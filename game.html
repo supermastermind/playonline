@@ -3,15 +3,53 @@
 
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="description" content="Play super master mind / code breaker online, assisted by a calculator and find the optimal strategy!">
+    <meta name="description" content="Play super master mind / code breaker online, assisted by a calculator to find the optimal strategy!">
     
     <meta name="title" content="Play super master mind / code breaker online">    
-    <title>Play super master mind / code breaker online</title>
+    <title>Play super master mind / code breaker online!</title>
   </head>
 
-  <body>
-    <h1>Play super master mind / code breaker online, assisted by a calculator and find the optimal strategy!</h1><br>
-    <a href="SuperMasterMind.html">PLAY NOW!</a>
+  <body style="background-color:black;color:white;">
+    <br><b><font size="6"><font color="red">Play </font><font color="yellow">super </font><font color="blue">master </font><font color="#FF7700">mind </font><font color="white">/ </font> <font color="#00E000">code </font><font color="#954400">breaker </font><font color="white">online!</font></font></b><br><br>
+    <img src="MasterMind4.png" style="border-color:black;" border=3><img src="MasterMind7.png" style="border-color:black;" border=3><img src="MasterMind5.png" style="border-color:black;" border=3><br><br>
+
+    <font size="5"><b><font color="red">Play </font><font color="yellow">super </font><font color="blue">master </font><font color="#FF7700">mind </font><font color="white">/ </font> <font color="#00E000">code </font><font color="#954400">breaker </font><font color="white">online</font>, assisted by a calculator to find the optimal strategy!</b></font><br><br>
+    This page allows to play super master mind / code breaker online.<br>
+    This online game is assisted by a calculator which will give you hints to find the optimal strategy!<br>
+    Seveval game modes are possible, from 3 (very easy) to 7 columns (expert) and from 6 to 10 colors<br>
+    At each stage of the game, the number of remaining possible codes is automatically computed and displayed.<br>
+    The calculator also compares what you played to the "optimal mathematical strategy". For each code played,<br>
+    it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played<br>
+    to this average number when your code is played, and then displays the difference next to your code.<br>
+    For example:
+    <ul style="list-style-type:disc;margin:0">
+    <li>+0.00 means that what you played was optimal (no difference between your code and the optimal codes),</li>
+    <li>-1.00 means that what you played was totally useless (1 attempt was lost, thus -1),</li>
+    <li>-0.50 means that what you played was not optimal: you lost 1/2 attempt on average<br> 
+    to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches<br>
+    the secret code in 4 attempts on average, your code (followed by an optimal strategy) will reach it in 4.5 attempts on average.<br>
+    Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game! :)<br>
+    </ul><br>
+    
+    <table><tr><td><center>
+    <b><font size="5">Click here to <a href="SuperMasterMind.html">PLAY NOW!<br></font>
+    <img src="MasterMind_game_2.png" style="border-color:black;" border=3>
+    </a></b>
+    <center></td></tr></table><br>
+   
+    <i><b>Summary of the rules:</b><br>
+    The goal of the game is to find out a secret code composed of N colors (duplicate colors being allowed, N being between 3 and 7).<br>
+    The player makes successive attempts and has to find it out before maximum number of attempts is reached.<br>
+    At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
+    <ul style="list-style-type:disc;margin:0">
+    <li>a black peg indicates the existence of a correct color placed in a correct position,</li>
+    <li>a white peg indicates the existence of a correct color placed in a wrong position.</li>
+    </ul>
+    Once feedback is provided, another attempt is made.<br>
+    The game ends when the secret code is found (which means the player got N black pegs) or when the maximum number of attempts is reached<br>
+    meaning the game is lost.<br><br>
+    </i>
+    
   </body>
 
 </html>
