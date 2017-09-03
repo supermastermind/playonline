@@ -3,70 +3,95 @@
 
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="description" content="Play super master mind / code breaker online, assisted by a calculator to find the optimal strategy!">
-    
-    <meta name="title" content="Play super master mind / code breaker online">    
     <title>Play super master mind / code breaker online!</title>
+    <meta name="title" content="Play super master mind / code breaker online!">
+    <meta name="description" content="Play super master mind / code breaker online, assisted by a calculator to find the optimal strategy!">
+
+    <style>
+      body {
+        font-family: Comic Sans MS;
+        margin: 1%;
+        padding: 0%;        
+        color:black;
+        background-color:white;
+        background-image:url(img/html_background.jpg);
+        font-size: medium;
+      }
+    </style>
+
   </head>
 
-  <body style="background-color:#FFFFEE;color:black;">
-    <font size="3">
-  
-    <b><font size="6"><font color="#F00000">Play </font><font color="#EAEA00">super </font><font color="#0000A8">master </font><font color="#FF7700">mind </font><font color="black">/ </font> <font color="#00E000">code </font><font color="#954400">breaker </font><font color="black">online!</font></font></b><br><br>
-    <a href="game.html"><img src="img/SuperMasterMind_1.png" style="border-color:white;" border=0><img src="img/SuperMasterMind_2.png" style="border-color:white;" border=0><img src="img/SuperMasterMind_3.png" style="border-color:white;" border=0></a><br><br>
+  <body>
 
-    <font size="5"><b><font color="#F00000">Play </font><font color="#EAEA00">super </font><font color="#0000A8">master </font><font color="#FF7700">mind </font><font color="black">/ </font> <font color="#00E000">code </font><font color="#954400">breaker </font><font color="black">online</font>, assisted by a calculator to find the optimal strategy!</b></font><br><br>
+    <b><font style="font-size:xx-large;">
+      <font color="#F00000">Play </font><font color="#FF7700">super </font><font color="#F7F700">master </font><font color="#00D000">mind </font><font color="black">/ </font> <font color="#0000A8">code </font><font color="#954400">breaker </font><font color="#FF7700">online!</font>
+    </font></b><br><br>
     
-    <table><tr><td width=14></td><td>     
-     
-    <b><font size="4" color="#0000A8">Game features:</font></b><br style="line-height:33px">
-    This page allows to play super master mind / code breaker online.<br>
-    The game is assisted by a calculator which will give you hints to find the optimal strategy!<br>
-    Several game modes are possible, from 3 (very easy) to 7 columns (expert) and from 6 to 10 colors<br>
-    At each stage of the game, the number of remaining possible codes is automatically computed and displayed.<br>
-    The associated list of possible codes can also be displayed (once the game is over).<br>
-    The calculator also compares what you played to the "optimal mathematical strategy". For each code played,<br>
-    it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played<br>
-    to this average number when your code is played, and then displays the difference next to your code. For example:<br>
-    <ul style="list-style-type:disc;margin:0;">
-    <li>+0.00 means that what you played was optimal (no difference between your code and the optimal codes),</li>
-    <li>-1.00 means that what you played was totally useless (1 attempt was lost, thus -1),</li>
-    <li>-0.50 means that what you played was not optimal: you lost 1/2 attempt on average<br> 
-    to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches<br>
-    the secret code in 4 attempts on average, your code (followed by an optimal strategy) will reach it in 4.5 attempts on average.<br>
-    Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game! :)<br>
-    </ul>
-    <div id='strategy_details' onclick="document.getElementById('strategy_details').innerHTML  = 'The optimal strategy is determined thanks to a recursive algorithm which goes through all possible games (enumeration of all games<br>with some &quot;equivalent games&quot; tricks for optimization).<br>The goal of this algorithm is to minimize the average number of attempts to find secret codes, all secret codes having the same weight<br>(i.e. same probability to be selected). In this algorithm, only the possible codes are considered at each stage of the game.<br>In some (very rare) cases, playing an impossible code may be better than playing the best possible code!<br>This could be called a &quot;useful mistake&quot;. This will thus result in the above number to be strictly positive (e.g. +0.10). If you get<br>such a number (voluntarily), you are really good!';"><i>Click here for more details on the optimal strategy...</i></div><br>
-    
-    <b><font size="4" color="#0000A8">Game rules:</font></b><br style="line-height:33px">
-    The goal of the game is to find out a secret code composed of N colors (duplicate colors are allowed).<br>
-    The player makes successive attempts and has to find the secret code before the maximum number of attempts is reached.<br>
-    At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
-    <ul style="list-style-type:disc;margin:0">
-    <li>a black peg indicates the existence of a correct color placed in a correct position,</li>
-    <li>a white peg indicates the existence of a correct color placed in a wrong position.</li>
-    </ul>
-    Once this feedback has been provided, another attempt is made.<br>
-    The game ends when the secret code is found, which means the player got N black pegs, or when the maximum number<br> 
-    of attempts is reached, in which case the game is lost.<br>
-    (Alternative game names: super master mind, mastermind, code breaker)<br><br>    
-    
-    <b><font size="4" color="#0000A8">Play online:</font></b><br style="line-height:33px"> 
     <a href="game.html">
-    <b><font size="4">PLAY ONLINE NOW!</font></b><br style="line-height:14px">    
-    <img src="img/SuperMasterMind_game.png" style="border-color:#F00000;border-top: 3px solid white"><br>
-    </a><br>
-    
-    <b><font size="4" color="#0000A8">Programming languages:</font></b><br style="line-height:33px">
-    HTML, CSS, Javascript<br><br>        
-    
-    <b><font size="4" color="#0000A8">Contact info:</font></b><br style="line-height:33px">
-    Want to share some comments or ideas? </b><a href="mailto:sharerandomwallpapers@gmail.com">Just send me an email</a><br><br>        
-    
+      <div id='game_images'><img src='img/SuperMasterMind_1.png' border=0><img src='img/SuperMasterMind_2.png' border=0><img src='img/SuperMasterMind_3.png' border=0><img src='img/SuperMasterMind_4.png' border=0></div>
+      <script>
+        if (screen.width >= 1000) {
+          document.getElementById('game_images').innerHTML += "<img src='img/SuperMasterMind_5.png' border=0>";
+        }
+      </script>
+    </a>
+    <br>
+
+    <b><font style="font-size:large;">Fond of this "already old" game?<br>
+      Train your mind by <font color="#F00000">playing </font><font color="#FF7700">super </font><font color="#F7F700">master </font><font color="#00D000">mind </font><font color="black">/ </font> <font color="#0000A8">code </font><font color="#954400">breaker </font><font color="#FF7700">online</font>, assisted by a calculator to find the optimal strategy!
+    </font></b><br style="line-height:33px">
+
+    <table><tr><td width=14></td><td>
+
+      <table width=88% border=0><tr><td>
+        <b><font style="font-size:large;" color="#0000A8">Game features:</font></b><br style="line-height:33px">
+        This page allows to play super master mind / code breaker online.<br>
+        The game is assisted by a calculator which will give you hints to find the optimal strategy!<br>
+        Several game modes are possible, from 3 (very easy) to 7 columns (expert) and from 6 to 10 colors.<br>
+        At each stage of the game, the number of remaining possible codes is automatically computed and displayed.
+        The associated list of possible codes can also be displayed (once the game is over, otherwise it would be cheating!).<br>
+        The calculator also compares what you played to the "optimal mathematical strategy". For each code played,
+        it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
+        to this average number when your code is played, and then displays the difference next to your code. For example:<br>
+        <ul style="list-style-type:disc;margin:0;">
+        <li>+0.00 means that what you played was optimal (no difference between your code and the optimal codes),</li>
+        <li>-1.00 means that what you played was totally useless (1 attempt was lost, thus -1),</li>
+        <li>-0.50 means that what you played was not optimal: you lost 1/2 attempt on average 
+        to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches
+        the secret code in 4 attempts on average, your code (followed by an optimal strategy) will reach it in 4.5 attempts on average.
+        Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game! :)<br>
+        </ul>
+        <div id='strategy_details' onclick="document.getElementById('strategy_details').innerHTML='The optimal strategy is determined thanks to a recursive algorithm which goes through all possible games (enumeration of all games with some &quot;equivalent games&quot; tricks for optimization). The goal of this algorithm is to minimize the average number of attempts to find secret codes, all secret codes having the same weight (i.e. same probability to be selected).<br>In this algorithm, only the possible codes are considered at each stage of the game. In some (very rare) cases, playing an impossible code may be better than playing the best possible code! This could be called a &quot;useful mistake&quot;. This will thus result in the above number being strictly positive (e.g. +0.10). If you get such a positive number (voluntarily), you are really good!';"><i>Click here for more details on the optimal strategy...</i></div><br>
+
+        <b><font style="font-size:large;" color="#0000A8">Game rules:</font></b><br style="line-height:33px">
+        The goal of the game is to find out a secret code composed of N colors (duplicate colors are allowed).<br>
+        The player makes successive attempts and has to find the secret code before the maximum number of attempts is reached.<br>
+        At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
+        <ul style="list-style-type:disc;margin:0">
+        <li>a black peg indicates the existence of a correct color placed in a correct position,</li>
+        <li>a white peg indicates the existence of a correct color placed in a wrong position.</li>
+        </ul>
+        Once this feedback has been provided, another attempt is made.<br>
+        The game ends when the secret code is found, which means the player got N black pegs, or when the maximum number<br>
+        of attempts is reached, in which case the game is lost.<br>
+        Alternative game names: super master mind, super mastermind, master mind, mastermind, code breaker.<br><br>
+
+      </td></tr></table>
+
+      <b><font style="font-size:large;" color="#0000A8">Play online:</font></b><br style="line-height:33px">
+      <a href="game.html">
+      <b><font style="font-size:large;">PLAY ONLINE NOW!</font></b><br style="line-height:14px">
+      <img src="img/SuperMasterMind_game.png" style="border-color:#F00000;border-top: 3px solid white"><br>
+      </a><br>
+
+      <b><font style="font-size:large;" color="#0000A8">Programming languages:</font></b><br style="line-height:33px">
+      HTML, CSS, Javascript. This open source program is of course free.<br><br>
+
+      <b><font style="font-size:large;" color="#0000A8">Contact info:</font></b><br style="line-height:33px">
+      Want to share some comments or ideas? </b><a href="mailto:sharerandomwallpapers@gmail.com">Just send me an email</a><br><br>
+
     </td></tr></table><br>
-    
-   </font>
-    
+
   </body>
 
 </html>
