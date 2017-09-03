@@ -10,34 +10,32 @@
   </head>
 
   <body style="background-color:black;color:white;">
-    <br><b><font size="6"><font color="red">Play </font><font color="yellow">super </font><font color="blue">master </font><font color="#FF7700">mind </font><font color="white">/ </font> <font color="#00E000">code </font><font color="#954400">breaker </font><font color="white">online!</font></font></b><br><br>
-    <img src="MasterMind1_resized.png" style="border-color:black;" border=3><img src="MasterMind2_resized.png" style="border-color:black;" border=3><img src="MasterMind3_resized.png" style="border-color:black;" border=3><br><br>
+    <b><font size="6"><font color="red">Play </font><font color="yellow">super </font><font color="blue">master </font><font color="#FF7700">mind </font><font color="white">/ </font> <font color="#00E000">code </font><font color="#954400">breaker </font><font color="white">online!</font></font></b><br><br>
+    <a href="SuperMasterMind.html"><img src="MasterMind1_resized.png" style="border-color:black;" border=3><img src="MasterMind2_resized.png" style="border-color:black;" border=3><img src="MasterMind3_resized.png" style="border-color:black;" border=3></a><br><br>
 
     <font size="5"><b><font color="red">Play </font><font color="yellow">super </font><font color="blue">master </font><font color="#FF7700">mind </font><font color="white">/ </font> <font color="#00E000">code </font><font color="#954400">breaker </font><font color="white">online</font>, assisted by a calculator to find the optimal strategy!</b></font><br><br>
+    
+    <table><tr><td width=14></td><td>     
+       
     This page allows to play super master mind / code breaker online.<br>
-    This online game is assisted by a calculator which will give you hints to find the optimal strategy!<br>
-    Seveval game modes are possible, from 3 (very easy) to 7 columns (expert) and from 6 to 10 colors<br>
+    The game is assisted by a calculator which will give you hints to find the optimal strategy!<br>
+    Several game modes are possible, from 3 (very easy) to 7 columns (expert) and from 6 to 10 colors<br>
     At each stage of the game, the number of remaining possible codes is automatically computed and displayed.<br>
     The calculator also compares what you played to the "optimal mathematical strategy". For each code played,<br>
     it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played<br>
     to this average number when your code is played, and then displays the difference next to your code.<br>
     For example:
-    <ul style="list-style-type:disc;margin:0">
+    <ul style="list-style-type:disc;margin:0;">
     <li>+0.00 means that what you played was optimal (no difference between your code and the optimal codes),</li>
     <li>-1.00 means that what you played was totally useless (1 attempt was lost, thus -1),</li>
     <li>-0.50 means that what you played was not optimal: you lost 1/2 attempt on average<br> 
     to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches<br>
     the secret code in 4 attempts on average, your code (followed by an optimal strategy) will reach it in 4.5 attempts on average.<br>
     Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game! :)<br>
-    </ul><br>
+    </ul>
+    <div id='strategy_details' onclick="document.getElementById('strategy_details').innerHTML  = 'The optimal strategy is determined thanks to a recursive algorithm. In this algorithm, only the possible codes are considered<br>at each stage of the game. In some (very rare) cases, playing an impossible code may be better than playing the best possible code!<br>This could be called a &quot;useful mistake&quot;. This will thus result in the above number to be strictly positive (e.g. +0.10). If you get<br>such a number (voluntarily), you are really good!';"><i>Click here for more details...</i></div><br>
     
-    <table><tr><td><center>
-    <b><font size="5">Click here to <a href="SuperMasterMind.html">PLAY NOW!<br></font>
-    <img src="MasterMind_game_resized.png" style="border-color:black;" border=3>
-    </a></b>
-    <center></td></tr></table><br>
-   
-    <i><b>Summary of the rules:</b><br>
+    <b>Summary of the rules:</b><br>
     The goal of the game is to find out a secret code composed of N colors (duplicate colors being allowed).<br>
     The player makes successive attempts and has to find out the secret code before the maximum number of attempts is reached.<br>
     At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
@@ -47,8 +45,19 @@
     </ul>
     Once this feedback has been provided, another attempt is made.<br>
     The game ends when the secret code is found, which means the player got N black pegs, or when the maximum number<br> 
-    of attempts is reached, in which case the game is lost.<br><br>
-    </i>
+    of attempts is reached, in which case the game is lost.<br>
+    (Alternative game names: super master mind, mastermind, code breaker)<br><br>
+    
+
+    <b><font size="4"><a href="SuperMasterMind.html">PLAY ONLINE NOW</font><br>
+    <img src="SuperMasterMind_game_resized.png" style="border-color:red;border-top: 7px solid black"><br>
+    </a></b><br>
+    
+    <b>Programming languages:</b><br>HTML, CSS, Javascript<br><br>
+    
+    <b>Contact info:</b><br>Want to share comments or ideas? </b><a href="mailto:sharerandomwallpapers@gmail.com">Just send me an email</a><br><br>
+    
+    </td></tr></table><br>
     
   </body>
 
