@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v1.0";
+let version = "v0.5";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 6;
@@ -474,6 +474,10 @@ class CodeHandler {
   marksEqual(mark1, mark2) {
     return ( (mark1.nbBlacks == mark2.nbBlacks) && (mark1.nbWhites == mark2.nbWhites) );
   }
+  
+  markToString(mark) {
+    return mark.nbBlacks + "B" + mark.nbWhites + "W";
+  }  
 
 }
 
@@ -1197,9 +1201,9 @@ function draw_graphic_bis() {
       small_italic_font = "italic " + Math.floor((3*min_font_size+font_size)/4) + "px " + fontFamily;
       very_small_italic_font = "italic " + Math.floor((9*min_font_size+font_size)/10) + "px " + fontFamily;
 
-      medium_basic_font = Math.floor((min_font_size+font_size)/2) + "px " + fontFamily;
-      medium_bold_font = "bold " + Math.floor((min_font_size+font_size)/2) + "px " + fontFamily;
-      medium_bold_italic_font = "bold italic " + Math.floor((min_font_size+font_size)/2) + "px " + fontFamily;
+      medium_basic_font = Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
+      medium_bold_font = "bold " + Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
+      medium_bold_italic_font = "bold italic " + Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
 
       error_font = font_size + "px " + fontFamily;
 
@@ -1824,7 +1828,7 @@ function draw_graphic_bis() {
     else {
       errorColor = "lightGray";
     }
-    if (showPossibleCodesMode) {
+    if (showPossibleCodesMode) { // XXX Erreurs à tester, tjs valides?
       displayString(errorStr, 0, nbMaxAttemptsToDisplay+3-1, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4+3,
                     errorColor, backgroundColor_2, ctx, true, 1, false, 0);
     }
@@ -2006,6 +2010,9 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
   while (circle_width_applied > Math.floor((55*constant_y_cell_delta)/100)) {
     circle_width_applied = circle_width_applied - 2; // (keeps even)
   }
+  if (circle_width_applied < 2) {
+    circle_width_applied = 2;
+  }
 
   // Space between marks whose circle's diameter is circle_width_applied
   let space_btw_marks = ((x_0_next - x_0 - 2.0) - (nbColumns*(circle_width_applied+1.0))) / (nbColumns+1.0);
@@ -2021,9 +2028,11 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
   let x_0_pos_offset = Math.max(0, Math.floor((left_space + right_space)/2) - left_space);
 
   let circleBorderWidth = 1.25;
+  let whiteBckg = "#FCFCFC";
   let radius = Math.floor(circle_width_applied/2);
-  if (radius <= 2) { // radius
-    circleBorderWidth = 0.75;
+  if (radius <= 3) { // radius
+    circleBorderWidth = 0.6;
+    whiteBckg = "#FFFFFF";
   }
   
   for (let i = 0; i < mark.nbBlacks; i++) {
@@ -2051,7 +2060,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
             Math.floor((y_0 + y_0_next + 1)/2), // center y
             radius, // radius
             0, 2 * Math.PI, false); // starting and ending angles + clockwise
-    ctx.fillStyle = "#FCFCFC";
+    ctx.fillStyle = whiteBckg;
     ctx.fill();
     ctx.lineWidth = circleBorderWidth;
     ctx.strokeStyle = "black";
@@ -2080,6 +2089,52 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth)
   ctx.lineTo(x, y+radius);
   ctx.quadraticCurveTo(x, y, x+radius, y);
   ctx.stroke();
+}
+
+function displayPerf(perf, y_cell, backgroundColor, ctx) {
+
+  let performanceIndicator = Math.round(perf * 100.0) / 100.0;
+
+  if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
+    displayString("?", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                  lightGray, backgroundColor, ctx);
+  }
+  else if (performanceIndicator != PerformanceIndicatorNA) {
+    if (performanceIndicator == -1.0) { // useless code
+      let res = displayString(" useless ", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                                  redColor, backgroundColor, ctx, true, 0, true, 0);
+      if (!res) {
+        displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                      redColor, backgroundColor, ctx);
+      }
+    }
+    else if (performanceIndicator <= -0.50) {
+      displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                    redColor, backgroundColor, ctx);
+    }
+    else if (performanceIndicator <= -0.25) {
+      displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                    orangeColor, backgroundColor, ctx);
+    }
+    else if (performanceIndicator < 0.0) {
+      displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                    lightGray, backgroundColor, ctx);
+    }
+    else if (performanceIndicator == 0.0) { // optimal code
+      let res = displayString(" optimal ", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                                  lightGray, backgroundColor, ctx, true, 0, true, 0);
+      if (!res) {
+        displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                      lightGray, backgroundColor, ctx);
+      }
+    }
+    else { // (an illogical code can be better than the optimal logical code)
+      displayString("+" + String.format("%.2f", performanceIndicator).replaceAll(",",".") + "!", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4), y_cell, 4,
+                    greenColor, backgroundColor, ctx);
+    }
+  }
+  // else: nothing is displayed in case of PerformanceIndicatorNA
+
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
