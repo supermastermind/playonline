@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 
   <head>
@@ -6,97 +6,101 @@
     <title>Play super master mind / code breaker online!</title>
     <meta name="title" content="Play super master mind / code breaker online!">
     <meta name="description" content="Play super master mind / code breaker online, assisted by a calculator which knows the optimal strategy!">
+    <meta name="keywords" content="super master mind, mastermind, code breaker, play, online, optimal, strategy">   
 
-    <style>
-      body {
-        font-family: Comic Sans MS;
-        margin: 1%;
-        padding: 0%;        
-        color:black;
-        background-color:white;
-        background-image:url('img/html_background.jpg');
-        background-position: left bottom;
-        font-size: medium;
-      }
-    </style>
-
+    <link rel="stylesheet" type="text/css" href="style/style.css">   
+    <script src="common_functions.js"></script>
   </head>
 
   <body>
-
-    <b><font style="font-size:xx-large;">
-      <font color="#F00000">Play </font><font color="#FF7700">super </font><font color="#F7F700">master </font><font color="#00D000">mind </font><font color="black">/ </font> <font color="#0000A8">code </font><font color="#954400">breaker </font><font color="#FF7700">online!</font>
-    </font></b><br><br>
+    <div id="main">
     
-    <a href="game.html" onfocus='this.blur()'>
-      <div id='game_images'><img src='img/SuperMasterMind_1.png' border=0><img src='img/SuperMasterMind_2.png' border=0><img src='img/SuperMasterMind_3.png' border=0><img src='img/SuperMasterMind_4.png' border=0></div>
-      <script>
-        if (screen.width >= 1000) {
-          document.getElementById('game_images').innerHTML += "<img src='img/SuperMasterMind_5.png' border=0>";
-        }
-      </script>
-    </a>
-    <br>
+      <!-- HEADER -->
+      <script>write_menu(0);</script>
+    
+      <div id="site_content">
+      
+        <!-- SIDEBAR -->
+        <script>write_sidebar();</script>
+      
+        <!-- MAIN CONTENT -->
+        <div id="content">
 
-    <b><font style="font-size:large;">Fond of this already-old game?<br>
-      Train your mind by <font color="#F00000">playing </font><font color="#FF7700">super </font><font color="#F7F700">master </font><font color="#00D000">mind </font><font color="black">/ </font> <font color="#0000A8">code </font><font color="#954400">breaker </font><font color="#FF7700">online</font>, assisted by a calculator which knows the optimal strategy!
-    </font></b><br style="line-height:33px">
+          <h1><font color="#000000">Fond of this good old game?<br style="line-height:33px">
+          
+          <a href="game.html" onfocus='this.blur()'>
+            <div id='game_images'>
+              <img src='img/SuperMasterMind_1.png' style='width:auto;height:250px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:250px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:250px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:250px;border:0;margin:0px'><img src='img/SuperMasterMind_5.png' style='width:auto;height:250px;border:0;margin:0px'>
+            </div>
+          </a>
+          Train your mind by <font color="#F00000">playing </font><font color="#FF7700">super </font><font color="#C0C000">master </font><font color="#00D000">mind </font><font color="black">/ </font> <font color="#0000A8">code </font><font color="#954400">breaker </font><font color="#FF7700">online</font>, assisted by a calculator which knows the optimal strategy!
+          </font></h1>
 
-    <table style='border:0px ridge white;margin:0;padding:0;'><tr><td style='width:14px;margin:0;padding:0;'></td><td style='margin:0;padding:0;'>
+          <table style='width:88%;border:0;margin:0;padding:0;'><tr><td style='border:0;margin:0;padding:0;background:#F6F6F6'>
 
-      <table style='width:88%;border:0px ridge white;margin:0;padding:0;'><tr><td style='margin:0;padding:0;padding-top:14px;'>
+            <h3>Game rules:</h3>
+            The goal of the game is to find out a secret code composed of N colors (duplicate colors are allowed).<br>
+            The player makes successive attempts and has to find the secret code before the maximum number of attempts is reached.<br>
+            At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
+            <ul style="list-style-type:disc;margin:0">
+            <li>a black peg indicates the existence of a correct color placed in a correct position,</li>
+            <li>a white peg indicates the existence of a correct color placed in a wrong position.</li>
+            </ul>
+            Once this feedback has been provided, another attempt is made.<br>
+            The game ends when the secret code is found, which means the player got N black pegs, or when the maximum number<br>
+            of attempts is reached, in which case the game is lost.<br>
+            Alternative game names: super master mind, super mastermind, master mind, mastermind, code breaker.<br><br>
 
-        <b><font style="font-size:large;" color="#0000A8">Game rules:</font></b><br style="line-height:33px">
-        The goal of the game is to find out a secret code composed of N colors (duplicate colors are allowed).<br>
-        The player makes successive attempts and has to find the secret code before the maximum number of attempts is reached.<br>
-        At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
-        <ul style="list-style-type:disc;margin:0">
-        <li>a black peg indicates the existence of a correct color placed in a correct position,</li>
-        <li>a white peg indicates the existence of a correct color placed in a wrong position.</li>
-        </ul>
-        Once this feedback has been provided, another attempt is made.<br>
-        The game ends when the secret code is found, which means the player got N black pegs, or when the maximum number<br>
-        of attempts is reached, in which case the game is lost.<br>
-        Alternative game names: super master mind, super mastermind, master mind, mastermind, code breaker.<br><br>
+            <h3>Online game features:</h3>
+            This page allows to play super master mind / code breaker online.<br>
+            The game is assisted by a calculator which will give you hints to find the optimal strategy!<br>
+            Several game modes are possible, from 3 (very easy) to 7 columns (expert) and from 6 to 10 colors.<br>
+            <i>(Ongoing work - September 2017:)</i> At each stage of the game, the number of remaining possible codes is automatically computed and displayed.
+            The associated list of possible codes can also be displayed (once the game is over, otherwise it would be cheating!).<br>
+            The calculator also compares what you played to the "optimal mathematical strategy". For each code played,
+            it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
+            to this average number when your code is played, and then displays the difference next to your code. For example:<br>
+            <ul style="list-style-type:disc;margin:0;">
+            <li>+0.00 means that what you played was optimal (no difference between your code and the optimal codes),</li>
+            <li>-1.00 means that what you played was totally useless (1 attempt was lost, thus -1),</li>
+            <li>-0.50 means that what you played was not optimal: you lost 1/2 attempt on average 
+            to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches
+            the secret code in 4 attempts on average, your code (followed by an optimal strategy) will reach it in 4.5 attempts on average.
+            Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game! :)<br>
+            </ul>
+            
+            <!-- OPTIMAL STRATEGY DETAILS -->
+            <script>write_optimal_strategy_details(0);</script>
 
-        <b><font style="font-size:large;" color="#0000A8">Online game features:</font></b><br style="line-height:33px">
-        This page allows to play super master mind / code breaker online.<br>
-        The game is assisted by a calculator which will give you hints to find the optimal strategy!<br>
-        Several game modes are possible, from 3 (very easy) to 7 columns (expert) and from 6 to 10 colors.<br>
-        <span style="color:black;background:#D0D0D0;">[Ongoing work (Sept 2017):]</span> At each stage of the game, the number of remaining possible codes is automatically computed and displayed.
-        The associated list of possible codes can also be displayed (once the game is over, otherwise it would be cheating!).<br>
-        The calculator also compares what you played to the "optimal mathematical strategy". For each code played,
-        it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
-        to this average number when your code is played, and then displays the difference next to your code. For example:<br>
-        <ul style="list-style-type:disc;margin:0;">
-        <li>+0.00 means that what you played was optimal (no difference between your code and the optimal codes),</li>
-        <li>-1.00 means that what you played was totally useless (1 attempt was lost, thus -1),</li>
-        <li>-0.50 means that what you played was not optimal: you lost 1/2 attempt on average 
-        to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches
-        the secret code in 4 attempts on average, your code (followed by an optimal strategy) will reach it in 4.5 attempts on average.
-        Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game! :)<br>
-        </ul>
-        <div id='strategy_details' onclick="document.getElementById('strategy_details').innerHTML='The optimal strategy is determined thanks to a recursive algorithm which goes through all possible games (enumeration of all games with some &quot;equivalent games&quot; tricks for optimization). The goal of this algorithm is to minimize the average number of attempts to find secret codes, all secret codes having the same weight (i.e. same probability to be selected).<br>In this algorithm, only the possible codes are considered at each stage of the game. In some (very rare) cases, playing an impossible code may be better than playing the best possible code! This could be called a &quot;useful mistake&quot;. This will thus result in the above number being strictly positive (e.g. +0.10). If you get such a positive number (voluntarily), you are really good!';"><i>Click here for more details on the optimal strategy...</i></div><br>
+          </td></tr></table>
 
-      </td></tr></table>
+          <h3>Play online:</h3>
+          <a href="game.html" onfocus='this.blur()'>
+          <b><font style="font-size:large;">PLAY ONLINE NOW!</font></b><br style="line-height:14px">
+          <img src="img/SuperMasterMind_game.png" style="border-color:#F00000;margin-top: 4px"><br><br>
+          <a href=optimal_strategy.html>Show more screenshots</a><br>
+          </a><br>
 
-      <b><font style="font-size:large;" color="#0000A8">Play online:</font></b><br style="line-height:33px">
-      <a href="game.html" onfocus='this.blur()'>
-      <b><font style="font-size:large;">PLAY ONLINE NOW!</font></b><br style="line-height:14px">
-      <img src="img/SuperMasterMind_game.png" style="border-color:#F00000;margin-top: 4px"><br>
-      </a><br>
+          <b><font style="font-size:large;" color="#0000A8">Other information:</font></b><br style="line-height:33px">
+          <ul style="list-style-type:disc;margin:0">
+          <li>Programming languages: HTML 5, CSS, Javascript<br>
+          <li>This program is free and open source (under <a href="LICENSE" onfocus='this.blur()'>GNU General Public License v3.0</a>)
+          </ul><br>
 
-      <b><font style="font-size:large;" color="#0000A8">Other information:</font></b><br style="line-height:33px">
-      <ul style="list-style-type:disc;margin:0">
-      <li>Programming languages: HTML 5, CSS, Javascript<br>
-      <li>This program is free and open source (under <a href="LICENSE" onfocus='this.blur()'>GNU General Public License v3.0</a>)
-      </ul><br>
+          <b><font style="font-size:large;" color="#0000A8">Contact:</font></b><br style="line-height:33px">
+          Want to share some comments or ideas? </b><a href="mailto:sharerandomwallpapers@gmail.com">Just send me an email</a><br><br>
 
-      <b><font style="font-size:large;" color="#0000A8">Contact:</font></b><br style="line-height:33px">
-      Want to share some comments or ideas? </b><a href="mailto:sharerandomwallpapers@gmail.com">Just send me an email</a><br><br>
+        </div>
+        
+      </div>
+      
+      <!-- FOOTER -->    
+      <div id="footer">
+        <p><a href="index.html">Home</a> | <a href="examples.html">Examples</a> | <a href="page.html">A Page</a> | <a href="another_page.html">Another Page</a> | <a href="contact.html">Contact Us</a></p>
+        <p>Copyright &copy; simple_light | <a href="http://validator.w3.org/check?uri=referer">HTML5</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | <a href="http://www.html5webtemplates.co.uk">design from HTML5webtemplates.co.uk</a></p>
+      </div>
 
-    </td></tr></table><br>
-
+    </div>
   </body>
-
+  
 </html>
