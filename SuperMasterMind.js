@@ -1,4 +1,6 @@
 
+// XXXs globally: .js, .html and google scripts / trace of right code to be suppressed
+
 "use strict";
 
 console.log("Running SuperMasterMind.js...");
@@ -54,14 +56,15 @@ let equivalenceClassIdUNKNOWN = -100;
 let nbOfStatsFilled = 0;
 let currentAttemptNumber = 1;
 let gameWon = false;
-let nbGamesWonWithoutHelp = 0;
+let nbGamesWonWithoutHelpAtAll = 0;
 let secretCode = -1;
 let secretCodeRevealed = -1;
 let game_cnt = 0;
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
-let playerWasHelped = false;
+let playerWasHelpedSignificantly = false;
+let playerWasHelpedSlightly = false;
 let nbMaxMinutesForHint = -1; // N.A.
 let currentAttemptNumberForHint = -1; // N.A.
 
@@ -516,7 +519,7 @@ function playRandomCodeButtonClick() {
 function playPossibleCodeButtonClick() {
   if (!document.getElementById("playPossibleCodeButton").disabled) {
     if (currentAttemptNumber > 1) {
-      playerWasHelped = true;
+      playerWasHelpedSignificantly = true;
     }
     currentCode = possibleCodesLists[nbOfStatsFilled-1][0].code; // select first code of the list
     draw_graphic();
@@ -532,7 +535,7 @@ function revealSecretColorButtonClick() {
       displayGUIError("too many revealed colors", new Error().stack);
     }
     else if ((nbColumns-nbEmptyColors+1) < (nbColumns+1)/2) {
-      playerWasHelped = true;
+      playerWasHelpedSlightly = true;
       let revealedColorIdx = Math.floor(Math.random() * nbEmptyColors);
       secretCodeRevealed = codeHandler.replaceEmptyColor(secretCodeRevealed, revealedColorIdx, secretCode);
       currentCode = secretCodeRevealed;
@@ -796,12 +799,15 @@ function resetGameAttributes(nbColumnsSelected) {
   // secretCode = 0x07777777;
   console.log("Secret code: " + codeHandler.codeToString(secretCode));
   secretCodeRevealed = 0;
+  
   game_cnt++;
   if (game_cnt > 1000000) {
     game_cnt = 0;
   }
+  
   newGameEvent = false;
-  playerWasHelped = false;
+  playerWasHelpedSignificantly = false;
+  playerWasHelpedSlightly = false;
   switch (nbColumns) {
     case 3:
       nbMaxMinutesForHint = 5;
@@ -1007,6 +1013,10 @@ function draw_graphic_bis() {
   let res;
   let nbMaxAttemptsToDisplay = nbMaxAttempts;
   let draw_exception = false;
+  
+  let timeStr = "";
+  let game_won_without_big_help = false;
+  let score = -1.0;
 
   try {
 
@@ -1130,6 +1140,14 @@ function draw_graphic_bis() {
         if (1 == currentAttemptNumber) {
           startTime = (new Date()).getTime(); // time in milliseconds
           stopTime = startTime;
+          try {
+            if (typeof(Storage) !== 'undefined') {  
+              if (localStorage.nbgamesstarted) {
+                localStorage.nbgamesstarted = Number(localStorage.nbgamesstarted) + 1;
+              }
+            }
+          }
+          catch (err) {}          
         }
         codesPlayed[currentAttemptNumber-1] = currentCode;
         codeHandler.fillMark(secretCode, currentCode, marks[currentAttemptNumber-1]);
@@ -1138,8 +1156,11 @@ function draw_graphic_bis() {
           currentAttemptNumber++;
           currentCode = -1;
           gameWon = true;
-          if (!playerWasHelped) {
-            nbGamesWonWithoutHelp++;
+          if ((!playerWasHelpedSignificantly) && (!playerWasHelpedSlightly)) {
+            nbGamesWonWithoutHelpAtAll++;            
+          }
+          if (!playerWasHelpedSignificantly) {
+            game_won_without_big_help = true;
           }
         }
         else {
@@ -1494,7 +1515,6 @@ function draw_graphic_bis() {
           let timeInSeconds = Math.floor((stopTime - startTime)/1000);
           let timeInMinutes = Math.floor(timeInSeconds/60);
           timeInSeconds = timeInSeconds - timeInMinutes*60; // (range: [0;59])
-          let timeStr;
           if (timeInMinutes != 0) {
             timeInSeconds = (timeInSeconds/10)*10;
             if (timeInSeconds != 0) {
@@ -1509,32 +1529,59 @@ function draw_graphic_bis() {
           }
 
           if (gameWon) { // game won
-            let victoryStr;
-            if (playerWasHelped) {
+          
+            let victoryStr;         
+            score = Math.max(100 - (currentAttemptNumber-2)*10 - timeInSeconds/10, 0); // XXX right formulaes          
+            if (playerWasHelpedSignificantly) {
               victoryStr = "You won with help!";
+              score = 0;
+            }
+            else if (playerWasHelpedSlightly) {
+              victoryStr = "You won with help!";              
+              let nbColorsRevealed = (nbColumns-codeHandler.nbEmptyColors(secretCodeRevealed));
+              if (nbColorsRevealed == 1) { // 1 color revealed
+                score = (2 * score) / 3;
+              }
+              else if (nbColorsRevealed > 1) { // > 1 colors revealed
+                score = (1 * score) / 3;
+              }
+              else {
+                score = 0;                
+                displayGUIError("internal error: nbColorsRevealed = " + nbColorsRevealed, new Error().stack);
+              }
             }
             else {
               victoryStr = "You won!!!";
             }
+            score = Math.floor(5 * score)/5;
+            
             displayString(victoryStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+            if (score > 0) {
+              displayString("Score: " + score, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
+                            greenColor, backgroundColor_2, ctx, true, 0, false, 0);                          
+            }
+            
           }
           else if (currentAttemptNumber == nbMaxAttemptsToDisplay+1) { // game lost
+          
+            score = 0;
             displayString("You lost!", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2, ((nbColumns>=7)?5:4)+4+3,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
+                          
           }
           else {
             displayGUIError("game over inconsistency", false);
           }
 
           ctx.font = small_italic_font;
-          if ((nbGamesWonWithoutHelp <= HintsThreshold) && (!gameOnGoing()) && allPossibleCodesFilled()) {
+          if ((nbGamesWonWithoutHelpAtAll <= HintsThreshold) && (!gameOnGoing()) && allPossibleCodesFilled()) {
             displayString("\u2193 Click below to show the possible codes", 0, nbMaxAttemptsToDisplay, 2+(90*(nbColumns+1))/100+nbColumns*2,
-                          darkGray, backgroundColor_2, ctx, true, 1, true, 0);
+                          darkGray, backgroundColor_2, ctx, true, 1, true, 0); // XXX Bubble
           }
 
         }
@@ -1570,7 +1617,7 @@ function draw_graphic_bis() {
         ctx.fillStyle = darkGray;
 
         ctx.font = medium_bold_font;
-        if ((nbGamesWonWithoutHelp == 0) && gameOnGoing()) {
+        if ((nbGamesWonWithoutHelpAtAll == 0) && gameOnGoing()) {
           let x_delta = 0.75;
           displayString("Click on the colors to select them!", 2+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+3+Math.floor(nbColors/2)-1, +((nbColumns>=7)?5:4)+4+3-x_delta,
                         darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
@@ -1639,8 +1686,8 @@ function draw_graphic_bis() {
         }
 
         ctx.font = small_italic_font;
-        if (nbGamesWonWithoutHelp <= HintsThreshold) {
-          displayString("\u2190 Back to game", 0, nbMaxAttemptsToDisplay, 2+(90*(nbColumns+1))/100,
+        if (nbGamesWonWithoutHelpAtAll <= HintsThreshold) {
+          displayString("\u2190 Back to game", 0, nbMaxAttemptsToDisplay, 2+(90*(nbColumns+1))/100,  // XXX bubble
                         darkGray, backgroundColor_2, ctx, true, 1, true, 0);
         }
 
@@ -1781,8 +1828,21 @@ function draw_graphic_bis() {
 
       checkArraySizes();
 
-      main_graph_update_needed = false;
+      // *****************************
+      // Store player's info distantly
+      // *****************************
 
+      if (game_won_without_big_help) {
+        if ((timeStr.length == 0) || (score == -1.0)) {
+          displayGUIError("internal error at store_player_info call", new Error().stack);
+        }
+        else if (score > 0.0) {
+          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "+0.00"); // XXX to be filled properly
+        }
+      }      
+      
+      main_graph_update_needed = false;
+      
     }
 
     // ******************
@@ -1819,6 +1879,10 @@ function draw_graphic_bis() {
     displayGUIError("draw error: " + err, err.stack);
   }
 
+  // *********************
+  // Display errors if any
+  // *********************
+  
   if (errorStr != "") { // XXX A tester
     ctx.font = very_small_italic_font;
     let errorColor;
@@ -1837,7 +1901,7 @@ function draw_graphic_bis() {
                     errorColor, backgroundColor_2, ctx, true, 1, false, 0);
     }
   }
-
+ 
 }
 
 function displayString(str, x_cell, y_cell, x_cell_width,
@@ -2159,11 +2223,6 @@ function displayGUIError(GUIErrorStr, errStack) {
     alert(errorStr + "\nSee Javascript console for more details (Ctrl+Shift+I in Chrome or Firefox)\n\n");
   }
 
-}
-
-function sleep(milliSeconds){
-    let waitUntil = new Date().getTime() + milliSeconds;
-    while(new Date().getTime() < waitUntil) true;
 }
 
 // *************************************************************************

@@ -88,40 +88,294 @@
         alert("Your browser does not support javascript classes.\nThis game can be run in Chrome and Firefox (but not in Internet Explorer).");
       }
     </script>
-
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    
   </head>
 
   <body onresize='draw_graphic();'>
 
-  <!-- HTML controls and canvas -->
+    <!-- HTML controls and canvas -->
 
-  <table id='my_table' style='background:#E3E3E3;width:75%;height:90%;position:absolute;left:12.5%;top:2%;border:5px ridge white;border-radius:1%;margin:0;padding:0;'>
-    <tr style='height:100%;'>
-      <td style='width:0.4%;margin:0;padding:0;'></td>
-      <td style='width:12%;margin:0;padding:0;vertical-align:middle;text-align:center;'>
-        <input id='newGameButton' class='button' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()'>
-        <form action=''>
-          <label class='radio' title='Play with 3 columns (very easy)'><input id='columnslabel_3b' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(3)'><span id='columnslabel_3' class='radio' style='vertical-align:middle;'> 3 columns <br></span></label>
-          <label class='radio' title='Play with 4 columns (easy)'><input id='columnslabel_4b' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(4)'><span id='columnslabel_4' class='radio' style='vertical-align:middle;'> 4 columns <br></span></label>
-          <label class='radio' title='Play with 5 columns (classical Super Master Mind)'><input id='columnslabel_5b' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(5)'><span id='columnslabel_5' class='radio' style='vertical-align:middle;'> 5 columns <br></span></label>
-          <label class='radio' title='Play with 6 columns (advanced)'><input id='columnslabel_6b' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(6)'><span id='columnslabel_6' class='radio' style='vertical-align:middle;'> 6 columns <br></span></label>
-          <label class='radio' title='Play with 7 columns (expert!)'><input id='columnslabel_7b' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(7)'><span id='columnslabel_7' class='radio' style='vertical-align:middle;'> 7 columns <br></span></label>
-        </form>
-        <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset the current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
-        <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
-        <input id='playPossibleCodeButton' class='button disabled' type='button' value='Play possible code' title='Play a code which is possible' onclick='playPossibleCodeButtonClick()' onfocus='this.blur()' disabled>
-        <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code to help you...' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-        <input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show the possible codes at each stage of the game (can only be selected when the game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
-      </td>
-      <td style='width:0.4%;margin:0;padding:0;'></td>
-      <td style='width:87.2%;margin:0;padding:0;vertical-align:middle;align:right;text-align:left;'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
-    </tr>
-  </table>
+    <table id='my_table' style='background:#E3E3E3;width:75%;height:90%;position:absolute;left:12.5%;top:2%;border:5px ridge white;border-radius:1%;margin:0;padding:0;'>
+      <tr style='height:100%;'>
+        <td style='width:0.4%;margin:0;padding:0;'></td>
+        <td style='width:12%;margin:0;padding:0;vertical-align:middle;text-align:center;'>
+          <input id='newGameButton' class='button' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()'>
+          <form action=''>
+            <label class='radio' title='Play with 3 columns (very easy)'><input id='columnslabel_3b' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(3)'><span id='columnslabel_3' class='radio' style='vertical-align:middle;'> 3 columns <br></span></label>
+            <label class='radio' title='Play with 4 columns (easy)'><input id='columnslabel_4b' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(4)'><span id='columnslabel_4' class='radio' style='vertical-align:middle;'> 4 columns <br></span></label>
+            <label class='radio' title='Play with 5 columns (classical Super Master Mind)'><input id='columnslabel_5b' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(5)'><span id='columnslabel_5' class='radio' style='vertical-align:middle;'> 5 columns <br></span></label>
+            <label class='radio' title='Play with 6 columns (advanced)'><input id='columnslabel_6b' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(6)'><span id='columnslabel_6' class='radio' style='vertical-align:middle;'> 6 columns <br></span></label>
+            <label class='radio' title='Play with 7 columns (expert!)'><input id='columnslabel_7b' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(7)'><span id='columnslabel_7' class='radio' style='vertical-align:middle;'> 7 columns <br></span></label>
+          </form>
+          <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset the current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
+          <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
+          <input id='playPossibleCodeButton' class='button disabled' type='button' value='Play possible code' title='Play a code which is possible' onclick='playPossibleCodeButtonClick()' onfocus='this.blur()' disabled>
+          <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code to help you...' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
+          <input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show the possible codes at each stage of the game (can only be selected when the game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
+        </td>
+        <td style='width:0.4%;margin:0;padding:0;'></td>
+        <td style='width:87.2%;margin:0;padding:0;vertical-align:middle;align:right;text-align:left;'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
+      </tr>
+    </table>
+    
+    <!-- Run main Super Master Mind javascript -->
+ 
+    <script src='SuperMasterMind.js'></script>
+    
+    <!-- Handle player's info stored in distant google sheet -->
 
-  <!-- Run main Super Master Mind javascript -->
+    <iframe style='display:none;' name='my_frame'>Your browser does not support iframes!</iframe> <!-- suppress style='display:none;' to see the form's response -->
+    <form  style='display:none;' id='my_form' target='my_frame' action='https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec'>
+      query: <input id='form_query_id' name='query' type='text' value='-'><br> <!-- IP address -->
+      playerid: <input id='form_playerid_id' name='playerid' type='text' value='-'><br> <!-- Player identifier -->
+      firstname: <input id='form_firstname_id' name='firstname' type='text' value='-'><br>
+      nbcolumns: <input id='form_nbcolumns_id' name='nbcolumns' type='text' value='-'><br>
+      score: <input id='form_score_id' name='score' type='text' value='-'><br>
+      attempts: <input id='form_attempts_id' name='attempts' type='text' value='-'><br>
+      time: <input id='form_time_id' name='time' type='text' value='-'><br>
+      perfs: <input id='form_perfs_id' name='perfs' type='text' value='-'><br>
+      gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-'><br>
+      deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-'><br>
+      country: <input id='form_country_id' name='country' type='text' value='-'><br>      
+      regionName: <input id='form_regionName_id' name='regionName' type='text' value='-'><br>
+      zip: <input id='form_zip_id' name='zip' type='text' value='-'><br>
+      city: <input id='form_city_id' name='city' type='text' value='-'><br>
+      timezone: <input id='form_timezone_id' name='timezone' type='text' value='-'><br>
+      lat: <input id='form_lat_id' name='lat' type='text' value='-'><br> <!-- Latitude -->
+      lon: <input id='form_lon_id' name='lon' type='text' value='-'><br> <!-- Longitude -->
+      isp: <input id='form_isp_id' name='isp' type='text' value='-'><br> <!-- Internet service provider -->            
+      org: <input id='form_org_id' name='org' type='text' value='-'><br> <!-- Organization -->
+      as: <input id='form_as_id' name='as' type='text' value='-'><br> <!-- Authentication server -->            
+      mobile: <input id='form_mobile_id' name='mobile' type='text' value='-'><br> <!-- Mobile (cellular) connection -->
+      status: <input id='form_status_id' name='status' type='text' value='-'><br> <!-- Status: success or fail -->
+      errormessage: <input id='form_errormessage_id' name='errormessage' type='text' value='-'><br> <!-- error message if status is fail -->
+      platform: <input id='form_platform_id' name='platform' type='text' value='-'><br> <!-- OS -->
+      browserlanguage: <input id='form_browserlanguage_id' name='browserlanguage' type='text' value='-'><br> <!-- Browser language -->
+      userAgent: <input id='form_userAgent_id' name='userAgent' type='text' value='-'><br> <!-- Browser (more or less) -->
+      href: <input id='form_href_id' name='href' type='text' value='-'><br>      
+      formsubmitdate: <input id='form_formsubmitdate_id' name='formsubmitdate' type='text' value='-'><br>
+      debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-'><br>
+    </form>
+  
+    <script>   
 
-  <script src='SuperMasterMind.js'></script>
+      function sleep(ms) { // To be called like "await sleep(1000);"
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
+      function makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (var i = 0; i < 5; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }      
 
+      function capitalizeFirstLetter(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      } 
+
+      function getLocation() {
+        switch(location.protocol) {
+           case 'http:':
+             return 'P1';
+           case 'https:':
+             return 'P1s';
+           case 'file:':
+             return 'P1'; // XXX to change into P2 when delivered
+           default: 
+             // (other protocols)
+             return 'P3';
+        }
+      }
+      
+      // Method based on JSONP found in https://ctrlq.org/code/20197-jquery-ajax-call-google-script to avoid "Cross Origin" issues.
+      // See also https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ about JSONP usage & safety.
+      // => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
+      function callGoogleScript(my_form_url) { 
+        jQuery.ajax({
+          crossDomain: true,
+          url: my_form_url,
+          method: "GET",
+          dataType: "jsonp"
+        });
+      }
+
+      var playerid_prefix = "ID/";      
+      function handle_rsp(e) {
+        if ( (typeof e.parameter !== 'undefined')
+             && (typeof e.parameter.query !== 'undefined')
+             && (typeof e.parameter.playerid !== 'undefined')
+             && (e.parameter.playerid.indexOf(playerid_prefix) == 0)
+             && (typeof e.rsp_cd == 'undefined') ) {
+          alert("RESPONSE=" + JSON.stringify(e.parameter));
+        }
+        else {
+          if (typeof e.rsp_cd !== 'undefined') {
+            console.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
+          }
+          else {
+            console.log('rsp_cd: ?');
+          }
+        }
+      }
+
+      var last_game_cnt = -1;
+      async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs) { // asynchronous function
+        
+        if (game_cnt == last_game_cnt) { // At most one storage per game
+          return;
+        }
+        last_game_cnt = game_cnt;
+                
+        sleep(2222); 
+        
+        $.getJSON('http://ip-api.com/json/?fields=country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,mobile,query,status,message', function(data){
+                       
+          // IP addess related fields
+          // ************************
+          
+          if (data.status != 'success') {
+            console.log('Error: http://ip-api.com/json status is not \"success\": ' + data.status);
+            return;            
+          }
+          if (typeof data.query == 'undefined') { // should never happen according to http://ip-api.com documentation        
+            console.log('Error: no query field in successful http://ip-api.com/json response');
+            return;
+          }          
+          
+          console.log(data.query);
+          document.getElementById('form_query_id').value = data.query;
+          console.log(data.country);
+          document.getElementById('form_country_id').value = data.country;
+          console.log(data.regionName);
+          document.getElementById('form_regionName_id').value = data.regionName;
+          console.log(data.zip);
+          document.getElementById('form_zip_id').value = data.zip;          
+          console.log(data.city);
+          document.getElementById('form_city_id').value = data.city;
+          console.log(data.timezone);
+          document.getElementById('form_timezone_id').value = data.timezone;                    
+          console.log(data.lat);
+          document.getElementById('form_lat_id').value = data.lat;                    
+          console.log(data.lon);
+          document.getElementById('form_lon_id').value = data.lon;                              
+          console.log(data.isp);
+          document.getElementById('form_isp_id').value = data.isp;
+          console.log(data.org);
+          document.getElementById('form_org_id').value = data.org;
+          console.log(data.as);
+          document.getElementById('form_as_id').value = data.as;          
+          console.log(data.mobile);
+          document.getElementById('form_mobile_id').value = data.mobile;
+          
+          console.log(data.status);
+          document.getElementById('form_status_id').value = data.status;
+          console.log(data.message);
+          document.getElementById('form_errormessage_id').value = data.message;
+          
+          // Other fields  
+          // ************
+
+          var playerid;
+          var firstname = "-";
+          var gamesok = -1;
+          var deltagames = -1;         
+          if (typeof(Storage) !== 'undefined') {
+            if (!localStorage.gamesok) {
+              localStorage.gamesok = 0;
+            }
+            localStorage.gamesok = Number(localStorage.gamesok) + 1;
+            gamesok = Number(localStorage.gamesok);
+            if (!localStorage.nbgamesstarted) {
+              localStorage.nbgamesstarted = 0;
+            }     
+            if (!localStorage.nbgamesstarted_ref) {
+              localStorage.nbgamesstarted_ref = 0;
+            }
+            deltagames = localStorage.nbgamesstarted - localStorage.nbgamesstarted_ref - 1;            
+            localStorage.nbgamesstarted_ref = localStorage.nbgamesstarted;
+            if ( (!localStorage.firstname) 
+                 && (gamesok > 10) && ( ((nbcolumns >= 5) && (score > 70)) || ((nbcolumns >= 6) && (score > 60)) ) ) { // (experienced player)
+              var input  = prompt("You seem to be a good or experienced player!\nPlease enter your first name to store your next scores (between 3 and 9 consecutive letters):", "John?");
+              if (input != null) {
+                input = input.trim().toLowerCase();
+                if ( (input.length >= 3) && (input.length <= 9) && (/^[a-zA-Z]+$/.test(input)) /* (shall only contain letters) */ ) {
+                  localStorage.firstname = capitalizeFirstLetter(input);
+                }
+                else {
+                  alert("Invalid first name: " + input);
+                }
+              }
+            }
+            if (localStorage.firstname) {
+              // Suppress most common rude words
+              if ( (localStorage.firstname.toLowerCase().indexOf('bastard') != -1) || (localStorage.firstname.toLowerCase().indexOf('fuck') != -1) || (localStorage.firstname.toLowerCase().indexOf('damn') != -1)
+                   || (localStorage.firstname.toLowerCase().indexOf('bitch') != -1) || (localStorage.firstname.toLowerCase().indexOf('hell') != -1) || (localStorage.firstname.toLowerCase().indexOf('shit') != -1) ) {
+                localStorage.firstname = "-";
+              }
+              firstname = localStorage.firstname;
+            }
+            if (!localStorage.playerid) {
+              var id = makeid() + ' - ' + new Date();            
+              localStorage.playerid = id;
+            }
+            playerid = playerid_prefix + localStorage.playerid;
+          } 
+          else {
+            console.log("Error: your browser does not support web storage...");
+            playerid = playerid_prefix + "Default";
+          }            
+          
+          console.log(playerid);
+          document.getElementById('form_playerid_id').value = playerid;                    
+          console.log(firstname);
+          document.getElementById('form_firstname_id').value = firstname;                              
+          console.log(nbcolumns);
+          document.getElementById('form_nbcolumns_id').value = nbcolumns;                    
+          console.log(score);
+          document.getElementById('form_score_id').value = score;                              
+          console.log(attempts);
+          document.getElementById('form_attempts_id').value = attempts;                              
+          console.log(timestr);
+          document.getElementById('form_time_id').value = timestr;                              
+          console.log(perfs);
+          document.getElementById('form_perfs_id').value = perfs;                                        
+          console.log(gamesok);
+          document.getElementById('form_gamesok_id').value = gamesok;          
+          console.log(deltagames);
+          document.getElementById('form_deltagames_id').value = deltagames;                    
+          console.log(navigator.platform);
+          document.getElementById('form_platform_id').value = navigator.platform;          
+          console.log(navigator.language);
+          document.getElementById('form_browserlanguage_id').value = navigator.language;          
+          console.log(navigator.userAgent);
+          document.getElementById('form_userAgent_id').value = navigator.userAgent;          
+          document.getElementById('form_href_id').value = 'supermastermind.github.io/playonline'; // XXX to be replaced by: xxx.value = decodeURI(location.href);          
+          document.getElementById('form_formsubmitdate_id').value = new Date();                    
+          document.getElementById('form_debuginfo_id').value = getLocation() + '/';                    
+          
+          // console.log(JSON.stringify($("#my_form").serializeArray()));
+          var elements = document.getElementById("my_form").elements;
+          var my_form_url = document.getElementById("my_form").action + '?';
+          for (var i = 0, element; element = elements[i++];) {
+            my_form_url = my_form_url + element.name + '=' + element.value + '&';
+          }      
+          my_form_url = my_form_url + "my_callback_fct=handle_rsp";
+          // console.log(my_form_url);          
+
+          // Submit form for google sheet update
+          callGoogleScript(my_form_url);
+          // document.getElementById('my_form').submit(); 
+          // $("#my_form").submit();
+          
+        });
+      }
+      
+    </script>
+  
   </body>
 
 </html>
