@@ -157,7 +157,7 @@ let highlightColor = "#FFFF00"; // Yellow
 // Fonts
 // *****
 
-let fontFamily = "Verdana"; // XXX others to check?
+let fontFamily = "Verdana";
 let defaultFont = "10px " + fontFamily;
 let min_font_size = 10;
 let max_font_size = 30;
