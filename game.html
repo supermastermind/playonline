@@ -127,35 +127,36 @@
 
     <iframe style='display:none;' name='my_frame'>Your browser does not support iframes!</iframe> <!-- suppress style='display:none;' to see the form's response -->
     <form  style='display:none;' id='my_form' target='my_frame' action='https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec'>
-      query: <input id='form_query_id' name='query' type='text' value='-'><br> <!-- IP address -->
-      playerid: <input id='form_playerid_id' name='playerid' type='text' value='-'><br> <!-- Player identifier -->
+
+      playerid: <input id='form_playerid_id' name='playerid' type='text' value='-'><br>
       firstname: <input id='form_firstname_id' name='firstname' type='text' value='-'><br>
+      
       nbcolumns: <input id='form_nbcolumns_id' name='nbcolumns' type='text' value='-'><br>
+      attempts: <input id='form_attempts_id' name='attempts' type='text' value='-'><br>      
+      time: <input id='form_time_id' name='time' type='text' value='-'><br>      
+      perfs: <input id='form_perfs_id' name='perfs' type='text' value='-'><br>            
       score: <input id='form_score_id' name='score' type='text' value='-'><br>
-      attempts: <input id='form_attempts_id' name='attempts' type='text' value='-'><br>
-      time: <input id='form_time_id' name='time' type='text' value='-'><br>
-      perfs: <input id='form_perfs_id' name='perfs' type='text' value='-'><br>
+      help: <input id='form_help_id' name='help' type='text' value='-'><br>
+
       gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-'><br>
       deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-'><br>
+
       country: <input id='form_country_id' name='country' type='text' value='-'><br>      
-      regionName: <input id='form_regionName_id' name='regionName' type='text' value='-'><br>
+      region: <input id='form_region_id' name='region' type='text' value='-'><br>
       zip: <input id='form_zip_id' name='zip' type='text' value='-'><br>
       city: <input id='form_city_id' name='city' type='text' value='-'><br>
       timezone: <input id='form_timezone_id' name='timezone' type='text' value='-'><br>
-      lat: <input id='form_lat_id' name='lat' type='text' value='-'><br> <!-- Latitude -->
-      lon: <input id='form_lon_id' name='lon' type='text' value='-'><br> <!-- Longitude -->
-      isp: <input id='form_isp_id' name='isp' type='text' value='-'><br> <!-- Internet service provider -->            
-      org: <input id='form_org_id' name='org' type='text' value='-'><br> <!-- Organization -->
-      as: <input id='form_as_id' name='as' type='text' value='-'><br> <!-- Authentication server -->            
-      mobile: <input id='form_mobile_id' name='mobile' type='text' value='-'><br> <!-- Mobile (cellular) connection -->
-      status: <input id='form_status_id' name='status' type='text' value='-'><br> <!-- Status: success or fail -->
-      errormessage: <input id='form_errormessage_id' name='errormessage' type='text' value='-'><br> <!-- error message if status is fail -->
+      latitude: <input id='form_latitude_id' name='latitude' type='text' value='-'><br>
+      longitude: <input id='form_longitude_id' name='longitude' type='text' value='-'><br>
+      ipaddress: <input id='form_ipaddress_id' name='ipaddress' type='text' value='-'><br>            
+       
       platform: <input id='form_platform_id' name='platform' type='text' value='-'><br> <!-- OS -->
       browserlanguage: <input id='form_browserlanguage_id' name='browserlanguage' type='text' value='-'><br> <!-- Browser language -->
-      userAgent: <input id='form_userAgent_id' name='userAgent' type='text' value='-'><br> <!-- Browser (more or less) -->
+      useragent: <input id='form_useragent_id' name='useragent' type='text' value='-'><br> <!-- Browser (more or less) -->
       href: <input id='form_href_id' name='href' type='text' value='-'><br>      
       formsubmitdate: <input id='form_formsubmitdate_id' name='formsubmitdate' type='text' value='-'><br>
       debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-'><br>
+      
     </form>
   
     <script>   
@@ -165,9 +166,9 @@
       }
       
       function makeid() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        for (var i = 0; i < 5; i++) {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 5; i++) {
           text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
         return text;
@@ -182,18 +183,19 @@
            case 'http:':
              return 'P1';
            case 'https:':
-             return 'P1s';
+             return 'P1b';
            case 'file:':
-             return 'P1'; // XXX to change into P2 when delivered
+             return 'P1b'; // XXX to change into P2 when delivered
            default: 
              // (other protocols)
              return 'P3';
         }
       }
       
-      // Method based on JSONP found in https://ctrlq.org/code/20197-jquery-ajax-call-google-script to avoid "Cross Origin" issues.
-      // See also https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ about JSONP usage & safety.
-      // => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
+      // Interesting links about JSONP:
+      // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
+      // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
+      //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
       function callGoogleScript(my_form_url) { 
         jQuery.ajax({
           crossDomain: true,
@@ -206,11 +208,10 @@
       var playerid_prefix = "ID/";      
       function handle_rsp(e) {
         if ( (typeof e.parameter !== 'undefined')
-             && (typeof e.parameter.query !== 'undefined')
              && (typeof e.parameter.playerid !== 'undefined')
              && (e.parameter.playerid.indexOf(playerid_prefix) == 0)
              && (typeof e.rsp_cd == 'undefined') ) {
-          alert("RESPONSE=" + JSON.stringify(e.parameter));
+          console.log(JSON.stringify(e.parameter));
         }
         else {
           if (typeof e.rsp_cd !== 'undefined') {
@@ -223,66 +224,108 @@
       }
 
       var last_game_cnt = -1;
-      async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs) { // asynchronous function
+      async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, help) { // asynchronous function
+        
+        let error_detected = false;
         
         if (game_cnt == last_game_cnt) { // At most one storage per game
           return;
         }
         last_game_cnt = game_cnt;
                 
-        sleep(2222); 
+        sleep(2222); // XXX
         
-        $.getJSON('http://ip-api.com/json/?fields=country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,mobile,query,status,message', function(data){
+        $.getJSON('https://freegeoip.net/json/', function(data){
                        
-          // IP addess related fields
-          // ************************
-          
-          if (data.status != 'success') {
-            console.log('Error: http://ip-api.com/json status is not \"success\": ' + data.status);
-            return;            
+          // Check that the response contains valid information
+          // **************************************************
+
+          if (typeof data.ip == 'undefined') {
+            console.log('Error: no ip field in https://freegeoip.net/json/ response');
+            error_detected = true;
+          }                    
+          else if (data.ip.length < 7) {
+            console.log('Error: no valid IP address in https://freegeoip.net/json/ response (' + data.ip + ')');
+            error_detected = true;    
           }
-          if (typeof data.query == 'undefined') { // should never happen according to http://ip-api.com documentation        
-            console.log('Error: no query field in successful http://ip-api.com/json response');
-            return;
-          }          
+          if (typeof data.city == 'undefined') {
+            console.log('Error: no city field in https://freegeoip.net/json/ response');
+            error_detected = true;
+          }                    
+          else if (data.city.length < 3) {
+            console.log('Error: no valid city name in https://freegeoip.net/json/ response (' + data.city + ')');
+            error_detected = true;    
+          }
+         
+          let country = '-';
+          let region = '-';
+          let zip = '-';
+          let city = '-';
+          let timezone = '-';
+          let latitude = '-';
+          let longitude = '-';
+          let ipaddress = '-';
           
-          console.log(data.query);
-          document.getElementById('form_query_id').value = data.query;
-          console.log(data.country);
-          document.getElementById('form_country_id').value = data.country;
-          console.log(data.regionName);
-          document.getElementById('form_regionName_id').value = data.regionName;
-          console.log(data.zip);
-          document.getElementById('form_zip_id').value = data.zip;          
-          console.log(data.city);
-          document.getElementById('form_city_id').value = data.city;
-          console.log(data.timezone);
-          document.getElementById('form_timezone_id').value = data.timezone;                    
-          console.log(data.lat);
-          document.getElementById('form_lat_id').value = data.lat;                    
-          console.log(data.lon);
-          document.getElementById('form_lon_id').value = data.lon;                              
-          console.log(data.isp);
-          document.getElementById('form_isp_id').value = data.isp;
-          console.log(data.org);
-          document.getElementById('form_org_id').value = data.org;
-          console.log(data.as);
-          document.getElementById('form_as_id').value = data.as;          
-          console.log(data.mobile);
-          document.getElementById('form_mobile_id').value = data.mobile;
+          if (error_detected) {
+            // XXX geoloc
+            return; // XXX
+          }
+          else {
           
-          console.log(data.status);
-          document.getElementById('form_status_id').value = data.status;
-          console.log(data.message);
-          document.getElementById('form_errormessage_id').value = data.message;
-          
+            // Read fields in the response
+            // ***************************
+            
+            if ((typeof data.country_name != 'undefined') && (data.country_name.length > 1)) {
+              country = data.country_name;            
+            }
+            if ((typeof data.region_name != 'undefined') && (data.region_name.length > 1)) {
+              region = data.region_name;            
+            }
+            if ((typeof data.zip_code != 'undefined') && (data.zip_code.length > 1)) {
+              zip = data.zip_code;            
+            }
+            if ((typeof data.city != 'undefined') && (data.city.length > 1)) {
+              city = data.city;            
+            }
+            if ((typeof data.time_zone != 'undefined') && (data.time_zone.length > 1)) {
+              timezone = data.time_zone;            
+            }
+            if (typeof data.latitude != 'undefined') {
+              latitude = data.latitude;            
+            }
+            if (typeof data.longitude != 'undefined') {
+              longitude = data.longitude;            
+            }
+            if ((typeof data.ip != 'undefined') && (data.ip.length > 1)) {
+              ipaddress = data.ip;            
+            }
+            
+          }
+         
+          console.log(country);
+          document.getElementById('form_country_id').value = country;
+          console.log(region);
+          document.getElementById('form_region_id').value = region;
+          console.log(zip);
+          document.getElementById('form_zip_id').value = zip;          
+          console.log(city);
+          document.getElementById('form_city_id').value = city;
+          console.log(timezone);
+          document.getElementById('form_timezone_id').value = timezone;                    
+          console.log(latitude);
+          document.getElementById('form_latitude_id').value = latitude;                    
+          console.log(longitude);
+          document.getElementById('form_longitude_id').value = longitude;                              
+          console.log(ipaddress);
+          document.getElementById('form_ipaddress_id').value = ipaddress;                                                  
+                    
           // Other fields  
           // ************
 
-          var playerid;
-          var firstname = "-";
-          var gamesok = -1;
-          var deltagames = -1;         
+          let playerid;
+          let firstname = "-";
+          let gamesok = -1;
+          let deltagames = -1;         
           if (typeof(Storage) !== 'undefined') {
             if (!localStorage.gamesok) {
               localStorage.gamesok = 0;
@@ -299,7 +342,7 @@
             localStorage.nbgamesstarted_ref = localStorage.nbgamesstarted;
             if ( (!localStorage.firstname) 
                  && (gamesok > 10) && ( ((nbcolumns >= 5) && (score > 70)) || ((nbcolumns >= 6) && (score > 60)) ) ) { // (experienced player)
-              var input  = prompt("You seem to be a good or experienced player!\nPlease enter your first name to store your next scores (between 3 and 9 consecutive letters):", "John?");
+              let input  = prompt("You seem to be a good or experienced player!\nPlease enter your first name to store your next scores (between 3 and 9 consecutive letters):", "John?");
               if (input != null) {
                 input = input.trim().toLowerCase();
                 if ( (input.length >= 3) && (input.length <= 9) && (/^[a-zA-Z]+$/.test(input)) /* (shall only contain letters) */ ) {
@@ -319,7 +362,7 @@
               firstname = localStorage.firstname;
             }
             if (!localStorage.playerid) {
-              var id = makeid() + ' - ' + new Date();            
+              let id = makeid() + ' - ' + new Date();            
               localStorage.playerid = id;
             }
             playerid = playerid_prefix + localStorage.playerid;
@@ -335,32 +378,35 @@
           document.getElementById('form_firstname_id').value = firstname;                              
           console.log(nbcolumns);
           document.getElementById('form_nbcolumns_id').value = nbcolumns;                    
+          console.log(attempts);
+          document.getElementById('form_attempts_id').value = attempts;            
+          console.log(timestr);
+          document.getElementById('form_time_id').value = timestr;                 
+          console.log(perfs);
+          document.getElementById('form_perfs_id').value = perfs;                            
           console.log(score);
           document.getElementById('form_score_id').value = score;                              
-          console.log(attempts);
-          document.getElementById('form_attempts_id').value = attempts;                              
-          console.log(timestr);
-          document.getElementById('form_time_id').value = timestr;                              
-          console.log(perfs);
-          document.getElementById('form_perfs_id').value = perfs;                                        
+          console.log(help);
+          document.getElementById('form_help_id').value = help;                                                                                   
           console.log(gamesok);
           document.getElementById('form_gamesok_id').value = gamesok;          
           console.log(deltagames);
-          document.getElementById('form_deltagames_id').value = deltagames;                    
+          document.getElementById('form_deltagames_id').value = deltagames;  
+          
           console.log(navigator.platform);
           document.getElementById('form_platform_id').value = navigator.platform;          
           console.log(navigator.language);
           document.getElementById('form_browserlanguage_id').value = navigator.language;          
           console.log(navigator.userAgent);
-          document.getElementById('form_userAgent_id').value = navigator.userAgent;          
+          document.getElementById('form_useragent_id').value = navigator.userAgent;
           document.getElementById('form_href_id').value = 'supermastermind.github.io/playonline'; // XXX to be replaced by: xxx.value = decodeURI(location.href);          
           document.getElementById('form_formsubmitdate_id').value = new Date();                    
           document.getElementById('form_debuginfo_id').value = getLocation() + '/';                    
           
           // console.log(JSON.stringify($("#my_form").serializeArray()));
-          var elements = document.getElementById("my_form").elements;
-          var my_form_url = document.getElementById("my_form").action + '?';
-          for (var i = 0, element; element = elements[i++];) {
+          let elements = document.getElementById("my_form").elements;
+          let my_form_url = document.getElementById("my_form").action + '?';
+          for (let i = 0, element; element = elements[i++];) {
             my_form_url = my_form_url + element.name + '=' + element.value + '&';
           }      
           my_form_url = my_form_url + "my_callback_fct=handle_rsp";

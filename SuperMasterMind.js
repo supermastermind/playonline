@@ -1017,6 +1017,7 @@ function draw_graphic_bis() {
   let timeStr = "";
   let game_won_without_big_help = false;
   let score = -1.0;
+  let nbColorsRevealed = 0;
 
   try {
 
@@ -1531,35 +1532,38 @@ function draw_graphic_bis() {
           if (gameWon) { // game won
           
             let victoryStr;         
-            score = Math.max(100 - (currentAttemptNumber-2)*10 - timeInSeconds/10, 0); // XXX right formulaes          
+            score = Math.max(100.0 - (currentAttemptNumber-2)*10.0 - timeInSeconds/10.0, 0.0); // XXX right formulaes          
             if (playerWasHelpedSignificantly) {
               victoryStr = "You won with help!";
-              score = 0;
+              score = 0.0;
             }
             else if (playerWasHelpedSlightly) {
               victoryStr = "You won with help!";              
-              let nbColorsRevealed = (nbColumns-codeHandler.nbEmptyColors(secretCodeRevealed));
+              nbColorsRevealed = (nbColumns-codeHandler.nbEmptyColors(secretCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
-                score = (2 * score) / 3;
+                score = score / 2.0;
               }
-              else if (nbColorsRevealed > 1) { // > 1 colors revealed
-                score = (1 * score) / 3;
+              else if (nbColorsRevealed == 2) { // 2 colors revealed
+                score = score / 4.0;
+              }
+              else if (nbColorsRevealed > 2) { // > 2 colors revealed
+                score = score / 8.0;
               }
               else {
-                score = 0;                
+                score = 0.0;                
                 displayGUIError("internal error: nbColorsRevealed = " + nbColorsRevealed, new Error().stack);
               }
             }
             else {
               victoryStr = "You won!!!";
             }
-            score = Math.floor(5 * score)/5;
+            score = Math.floor(5.0 * score)/5;
             
             displayString(victoryStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
-            if (score > 0) {
+            if (score > 0.0) {
               displayString("Score: " + score, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
                             greenColor, backgroundColor_2, ctx, true, 0, false, 0);                          
             }
@@ -1567,7 +1571,7 @@ function draw_graphic_bis() {
           }
           else if (currentAttemptNumber == nbMaxAttemptsToDisplay+1) { // game lost
           
-            score = 0;
+            score = 0.0;
             displayString("You lost!", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2, ((nbColumns>=7)?5:4)+4+3,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
@@ -1837,7 +1841,7 @@ function draw_graphic_bis() {
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
-          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "+0.00"); // XXX to be filled properly
+          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "+0.00", nbColorsRevealed); // XXX to be filled properly
         }
       }      
       
