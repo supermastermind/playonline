@@ -129,6 +129,8 @@
     <script src='lib/tingle-master/dist/tingle.min.js'></script>
     <script>
     
+      var modal_mode = -1;
+    
       var modal = new tingle.modal({
           footer: true,
           stickyFooter: false,
@@ -143,38 +145,69 @@
           },
           beforeClose: function() {  
           
-            // Get selected country name
-            try {          
-              let elt = document.getElementById("country_selection");
-              if ( (elt.selectedIndex != -1) && (elt.selectedIndex > 0) /* (skip very first option) */) {
-                if (typeof(Storage) !== 'undefined') {
-                  localStorage.countryname =  elt.options[elt.selectedIndex].text;                
+            if (modal_mode == 1) {
+          
+              // Get selected country name
+              try {          
+                let elt = document.getElementById("country_selection");
+                if ( (elt.selectedIndex != -1) && (elt.selectedIndex > 0) /* (skip very first option) */) {
+                  if (typeof(Storage) !== 'undefined') {
+                    localStorage.countryname =  elt.options[elt.selectedIndex].text;                
+                  }
                 }
               }
-            }
-            catch (exc) {            
-              console.log("error encountered at country name selection: " + exc);
-            }
-            
-            // Get city name entered
-            try {          
-              let city_entered = document.getElementById("city_input").value;
-              city_entered = city_entered.trim().toLowerCase();
-              if ( (city_entered.length >= 3) && (city_entered.length <= 15) && (/^[a-zA-Z-]+$/.test(city_entered)) /* (shall only contain letters) */ ) {
-                if (typeof(Storage) !== 'undefined') {
-                  localStorage.cityname = capitalizeFirstLetter(city_entered);
-                }
+              catch (exc) {            
+                console.log("error encountered at country name selection: " + exc);
               }
-              else {
-                alert("Invalid city name: " + city_entered);
-              }              
-            }
-            catch (exc) {            
-              console.log("error encountered at city name selection: " + exc);
+              
+              // Get city name entered
+              try {          
+                let city_entered = document.getElementById("city_input").value;
+                city_entered = city_entered.trim().toLowerCase();
+                if ( (city_entered.length >= 3) && (city_entered.length <= 15) && (/^[a-zA-Z-]+$/.test(city_entered)) /* (shall only contain letters) */ ) {
+                  if (typeof(Storage) !== 'undefined') {
+                    localStorage.cityname = capitalizeFirstLetters(city_entered);
+                  }
+                }
+                else {
+                  alert("Invalid city name: " + city_entered);
+                }              
+              }
+              catch (exc) {            
+                console.log("error encountered at city name selection: " + exc);
+              }
+              
+              return true; // close the modal
+              // return false; // nothing happens
+              
             }
             
-            return true; // close the modal
-            // return false; // nothing happens
+            else if (modal_mode == 2) {
+              
+              // Get firstname entered
+              try {          
+                let firstname_entered = document.getElementById("firstname_input").value;
+                firstname_entered = firstname_entered.trim().toLowerCase();
+                if ( (firstname_entered.length >= 3) && (firstname_entered.length <= 10) && (/^[a-zA-Z-]+$/.test(firstname_entered)) /* (shall only contain letters) */ ) {
+                  if (typeof(Storage) !== 'undefined') {
+                    localStorage.firstname = capitalizeFirstLetters(firstname_entered);
+                  }
+                }
+                else {
+                  alert("Invalid first name: " + firstname_entered);
+                }              
+              }
+              catch (exc) {            
+                console.log("error encountered at first name selection: " + exc);
+              }
+              
+              return true; // close the modal              
+              
+            }
+            
+            return true; // close the modal 
+            // return false; // nothing happens            
+            
           }
       });
 
@@ -193,10 +226,10 @@
       firstname: <input id='form_firstname_id' name='firstname' type='text' value='-'><br>
       
       nbcolumns: <input id='form_nbcolumns_id' name='nbcolumns' type='text' value='-'><br>
+      score: <input id='form_score_id' name='score' type='text' value='-'><br>      
       attempts: <input id='form_attempts_id' name='attempts' type='text' value='-'><br>      
       time: <input id='form_time_id' name='time' type='text' value='-'><br>      
       perfs: <input id='form_perfs_id' name='perfs' type='text' value='-'><br>            
-      score: <input id='form_score_id' name='score' type='text' value='-'><br>
       help: <input id='form_help_id' name='help' type='text' value='-'><br>
 
       gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-'><br>
@@ -235,9 +268,18 @@
         return text;
       }      
 
-      function capitalizeFirstLetter(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-      } 
+      function capitalizeFirstLetters(str) {
+        let res = str.charAt(0).toUpperCase() + str.slice(1);
+        let index = res.indexOf('-');
+        if ((index != -1) && (index < res.length-1)) {
+          res = res.substring(0, index+1) + res.charAt(index+1).toUpperCase() + res.slice(index+2);
+        }
+        index = res.lastIndexOf('-');
+        if ((index != -1) && (index < res.length-1)) {
+          res = res.substring(0, index+1) + res.charAt(index+1).toUpperCase() + res.slice(index+2);
+        }        
+        return res;
+      }
 
       function getLocation() {
         switch(location.protocol) {
@@ -315,49 +357,55 @@
           let latitude = '-';
           let longitude = '-';
           let ipaddress = '-';
-                             
-          if ((typeof data.country_name != 'undefined') && (data.country_name.length >= 3)) {
-            country = data.country_name;            
-          }
-          else {
-            console.log('invalid country name in response');
-          }
-          if ((typeof data.region_name != 'undefined') && (data.region_name.length >= 2)) {
-            region = data.region_name;            
-          }
-          else {
-            console.log('invalid region name in response');
-          }
-          if ((typeof data.zip_code != 'undefined') && (data.zip_code.length >= 2)) {
-            zip = data.zip_code;            
-          }
-          else {
-            console.log('invalid zip code in response');
-          }          
-          if ((typeof data.city != 'undefined') && (data.city.length >= 3)) {
-            city = data.city;            
-          }
-          else {
-            console.log('invalid city name in response');
-          }          
-          if ((typeof data.time_zone != 'undefined') && (data.time_zone.length >= 2)) {
-            timezone = data.time_zone;            
-          }
-          else {
-            console.log('invalid time zone in response');
-          }          
-          if (typeof data.latitude != 'undefined') {
-            latitude = data.latitude;            
-          }
-          else {
-            console.log('invalid latitude response');
-          }          
-          if (typeof data.longitude != 'undefined') {
-            longitude = data.longitude;            
-          }
-          else {
-            console.log('invalid longitude in response');
-          }          
+                        
+          if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined')
+               && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
+                      
+            if ((typeof data.country_name != 'undefined') && (data.country_name.length >= 3)) {
+              country = data.country_name;            
+            }
+            else {
+              console.log('invalid country name in response');
+            }
+            if ((typeof data.region_name != 'undefined') && (data.region_name.length >= 2)) {
+              region = data.region_name;            
+            }
+            else {
+              console.log('invalid region name in response');
+            }
+            if ((typeof data.zip_code != 'undefined') && (data.zip_code.length >= 2)) {
+              zip = data.zip_code;            
+            }
+            else {
+              console.log('invalid zip code in response');
+            }          
+            if ((typeof data.city != 'undefined') && (data.city.length >= 3)) {
+              city = data.city;            
+            }
+            else {
+              console.log('invalid city name in response');
+            }          
+            if ((typeof data.time_zone != 'undefined') && (data.time_zone.length >= 2)) {
+              timezone = data.time_zone;            
+            }
+            else {
+              console.log('invalid time zone in response');
+            }          
+            if (typeof data.latitude != 'undefined') {
+              latitude = data.latitude;            
+            }
+            else {
+              console.log('invalid latitude response');
+            }          
+            if (typeof data.longitude != 'undefined') {
+              longitude = data.longitude;            
+            }
+            else {
+              console.log('invalid longitude in response');
+            }   
+            
+          }            
+          
           if ((typeof data.ip != 'undefined') && (data.ip.length >= 7)) {
             ipaddress = data.ip;            
           }
@@ -365,24 +413,24 @@
             console.log('invalid ip address in response');
           }          
         
-          if ((city == '-') && (typeof(Storage) !== 'undefined')) {
-            if (localStorage.cityname) {
-              if (!isStringCorrect(localStorage.cityname)) {
-                localStorage.cityname = "-";
-              }
-              city = localStorage.cityname + '~';
-            }                          
+          if (typeof(Storage) !== 'undefined') {
+            if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
+              if (localStorage.countryname) {
+                if (!isStringCorrect(localStorage.countryname)) {
+                  localStorage.countryname = "-";
+                }
+                country = localStorage.countryname + '~';
+              }                          
+              region = '-'; // (skipped to simplify)                          
+              if (localStorage.cityname) {
+                if (!isStringCorrect(localStorage.cityname)) {
+                  localStorage.cityname = "-";
+                }
+                city = localStorage.cityname + '~';
+              }                                        
+            }
           }
-
-          if ((country == '-') && (typeof(Storage) !== 'undefined')) {
-            if (localStorage.countryname) {
-              if (!isStringCorrect(localStorage.countryname)) {
-                localStorage.countryname = "-";
-              }
-              country = localStorage.countryname + '~';
-            }                          
-          }
-          
+            
           console.log(country);
           document.getElementById('form_country_id').value = country;
           console.log(region);
@@ -421,19 +469,6 @@
             }
             deltagames = localStorage.nbgamesstarted - localStorage.nbgamesstarted_ref - 1;            
             localStorage.nbgamesstarted_ref = localStorage.nbgamesstarted;
-            if ( (!localStorage.firstname) 
-                 && (gamesok > 10) && ( ((nbcolumns >= 5) && (score > 70)) || ((nbcolumns >= 6) && (score > 60)) ) ) { // (experienced player)
-              let input  = prompt("You seem to be a good or experienced player!\nPlease enter your first name to store your next scores (between 3 and 9 consecutive letters):", "John?");
-              if (input != null) {
-                input = input.trim().toLowerCase();
-                if ( (input.length >= 3) && (input.length <= 9) && (/^[a-zA-Z-]+$/.test(input)) /* (shall only contain letters) */ ) {
-                  localStorage.firstname = capitalizeFirstLetter(input);
-                }
-                else {
-                  alert("Invalid first name: " + input);
-                }
-              }
-            }
             if (localStorage.firstname) {
               if (!isStringCorrect(localStorage.firstname)) {
                 localStorage.firstname = "-";
@@ -457,14 +492,14 @@
           document.getElementById('form_firstname_id').value = firstname;                              
           console.log(nbcolumns);
           document.getElementById('form_nbcolumns_id').value = nbcolumns;                    
+          console.log(score);
+          document.getElementById('form_score_id').value = score;            
           console.log(attempts);
           document.getElementById('form_attempts_id').value = attempts;            
           console.log(timestr);
           document.getElementById('form_time_id').value = timestr;                 
           console.log(perfs);
-          document.getElementById('form_perfs_id').value = perfs;                            
-          console.log(score);
-          document.getElementById('form_score_id').value = score;                              
+          document.getElementById('form_perfs_id').value = perfs;                                                        
           console.log(help);
           document.getElementById('form_help_id').value = help;                                                                                   
           console.log(gamesok);
@@ -502,10 +537,23 @@
               // set modal content
               modal.setContent("<h2>Storing your scores...<br>Please enter your country and city names, they will be stored together with your next scores:</h2>"
                                + "<h3>Your country:</h3><select id='country_selection'><option value=\"-\">Select your country...</option><option value=\"AF\">Afghanistan</option><option value=\"AX\">Åland Islands</option><option value=\"AL\">Albania</option><option value=\"DZ\">Algeria</option><option value=\"AS\">American Samoa</option><option value=\"AD\">Andorra</option><option value=\"AO\">Angola</option><option value=\"AI\">Anguilla</option><option value=\"AQ\">Antarctica</option><option value=\"AG\">Antigua and Barbuda</option><option value=\"AR\">Argentina</option><option value=\"AM\">Armenia</option><option value=\"AW\">Aruba</option><option value=\"AU\">Australia</option><option value=\"AT\">Austria</option><option value=\"AZ\">Azerbaijan</option><option value=\"BS\">Bahamas</option><option value=\"BH\">Bahrain</option><option value=\"BD\">Bangladesh</option><option value=\"BB\">Barbados</option><option value=\"BY\">Belarus</option><option value=\"BE\">Belgium</option><option value=\"BZ\">Belize</option><option value=\"BJ\">Benin</option><option value=\"BM\">Bermuda</option><option value=\"BT\">Bhutan</option><option value=\"BO\">Bolivia, Plurinational State of</option><option value=\"BQ\">Bonaire, Sint Eustatius and Saba</option><option value=\"BA\">Bosnia and Herzegovina</option><option value=\"BW\">Botswana</option><option value=\"BV\">Bouvet Island</option><option value=\"BR\">Brazil</option><option value=\"IO\">British Indian Ocean Territory</option><option value=\"BN\">Brunei Darussalam</option><option value=\"BG\">Bulgaria</option><option value=\"BF\">Burkina Faso</option><option value=\"BI\">Burundi</option><option value=\"KH\">Cambodia</option><option value=\"CM\">Cameroon</option><option value=\"CA\">Canada</option><option value=\"CV\">Cape Verde</option><option value=\"KY\">Cayman Islands</option><option value=\"CF\">Central African Republic</option><option value=\"TD\">Chad</option><option value=\"CL\">Chile</option><option value=\"CN\">China</option><option value=\"CX\">Christmas Island</option><option value=\"CC\">Cocos (Keeling) Islands</option><option value=\"CO\">Colombia</option><option value=\"KM\">Comoros</option><option value=\"CG\">Congo</option><option value=\"CD\">Congo, the Democratic Republic of the</option><option value=\"CK\">Cook Islands</option><option value=\"CR\">Costa Rica</option><option value=\"CI\">Côte d'Ivoire</option><option value=\"HR\">Croatia</option><option value=\"CU\">Cuba</option><option value=\"CW\">Curaçao</option><option value=\"CY\">Cyprus</option><option value=\"CZ\">Czech Republic</option><option value=\"DK\">Denmark</option><option value=\"DJ\">Djibouti</option><option value=\"DM\">Dominica</option><option value=\"DO\">Dominican Republic</option><option value=\"EC\">Ecuador</option><option value=\"EG\">Egypt</option><option value=\"SV\">El Salvador</option><option value=\"GQ\">Equatorial Guinea</option><option value=\"ER\">Eritrea</option><option value=\"EE\">Estonia</option><option value=\"ET\">Ethiopia</option><option value=\"FK\">Falkland Islands (Malvinas)</option><option value=\"FO\">Faroe Islands</option><option value=\"FJ\">Fiji</option><option value=\"FI\">Finland</option><option value=\"FR\">France</option><option value=\"GF\">French Guiana</option><option value=\"PF\">French Polynesia</option><option value=\"TF\">French Southern Territories</option><option value=\"GA\">Gabon</option><option value=\"GM\">Gambia</option><option value=\"GE\">Georgia</option><option value=\"DE\">Germany</option><option value=\"GH\">Ghana</option><option value=\"GI\">Gibraltar</option><option value=\"GR\">Greece</option><option value=\"GL\">Greenland</option><option value=\"GD\">Grenada</option><option value=\"GP\">Guadeloupe</option><option value=\"GU\">Guam</option><option value=\"GT\">Guatemala</option><option value=\"GG\">Guernsey</option><option value=\"GN\">Guinea</option><option value=\"GW\">Guinea-Bissau</option><option value=\"GY\">Guyana</option><option value=\"HT\">Haiti</option><option value=\"HM\">Heard Island and McDonald Islands</option><option value=\"VA\">Holy See (Vatican City State)</option><option value=\"HN\">Honduras</option><option value=\"HK\">Hong Kong</option><option value=\"HU\">Hungary</option><option value=\"IS\">Iceland</option><option value=\"IN\">India</option><option value=\"ID\">Indonesia</option><option value=\"IR\">Iran, Islamic Republic of</option><option value=\"IQ\">Iraq</option><option value=\"IE\">Ireland</option><option value=\"IM\">Isle of Man</option><option value=\"IL\">Israel</option><option value=\"IT\">Italy</option><option value=\"JM\">Jamaica</option><option value=\"JP\">Japan</option><option value=\"JE\">Jersey</option><option value=\"JO\">Jordan</option><option value=\"KZ\">Kazakhstan</option><option value=\"KE\">Kenya</option><option value=\"KI\">Kiribati</option><option value=\"KP\">Korea, Democratic People's Republic of</option><option value=\"KR\">Korea, Republic of</option><option value=\"KW\">Kuwait</option><option value=\"KG\">Kyrgyzstan</option><option value=\"LA\">Lao People's Democratic Republic</option><option value=\"LV\">Latvia</option><option value=\"LB\">Lebanon</option><option value=\"LS\">Lesotho</option><option value=\"LR\">Liberia</option><option value=\"LY\">Libya</option><option value=\"LI\">Liechtenstein</option><option value=\"LT\">Lithuania</option><option value=\"LU\">Luxembourg</option><option value=\"MO\">Macao</option><option value=\"MK\">Macedonia, the former Yugoslav Republic of</option><option value=\"MG\">Madagascar</option><option value=\"MW\">Malawi</option><option value=\"MY\">Malaysia</option><option value=\"MV\">Maldives</option><option value=\"ML\">Mali</option><option value=\"MT\">Malta</option><option value=\"MH\">Marshall Islands</option><option value=\"MQ\">Martinique</option><option value=\"MR\">Mauritania</option><option value=\"MU\">Mauritius</option><option value=\"YT\">Mayotte</option><option value=\"MX\">Mexico</option><option value=\"FM\">Micronesia, Federated States of</option><option value=\"MD\">Moldova, Republic of</option><option value=\"MC\">Monaco</option><option value=\"MN\">Mongolia</option><option value=\"ME\">Montenegro</option><option value=\"MS\">Montserrat</option><option value=\"MA\">Morocco</option><option value=\"MZ\">Mozambique</option><option value=\"MM\">Myanmar</option><option value=\"NA\">Namibia</option><option value=\"NR\">Nauru</option><option value=\"NP\">Nepal</option><option value=\"NL\">Netherlands</option><option value=\"NC\">New Caledonia</option><option value=\"NZ\">New Zealand</option><option value=\"NI\">Nicaragua</option><option value=\"NE\">Niger</option><option value=\"NG\">Nigeria</option><option value=\"NU\">Niue</option><option value=\"NF\">Norfolk Island</option><option value=\"MP\">Northern Mariana Islands</option><option value=\"NO\">Norway</option><option value=\"OM\">Oman</option><option value=\"PK\">Pakistan</option><option value=\"PW\">Palau</option><option value=\"PS\">Palestinian Territory, Occupied</option><option value=\"PA\">Panama</option><option value=\"PG\">Papua New Guinea</option><option value=\"PY\">Paraguay</option><option value=\"PE\">Peru</option><option value=\"PH\">Philippines</option><option value=\"PN\">Pitcairn</option><option value=\"PL\">Poland</option><option value=\"PT\">Portugal</option><option value=\"PR\">Puerto Rico</option><option value=\"QA\">Qatar</option><option value=\"RE\">Réunion</option><option value=\"RO\">Romania</option><option value=\"RU\">Russian Federation</option><option value=\"RW\">Rwanda</option><option value=\"BL\">Saint Barthélemy</option><option value=\"SH\">Saint Helena, Ascension and Tristan da Cunha</option><option value=\"KN\">Saint Kitts and Nevis</option><option value=\"LC\">Saint Lucia</option><option value=\"MF\">Saint Martin (French part)</option><option value=\"PM\">Saint Pierre and Miquelon</option><option value=\"VC\">Saint Vincent and the Grenadines</option><option value=\"WS\">Samoa</option><option value=\"SM\">San Marino</option><option value=\"ST\">Sao Tome and Principe</option><option value=\"SA\">Saudi Arabia</option><option value=\"SN\">Senegal</option><option value=\"RS\">Serbia</option><option value=\"SC\">Seychelles</option><option value=\"SL\">Sierra Leone</option><option value=\"SG\">Singapore</option><option value=\"SX\">Sint Maarten (Dutch part)</option><option value=\"SK\">Slovakia</option><option value=\"SI\">Slovenia</option><option value=\"SB\">Solomon Islands</option><option value=\"SO\">Somalia</option><option value=\"ZA\">South Africa</option><option value=\"GS\">South Georgia and the South Sandwich Islands</option><option value=\"SS\">South Sudan</option><option value=\"ES\">Spain</option><option value=\"LK\">Sri Lanka</option><option value=\"SD\">Sudan</option><option value=\"SR\">Suriname</option><option value=\"SJ\">Svalbard and Jan Mayen</option><option value=\"SZ\">Swaziland</option><option value=\"SE\">Sweden</option><option value=\"CH\">Switzerland</option><option value=\"SY\">Syrian Arab Republic</option><option value=\"TW\">Taiwan, Province of China</option><option value=\"TJ\">Tajikistan</option><option value=\"TZ\">Tanzania, United Republic of</option><option value=\"TH\">Thailand</option><option value=\"TL\">Timor-Leste</option><option value=\"TG\">Togo</option><option value=\"TK\">Tokelau</option><option value=\"TO\">Tonga</option><option value=\"TT\">Trinidad and Tobago</option><option value=\"TN\">Tunisia</option><option value=\"TR\">Turkey</option><option value=\"TM\">Turkmenistan</option><option value=\"TC\">Turks and Caicos Islands</option><option value=\"TV\">Tuvalu</option><option value=\"UG\">Uganda</option><option value=\"UA\">Ukraine</option><option value=\"AE\">United Arab Emirates</option><option value=\"GB\">United Kingdom</option><option value=\"US\">United States</option><option value=\"UM\">United States Minor Outlying Islands</option><option value=\"UY\">Uruguay</option><option value=\"UZ\">Uzbekistan</option><option value=\"VU\">Vanuatu</option><option value=\"VE\">Venezuela, Bolivarian Republic of</option><option value=\"VN\">Viet Nam</option><option value=\"VG\">Virgin Islands, British</option><option value=\"VI\">Virgin Islands, U.S.</option><option value=\"WF\">Wallis and Futuna</option><option value=\"EH\">Western Sahara</option><option value=\"YE\">Yemen</option><option value=\"ZM\">Zambia</option><option value=\"ZW\">Zimbabwe</option></select>"
-                               + "<h3>Your city (between 3 and 15 consecutive letters)</h3><input id='city_input' type='text' value='Paris?' maxlength='15' pattern='[A-Za-z]{3}'></input>"
+                               + "<h3>Your city (between 3 and 15 consecutive letters):</h3><input id='city_input' type='text' value='Paris?' maxlength='15'></input>"
                                + "<h4>Close this dialog to skip this step</h4>");   
               // open modal
+              modal_mode = 1;
               modal.open();
+            }
+            else {
+              if ( (!localStorage.firstname) 
+                   && (gamesok > 10) && ( ((nbcolumns >= 5) && (score > 70)) || ((nbcolumns >= 6) && (score > 60)) ) ) { // (experienced player)
+                // set modal content
+                modal.setContent("<h2>You seem to be an experienced player!<br>Please enter your first name, it will be stored together with your next scores:</h2>"
+                                 + "<h3>Your first name (between 3 and 10 consecutive letters):</h3><input id='firstname_input' type='text' value='John?' maxlength='10'></input>"
+                                 + "<h4>Close this dialog to skip this step</h4>");
+                // open modal
+                modal_mode = 2;
+                modal.open();                                      
+              }            
             }
           }
           
