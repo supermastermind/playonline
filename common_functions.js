@@ -49,7 +49,7 @@ function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
-      Site under construction...<br><br>\
+      <span style='background:yellow;'>Site under construction...</span><br><br>\
       <h4>Version 0.5</h4>\
       September 5th 2017<br>\
       simple gameplay available\
