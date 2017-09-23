@@ -48,13 +48,13 @@ function write_menu(selected_idx) {
 function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
-      <h1>History</h1>\
+      <h2>History:</h2>\
       <span style='background:yellow;'>Site under construction...</span><br><br>\
       <h4>Version 0.5</h4>\
       September 5th 2017<br>\
       simple gameplay available\
       <br><br>\
-      <h1>Interesting links</h1>\
+      <h2>Interesting links:</h2>\
       <ul>\
         <li style='margin-left:0;margin-top:0;'><a href='https://wearethemutants.com/2017/03/27/cunning-and-logic-the-international-imagery-of-mastermind/'>The international imagery of &quot;Mastermind&quot;</a></li>\
         <li style='margin-left:0;'><a href='https://en.wikipedia.org/wiki/Mastermind_(board_game)'>Mastermind on wikipedia</a></li>\
@@ -64,9 +64,9 @@ function write_sidebar() {
 }
 
 function write_optimal_strategy_details(detail_level) {
-  var str = "<div id='strategy_details' onclick=\"document.getElementById('strategy_details').innerHTML='The optimal strategy is determined thanks to a recursive algorithm which goes through all possible games (enumeration of all games with some &quot;equivalent games&quot; tricks for optimization). The goal of this algorithm is to minimize the average number of attempts to find secret codes, all secret codes having the same weight (i.e. same probability to be selected).<br>In this algorithm, only the possible codes are considered at each stage of the game. In some (very rare) cases, playing an impossible code may be better than playing the best possible code(s)! This could be called a &quot;useful mistake&quot;. ";
+  var str = "<div id='strategy_details' onclick=\"document.getElementById('strategy_details').innerHTML='The optimal strategy is determined thanks to a <b>recursive algorithm</b> which goes through all possible games (enumeration of all games with some &quot;equivalent games&quot; tricks for optimization). The goal of this algorithm is to minimize the average number of attempts to find secret codes, all secret codes having the same weight (i.e. same probability to be selected).<br>In this algorithm, only the possible codes are considered at each stage of the game. In some (very rare) cases, playing an impossible code may be better than playing the best possible code(s)! This could be called a &quot;useful mistake&quot;. ";
   if (detail_level == 0) {
-    str += "This will thus result in the above number being strictly positive (e.g. +0.10). If you get such a positive number (voluntarily), you are really good!<br><div style=margin-top:5px;><a href=optimal_strategy.html>Optimal strategy statistics</a></div>';\"><font color=#A4AA04 style=cursor:pointer;><u>Details on the optimal strategy</u></font></div><div style='margin-top:5px;'><a href=screenshots.html>Game examples / screenshots</a></div><br>";
+    str += "This will thus result in the above number being strictly positive (e.g. +0.10). If you get such a positive number (voluntarily), you are really good!<br><div style=margin-top:5px;><a href=optimal_strategy.html><b>Optimal strategy statistics</b></a></div>';\"><font color=#A4AA04 style=cursor:pointer;><u><b>Details on the optimal strategy</b></u></font></div><div style='margin-top:5px;'><a href=screenshots.html><b>Game examples / screenshots</b></a></div><br>";
   }
   else {
     str += "</div><br>";
