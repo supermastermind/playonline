@@ -349,7 +349,7 @@
            case 'https:':
              return 'P1b';
            case 'file:':
-             return 'P1b'; // XXX to change into P2 when delivered
+             return 'P2';
            default: 
              // (other protocols)
              return 'P3';
@@ -564,7 +564,7 @@
           document.getElementById('form_browserlanguage_id').value = navigator.language;          
           console.log(navigator.userAgent);
           document.getElementById('form_useragent_id').value = navigator.userAgent;
-          document.getElementById('form_href_id').value = 'supermastermind.github.io/playonline'; // XXX to be replaced by: xxx.value = decodeURI(location.href);          
+          document.getElementById('form_href_id').value = decodeURI(location.href);          
           document.getElementById('form_formsubmitdate_id').value = new Date();                    
           document.getElementById('form_debuginfo_id').value = getLocation() + '/';                    
           
