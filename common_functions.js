@@ -48,13 +48,13 @@ function write_menu(selected_idx) {
 function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
-      <h2>History</h2>\
+      <h1>History</h1>\
       <span style='background:yellow;'>Site under construction...</span><br><br>\
       <h4>Version 0.5</h4>\
       September 5th 2017<br>\
       simple gameplay available\
       <br><br>\
-      <h2>Interesting links</h2>\
+      <h1>Interesting links</h1>\
       <ul>\
         <li style='margin-left:0;margin-top:0;'><a href='https://wearethemutants.com/2017/03/27/cunning-and-logic-the-international-imagery-of-mastermind/'>The international imagery of &quot;Mastermind&quot;</a></li>\
         <li style='margin-left:0;'><a href='https://en.wikipedia.org/wiki/Mastermind_(board_game)'>Mastermind on wikipedia</a></li>\
