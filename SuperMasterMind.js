@@ -1513,7 +1513,9 @@ function draw_graphic_bis() {
 
         if (!gameOnGoing()) {
 
-          let timeInSeconds = Math.floor((stopTime - startTime)/1000);
+          let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);
+          
+          let timeInSeconds = totalTimeInSeconds;          
           let timeInMinutes = Math.floor(timeInSeconds/60);
           timeInSeconds = timeInSeconds - timeInMinutes*60; // (range: [0;59])
           if (timeInMinutes != 0) {
@@ -1532,7 +1534,41 @@ function draw_graphic_bis() {
           if (gameWon) { // game won
           
             let victoryStr;         
-            score = Math.max(100.0 - (currentAttemptNumber-2)*10.0 - timeInSeconds/10.0, 0.0); // XXX right formulaes          
+            let nb_attempts_for_max_score;
+            let time_in_seconds_corresponding_to_one_attempt_in_score;
+            switch (nbColumns) {
+              case 3:
+                nb_attempts_for_max_score = 2;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 120.0;
+                break;
+              case 4:
+                nb_attempts_for_max_score = 3;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 300.0;
+                break;                
+              case 5:
+                nb_attempts_for_max_score = 4;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 600.0;
+                break;
+              case 6:
+                nb_attempts_for_max_score = 5;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 900.0;
+                break;                
+              case 7:
+                nb_attempts_for_max_score = 5;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 1200.0;
+                break;
+              default:
+                throw new Error("invalid number of columns: " + nbColumns);
+            }
+            let max_score = 100.0;            
+            let score_from_nb_attempts;
+            if (currentAttemptNumber-1 /* number of attempts */ <= nb_attempts_for_max_score) {
+              score_from_nb_attempts = max_score;
+            }
+            else {
+              score_from_nb_attempts = max_score - ((currentAttemptNumber-1) /* number of attempts */ - nb_attempts_for_max_score)*10.0;
+            }
+            score = Math.max(0.0, score_from_nb_attempts - Math.min((totalTimeInSeconds*10.0)/time_in_seconds_corresponding_to_one_attempt_in_score,(2*10.0)-0.2));
             if (playerWasHelpedSignificantly) {
               victoryStr = "You won with help!";
               score = 0.0;
@@ -1557,7 +1593,7 @@ function draw_graphic_bis() {
             else {
               victoryStr = "You won!!!";
             }
-            score = Math.floor(5.0 * score)/5;
+            score = Math.round(5.0 * score)/5.0;
             
             displayString(victoryStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
@@ -1837,7 +1873,7 @@ function draw_graphic_bis() {
       // *****************************
 
       if (game_won_without_big_help) {
-        if ((timeStr.length == 0) || (score == -1.0)) {
+        if ((timeStr.length == 0) || (score < 0.0)) { // XXX storage to be done only when all perfs have been computed
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
