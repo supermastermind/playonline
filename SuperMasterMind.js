@@ -1532,43 +1532,66 @@ function draw_graphic_bis() {
           }
 
           if (gameWon) { // game won
-          
             let victoryStr;         
             let nb_attempts_for_max_score;
             let time_in_seconds_corresponding_to_one_attempt_in_score;
+            let multiply_factor;
             switch (nbColumns) {
               case 3:
                 nb_attempts_for_max_score = 2;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 120.0;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 225.0; // (time corresponding to 2 attempts: 7.5 min)
+                multiply_factor = 0.25;
                 break;
               case 4:
                 nb_attempts_for_max_score = 3;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 300.0;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 450.0; // (time corresponding to 2 attempts: 15 min)
+                multiply_factor = 0.50;
                 break;                
               case 5:
                 nb_attempts_for_max_score = 4;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 600.0;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 900.0; // (time corresponding to 2 attempts: 30 min)
+                multiply_factor = 1.0;
                 break;
               case 6:
                 nb_attempts_for_max_score = 5;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 900.0;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 1350.0;  // (time corresponding to 2 attempts: 45 min)
+                multiply_factor = 1.5;
                 break;                
               case 7:
-                nb_attempts_for_max_score = 5;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 1200.0;
+                nb_attempts_for_max_score = 6;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 1800.0;  // (time corresponding to 2 attempts: 1 hour)
+                multiply_factor = 2.0;
                 break;
               default:
-                throw new Error("invalid number of columns: " + nbColumns);
+                throw new Error("invalid number of columns in score calculation: " + nbColumns);
             }
-            let max_score = 100.0;            
+            let max_score = 100.0;
+            let min_score = 1.0;
             let score_from_nb_attempts;
-            if (currentAttemptNumber-1 /* number of attempts */ <= nb_attempts_for_max_score) {
+            if (currentAttemptNumber-1 /* number of attempts */ <= nb_attempts_for_max_score) { // (all the very low numbers of attempts ("lucky games") are handled the same way)
               score_from_nb_attempts = max_score;
             }
             else {
               score_from_nb_attempts = max_score - ((currentAttemptNumber-1) /* number of attempts */ - nb_attempts_for_max_score)*10.0;
             }
-            score = Math.max(0.0, score_from_nb_attempts - Math.min((totalTimeInSeconds*10.0)/time_in_seconds_corresponding_to_one_attempt_in_score,(2*10.0)-0.2));
+            let max_time_delta_score;
+            if (currentAttemptNumber-1 /* number of attempts */ < nbMaxAttempts) {
+              max_time_delta_score = 2*10.0; // (the time spent will not cost more than 2 attempts in the score)
+            }
+            else {
+              max_time_delta_score = score_from_nb_attempts; // (at very last attempt, score will end up being zero as time goes on)
+            }
+            let time_delta_score = (totalTimeInSeconds*10.0)/time_in_seconds_corresponding_to_one_attempt_in_score;
+            if (time_delta_score <= max_time_delta_score) {
+              score = multiply_factor * (score_from_nb_attempts - time_delta_score);
+            }
+            else {
+              score = multiply_factor * (score_from_nb_attempts - max_time_delta_score - (time_delta_score - max_time_delta_score)/10000.0 /* (enables to sort scores) */);
+            }
+            if (score < min_score) {
+              score = min_score; /* (score will never be zero in case the game was won without significant help) */
+            }
+
             if (playerWasHelpedSignificantly) {
               victoryStr = "You won with help!";
               score = 0.0;
@@ -1577,13 +1600,13 @@ function draw_graphic_bis() {
               victoryStr = "You won with help!";              
               nbColorsRevealed = (nbColumns-codeHandler.nbEmptyColors(secretCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
-                score = score / 2.0;
+                score = Math.max(score / 2.0, min_score);
               }
               else if (nbColorsRevealed == 2) { // 2 colors revealed
-                score = score / 4.0;
+                score = Math.max(score / 4.0, min_score);
               }
               else if (nbColorsRevealed > 2) { // > 2 colors revealed
-                score = score / 8.0;
+                score = Math.max(score / 8.0, min_score);
               }
               else {
                 score = 0.0;                
@@ -1593,14 +1616,14 @@ function draw_graphic_bis() {
             else {
               victoryStr = "You won!!!";
             }
-            score = Math.round(5.0 * score)/5.0;
             
             displayString(victoryStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             if (score > 0.0) {
-              displayString("Score: " + score, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
+              let rounded_score = Math.round(5.0 * score)/5.0;
+              displayString("Score: " + rounded_score, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
                             greenColor, backgroundColor_2, ctx, true, 0, false, 0);                          
             }
             
