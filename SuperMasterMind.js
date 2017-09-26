@@ -1592,6 +1592,7 @@ function draw_graphic_bis() {
               score = min_score; /* (score will never be zero in case the game was won without significant help) */
             }
 
+            // Check if the player was helped
             if (playerWasHelpedSignificantly) {
               victoryStr = "You won with help!";
               score = 0.0;
