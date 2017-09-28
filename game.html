@@ -135,7 +135,8 @@
       var modal = new tingle.modal({
           footer: true,
           stickyFooter: false,
-          closeMethods: ['overlay', 'button', 'escape'],
+          // closeMethods: ['overlay', 'button', 'escape'],
+          closeMethods: ['button'],
           closeLabel: "Close",
           cssClass: ['custom-class-1', 'custom-class-2'],
           onOpen: function() {
@@ -260,6 +261,8 @@
       formsubmitdate: <input id='form_formsubmitdate_id' name='formsubmitdate' type='text' value='-'><br>
       debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-'><br>
       
+      rankings: <input id='form_rankings_id' name='rankings' type='text' value='-'><br>
+      
     </form>
   
     <script>   
@@ -349,7 +352,7 @@
            case 'https:':
              return 'P1b';
            case 'file:':
-             return 'P2';
+             return 'P1b'; // XXX to change into P2 when delivered
            default: 
              // (other protocols)
              return 'P3';
@@ -381,7 +384,9 @@
         if ( (typeof e.parameter !== 'undefined')
              && (typeof e.parameter.playerid !== 'undefined')
              && (e.parameter.playerid.indexOf(playerid_prefix) == 0)
-             && (typeof e.rsp_cd == 'undefined') ) {
+             && (typeof e.rsp_cd == 'undefined') 
+             && (typeof e.parameter.rankings !== 'undefined') 
+             && (e.parameter.rankings.length > 10) ) {
           console.log(JSON.stringify(e.parameter));
         }
         else {
@@ -564,9 +569,11 @@
           document.getElementById('form_browserlanguage_id').value = navigator.language;          
           console.log(navigator.userAgent);
           document.getElementById('form_useragent_id').value = navigator.userAgent;
-          document.getElementById('form_href_id').value = decodeURI(location.href);          
+          document.getElementById('form_href_id').value = 'supermastermind.github.io/playonline'; // XXX to be replaced by: xxx.value = decodeURI(location.href);          
           document.getElementById('form_formsubmitdate_id').value = new Date();                    
           document.getElementById('form_debuginfo_id').value = getLocation() + '/';                    
+          
+          document.getElementById('form_rankings_id').value = '-';                    
           
           // console.log(JSON.stringify($("#my_form").serializeArray()));
           let elements = document.getElementById("my_form").elements;
