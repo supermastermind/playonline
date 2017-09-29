@@ -603,7 +603,8 @@
             }
             else {
               if ( (!localStorage.firstname) 
-                   && (gamesok > 10) && ( ((nbcolumns >= 5) && (score > 70)) || ((nbcolumns >= 6) && (score > 60)) ) ) { // (experienced player)
+                   && (gamesok > 10) 
+                   && ( (gamesok > 25) || ((nbcolumns == 4) && (score >= 44)) || ((nbcolumns == 5) && (score >= 70)) || ((nbcolumns >= 6) && (score >= 100)) ) ) { // (experienced player)
                 // set modal content
                 modal.setContent("<h2>You seem to be an experienced player!<br>Please enter your first name, it will be stored together with your next scores:</h2>"
                                  + "<h3>Your first name (between 3 and 12 letters, no spaces):</h3><input id='firstname_input' type='text' value='John?' maxlength='12'></input>"
