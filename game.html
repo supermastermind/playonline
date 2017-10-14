@@ -128,6 +128,11 @@
       } catch (err) {
         alert("Your browser does not support javascript classes.\nThis game can be run in Chrome and Firefox (but not in Internet Explorer).");
       }
+      /* Already somewhere else? */
+      String.prototype.replaceAll = function(search, replacement) {
+          var target = this;
+          return target.replace(new RegExp(search, 'g'), replacement);
+      };      
     </script>
     <script src='lib/jquery-3.2.1.min.js'></script>
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
@@ -434,13 +439,15 @@
              && (typeof e.parameter.rankings !== 'undefined') 
              && (e.parameter.rankings.length > 10) ) {
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
-          console.log(rsp_rankings_str);          
-          if (modal_mode == -1) {
-            modal_mode = 3;
-            // set modal content
-            modal.setContent(rsp_rankings_str);   
-            // open modal
-            modal.open();          
+          console.log(rsp_rankings_str);   
+          if (rsp_rankings_str.indexOf('FF00FF') != -1) { // check if current game score is in top scores
+            if (modal_mode == -1) {
+              modal_mode = 3;
+              // set modal content
+              modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>" + rsp_rankings_str + "</div>");   
+              // open modal
+              modal.open();          
+            }
           }
         }
         else {
@@ -461,7 +468,7 @@
         }
         last_game_cnt = game_cnt;
                 
-        sleep(2222); // XXX
+        await sleep(1111);
         
         $.getJSON('https://freegeoip.net/json/', function(data) {
                        
