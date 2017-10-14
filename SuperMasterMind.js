@@ -1519,8 +1519,11 @@ function draw_graphic_bis() {
           let timeInMinutes = Math.floor(timeInSeconds/60);
           timeInSeconds = timeInSeconds - timeInMinutes*60; // (range: [0;59])
           if (timeInMinutes != 0) {
-            timeInSeconds = (timeInSeconds/10)*10;
-            if (timeInSeconds != 0) {
+            timeInSeconds = Math.floor(timeInSeconds/10.0)*10;
+            if (timeInMinutes >= 60) {
+              timeStr = timeInMinutes + " min";
+            }
+            else if (timeInSeconds != 0) {
               timeStr = timeInMinutes + " min " + timeInSeconds + " sec";
             }
             else {
