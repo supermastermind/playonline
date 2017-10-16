@@ -65,8 +65,7 @@ let stopTime = -1; // N.A.
 let newGameEvent = true;
 let playerWasHelpedSignificantly = false;
 let playerWasHelpedSlightly = false;
-let nbMaxMinutesForHint = -1; // N.A.
-let currentAttemptNumberForHint = -1; // N.A.
+let hintHasAlreadyBlinked = false;
 
 let errorStr = "";
 let errorCnt = 0;
@@ -183,6 +182,18 @@ let color_cnt = 0;
 
 let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
 console.log("navigator's user agent: " + navigator.userAgent);
+
+// *************************************************************************
+// *************************************************************************
+// New methods
+// *************************************************************************
+// *************************************************************************
+
+// String.replaceAll() method definition
+String.prototype.replaceAll = function(search, replacement) {
+  let target = this;
+  return target.replace(new RegExp(search, 'g'), replacement);
+};
 
 // *************************************************************************
 // *************************************************************************
@@ -797,7 +808,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameWon = false;
   secretCode = codeHandler.createRandomCode();
   // secretCode = 0x07777777;
-  console.log("Secret code: " + codeHandler.codeToString(secretCode));
+  // XXX console.log("Secret code: " + codeHandler.codeToString(secretCode));  
   secretCodeRevealed = 0;
   
   game_cnt++;
@@ -808,26 +819,7 @@ function resetGameAttributes(nbColumnsSelected) {
   newGameEvent = false;
   playerWasHelpedSignificantly = false;
   playerWasHelpedSlightly = false;
-  switch (nbColumns) {
-    case 3:
-      nbMaxMinutesForHint = 5;
-      break;
-    case 4:
-      nbMaxMinutesForHint = 10;
-      break;
-    case 5:
-      nbMaxMinutesForHint = 20;
-      break;
-    case 6:
-      nbMaxMinutesForHint = 25;
-      break;
-    case 7:
-      nbMaxMinutesForHint = 25;
-      break;
-    default:
-      throw new Error("invalid selection of number of columns: " + nbColumns + " (#2)");
-  }
-  currentAttemptNumberForHint = nbMaxAttempts+1;
+  hintHasAlreadyBlinked = false;
 
   errorStr = "";
   errorCnt = 0;
@@ -1513,14 +1505,14 @@ function draw_graphic_bis() {
 
         if (!gameOnGoing()) {
 
-          let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);
-          
+          let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);         
+         
           let timeInSeconds = totalTimeInSeconds;          
           let timeInMinutes = Math.floor(timeInSeconds/60);
           timeInSeconds = timeInSeconds - timeInMinutes*60; // (range: [0;59])
           if (timeInMinutes != 0) {
             timeInSeconds = Math.floor(timeInSeconds/10.0)*10;
-            if (timeInMinutes >= 60) {
+            if (timeInMinutes >= 30) {
               timeStr = timeInMinutes + " min";
             }
             else if (timeInSeconds != 0) {
@@ -1552,17 +1544,17 @@ function draw_graphic_bis() {
                 break;                
               case 5:
                 nb_attempts_for_max_score = 4;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 900.0; // (time corresponding to 2 attempts: 30 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 900.0; // (time corresponding to 2 attempts: 30 min) // See (*)
                 multiply_factor = 1.0;
                 break;
               case 6:
                 nb_attempts_for_max_score = 5;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 1350.0;  // (time corresponding to 2 attempts: 45 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 1350.0;  // (time corresponding to 2 attempts: 45 min) // See (*)
                 multiply_factor = 1.5;
                 break;                
               case 7:
                 nb_attempts_for_max_score = 6;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 1800.0;  // (time corresponding to 2 attempts: 1 hour)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 1800.0;  // (time corresponding to 2 attempts: 1 hour) // See (*)
                 multiply_factor = 2.0;
                 break;
               default:
@@ -1579,17 +1571,26 @@ function draw_graphic_bis() {
             }
             let max_time_delta_score;
             if (currentAttemptNumber-1 /* number of attempts */ < nbMaxAttempts) {
-              max_time_delta_score = 2*10.0; // (the time spent will not cost more than 2 attempts in the score)
+              max_time_delta_score = 2*10.0; // (the time spent will tend not to cost more than 2 attempts in the score)
             }
             else {
-              max_time_delta_score = score_from_nb_attempts; // (at very last attempt, score will end up being zero as time goes on)
+              max_time_delta_score = score_from_nb_attempts; // (at very last attempt, score will tend towards zero as time goes on)
             }
-            let time_delta_score = (totalTimeInSeconds*10.0)/time_in_seconds_corresponding_to_one_attempt_in_score;
+            let time_in_seconds_short_games = (2.0*time_in_seconds_corresponding_to_one_attempt_in_score)/3.0;
+            let time_delta_score;
+            if (totalTimeInSeconds <= time_in_seconds_short_games) { // scoring rule useful to distinguish good players
+              time_delta_score = (totalTimeInSeconds*10.0)/time_in_seconds_short_games;
+            }
+            else { // scoring rule for other players
+              // "good player's slope / 2"
+              time_delta_score = 10.0 + (10.0 * (totalTimeInSeconds - time_in_seconds_short_games)) / (2*time_in_seconds_corresponding_to_one_attempt_in_score - time_in_seconds_short_games);
+            }            
             if (time_delta_score <= max_time_delta_score) {
               score = multiply_factor * (score_from_nb_attempts - time_delta_score);
             }
             else {
-              score = multiply_factor * (score_from_nb_attempts - max_time_delta_score - (time_delta_score - max_time_delta_score)/10000.0 /* (enables to sort scores) */);
+              score = multiply_factor * (score_from_nb_attempts - max_time_delta_score 
+                                         - (time_delta_score - max_time_delta_score)/2.0); // "good player's slope / 4"
             }
             if (score < min_score) {
               score = min_score; /* (score will never be zero in case the game was won without significant help) */
@@ -1626,7 +1627,7 @@ function draw_graphic_bis() {
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             if (score > 0.0) {
-              let rounded_score = Math.round(5.0 * score)/5.0;
+              let rounded_score = Math.round(score * 5.0) / 5.0;
               displayString("Score: " + rounded_score, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
                             greenColor, backgroundColor_2, ctx, true, 0, false, 0);                          
             }
@@ -1646,7 +1647,7 @@ function draw_graphic_bis() {
           }
 
           ctx.font = small_italic_font;
-          if ((nbGamesWonWithoutHelpAtAll <= HintsThreshold) && (!gameOnGoing()) && allPossibleCodesFilled()) {
+          if ((nbGamesWonWithoutHelpAtAll <= HintsThreshold) && (!gameOnGoing()) && allPossibleCodesFilled()) { // XXX Use blinking button instead!!!
             displayString("\u2193 Click below to show the possible codes", 0, nbMaxAttemptsToDisplay, 2+(90*(nbColumns+1))/100+nbColumns*2,
                           darkGray, backgroundColor_2, ctx, true, 1, true, 0); // XXX Bubble
           }
@@ -1753,7 +1754,7 @@ function draw_graphic_bis() {
         }
 
         ctx.font = small_italic_font;
-        if (nbGamesWonWithoutHelpAtAll <= HintsThreshold) {
+        if (nbGamesWonWithoutHelpAtAll <= HintsThreshold) { // XXX Rename button instead
           displayString("\u2190 Back to game", 0, nbMaxAttemptsToDisplay, 2+(90*(nbColumns+1))/100,  // XXX bubble
                         darkGray, backgroundColor_2, ctx, true, 1, true, 0);
         }
@@ -1904,7 +1905,7 @@ function draw_graphic_bis() {
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
-          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "+0.00", nbColorsRevealed); // XXX to be filled properly
+          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "+0.00", nbColorsRevealed); // XXX to be filled properly (with perfs)
         }
       }      
       
@@ -1921,23 +1922,23 @@ function draw_graphic_bis() {
       ctx.font = basic_bold_font;
       displayCode(currentCode, currentAttemptNumber-1, ctx);
 
-      if ( (currentAttemptNumber > 1) && (currentAttemptNumberForHint >= currentAttemptNumber) && (secretCodeRevealed == 0) ) { // XXX à tester
-        let timeElapsedInSeconds = ((new Date()).getTime() - startTime)/1000;
-        if (timeElapsedInSeconds > nbMaxMinutesForHint*60) {
-          ctx.font = small_italic_font;
-          displayString("\u2190 Need help? Reveal a secret color!", 0, nbMaxAttemptsToDisplay, 2+(90*(nbColumns+1))/100+nbColumns*2,
-                        darkGray, backgroundColor_2, ctx, true, 1, true, 0);
-          currentAttemptNumberForHint = currentAttemptNumber;
-        }
-      }
-    }
-
     document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != secretCodeRevealed));
     if (document.getElementById("resetCurrentCodeButton").disabled) {
       document.getElementById("resetCurrentCodeButton").className = "button disabled";
     }
     else {
       document.getElementById("resetCurrentCodeButton").className = "button";
+    }
+
+    if ( (!hintHasAlreadyBlinked)
+         && gameOnGoing() && (currentAttemptNumber > 1)
+         && !(document.getElementById("revealSecretColorButton").disabled)
+         && (secretCodeRevealed == 0)
+         && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1680 /* 30 min - 2 min = 28 min */ : 2580 /* 45 min - 2 min = 43 min */))  // See (*)
+              || (currentAttemptNumber >= nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
+        document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + " blinking";
+        hintHasAlreadyBlinked = true;
+      }
     }
 
   }
@@ -1959,7 +1960,7 @@ function draw_graphic_bis() {
     else {
       errorColor = "lightGray";
     }
-    if (showPossibleCodesMode) { // XXX Erreurs à tester, tjs valides?
+    if (showPossibleCodesMode) { // XXX Erreurs à tester, bien affichees? tjs valides?
       displayString(errorStr, 0, nbMaxAttemptsToDisplay+3-1, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4+3,
                     errorColor, backgroundColor_2, ctx, true, 1, false, 0);
     }
@@ -2203,8 +2204,8 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
 
 function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth)
 {
-  var r = x + w;
-  var b = y + h;
+  let r = x + w;
+  let b = y + h;
   ctx.beginPath();
   ctx.strokeStyle = foregroundColor;
   ctx.lineWidth = lineWidth;

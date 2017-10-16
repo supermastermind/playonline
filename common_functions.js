@@ -1,10 +1,11 @@
+
 function write_menu(selected_idx) {
   var str = "\
     <div id='header'>\
       <div id='logo'>\
         <!-- class='logo_colour', allows you to change the colour of the text -->\
-        <h1><font color='#F00000'>Play </font><font color='#FF7700'>super </font><font color='#F7F700'>master </font><font color='#00D000'>mind </font><font color='black'>/ </font> <font color='#0000A8'>code </font><font color='#954400'>breaker </font><font color='#FF7700'>online!</font></h1>\
-        <h2><font color='#333333'>super master mind, mastermind & code breaker games</font></h2>\
+        <h1><font color='#F00000'>Play </font><font color='#FF7700'>Super </font><font color='#F7F700'>Master </font><font color='#00D000'>Mind </font><font color='black'>/ </font> <font color='#0000A8'>Code </font><font color='#954400'>breaker </font><font color='#FF7700'>online!</font></h1>\
+        <h2><font color='#333333'>Super Master Mind, Mastermind & Code breaker games</font></h2>\
       </div>\
       <div id='menubar'>\
         <ul id='menu'>\
@@ -49,10 +50,10 @@ function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
-      <span style='background:yellow;'>Site under construction...</span><br><br>\
-      <h4>Version 0.5</h4>\
-      September 5th 2017<br>\
-      simple gameplay available\
+      Site under construction...<br><br>\
+      Version 0.5:<br>\
+      simple gameplay available<br>\
+      September 5th 2017\
       <br><br>\
       <h1>Interesting links</h1>\
       <ul>\
