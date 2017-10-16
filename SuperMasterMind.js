@@ -1534,8 +1534,8 @@ function draw_graphic_bis() {
             switch (nbColumns) {
               case 3:
                 nb_attempts_for_max_score = 2;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 225.0; // (time corresponding to 2 attempts: 7.5 min)
-                multiply_factor = 0.25;
+                time_in_seconds_corresponding_to_one_attempt_in_score = 90.0; // (time corresponding to 2 attempts: 3 min)
+                multiply_factor = 0.30;
                 break;
               case 4:
                 nb_attempts_for_max_score = 3;
