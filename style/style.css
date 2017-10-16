@@ -36,7 +36,7 @@ h4, h5, h6
 { margin: 0;
   padding: 0 0 5px 0;
   font: normal 110% arial, sans-serif;
-  color: #B600B6;}
+  color: #000000;}
 
 h5, h6
 { font: italic 95% arial, sans-serif;
@@ -158,10 +158,10 @@ ul#menu li a
 
 ul#menu li.selected a, ul#menu li.selected a:hover
 { background: #FFF;
-  color: #B60000;}
+  color: #0000A8;}
 
 ul#menu li a:hover
-{ color: #B60000;}
+{ color: #FF00FF;}
 
 #site_content
 { width: 75%;
@@ -174,7 +174,7 @@ ul#menu li a:hover
 .sidebar
 { float: right;
   width: 222px;
-  padding: 0 15px 20px 15px; /* XXX line below (blue) to delete */
+  padding: 0 15px 20px 15px;
   background-color: #E0E0E0;} 
 
 .sidebar ul
