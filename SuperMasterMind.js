@@ -1997,6 +1997,7 @@ function displayString(str, x_cell, y_cell, x_cell_width,
   let x_0_next = get_x_pixel(x_min+x_step*(x_cell+x_cell_width));
   let y_0;
   let y_0_next;
+  let y_0_valign;
   let y_offset = 0; // (works with Chrome)
   if (firefoxMode) {
     y_offset = 1; // (works with Firefox)
@@ -2008,14 +2009,17 @@ function displayString(str, x_cell, y_cell, x_cell_width,
   if (0 == halfLine) {
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
+    y_0_valign = get_y_pixel(y_min+y_step*(y_cell+0.5), ignoreRanges);
   }
   else if (1 == halfLine) { // bottom half line
     y_0 = get_y_pixel(y_min+y_step*y_cell) - Math.round(str_height/4);
     y_0_next = y_0 - str_height;
+    y_0_valign = (y_0 + y_0_next)/2;
   }
   else { // top half line
     y_0 = get_y_pixel(y_min+y_step*y_cell) - str_height - Math.round(str_height/4) - 2;
     y_0_next = y_0 - str_height;
+    y_0_valign = (y_0 + y_0_next)/2;
   }
 
   if ( (!displayIfEnoughRoom) || (x_0_next - x_0 - str_width >= 0) ) {
@@ -2043,20 +2047,20 @@ function displayString(str, x_cell, y_cell, x_cell_width,
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "center"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
-      ctx.fillText(str, (x_0 + x_0_next)/2, (y_0 + y_0_next)/2 + y_offset);
+      ctx.fillText(str, (x_0 + x_0_next)/2, y_0_valign + y_offset);
       // subPixelText(ctx, str, (x_0 + x_0_next)/2, y_0, 25);
     }
     else if (justify == 2) { // right
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "end"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
-      ctx.fillText(str, x_0_next, (y_0 + y_0_next)/2 + y_offset);
+      ctx.fillText(str, x_0_next, y_0_valign + y_offset);
     }
     else { // left
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "start"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
-      ctx.fillText(str, x_0, (y_0 + y_0_next)/2 + y_offset);
+      ctx.fillText(str, x_0, y_0_valign + y_offset);
     }
 
     if (drawInBubble) {

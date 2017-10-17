@@ -46,15 +46,12 @@ function write_menu(selected_idx) {
   document.write(str);
 }
 
-function write_sidebar() {
+function write_sidebar(complete) {
+  // XXX TBC take complete into account
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
       Site under construction...<br><br>\
-      Version 0.6:<br>\
-      online game scores added<br>\
-      October 17th 2017\
-      <br><br>\
       Version 0.5:<br>\
       simple gameplay available<br>\
       September 5th 2017\
