@@ -1059,7 +1059,7 @@ function draw_graphic_bis() {
         }
         if (CompressedDisplayMode) {
 
-          document.getElementById("newGameButton").value = "N";
+          document.getElementById("newGameButton").value = height;
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
             document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);;
           }
@@ -1075,10 +1075,10 @@ function draw_graphic_bis() {
           let allRadioButtons = document.getElementsByClassName("radio");
           if (height < 350) {
             for (let i = 0; i < allButtons.length; i ++) {
-              allButtons[i].style.fontSize = "13px";
+              allButtons[i].style.fontSize = "12px";
             }
             for (let i = 0; i < allRadioButtons.length; i ++) {
-              allRadioButtons[i].style.fontSize = "12px";
+              allRadioButtons[i].style.fontSize = "11px";
             }
           }
           else {
