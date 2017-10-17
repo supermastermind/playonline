@@ -52,7 +52,7 @@ function write_sidebar() {
       <h1>History</h1>\
       Site under construction...<br><br>\
       Version 0.6:<br>\
-      adding online game scores<br>\
+      online game scores<br>\
       October 17th 2017\
       <br><br>\
       Version 0.5:<br>\
