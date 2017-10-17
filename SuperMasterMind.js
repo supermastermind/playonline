@@ -1054,7 +1054,7 @@ function draw_graphic_bis() {
             CompressedDisplayMode = true;
         }        
         if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/2)
-             || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) { // (mobile device check 2/2)
+             || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) ) { // (mobile device check 2/2)
           CompressedDisplayMode = true;
         }
         if (CompressedDisplayMode) {
