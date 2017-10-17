@@ -53,7 +53,7 @@ function write_sidebar() {
       Site under construction...<br><br>\
       Version 0.6:<br>\
       adding online game scores<br>\
-      October 17th 2017\
+      October 10th 2017\
       <br><br>\
       Version 0.5:<br>\
       simple gameplay available<br>\
