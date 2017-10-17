@@ -157,8 +157,8 @@ let highlightColor = "#FFFF00"; // Yellow
 // *****
 
 let fontFamily = "Verdana";
-let defaultFont = "10px " + fontFamily;
-let min_font_size = 10;
+let defaultFont = "9px " + fontFamily;
+let min_font_size = 9;
 let max_font_size = 30;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
@@ -1668,7 +1668,12 @@ function draw_graphic_bis() {
         // Draw color selection
         // ********************
 
-        ctx.fillStyle = darkGray;
+        if (font_size != min_font_size) {
+          ctx.fillStyle = darkGray;
+        }
+        else {
+          ctx.fillStyle = backgroundColor_2;
+        }
         for (let color = 0; color <= nbColors; color++) {
           x_0 = get_x_pixel(x_min+x_step*(2+(90*(nbColumns+1))/100));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+3+color));
@@ -2009,17 +2014,18 @@ function displayString(str, x_cell, y_cell, x_cell_width,
   if (0 == halfLine) {
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
-    y_0_valign = get_y_pixel(y_min+y_step*(y_cell+0.5), ignoreRanges);
+    y_0_valign = Math.round((y_0 + y_0_next)/2);
+    //y_0_valign = get_y_pixel(y_min+y_step*(y_cell+0.5), ignoreRanges);
   }
   else if (1 == halfLine) { // bottom half line
     y_0 = get_y_pixel(y_min+y_step*y_cell) - Math.round(str_height/4);
     y_0_next = y_0 - str_height;
-    y_0_valign = (y_0 + y_0_next)/2;
+    y_0_valign = Math.round((y_0 + y_0_next)/2);
   }
   else { // top half line
     y_0 = get_y_pixel(y_min+y_step*y_cell) - str_height - Math.round(str_height/4) - 2;
     y_0_next = y_0 - str_height;
-    y_0_valign = (y_0 + y_0_next)/2;
+    y_0_valign = Math.round((y_0 + y_0_next)/2);
   }
 
   if ( (!displayIfEnoughRoom) || (x_0_next - x_0 - str_width >= 0) ) {
@@ -2048,7 +2054,9 @@ function displayString(str, x_cell, y_cell, x_cell_width,
       ctx.textAlign = "center"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
       ctx.fillText(str, (x_0 + x_0_next)/2, y_0_valign + y_offset);
+      //drawLine(ctx, x_0, y_0_valign, x_0_next, y_0_valign);
       // subPixelText(ctx, str, (x_0 + x_0_next)/2, y_0, 25);
+    //drawLine(ctx, x_0, y_0_valign, x_0_next, y_0_valign);      
     }
     else if (justify == 2) { // right
       ctx.fillStyle = foregroundColor;
