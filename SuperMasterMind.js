@@ -157,8 +157,8 @@ let highlightColor = "#FFFF00"; // Yellow
 // *****
 
 let fontFamily = "Verdana";
-let defaultFont = "9px " + fontFamily;
-let min_font_size = 9;
+let defaultFont = "10px " + fontFamily;
+let min_font_size = 10;
 let max_font_size = 30;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
