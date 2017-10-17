@@ -1059,7 +1059,7 @@ function draw_graphic_bis() {
         }
         if (CompressedDisplayMode) {
 
-          document.getElementById("newGameButton").value = height;
+          document.getElementById("newGameButton").value = "N";
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
             document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);;
           }
@@ -1070,25 +1070,6 @@ function draw_graphic_bis() {
           document.getElementById("showPossibleCodesButton").value = "\uFF0A";
           document.getElementById("my_table").style.width = "90%";
           document.getElementById("my_table").style.left = "5%";
-
-          let allButtons = document.getElementsByClassName("button");
-          let allRadioButtons = document.getElementsByClassName("radio");
-          if (height < 350) {
-            for (let i = 0; i < allButtons.length; i ++) {
-              allButtons[i].style.fontSize = "12px";
-            }
-            for (let i = 0; i < allRadioButtons.length; i ++) {
-              allRadioButtons[i].style.fontSize = "11px";
-            }
-          }
-          else {
-            for (let i = 0; i < allButtons.length; i ++) {
-              allButtons[i].style.fontSize = "15px";
-            }
-            for (let i = 0; i < allRadioButtons.length; i ++) {
-              allRadioButtons[i].style.fontSize = "13px";
-            }            
-          }
         }
         else {
 
@@ -1103,18 +1084,35 @@ function draw_graphic_bis() {
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
           document.getElementById("my_table").style.width = tableIniWidth;
           document.getElementById("my_table").style.left = tableIniLeft;
-
-          let allButtons = document.getElementsByClassName("button");
-          let allRadioButtons = document.getElementsByClassName("radio");
+        }
+        let allButtons = document.getElementsByClassName("button");
+        let allRadioButtons = document.getElementsByClassName("radio");
+        if (height < 400) {
+          for (let i = 0; i < allButtons.length; i ++) {
+            allButtons[i].style.fontSize = "12px";
+          }
+          for (let i = 0; i < allRadioButtons.length; i ++) {
+            allRadioButtons[i].style.fontSize = "11px";
+          }
+        }
+        else if (height >= 1200) {
+          for (let i = 0; i < allButtons.length; i ++) {
+            allButtons[i].style.fontSize = "18px";
+          }
+          for (let i = 0; i < allRadioButtons.length; i ++) {
+            allRadioButtons[i].style.fontSize = "16px";
+          }
+        }
+        else {
           for (let i = 0; i < allButtons.length; i ++) {
             allButtons[i].style.fontSize = "15px";
           }
           for (let i = 0; i < allRadioButtons.length; i ++) {
             allRadioButtons[i].style.fontSize = "13px";
-          }
-
+          }            
         }
 
+        
         canvas.width = width; /* (necessary as canvas may have been expanded to fill its container) */
         canvas.height = height; /* (necessary as canvas may have been expanded to fill its container) */
         ctx.setTransform(1,0,0,1,0,0); // resets the canvas current transform to the identity matrix
