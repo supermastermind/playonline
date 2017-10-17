@@ -1089,10 +1089,10 @@ function draw_graphic_bis() {
         let allRadioButtons = document.getElementsByClassName("radio");
         if (height < 400) {
           for (let i = 0; i < allButtons.length; i ++) {
-            allButtons[i].style.fontSize = "12px";
+            allButtons[i].style.fontSize = "11px";
           }
           for (let i = 0; i < allRadioButtons.length; i ++) {
-            allRadioButtons[i].style.fontSize = "11px";
+            allRadioButtons[i].style.fontSize = "10px";
           }
         }
         else if (height >= 1200) {
