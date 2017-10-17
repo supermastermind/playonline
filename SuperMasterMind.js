@@ -1073,13 +1073,22 @@ function draw_graphic_bis() {
 
           let allButtons = document.getElementsByClassName("button");
           let allRadioButtons = document.getElementsByClassName("radio");
-          for (let i = 0; i < allButtons.length; i ++) {
-            allButtons[i].style.fontSize = "12px";
+          if (height < 400) {
+            for (let i = 0; i < allButtons.length; i ++) {
+              allButtons[i].style.fontSize = "12px";
+            }
+            for (let i = 0; i < allRadioButtons.length; i ++) {
+              allRadioButtons[i].style.fontSize = "11px";
+            }
           }
-          for (let i = 0; i < allRadioButtons.length; i ++) {
-            allRadioButtons[i].style.fontSize = "11px";
+          else {
+            for (let i = 0; i < allButtons.length; i ++) {
+              allButtons[i].style.fontSize = "15px";
+            }
+            for (let i = 0; i < allRadioButtons.length; i ++) {
+              allRadioButtons[i].style.fontSize = "13px";
+            }            
           }
-
         }
         else {
 
