@@ -1068,7 +1068,7 @@ function draw_graphic_bis() {
         }        
         if (CompressedDisplayMode) {
 
-          document.getElementById("newGameButton").value = "N";
+          document.getElementById("newGameButton").value = "NN";
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
             document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);;
           }
