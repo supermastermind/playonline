@@ -92,8 +92,8 @@ let tableIniBorder = document.getElementById("my_table").style.border;
 let tableIniBorderRadius = document.getElementById("my_table").style["border-radius"];
 
 let CompressedDisplayMode = false;
-let CompressedDisplayMode_compressWidth = 300;
-let CompressedDisplayMode_uncompressWidth = 600;
+let CompressedDisplayMode_compressWidth = 400;
+let CompressedDisplayMode_uncompressWidth = 900;
 
 // Widths and heights
 // ******************
