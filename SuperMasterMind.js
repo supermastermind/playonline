@@ -1126,7 +1126,7 @@ function draw_graphic_bis() {
             allButtons[i].style.fontSize = "20px";
           }
           for (let i = 0; i < allRadioButtons.length; i ++) {
-            allRadioButtons[i].style.fontSize = "18px";
+            allRadioButtons[i].style.fontSize = "20px";
           }
         }
         else {
