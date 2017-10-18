@@ -101,10 +101,10 @@ let mobileMode = false;
 // Widths and heights
 // ******************
 
-let left_border_margin_x = 5.0;  // Left border margin for x axis in %
-let right_border_margin_x = 5.0;  // Right border margin for x axis in %
-let bottom_border_margin_y = 5.0; // Bottom border margin for y axis in %
-let top_border_margin_y = 5.0;    // Top border margin for y axis in %
+let left_border_margin_x = -1.0;   // N.A. - Left border margin for x axis in %
+let right_border_margin_x = -1.0;  // N.A. - Right border margin for x axis in %
+let bottom_border_margin_y = -1.0; // N.A. - Bottom border margin for y axis in %
+let top_border_margin_y = -1.0;    // N.A. - Top border margin for y axis in %
 
 let current_width = -1; // N.A.
 let width_shift;
@@ -1088,6 +1088,11 @@ function draw_graphic_bis() {
             document.getElementById("my_canvas").style.height = "99%";          
           }
           
+          left_border_margin_x = 1.0;  // Left border margin for x axis in %
+          right_border_margin_x = 1.0;  // Right border margin for x axis in %
+          bottom_border_margin_y = 1.5; // Bottom border margin for y axis in %
+          top_border_margin_y = 1.0;    // Top border margin for y axis in %          
+          
         }
         else {
 
@@ -1109,6 +1114,11 @@ function draw_graphic_bis() {
           document.getElementById("my_canvas").style.width = myCanvasIniWidth;
           document.getElementById("my_canvas").style.height = myCanvasIniHeight;          
 
+          left_border_margin_x = 5.0;   // Left border margin for x axis in %
+          right_border_margin_x = 5.0;  // Right border margin for x axis in %
+          bottom_border_margin_y = 5.0; // Bottom border margin for y axis in %
+          top_border_margin_y = 5.0;    // Top border margin for y axis in %          
+          
         }
 
         let allButtons = document.getElementsByClassName("button");
