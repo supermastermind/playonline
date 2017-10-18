@@ -90,10 +90,13 @@ let tableIniHeight = document.getElementById("my_table").style.height;
 let tableIniTop = document.getElementById("my_table").style.top;
 let tableIniBorder = document.getElementById("my_table").style.border;
 let tableIniBorderRadius = document.getElementById("my_table").style["border-radius"];
+let myCanvasIniWidth = document.getElementById("my_canvas").style.width;
+let myCanvasIniHeight = document.getElementById("my_canvas").style.height;
 
 let CompressedDisplayMode = false;
 let CompressedDisplayMode_compressWidth = 400;
 let CompressedDisplayMode_uncompressWidth = 900;
+let mobileMode = false;
 
 // Widths and heights
 // ******************
@@ -1057,9 +1060,11 @@ function draw_graphic_bis() {
         else if (width <= CompressedDisplayMode_compressWidth) {
             CompressedDisplayMode = true;
         }
+        mobileMode = false;        
         if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/2)
              || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) ) { // (mobile device check 2/2)
           CompressedDisplayMode = true;
+          mobileMode = true;
         }        
         if (CompressedDisplayMode) {
 
@@ -1078,6 +1083,10 @@ function draw_graphic_bis() {
           document.getElementById("my_table").style.top = "0%";
           document.getElementById("my_table").style.border = "none";
           document.getElementById("my_table").style["border-radius"] = "0%";
+          if (mobileMode) { // (The below settings can lead to issues when resizing windows on PCs, in particular with Firefox)
+            document.getElementById("my_canvas").style.width = "99%";
+            document.getElementById("my_canvas").style.height = "99%";          
+          }
           
         }
         else {
@@ -1097,6 +1106,8 @@ function draw_graphic_bis() {
           document.getElementById("my_table").style.top = tableIniTop;
           document.getElementById("my_table").style.border = tableIniBorder;
           document.getElementById("my_table").style["border-radius"] = tableIniBorderRadius;
+          document.getElementById("my_canvas").style.width = myCanvasIniWidth;
+          document.getElementById("my_canvas").style.height = myCanvasIniHeight;          
 
         }
 
@@ -1112,10 +1123,10 @@ function draw_graphic_bis() {
         }
         else if (height >= 1100) {
           for (let i = 0; i < allButtons.length; i ++) {
-            allButtons[i].style.fontSize = "19px";
+            allButtons[i].style.fontSize = "20px";
           }
           for (let i = 0; i < allRadioButtons.length; i ++) {
-            allRadioButtons[i].style.fontSize = "17px";
+            allRadioButtons[i].style.fontSize = "18px";
           }
         }
         else {
