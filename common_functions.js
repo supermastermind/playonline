@@ -46,16 +46,18 @@ function write_menu(selected_idx) {
   document.write(str);
 }
 
-function write_sidebar(complete) {
-  // XXX TBC take complete into account
+function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
       Site under construction...<br><br>\
-      Version 0.5:<br>\
-      simple gameplay available<br>\
-      September 5th 2017\
+      Version 0.6<br>\
+      online game scores added<br>\
+      October 18th 2017\
       <br><br>\
+      Version 0.5<br>\
+      simple gameplay available<br>\
+      <br>\
       <h1>Interesting links</h1>\
       <ul>\
         <li style='margin-left:0;margin-top:0;'><a href='https://wearethemutants.com/2017/03/27/cunning-and-logic-the-international-imagery-of-mastermind/'>The international imagery of &quot;Mastermind&quot;</a></li>\
@@ -63,6 +65,21 @@ function write_sidebar(complete) {
         <li style='margin-left:0;'><a href='http://ma.wolfram.com/Mastermind.html'>Mastermind strategies</a></li>\
       </ul>\
     </div>");
+}
+
+function write_introduction() {
+  document.write("\
+    <h2 style='margin-top:0px;'><font color=#000000>Fond of this good old game?</font></h2>\
+    <a href='game.html' onfocus='this.blur()'>\
+      <div id='game_images'>");
+  var img_str = "<img src='img/SuperMasterMind_1.png' style='width:auto;height:222px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:222px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:222px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:222px;border:0;margin:0px'>";
+  if (window.innerWidth >= 1150) {
+    img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:auto;height:222px;border:0;margin:0px'>";
+  }
+  document.write(img_str);
+  document.write("\
+      </div>\
+    </a>");
 }
 
 function write_optimal_strategy_details(detail_level) {

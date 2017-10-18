@@ -31,35 +31,21 @@
       <div id="site_content">
 
         <!-- SIDEBAR -->
-        <script>
-            write_sidebar((window.innerWidth >= 1400);
-        </script>
+        <script>write_sidebar();</script>
 
         <!-- MAIN CONTENT -->
         <div id="content">
 
-          <h2 style='margin-top:0px;'><b><font color="#000000">Fond of this good old game?</b></h2>
-          <a href='game.html' onfocus='this.blur()'>
-            <div id='game_images'>
-              <script>
-                var img_str = "<img src='img/SuperMasterMind_1.png' style='width:auto;height:222px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:222px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:222px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:222px;border:0;margin:0px'>";              
-                if (window.innerWidth >= 1150) {
-                  img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:auto;height:222px;border:0;margin:0px'>";
-                }
-                document.write(img_str); // XXX => à généraliser aux autres pages!!!
-              </script>
-            </div>
-          </a>
-          </font>
+          <script>write_introduction()</script>
 
-          <table style='border:0;margin:0;padding:0;'><tr style='width:88%;'><td style='border:0;margin:0;padding:0;background:#F6F6F6;color:black'>
-
-            <h2><font color="#000000;">
-            Train your mind by <font color="#F00000"><b>playing </font><font color="#FF7700">Super </font><font color="#C0C000">Master </font><font color="#00D000">Mind </font><font color="black">/ </font> <font color="#0000A8">Code </font><font color="#954400">breaker </font><font color="#FF7700">online</b></font>, assisted by a calculator which knows the optimal strategy!          
-            </font></h2>
+          <h2><font color="#000000;">
+          Train your mind by <font color="#F00000"><b>playing </font><font color="#FF7700">Super </font><font color="#C0C000">Master </font><font color="#00D000">Mind </font><font color="black">/ </font> <font color="#0000A8">Code </font><font color="#954400">breaker </font><font color="#FF7700">online</b></font>, assisted by a calculator which knows the optimal strategy!          
+          </font></h2>          
           
+          <table style='border:0;margin:0;padding:0;'><tr><td style='border:0;margin:0;padding:0;background:#F6F6F6;color:black'>
+         
             <a href='game.html' onfocus='this.blur()' style="text-decoration:none;"><h3><b>Play online now</b></h3>
-            <img src="img/SuperMasterMind_game_online.png" style="border-color:#F00000;margin-top: 4px"></a><br><br>               
+            <img src="img/SuperMasterMind_game_online.png" style="width:100%;border-color:#F00000;margin-top: 4px"></a><br><br>               
             
             <h3><b>Rules</b></h3>
             The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>
@@ -93,13 +79,13 @@
             <!-- OPTIMAL STRATEGY DETAILS -->
             <script>write_optimal_strategy_details(0);</script>
 
-            <h3><b>About...</b></h3>
+            <h3><b>About</b></h3>
             <font color=black>
             This program is fully written in <b>HTML 5 and javascript</b><br>
             <hr style="height:7px; visibility:hidden;" />
             It is free and open source, under <a href='LICENSE.txt' onfocus='this.blur()'><b>GNU General Public License</b></a><br>
             <hr style="height:7px; visibility:hidden;" />
-            Any comments or ideas? See <a href='contact_info.html' onfocus='this.blur()'><b>Contact info</b></a>
+            Any comments or ideas? See <a href='contact_info.html' onfocus='this.blur()'><b>Contact info</b></a> <a href='contact_info.html' onfocus='this.blur()'><img src="img/email.png" style="vertical-align:middle;width:auto;height:22px;margin:0px"></a>
             </font>            
             
           </td></tr></table>

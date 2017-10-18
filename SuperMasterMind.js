@@ -86,6 +86,10 @@ let showPossibleCodesButtonIniName = document.getElementById("showPossibleCodesB
 
 let tableIniWidth = document.getElementById("my_table").style.width;
 let tableIniLeft = document.getElementById("my_table").style.left;
+let tableIniHeight = document.getElementById("my_table").style.height;
+let tableIniTop = document.getElementById("my_table").style.top;
+let tableIniBorder = document.getElementById("my_table").style.border;
+let tableIniBorderRadius = document.getElementById("my_table").style["border-radius"];
 
 let CompressedDisplayMode = false;
 let CompressedDisplayMode_compressWidth = 300;
@@ -1052,11 +1056,11 @@ function draw_graphic_bis() {
         }
         else if (width <= CompressedDisplayMode_compressWidth) {
             CompressedDisplayMode = true;
-        }        
+        }
         if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/2)
              || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) ) { // (mobile device check 2/2)
           CompressedDisplayMode = true;
-        }
+        }        
         if (CompressedDisplayMode) {
 
           document.getElementById("newGameButton").value = "N";
@@ -1068,8 +1072,13 @@ function draw_graphic_bis() {
           document.getElementById("playPossibleCodeButton").value = "P";
           document.getElementById("revealSecretColorButton").value = "?";
           document.getElementById("showPossibleCodesButton").value = "\uFF0A";
-          document.getElementById("my_table").style.width = "90%";
-          document.getElementById("my_table").style.left = "5%";
+          document.getElementById("my_table").style.width = "100%";
+          document.getElementById("my_table").style.left = "0%";
+          document.getElementById("my_table").style.height = "100%";
+          document.getElementById("my_table").style.top = "0%";
+          document.getElementById("my_table").style.border = "none";
+          document.getElementById("my_table").style["border-radius"] = "0%";
+          
         }
         else {
 
@@ -1084,18 +1093,24 @@ function draw_graphic_bis() {
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
           document.getElementById("my_table").style.width = tableIniWidth;
           document.getElementById("my_table").style.left = tableIniLeft;
+          document.getElementById("my_table").style.height = tableIniHeight;
+          document.getElementById("my_table").style.top = tableIniTop;
+          document.getElementById("my_table").style.border = tableIniBorder;
+          document.getElementById("my_table").style["border-radius"] = tableIniBorderRadius;
+
         }
+
         let allButtons = document.getElementsByClassName("button");
-        let allRadioButtons = document.getElementsByClassName("radio");
+        let allRadioButtons = document.getElementsByClassName("radio");        
         if (height < 400) {
           for (let i = 0; i < allButtons.length; i ++) {
-            allButtons[i].style.fontSize = "11px";
+            allButtons[i].style.fontSize = "10px";
           }
           for (let i = 0; i < allRadioButtons.length; i ++) {
             allRadioButtons[i].style.fontSize = "10px";
           }
         }
-        else if (height >= 1200) {
+        else if (height >= 1100) {
           for (let i = 0; i < allButtons.length; i ++) {
             allButtons[i].style.fontSize = "19px";
           }
@@ -1110,8 +1125,7 @@ function draw_graphic_bis() {
           for (let i = 0; i < allRadioButtons.length; i ++) {
             allRadioButtons[i].style.fontSize = "13px";
           }            
-        }
-
+        }        
         
         canvas.width = width; /* (necessary as canvas may have been expanded to fill its container) */
         canvas.height = height; /* (necessary as canvas may have been expanded to fill its container) */
@@ -2002,7 +2016,6 @@ function displayString(str, x_cell, y_cell, x_cell_width,
   let x_0_next = get_x_pixel(x_min+x_step*(x_cell+x_cell_width));
   let y_0;
   let y_0_next;
-  let y_0_valign;
   let y_offset = 0; // (works with Chrome)
   if (firefoxMode) {
     y_offset = 1; // (works with Firefox)
@@ -2014,18 +2027,14 @@ function displayString(str, x_cell, y_cell, x_cell_width,
   if (0 == halfLine) {
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
-    y_0_valign = Math.round((y_0 + y_0_next)/2);
-    //y_0_valign = get_y_pixel(y_min+y_step*(y_cell+0.5), ignoreRanges);
   }
   else if (1 == halfLine) { // bottom half line
     y_0 = get_y_pixel(y_min+y_step*y_cell) - Math.round(str_height/4);
     y_0_next = y_0 - str_height;
-    y_0_valign = Math.round((y_0 + y_0_next)/2);
   }
   else { // top half line
     y_0 = get_y_pixel(y_min+y_step*y_cell) - str_height - Math.round(str_height/4) - 2;
     y_0_next = y_0 - str_height;
-    y_0_valign = Math.round((y_0 + y_0_next)/2);
   }
 
   if ( (!displayIfEnoughRoom) || (x_0_next - x_0 - str_width >= 0) ) {
@@ -2053,22 +2062,20 @@ function displayString(str, x_cell, y_cell, x_cell_width,
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "center"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
-      ctx.fillText(str, (x_0 + x_0_next)/2, y_0_valign + y_offset);
-      //drawLine(ctx, x_0, y_0_valign, x_0_next, y_0_valign);
+      ctx.fillText(str, (x_0 + x_0_next)/2, (y_0 + y_0_next)/2 + y_offset);
       // subPixelText(ctx, str, (x_0 + x_0_next)/2, y_0, 25);
-    //drawLine(ctx, x_0, y_0_valign, x_0_next, y_0_valign);      
     }
     else if (justify == 2) { // right
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "end"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
-      ctx.fillText(str, x_0_next, y_0_valign + y_offset);
+      ctx.fillText(str, x_0_next, (y_0 + y_0_next)/2 + y_offset);
     }
     else { // left
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "start"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
-      ctx.fillText(str, x_0, y_0_valign + y_offset);
+      ctx.fillText(str, x_0, (y_0 + y_0_next)/2 + y_offset);
     }
 
     if (drawInBubble) {
