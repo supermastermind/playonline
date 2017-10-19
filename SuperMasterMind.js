@@ -1270,6 +1270,11 @@ function draw_graphic_bis() {
       // Draw main game table
       // ********************
 
+      displayString("\u2714" /* (check mark/tick) */, 2, 10, 3,
+                    greenColor, highlightColor, ctx);      
+      displayString("Z" /* (check mark/tick) */, 2, 9, 3,
+                    greenColor, highlightColor, ctx);      
+                    
       x_0 = get_x_pixel(x_min+x_step*(2+(90*(nbColumns+1))/100));
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       x_1 = get_x_pixel(x_min+x_step*(2+(90*(nbColumns+1))/100+nbColumns*2));
