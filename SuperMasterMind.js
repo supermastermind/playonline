@@ -1272,7 +1272,7 @@ function draw_graphic_bis() {
 
       displayString("\u2714" /* (check mark/tick) */, 2, 10, 3,
                     greenColor, highlightColor, ctx);      
-      displayString("Z" /* (check mark/tick) */, 2, 9, 3,
+      displayString("\u2713" /* (check mark/tick) */, 2, 9, 3,
                     greenColor, highlightColor, ctx);      
                     
       x_0 = get_x_pixel(x_min+x_step*(2+(90*(nbColumns+1))/100));
