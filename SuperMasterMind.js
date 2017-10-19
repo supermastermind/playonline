@@ -187,6 +187,9 @@ let main_graph_update_needed = true;
 let color_selection_code = 0;
 let color_cnt = 0;
 
+let tickChar = "\u2714"; /* (check mark/tick) */
+let crossChar = "\u2716"; /* (cross) */
+
 let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
 console.log("navigator's user agent: " + navigator.userAgent);
 
@@ -1221,6 +1224,14 @@ function draw_graphic_bis() {
     // ***************
 
     nbMaxAttemptsToDisplay = ((!showPossibleCodesMode) ? nbMaxAttempts : currentAttemptNumber-1);
+    if (!mobileMode) {
+      tickChar = "\u2714"; /* (check mark/tick) */
+      crossChar = "\u2716"; /* (cross) */
+    }
+    else { // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
+      tickChar = "\u2713"; /* (check mark/tick) */
+      crossChar = "\u2715"; /* (cross) */      
+    }
 
     // XXX optimized display event to be tested!
     if (main_graph_update_needed) { // Note: no double buffering is needed in javascript (canvas contents do not need to be refilled as during Java's repaint())
@@ -1432,17 +1443,17 @@ function draw_graphic_bis() {
           if (performanceIndicators[i-1] == -1.0 /* (useless code) */) {
             displayGUIError("useless code inconsistency", false);
           }
-          displayString("\u2713" /* (check mark/tick) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
+          displayString(tickChar, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
                         greenColor, backgroundColor, ctx);
         }
         else { // code is not possible
           res = false;
           if (i > 2) {
-            res = displayString(" \u2715" /* (cross) */ + " " + isPossible + " ", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
+            res = displayString(crossChar + " " + isPossible + " ", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
                                 redColor, backgroundColor, ctx, true, 0, true, 0);
           }
           if (!res) {
-            displayString("\u2715" /* (cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
+            displayString(crossChar, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
                           redColor, backgroundColor, ctx);
           }
         }
@@ -1498,7 +1509,7 @@ function draw_graphic_bis() {
                               darkGray, backgroundColor_2, ctx, 0, true)) {
             display2Strings("Number", "of codes", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, ((nbColumns>=7)?5:4),
                             darkGray, backgroundColor_2, ctx, 0, true);
-            displayString("\u2713 or \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
+            displayString(tickChar + " / " + crossChar, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
                           darkGray, backgroundColor_2, ctx, true, 0, true, 1);
           }
         }
@@ -1507,7 +1518,7 @@ function draw_graphic_bis() {
                               lightGray, backgroundColor_2, ctx, 0, true)) {
             display2Strings("Number", "of codes", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, ((nbColumns>=7)?5:4),
                             lightGray, backgroundColor_2, ctx, 0, true);
-            displayString("\u2713 or \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
+            displayString(tickChar + " / " + crossChar, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
                           lightGray, backgroundColor_2, ctx, true, 0, true, 1);
           }
         }
@@ -1816,7 +1827,7 @@ function draw_graphic_bis() {
         ctx.font = small_basic_font;
         for (let col = 0; col < nbColumns; col++) {
           if (codeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1) != emptyColor) {
-            displayString("\u2713" /* (check mark/tick) */, 2+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+1+nbPossibleCodesShown, 2,
+            displayString(tickChar, 2+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+1+nbPossibleCodesShown, 2,
                           greenColor, backgroundColor_2, ctx, true, 0, true, 1, true /* (ignoreRanges) */);
           }
         }
