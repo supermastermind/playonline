@@ -1498,7 +1498,7 @@ function draw_graphic_bis() {
                               darkGray, backgroundColor_2, ctx, 0, true)) {
             display2Strings("Number", "of codes", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, ((nbColumns>=7)?5:4),
                             darkGray, backgroundColor_2, ctx, 0, true);
-            displayString("\u2713 / \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
+            displayString("\u2713 or \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
                           darkGray, backgroundColor_2, ctx, true, 0, true, 1);
           }
         }
@@ -1507,7 +1507,7 @@ function draw_graphic_bis() {
                               lightGray, backgroundColor_2, ctx, 0, true)) {
             display2Strings("Number", "of codes", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, ((nbColumns>=7)?5:4),
                             lightGray, backgroundColor_2, ctx, 0, true);
-            displayString("\u2713 / \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
+            displayString("\u2713 or \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
                           lightGray, backgroundColor_2, ctx, true, 0, true, 1);
           }
         }
