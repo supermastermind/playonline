@@ -1068,6 +1068,14 @@ function draw_graphic_bis() {
              || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) ) { // (mobile device check 2/2)
           CompressedDisplayMode = true;
           mobileMode = true;
+        }    
+        if (mobileMode && (/Android/i.test(navigator.userAgent))) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome      
+          tickChar = "\u2713"; /* (check mark/tick) */
+          crossChar = "\u2715"; /* (cross) */
+        }
+        else {
+          tickChar = "\u2714"; /* (check mark/tick) */
+          crossChar = "\u2716"; /* (cross) */      
         }        
         if (CompressedDisplayMode) {
 
@@ -1075,7 +1083,7 @@ function draw_graphic_bis() {
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
             document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);;
           }
-          document.getElementById("resetCurrentCodeButton").value = "\u2716"; // (cross)
+          document.getElementById("resetCurrentCodeButton").value = crossChar; // (cross)
           document.getElementById("playRandomCodeButton").value = "R";
           document.getElementById("playPossibleCodeButton").value = "P";
           document.getElementById("revealSecretColorButton").value = "?";
@@ -1224,14 +1232,6 @@ function draw_graphic_bis() {
     // ***************
 
     nbMaxAttemptsToDisplay = ((!showPossibleCodesMode) ? nbMaxAttempts : currentAttemptNumber-1);
-    if (!mobileMode) {
-      tickChar = "\u2714"; /* (check mark/tick) */
-      crossChar = "\u2716"; /* (cross) */
-    }
-    else { // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
-      tickChar = "\u2713"; /* (check mark/tick) */
-      crossChar = "\u2715"; /* (cross) */      
-    }
 
     // XXX optimized display event to be tested!
     if (main_graph_update_needed) { // Note: no double buffering is needed in javascript (canvas contents do not need to be refilled as during Java's repaint())
