@@ -1269,12 +1269,7 @@ function draw_graphic_bis() {
 
       // Draw main game table
       // ********************
-
-      displayString("\u2714" /* (check mark/tick) */, 2, 10, 3,
-                    greenColor, highlightColor, ctx);      
-      displayString("\u2713" /* (check mark/tick) */, 2, 9, 3,
-                    greenColor, highlightColor, ctx);      
-                    
+                   
       x_0 = get_x_pixel(x_min+x_step*(2+(90*(nbColumns+1))/100));
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       x_1 = get_x_pixel(x_min+x_step*(2+(90*(nbColumns+1))/100+nbColumns*2));
@@ -1437,17 +1432,17 @@ function draw_graphic_bis() {
           if (performanceIndicators[i-1] == -1.0 /* (useless code) */) {
             displayGUIError("useless code inconsistency", false);
           }
-          displayString("\u2714" /* (check mark/tick) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
+          displayString("\u2713" /* (check mark/tick) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
                         greenColor, backgroundColor, ctx);
         }
         else { // code is not possible
           res = false;
           if (i > 2) {
-            res = displayString(" \u2716" /* (cross) */ + " " + isPossible + " ", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
+            res = displayString(" \u2715" /* (cross) */ + " " + isPossible + " ", 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
                                 redColor, backgroundColor, ctx, true, 0, true, 0);
           }
           if (!res) {
-            displayString("\u2716" /* (cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
+            displayString("\u2715" /* (cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, i-1, 3,
                           redColor, backgroundColor, ctx);
           }
         }
@@ -1503,7 +1498,7 @@ function draw_graphic_bis() {
                               darkGray, backgroundColor_2, ctx, 0, true)) {
             display2Strings("Number", "of codes", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, ((nbColumns>=7)?5:4),
                             darkGray, backgroundColor_2, ctx, 0, true);
-            displayString("\u2714 / \u2716" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
+            displayString("\u2713 / \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
                           darkGray, backgroundColor_2, ctx, true, 0, true, 1);
           }
         }
@@ -1512,7 +1507,7 @@ function draw_graphic_bis() {
                               lightGray, backgroundColor_2, ctx, 0, true)) {
             display2Strings("Number", "of codes", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, ((nbColumns>=7)?5:4),
                             lightGray, backgroundColor_2, ctx, 0, true);
-            displayString("\u2714 / \u2716" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
+            displayString("\u2713 / \u2715" /* (check mark/tick + cross) */, 2+(90*(nbColumns+1))/100+nbColumns*2+((nbColumns>=7)?5:4)+4, nbMaxAttemptsToDisplay, 3,
                           lightGray, backgroundColor_2, ctx, true, 0, true, 1);
           }
         }
@@ -1821,7 +1816,7 @@ function draw_graphic_bis() {
         ctx.font = small_basic_font;
         for (let col = 0; col < nbColumns; col++) {
           if (codeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1) != emptyColor) {
-            displayString("\u2714" /* (check mark/tick) */, 2+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+1+nbPossibleCodesShown, 2,
+            displayString("\u2713" /* (check mark/tick) */, 2+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+1+nbPossibleCodesShown, 2,
                           greenColor, backgroundColor_2, ctx, true, 0, true, 1, true /* (ignoreRanges) */);
           }
         }
