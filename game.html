@@ -482,7 +482,7 @@
           let latitude = '-';
           let longitude = '-';
           let ipaddress = '-';
-                        
+
           if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined')
                && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
                       
@@ -540,17 +540,14 @@
         
           if (typeof(Storage) !== 'undefined') {
             if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
-              if (localStorage.countryname) {
+              if (localStorage.countryname && localStorage.cityname) {
                 country = localStorage.countryname + '~';
-                region = '-'; // (skipped to simplify)                                          
-              }                          
-              if (localStorage.cityname) {
+                region = '-'; // (skipped to simplify)
                 city = localStorage.cityname + '~';
-                region = '-'; // (skipped to simplify)                                          
-              }                                        
+              }
             }
           }
-            
+
           console.log(country);
           document.getElementById('form_country_id').value = country;
           console.log(region);
