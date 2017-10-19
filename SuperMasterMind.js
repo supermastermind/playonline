@@ -1088,7 +1088,7 @@ function draw_graphic_bis() {
             document.getElementById("my_canvas").style.height = "99%";          
           }
           
-          left_border_margin_x = 1.0;  // Left border margin for x axis in %
+          left_border_margin_x = 1.0;   // Left border margin for x axis in %
           right_border_margin_x = 1.0;  // Right border margin for x axis in %
           bottom_border_margin_y = 1.5; // Bottom border margin for y axis in %
           top_border_margin_y = 1.0;    // Top border margin for y axis in %          
