@@ -558,10 +558,11 @@
               }
             }
           }
-          if ( (country == '-') || (city == '-') ) { // Country and/or city are not clear
+          if ( (country == '-') || (city == '-') ) { // Country and/or city are still not clear
             if (country != '-') {
               country = country + '?';
             }
+            region = '-'; // (skipped to simplify)
             if (city != '-') {
               city = city + '?';
             }
