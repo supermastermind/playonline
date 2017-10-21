@@ -18,6 +18,13 @@
     <meta name="description" content="Play Super Master Mind / Code breaker online, assisted by a calculator which knows the optimal strategy!">
     <meta name="keywords" content="super master mind, mastermind, code breaker, game, online, strategy, optimal, javascript">    
     
+    <!-- Remote console at http://console.re/supermastermind displaying console text (provided all calls to "console.log(xxx)" are replaced by "console.re.log(xxx)")
+         and console errors (provided the .js scripts to be debugged are copied/pasted directly into this HTML file between <script>...</script> tags, 
+         otherwise error details, among which error line numbers, will be lost):
+      <script src="https://console.re/connector.js" data-channel="supermastermind" id="consolerescript"></script>
+      <script>console.re.log('remote log enabled!');</script>    
+    -->
+    
     <style>
 
       /* *** Main styles *** */
@@ -112,6 +119,7 @@
         // font-size: 14px;
         font-weight: bold;
         width: 100%;
+        box-shadow: none;
 
         /* text not selectable */
         -webkit-touch-callout: none;
@@ -127,8 +135,9 @@
     <script>
       try {
         eval('"use strict"; class foo {}');
+        let test_let_inst = "test let"; // old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1)
       } catch (err) {
-        alert("Your browser does not support javascript classes.\nThis game can be run in Chrome and Firefox (but not in Internet Explorer). If you use Safari, please upgrade it to the last version to solve this error.");
+        alert("Your browser cannot run this game.\nThis game can be run in the last versions of Chrome, Firefox and Safari (v10 or above). Please update your browser if necessary.\nThis game cannot be run in Internet Explorer.");
       }
     </script>
     <script src='lib/jquery-3.2.1.min.js'></script>
