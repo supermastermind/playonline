@@ -2469,5 +2469,3 @@ draw_graphic();
 
 let canvas = document.getElementById("my_canvas");
 canvas.addEventListener("click", mouseClick, false);
-
-
