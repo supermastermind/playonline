@@ -625,7 +625,7 @@ function mouseClick(e) {
         }
       }
       catch (exc) {
-        displayGUIError("mouseReleased: " + exc, err.stack);
+        displayGUIError("mouseReleased: " + exc, exc.stack);
       }
 
     }
@@ -2470,3 +2470,4 @@ draw_graphic();
 let canvas = document.getElementById("my_canvas");
 canvas.addEventListener("click", mouseClick, false);
 
+
