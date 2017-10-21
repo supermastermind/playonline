@@ -437,8 +437,7 @@
              && (e.parameter.rankings.length > 10) ) {
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
           console.log(rsp_rankings_str);   
-          if ( (rsp_rankings_str.indexOf('FF00FF') != -1) // check if current game score is in top scores
-               && (!gameOnGoing()) ) { // check that no new game was started
+          if (rsp_rankings_str.indexOf('FF00FF') != -1) { // check if current game score is in top scores
             if (modal_mode == -1) {
               modal_mode = 3;
               // set modal content
@@ -450,7 +449,7 @@
             }
           }
           else {
-            console.log("modal display conditions not fulfilled');
+            console.log("modal display conditions not fulfilled");
           }
         }
         else {
@@ -471,7 +470,7 @@
         }
         last_game_cnt = game_cnt;
                 
-        await sleep(3111);
+        await sleep(1111);
         
         $.getJSON('https://freegeoip.net/json/', function(data) {
                        
