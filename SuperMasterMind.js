@@ -1596,7 +1596,7 @@ function draw_graphic_bis() {
                 break;
               case 4:
                 nb_attempts_for_max_score = 3;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 450.0; // (time corresponding to 2 attempts: 15 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 360.0; // (time corresponding to 2 attempts: 12 min)
                 multiply_factor = 0.50;
                 break;                
               case 5:
@@ -1996,7 +1996,7 @@ function draw_graphic_bis() {
          && gameOnGoing() && (currentAttemptNumber > 1)
          && !(document.getElementById("revealSecretColorButton").disabled)
          && (secretCodeRevealed == 0)
-         && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1680 /* 30 min - 2 min = 28 min */ : 2580 /* 45 min - 2 min = 43 min */))  // See (*)
+         && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1260 /* 21 min */ : 2400 /* 40 min */))  // See (*)
               || (currentAttemptNumber >= nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
         document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + " blinking";
         hintHasAlreadyBlinked = true;
