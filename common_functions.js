@@ -62,7 +62,7 @@ function write_sidebar() {
       <ul>\
         <li style='margin-left:0;margin-top:0;'><a href='https://wearethemutants.com/2017/03/27/cunning-and-logic-the-international-imagery-of-mastermind/'>The international imagery of &quot;Mastermind&quot;</a></li>\
         <li style='margin-left:0;'><a href='https://en.wikipedia.org/wiki/Mastermind_(board_game)'>Mastermind on wikipedia</a></li>\
-        <li style='margin-left:0;'><a href='http://ma.wolfram.com/Mastermind.html'>Mastermind strategies</a></li>\
+        <li style='margin-left:0;'><a href='http://mathworld.wolfram.com/Mastermind.html'>Mastermind strategies</a></li>\
       </ul>\
     </div>");
 }
