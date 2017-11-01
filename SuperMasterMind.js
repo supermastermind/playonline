@@ -1683,11 +1683,11 @@ function draw_graphic_bis() {
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
-            if (score > 0.0) {
-              let rounded_score = Math.round(score * 5.0) / 5.0;
-              displayString("Score: " + rounded_score, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
-                            greenColor, backgroundColor_2, ctx, true, 0, false, 0);                          
-            }
+            // if (score > 0.0) {
+            let rounded_score = Math.round(score);
+            displayString("Score: " + rounded_score, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
+                          greenColor, backgroundColor_2, ctx, true, 0, false, 0);                          
+            // }
             
           }
           else if (currentAttemptNumber == nbMaxAttemptsToDisplay+1) { // game lost
@@ -1697,6 +1697,9 @@ function draw_graphic_bis() {
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
+            displayString("Score: 0", 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-2, ((nbColumns>=7)?5:4)+4+3,
+                          redColor, backgroundColor_2, ctx, true, 0, false, 0);                          
+                          
                           
           }
           else {
