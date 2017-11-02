@@ -1569,7 +1569,7 @@ function draw_graphic_bis() {
           timeInSeconds = timeInSeconds - timeInMinutes*60; // (range: [0;59])
           if (timeInMinutes != 0) {
             timeInSeconds = Math.floor(timeInSeconds/10.0)*10;
-            if (timeInMinutes >= 30) {
+            if (timeInMinutes >= 10) {
               timeStr = timeInMinutes + " min";
             }
             else if (timeInSeconds != 0) {
@@ -1673,7 +1673,7 @@ function draw_graphic_bis() {
             else {
               victoryStr = "You won!!!";
             }
-            
+
             displayString(victoryStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2, ((nbColumns>=7)?5:4)+4+3,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             displayString("Time: " + timeStr, 2+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+3+nbColors/2-1, ((nbColumns>=7)?5:4)+4+3,
