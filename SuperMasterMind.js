@@ -1596,7 +1596,7 @@ function draw_graphic_bis() {
                 break;
               case 4:
                 nb_attempts_for_max_score = 3;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 360.0; // (time corresponding to 2 attempts: 12 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 450.0; // (time corresponding to 2 attempts: 15 min)
                 multiply_factor = 0.75;
                 break;                
               case 5:
