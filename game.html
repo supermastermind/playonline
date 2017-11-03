@@ -445,16 +445,15 @@
              && (e.parameter.rankings.length > 10) ) {
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
           console.log(rsp_rankings_str);   
-          if (rsp_rankings_str.indexOf('FF00FF') != -1) { // check if current game score is in top scores
-            if (modal_mode == -1) {
-              modal_mode = 3;
-              // set modal content
-              modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>" 
-                               + rsp_rankings_str 
-                               + "</div>");   
-              // open modal
-              modal.open();          
-            }
+          // Rk: top scores are always displayed, even if current game score is not in them
+          if (modal_mode == -1) {
+            modal_mode = 3;
+            // set modal content
+            modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>" 
+                             + rsp_rankings_str 
+                             + "</div>");   
+            // open modal
+            modal.open();          
           }
           else {
             console.log("modal display conditions not fulfilled");
