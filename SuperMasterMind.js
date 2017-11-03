@@ -1171,7 +1171,7 @@ function draw_graphic_bis() {
             allRadioButtons[i].style.fontSize = "10px";
           }
         }
-        else if (height >= 1100) {
+        else if (height >= 1000) {
           for (let i = 0; i < allButtons.length; i ++) {
             allButtons[i].style.fontSize = "22px";
           }
@@ -1569,7 +1569,7 @@ function draw_graphic_bis() {
             }          
           }
           if (res_header1 && res_header2) {
-            if (!displayString(tickChar + " / " + crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
+            if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                darkGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                             darkGray, backgroundColor_2, ctx, true, 0, true, 1);                                 
@@ -1602,7 +1602,7 @@ function draw_graphic_bis() {
             }            
           }
           if (res_header1 && res_header2) {          
-            if (!displayString(tickChar + " / " + crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
+            if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                             lightGray, backgroundColor_2, ctx, true, 0, true, 1);
