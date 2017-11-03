@@ -1546,7 +1546,7 @@ function draw_graphic_bis() {
           }
           let res_header1 = false;          
           let res_header2 = false;          
-          if (!display2Strings("Number", "\u2009" /* (thin space) */ + "of codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if (!display2Strings("number", "\u2009" /* (thin space) */ + "of codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                darkGray, backgroundColor_2, ctx, 0, true)) {
             if (displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                               darkGray, backgroundColor_2, ctx, true, 0, true, 1)) {
@@ -1579,7 +1579,7 @@ function draw_graphic_bis() {
         else {
           let res_header1 = false;
           let res_header2 = false;
-          if (!display2Strings("Number", "\u2009" /* (thin space) */ + "of codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if (!display2Strings("number", "\u2009" /* (thin space) */ + "of codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, 0, true)) {
             if (displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                               lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
