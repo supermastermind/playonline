@@ -728,7 +728,7 @@ function updateGameSizes() {
     optimal_width = 2.25;
     tick_width = 1.35;
     
-    transition_height = 0.5;
+    transition_height = 0.4;
   }
   
   x_step = (x_max - x_min) / (attempt_nb_width // attempt number
