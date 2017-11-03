@@ -1027,7 +1027,7 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
 }
 
 function draw_graphic() {
-  //draw_graphic_bis();
+  draw_graphic_bis();
   draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
 }
 
@@ -1044,6 +1044,8 @@ function draw_graphic_bis() {
   let game_won_without_big_help = false;
   let score = -1.0;
   let nbColorsRevealed = 0;
+  
+  let optimized_main_graph_update_needed = false;
 
   try {
 
@@ -1252,7 +1254,12 @@ function draw_graphic_bis() {
             currentCode = secretCodeRevealed;
           }
         }
-        main_graph_update_needed = true;
+        if (!main_graph_update_needed) {
+          main_graph_update_needed = true; // (transition)
+          if (gameOnGoing()) {
+            optimized_main_graph_update_needed = true;
+          }
+        }
       }
     }
 
@@ -1268,7 +1275,9 @@ function draw_graphic_bis() {
       let x_0, y_0, x_1, y_1;
 
       ctx.fillStyle = backgroundColor_2;
-      ctx.fillRect(0,0,current_width,current_height);
+      if (!optimized_main_graph_update_needed) {
+        ctx.fillRect(0,0,current_width,current_height);
+      }
 
       // ***************
       // Adapt font size
