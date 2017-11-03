@@ -1027,7 +1027,7 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
 }
 
 function draw_graphic() {
-  draw_graphic_bis();
+  //draw_graphic_bis();
   draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
 }
 
