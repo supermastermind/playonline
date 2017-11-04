@@ -128,9 +128,6 @@ let optimal_width = 4;
 let tick_width = 3;
 let transition_height = 1;
 
-let funnyDisplayKey = -1;
-let lastFunnyDisplayKey = -2;
-
 // Colors
 // ******
 
@@ -1305,11 +1302,7 @@ function draw_graphic_bis() {
       let x_0, y_0, x_1, y_1;
 
       ctx.fillStyle = backgroundColor_2;
-      funnyDisplayKey = current_width * 1.1 + current_height * 2.22 + x_step * 3.333 + y_step * 4.4444; // ("funny key" used for display optimization)      
-      if (funnyDisplayKey != lastFunnyDisplayKey) {
-        ctx.fillRect(0,0,current_width,current_height);
-        lastFunnyDisplayKey = funnyDisplayKey;
-      }
+      ctx.fillRect(0,0,current_width,current_height);
 
       // ***************
       // Adapt font size
