@@ -114,9 +114,6 @@ let height_shift;
 let reduced_height;
 let x_axis_height;
 
-let last_width_fullFillRect = -1;
-let last_height_fullFillRect = -1;
-
 let x_min = 0.0;
 let x_max = 100.0;
 let y_min = 0.0;
@@ -1297,11 +1294,7 @@ function draw_graphic_bis() {
       let x_0, y_0, x_1, y_1;
 
       ctx.fillStyle = backgroundColor_2;
-      if ( (current_width != last_width_fullFillRect) || (current_height != last_height_fullFillRect) ) {
-        ctx.fillRect(0,0,current_width,current_height);
-        last_width_fullFillRect = current_width;
-        last_height_fullFillRect = current_height;           
-      }   
+      ctx.fillRect(0,0,current_width,current_height);
 
       // ***************
       // Adapt font size
