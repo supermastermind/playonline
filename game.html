@@ -599,14 +599,70 @@
             }
             localStorage.gamesok = Number(localStorage.gamesok) + 1;
             gamesok = Number(localStorage.gamesok);
-            if (!localStorage.nbgamesstarted) {
-              localStorage.nbgamesstarted = 0;
-            }     
-            if (!localStorage.nbgamesstarted_ref) {
-              localStorage.nbgamesstarted_ref = 0;
+            
+            switch (nbcolumns) {
+            
+              case 3:
+                if (!localStorage.nbgamesstarted3) {
+                  localStorage.nbgamesstarted3 = 0;
+                }     
+                if (!localStorage.nbgamesstarted3_ref) {
+                  localStorage.nbgamesstarted3_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;            
+                localStorage.nbgamesstarted3_ref = localStorage.nbgamesstarted3;
+                break;
+
+              case 4:
+                if (!localStorage.nbgamesstarted4) {
+                  localStorage.nbgamesstarted4 = 0;
+                }     
+                if (!localStorage.nbgamesstarted4_ref) {
+                  localStorage.nbgamesstarted4_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;            
+                localStorage.nbgamesstarted4_ref = localStorage.nbgamesstarted4;
+                break;
+
+              case 5:
+                if (!localStorage.nbgamesstarted5) {
+                  localStorage.nbgamesstarted5 = 0;
+                }     
+                if (!localStorage.nbgamesstarted5_ref) {
+                  localStorage.nbgamesstarted5_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;            
+                localStorage.nbgamesstarted5_ref = localStorage.nbgamesstarted5;
+                break;
+
+              case 6:
+                if (!localStorage.nbgamesstarted6) {
+                  localStorage.nbgamesstarted6 = 0;
+                }     
+                if (!localStorage.nbgamesstarted6_ref) {
+                  localStorage.nbgamesstarted6_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref - 1;            
+                localStorage.nbgamesstarted6_ref = localStorage.nbgamesstarted6;
+                break;
+                
+              case 7:
+                if (!localStorage.nbgamesstarted7) {
+                  localStorage.nbgamesstarted7 = 0;
+                }     
+                if (!localStorage.nbgamesstarted7_ref) {
+                  localStorage.nbgamesstarted7_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref - 1;            
+                localStorage.nbgamesstarted7_ref = localStorage.nbgamesstarted7;
+                break;
+                
+              default:
+                console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
+                return;
+                
             }
-            deltagames = localStorage.nbgamesstarted - localStorage.nbgamesstarted_ref - 1;            
-            localStorage.nbgamesstarted_ref = localStorage.nbgamesstarted;
+            
             if (localStorage.firstname) {
               firstname = localStorage.firstname;
             }

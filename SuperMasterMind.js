@@ -1222,9 +1222,35 @@ function draw_graphic_bis() {
           startTime = (new Date()).getTime(); // time in milliseconds
           stopTime = startTime;
           try {
-            if (typeof(Storage) !== 'undefined') {  
-              if (localStorage.nbgamesstarted) {
-                localStorage.nbgamesstarted = Number(localStorage.nbgamesstarted) + 1;
+            if (typeof(Storage) !== 'undefined') { 
+              switch (nbColumns) {
+                case 3:              
+                  if (localStorage.nbgamesstarted3) {
+                    localStorage.nbgamesstarted3 = Number(localStorage.nbgamesstarted3) + 1;
+                  }
+                  break;
+                case 4:              
+                  if (localStorage.nbgamesstarted4) {
+                    localStorage.nbgamesstarted4 = Number(localStorage.nbgamesstarted4) + 1;
+                  }
+                  break;
+                case 5:              
+                  if (localStorage.nbgamesstarted5) {
+                    localStorage.nbgamesstarted5 = Number(localStorage.nbgamesstarted5) + 1;
+                  }
+                  break;
+                case 6:              
+                  if (localStorage.nbgamesstarted6) {
+                    localStorage.nbgamesstarted6 = Number(localStorage.nbgamesstarted6) + 1;
+                  }
+                  break;
+                case 7:              
+                  if (localStorage.nbgamesstarted7) {
+                    localStorage.nbgamesstarted7 = Number(localStorage.nbgamesstarted7) + 1;
+                  }
+                  break;
+                default:
+                  throw new Error("invalid number of columns in score calculation: " + nbColumns);
               }
             }
           }
