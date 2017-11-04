@@ -1171,6 +1171,14 @@ function draw_graphic_bis() {
             allRadioButtons[i].style.fontSize = "10px";
           }
         }
+        else if (height >= 1800) {
+          for (let i = 0; i < allButtons.length; i ++) {
+            allButtons[i].style.fontSize = "28px";
+          }
+          for (let i = 0; i < allRadioButtons.length; i ++) {
+            allRadioButtons[i].style.fontSize = "28px";
+          }
+        }
         else if (height >= 1000) {
           for (let i = 0; i < allButtons.length; i ++) {
             allButtons[i].style.fontSize = "22px";
