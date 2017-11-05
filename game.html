@@ -138,6 +138,9 @@
       } catch (err) {
         alert("Your browser cannot run this game.\nThis game can be run in the last versions of Chrome, Firefox and Safari (v10 or above): update your browser version if necessary.\nThis game cannot be run in Internet Explorer.");
       }
+      if (typeof(Worker) == "undefined") {
+        alert("Your browser cannot run this game because it does not support Web workers: update your browser version if necessary.");
+      }
     </script>
     <script src='lib/jquery-3.2.1.min.js'></script>
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>

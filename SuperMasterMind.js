@@ -1,4 +1,8 @@
 
+// ***************************************************
+// ********** Main Super Master Mind script **********
+// ***************************************************
+
 // XXXs globally: .js, .html and google scripts / trace of right code to be suppressed
 
 "use strict";
@@ -21,6 +25,7 @@ let nbMinColors = 6;
 let nbMaxColors = 10;
 let nbMinColumns = 3;
 let nbMaxColumns = 7;
+let overallNbMinAttempts = 4;
 let overallNbMaxAttempts = 12;
 
 let defaultNbColumns = 5; // classical Super Master Mind game
@@ -69,6 +74,8 @@ let hintHasAlreadyBlinked = false;
 
 let errorStr = "";
 let errorCnt = 0;
+
+let gameSolver = undefined;
 
 // GUI variables
 // *************
@@ -183,6 +190,7 @@ let very_small_italic_font = defaultFont;
 let medium_basic_font = defaultFont;
 let medium_bold_font = defaultFont;
 let medium_bold_italic_font = defaultFont;
+let stats_font = defaultFont;
 let error_font = defaultFont;
 let font_size = min_font_size;
 
@@ -517,6 +525,60 @@ class CodeHandler {
 // *************************************************************************
 // *************************************************************************
 
+// ***************************
+// GameSolver worker functions
+// ***************************
+
+// Function called on gameSolver worker's message reception
+function onGameSolverMsg(e) {
+  
+  if (e.data == undefined) {
+    displayGUIError("gameSolver error: data is undefined");  
+    return;
+  }
+  let data = e.data;
+  
+  if (data.rsp_type == undefined) {
+    displayGUIError("gameSolver error: rsp_type is undefined");  
+    return;
+  }
+
+  // ************************
+  // Number of possible codes
+  // ************************
+  
+  if (data.rsp_type == 'NB_POSSIBLE_CODES') {
+    
+    if (data.nbOfPossibleCodes_p == undefined) {
+      displayGUIError("gameSolver error: nbOfPossibleCodes_p is undefined");
+    }
+    let nbOfPossibleCodes_p = Number(data.nbOfPossibleCodes_p);
+    if ( isNaN(nbOfPossibleCodes_p) || (nbOfPossibleCodes_p < 0) ) {
+      displayGUIError("gameSolver error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p);
+    }
+    
+    // alert("MSG:" + e.data);
+    // XXX function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id) {
+    writeNbOfPossibleCodes(nbOfPossibleCodes_p, 1, minNbColorsTables[0], maxNbColorsTables[0], 1, game_cnt);    
+    
+  }
+
+  // **********
+  // Error case
+  // **********
+  
+  else {
+    displayGUIError("gameSolver error: unexpected rsp_type: " + data.rsp_type);  
+    return;
+  }  
+
+}
+
+// Function called on gameSolver worker's error
+function onGameSolverError(e) {
+  displayGUIError("gameSolver error:" + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);  
+}
+
 // ***********************
 // Event-related functions
 // ***********************
@@ -716,7 +778,7 @@ function updateGameSizes() {
 
   if (!CompressedDisplayMode) {
     attempt_nb_width = 2;
-    nb_possible_codes_width = ((nbColumns>=7)?5:4);
+    nb_possible_codes_width = ((nbColumns>=7)?5:4);    
     optimal_width = 4;
     tick_width = 3;
     
@@ -724,7 +786,7 @@ function updateGameSizes() {
   }
   else {
     attempt_nb_width = 0;
-    nb_possible_codes_width = ((nbColumns>=7)?4:3); 
+    nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2)); 
     optimal_width = 2.25;
     tick_width = 1.35;
     
@@ -760,6 +822,12 @@ function resetGameAttributes(nbColumnsSelected) {
 
   let i;
 
+  // Clear gameSolver worker if necessary
+  if (gameSolver !== undefined) {
+    gameSolver.terminate(); 
+    gameSolver = undefined;
+  }     
+  
   main_graph_update_needed = true;
   codeHandler = null;
 
@@ -788,7 +856,7 @@ function resetGameAttributes(nbColumnsSelected) {
     default:
       throw new Error("invalid selection of number of columns: " + nbColumns + " (#1)");
   }
-  if ( (nbMaxAttempts < 4) || (nbMaxAttempts > overallNbMaxAttempts) ) {
+  if ( (nbMaxAttempts < overallNbMinAttempts) || (nbMaxAttempts > overallNbMaxAttempts) ) {
     throw new Error("invalid nbMaxAttempts: " + nbMaxAttempts);
   }
 
@@ -824,7 +892,7 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   performanceIndicators = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
-    performanceIndicators = PerformanceIndicatorNA;
+    performanceIndicators[i] = PerformanceIndicatorNA;
   }
   performanceIndicatorsEvaluatedSystematically = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
@@ -859,7 +927,14 @@ function resetGameAttributes(nbColumnsSelected) {
   errorCnt = 0;
 
   updateGameSizes();
-
+  
+  // Create a new worker for gameSolver
+  gameSolver = new Worker("Game" + "Solver.js");
+  gameSolver.addEventListener('message', onGameSolverMsg, false);
+  gameSolver.addEventListener('error', onGameSolverError, false);
+  // Send a message to the gameSolver worker to initialize it  
+  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'secretCode': codeHandler.codeToString(secretCode), 'game_id': game_cnt});
+  
 }
 
 function checkArraySizes() {
@@ -917,6 +992,41 @@ function isAttemptPossible(attempt_nb) { // (returns 0 if the attempt_nb th code
     }
   }
   return 0;
+}
+
+// ****************************
+// Statistics related functions
+// ****************************
+
+function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id) {
+  if (game_id != game_cnt) { // ignore other threads
+    return false;
+  }
+  if (  (nbOfPossibleCodes_p < 0)
+        || (attempt_nb != nbOfStatsFilled + 1) // stats shall be filled consecutively
+        || (attempt_nb <= 0)
+        || (attempt_nb > nbMaxAttempts)
+        || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
+        || (!codeHandler.isValid(colorsFoundCode_p)) ) {
+    displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (#1)", new Error().stack);
+    return false;
+  }
+  nbOfPossibleCodes[attempt_nb-1] = nbOfPossibleCodes_p;
+  colorsFoundCodes[attempt_nb-1] = colorsFoundCode_p;
+  let sum_max = 0;
+  for (let color = 1; color <= nbColors; color++) {
+    minNbColorsTables[attempt_nb-1][color] = minNbColorsTable_p[color];
+    maxNbColorsTables[attempt_nb-1][color] = maxNbColorsTable_p[color];
+    sum_max += maxNbColorsTables[attempt_nb-1][color];
+  }
+  if (sum_max < nbColumns) {
+    displayGUIError("invalid stats (sum_max=" + sum_max + ")", new Error().stack);
+    return false;
+  }
+  nbOfStatsFilled = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
+  main_graph_update_needed = true;
+  draw_graphic();
+  return true;
 }
 
 // **************************************
@@ -1338,7 +1448,8 @@ function draw_graphic_bis() {
       medium_basic_font = Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
       medium_bold_italic_font = "bold italic " + Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
-
+      
+      stats_font = medium_bold_font;            
       error_font = font_size + "px " + fontFamily;
 
       // Draw main game table
@@ -1472,15 +1583,18 @@ function draw_graphic_bis() {
         }
 
         let statsColor;
-        ctx.font = medium_bold_font;
+        ctx.font = stats_font;
         if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
           statsColor = darkGray;
         }
         else {
           statsColor = lightGray;
         }
-        displayString(nbOfPossibleCodes[i-1], attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
-                      statsColor, backgroundColor, ctx);
+        if (!displayString("\u2009" /* (thin space) */ + nbOfPossibleCodes[i-1] + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+                           statsColor, backgroundColor, ctx, true, 0, true, 0)) {
+          displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+                                     statsColor, backgroundColor, ctx);
+        }
         if (i < currentAttemptNumber) {
           if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
                || performanceIndicatorsEvaluatedSystematically[i-1]
@@ -2013,7 +2127,7 @@ function draw_graphic_bis() {
             globalPerfStr = "?";
           }
           else if (performanceIndicator != PerformanceIndicatorNA) {
-            globalPerfStr = String.format("%.2f", performanceIndicator).replaceAll(",",".");
+            globalPerfStr = performanceIndicator.toFixed(2).replaceAll(",",".");
           }
           // else: nothing is displayed in case of PerformanceIndicatorNA
           ctx.font = medium_bold_font;
@@ -2428,32 +2542,32 @@ function displayPerf(perf, y_cell, backgroundColor, ctx) {
       let res = displayString(" useless ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                                   redColor, backgroundColor, ctx, true, 0, true, 0);
       if (!res) {
-        displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                       redColor, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator <= -0.50) {
-      displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                     redColor, backgroundColor, ctx);
     }
     else if (performanceIndicator <= -0.25) {
-      displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                     orangeColor, backgroundColor, ctx);
     }
     else if (performanceIndicator < 0.0) {
-      displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                     lightGray, backgroundColor, ctx);
     }
     else if (performanceIndicator == 0.0) { // optimal code
       let res = displayString(" optimal ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                                   lightGray, backgroundColor, ctx, true, 0, true, 0);
       if (!res) {
-        displayString(String.format("%.2f", performanceIndicator).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                       lightGray, backgroundColor, ctx);
       }
     }
     else { // (an illogical code can be better than the optimal logical code)
-      displayString("+" + String.format("%.2f", performanceIndicator).replaceAll(",",".") + "!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      displayString("+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                     greenColor, backgroundColor, ctx);
     }
   }
