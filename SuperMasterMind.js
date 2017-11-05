@@ -411,97 +411,19 @@ class CodeHandler {
     this.code2_colors[5] = ((code2 >> 20) & 0x0000000F);
     this.code2_colors[6] = ((code2 >> 24) & 0x0000000F);
 
-    // The below operations are switch/cased for better performances
-    switch (this.nbColumns) {
-
-      case 3:
-        for (col1 = 0; col1 < 3; col1++) {
-          if (this.code1_colors[col1] == this.code2_colors[col1]) {
-            nbBlacks++;
-          }
-          else {
-            for (col2 = 0; col2 < 3; col2++) {
-              if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
-                this.colors_int[col2] = false;
-                nbWhites++;
-                break;
-              }
-            }
+    for (col1 = 0; col1 < this.nbColumns; col1++) {
+      if (this.code1_colors[col1] == this.code2_colors[col1]) {
+        nbBlacks++;
+      }
+      else {
+        for (col2 = 0; col2 < this.nbColumns; col2++) {
+          if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
+            this.colors_int[col2] = false;
+            nbWhites++;
+            break;
           }
         }
-        break;
-
-      case 4:
-        for (col1 = 0; col1 < 4; col1++) {
-          if (this.code1_colors[col1] == this.code2_colors[col1]) {
-            nbBlacks++;
-          }
-          else {
-            for (col2 = 0; col2 < 4; col2++) {
-              if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
-                this.colors_int[col2] = false;
-                nbWhites++;
-                break;
-              }
-            }
-          }
-        }
-        break;
-
-      case 5:
-        for (col1 = 0; col1 < 5; col1++) {
-          if (this.code1_colors[col1] == this.code2_colors[col1]) {
-            nbBlacks++;
-          }
-          else {
-            for (col2 = 0; col2 < 5; col2++) {
-              if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
-                this.colors_int[col2] = false;
-                nbWhites++;
-                break;
-              }
-            }
-          }
-        }
-        break;
-
-      case 6:
-        for (col1 = 0; col1 < 6; col1++) {
-          if (this.code1_colors[col1] == this.code2_colors[col1]) {
-            nbBlacks++;
-          }
-          else {
-            for (col2 = 0; col2 < 6; col2++) {
-              if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
-                this.colors_int[col2] = false;
-                nbWhites++;
-                break;
-              }
-            }
-          }
-        }
-        break;
-
-      case 7:
-        for (col1 = 0; col1 < 7; col1++) {
-          if (this.code1_colors[col1] == this.code2_colors[col1]) {
-            nbBlacks++;
-          }
-          else {
-            for (col2 = 0; col2 < 7; col2++) {
-              if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
-                this.colors_int[col2] = false;
-                nbWhites++;
-                break;
-              }
-            }
-          }
-        }
-        break;
-
-      default:
-        throw new Error("CodeHandler: fillMark (" + this.nbColumns + ")");
-
+      }
     }
 
     mark.nbBlacks = nbBlacks;
