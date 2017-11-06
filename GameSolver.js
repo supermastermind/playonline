@@ -21,6 +21,9 @@ let secretCodeForDebugOnly = -1;
 let game_id = -1;
 
 let initialNbPossibleCodes = -1;
+let colorsFoundCode = -1;
+let minNbColorsTable;
+let maxNbColorsTable;
 
 // ********************************
 // Handle messages from main thread
@@ -92,12 +95,15 @@ self.addEventListener('message', function(e) {
       throw new Error("INIT phase / invalid game_id: " + game_id);
     }
     
+    minNbColorsTable = new Array(nbColors+1);
+    maxNbColorsTable = new Array(nbColors+1);        
+    
     initialNbPossibleCodes = Math.round(Math.pow(nbColors,nbColumns));
 
     init_done = true;
     
     // XXX FOR TEST ONLY:    
-    self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes});
+    self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
     
   }
   
