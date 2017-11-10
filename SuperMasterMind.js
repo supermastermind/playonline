@@ -517,11 +517,11 @@ function onGameSolverMsg(e) {
     let game_id = Number(data.game_id);
     if ( isNaN(game_id) || (game_id < 0) ) {
       displayGUIError("gameSolver error: invalid game_id: " + game_id, new Error().stack);  
-    }
+    }    
     
     // alert("MSG:" + e.data);
-    // XXX function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id) {
-    writeNbOfPossibleCodes(nbOfPossibleCodes_p, 1, minNbColorsTables[0], maxNbColorsTables[0], 1, game_cnt);    
+    // XXX function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id)
+    writeNbOfPossibleCodes(nbOfPossibleCodes_p, 1, minNbColorsTables[0], maxNbColorsTables[0], 1, game_id);    
     
   }
 
@@ -962,6 +962,7 @@ function isAttemptPossible(attempt_nb) { // (returns 0 if the attempt_nb th code
 
 function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id) {
   if (game_id != game_cnt) { // ignore other threads
+    console.log("writeNbOfPossibleCodes() call ignored: " + game_id + ", " + game_cnt);
     return false;
   }
   if (  (nbOfPossibleCodes_p < 0)
