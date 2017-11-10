@@ -112,7 +112,18 @@ self.addEventListener('message', function(e) {
   // ***********
   
   else if (init_done && (data.req_type == 'NEW_ATTEMPT')) {
+
     // TBC
+    console.log(data.mark_nbBlacks + "B" + data.mark_nbWhites + "W: " + data.code); // XXX
+
+    if (data.game_id == undefined) {
+      throw new Error("NEW_ATTEMPT phase / game_id is undefined");
+    }
+    let attempt_game_id = Number(data.game_id);
+    if ( isNaN(attempt_game_id) || (attempt_game_id < 0) || (attempt_game_id != game_id) ) {
+      throw new Error("NEW_ATTEMPT phase / invalid game_id: " + attempt_game_id + " (" + game_id + ")");
+    }
+
   }
   
   // **********

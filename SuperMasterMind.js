@@ -1296,6 +1296,7 @@ function draw_graphic_bis() {
     else {
       if ( gameOnGoing() // playing phase
            && codeHandler.isFullAndValid(currentCode) ) { // New code submitted
+
         if (1 == currentAttemptNumber) {
           startTime = (new Date()).getTime(); // time in milliseconds
           stopTime = startTime;
@@ -1359,6 +1360,17 @@ function draw_graphic_bis() {
           }
         }
         main_graph_update_needed = true;
+        
+        // Send a message to the gameSolver worker for the new code submitted
+        let nbMaxAttemptsForEndOfGame;
+        if (gameWon) {
+          nbMaxAttemptsForEndOfGame = currentAttemptNumber-1;
+        }
+        else {
+          nbMaxAttemptsForEndOfGame = nbMaxAttempts;
+        }        
+        gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'currentAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
+        
       }
     }
 
