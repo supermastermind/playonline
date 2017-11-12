@@ -36,7 +36,7 @@ let nbColumns = -1; // N.A.
 let nbColors = -1; // N.A.
 let nbMaxAttempts = -1; // N.A.
 
-let codeHandler = null;
+let simpleCodeHandler = null;
 
 let showPossibleCodesMode = false;
 let nbMinPossibleCodesShown = -1; // N.A.
@@ -226,21 +226,25 @@ String.prototype.replaceAll = function(search, replacement) {
 // *************************************************************************
 
 // *************************************************************************
-// Code handler class
+// "Simple" Code handler class
 // *************************************************************************
 
-class CodeHandler {
+class SimpleCodeHandler { // NOTE: the code of this class is partially duplicated in GameSolver.js script
 
-  constructor(nbColumns_p, nbColors_p) {
-    if ( (nbColumns_p < Math.max(nbMinColumns,3)) || (nbColumns_p > Math.min(nbMaxColumns,7)) /* 3 and 7 is hardcoded in some methods of this class for better performances */ ) {
-      throw new Error("CodeHandler: invalid nb of columns (" + nbColumns_p + ")");
+  constructor(nbColumns_p, nbColors_p, nbMinColumns_p, nbMaxColumns_p, emptyColor_p) {
+    if ( (nbColumns_p < Math.max(nbMinColumns_p,3)) || (nbColumns_p > Math.min(nbMaxColumns_p,7)) /* 3 and 7 is hardcoded in some methods of this class for better performances */ ) {
+      throw new Error("SimpleCodeHandler: invalid nb of columns (" + nbColumns_p + ", " + nbMinColumns_p + "," + nbMaxColumns_p + ")");
+    }
+    if (nbColors_p < 0) {
+      throw new Error("SimpleCodeHandler: invalid nb of colors: (" + nbColors_p + ")");
     }
     this.nbColumns = nbColumns_p;
     this.nbColors = nbColors_p;
+    this.emptyColor = emptyColor_p;
 
-    this.code1_colors = new Array(nbMaxColumns);
-    this.code2_colors = new Array(nbMaxColumns);
-    this.colors_int = new Array(nbMaxColumns);
+    this.code1_colors = new Array(nbMaxColumns_p);
+    this.code2_colors = new Array(nbMaxColumns_p);
+    this.colors_int = new Array(nbMaxColumns_p);
   }
 
   getNbColumns() {
@@ -264,7 +268,7 @@ class CodeHandler {
       case 7:
         return ((code >> 24) & 0x0000000F);
       default:
-        throw new Error("CodeHandler: getColor (" + column + ")");
+        throw new Error("SimpleCodeHandler: getColor (" + column + ")");
     }
   }
 
@@ -285,7 +289,7 @@ class CodeHandler {
       case 7:
         return ((code & 0xF0FFFFFF) | (color << 24));
       default:
-        throw new Error("CodeHandler: setColor (" + column + ")");
+        throw new Error("SimpleCodeHandler: setColor (" + column + ")");
     }
   }
 
@@ -329,7 +333,7 @@ class CodeHandler {
     for (let col = 0; col < this.nbColumns; col++) {
       let color = this.getColor(code, col+1);
       if ( ((color < 1) || (color > this.nbColors))
-           && (color != emptyColor) ) {
+           && (color != this.emptyColor) ) {
         return false;
       }
     }
@@ -340,7 +344,7 @@ class CodeHandler {
     for (let col = 0; col < this.nbColumns; col++) {
       let color = this.getColor(code, col+1);
       if ( (color < 1) || (color > this.nbColors)
-           || (color == emptyColor) ) {
+           || (color == this.emptyColor) ) {
         return false;
       }
     }
@@ -350,7 +354,7 @@ class CodeHandler {
   nbEmptyColors(code) {
     let cnt = 0;
     for (let col = 0; col < this.nbColumns; col++) {
-      if (this.getColor(code, col+1) == emptyColor) {
+      if (this.getColor(code, col+1) == this.emptyColor) {
         cnt++;
       }
     }
@@ -364,7 +368,7 @@ class CodeHandler {
   replaceEmptyColor(code, emptyColorIdx, code2) {
     let cnt = 0;
     for (let col = 0; col < this.nbColumns; col++) {
-      if (this.getColor(code, col+1) == emptyColor) {
+      if (this.getColor(code, col+1) == this.emptyColor) {
         if (cnt == emptyColorIdx) {
           return this.setColor(code, this.getColor(code2, col+1), col+1);
         }
@@ -562,7 +566,7 @@ function resetCurrentCodeButtonClick() {
 
 function playRandomCodeButtonClick() {
   if (!document.getElementById("playRandomCodeButton").disabled) {
-    currentCode = codeHandler.createRandomCode(nbColumns);
+    currentCode = simpleCodeHandler.createRandomCode(nbColumns);
     draw_graphic();
   }
 }
@@ -581,14 +585,14 @@ function revealSecretColorButtonClick() {
   if ( (!document.getElementById("revealSecretColorButton").disabled)
        && gameOnGoing()
        && (secretCode != -1) && (secretCodeRevealed != -1) ) {
-    let nbEmptyColors = codeHandler.nbEmptyColors(secretCodeRevealed);
+    let nbEmptyColors = simpleCodeHandler.nbEmptyColors(secretCodeRevealed);
     if (nbEmptyColors <= 1) {
       displayGUIError("too many revealed colors", new Error().stack);
     }
     else if ((nbColumns-nbEmptyColors+1) < (nbColumns+1)/2) {
       playerWasHelpedSlightly = true;
       let revealedColorIdx = Math.floor(Math.random() * nbEmptyColors);
-      secretCodeRevealed = codeHandler.replaceEmptyColor(secretCodeRevealed, revealedColorIdx, secretCode);
+      secretCodeRevealed = simpleCodeHandler.replaceEmptyColor(secretCodeRevealed, revealedColorIdx, secretCode);
       currentCode = secretCodeRevealed;
       main_graph_update_needed = true;
       draw_graphic();
@@ -702,7 +706,7 @@ function mouseClick(e) {
 
 function playAColor(color, column) {
   if (gameOnGoing()) {
-    currentCode = codeHandler.setColor(currentCode, color, column);
+    currentCode = simpleCodeHandler.setColor(currentCode, color, column);
     draw_graphic();
   }
 }
@@ -791,7 +795,7 @@ function resetGameAttributes(nbColumnsSelected) {
   }     
   
   main_graph_update_needed = true;
-  codeHandler = null;
+  simpleCodeHandler = null;
 
   nbColumns = nbColumnsSelected;
   switch (nbColumns) {
@@ -822,7 +826,7 @@ function resetGameAttributes(nbColumnsSelected) {
     throw new Error("invalid nbMaxAttempts: " + nbMaxAttempts);
   }
 
-  codeHandler = new CodeHandler(nbColumns, nbColors);
+  simpleCodeHandler = new SimpleCodeHandler(nbColumns, nbColors, nbMinColumns, nbMaxColumns, emptyColor);
 
   showPossibleCodesMode = false;
   nbMinPossibleCodesShown = nbColumns+nbColors+4;
@@ -870,9 +874,9 @@ function resetGameAttributes(nbColumnsSelected) {
   nbOfStatsFilled = 0;
   currentAttemptNumber = 1;
   gameWon = false;
-  secretCode = codeHandler.createRandomCode();
+  secretCode = simpleCodeHandler.createRandomCode();
   // secretCode = 0x07777777;
-  // XXX console.log("Secret code: " + codeHandler.codeToString(secretCode));  
+  // XXX console.log("Secret code: " + simpleCodeHandler.codeToString(secretCode));  
   secretCodeRevealed = 0;
   
   game_cnt++;
@@ -948,8 +952,8 @@ function isAttemptPossible(attempt_nb) { // (returns 0 if the attempt_nb th code
   }
   let mark_tmp = {nbBlacks:0, nbWhites:0};
   for (let i = 1; i <= attempt_nb-1; i++) { // go through all codes previously played
-    codeHandler.fillMark(codesPlayed[attempt_nb-1], codesPlayed[i-1], mark_tmp);
-    if (!codeHandler.marksEqual(mark_tmp, marks[i-1])) {
+    simpleCodeHandler.fillMark(codesPlayed[attempt_nb-1], codesPlayed[i-1], mark_tmp);
+    if (!simpleCodeHandler.marksEqual(mark_tmp, marks[i-1])) {
       return i;
     }
   }
@@ -970,7 +974,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
         || (attempt_nb <= 0)
         || (attempt_nb > nbMaxAttempts)
         || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
-        || (!codeHandler.isValid(colorsFoundCode_p)) ) {
+        || (!simpleCodeHandler.isValid(colorsFoundCode_p)) ) {
     displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (#1)", new Error().stack);
     return false;
   }
@@ -1287,7 +1291,7 @@ function draw_graphic_bis() {
          || (nbColumns != nbColumnsSelected) ) { // Check event "column number change"
       resetGameAttributes(nbColumnsSelected);
     }
-    if (codeHandler.getNbColumns() != nbColumns) {
+    if (simpleCodeHandler.getNbColumns() != nbColumns) {
       throw new Error("invalid nbColumns handling");
     }
 
@@ -1296,7 +1300,7 @@ function draw_graphic_bis() {
     }
     else {
       if ( gameOnGoing() // playing phase
-           && codeHandler.isFullAndValid(currentCode) ) { // New code submitted
+           && simpleCodeHandler.isFullAndValid(currentCode) ) { // New code submitted
 
         if (1 == currentAttemptNumber) {
           startTime = (new Date()).getTime(); // time in milliseconds
@@ -1337,7 +1341,7 @@ function draw_graphic_bis() {
           catch (err) {}          
         }
         codesPlayed[currentAttemptNumber-1] = currentCode;
-        codeHandler.fillMark(secretCode, currentCode, marks[currentAttemptNumber-1]);
+        simpleCodeHandler.fillMark(secretCode, currentCode, marks[currentAttemptNumber-1]);
         if (marks[currentAttemptNumber-1].nbBlacks == nbColumns) { // game over (game won)
           stopTime = (new Date()).getTime(); // time in milliseconds
           currentAttemptNumber++;
@@ -1870,7 +1874,7 @@ function draw_graphic_bis() {
             }
             else if (playerWasHelpedSlightly) {
               victoryStr = "You won with help!";              
-              nbColorsRevealed = (nbColumns-codeHandler.nbEmptyColors(secretCodeRevealed));
+              nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
                 score = Math.max(score / 2.0, min_score);
               }
@@ -1958,7 +1962,7 @@ function draw_graphic_bis() {
         ctx.font = basic_bold_font;
         for (let color = 0; color < nbColors; color++) {
           for (let col = 0; col < nbColumns; col++) {
-            color_selection_code = codeHandler.setColor(color_selection_code, color+1, col+1);
+            color_selection_code = simpleCodeHandler.setColor(color_selection_code, color+1, col+1);
           }
           displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+1+transition_height+color, ctx);
         }
@@ -2045,7 +2049,7 @@ function draw_graphic_bis() {
 
         ctx.font = small_basic_font;
         for (let col = 0; col < nbColumns; col++) {
-          if (codeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1) != emptyColor) {
+          if (simpleCodeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1) != emptyColor) {
             displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown, 2,
                           greenColor, backgroundColor_2, ctx, true, 0, true, 1, true /* (ignoreRanges) */);
           }
@@ -2160,7 +2164,7 @@ function draw_graphic_bis() {
       else {
         document.getElementById("playPossibleCodeButton").className = "button";
       }
-      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-codeHandler.nbEmptyColors(secretCodeRevealed)+1) < (nbColumns+1)/2);
+      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed)+1) < (nbColumns+1)/2);
       if (document.getElementById("revealSecretColorButton").disabled) {
         document.getElementById("revealSecretColorButton").className = "button disabled";
       }
@@ -2404,7 +2408,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
 
 function displayCode(code, y_cell, ctx, secretCodeCase = false) {
   for (let col = 0; col < nbColumns; col++) {
-    let color = codeHandler.getColor(code, col+1);
+    let color = simpleCodeHandler.getColor(code, col+1);
     displayColor(color, attempt_nb_width+(90*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true);
   }
 }
