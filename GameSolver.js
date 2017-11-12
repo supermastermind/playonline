@@ -36,6 +36,14 @@ let initialNbPossibleCodes = -1;
 let colorsFoundCode = -1;
 let minNbColorsTable;
 let maxNbColorsTable;
+let nbColorsTableForMinMaxNbColors;
+
+let nbMaxMarks;
+
+let possibleCodesAfterNAttempts;
+let possibleCodes__PerfCalc;
+
+let nbCodesForSystematicPerfEvaluation = 2000;
 
 let currentAttemptNumber = 0;
 let nbMaxAttemptsForEndOfGame = -1;
@@ -46,6 +54,160 @@ let message_processing_ongoing = false;
 // Classes
 // *************************************************************************
 // *************************************************************************
+
+/* ********************************************************************************************************
+   OptimizedArrayInternalList class (used by OptimizedArrayList)
+   ******************************************************************************************************** */
+class OptimizedArrayInternalList {
+  constructor(granularity_p) {
+    this.list = new Array(granularity_p);
+  }
+}
+
+/* **********************************************************************************************************
+   OptimizedArrayList class: "ArrayList" of non-null integers optimized in terms of performances and memory.
+   A classical use case of this class is the handling of a memory buffer whose size is significantly flexible
+   (dynamic memory allocation instead of static allocation).
+   ********************************************************************************************************** */
+let nb_max_internal_lists = 100; // (100 means a 1% memory allocation flexibility)           
+class OptimizedArrayList {
+
+  constructor(granularity_p) {
+    if (granularity_p < 5*nb_max_internal_lists)  {
+      throw new Error("OptimizedArrayList: invalid granularity: " + granularity_p);
+    }
+    
+    this.granularity = granularity_p;
+    this.nb_elements = 0;
+    this.current_add_list_idx = 0;
+    this.current_add_idx = 0;
+    this.current_get_list_idx = 0;
+    this.current_get_idx = 0;
+    this.internal_lists = new Array(nb_max_internal_lists);
+    this.internal_lists[0] = new OptimizedArrayInternalList(this.granularity);
+  }
+
+  clear() {
+    this.nb_elements = 0;
+    this.current_add_list_idx = 0;
+    this.current_add_idx = 0;
+    this.current_get_list_idx = 0;
+    this.current_get_idx = 0;
+    // Memory is not freed explicitly (no "this.internal_lists[x] = null" (or "this.internal_lists[x].list[y] = null": N.A. for int type))
+    // => the tables allocated in memory will thus be reusable, which can fasten the processes
+  }
+
+  free() {
+    this.nb_elements = 0;
+    this.current_add_list_idx = 0;
+    this.current_add_idx = 0;
+    this.current_get_list_idx = 0;
+    this.current_get_idx = 0;
+    // Memory is freed
+    for (let list_idx = 0; list_idx < nb_max_internal_lists; list_idx++) {
+      this.internal_lists[list_idx] = null; // (help garbage collector)
+    }
+    this.internal_lists = null; // (help garbage collector)
+  }
+
+  getNbElements() {
+    return this.nb_elements;
+  }
+
+  add(value) {
+
+    // Add element
+    this.internal_lists[this.current_add_list_idx].list[this.current_add_idx] = value;
+    this.nb_elements++;
+
+    // Prepare next add
+    if (this.current_add_idx < this.granularity-1) {
+      this.current_add_idx++;
+    }
+    else {
+      if (this.current_add_list_idx >= nb_max_internal_lists-1) {
+        throw new Error("OptimizedArrayList: array is full");
+      }
+      this.current_add_list_idx++;
+      if (this.internal_lists[this.current_add_list_idx] == null) {
+        this.internal_lists[this.current_add_list_idx] = new OptimizedArrayInternalList(this.granularity);
+      }
+      this.current_add_idx = 0;
+    }
+
+  }
+
+  resetGetIterator() {
+    this.current_get_list_idx = 0;
+    this.current_get_idx = 0;
+  }
+
+  getNextElement(goToNext) {
+
+    // Get next element
+    if ( (this.current_get_list_idx < this.current_add_list_idx)
+         || ( (this.current_get_list_idx == this.current_add_list_idx) && (this.current_get_idx < this.current_add_idx) ) ) {
+
+      let value = this.internal_lists[this.current_get_list_idx].list[this.current_get_idx];
+
+      // Prepare next get
+      if (goToNext) {
+        if (this.current_get_idx < this.granularity-1) {
+          this.current_get_idx++;
+        }
+        else {
+          this.current_get_list_idx++;
+          this.current_get_idx = 0;
+        }
+      }
+
+      if (value == 0) {
+        throw new Error("OptimizedArrayList: getNextElement inconsistency");
+      }
+      return value;
+
+    }
+    else {
+      return 0;
+    }
+
+  }
+
+  replaceNextElement(value_ini_p, value_p) {
+
+    if ( (value_ini_p == 0) || (value_p == 0) ) {
+      throw new Error("OptimizedArrayList: replaceNextElement: invalid parameter (" + value_ini_p + "," + value_p + ")");
+    }
+
+    // Replace next element
+    if ( (this.current_get_list_idx < this.current_add_list_idx)
+         || ( (this.current_get_list_idx == this.current_add_list_idx) && (this.current_get_idx < this.current_add_idx) ) ) {
+
+      let value = this.internal_lists[this.current_get_list_idx].list[this.current_get_idx];
+      if (value != value_ini_p) {
+        throw new Error("OptimizedArrayList: replaceNextElement inconsistency (" + value + "," + value_ini_p + ")");
+      }
+
+      // Replace
+      this.internal_lists[this.current_get_list_idx].list[this.current_get_idx] = value_p;
+
+      // Prepare next get
+      if (this.current_get_idx < this.granularity-1) {
+        this.current_get_idx++;
+      }
+      else {
+        this.current_get_list_idx++;
+        this.current_get_idx = 0;
+      }
+
+    }
+    else {
+      throw new Error("OptimizedArrayList: replaceNextElement inconsistency");
+    }
+
+  }
+
+}
 
 // *************************************************************************
 // Code handler class
@@ -282,6 +444,356 @@ class CodeHandler { // NOTE: the code of this class is partially duplicated in S
 // *************************************************************************
 // *************************************************************************
 
+// **********************************
+// Update tables of numbers of colors
+// **********************************
+
+function updateNbColorsTables(code) {
+
+  if (!codeHandler.isEmpty(colorsFoundCode)) { // colorsFoundCode is not empty
+    for (let column = 0; column < nbColumns; column++) {
+      let color = codeHandler.getColor(colorsFoundCode, column+1);
+      if (color == emptyColor) {
+        continue;
+      }
+      let color2 = codeHandler.getColor(code, column+1);
+      if (color == nbColors+1) { // (initial value)
+        colorsFoundCode = codeHandler.setColor(colorsFoundCode, color2, column+1);
+      }
+      else if (color != color2) {
+        colorsFoundCode = codeHandler.setColor(colorsFoundCode, emptyColor, column+1);
+      }
+    }
+  }
+
+  let sum = 0;
+  for (let color = 1; color <= nbColors; color++) {
+    let nb_colors_tmp = nbColorsTableForMinMaxNbColors[color];
+    sum += nb_colors_tmp;
+    minNbColorsTable[color] = Math.min(nb_colors_tmp, minNbColorsTable[color]);
+    maxNbColorsTable[color] = Math.max(nb_colors_tmp, maxNbColorsTable[color]);
+  }
+  if (sum != nbColumns) {
+    throw new Error("updateNbColorsTables() error: " + sum);
+  }
+
+}
+
+
+// ***************************************************
+// Compute number of possible codes at a given attempt
+// ***************************************************
+
+let last_attempt_nb = 0;
+function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
+
+  if ( (attempt_nb < 1) || (attempt_nb != last_attempt_nb+1) || (nb_codes_max_listed <= 0) ) { // Calls to computeNbOfPossibleCodes() use consecutive attempt numbers
+   throw new Error("computeNbOfPossibleCodes: invalid parameters (" + attempt_nb + "," + last_attempt_nb + "," + nb_codes_max_listed + ")");
+  }
+  last_attempt_nb++;
+
+  // Initialize tables of numbers of colors
+  colorsFoundCode = codeHandler.setAllColorsIdentical(nbColors+1); // (initial value)
+  for (let color = 1; color <= nbColors; color++) {
+    minNbColorsTable[color] = nbColumns;
+    maxNbColorsTable[color] = 0;
+  }
+
+  let N; // possibleCodesAfterNAttempts is build at attempt N (shall be >= 1)
+  if (nbColumns >= 7) { // (higher memory consumption)
+    N = 3;
+  }
+  else {
+    N = 1;
+  }
+
+  if (attempt_nb <= N) {  
+
+    if (possibleCodesAfterNAttempts.getNbElements() != 0) {
+      throw new Error("computeNbOfPossibleCodes: internal error (" + possibleCodesAfterNAttempts.getNbElements() + ")");
+    }
+    
+    if (possibleCodes__PerfCalc.length != nbCodesForSystematicPerfEvaluation) {
+      throw new Error("computeNbOfPossibleCodes: internal error (possibleCodes__PerfCalc)");
+    }
+  
+    let code_tmp = 0;
+    let mark_tmp = {nbBlacks:0, nbWhites:0};
+    let cnt = 0;
+
+    switch (nbColumns) {
+
+      case 3:
+
+        for (let color1 = 1; color1 <= nbColors; color1++) {
+          for (let color2 = 1; color2 <= nbColors; color2++) {
+            for (let color3 = 1; color3 <= nbColors; color3++) {
+              code_tmp = codeHandler.setAllColors(color1, color2, color3, emptyColor, emptyColor, emptyColor, emptyColor);
+              let isPossible = true;
+              for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
+                codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
+                if (!marks[attempt_idx].equals(mark_tmp)) {
+                  isPossible = false;
+                  break;
+                }
+              }
+              if (isPossible) {
+                nbColorsTableForMinMaxNbColors.fill(0);
+                nbColorsTableForMinMaxNbColors[color1]++;
+                nbColorsTableForMinMaxNbColors[color2]++;
+                nbColorsTableForMinMaxNbColors[color3]++;
+                updateNbColorsTables(code_tmp);
+                cnt++;
+                if (attempt_nb == N) {
+                  possibleCodesAfterNAttempts.add(code_tmp);
+                }
+                if (cnt <= nb_codes_max_listed) {
+                  possibleCodes__PerfCalc[0][0].add(code_tmp);
+                }
+              }
+            }
+          }
+        }
+        break;
+
+      case 4:
+
+        for (let color1 = 1; color1 <= nbColors; color1++) {
+          for (let color2 = 1; color2 <= nbColors; color2++) {
+            for (let color3 = 1; color3 <= nbColors; color3++) {
+              for (let color4 = 1; color4 <= nbColors; color4++) {
+                code_tmp = codeHandler.setAllColors(color1, color2, color3, color4, emptyColor, emptyColor, emptyColor);
+                let isPossible = true;
+                for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
+                  codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
+                  if (!marks[attempt_idx].equals(mark_tmp)) {
+                    isPossible = false;
+                    break;
+                  }
+                }
+                if (isPossible) {
+                  nbColorsTableForMinMaxNbColors.fill(0);
+                  nbColorsTableForMinMaxNbColors[color1]++;
+                  nbColorsTableForMinMaxNbColors[color2]++;
+                  nbColorsTableForMinMaxNbColors[color3]++;
+                  nbColorsTableForMinMaxNbColors[color4]++;
+                  updateNbColorsTables(code_tmp);
+                  cnt++;
+                  if (attempt_nb == N) {
+                    possibleCodesAfterNAttempts.add(code_tmp);
+                  }
+                  if (cnt <= nb_codes_max_listed) {
+                    possibleCodes__PerfCalc[0][0].add(code_tmp);
+                  }                  
+                }
+              }
+            }
+          }
+        }
+        break;
+
+      case 5:
+
+        for (let color1 = 1; color1 <= nbColors; color1++) {
+          for (let color2 = 1; color2 <= nbColors; color2++) {
+            for (let color3 = 1; color3 <= nbColors; color3++) {
+              for (let color4 = 1; color4 <= nbColors; color4++) {
+                for (let color5 = 1; color5 <= nbColors; color5++) {
+                  code_tmp = codeHandler.setAllColors(color1, color2, color3, color4, color5, emptyColor, emptyColor);
+                  let isPossible = true;
+                  for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
+                    codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
+                    if (!marks[attempt_idx].equals(mark_tmp)) {
+                      isPossible = false;
+                      break;
+                    }
+                  }
+                  if (isPossible) {
+                    nbColorsTableForMinMaxNbColors.fill(0);
+                    nbColorsTableForMinMaxNbColors[color1]++;
+                    nbColorsTableForMinMaxNbColors[color2]++;
+                    nbColorsTableForMinMaxNbColors[color3]++;
+                    nbColorsTableForMinMaxNbColors[color4]++;
+                    nbColorsTableForMinMaxNbColors[color5]++;
+                    updateNbColorsTables(code_tmp);
+                    cnt++;
+                    if (attempt_nb == N) {
+                      possibleCodesAfterNAttempts.add(code_tmp);
+                    }
+                    if (cnt <= nb_codes_max_listed) {
+                      possibleCodes__PerfCalc[0][0].add(code_tmp);
+                    }                    
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+
+      case 6:
+
+        for (let color1 = 1; color1 <= nbColors; color1++) {
+          for (let color2 = 1; color2 <= nbColors; color2++) {
+            for (let color3 = 1; color3 <= nbColors; color3++) {
+              for (let color4 = 1; color4 <= nbColors; color4++) {
+                for (let color5 = 1; color5 <= nbColors; color5++) {
+                  for (let color6 = 1; color6 <= nbColors; color6++) {
+                    code_tmp = codeHandler.setAllColors(color1, color2, color3, color4, color5, color6, emptyColor);
+                    let isPossible = true;
+                    for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
+                      codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
+                      if (!marks[attempt_idx].equals(mark_tmp)) {
+                        isPossible = false;
+                        break;
+                      }
+                    }
+                    if (isPossible) {
+                      nbColorsTableForMinMaxNbColors.fill(0);
+                      nbColorsTableForMinMaxNbColors[color1]++;
+                      nbColorsTableForMinMaxNbColors[color2]++;
+                      nbColorsTableForMinMaxNbColors[color3]++;
+                      nbColorsTableForMinMaxNbColors[color4]++;
+                      nbColorsTableForMinMaxNbColors[color5]++;
+                      nbColorsTableForMinMaxNbColors[color6]++;
+                      updateNbColorsTables(code_tmp);
+                      cnt++;
+                      if (attempt_nb == N) {
+                        possibleCodesAfterNAttempts.add(code_tmp);
+                      }
+                      if (cnt <= nb_codes_max_listed) {
+                        possibleCodes__PerfCalc[0][0].add(code_tmp);
+                      }                      
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+
+      case 7:
+
+        for (let color1 = 1; color1 <= nbColors; color1++) {
+          for (let color2 = 1; color2 <= nbColors; color2++) {
+            for (let color3 = 1; color3 <= nbColors; color3++) {
+              for (let color4 = 1; color4 <= nbColors; color4++) {
+                for (let color5 = 1; color5 <= nbColors; color5++) {
+                  for (let color6 = 1; color6 <= nbColors; color6++) {
+                    for (let color7 = 1; color7 <= nbColors; color7++) {
+                      code_tmp = codeHandler.setAllColors(color1, color2, color3, color4, color5, color6, color7);
+                      let isPossible = true;
+                      for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
+                        codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
+                        if (!marks[attempt_idx].equals(mark_tmp)) {
+                          isPossible = false;
+                          break;
+                        }
+                      }
+                      if (isPossible) {
+                        nbColorsTableForMinMaxNbColors.fill(0);
+                        nbColorsTableForMinMaxNbColors[color1]++;
+                        nbColorsTableForMinMaxNbColors[color2]++;
+                        nbColorsTableForMinMaxNbColors[color3]++;
+                        nbColorsTableForMinMaxNbColors[color4]++;
+                        nbColorsTableForMinMaxNbColors[color5]++;
+                        nbColorsTableForMinMaxNbColors[color6]++;
+                        nbColorsTableForMinMaxNbColors[color7]++;
+                        updateNbColorsTables(code_tmp);
+                        cnt++;
+                        if (attempt_nb == N) {
+                          possibleCodesAfterNAttempts.add(code_tmp);
+                        }
+                        if (cnt <= nb_codes_max_listed) {
+                          possibleCodes__PerfCalc[0][0].add(code_tmp);
+                        }                        
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        break;
+
+      default:
+        throw new Error("computeNbOfPossibleCodes: invalid nbColumns value: " + nbColumns);
+    }
+
+    if ( (cnt <= 0) || (cnt > initialNbPossibleCodes)
+         || ( (attempt_nb == 1) && (cnt != initialNbPossibleCodes) )
+         || ( (attempt_nb < N) && (possibleCodesAfterNAttempts.getNbElements() != 0) )
+         || ( (attempt_nb == N) && (cnt != possibleCodesAfterNAttempts.getNbElements()) )
+         || (possibleCodes__PerfCalc[0][0].getNbElements() != Math.min(cnt, nb_codes_max_listed)) ) {
+        throw new Error("computeNbOfPossibleCodes: invalid cnt values (" + cnt + "," + attempt_nb + "," + possibleCodesAfterNAttempts.getNbElements() + "," + possibleCodes__PerfCalc[0][0].getNbElements() + ")");
+    }
+    return cnt;
+
+  } // (attempt_nb <= N)
+  else { // (attempt_nb > N)
+
+    let code_possible_after_N_attempts;
+    let code_possible_after_N_attempts_bis;
+    let mark_tmp = {nbBlacks:0, nbWhites:0};
+    let cnt = 0;
+    let cnt_global = 0;
+
+    possibleCodesAfterNAttempts.resetGetIterator();
+    do {
+
+      code_possible_after_N_attempts = possibleCodesAfterNAttempts.getNextElement(false /* (do not make the iteration) */);
+      if (code_possible_after_N_attempts == 0) {
+        break;
+      }
+      cnt_global++;
+
+      let isPossible;
+      if (code_possible_after_N_attempts != -1) { // ("code impossible" value)
+        isPossible = true;
+        for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
+          codeHandler.fillMark(codesPlayed[attempt_idx], code_possible_after_N_attempts, mark_tmp);
+          if (!marks[attempt_idx].equals(mark_tmp)) {
+            isPossible = false;
+            break;
+          }
+        }
+      }
+      else {
+        isPossible = false;
+      }
+
+      if (isPossible) {
+        code_possible_after_N_attempts_bis = possibleCodesAfterNAttempts.getNextElement(true /* (make the iteration) */);
+        if (code_possible_after_N_attempts != code_possible_after_N_attempts_bis) {
+          throw new Error("computeNbOfPossibleCodes: iteration inconsistency (" + code_possible_after_N_attempts + "," + code_possible_after_N_attempts_bis + ")");
+        }
+        nbColorsTableForMinMaxNbColors.fill(0);
+        for (let column = 0; column < nbColumns; column++) {
+          nbColorsTableForMinMaxNbColors[codeHandler.getColor(code_possible_after_N_attempts, column+1)]++;
+        }
+        updateNbColorsTables(code_possible_after_N_attempts);
+        cnt++;
+      }
+      else {
+        possibleCodesAfterNAttempts.replaceNextElement(code_possible_after_N_attempts, -1); // ("code impossible" value)
+      }
+
+    } while (true);
+
+    if ( (cnt <= 0) || (cnt > initialNbPossibleCodes)
+         || ( (attempt_nb == 1) && (cnt != initialNbPossibleCodes) )
+         || (cnt_global != possibleCodesAfterNAttempts.getNbElements())
+         || (possibleCodes__PerfCalc[0][0].getNbElements() != Math.min(cnt, nb_codes_max_listed)) ) {
+      throw new Error("computeNbOfPossibleCodes: invalid cnt/cnt_global values (" + cnt + "," + cnt_global + "," + possibleCodesAfterNAttempts.getNbElements() + ")");
+    }
+    return cnt;
+
+  }
+
+}
+
 // ********************************
 // Handle messages from main thread
 // ********************************
@@ -371,7 +883,50 @@ self.addEventListener('message', function(e) {
     initialNbPossibleCodes = Math.round(Math.pow(nbColors,nbColumns));    
     minNbColorsTable = new Array(nbColors+1);
     maxNbColorsTable = new Array(nbColors+1);        
+    nbColorsTableForMinMaxNbColors = new Array(nbColors+1); 
     
+    switch (nbColumns) {
+      case 3:
+        // ******************************************
+        // * Maximum number of marks for 3 columns: *
+        // * 0 black  => 0..3 whites => 4 marks     *
+        // * 1 black  => 0..2 whites => 3 marks     *
+        // * 2 blacks => 0 white     => 1 mark      *
+        // * 3 blacks => 0 white     => 1 mark      *
+        // *                *** TOTAL:  9 marks *** *
+        // ******************************************
+        nbMaxMarks = 9;
+        break;
+      case 4:
+        nbMaxMarks = 14;
+        break;
+      case 5:
+        nbMaxMarks = 20;
+        break;
+      case 6:
+        nbMaxMarks = 27;
+        break;
+      case 7:
+        // ******************************************
+        // * Maximum number of marks for 7 columns: *
+        // * 0 black  => 0..7 whites => 8 marks     *
+        // * 1 black  => 0..6 whites => 7 marks     *
+        // * 2 blacks => 0..5 whites => 6 marks     *
+        // * ...                                    *
+        // * 5 blacks => 0..2 whites => 3 marks     *
+        // * 6 blacks => 0 white     => 1 mark      *
+        // * 7 blacks => 0 white     => 1 mark      *
+        // *                *** TOTAL: 35 marks *** *
+        // ******************************************
+        nbMaxMarks = 35;
+        break;
+      default:
+        throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
+    }    
+  
+    possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
+    possibleCodes__PerfCalc = new Array(nbCodesForSystematicPerfEvaluation);
+  
     init_done = true;
     
     // XXX FOR TEST ONLY:    
