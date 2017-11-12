@@ -923,10 +923,7 @@ self.addEventListener('message', function(e) {
       default:
         throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
     }    
-  
-    possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
-    possibleCodes__PerfCalc = new Array(nbCodesForSystematicPerfEvaluation);
-  
+    
     init_done = true;
     
     // XXX FOR TEST ONLY:    
@@ -996,6 +993,11 @@ self.addEventListener('message', function(e) {
     }
 
     console.log(String(currentAttemptNumber) + ": " + codeHandler.markToString(marks[currentAttemptNumber-1]) + " " + codeHandler.codeToString(codesPlayed[currentAttemptNumber-1]));
+    
+    if (currentAttemptNumber == 1) {
+      possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
+      possibleCodes__PerfCalc = new Array(nbCodesForSystematicPerfEvaluation);
+    }
     
   }
   
