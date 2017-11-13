@@ -523,9 +523,7 @@ function onGameSolverMsg(e) {
       displayGUIError("gameSolver error: invalid game_id: " + game_id, new Error().stack);  
     }    
     
-    // alert("MSG:" + e.data);
-    // XXX function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id)
-    writeNbOfPossibleCodes(nbOfPossibleCodes_p, 1, minNbColorsTables[0], maxNbColorsTables[0], 1, game_id);    
+    writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
     
   }
 

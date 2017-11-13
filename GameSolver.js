@@ -33,6 +33,9 @@ let marks;
 let codeHandler;
 
 let initialNbPossibleCodes = -1;
+let previousNbOfPossibleCodes = -1;
+let nextNbOfPossibleCodes = -1;
+
 let colorsFoundCode = -1;
 let minNbColorsTable;
 let maxNbColorsTable;
@@ -43,6 +46,7 @@ let nbMaxMarks;
 let possibleCodesAfterNAttempts;
 let possibleCodes__PerfCalc;
 
+let nbMaxCodesListed = 100;
 let nbCodesForSystematicPerfEvaluation = 2000;
 
 let currentAttemptNumber = 0;
@@ -484,14 +488,16 @@ function updateNbColorsTables(code) {
 // Compute number of possible codes at a given attempt
 // ***************************************************
 
-let last_attempt_nb = 0;
+let last_attempt_nb = 1;
 function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
 
-  if ( (attempt_nb < 1) || (attempt_nb != last_attempt_nb+1) || (nb_codes_max_listed <= 0) ) { // Calls to computeNbOfPossibleCodes() use consecutive attempt numbers
+  if ( (attempt_nb < 2) || (attempt_nb != last_attempt_nb+1) || (nb_codes_max_listed <= 0) ) { // Calls to computeNbOfPossibleCodes() use consecutive attempt numbers
    throw new Error("computeNbOfPossibleCodes: invalid parameters (" + attempt_nb + "," + last_attempt_nb + "," + nb_codes_max_listed + ")");
   }
   last_attempt_nb++;
 
+  possibleCodes__PerfCalc.clear();
+  
   // Initialize tables of numbers of colors
   colorsFoundCode = codeHandler.setAllColorsIdentical(nbColors+1); // (initial value)
   for (let color = 1; color <= nbColors; color++) {
@@ -504,18 +510,14 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
     N = 3;
   }
   else {
-    N = 1;
+    N = 2;
   }
 
   if (attempt_nb <= N) {  
 
     if (possibleCodesAfterNAttempts.getNbElements() != 0) {
       throw new Error("computeNbOfPossibleCodes: internal error (" + possibleCodesAfterNAttempts.getNbElements() + ")");
-    }
-    
-    if (possibleCodes__PerfCalc.length != nbCodesForSystematicPerfEvaluation) {
-      throw new Error("computeNbOfPossibleCodes: internal error (possibleCodes__PerfCalc)");
-    }
+    }   
   
     let code_tmp = 0;
     let mark_tmp = {nbBlacks:0, nbWhites:0};
@@ -532,7 +534,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
               let isPossible = true;
               for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
                 codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
-                if (!marks[attempt_idx].equals(mark_tmp)) {
+                if (!codeHandler.marksEqual(marks[attempt_idx], mark_tmp)) {
                   isPossible = false;
                   break;
                 }
@@ -548,7 +550,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                   possibleCodesAfterNAttempts.add(code_tmp);
                 }
                 if (cnt <= nb_codes_max_listed) {
-                  possibleCodes__PerfCalc[0][0].add(code_tmp);
+                  possibleCodes__PerfCalc.add(code_tmp);
                 }
               }
             }
@@ -565,8 +567,8 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                 code_tmp = codeHandler.setAllColors(color1, color2, color3, color4, emptyColor, emptyColor, emptyColor);
                 let isPossible = true;
                 for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
-                  codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
-                  if (!marks[attempt_idx].equals(mark_tmp)) {
+                  codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);                  
+                  if (!codeHandler.marksEqual(marks[attempt_idx], mark_tmp)) {
                     isPossible = false;
                     break;
                   }
@@ -583,7 +585,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                     possibleCodesAfterNAttempts.add(code_tmp);
                   }
                   if (cnt <= nb_codes_max_listed) {
-                    possibleCodes__PerfCalc[0][0].add(code_tmp);
+                    possibleCodes__PerfCalc.add(code_tmp);
                   }                  
                 }
               }
@@ -603,7 +605,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                   let isPossible = true;
                   for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
                     codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
-                    if (!marks[attempt_idx].equals(mark_tmp)) {
+                    if (!codeHandler.marksEqual(marks[attempt_idx], mark_tmp)) {
                       isPossible = false;
                       break;
                     }
@@ -621,7 +623,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                       possibleCodesAfterNAttempts.add(code_tmp);
                     }
                     if (cnt <= nb_codes_max_listed) {
-                      possibleCodes__PerfCalc[0][0].add(code_tmp);
+                      possibleCodes__PerfCalc.add(code_tmp);
                     }                    
                   }
                 }
@@ -643,7 +645,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                     let isPossible = true;
                     for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
                       codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
-                      if (!marks[attempt_idx].equals(mark_tmp)) {
+                      if (!codeHandler.marksEqual(marks[attempt_idx], mark_tmp)) {
                         isPossible = false;
                         break;
                       }
@@ -662,7 +664,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                         possibleCodesAfterNAttempts.add(code_tmp);
                       }
                       if (cnt <= nb_codes_max_listed) {
-                        possibleCodes__PerfCalc[0][0].add(code_tmp);
+                        possibleCodes__PerfCalc.add(code_tmp);
                       }                      
                     }
                   }
@@ -686,7 +688,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                       let isPossible = true;
                       for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
                         codeHandler.fillMark(codesPlayed[attempt_idx], code_tmp, mark_tmp);
-                        if (!marks[attempt_idx].equals(mark_tmp)) {
+                        if (!codeHandler.marksEqual(marks[attempt_idx], mark_tmp)) {
                           isPossible = false;
                           break;
                         }
@@ -706,7 +708,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
                           possibleCodesAfterNAttempts.add(code_tmp);
                         }
                         if (cnt <= nb_codes_max_listed) {
-                          possibleCodes__PerfCalc[0][0].add(code_tmp);
+                          possibleCodes__PerfCalc.add(code_tmp);
                         }                        
                       }
                     }
@@ -726,8 +728,8 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
          || ( (attempt_nb == 1) && (cnt != initialNbPossibleCodes) )
          || ( (attempt_nb < N) && (possibleCodesAfterNAttempts.getNbElements() != 0) )
          || ( (attempt_nb == N) && (cnt != possibleCodesAfterNAttempts.getNbElements()) )
-         || (possibleCodes__PerfCalc[0][0].getNbElements() != Math.min(cnt, nb_codes_max_listed)) ) {
-        throw new Error("computeNbOfPossibleCodes: invalid cnt values (" + cnt + "," + attempt_nb + "," + possibleCodesAfterNAttempts.getNbElements() + "," + possibleCodes__PerfCalc[0][0].getNbElements() + ")");
+         || (possibleCodes__PerfCalc.getNbElements() != Math.min(cnt, nb_codes_max_listed)) ) {
+        throw new Error("computeNbOfPossibleCodes: invalid cnt values (" + cnt + "," + attempt_nb + "," + possibleCodesAfterNAttempts.getNbElements() + "," + possibleCodes__PerfCalc.getNbElements() + ")");
     }
     return cnt;
 
@@ -754,7 +756,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
         isPossible = true;
         for (let attempt_idx = 0; attempt_idx < attempt_nb-1; attempt_idx++) {
           codeHandler.fillMark(codesPlayed[attempt_idx], code_possible_after_N_attempts, mark_tmp);
-          if (!marks[attempt_idx].equals(mark_tmp)) {
+          if (!codeHandler.marksEqual(marks[attempt_idx], mark_tmp)) {
             isPossible = false;
             break;
           }
@@ -775,6 +777,9 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
         }
         updateNbColorsTables(code_possible_after_N_attempts);
         cnt++;
+        if (cnt <= nb_codes_max_listed) {
+          possibleCodes__PerfCalc.add(code_possible_after_N_attempts);
+        }        
       }
       else {
         possibleCodesAfterNAttempts.replaceNextElement(code_possible_after_N_attempts, -1); // ("code impossible" value)
@@ -785,7 +790,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
     if ( (cnt <= 0) || (cnt > initialNbPossibleCodes)
          || ( (attempt_nb == 1) && (cnt != initialNbPossibleCodes) )
          || (cnt_global != possibleCodesAfterNAttempts.getNbElements())
-         || (possibleCodes__PerfCalc[0][0].getNbElements() != Math.min(cnt, nb_codes_max_listed)) ) {
+         || (possibleCodes__PerfCalc.getNbElements() != Math.min(cnt, nb_codes_max_listed)) ) {
       throw new Error("computeNbOfPossibleCodes: invalid cnt/cnt_global values (" + cnt + "," + cnt_global + "," + possibleCodesAfterNAttempts.getNbElements() + ")");
     }
     return cnt;
@@ -819,10 +824,14 @@ self.addEventListener('message', function(e) {
   // **************
   
   if (data.req_type == 'INIT') {
-  
+   
+    // *******************
+    // Read message fields
+    // *******************
+   
     if (init_done) {
       throw new Error("INIT phase / double initialization");
-    }
+    } 
   
     if (data.nbColumns == undefined) {
       throw new Error("INIT phase / nbColumns is undefined");
@@ -869,6 +878,10 @@ self.addEventListener('message', function(e) {
       throw new Error("INIT phase / invalid game_id: " + game_id);
     }
 
+    // ********************
+    // Initialize variables
+    // ********************   
+    
     codesPlayed = new Array(nbMaxAttempts);
     for (let i = 0; i < nbMaxAttempts; i++) {
       codesPlayed[i] = 0;
@@ -880,7 +893,10 @@ self.addEventListener('message', function(e) {
     
     codeHandler = new CodeHandler(nbColumns, nbColors, nbMinColumns, nbMaxColumns, emptyColor)   
     
-    initialNbPossibleCodes = Math.round(Math.pow(nbColors,nbColumns));    
+    initialNbPossibleCodes = Math.round(Math.pow(nbColors,nbColumns)); 
+    previousNbOfPossibleCodes = initialNbPossibleCodes;
+    nextNbOfPossibleCodes = initialNbPossibleCodes;
+    
     minNbColorsTable = new Array(nbColors+1);
     maxNbColorsTable = new Array(nbColors+1);        
     nbColorsTableForMinMaxNbColors = new Array(nbColors+1); 
@@ -924,10 +940,18 @@ self.addEventListener('message', function(e) {
         throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
     }    
     
-    init_done = true;
+    // **********
+    // Update GUI
+    // **********
     
-    // XXX FOR TEST ONLY:    
+    colorsFoundCode = codeHandler.setAllColorsIdentical(emptyColor); // value at game start
+    for (let color = 1; color <= nbColors; color++) { // values at game start
+      minNbColorsTable[color] = 0;
+      maxNbColorsTable[color] = nbColumns;
+    }
     self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
+
+    init_done = true;
     
   }
   
@@ -937,6 +961,10 @@ self.addEventListener('message', function(e) {
   
   else if (init_done && (data.req_type == 'NEW_ATTEMPT')) {
 
+    // *******************
+    // Read message fields
+    // *******************  
+  
     if (data.currentAttemptNumber == undefined) {
       throw new Error("NEW_ATTEMPT phase / currentAttemptNumber is undefined");
     }
@@ -993,11 +1021,26 @@ self.addEventListener('message', function(e) {
     }
 
     console.log(String(currentAttemptNumber) + ": " + codeHandler.markToString(marks[currentAttemptNumber-1]) + " " + codeHandler.codeToString(codesPlayed[currentAttemptNumber-1]));
-    
+
+    // ***************
+    // Main processing
+    // ***************
+
     if (currentAttemptNumber == 1) {
       possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
-      possibleCodes__PerfCalc = new Array(nbCodesForSystematicPerfEvaluation);
+      possibleCodes__PerfCalc = new OptimizedArrayList(Math.max(nbMaxCodesListed, 5*nb_max_internal_lists));
     }
+
+    previousNbOfPossibleCodes = nextNbOfPossibleCodes;
+    nextNbOfPossibleCodes = computeNbOfPossibleCodes(currentAttemptNumber+1, nbMaxCodesListed);
+    
+    // **********
+    // Update GUI
+    // **********
+    
+    if (currentAttemptNumber+1 <= nbMaxAttemptsForEndOfGame) {
+      self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': nextNbOfPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': (currentAttemptNumber+1), 'game_id': game_id});
+    }      
     
   }
   
