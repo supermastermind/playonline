@@ -53,6 +53,8 @@ let currentAttemptNumber = 0;
 let nbMaxAttemptsForEndOfGame = -1;
 let message_processing_ongoing = false;
 
+let refresh_time = 444;
+
 // *************************************************************************
 // *************************************************************************
 // Classes
@@ -729,7 +731,7 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed) {
          || ( (attempt_nb < N) && (possibleCodesAfterNAttempts.getNbElements() != 0) )
          || ( (attempt_nb == N) && (cnt != possibleCodesAfterNAttempts.getNbElements()) )
          || (possibleCodes__PerfCalc.getNbElements() != Math.min(cnt, nb_codes_max_listed)) ) {
-        throw new Error("computeNbOfPossibleCodes: invalid cnt values (" + cnt + "," + attempt_nb + "," + possibleCodesAfterNAttempts.getNbElements() + "," + possibleCodes__PerfCalc.getNbElements() + ")");
+      throw new Error("computeNbOfPossibleCodes: invalid cnt values (" + cnt + "," + attempt_nb + "," + possibleCodesAfterNAttempts.getNbElements() + "," + possibleCodes__PerfCalc.getNbElements() + ")");
     }
     return cnt;
 
@@ -949,6 +951,9 @@ self.addEventListener('message', function(e) {
       minNbColorsTable[color] = 0;
       maxNbColorsTable[color] = nbColumns;
     }
+    
+    let now = new Date().getTime();
+    while(new Date().getTime() < now + refresh_time){}
     self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
 
     init_done = true;
@@ -1026,6 +1031,8 @@ self.addEventListener('message', function(e) {
     // Main processing
     // ***************
 
+    let now = new Date().getTime();
+    
     if (currentAttemptNumber == 1) {
       possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
       possibleCodes__PerfCalc = new OptimizedArrayList(Math.max(nbMaxCodesListed, 5*nb_max_internal_lists));
@@ -1039,6 +1046,7 @@ self.addEventListener('message', function(e) {
     // **********
     
     if (currentAttemptNumber+1 <= nbMaxAttemptsForEndOfGame) {
+      while(new Date().getTime() < now + refresh_time){}      
       self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': nextNbOfPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': (currentAttemptNumber+1), 'game_id': game_id});
     }      
     
