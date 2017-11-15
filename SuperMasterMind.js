@@ -1422,9 +1422,9 @@ function draw_graphic_bis() {
       small_italic_font = "italic " + Math.floor((3*min_font_size+font_size)/4) + "px " + fontFamily;
       very_small_italic_font = "italic " + Math.floor((9*min_font_size+font_size)/10) + "px " + fontFamily;
 
-      medium_basic_font = Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
-      medium_bold_font = "bold " + Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
-      medium_bold_italic_font = "bold italic " + Math.floor((2*min_font_size+font_size)/3) + "px " + fontFamily;
+      medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
+      medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
+      medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       
       stats_font = medium_bold_font;            
       error_font = font_size + "px " + fontFamily;
@@ -1924,7 +1924,7 @@ function draw_graphic_bis() {
             displayGUIError("game over inconsistency", new Error().stack);  
           }
 
-          ctx.font = small_italic_font;
+          ctx.font = small_italic_font; // XXX
           if ((nbGamesWonWithoutHelpAtAll <= HintsThreshold) && (!gameOnGoing()) && allPossibleCodesFilled()) { // XXX Use blinking button instead!!!
             displayString("\u2193 Click below to show the possible codes", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2,
                           darkGray, backgroundColor_2, ctx, true, 1, true, 0); // XXX Bubble
@@ -2036,7 +2036,7 @@ function draw_graphic_bis() {
           displayGUIError("invalid currentPossibleCodeShown: " + currentPossibleCodeShown, new Error().stack);  
         }
 
-        ctx.font = small_italic_font;
+        ctx.font = small_italic_font; // XXX
         if (nbGamesWonWithoutHelpAtAll <= HintsThreshold) { // XXX Rename button instead
           displayString("\u2190 Back to game", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(90*(nbColumns+1))/100,  // XXX bubble
                         darkGray, backgroundColor_2, ctx, true, 1, true, 0);
@@ -2045,7 +2045,7 @@ function draw_graphic_bis() {
         // Draw always present and impossible colors
         // *****************************************
 
-        ctx.font = small_basic_font;
+        ctx.font = small_basic_font; // XXX not too small?
         for (let col = 0; col < nbColumns; col++) {
           if (simpleCodeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1) != emptyColor) {
             displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown, 2,
