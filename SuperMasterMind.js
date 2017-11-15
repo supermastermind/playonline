@@ -179,7 +179,7 @@ let highlightColor = "#FFFF00"; // Yellow
 let fontFamily = "Verdana";
 let defaultFont = "10px " + fontFamily;
 let min_font_size = 10;
-let max_font_size = 30;
+let max_font_size = 40;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
 let basic_bold_italic_font = defaultFont;
@@ -1417,10 +1417,10 @@ function draw_graphic_bis() {
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
       basic_bold_italic_font = "bold italic " + font_size + "px " + fontFamily;
 
-      small_basic_font = Math.floor((3*min_font_size+font_size)/4) + "px " + fontFamily;
-      small_bold_font = "bold " + Math.floor((3*min_font_size+font_size)/4) + "px " + fontFamily;
-      small_italic_font = "italic " + Math.floor((3*min_font_size+font_size)/4) + "px " + fontFamily;
-      very_small_italic_font = "italic " + Math.floor((9*min_font_size+font_size)/10) + "px " + fontFamily;
+      small_basic_font = Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
+      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
+      small_italic_font = "italic " + Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
+      very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.0), min_font_size) + "px " + fontFamily;
 
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
@@ -1635,7 +1635,7 @@ function draw_graphic_bis() {
         // Display game version
         // ********************
 
-        ctx.font = very_small_italic_font;
+        ctx.font = small_italic_font;
         displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors, 5,
                       lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
 
