@@ -2103,7 +2103,7 @@ function draw_graphic_bis() {
         let nbOfCodesListed = Math.min(nbOfCodes,nbPossibleCodesShown);
         if ( (currentPossibleCodeShown >= 1) && (currentPossibleCodeShown <= nbMaxAttempts) && (nbOfCodes>=1) ) {
 
-          ctx.font = medium_bold_font;
+          ctx.font = basic_bold_font;
           if (nbOfCodes == 1) {
             res = displayString("1 possible code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
                                 darkGray, backgroundColor_2, ctx, true, 0, true, 0);
@@ -2146,7 +2146,7 @@ function draw_graphic_bis() {
             displayString("at " + currentPossibleCodeShownStr + " attempt  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2, attempt_nb_width+(90*(nbColumns+1))/100,
                           darkGray, backgroundColor_2, ctx, true, 0, true, 0);
             if (nbOfCodesListed < nbOfCodes) {
-              ctx.font = medium_bold_font;
+              ctx.font = basic_bold_font;
               if (nbOfCodes-nbOfCodesListed == 1) {
                 if (!displayString("+ 1 other code ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                                    darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
@@ -2241,12 +2241,12 @@ function draw_graphic_bis() {
             // globalPerfStr = performanceIndicator.toFixed(2).replaceAll(",",".");
           // }
           // else: nothing is displayed in case of PerformanceIndicatorNA
-          // ctx.font = medium_bold_font;
+          // ctx.font = basic_bold_font;
           // displayString(globalPerfStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, y_cell, nb_possible_codes_width,
                         // lightGray, backgroundColor_2, ctx);
           // displayPerf(codeAndPerfs.relativePerformance, y_cell, backgroundColor_2, ctx);
           // if ( (codeAndPerfs.equivalenceClassId != equivalenceClassIdUNKNOWN) && (codeAndPerfs.equivalenceClassId >= 0) /* (valid value) */ ) {
-            // ctx.font = medium_bold_italic_font;
+            // ctx.font = basic_bold_font;
             // displayString("(" + codeAndPerfs.equivalenceClassId + ")", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell, tick_width,
                           // lightGray, backgroundColor_2, ctx, true, 0, true, 0);
           // }
