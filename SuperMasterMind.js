@@ -69,6 +69,7 @@ let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
 let playerWasHelpedSignificantly = false;
+let lastConsecutiveAttemptNumberForSignificantHelp = 1;
 let playerWasHelpedSlightly = false;
 
 let errorStr = "";
@@ -616,6 +617,9 @@ function playRandomCodeButtonClick() {
 function playPossibleCodeButtonClick() {
   if (!document.getElementById("playPossibleCodeButton").disabled) {
     if (currentAttemptNumber > 1) {
+      if (lastConsecutiveAttemptNumberForSignificantHelp+1 == currentAttemptNumber) {
+        lastConsecutiveAttemptNumberForSignificantHelp = currentAttemptNumber;
+      }
       playerWasHelpedSignificantly = true;
     }
     currentCode = possibleCodesLists[nbOfStatsFilled-1][0]; // select first code of the list
@@ -952,6 +956,7 @@ function resetGameAttributes(nbColumnsSelected) {
   
   newGameEvent = false;
   playerWasHelpedSignificantly = false;
+  lastConsecutiveAttemptNumberForSignificantHelp = 1;
   playerWasHelpedSlightly = false;
 
   errorStr = "";
@@ -1092,6 +1097,55 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attem
   main_graph_update_needed = true;
   draw_graphic();
   return true;
+}
+
+// ****************
+// Storage function
+// ****************
+
+function updateAndStoreNbGamesStarted(offset) {
+  
+  try {
+    if (typeof(Storage) !== 'undefined') {
+      switch (nbColumns) {
+        case 3:              
+          if (localStorage.nbgamesstarted3) {
+            localStorage.nbgamesstarted3 = Number(localStorage.nbgamesstarted3) + offset;
+          }
+          break;
+        case 4:              
+          if (localStorage.nbgamesstarted4) {
+            localStorage.nbgamesstarted4 = Number(localStorage.nbgamesstarted4) + offset;
+          }
+          break;
+        case 5:              
+          if (localStorage.nbgamesstarted5) {
+            localStorage.nbgamesstarted5 = Number(localStorage.nbgamesstarted5) + offset;
+          }
+          break;
+        case 6:              
+          if (localStorage.nbgamesstarted6) {
+            localStorage.nbgamesstarted6 = Number(localStorage.nbgamesstarted6) + offset;
+          }
+          break;
+        case 7:              
+          if (localStorage.nbgamesstarted7) {
+            localStorage.nbgamesstarted7 = Number(localStorage.nbgamesstarted7) + offset;
+          }
+          break;
+        default:
+          throw new Error("updateAndStoreNbGamesStarted(): invalid number of columns: " + nbColumns);
+      }
+    }
+    else {
+      console.log("nbgamesstarted cannot be stored (no storage support)");
+    }
+  }
+  catch (err) {
+    displayGUIError("error while storing nbgamesstarted: " + err, new Error().stack);
+  } 
+ 
+  
 }
 
 // **************************************
@@ -1403,40 +1457,7 @@ function draw_graphic_bis() {
         if (1 == currentAttemptNumber) {
           startTime = (new Date()).getTime(); // time in milliseconds
           stopTime = startTime;
-          try {
-            if (typeof(Storage) !== 'undefined') { 
-              switch (nbColumns) {
-                case 3:              
-                  if (localStorage.nbgamesstarted3) {
-                    localStorage.nbgamesstarted3 = Number(localStorage.nbgamesstarted3) + 1;
-                  }
-                  break;
-                case 4:              
-                  if (localStorage.nbgamesstarted4) {
-                    localStorage.nbgamesstarted4 = Number(localStorage.nbgamesstarted4) + 1;
-                  }
-                  break;
-                case 5:              
-                  if (localStorage.nbgamesstarted5) {
-                    localStorage.nbgamesstarted5 = Number(localStorage.nbgamesstarted5) + 1;
-                  }
-                  break;
-                case 6:              
-                  if (localStorage.nbgamesstarted6) {
-                    localStorage.nbgamesstarted6 = Number(localStorage.nbgamesstarted6) + 1;
-                  }
-                  break;
-                case 7:              
-                  if (localStorage.nbgamesstarted7) {
-                    localStorage.nbgamesstarted7 = Number(localStorage.nbgamesstarted7) + 1;
-                  }
-                  break;
-                default:
-                  throw new Error("invalid number of columns in score calculation: " + nbColumns);
-              }
-            }
-          }
-          catch (err) {}          
+          updateAndStoreNbGamesStarted(+1);
         }
         codesPlayed[currentAttemptNumber-1] = currentCode;
         simpleCodeHandler.fillMark(secretCode, currentCode, marks[currentAttemptNumber-1]);
@@ -1450,6 +1471,9 @@ function draw_graphic_bis() {
           }
           if (!playerWasHelpedSignificantly) {
             game_won_without_big_help = true;
+          }
+          if (lastConsecutiveAttemptNumberForSignificantHelp+1 == currentAttemptNumber) { // only consecutive significant helps
+            updateAndStoreNbGamesStarted(-1);          
           }
         }
         else {
