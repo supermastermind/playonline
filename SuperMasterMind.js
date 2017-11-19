@@ -180,7 +180,7 @@ let highlightColor = "#FFFF00"; // Yellow
 
 let fontFamily = "Verdana";
 let defaultFont = "10px " + fontFamily;
-let min_font_size = 9;
+let min_font_size = 8;
 let max_font_size = 40;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
@@ -2154,7 +2154,7 @@ function draw_graphic_bis() {
         // Draw always present and impossible colors
         // *****************************************
 
-        ctx.font = small_basic_font; // XXX not too small?
+        ctx.font = basic_bold_font;
         for (let col = 0; col < nbColumns; col++) {
           if (simpleCodeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1) != emptyColor) {
             displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown, 2,
