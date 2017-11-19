@@ -18,7 +18,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v0.6";
+let version = "v0.7";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 6;
@@ -70,7 +70,6 @@ let stopTime = -1; // N.A.
 let newGameEvent = true;
 let playerWasHelpedSignificantly = false;
 let playerWasHelpedSlightly = false;
-let hintHasAlreadyBlinked = false;
 
 let errorStr = "";
 let errorCnt = 0;
@@ -87,9 +86,12 @@ for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
 }
 let resetCurrentCodeButtonIniName = document.getElementById("resetCurrentCodeButton").value;
 let playRandomCodeButtonIniName = document.getElementById("playRandomCodeButton").value;
-let playPossibleCodeButtonIniName = document.getElementById("playPossibleCodeButton").value;
 let revealSecretColorButtonIniName = document.getElementById("revealSecretColorButton").value;
+let playPossibleCodeButtonIniName = document.getElementById("playPossibleCodeButton").value;
 let showPossibleCodesButtonIniName = document.getElementById("showPossibleCodesButton").value;
+let showPossibleCodesButtonCompressedName = "\u2606";
+let showPossibleCodesButtonBackToGameName = "Back to game";
+let showPossibleCodesButtonBackToGameCompressedName = "\u2936";
 
 let tableIniWidth = document.getElementById("my_table").style.width;
 let tableIniLeft = document.getElementById("my_table").style.left;
@@ -459,13 +461,13 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
 function onGameSolverMsg(e) {
   
   if (e.data == undefined) {
-    displayGUIError("gameSolver error: data is undefined", new Error().stack);  
+    displayGUIError("gameSolver msg error: data is undefined", new Error().stack);  
     return;
   }
   let data = e.data;
   
   if (data.rsp_type == undefined) {
-    displayGUIError("gameSolver error: rsp_type is undefined", new Error().stack);  
+    displayGUIError("gameSolver msg error: rsp_type is undefined", new Error().stack);  
     return;
   }
 
@@ -476,57 +478,99 @@ function onGameSolverMsg(e) {
   if (data.rsp_type == 'NB_POSSIBLE_CODES') {
     
     if (data.nbOfPossibleCodes_p == undefined) {
-      displayGUIError("gameSolver error: nbOfPossibleCodes_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);  
     }
     let nbOfPossibleCodes_p = Number(data.nbOfPossibleCodes_p);
     if ( isNaN(nbOfPossibleCodes_p) || (nbOfPossibleCodes_p < 0) ) {
-      displayGUIError("gameSolver error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p, new Error().stack);  
     }
 
     if (data.colorsFoundCode_p == undefined) {
-      displayGUIError("gameSolver error: colorsFoundCode_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined", new Error().stack);  
     }
     let colorsFoundCode_p = Number(data.colorsFoundCode_p);
     if (isNaN(colorsFoundCode_p)) {
-      displayGUIError("gameSolver error: invalid colorsFoundCode_p: " + colorsFoundCode_p, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: " + colorsFoundCode_p, new Error().stack);  
     }
     
     if (data.minNbColorsTable_p == undefined) {
-      displayGUIError("gameSolver error: minNbColorsTable_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined", new Error().stack);  
     }
     let minNbColorsTable_p = (data.minNbColorsTable_p).split(",");
     if (minNbColorsTable_p.length != nbColors+1) {
-      displayGUIError("gameSolver error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length, new Error().stack);  
     }
 
     if (data.maxNbColorsTable_p == undefined) {
-      displayGUIError("gameSolver error: maxNbColorsTable_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined", new Error().stack);  
     }
     let maxNbColorsTable_p = (data.maxNbColorsTable_p).split(",");
     if (maxNbColorsTable_p.length != nbColors+1) {
-      displayGUIError("gameSolver error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length, new Error().stack);  
     }
     
     if (data.attempt_nb == undefined) {
-      displayGUIError("gameSolver error: attempt_nb is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);  
     }
     let attempt_nb = Number(data.attempt_nb);
     if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-      displayGUIError("gameSolver error: invalid attempt_nb: " + attempt_nb, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);  
     }
 
     if (data.game_id == undefined) {
-      displayGUIError("gameSolver error: game_id is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);  
     }
     let game_id = Number(data.game_id);
     if ( isNaN(game_id) || (game_id < 0) ) {
-      displayGUIError("gameSolver error: invalid game_id: " + game_id, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);  
     }    
     
     writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
     
   }
 
+  // **********************
+  // List of possible codes
+  // **********************
+  
+  else if (data.rsp_type == 'LIST_OF_POSSIBLE_CODES') {
+    
+    if (data.possibleCodesList_p == undefined) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);  
+    }
+    let possibleCodesList_p = (data.possibleCodesList_p).split(",");
+    if ( (possibleCodesList_p.length <= 0) || (possibleCodesList_p.length > nbMaxPossibleCodesShown) ) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + data.possibleCodesList_p + ", length is " + possibleCodesList_p.length, new Error().stack);  
+    }    
+    
+    if (data.nb_possible_codes_listed == undefined) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined", new Error().stack);  
+    }
+    let nb_possible_codes_listed = Number(data.nb_possible_codes_listed);
+    if ( isNaN(nb_possible_codes_listed) || (nb_possible_codes_listed <= 0) || (nb_possible_codes_listed > nbMaxPossibleCodesShown) ) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed, new Error().stack);  
+    }
+
+    if (data.attempt_nb == undefined) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);  
+    }
+    let attempt_nb = Number(data.attempt_nb);
+    if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);  
+    }
+
+    if (data.game_id == undefined) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);  
+    }
+    let game_id = Number(data.game_id);
+    if ( isNaN(game_id) || (game_id < 0) ) {
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);  
+    }    
+    
+    writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attempt_nb, game_id);  
+    
+  }  
+  
   // **********
   // Error case
   // **********
@@ -598,22 +642,50 @@ function revealSecretColorButtonClick() {
   }
 }
 
-function showPossibleCodesButtonClick() {
+function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1) {
   if (!document.getElementById("showPossibleCodesButton").disabled) {
-    showPossibleCodesMode = !showPossibleCodesMode;
+    if (invertMode) {
+      showPossibleCodesMode = !showPossibleCodesMode;
+    }
     if (!showPossibleCodesMode) {
       nbPossibleCodesShown = -1;
       currentPossibleCodeShown = -1;
     }
     else {
       nbPossibleCodesShown = Math.max(nbMinPossibleCodesShown, Math.min(nbMaxPossibleCodesShown, 20 + (nbMaxAttempts+1 - currentAttemptNumber)));
-      currentPossibleCodeShown = 1;
+      let interesting_attempt_idx = 0;
+      let cnt = 0;
+      if (!gameWon) {
+        cnt = 1;
+      }
+      let previous_nb = -1;
+      for (let i = currentAttemptNumber-2; i >= 0; i--) {
+        if (nbOfPossibleCodes[i] > 1) {
+          interesting_attempt_idx = i;          
+          cnt++
+          if (nbOfPossibleCodes[i] >= 7) {
+            break;
+          }            
+          if ((cnt > 1) && (nbOfPossibleCodes[i] != previous_nb)) { 
+            break;
+          }
+          previous_nb = nbOfPossibleCodes[i];
+        }
+      }
+      if (newPossibleCodeShown == -1) {
+        currentPossibleCodeShown = interesting_attempt_idx+1;
+      }
+      else {
+        currentPossibleCodeShown = newPossibleCodeShown;
+      }
     }
     updateGameSizes();
+    draw_graphic();
   }
 }
 
 function mouseClick(e) {
+  
   let event_x_min, event_x_max, event_y_min, event_y_max;
   let rect = canvas.getBoundingClientRect();  
   let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
@@ -628,7 +700,7 @@ function mouseClick(e) {
     event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
     event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
     event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts+transition_height+1+transition_height+nbColors));
-    event_y_max = get_y_pixel(y_min+(currentAttemptNumber-1)*y_step);
+    event_y_max = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 
     if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
          && (mouse_y > event_y_min) && (mouse_y < event_y_max) ) {
@@ -668,38 +740,33 @@ function mouseClick(e) {
   // Attempt selection
   // *****************
 
-  /* else if ((!gameOnGoing()) && allPossibleCodesFilled()) {
-    if (superMasterMind.showPossibleCodesComboBox.getSelectedIndex() == 0) {
-      event_y_min = get_y_pixel(y_min+nbMaxAttempts*y_step);
+  else if ((!gameOnGoing()) && allPossibleCodesFilled()) {
+    
+    if (!showPossibleCodesMode) {
+      event_y_min = get_y_pixel(y_min+y_step*nbMaxAttempts);
     }
     else {
-      event_y_min = get_y_pixel(y_min+(currentAttemptNumber-1)*y_step);
+      event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
     }
     event_y_max = get_y_pixel(y_min+y_step*0);
 
     if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) {
-      let attempt_found = false;
       for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
         let y_0 = get_y_pixel(y_min+y_step*(idx+1));
         let y_1 = get_y_pixel(y_min+y_step*(idx));
         if ((mouse_y > y_0) && (mouse_y < y_1)) {
-          if (superMasterMind.showPossibleCodesComboBox.isEnabled()) {
-            superMasterMind.showPossibleCodesComboBox.setSelectedIndex((superMasterMind.showPossibleCodesComboBox.getItemCount() - (idx+1)));
-          }
-          attempt_found = true;
+          showPossibleCodesButtonClick(!showPossibleCodesMode, idx+1);
           break;
         }
       }
-      if (!attempt_found) {
-        superMasterMind.showPossibleCodesComboBox.setSelectedIndex((superMasterMind.showPossibleCodesComboBox.getItemCount() - ((currentAttemptNumber-2)+1)));
-      }
     }
     else {
-      if (superMasterMind.showPossibleCodesComboBox.isEnabled() && (superMasterMind.showPossibleCodesComboBox.getSelectedIndex() > 0)) {
-        superMasterMind.showPossibleCodesComboBox.setSelectedIndex(0);
+      if (showPossibleCodesMode) {
+        showPossibleCodesButtonClick();
       }
     }
-  } */
+  }
+  
 }
 
 function playAColor(color, column) {
@@ -777,7 +844,8 @@ function updateGameSizes() {
     }
     y_step = (y_max - y_min) / (currentAttemptNumber-1 // number of attempts reached at end of game
                                 +transition_height // margin
-                                +nbPossibleCodesShown); // possible codes
+                                +nbPossibleCodesShown // possible codes
+                                +1); // tick display
   }
 
 }
@@ -885,7 +953,6 @@ function resetGameAttributes(nbColumnsSelected) {
   newGameEvent = false;
   playerWasHelpedSignificantly = false;
   playerWasHelpedSlightly = false;
-  hintHasAlreadyBlinked = false;
 
   errorStr = "";
   errorCnt = 0;
@@ -967,10 +1034,9 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     console.log("writeNbOfPossibleCodes() call ignored: " + game_id + ", " + game_cnt);
     return false;
   }
-  if (  (nbOfPossibleCodes_p < 0)
+  if (  (nbOfPossibleCodes_p <= 0)
         || (attempt_nb != nbOfStatsFilled + 1) // stats shall be filled consecutively
-        || (attempt_nb <= 0)
-        || (attempt_nb > nbMaxAttempts)
+        || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
         || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
         || (!simpleCodeHandler.isValid(colorsFoundCode_p)) ) {
     displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (#1)", new Error().stack);
@@ -988,7 +1054,41 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     displayGUIError("invalid stats (sum_max=" + sum_max + ")", new Error().stack);
     return false;
   }
+  // XXX Temporary code: to be done in the worker - being
+  if ((attempt_nb >= 2) && (nbOfPossibleCodes[attempt_nb-1] == nbOfPossibleCodes[attempt_nb-2])) { 
+    performanceIndicators[attempt_nb-2] = -1.0;
+  }
+  // XXX Temporary code: to be done in the worker - end  
   nbOfStatsFilled = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
+  main_graph_update_needed = true;
+  draw_graphic();
+  return true;
+}
+
+function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attempt_nb, game_id) {
+  if (game_id != game_cnt) { // ignore other threads
+    console.log("writePossibleCodes() call ignored: " + game_id + ", " + game_cnt);
+    return false;
+  }
+  if ( (nb_possible_codes_listed <= 0) || (possibleCodesList_p.length < nb_possible_codes_listed)
+        || (attempt_nb != nbOfStatsFilled) // (cf. above assumption on stats writing)
+        || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
+        || (possibleCodesListsSizes[attempt_nb-1] != 0 /* initial value */)
+        || ((nbOfPossibleCodes[attempt_nb-1] <= nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbOfPossibleCodes[attempt_nb-1])) // (cf. above assumption on stats writing)
+        || ((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbMaxPossibleCodesShown)) ) { // (cf. above assumption on stats writing)        
+    displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (#3)", new Error().stack);
+    return false;
+  }
+  for (let i = 0; i < nb_possible_codes_listed; i++) {
+    let code = possibleCodesList_p[i];
+    if (!simpleCodeHandler.isFullAndValid(code)) {
+      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled + ", " + code + ")  (#4)", new Error().stack);
+      return false;
+    }
+    possibleCodesLists[attempt_nb-1][i] = code;
+  }
+  possibleCodesListsSizes[attempt_nb-1] = nb_possible_codes_listed;
+  // nbOfStatsFilled keeps unchanged (cf. above assumption on stats writing)
   main_graph_update_needed = true;
   draw_graphic();
   return true;
@@ -1187,11 +1287,11 @@ function draw_graphic_bis() {
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
             document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);;
           }
-          document.getElementById("resetCurrentCodeButton").value = crossChar; // (cross)
-          document.getElementById("playRandomCodeButton").value = "R";
-          document.getElementById("playPossibleCodeButton").value = "P";
+          document.getElementById("resetCurrentCodeButton").value = "\u2718";
+          document.getElementById("playRandomCodeButton").value = "\u266C";
           document.getElementById("revealSecretColorButton").value = "?";
-          document.getElementById("showPossibleCodesButton").value = "\uFF0A";
+          document.getElementById("playPossibleCodeButton").value = "??";          
+          document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
           document.getElementById("my_table").style.width = "100%";
           document.getElementById("my_table").style.left = "0%";
           document.getElementById("my_table").style.height = "100%";
@@ -1217,8 +1317,8 @@ function draw_graphic_bis() {
           }
           document.getElementById("resetCurrentCodeButton").value = resetCurrentCodeButtonIniName;
           document.getElementById("playRandomCodeButton").value = playRandomCodeButtonIniName;
-          document.getElementById("playPossibleCodeButton").value = playPossibleCodeButtonIniName;
           document.getElementById("revealSecretColorButton").value = revealSecretColorButtonIniName;
+          document.getElementById("playPossibleCodeButton").value = playPossibleCodeButtonIniName;          
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
           document.getElementById("my_table").style.width = tableIniWidth;
           document.getElementById("my_table").style.left = tableIniLeft;
@@ -1924,12 +2024,6 @@ function draw_graphic_bis() {
             displayGUIError("game over inconsistency", new Error().stack);  
           }
 
-          ctx.font = small_italic_font; // XXX
-          if ((nbGamesWonWithoutHelpAtAll <= HintsThreshold) && (!gameOnGoing()) && allPossibleCodesFilled()) { // XXX Use blinking button instead!!!
-            displayString("\u2193 Click below to show the possible codes", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2,
-                          darkGray, backgroundColor_2, ctx, true, 1, true, 0); // XXX Bubble
-          }
-
         }
 
         // Draw color selection
@@ -1987,19 +2081,27 @@ function draw_graphic_bis() {
 
           ctx.font = medium_bold_font;
           if (nbOfCodes == 1) {
-            res = displayString("1 possible code  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
-                          darkGray, backgroundColor_2, ctx, true, 2, true, 0);
+            res = displayString("1 possible code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                                darkGray, backgroundColor_2, ctx, true, 0, true, 0);
             if (!res) {
-              res = displayString("1 code  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
-                                                        darkGray, backgroundColor_2, ctx, true, 2, true, 0);
+              res = displayString("1\u2009code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                                  darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+              if (!res) {
+                res = displayString("1", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                                    darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+              }
             }
           }
           else {
-            res = displayString(nbOfCodes + " possible codes  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
-                                        darkGray, backgroundColor_2, ctx, true, 2, true, 0);
+            res = displayString(nbOfCodes + " possible codes ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                                darkGray, backgroundColor_2, ctx, true, 0, true, 0);
             if (!res) {
-              res = displayString(nbOfCodes + " codes  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
-                                                        darkGray, backgroundColor_2, ctx, true, 2, true, 0);
+              res = displayString(nbOfCodes + "\u2009codes ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                                  darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+              if (!res) {
+                res = displayString(String(nbOfCodes), 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                                    darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+              }                                  
             }
           }
           let currentPossibleCodeShownStr;
@@ -2018,28 +2120,35 @@ function draw_graphic_bis() {
           }
           if (res) {
             displayString("at " + currentPossibleCodeShownStr + " attempt  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2, attempt_nb_width+(90*(nbColumns+1))/100,
-                          darkGray, backgroundColor_2, ctx, true, 2, true, 0);
+                          darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+            if (nbOfCodesListed < nbOfCodes) {
+              ctx.font = medium_bold_font;
+              if (nbOfCodes-nbOfCodesListed == 1) {
+                if (!displayString("+ 1 other code ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                   darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
+                  if (!displayString("+\u2009" + "1" + "\u2009code ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                     darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
+                    displayString("+\u2009" + "1", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                  darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+                  }                                     
+                }
+              }
+              else {
+                if(!displayString("+ " + (nbOfCodes-nbOfCodesListed) + " other codes ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                  darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
+                  if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009codes ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                     darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
+                    displayString("+\u2009" + (nbOfCodes-nbOfCodesListed), 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                  darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+                  }                                     
+                }                                    
+              }
+            }                          
           }
-          if (nbOfCodesListed < nbOfCodes) {
-            ctx.font = medium_bold_font;
-            if (nbOfCodes-nbOfCodesListed == 1) {
-              displayString("+ 1 other code", attempt_nb_width+(90*(nbColumns+1))/100, nbMaxAttemptsToDisplay, nbColumns*2,
-                            darkGray, backgroundColor_2, ctx, true, 0, false, 0);
-            }
-            else {
-              displayString("+ " + (nbOfCodes-nbOfCodesListed) + " other codes", attempt_nb_width+(90*(nbColumns+1))/100, nbMaxAttemptsToDisplay, nbColumns*2,
-                            darkGray, backgroundColor_2, ctx, true, 0, false, 0);
-            }
-          }
+          
         }
         else {
           displayGUIError("invalid currentPossibleCodeShown: " + currentPossibleCodeShown, new Error().stack);  
-        }
-
-        ctx.font = small_italic_font; // XXX
-        if (nbGamesWonWithoutHelpAtAll <= HintsThreshold) { // XXX Rename button instead
-          displayString("\u2190 Back to game", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(90*(nbColumns+1))/100,  // XXX bubble
-                        darkGray, backgroundColor_2, ctx, true, 1, true, 0);
         }
 
         // Draw always present and impossible colors
@@ -2082,7 +2191,7 @@ function draw_graphic_bis() {
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
           x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
-          drawLine(ctx, x_0, y_0, x_1, y_1);
+          drawLine(ctx, x_0, y_0, x_1+1, y_1);
         }
 
         for (let col = 0; col <= nbColumns; col++) {
@@ -2094,28 +2203,29 @@ function draw_graphic_bis() {
         }
 
         for (let codeidx = 0; codeidx < nbOfCodesListed; codeidx++) {
-          let codeAndPerfs = possibleCodesLists[currentPossibleCodeShown-1][codeidx];
+          let code = possibleCodesLists[currentPossibleCodeShown-1][codeidx];
           let y_cell = nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1-codeidx;
           ctx.font = basic_bold_font;
-          displayCode(codeAndPerfs.code, y_cell, ctx);
-          let globalPerfStr = "";
-          let performanceIndicator = Math.round(codeAndPerfs.globalPerformance * 100.0) / 100.0;
-          if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
-            globalPerfStr = "?";
-          }
-          else if (performanceIndicator != PerformanceIndicatorNA) {
-            globalPerfStr = performanceIndicator.toFixed(2).replaceAll(",",".");
-          }
+          displayCode(code, y_cell, ctx);
+          // XXX TBC:
+          // let globalPerfStr = "";
+          // let performanceIndicator = Math.round(codeAndPerfs.globalPerformance * 100.0) / 100.0;
+          // if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
+            // globalPerfStr = "?";
+          // }
+          // else if (performanceIndicator != PerformanceIndicatorNA) {
+            // globalPerfStr = performanceIndicator.toFixed(2).replaceAll(",",".");
+          // }
           // else: nothing is displayed in case of PerformanceIndicatorNA
-          ctx.font = medium_bold_font;
-          displayString(globalPerfStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, y_cell, nb_possible_codes_width,
-                        lightGray, backgroundColor_2, ctx);
-          displayPerf(codeAndPerfs.relativePerformance, y_cell, backgroundColor_2, ctx);
-          if ( (codeAndPerfs.equivalenceClassId != equivalenceClassIdUNKNOWN) && (codeAndPerfs.equivalenceClassId >= 0) /* (valid value) */ ) {
-            ctx.font = medium_bold_italic_font;
-            displayString("(" + codeAndPerfs.equivalenceClassId + ")", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell, tick_width,
-                          lightGray, backgroundColor_2, ctx, true, 0, true, 0);
-          }
+          // ctx.font = medium_bold_font;
+          // displayString(globalPerfStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, y_cell, nb_possible_codes_width,
+                        // lightGray, backgroundColor_2, ctx);
+          // displayPerf(codeAndPerfs.relativePerformance, y_cell, backgroundColor_2, ctx);
+          // if ( (codeAndPerfs.equivalenceClassId != equivalenceClassIdUNKNOWN) && (codeAndPerfs.equivalenceClassId >= 0) /* (valid value) */ ) {
+            // ctx.font = medium_bold_italic_font;
+            // displayString("(" + codeAndPerfs.equivalenceClassId + ")", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell, tick_width,
+                          // lightGray, backgroundColor_2, ctx, true, 0, true, 0);
+          // }
         }
 
       }
@@ -2155,27 +2265,51 @@ function draw_graphic_bis() {
       else {
         document.getElementById("playRandomCodeButton").className  = "button";
       }
+      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed)+1) < (nbColumns+1)/2);
+      if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
+           && !(document.getElementById("revealSecretColorButton").disabled)
+           && (secretCodeRevealed == 0)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1260 /* 21 min */ : 2400 /* 40 min */))  // See (*)
+                || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
+          document.getElementById("revealSecretColorButton").className = "button blinking";
+      }
+      else if (document.getElementById("revealSecretColorButton").disabled) {
+        document.getElementById("revealSecretColorButton").className = "button disabled";
+      }
+      else {
+        document.getElementById("revealSecretColorButton").className = "button";
+      }
       document.getElementById("playPossibleCodeButton").disabled = !(gameOnGoing() && allPossibleCodesFilled());
       if (document.getElementById("playPossibleCodeButton").disabled) {
         document.getElementById("playPossibleCodeButton").className = "button disabled";
       }
       else {
         document.getElementById("playPossibleCodeButton").className = "button";
-      }
-      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed)+1) < (nbColumns+1)/2);
-      if (document.getElementById("revealSecretColorButton").disabled) {
-        document.getElementById("revealSecretColorButton").className = "button disabled";
-      }
-      else {
-        document.getElementById("revealSecretColorButton").className = "button";
-      }
+      }      
       document.getElementById("showPossibleCodesButton").disabled = !((!gameOnGoing()) && allPossibleCodesFilled());
       if (document.getElementById("showPossibleCodesButton").disabled) {
         document.getElementById("showPossibleCodesButton").className = "button disabled";
       }
       else {
-        document.getElementById("showPossibleCodesButton").className = "button";
+        document.getElementById("showPossibleCodesButton").className = "button blinking";
       }
+      
+      if (CompressedDisplayMode) {
+        if (showPossibleCodesMode) {
+          document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonBackToGameCompressedName;
+        }
+        else {
+          document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
+        }
+      }
+      else {
+        if (showPossibleCodesMode) {
+          document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonBackToGameName;
+        }
+        else {
+          document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
+        }
+      }      
 
       checkArraySizes();
 
@@ -2205,22 +2339,21 @@ function draw_graphic_bis() {
       ctx.font = basic_bold_font;
       displayCode(currentCode, currentAttemptNumber-1, ctx);
 
-    document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != secretCodeRevealed));
-    if (document.getElementById("resetCurrentCodeButton").disabled) {
-      document.getElementById("resetCurrentCodeButton").className = "button disabled";
-    }
-    else {
-      document.getElementById("resetCurrentCodeButton").className = "button";
-    }
+      document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != secretCodeRevealed));
+      if (document.getElementById("resetCurrentCodeButton").disabled) {
+        document.getElementById("resetCurrentCodeButton").className = "button disabled";
+      }
+      else {
+        document.getElementById("resetCurrentCodeButton").className = "button";
+      }
 
-    if ( (!hintHasAlreadyBlinked)
-         && gameOnGoing() && (currentAttemptNumber > 1)
-         && !(document.getElementById("revealSecretColorButton").disabled)
-         && (secretCodeRevealed == 0)
-         && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1260 /* 21 min */ : 2400 /* 40 min */))  // See (*)
-              || (currentAttemptNumber >= nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
-        document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + " blinking";
-        hintHasAlreadyBlinked = true;
+      // Useful to trigger button blinking due to time only
+      if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
+           && !(document.getElementById("revealSecretColorButton").disabled)
+           && (secretCodeRevealed == 0)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1260 /* 21 min */ : 2400 /* 40 min */))  // See (*)
+                || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
+          document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + " blinking";
       }
     }
 
@@ -2296,22 +2429,30 @@ function displayString(str, x_cell, y_cell, x_cell_width,
       ctx.fillRect(x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
     }
     if (justify == 0) { // centered
-      /* XXX TBC
       if (!displayColorMode) { // To simplify, strikethrough mode is only handled in the centered case
-        if (Math.max(Math.max(backgroundColor.getRed(), backgroundColor.getGreen()), backgroundColor.getBlue()) < 50) {
-          ctx.fillStyle = "white";
+        let redC = parseInt(backgroundColor.substring(1,3), 16);
+        let greenC = parseInt(backgroundColor.substring(3,5), 16);
+        let blueC = parseInt(backgroundColor.substring(5,7), 16);
+        if (Math.max(Math.max(redC, greenC), blueC) < 50) {
+          ctx.strokeStyle = "white";
         }
         else {
-          ctx.fillStyle = "black";
-        }
-        graphics2D.setStroke(thickStroke);
-        drawLine(ctx, x_0 + 2, y_0 - 2, x_0_next - 2, y_0_next + 2);
-        drawLine(ctx, x_0 + 2, y_0_next + 2, x_0_next - 2, y_0 - 2);
-        graphics2D.setStroke(basicStroke);
+          ctx.strokeStyle = "black";
+        }       
+        ctx.beginPath();              
+        let lineWidthIni = ctx.lineWidth;
+        ctx.lineWidth = 2;
+        ctx.moveTo(x_0 + 2, y_0 - 2);
+        ctx.lineTo(x_0_next - 2, y_0_next + 2);
+        ctx.moveTo(x_0 + 2, y_0_next + 2);
+        ctx.lineTo(x_0_next - 2, y_0 - 2);
+        ctx.stroke();  // Draw it
+        ctx.lineWidth = lineWidthIni;
+        
         ctx.fillStyle = backgroundColor;
         let half_hidding_rect_width = Math.min(16*(x_0_next - x_0)/100, str_width/2+2);
         ctx.fillRect(x_0 + (x_0_next - x_0)/2 - half_hidding_rect_width, y_0_next + 1, 2*half_hidding_rect_width+2, y_0 - y_0_next - 1);
-      } */
+      }
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "center"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
@@ -2516,39 +2657,59 @@ function displayPerf(perf, y_cell, backgroundColor, ctx) {
   }
   else if (performanceIndicator != PerformanceIndicatorNA) {
     if (performanceIndicator == -1.0) { // useless code
-      let res = displayString(" useless ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                                  redColor, backgroundColor, ctx, true, 0, true, 0);
-      if (!res) {
-        displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                      redColor, backgroundColor, ctx);
+      if (!displayString(" useless ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                         redColor, backgroundColor, ctx, true, 0, true, 0)) {
+        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                           redColor, backgroundColor, ctx, true, 0, true, 0)) {
+          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                        redColor, backgroundColor, ctx);
+        }
       }
     }
     else if (performanceIndicator <= -0.50) {
-      displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                    redColor, backgroundColor, ctx);
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                         redColor, backgroundColor, ctx, true, 0, true, 0)) {
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                      redColor, backgroundColor, ctx);                     
+      }
     }
     else if (performanceIndicator <= -0.25) {
-      displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                    orangeColor, backgroundColor, ctx);
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                         orangeColor, backgroundColor, ctx, true, 0, true, 0)) {
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                      orangeColor, backgroundColor, ctx);
+      }
     }
     else if (performanceIndicator < 0.0) {
-      displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                    lightGray, backgroundColor, ctx);
-    }
-    else if (performanceIndicator == 0.0) { // optimal code
-      let res = displayString(" optimal ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                                  lightGray, backgroundColor, ctx, true, 0, true, 0);
-      if (!res) {
-        displayString(performanceIndicator.toFixed(2).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                         lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                       lightGray, backgroundColor, ctx);
       }
     }
+    else if (performanceIndicator == 0.0) { // optimal code
+      if (!displayString(" optimal ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                         lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                           lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                       lightGray, backgroundColor, ctx);
+        }
+      }
+    }
     else { // (an illogical code can be better than the optimal logical code)
-      displayString("+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                    greenColor, backgroundColor, ctx);
+      if (!displayString("\u2009" + "+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!" + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                         greenColor, backgroundColor, ctx, true, 0, true, 0)) {
+        displayString("+" + performanceIndicator.toFixed(1).replaceAll(",",".") + "!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                      greenColor, backgroundColor, ctx);
+      }
     }
   }
-  // else: nothing is displayed in case of PerformanceIndicatorNA
+  else {
+    // Nothing is displayed in case of PerformanceIndicatorNA (but the background is updated if needed)
+    displayString("\u2368", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+                  lightGray, backgroundColor, ctx);  
+  }
 
 }
 
