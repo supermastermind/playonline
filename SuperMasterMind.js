@@ -91,7 +91,7 @@ let playPossibleCodeButtonIniName = document.getElementById("playPossibleCodeBut
 let showPossibleCodesButtonIniName = document.getElementById("showPossibleCodesButton").value;
 let showPossibleCodesButtonCompressedName = "\u2606";
 let showPossibleCodesButtonBackToGameName = "Back to game";
-let showPossibleCodesButtonBackToGameCompressedName = "\u2936";
+let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
 
 let tableIniWidth = document.getElementById("my_table").style.width;
 let tableIniLeft = document.getElementById("my_table").style.left;
@@ -180,7 +180,7 @@ let highlightColor = "#FFFF00"; // Yellow
 
 let fontFamily = "Verdana";
 let defaultFont = "10px " + fontFamily;
-let min_font_size = 10;
+let min_font_size = 9;
 let max_font_size = 40;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
@@ -618,7 +618,7 @@ function playPossibleCodeButtonClick() {
     if (currentAttemptNumber > 1) {
       playerWasHelpedSignificantly = true;
     }
-    currentCode = possibleCodesLists[nbOfStatsFilled-1][0].code; // select first code of the list
+    currentCode = possibleCodesLists[nbOfStatsFilled-1][0]; // select first code of the list
     draw_graphic();
   }
 }
@@ -2339,14 +2339,6 @@ function draw_graphic_bis() {
       ctx.font = basic_bold_font;
       displayCode(currentCode, currentAttemptNumber-1, ctx);
 
-      document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != secretCodeRevealed));
-      if (document.getElementById("resetCurrentCodeButton").disabled) {
-        document.getElementById("resetCurrentCodeButton").className = "button disabled";
-      }
-      else {
-        document.getElementById("resetCurrentCodeButton").className = "button";
-      }
-
       // Useful to trigger button blinking due to time only
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
@@ -2356,6 +2348,15 @@ function draw_graphic_bis() {
           document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + " blinking";
       }
     }
+    
+    document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != secretCodeRevealed));
+    if (document.getElementById("resetCurrentCodeButton").disabled) {
+      document.getElementById("resetCurrentCodeButton").className = "button disabled";
+    }
+    else {
+      document.getElementById("resetCurrentCodeButton").className = "button";
+    }
+    
 
   }
   catch (err) {
@@ -2707,7 +2708,7 @@ function displayPerf(perf, y_cell, backgroundColor, ctx) {
   }
   else {
     // Nothing is displayed in case of PerformanceIndicatorNA (but the background is updated if needed)
-    displayString("\u2368", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+    displayString("\u2234", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                   lightGray, backgroundColor, ctx);  
   }
 
