@@ -1992,12 +1992,12 @@ function draw_graphic_bis() {
             // Check if the player was helped
             if (playerWasHelpedSignificantly) {
               victoryStr = "You won with help!";
-              victoryStr2 = "You won /help"
+              victoryStr2 = "You won /??"
               score = 0.0;
             }
             else if (playerWasHelpedSlightly) {
               victoryStr = "You won with help!"; 
-              victoryStr2 = "You won /help"             
+              victoryStr2 = "You won /?"             
               nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
                 score = Math.max(score / 2.0, min_score);
