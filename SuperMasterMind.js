@@ -1507,7 +1507,6 @@ function draw_graphic_bis() {
 
     nbMaxAttemptsToDisplay = ((!showPossibleCodesMode) ? nbMaxAttempts : currentAttemptNumber-1);
 
-    // XXX optimized display event to be tested!
     if (main_graph_update_needed) { // Note: no double buffering is needed in javascript (canvas contents do not need to be refilled as during Java's repaint())
 
       let x_0, y_0, x_1, y_1;
@@ -2346,7 +2345,7 @@ function draw_graphic_bis() {
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
-          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "+0.00", nbColorsRevealed); // XXX to be filled properly (with perfs)
+          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "-", nbColorsRevealed); // XXX to be filled properly (with perfs)
         }
       }      
       
@@ -2386,29 +2385,6 @@ function draw_graphic_bis() {
   catch (err) {
     draw_exception = true;
     displayGUIError("draw error: " + err, err.stack);
-  }
-
-  // *********************
-  // Display errors if any
-  // *********************
-  
-  if (errorStr != "") { // XXX A tester
-    ctx.font = very_small_italic_font;
-    let errorColor;
-    if (draw_exception) { // A Java exception occurred while drawing the graphic (showPossibleCodesMode and nbMaxAttemptsToDisplay can be corrupted / inconsistent with current GUI display)
-      errorColor = "red";
-    }
-    else {
-      errorColor = "gray";
-    }
-    if (showPossibleCodesMode) { // XXX Erreurs à tester, bien affichees? tjs valides?
-      displayString(errorStr, 0, nbMaxAttemptsToDisplay+transition_height+1+transition_height-1, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width,
-                    errorColor, backgroundColor_2, ctx, true, 1, false, 0);
-    }
-    else {
-      displayString(errorStr, 0, nbMaxAttemptsToDisplay, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width,
-                    errorColor, backgroundColor_2, ctx, true, 1, false, 0);
-    }
   }
  
 }
