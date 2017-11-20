@@ -946,7 +946,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameWon = false;
   secretCode = simpleCodeHandler.createRandomCode();
   // secretCode = 0x07777777;
-  // XXX console.log("Secret code: " + simpleCodeHandler.codeToString(secretCode));  
+  // console.log("Secret code: " + simpleCodeHandler.codeToString(secretCode));  
   secretCodeRevealed = 0;
   
   game_cnt++;
@@ -2750,7 +2750,7 @@ function displayGUIError(GUIErrorStr, errStack) {
 // Code shared at https://jsfiddle.net/Ghislain999/2dw0bw6h/
 // *************************************************************************
 
-let subPixelText = function(ctx,text,x,y,fontHeight){ // XXX à utiliser?
+let subPixelText = function(ctx,text,x,y,fontHeight){
   let width = ctx.measureText(text).width + 12; // add some extra pixels
   let hOffset = Math.floor(fontHeight);
   let c = document.createElement("canvas");
