@@ -862,7 +862,13 @@ function resetGameAttributes(nbColumnsSelected) {
   if (gameSolver !== undefined) {
     gameSolver.terminate(); 
     gameSolver = undefined;
-  }     
+  } 
+
+  if ((typeof reload_needed !== "undefined") && reload_needed) {
+    reload_needed = false;
+    alert("The page needs to be reloaded...");
+    location.reload(true);
+  }  
   
   main_graph_update_needed = true;
   simpleCodeHandler = null;

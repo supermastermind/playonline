@@ -175,7 +175,11 @@
     </table><br>
     
     <!-- Run main Super Master Mind javascript -->
- 
+
+    <script>
+      let html_compatibility_game_version = "Ver_A";    
+      let reload_needed = false;
+    </script>    
     <script src='SuperMasterMind.js'></script>
     
     <!-- Handle player's info stored in distant google sheet -->
@@ -325,7 +329,7 @@
     </form>
   
     <script>   
-
+    
       function sleep(ms) { // To be called like "await sleep(1000);"
         return new Promise(resolve => setTimeout(resolve, ms));
       }
@@ -709,7 +713,7 @@
           document.getElementById('form_useragent_id').value = navigator.userAgent;
           document.getElementById('form_href_id').value = decodeURI(location.href);          
           document.getElementById('form_formsubmitdate_id').value = new Date();                    
-          document.getElementById('form_debuginfo_id').value = getLocation() + '/';                    
+          document.getElementById('form_debuginfo_id').value = getLocation() + '/' + html_compatibility_game_version;
           
           document.getElementById('form_rankings_id').value = '-';                    
           
@@ -765,7 +769,7 @@
         });
       }
             
-      setTimeout("alert(\"The page needs to be reloaded...\");location.reload(true);",8*24*3600*1000); // (reload the page from server every 8 days if necessary)
+      setTimeout("reload_needed = true;",2*24*3600*1000); // (reload the page from server every 2 days if necessary)
       
     </script>
     
