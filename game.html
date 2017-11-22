@@ -177,7 +177,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_A";    
+      let html_compatibility_game_version = "Ver_B";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -705,8 +705,8 @@
           console.log(deltagames);
           document.getElementById('form_deltagames_id').value = deltagames;  
           
-          console.log(navigator.platform);
-          document.getElementById('form_platform_id').value = navigator.platform;          
+          console.log(navigator.platform + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth);
+          document.getElementById('form_platform_id').value = navigator.platform + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth;          
           console.log(navigator.language);
           document.getElementById('form_browserlanguage_id').value = navigator.language;          
           console.log(navigator.userAgent);
