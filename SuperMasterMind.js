@@ -1915,7 +1915,10 @@ function draw_graphic_bis() {
           timeInSeconds = timeInSeconds - timeInMinutes*60; // (range: [0;59])
           if (timeInMinutes != 0) {
             timeInSeconds = Math.floor(timeInSeconds/10.0)*10;
-            if (timeInMinutes >= 10) {
+            if (timeInMinutes > 24*60) {
+              timeStr = "> 1 day";
+            }
+            else if (timeInMinutes >= 10) {
               timeStr = timeInMinutes + " min";
             }
             else if (timeInSeconds != 0) {
