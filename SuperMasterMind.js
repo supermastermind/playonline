@@ -866,7 +866,6 @@ function resetGameAttributes(nbColumnsSelected) {
 
   if ((typeof reload_needed !== "undefined") && reload_needed) {
     reload_needed = false;
-    alert("The page needs to be reloaded...");
     location.reload(true);
   }  
   
@@ -1910,15 +1909,30 @@ function draw_graphic_bis() {
 
           let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);         
          
-          let timeInSeconds = totalTimeInSeconds;          
-          let timeInMinutes = Math.floor(timeInSeconds/60);
-          timeInSeconds = timeInSeconds - timeInMinutes*60; // (range: [0;59])
-          if (timeInMinutes != 0) {
-            timeInSeconds = Math.floor(timeInSeconds/10.0)*10;
-            if (timeInMinutes > 24*60) {
-              timeStr = "> 1 day";
+          let timeInHours = Math.floor(totalTimeInSeconds/3600);
+          let timeInSecondsWithinHour = (totalTimeInSeconds - timeInHours*3600); // (range: [0;3599]       
+          let timeInMinutes = Math.floor(timeInSecondsWithinHour/60);
+          timeInSeconds = timeInSecondsWithinHour - timeInMinutes*60; // (range: [0;59])
+          
+          if (timeInHours >= 24) {
+            timeStr = "> 1 day";
+          }
+          else if (timeInHours > 0) {
+            if (timeInMinutes > 0) {
+              if (timeInMinutes < 10) {
+                timeStr = timeInHours + "h0" + timeInMinutes;
+              }              
+              else {
+                timeStr = timeInHours + "h" + timeInMinutes;
+              }
             }
-            else if (timeInMinutes >= 10) {
+            else {
+              timeStr = timeInHours + "h";
+            }
+          }
+          else if (timeInMinutes != 0) {
+            timeInSeconds = Math.floor(timeInSeconds/10.0)*10;
+            if (timeInMinutes >= 10) {
               timeStr = timeInMinutes + " min";
             }
             else if (timeInSeconds != 0) {
