@@ -666,7 +666,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       for (let i = currentAttemptNumber-2; i >= 0; i--) {
         if (nbOfPossibleCodes[i] > 1) {
           interesting_attempt_idx = i;          
-          cnt++
+          cnt++;
           if (nbOfPossibleCodes[i] >= 4) {
             break;
           }            
