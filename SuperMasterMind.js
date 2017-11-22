@@ -1920,10 +1920,10 @@ function draw_graphic_bis() {
           else if (timeInHours > 0) {
             if (timeInMinutes > 0) {
               if (timeInMinutes < 10) {
-                timeStr = timeInHours + "h0" + timeInMinutes;
+                timeStr = timeInHours + "h 0" + timeInMinutes;
               }              
               else {
-                timeStr = timeInHours + "h" + timeInMinutes;
+                timeStr = timeInHours + "h " + timeInMinutes;
               }
             }
             else {
