@@ -705,15 +705,15 @@
           console.log(deltagames);
           document.getElementById('form_deltagames_id').value = deltagames;  
           
-          console.log(navigator.platform + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth);
-          document.getElementById('form_platform_id').value = navigator.platform + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth;          
+          console.log(navigator.platform);
+          document.getElementById('form_platform_id').value = navigator.platform;          
           console.log(navigator.language);
           document.getElementById('form_browserlanguage_id').value = navigator.language;          
           console.log(navigator.userAgent);
           document.getElementById('form_useragent_id').value = navigator.userAgent;
           document.getElementById('form_href_id').value = decodeURI(location.href);          
           document.getElementById('form_formsubmitdate_id').value = new Date();                    
-          document.getElementById('form_debuginfo_id').value = getLocation() + '/' + html_compatibility_game_version;
+          document.getElementById('form_debuginfo_id').value = getLocation() + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/' + html_compatibility_game_version;
           
           document.getElementById('form_rankings_id').value = '-';                    
           
