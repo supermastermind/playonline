@@ -177,7 +177,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_Ba";    
+      let html_compatibility_game_version = "Ver_C";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -713,7 +713,7 @@
           document.getElementById('form_useragent_id').value = navigator.userAgent;
           document.getElementById('form_href_id').value = decodeURI(location.href);          
           document.getElementById('form_formsubmitdate_id').value = new Date();                    
-          document.getElementById('form_debuginfo_id').value = getLocation() + '/screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version;
+          document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version;
           
           document.getElementById('form_rankings_id').value = '-';                    
           
