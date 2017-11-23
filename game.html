@@ -177,7 +177,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_C";    
+      let html_compatibility_game_version = "Ver_D";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -214,7 +214,7 @@
                 let elt = document.getElementById("country_selection");
                 if ( (elt.selectedIndex != -1) && (elt.selectedIndex > 0) /* (skip very first option) */) {
                   if (typeof(Storage) !== 'undefined') {
-                    localStorage.countryname =  elt.options[elt.selectedIndex].text;                
+                    localStorage.countryname = elt.options[elt.selectedIndex].text;                
                   }
                 }
                 else {
@@ -273,7 +273,7 @@
               
             }
             
-            else if (modal_mode == 3) {  
+            else if (modal_mode == 3) {
               // (No particular action)
               return true; // close the modal
             }
@@ -713,7 +713,24 @@
           document.getElementById('form_useragent_id').value = navigator.userAgent;
           document.getElementById('form_href_id').value = decodeURI(location.href);          
           document.getElementById('form_formsubmitdate_id').value = new Date();                    
-          document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version;
+          
+          var extra_debug_info = "";
+          try {
+            extra_debug_info = "/Cookies:" + navigator.cookieEnabled;
+            extra_debug_info = extra_debug_info + "/Java:" + navigator.javaEnabled();
+
+            var pluginsLength = navigator.plugins.length; // (Note: plugin listing is no longer allowed in Firefox for security reasons => length=0 will be returned)
+            extra_debug_info =  extra_debug_info + "/Plugins:" + pluginsLength;
+            if (pluginsLength > 0) {
+              for (var i = 0; i < pluginsLength; i++) {
+                extra_debug_info = extra_debug_info + "|" + i + ":" + navigator.plugins[i].filename + (navigator.plugins[i].version?navigator.plugins[i].version:"");
+              }
+            }
+
+            extra_debug_info = extra_debug_info + "/MimeTypes:" + navigator.mimeTypes.length;
+          }
+          catch (exc) {}
+          document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + extra_debug_info;
           
           document.getElementById('form_rankings_id').value = '-';                    
           
