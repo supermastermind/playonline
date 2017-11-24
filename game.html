@@ -719,7 +719,7 @@
             extra_debug_info = "/Cookies:" + navigator.cookieEnabled;
             extra_debug_info = extra_debug_info + "/Java:" + navigator.javaEnabled();
 
-            var pluginsLength = navigator.plugins.length; // (Note: plugin listing is no longer allowed in Firefox for security reasons => length=0 will be returned)
+            var pluginsLength = navigator.plugins.length; // (Note: plugin listing is no longer allowed in Firefox for security reasons => length will be less than the actual value)
             extra_debug_info =  extra_debug_info + "/Plugins:" + pluginsLength;
             if (pluginsLength > 0) {
               for (var i = 0; i < pluginsLength; i++) {
