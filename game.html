@@ -766,8 +766,8 @@
             }
             else {
               if ( (!localStorage.firstname)
-                   && (gamesok >= 4) // (coherent with "history_clear_advice")
-                   && ( ((gamesok >= 8) && (score >= 33)) || ((nbcolumns == 4) && (score >= 48)) || ((nbcolumns == 5) && (score >= 70)) || ((nbcolumns >= 6) && (score >= 90)) ) ) { // (experienced player)
+                   && (gamesok >= 3) // (coherent with "history_clear_advice")
+                   && ( (gamesok >= 10) || ((gamesok >= 7) && (score >= 33)) || ((nbcolumns == 4) && (score >= 44)) || ((nbcolumns == 5) && (score >= 60)) || ((nbcolumns >= 6) && (score >= 90)) ) ) { // (experienced player)
                 if (modal_mode == -1) {                   
                   modal_mode = 2;
                   // set modal content
