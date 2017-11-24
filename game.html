@@ -766,15 +766,15 @@
             }
             else {
               if ( (!localStorage.firstname)
-                   && (gamesok >= 3)
-                   && ( ((gamesok >= 8) && (score >= 33)) || ((nbcolumns == 4) && (gamesok >= 4) && (score >= 48)) || ((nbcolumns == 5) && (score >= 70)) || ((nbcolumns >= 6) && (score >= 90)) ) ) { // (experienced player)
+                   && (gamesok >= 4) // (coherent with "history_clear_advice")
+                   && ( ((gamesok >= 8) && (score >= 33)) || ((nbcolumns == 4) && (score >= 48)) || ((nbcolumns == 5) && (score >= 70)) || ((nbcolumns >= 6) && (score >= 90)) ) ) { // (experienced player)
                 if (modal_mode == -1) {                   
                   modal_mode = 2;
                   // set modal content
                   modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"  
                                    + "<h2>You seem to be an experienced player!<br>Please enter your first name, it will be stored together with your next scores:</h2>"
                                    + "<h3>Your first name (between 3 and 12 letters, no spaces):</h3><input id='firstname_input' type='text' value='John?' maxlength='12'></input>"
-                                   + "<h4>Close this dialog to skip this step</h4>"
+                                   + "<h4>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</h4>"
                                    + "</div>");
                   // open modal
                   modal.open();                                      
