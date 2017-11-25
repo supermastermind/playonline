@@ -75,6 +75,8 @@ let playerWasHelpedSlightly = false;
 let errorStr = "";
 let errorCnt = 0;
 
+let tmp_perf = 0; // XXX Temporary code
+
 let gameSolver = undefined;
 
 // GUI variables
@@ -967,6 +969,8 @@ function resetGameAttributes(nbColumnsSelected) {
   errorStr = "";
   errorCnt = 0;
 
+  tmp_perf = 0; // XXX Temporary code
+  
   updateGameSizes();
   
   // Create a new worker for gameSolver
@@ -1067,6 +1071,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
   // XXX Temporary code: to be done in the worker - being
   if ((attempt_nb >= 2) && (nbOfPossibleCodes[attempt_nb-1] == nbOfPossibleCodes[attempt_nb-2])) { 
     performanceIndicators[attempt_nb-2] = -1.0;
+    tmp_perf = tmp_perf-1;
   }
   // XXX Temporary code: to be done in the worker - end  
   nbOfStatsFilled = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
@@ -2375,7 +2380,7 @@ function draw_graphic_bis() {
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
-          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, "-", nbColorsRevealed); // XXX to be filled properly (with perfs)
+          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "&#x2234" : String(tmp_perf)), nbColorsRevealed); // XXX to be filled properly (with perfs)
         }
       }      
       
