@@ -669,7 +669,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
         if (nbOfPossibleCodes[i] > 1) {
           interesting_attempt_idx = i;          
           cnt++;
-          if (nbOfPossibleCodes[i] >= 4) {
+          if (nbOfPossibleCodes[i] >= 3) {
             break;
           }            
           if ((cnt > 1) && (nbOfPossibleCodes[i] != previous_nb)) { 
