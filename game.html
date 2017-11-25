@@ -182,7 +182,7 @@
     </script>    
     <script src='SuperMasterMind.js'></script>
     
-    <!-- Handle player's info stored in distant google sheet -->
+    <!-- Handle player's info -->
 
     <script src='lib/tingle-master/dist/tingle.min.js'></script>
     <script>
@@ -201,6 +201,16 @@
           },
           onClose: function() {
             console.log('modal closed');
+            
+            if (modal_mode == 2) {
+              if (typeof(Storage) !== 'undefined') {
+                if (localStorage.firstname) {
+                  document.getElementById('form_firstname_id').value = localStorage.firstname;                 
+                }
+              }
+            }
+            setTimeout("submitForm();",444);
+            
             modal_mode = -1;
           },
           beforeClose: function() {  
@@ -430,18 +440,31 @@
       }
       
       // Interesting links about JSONP:
-      // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
+      // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
       //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
-      function callGoogleScript(my_form_url) { 
+      function submitForm() {
+        // console.log(JSON.stringify($("#my_form").serializeArray()));
+        let elements = document.getElementById("my_form").elements;
+        let my_form_url = document.getElementById("my_form").action + '?';
+        for (let i = 0, element; element = elements[i++];) {
+          my_form_url = my_form_url + element.name + '=' + element.value + '&';
+        }      
+        my_form_url = my_form_url + "my_callback_fct=handle_rsp";
+        // console.log(my_form_url);          
+
+        // Submit form
         jQuery.ajax({
           crossDomain: true,
           url: my_form_url,
           method: "GET",
           dataType: "jsonp"
         });
+        
+        // document.getElementById('my_form').submit(); 
+        // $("#my_form").submit();
       }
-
+      
       var playerid_prefix = "ID/";      
       function handle_rsp(e) {
         if ( (typeof e.parameter !== 'undefined')
@@ -734,20 +757,7 @@
           
           document.getElementById('form_rankings_id').value = '-';                    
           
-          // console.log(JSON.stringify($("#my_form").serializeArray()));
-          let elements = document.getElementById("my_form").elements;
-          let my_form_url = document.getElementById("my_form").action + '?';
-          for (let i = 0, element; element = elements[i++];) {
-            my_form_url = my_form_url + element.name + '=' + element.value + '&';
-          }      
-          my_form_url = my_form_url + "my_callback_fct=handle_rsp";
-          // console.log(my_form_url);          
-
-          // Submit form for google sheet update
-          callGoogleScript(my_form_url);
-          // document.getElementById('my_form').submit(); 
-          // $("#my_form").submit();
-          
+          var form_to_be_submitted = true;
           if (typeof(Storage) !== 'undefined') {
             if ( ((city == '-') && (!localStorage.cityname))
                  || ((country == '-') && (!localStorage.countryname)) ) {
@@ -762,12 +772,13 @@
                                  + "</div>");   
                 // open modal
                 modal.open();
+                form_to_be_submitted = true; // (to simplify)                
               }
             }
             else {
               if ( (!localStorage.firstname)
                    && (gamesok >= 3) // (coherent with "history_clear_advice")
-                   && ( (gamesok >= 10) || ((gamesok >= 7) && (score >= 33)) || ((nbcolumns == 4) && (score >= 44)) || ((nbcolumns == 5) && (score >= 60)) || ((nbcolumns >= 6) && (score >= 90)) ) ) { // (experienced player)
+                   && ( (gamesok >= 10) || ((gamesok >= 7) && (score >= 31)) || ((nbcolumns == 4) && (score >= 38)) || ((nbcolumns == 5) && (score >= 51)) || ((nbcolumns >= 6) && (score >= 76)) ) ) { // (experienced player)
                 if (modal_mode == -1) {                   
                   modal_mode = 2;
                   // set modal content
@@ -777,11 +788,17 @@
                                    + "<h4>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</h4>"
                                    + "</div>");
                   // open modal
-                  modal.open();                                      
+                  modal.open(); 
+                  form_to_be_submitted = false; // for form be submitted when modal is closed                  
                 }
               }            
             }
           }
+          
+          if (form_to_be_submitted) {
+            console.log("FORM SUBMIT SKIPPED");
+            submitForm();
+          }          
           
         });
       }
