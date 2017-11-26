@@ -541,7 +541,7 @@
                && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
                       
             if ((typeof data.country_name != 'undefined') && (data.country_name.length >= 3)) {
-              // country = data.country_name;            
+              country = data.country_name;            
             }
             else {
               console.log('invalid country name in response');
@@ -559,7 +559,7 @@
               console.log('invalid zip code in response');
             }          
             if ((typeof data.city != 'undefined') && (data.city.length >= 3)) {
-              // city = data.city;            
+              city = data.city;            
             }
             else {
               console.log('invalid city name in response');
