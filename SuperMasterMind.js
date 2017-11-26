@@ -1987,7 +1987,7 @@ function draw_graphic_bis() {
                 throw new Error("invalid number of columns in score calculation: " + nbColumns);
             }
             let max_score = 100.0;
-            let min_score = 1.0;
+            let min_score = 1.0 + Math.min(totalTimeInSeconds/1000000, 0.4);
             let score_from_nb_attempts;
             if (currentAttemptNumber-1 /* number of attempts */ <= nb_attempts_for_max_score) { // (all the very low numbers of attempts ("lucky games") are handled the same way)
               score_from_nb_attempts = max_score;
