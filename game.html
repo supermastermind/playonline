@@ -810,9 +810,11 @@
           }
           
           if (form_to_be_submitted) {
-            console.log("(form submission skipped)");
             submitForm();
           }          
+          else {
+            console.log("(form submission skipped)");
+          }
           
         });
       }
