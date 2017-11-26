@@ -773,8 +773,8 @@
           
           var form_to_be_submitted = true;
           if (typeof(Storage) !== 'undefined') {
-            if ( ((city == '-') && (!localStorage.cityname))
-                 || ((country == '-') && (!localStorage.countryname)) ) {
+            if ( (!localStorage.cityname)
+                 || (!localStorage.countryname) ) {
               if (modal_mode == -1) {
                 modal_mode = 1;
                 // set modal content                
