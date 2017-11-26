@@ -177,7 +177,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_E";    
+      let html_compatibility_game_version = "Ver_F";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -202,9 +202,23 @@
           onClose: function() {
             console.log('modal closed');
             
-            if (modal_mode == 2) {
+            if (modal_mode == 1) {
+              if (typeof(Storage) !== 'undefined') {
+                if (localStorage.countryname && localStorage.cityname) {
+                  console.log("new countryname: " + localStorage.countryname + '~');
+                  document.getElementById('form_country_id').value = localStorage.countryname + '~';
+                  console.log("new region: -");
+                  document.getElementById('form_region_id').value = "-"; // (skipped to simplify)
+                  console.log("new city: " + localStorage.cityname + '~');
+                  document.getElementById('form_city_id').value = localStorage.cityname + '~';                    
+                }
+              }
+              setTimeout("submitForm();",444);                          
+            }
+            else if (modal_mode == 2) {
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.firstname) {
+                  console.log("new firstname: " + localStorage.firstname);
                   document.getElementById('form_firstname_id').value = localStorage.firstname;                 
                 }
               }
@@ -772,7 +786,7 @@
                                  + "</div>");   
                 // open modal
                 modal.open();
-                form_to_be_submitted = true; // (to simplify)                
+                form_to_be_submitted = false; // form to be submitted when modal is closed                  
               }
             }
             else {
@@ -789,14 +803,14 @@
                                    + "</div>");
                   // open modal
                   modal.open(); 
-                  form_to_be_submitted = false; // for form be submitted when modal is closed                  
+                  form_to_be_submitted = false; // form to be submitted when modal is closed                  
                 }
               }            
             }
           }
           
           if (form_to_be_submitted) {
-            console.log("FORM SUBMIT SKIPPED");
+            console.log("(form submission skipped)");
             submitForm();
           }          
           
