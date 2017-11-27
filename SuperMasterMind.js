@@ -859,6 +859,7 @@ function updateGameSizes() {
 function resetGameAttributes(nbColumnsSelected) {
 
   let i;
+  let first_session_game;
 
   // Clear gameSolver worker if necessary
   if (gameSolver !== undefined) {
@@ -978,8 +979,14 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolver.addEventListener('message', onGameSolverMsg, false);
   gameSolver.addEventListener('error', onGameSolverError, false);
   // Send a message to the gameSolver worker to initialize it  
-  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'secretCode': secretCode, 'game_id': game_cnt});
-  
+  if ( (typeof(Storage) !== 'undefined') && (!sessionStorage.first_session_game) ) {
+    sessionStorage.first_session_game = 1;
+    first_session_game = true;
+  }
+  else {
+    first_session_game = false;
+  }
+  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'secretCode': secretCode, 'first_session_game': first_session_game, 'game_id': game_cnt});  
 }
 
 function checkArraySizes() {

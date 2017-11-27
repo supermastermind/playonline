@@ -52,6 +52,7 @@ let nbMaxAttemptsForEndOfGame = -1;
 let message_processing_ongoing = false;
 
 let refresh_time = 777;
+let long_refresh_time = 3333;
 
 // *************************************************************************
 // *************************************************************************
@@ -975,6 +976,11 @@ self.addEventListener('message', function(e) {
     }
     secretCodeForDebugOnly = data.secretCode;
 
+    if (data.first_session_game == undefined) {
+      throw new Error("INIT phase / first_session_game is undefined");
+    }    
+    let first_session_game = data.first_session_game;
+    
     if (data.game_id == undefined) {
       throw new Error("INIT phase / game_id is undefined");
     }
@@ -1054,9 +1060,14 @@ self.addEventListener('message', function(e) {
       minNbColorsTable[color] = 0;
       maxNbColorsTable[color] = nbColumns;
     }
-    
-    let now = new Date().getTime();
-    while(new Date().getTime() < now + refresh_time){}
+
+    let now = new Date().getTime();    
+    if (!first_session_game) {
+      while(new Date().getTime() < now + refresh_time){}
+    }
+    else {
+      while(new Date().getTime() < now + long_refresh_time){}
+    }
     self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
 
     let shortInitialPossibleCodesTable = new Array(nbMaxPossibleCodesShown);
