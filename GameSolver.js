@@ -52,7 +52,7 @@ let nbMaxAttemptsForEndOfGame = -1;
 let message_processing_ongoing = false;
 
 let refresh_time = 777;
-let long_refresh_time = 3333;
+let long_refresh_time = 4888;
 
 // *************************************************************************
 // *************************************************************************
