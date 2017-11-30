@@ -28,9 +28,11 @@ let nbMaxColumns = 7;
 let overallNbMinAttempts = 4;
 let overallNbMaxAttempts = 12;
 
-let defaultNbColumns = 5; // classical Super Master Mind game
-let defaultNbColors = 8; // classical Super Master Mind game
-let defaultNbMaxAttempts = 12; // classical Super Master Mind game
+let nominalGameNbColumns = 5; // classical Super Master Mind game
+let nominalGameNbColors = 8; // classical Super Master Mind game
+let nominalGameNbMaxAttempts = 12; // classical Super Master Mind game
+
+let defaultNbColumns = 4;
 
 let nbColumns = -1; // N.A.
 let nbColors = -1; // N.A.
@@ -878,24 +880,24 @@ function resetGameAttributes(nbColumnsSelected) {
   nbColumns = nbColumnsSelected;
   switch (nbColumns) {
     case 3:
-      nbColors = Math.max(nbMinColors, defaultNbColors - 2);
-      nbMaxAttempts = defaultNbMaxAttempts - 4;
+      nbColors = Math.max(nbMinColors, nominalGameNbColors - 2);
+      nbMaxAttempts = nominalGameNbMaxAttempts - 4;
       break;
     case 4:
-      nbColors = Math.max(nbMinColors, defaultNbColors - 1);
-      nbMaxAttempts = defaultNbMaxAttempts - 2;
+      nbColors = Math.max(nbMinColors, nominalGameNbColors - 1);
+      nbMaxAttempts = nominalGameNbMaxAttempts - 2;
       break;
-    case 5: // defaultNbColumns
-      nbColors = defaultNbColors;
-      nbMaxAttempts = defaultNbMaxAttempts;
+    case 5: // nominalGameNbColumns
+      nbColors = nominalGameNbColors;
+      nbMaxAttempts = nominalGameNbMaxAttempts;
       break;
     case 6:
-      nbColors = Math.min(nbMaxColors, defaultNbColors + 1);
-      nbMaxAttempts = defaultNbMaxAttempts;
+      nbColors = Math.min(nbMaxColors, nominalGameNbColors + 1);
+      nbMaxAttempts = nominalGameNbMaxAttempts;
       break;
     case 7:
-      nbColors = Math.min(nbMaxColors, defaultNbColors + 2);
-      nbMaxAttempts = defaultNbMaxAttempts;
+      nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
+      nbMaxAttempts = nominalGameNbMaxAttempts;
       break;
     default:
       throw new Error("invalid selection of number of columns: " + nbColumns + " (#1)");
@@ -1715,7 +1717,7 @@ function draw_graphic_bis() {
         if (i < currentAttemptNumber) {
           if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
                || performanceIndicatorsEvaluatedSystematically[i-1]
-               || (nbColumns < defaultNbColumns) /* (easy games) */ ) {
+               || (nbColumns < nominalGameNbColumns) /* (easy games) */ ) {
             displayPerf(performanceIndicators[i-1], i-1, backgroundColor, ctx);
           }
           else {
@@ -1739,7 +1741,7 @@ function draw_graphic_bis() {
         let isPossible = isAttemptPossible(i);
         if ( gameOnGoing() && (i > nbMaxHintsDisplayed)
              && (performanceIndicators[i-1] != -1.0 /* (useless code) */)
-             && (nbColumns >= defaultNbColumns) /* (easy games) */ ) {
+             && (nbColumns >= nominalGameNbColumns) /* (not easy games) */ ) {
           displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                         lightGray, backgroundColor, ctx);
         }
