@@ -2002,7 +2002,7 @@ function draw_graphic_bis() {
               score_from_nb_attempts = max_score;
             }
             else {
-              score_from_nb_attempts = max_score - ((currentAttemptNumber-1) /* number of attempts */ - nb_attempts_for_max_score)*10.0;
+              score_from_nb_attempts = max_score - ((currentAttemptNumber-1) /* number of attempts */ - nb_attempts_for_max_score)*10.0 + 0.5;
             }
             let time_in_seconds_short_games = (2.0*time_in_seconds_corresponding_to_one_attempt_in_score)/3.0;
             let time_delta_score;
