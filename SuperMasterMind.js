@@ -1451,7 +1451,7 @@ function draw_graphic_bis() {
 
       }
 
-    } while (resize_detected && (resize_cnt <= 25)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+    } while (resize_detected && (resize_cnt <= 16)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
