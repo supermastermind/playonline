@@ -607,14 +607,14 @@ function newGameButtonClick(nbColumns) {
 function resetCurrentCodeButtonClick() {
   if (!document.getElementById("resetCurrentCodeButton").disabled) {
     currentCode = secretCodeRevealed;
-    draw_graphic();
+    draw_graphic(false);
   }
 }
 
 function playRandomCodeButtonClick() {
   if (!document.getElementById("playRandomCodeButton").disabled) {
     currentCode = simpleCodeHandler.createRandomCode(nbColumns);
-    draw_graphic();
+    draw_graphic(false);
   }
 }
 
@@ -627,7 +627,7 @@ function playPossibleCodeButtonClick() {
       playerWasHelpedSignificantly = true;
     }
     currentCode = possibleCodesLists[nbOfStatsFilled-1][0]; // select first code of the list
-    draw_graphic();
+    draw_graphic(false);
   }
 }
 
@@ -645,7 +645,7 @@ function revealSecretColorButtonClick() {
       secretCodeRevealed = simpleCodeHandler.replaceEmptyColor(secretCodeRevealed, revealedColorIdx, secretCode);
       currentCode = secretCodeRevealed;
       main_graph_update_needed = true;
-      draw_graphic();
+      draw_graphic(false);
     }
   }
 }
@@ -780,7 +780,7 @@ function mouseClick(e) {
 function playAColor(color, column) {
   if (gameOnGoing()) {
     currentCode = simpleCodeHandler.setColor(currentCode, color, column);
-    draw_graphic();
+    draw_graphic(false);
   }
 }
 
@@ -1085,7 +1085,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
   // XXX Temporary code: to be done in the worker - end  
   nbOfStatsFilled = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
   main_graph_update_needed = true;
-  draw_graphic();
+  draw_graphic(false);
   return true;
 }
 
@@ -1114,7 +1114,7 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attem
   possibleCodesListsSizes[attempt_nb-1] = nb_possible_codes_listed;
   // nbOfStatsFilled keeps unchanged (cf. above assumption on stats writing)
   main_graph_update_needed = true;
-  draw_graphic();
+  draw_graphic(false);
   return true;
 }
 
@@ -1274,9 +1274,11 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
   ctx.stroke();
 }
 
-function draw_graphic() {
+function draw_graphic(fullMode = true) {
   draw_graphic_bis();
-  draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
+  if (fullMode) {
+    draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
+  }
 }
 
 function draw_graphic_bis() {
@@ -1451,7 +1453,7 @@ function draw_graphic_bis() {
 
       }
 
-    } while (resize_detected && (resize_cnt <= 16)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+    } while (resize_detected && (resize_cnt <= 40)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
