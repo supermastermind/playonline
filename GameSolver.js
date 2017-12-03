@@ -51,8 +51,8 @@ let currentAttemptNumber = 0;
 let nbMaxAttemptsForEndOfGame = -1;
 let message_processing_ongoing = false;
 
-let refresh_time = 777;
-let long_refresh_time = 4444;
+let refresh_time = 555;
+let long_refresh_time = 2425;
 
 // *************************************************************************
 // *************************************************************************
