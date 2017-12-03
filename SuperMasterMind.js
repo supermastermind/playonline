@@ -2004,7 +2004,7 @@ function draw_graphic_bis() {
               score_from_nb_attempts = max_score;
             }
             else {
-              score_from_nb_attempts = max_score - ((currentAttemptNumber-1) /* number of attempts */ - nb_attempts_for_max_score)*10.0 + 0.5;
+              score_from_nb_attempts = max_score - ((currentAttemptNumber-1) /* number of attempts */ - nb_attempts_for_max_score)*10.0;
             }
             let time_in_seconds_short_games = (2.0*time_in_seconds_corresponding_to_one_attempt_in_score)/3.0;
             let time_delta_score;
@@ -2018,11 +2018,11 @@ function draw_graphic_bis() {
             let max_time_delta_score = 2*10.0; // the time spent will tend not to cost more than 2 attempts in the score
             if ( (time_delta_score <= max_time_delta_score) 
                  || (currentAttemptNumber-1 /* number of attempts */ >= nbMaxAttempts) /* at last attempt, score will tend towards zero "more quickly" as time goes on */ ) {
-              score = multiply_factor * (score_from_nb_attempts - time_delta_score);
+              score = multiply_factor * (score_from_nb_attempts - time_delta_score) + 0.499;
             }
             else {
               score = multiply_factor * (score_from_nb_attempts - max_time_delta_score 
-                                         - (time_delta_score - max_time_delta_score)/1.5); // "good player's slope / 3"
+                                         - (time_delta_score - max_time_delta_score)/1.5) + 0.499; // "good player's slope / 3"
             }
             if (score < min_score) {
               score = min_score; /* (score will never be zero in case the game was won without significant help) */
