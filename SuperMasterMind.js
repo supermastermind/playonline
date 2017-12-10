@@ -1991,7 +1991,7 @@ function draw_graphic_bis() {
                 break;                
               case 7:
                 nb_attempts_for_max_score = 6;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 1500.0;  // (time corresponding to 2 attempts: 50 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 1800.0;  // (time corresponding to 2 attempts: 60 min) // See (*)
                 multiply_factor = 2.0;
                 break;
               default:
