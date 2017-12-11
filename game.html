@@ -524,16 +524,16 @@
       }      
       function handle_rsp(e) {
         var score_display_time = 2500;
-        var time_to_wait = 22;
+        var time_to_wait = 25;
         var time_diff = new Date().getTime() - store_time;
         if (time_diff < 0) { // (invalid case)
-          time_to_wait = 22;
+          time_to_wait = 25;
         }
         else if (time_diff < score_display_time) {
           time_to_wait = score_display_time - time_diff;
         }
         else {
-          time_to_wait = 22; // (no time to wait, form submission was long enough)
+          time_to_wait = 25; // (no time to wait, form submission was long enough)
         }
         console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
