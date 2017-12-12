@@ -955,7 +955,7 @@ function resetGameAttributes(nbColumnsSelected) {
   currentAttemptNumber = 1;
   gameWon = false;
   secretCode = simpleCodeHandler.createRandomCode();
-  secretCode = 0x07777777;
+  // secretCode = 0x07777777;
   // console.log("Secret code: " + simpleCodeHandler.codeToString(secretCode));  
   secretCodeRevealed = 0;
   
