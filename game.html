@@ -626,7 +626,7 @@
               if (localStorage.countryname && localStorage.cityname) {
                 country = localStorage.countryname + '~';
                 if ( (localStorage.countryname == "France") && (localStorage.cityname == "Paris") ) { // Particular case
-                  region = 'Île-de-France';
+                  region = 'Île-de-France' + '~';
                 }
                 else {
                   region = '-'; // (skipped to simplify)
