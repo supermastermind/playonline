@@ -1779,7 +1779,7 @@ function draw_graphic_bis() {
         // Display game version
         // ********************
 
-        ctx.font = small_italic_font;
+        ctx.font = very_small_italic_font;
         displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors, 5,
                       lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
 
