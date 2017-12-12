@@ -189,7 +189,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_Fbis";    
+      let html_compatibility_game_version = "Ver_Fter";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -625,7 +625,12 @@
             if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
               if (localStorage.countryname && localStorage.cityname) {
                 country = localStorage.countryname + '~';
-                region = '-'; // (skipped to simplify)
+                if ( (localStorage.countryname == "France") && (localStorage.cityname == "Paris") ) { // Particular case
+                  region = 'Île-de-France';
+                }
+                else {
+                  region = '-'; // (skipped to simplify)
+                }
                 city = localStorage.cityname + '~';
               }
             }
