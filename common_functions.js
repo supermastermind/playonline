@@ -76,9 +76,9 @@ function write_introduction() {
     <h2 style='margin-top:0px;'><font color=#000000>Fond of this good old game?</font></h2>\
     <a href='game.html' onfocus='this.blur()'>\
       <div id='game_images'>");
-  var img_str = "<img src='img/SuperMasterMind_1.png' style='width:auto;height:222px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:222px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:222px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:222px;border:0;margin:0px'>";
-  if (window.innerWidth >= 1150) {
-    img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:auto;height:222px;border:0;margin:0px'>";
+  var img_str = "<img src='img/SuperMasterMind_1.png' style='width:auto;height:188px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:188px;border:0;margin:0px'>";
+  if (window.innerWidth >= 1024) {
+    img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:auto;height:188px;border:0;margin:0px'>";
   }
   document.write(img_str);
   document.write("\
