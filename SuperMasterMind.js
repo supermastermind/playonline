@@ -1952,7 +1952,7 @@ function draw_graphic_bis() {
               timeStr = timeInMinutes + " min";
             }
             else if (timeInSeconds != 0) {
-              timeStr = timeInMinutes + " min " + timeInSeconds;
+              timeStr = timeInMinutes + " min " + timeInSeconds + " sec";
             }
             else {
               timeStr = timeInMinutes + " min";
