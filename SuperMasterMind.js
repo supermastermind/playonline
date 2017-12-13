@@ -1952,14 +1952,14 @@ function draw_graphic_bis() {
               timeStr = timeInMinutes + " min";
             }
             else if (timeInSeconds != 0) {
-              timeStr = timeInMinutes + " min " + timeInSeconds + " sec";
+              timeStr = timeInMinutes + " min " + timeInSeconds + " s";
             }
             else {
               timeStr = timeInMinutes + " min";
             }
           }
           else {
-            timeStr = timeInSeconds + " sec";
+            timeStr = timeInSeconds + " s";
           }
 
           if (gameWon) { // game won
