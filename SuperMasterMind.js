@@ -108,8 +108,8 @@ let myCanvasIniWidth = document.getElementById("my_canvas").style.width;
 let myCanvasIniHeight = document.getElementById("my_canvas").style.height;
 
 let CompressedDisplayMode = false;
-let CompressedDisplayMode_compressWidth = 400;
-let CompressedDisplayMode_uncompressWidth = 900;
+let CompressedDisplayMode_compressWidth = 488;
+let CompressedDisplayMode_uncompressWidth = 999;
 let mobileMode = false;
 
 // Widths and heights
@@ -1564,7 +1564,7 @@ function draw_graphic_bis() {
       small_basic_font = Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
       small_bold_font = "bold " + Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
       small_italic_font = "italic " + Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
-      very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.0), min_font_size) + "px " + fontFamily;
+      very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.2), min_font_size) + "px " + fontFamily;
 
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
@@ -2133,8 +2133,14 @@ function draw_graphic_bis() {
         ctx.font = medium_bold_font;
         if ((nbGamesWonWithoutHelpAtAll == 0) && gameOnGoing()) {
           let x_delta = 0.75;
-          displayString("Click on the colors to select them!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+1+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
-                        darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
+          if (!displayString("Click on the colors to select them!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+1+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
+                             darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
+            if (font_size >= 27) { // (very big font cases)
+              ctx.font = small_bold_font;
+            }
+            displayString("Click on the colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+1+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
+                          darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
+          }
         }
 
       }
