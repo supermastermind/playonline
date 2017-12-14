@@ -96,4 +96,3 @@ function write_optimal_strategy_details(detail_level) {
   }
   document.write(str);
 }
-            

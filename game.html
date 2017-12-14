@@ -16,9 +16,7 @@
     -->
     
     <style>
-
       /* *** Main styles *** */
-
       body {
           font-family: 'Verdana';
           margin: 0%;
@@ -28,7 +26,6 @@
           font-size: 10px;
           background: black;
       }
-
       #my_canvas {
           margin: 0;
           padding: 0;
@@ -39,9 +36,7 @@
           border-radius: 1%;
           zoom: 1.0; /* (used by Chrome, ignored by Firefox) */
       }
-
       /* *** Classes for button styling using CSS *** */
-
       .button {
         font-family: Verdana;
         background-color: white;
@@ -59,18 +54,15 @@
         margin-bottom: 5px;
         border-radius: 20%;
       }
-
       .button:hover {
         background-color: purple;
         color: white;
       }
-
       .disabled {
           opacity: 0.4;
           font-weight: normal;
           cursor: not-allowed;
       }
-
       /* Safari 4.0 - 8.0 */
       @-webkit-keyframes glowing {
         0%   {background-color: white;}
@@ -82,7 +74,6 @@
         87%  {background-color: purple;}
         100% {background-color: white;}
       }
-
       /* Standard syntax */
       @keyframes glowing {
         0%   {background-color: white;}
@@ -101,7 +92,6 @@
         animation-name: glowing;
         animation-duration: 3.75s;
        }
-
       .fast_blinking {
         -webkit-animation-name: glowing; /* Safari 4.0 - 8.0 */
         -webkit-animation-duration: 2.75s; /* Safari 4.0 - 8.0 */
@@ -119,7 +109,6 @@
         font-weight: bold;
         width: 100%;
         box-shadow: none;
-
         /* text not selectable */
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -128,7 +117,6 @@
         -ms-user-select: none;
         user-select: none;
       }
-
     </style>
 
     <script>
@@ -307,7 +295,6 @@
             
           }
       });
-
       // add a button
       modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary', function() {
         // here goes some logic
@@ -366,7 +353,6 @@
         }
         return text;
       }      
-
       function capitalizeFirstLetters(str) {
         if (str.length == 0) {
           return "";
@@ -392,7 +378,6 @@
             }
           }
           res2 = res2 + res;
-
           res = res2;
           res2 = "";          
           index = res.indexOf(' ');
@@ -431,7 +416,6 @@
           return res2;
         }
       }
-
       function getLocation() {
         switch(location.protocol) {
            case 'http:':
@@ -472,7 +456,6 @@
         }        
         my_form_url = my_form_url + "my_callback_fct=handle_rsp";        
         // console.log(my_form_url);          
-
         // Submit form
         jQuery.ajax({
           crossDomain: true,
@@ -534,7 +517,6 @@
         console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
       }
-
       var last_game_cnt = -1;
       async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, help) { // asynchronous function
         
@@ -542,7 +524,6 @@
           return;
         }
         last_game_cnt = game_cnt;       
-
         store_time = new Date().getTime();
         
         $.getJSON('https://freegeoip.net/json/', function(data) {
@@ -558,7 +539,6 @@
           let latitude = '-';
           let longitude = '-';
           let ipaddress = '-';
-
           if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined')
                && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
                       
@@ -639,7 +619,6 @@
               city = city + '?';
             }
           }
-
           console.log(country);
           document.getElementById('form_country_id').value = country;
           console.log(region);
@@ -659,7 +638,6 @@
                     
           // Other fields  
           // ************
-
           let playerid;
           let firstname = "-";
           let gamesok = -1;
@@ -683,7 +661,6 @@
                 deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;            
                 localStorage.nbgamesstarted3_ref = localStorage.nbgamesstarted3;
                 break;
-
               case 4:
                 if (!localStorage.nbgamesstarted4) {
                   localStorage.nbgamesstarted4 = 0;
@@ -694,7 +671,6 @@
                 deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;            
                 localStorage.nbgamesstarted4_ref = localStorage.nbgamesstarted4;
                 break;
-
               case 5:
                 if (!localStorage.nbgamesstarted5) {
                   localStorage.nbgamesstarted5 = 0;
@@ -705,7 +681,6 @@
                 deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;            
                 localStorage.nbgamesstarted5_ref = localStorage.nbgamesstarted5;
                 break;
-
               case 6:
                 if (!localStorage.nbgamesstarted6) {
                   localStorage.nbgamesstarted6 = 0;
@@ -782,7 +757,6 @@
           try {
             extra_debug_info = "/Cookies:" + navigator.cookieEnabled;
             extra_debug_info = extra_debug_info + "/Java:" + navigator.javaEnabled();
-
             var pluginsLength = navigator.plugins.length; // (Note: plugin listing is no longer allowed in Firefox for security reasons => length will be less than the actual value)
             extra_debug_info =  extra_debug_info + "/Plugins:" + pluginsLength;
             if (pluginsLength > 0) {
@@ -790,7 +764,6 @@
                 extra_debug_info = extra_debug_info + "|" + i + ":" + navigator.plugins[i].filename + (navigator.plugins[i].version?navigator.plugins[i].version:"");
               }
             }
-
             extra_debug_info = extra_debug_info + "/MimeTypes:" + navigator.mimeTypes.length;
           }
           catch (exc) {}
@@ -864,7 +837,6 @@
           }
           submitForm(errorStr);
         });
-
       }
             
       setTimeout("reload_needed = true;",2*24*3600*1000); // (reload the page from server every 2 days if necessary)
