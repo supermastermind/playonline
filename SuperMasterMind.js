@@ -63,7 +63,7 @@ let equivalenceClassIdUNKNOWN = -100;
 let nbOfStatsFilled = 0;
 let currentAttemptNumber = 1;
 let gameWon = false;
-let nbGamesWonWithoutHelpAtAll = 0;
+let nbGamesWon = 0;
 let secretCode = -1;
 let secretCodeRevealed = -1;
 let game_cnt = 0;
@@ -1487,9 +1487,9 @@ function draw_graphic_bis() {
           currentAttemptNumber++;
           currentCode = -1;
           gameWon = true;
-          if ((!playerWasHelpedSignificantly) && (!playerWasHelpedSlightly)) {
-            nbGamesWonWithoutHelpAtAll++;            
-          }
+          // if ((!playerWasHelpedSignificantly) && (!playerWasHelpedSlightly)) {
+          nbGamesWon++;            
+          // }
           if (!playerWasHelpedSignificantly) {
             game_won_without_big_help = true;
           }
@@ -2131,7 +2131,7 @@ function draw_graphic_bis() {
         ctx.fillStyle = darkGray;
 
         ctx.font = medium_bold_font;
-        if ((nbGamesWonWithoutHelpAtAll == 0) && gameOnGoing()) {
+        if ((nbGamesWon == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
           let x_delta = 0.75;
           if (!displayString("Click on the colors to select them!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+1+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
