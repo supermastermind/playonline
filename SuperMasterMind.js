@@ -63,7 +63,7 @@ let equivalenceClassIdUNKNOWN = -100;
 let nbOfStatsFilled = 0;
 let currentAttemptNumber = 1;
 let gameWon = false;
-let nbGamesWon = 0;
+let nbGames = 0;
 let secretCode = -1;
 let secretCodeRevealed = -1;
 let game_cnt = 0;
@@ -111,6 +111,7 @@ let CompressedDisplayMode = false;
 let CompressedDisplayMode_compressWidth = 488;
 let CompressedDisplayMode_uncompressWidth = 999;
 let mobileMode = false;
+let androidMode = false;
 
 // Widths and heights
 // ******************
@@ -445,10 +446,10 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
   marksEqual(mark1, mark2) {
     return ( (mark1.nbBlacks == mark2.nbBlacks) && (mark1.nbWhites == mark2.nbWhites) );
   }
-  
+
   markToString(mark) {
     return mark.nbBlacks + "B" + mark.nbWhites + "W";
-  }  
+  }
 
 }
 
@@ -464,132 +465,132 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
 
 // Function called on gameSolver worker's message reception
 function onGameSolverMsg(e) {
-  
+
   if (e.data == undefined) {
-    displayGUIError("gameSolver msg error: data is undefined", new Error().stack);  
+    displayGUIError("gameSolver msg error: data is undefined", new Error().stack);
     return;
   }
   let data = e.data;
-  
+
   if (data.rsp_type == undefined) {
-    displayGUIError("gameSolver msg error: rsp_type is undefined", new Error().stack);  
+    displayGUIError("gameSolver msg error: rsp_type is undefined", new Error().stack);
     return;
   }
 
   // ************************
   // Number of possible codes
   // ************************
-  
+
   if (data.rsp_type == 'NB_POSSIBLE_CODES') {
-    
+
     if (data.nbOfPossibleCodes_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);
     }
     let nbOfPossibleCodes_p = Number(data.nbOfPossibleCodes_p);
     if ( isNaN(nbOfPossibleCodes_p) || (nbOfPossibleCodes_p < 0) ) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p, new Error().stack);
     }
 
     if (data.colorsFoundCode_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined", new Error().stack);
     }
     let colorsFoundCode_p = Number(data.colorsFoundCode_p);
     if (isNaN(colorsFoundCode_p)) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: " + colorsFoundCode_p, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: " + colorsFoundCode_p, new Error().stack);
     }
-    
+
     if (data.minNbColorsTable_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined", new Error().stack);
     }
     let minNbColorsTable_p = (data.minNbColorsTable_p).split(",");
     if (minNbColorsTable_p.length != nbColors+1) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length, new Error().stack);
     }
 
     if (data.maxNbColorsTable_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined", new Error().stack);
     }
     let maxNbColorsTable_p = (data.maxNbColorsTable_p).split(",");
     if (maxNbColorsTable_p.length != nbColors+1) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length, new Error().stack);
     }
-    
+
     if (data.attempt_nb == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
     }
     let attempt_nb = Number(data.attempt_nb);
     if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
     }
 
     if (data.game_id == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);  
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
     }
     let game_id = Number(data.game_id);
     if ( isNaN(game_id) || (game_id < 0) ) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);  
-    }    
-    
+      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+    }
+
     writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
-    
+
   }
 
   // **********************
   // List of possible codes
   // **********************
-  
+
   else if (data.rsp_type == 'LIST_OF_POSSIBLE_CODES') {
-    
+
     if (data.possibleCodesList_p == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);  
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);
     }
     let possibleCodesList_p = (data.possibleCodesList_p).split(",");
     if ( (possibleCodesList_p.length <= 0) || (possibleCodesList_p.length > nbMaxPossibleCodesShown) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + data.possibleCodesList_p + ", length is " + possibleCodesList_p.length, new Error().stack);  
-    }    
-    
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + data.possibleCodesList_p + ", length is " + possibleCodesList_p.length, new Error().stack);
+    }
+
     if (data.nb_possible_codes_listed == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined", new Error().stack);  
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined", new Error().stack);
     }
     let nb_possible_codes_listed = Number(data.nb_possible_codes_listed);
     if ( isNaN(nb_possible_codes_listed) || (nb_possible_codes_listed <= 0) || (nb_possible_codes_listed > nbMaxPossibleCodesShown) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed, new Error().stack);  
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed, new Error().stack);
     }
 
     if (data.attempt_nb == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);  
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
     }
     let attempt_nb = Number(data.attempt_nb);
     if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);  
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
     }
 
     if (data.game_id == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);  
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
     }
     let game_id = Number(data.game_id);
     if ( isNaN(game_id) || (game_id < 0) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);  
-    }    
-    
-    writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attempt_nb, game_id);  
-    
-  }  
-  
+      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+    }
+
+    writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attempt_nb, game_id);
+
+  }
+
   // **********
   // Error case
   // **********
-  
+
   else {
-    displayGUIError("gameSolver error: unexpected rsp_type: " + data.rsp_type, new Error().stack);  
+    displayGUIError("gameSolver error: unexpected rsp_type: " + data.rsp_type, new Error().stack);
     return;
-  }  
+  }
 
 }
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
-  displayGUIError("gameSolver error:" + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);  
+  displayGUIError("gameSolver error:" + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
 }
 
 // ***********************
@@ -669,12 +670,12 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       let previous_nb = -1;
       for (let i = currentAttemptNumber-2; i >= 0; i--) {
         if (nbOfPossibleCodes[i] > 1) {
-          interesting_attempt_idx = i;          
+          interesting_attempt_idx = i;
           cnt++;
           if (nbOfPossibleCodes[i] >= 3) {
             break;
-          }            
-          if ((cnt > 1) && (nbOfPossibleCodes[i] != previous_nb)) { 
+          }
+          if ((cnt > 1) && (nbOfPossibleCodes[i] != previous_nb)) {
             break;
           }
           previous_nb = nbOfPossibleCodes[i];
@@ -693,9 +694,9 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
 }
 
 function mouseClick(e) {
-  
+
   let event_x_min, event_x_max, event_y_min, event_y_max;
-  let rect = canvas.getBoundingClientRect();  
+  let rect = canvas.getBoundingClientRect();
   let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
   let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
 
@@ -749,7 +750,7 @@ function mouseClick(e) {
   // *****************
 
   else if ((!gameOnGoing()) && allPossibleCodesFilled()) {
-    
+
     if (!showPossibleCodesMode) {
       event_y_min = get_y_pixel(y_min+y_step*nbMaxAttempts);
     }
@@ -774,7 +775,7 @@ function mouseClick(e) {
       }
     }
   }
-  
+
 }
 
 function playAColor(color, column) {
@@ -817,28 +818,28 @@ function updateGameSizes() {
 
   if (!CompressedDisplayMode) {
     attempt_nb_width = 2;
-    nb_possible_codes_width = ((nbColumns>=7)?5:4);    
+    nb_possible_codes_width = ((nbColumns>=7)?5:4);
     optimal_width = 4;
     tick_width = 3;
-    
+
     transition_height = 1;
   }
   else {
     attempt_nb_width = 0;
-    nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2)); 
+    nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
     optimal_width = 2.25;
     tick_width = 1.35;
-    
+
     transition_height = 0.4;
   }
-  
+
   x_step = (x_max - x_min) / (attempt_nb_width // attempt number
                               +(90*(nbColumns+1))/100 // mark
                               +nbColumns*2 // code
                               +nb_possible_codes_width // number of possible codes
                               +optimal_width // optimal
-                              +tick_width); // OK/NOK    
-  
+                              +tick_width); // OK/NOK
+
   if (!showPossibleCodesMode) {
     y_step = (y_max - y_min) / (nbMaxAttempts // max number of attempts
                                 +transition_height // margin
@@ -865,15 +866,15 @@ function resetGameAttributes(nbColumnsSelected) {
 
   // Clear gameSolver worker if necessary
   if (gameSolver !== undefined) {
-    gameSolver.terminate(); 
+    gameSolver.terminate();
     gameSolver = undefined;
-  } 
+  }
 
   if ((typeof reload_needed !== "undefined") && reload_needed) {
     reload_needed = false;
     location.reload(true);
-  }  
-  
+  }
+
   main_graph_update_needed = true;
   simpleCodeHandler = null;
 
@@ -956,14 +957,14 @@ function resetGameAttributes(nbColumnsSelected) {
   gameWon = false;
   secretCode = simpleCodeHandler.createRandomCode();
   // secretCode = 0x07777777;
-  // console.log("Secret code: " + simpleCodeHandler.codeToString(secretCode));  
+  // console.log("Secret code: " + simpleCodeHandler.codeToString(secretCode));
   secretCodeRevealed = 0;
-  
+
   game_cnt++;
   if (game_cnt > 1000000) {
     game_cnt = 0;
   }
-  
+
   newGameEvent = false;
   playerWasHelpedSignificantly = false;
   lastConsecutiveAttemptNumberForSignificantHelp = 1;
@@ -973,14 +974,14 @@ function resetGameAttributes(nbColumnsSelected) {
   errorCnt = 0;
 
   tmp_perf = 0; // XXX Temporary code
-  
+
   updateGameSizes();
-  
+
   // Create a new worker for gameSolver
   gameSolver = new Worker("Game" + "Solver.js");
   gameSolver.addEventListener('message', onGameSolverMsg, false);
   gameSolver.addEventListener('error', onGameSolverError, false);
-  // Send a message to the gameSolver worker to initialize it  
+  // Send a message to the gameSolver worker to initialize it
   if ( (typeof(Storage) !== 'undefined') && (!sessionStorage.first_session_game) ) {
     sessionStorage.first_session_game = 1;
     first_session_game = true;
@@ -988,7 +989,7 @@ function resetGameAttributes(nbColumnsSelected) {
   else {
     first_session_game = false;
   }
-  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'secretCode': secretCode, 'first_session_game': first_session_game, 'game_id': game_cnt});  
+  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'secretCode': secretCode, 'first_session_game': first_session_game, 'game_id': game_cnt});
 }
 
 function checkArraySizes() {
@@ -1078,11 +1079,11 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     return false;
   }
   // XXX Temporary code: to be done in the worker - being
-  if ((attempt_nb >= 2) && (nbOfPossibleCodes[attempt_nb-1] == nbOfPossibleCodes[attempt_nb-2])) { 
+  if ((attempt_nb >= 2) && (nbOfPossibleCodes[attempt_nb-1] == nbOfPossibleCodes[attempt_nb-2])) {
     performanceIndicators[attempt_nb-2] = -1.0;
     tmp_perf = tmp_perf-1;
   }
-  // XXX Temporary code: to be done in the worker - end  
+  // XXX Temporary code: to be done in the worker - end
   nbOfStatsFilled = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
   main_graph_update_needed = true;
   draw_graphic(false);
@@ -1099,7 +1100,7 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attem
         || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
         || (possibleCodesListsSizes[attempt_nb-1] != 0 /* initial value */)
         || ((nbOfPossibleCodes[attempt_nb-1] <= nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbOfPossibleCodes[attempt_nb-1])) // (cf. above assumption on stats writing)
-        || ((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbMaxPossibleCodesShown)) ) { // (cf. above assumption on stats writing)        
+        || ((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbMaxPossibleCodesShown)) ) { // (cf. above assumption on stats writing)
     displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (#3)", new Error().stack);
     return false;
   }
@@ -1123,31 +1124,31 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attem
 // ****************
 
 function updateAndStoreNbGamesStarted(offset) {
-  
+
   try {
     if (typeof(Storage) !== 'undefined') {
       switch (nbColumns) {
-        case 3:              
+        case 3:
           if (localStorage.nbgamesstarted3) {
             localStorage.nbgamesstarted3 = Number(localStorage.nbgamesstarted3) + offset;
           }
           break;
-        case 4:              
+        case 4:
           if (localStorage.nbgamesstarted4) {
             localStorage.nbgamesstarted4 = Number(localStorage.nbgamesstarted4) + offset;
           }
           break;
-        case 5:              
+        case 5:
           if (localStorage.nbgamesstarted5) {
             localStorage.nbgamesstarted5 = Number(localStorage.nbgamesstarted5) + offset;
           }
           break;
-        case 6:              
+        case 6:
           if (localStorage.nbgamesstarted6) {
             localStorage.nbgamesstarted6 = Number(localStorage.nbgamesstarted6) + offset;
           }
           break;
-        case 7:              
+        case 7:
           if (localStorage.nbgamesstarted7) {
             localStorage.nbgamesstarted7 = Number(localStorage.nbgamesstarted7) + offset;
           }
@@ -1162,9 +1163,9 @@ function updateAndStoreNbGamesStarted(offset) {
   }
   catch (err) {
     displayGUIError("error while storing nbgamesstarted: " + err, new Error().stack);
-  } 
- 
-  
+  }
+
+
 }
 
 // **************************************
@@ -1289,7 +1290,7 @@ function draw_graphic_bis() {
   let res;
   let nbMaxAttemptsToDisplay = nbMaxAttempts;
   let draw_exception = false;
-  
+
   let timeStr = "";
   let game_won_without_big_help = false;
   let score = -1.0;
@@ -1312,7 +1313,7 @@ function draw_graphic_bis() {
       let width;
       let height;
       width = canvas.clientWidth;
-      height = canvas.clientHeight;      
+      height = canvas.clientHeight;
       // (Alternate sizes:
       //  width = canvas.offsetWidth - 2*2; // 2*2px (canvas' border = 2px) (2nd best solution - not perfect)
       //  height = canvas.offsetHeight - 2*2; // 2*2px (canvas' border = 2px) (2nd best solution - not perfect)
@@ -1339,23 +1340,27 @@ function draw_graphic_bis() {
           CompressedDisplayMode = true; // (transition)
           updateGameSizes();
         }
-        mobileMode = false;        
+        mobileMode = false;
+        androidMode = false;
         if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/2)
              || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) ) { // (mobile device check 2/2)
           if (!CompressedDisplayMode) {
             CompressedDisplayMode = true; // (transition)
-            updateGameSizes();          
+            updateGameSizes();
           }
           mobileMode = true;
-        }    
-        if (mobileMode && (/Android/i.test(navigator.userAgent))) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome      
+          if (/Android/i.test(navigator.userAgent)) {
+            androidMode = true;
+          }
+        }
+        if (mobileMode && (/Android/i.test(navigator.userAgent))) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
           tickChar = "\u2713"; /* (check mark/tick) */
           crossChar = "\u2715"; /* (cross) */
         }
         else {
           tickChar = "\u2714"; /* (check mark/tick) */
-          crossChar = "\u2716"; /* (cross) */      
-        }        
+          crossChar = "\u2716"; /* (cross) */
+        }
         if (CompressedDisplayMode) {
 
           document.getElementById("newGameButton").value = "N";
@@ -1365,7 +1370,7 @@ function draw_graphic_bis() {
           document.getElementById("resetCurrentCodeButton").value = "\u2718";
           document.getElementById("playRandomCodeButton").value = "\u266C";
           document.getElementById("revealSecretColorButton").value = "?";
-          document.getElementById("playPossibleCodeButton").value = "??";          
+          document.getElementById("playPossibleCodeButton").value = "??";
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
           document.getElementById("my_table").style.width = "100%";
           document.getElementById("my_table").style.left = "0%";
@@ -1375,14 +1380,14 @@ function draw_graphic_bis() {
           document.getElementById("my_table").style["border-radius"] = "0%";
           if (mobileMode) { // (The below settings can lead to issues when resizing windows on PCs, in particular with Firefox)
             document.getElementById("my_canvas").style.width = "99%";
-            document.getElementById("my_canvas").style.height = "99%";          
+            document.getElementById("my_canvas").style.height = "99%";
           }
-          
+
           left_border_margin_x = 1.0;   // Left border margin for x axis in %
           right_border_margin_x = 1.0;  // Right border margin for x axis in %
           bottom_border_margin_y = 1.5; // Bottom border margin for y axis in %
-          top_border_margin_y = 1.0;    // Top border margin for y axis in %          
-          
+          top_border_margin_y = 1.0;    // Top border margin for y axis in %
+
         }
         else {
 
@@ -1393,7 +1398,7 @@ function draw_graphic_bis() {
           document.getElementById("resetCurrentCodeButton").value = resetCurrentCodeButtonIniName;
           document.getElementById("playRandomCodeButton").value = playRandomCodeButtonIniName;
           document.getElementById("revealSecretColorButton").value = revealSecretColorButtonIniName;
-          document.getElementById("playPossibleCodeButton").value = playPossibleCodeButtonIniName;          
+          document.getElementById("playPossibleCodeButton").value = playPossibleCodeButtonIniName;
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
           document.getElementById("my_table").style.width = tableIniWidth;
           document.getElementById("my_table").style.left = tableIniLeft;
@@ -1402,17 +1407,17 @@ function draw_graphic_bis() {
           document.getElementById("my_table").style.border = tableIniBorder;
           document.getElementById("my_table").style["border-radius"] = tableIniBorderRadius;
           document.getElementById("my_canvas").style.width = myCanvasIniWidth;
-          document.getElementById("my_canvas").style.height = myCanvasIniHeight;          
+          document.getElementById("my_canvas").style.height = myCanvasIniHeight;
 
           left_border_margin_x = 5.0;   // Left border margin for x axis in %
           right_border_margin_x = 5.0;  // Right border margin for x axis in %
           bottom_border_margin_y = 5.0; // Bottom border margin for y axis in %
-          top_border_margin_y = 5.0;    // Top border margin for y axis in %          
-          
+          top_border_margin_y = 5.0;    // Top border margin for y axis in %
+
         }
 
         let allButtons = document.getElementsByClassName("button");
-        let allRadioButtons = document.getElementsByClassName("radio");        
+        let allRadioButtons = document.getElementsByClassName("radio");
         if (height < 400) {
           for (let i = 0; i < allButtons.length; i ++) {
             allButtons[i].style.fontSize = "10px";
@@ -1443,9 +1448,9 @@ function draw_graphic_bis() {
           }
           for (let i = 0; i < allRadioButtons.length; i ++) {
             allRadioButtons[i].style.fontSize = "13px";
-          }            
-        }        
-        
+          }
+        }
+
         canvas.width = width; /* (necessary as canvas may have been expanded to fill its container) */
         canvas.height = height; /* (necessary as canvas may have been expanded to fill its container) */
         ctx.setTransform(1,0,0,1,0,0); // resets the canvas current transform to the identity matrix
@@ -1488,13 +1493,13 @@ function draw_graphic_bis() {
           currentCode = -1;
           gameWon = true;
           // if ((!playerWasHelpedSignificantly) && (!playerWasHelpedSlightly)) {
-          nbGamesWon++;            
+          nbGames++;
           // }
           if (!playerWasHelpedSignificantly) {
             game_won_without_big_help = true;
           }
           if (lastConsecutiveAttemptNumberForSignificantHelp+1 == currentAttemptNumber) { // only consecutive significant helps
-            updateAndStoreNbGamesStarted(-1);          
+            updateAndStoreNbGamesStarted(-1);
           }
         }
         else {
@@ -1502,13 +1507,14 @@ function draw_graphic_bis() {
           if (currentAttemptNumber == nbMaxAttempts+1) { // game over (game lost)
             currentCode = -1;
             stopTime = (new Date()).getTime(); // time in milliseconds
+            nbGames++;
           }
           else {
             currentCode = secretCodeRevealed;
           }
         }
         main_graph_update_needed = true;
-        
+
         // Send a message to the gameSolver worker for the new code submitted
         let nbMaxAttemptsForEndOfGame;
         if (gameWon) {
@@ -1516,9 +1522,9 @@ function draw_graphic_bis() {
         }
         else {
           nbMaxAttemptsForEndOfGame = nbMaxAttempts;
-        }        
+        }
         gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'currentAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
-        
+
       }
     }
 
@@ -1569,13 +1575,13 @@ function draw_graphic_bis() {
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
-      
-      stats_font = medium_bold_font;            
+
+      stats_font = medium_bold_font;
       error_font = font_size + "px " + fontFamily;
 
       // Draw main game table
       // ********************
-                   
+
       x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
@@ -1749,7 +1755,7 @@ function draw_graphic_bis() {
         }
         else if (0 == isPossible) { // code is possible
           if (performanceIndicators[i-1] == -1.0 /* (useless code) */) {
-            displayGUIError("useless code inconsistency", new Error().stack);  
+            displayGUIError("useless code inconsistency", new Error().stack);
           }
           displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                         greenColor, backgroundColor, ctx);
@@ -1793,7 +1799,7 @@ function draw_graphic_bis() {
           let approx = false;
           for (let i = 1 ; i <= nbOfStatsFilled; i++) {
             if (performanceIndicators[i-1] == PerformanceIndicatorNA) {
-              displayGUIError("performanceIndicatorNA inconsistency (" + i + ")", new Error().stack);  
+              displayGUIError("performanceIndicatorNA inconsistency (" + i + ")", new Error().stack);
             }
             else if (performanceIndicators[i-1] == PerformanceIndicatorUNKNOWN) {
               approx = true;
@@ -1818,8 +1824,8 @@ function draw_graphic_bis() {
           else {
             str2 = sum_rounded.toFixed(2); // 2 decimal figures
           }
-          let res_header1 = false;          
-          let res_header2 = false;          
+          let res_header1 = false;
+          let res_header2 = false;
           if (!display2Strings("number", "\u2009" /* (thin space) */ + "of codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                darkGray, backgroundColor_2, ctx, 0, true)) {
             if (displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
@@ -1829,7 +1835,7 @@ function draw_graphic_bis() {
           }
           else {
             res_header1 = true;
-          }         
+          }
           if (res_header1) {
             if (!display2Strings("Total" + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                  darkGray, backgroundColor_2, ctx, 0, true)) {
@@ -1840,13 +1846,13 @@ function draw_graphic_bis() {
             }
             else {
               res_header2 = true;
-            }          
+            }
           }
           if (res_header1 && res_header2) {
             if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                darkGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
-                            darkGray, backgroundColor_2, ctx, true, 0, true, 1);                                 
+                            darkGray, backgroundColor_2, ctx, true, 0, true, 1);
             }
           }
         }
@@ -1862,7 +1868,7 @@ function draw_graphic_bis() {
           }
           else {
             res_header1 = true;
-          }  
+          }
           if (res_header1) {
             if (!display2Strings("0: optimal", "-1: useless", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                  lightGray, backgroundColor_2, ctx, 0, true)) {
@@ -1873,9 +1879,9 @@ function draw_graphic_bis() {
             }
             else {
               res_header2 = true;
-            }            
+            }
           }
-          if (res_header1 && res_header2) {          
+          if (res_header1 && res_header2) {
             if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
@@ -1923,13 +1929,13 @@ function draw_graphic_bis() {
 
         if (!gameOnGoing()) {
 
-          let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);   
+          let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);
 
           let timeInHours = Math.floor(totalTimeInSeconds/3600);
-          let timeInSecondsWithinHour = (totalTimeInSeconds - timeInHours*3600); // (range: [0;3599]       
+          let timeInSecondsWithinHour = (totalTimeInSeconds - timeInHours*3600); // (range: [0;3599]
           let timeInMinutes = Math.floor(timeInSecondsWithinHour/60);
           let timeInSeconds = timeInSecondsWithinHour - timeInMinutes*60; // (range: [0;59])
-          
+
           if (timeInHours >= 24) {
             timeStr = "> 1 day";
           }
@@ -1937,7 +1943,7 @@ function draw_graphic_bis() {
             if (timeInMinutes > 0) {
               if (timeInMinutes < 10) {
                 timeStr = timeInHours + "h 0" + timeInMinutes;
-              }              
+              }
               else {
                 timeStr = timeInHours + "h " + timeInMinutes;
               }
@@ -1963,8 +1969,8 @@ function draw_graphic_bis() {
           }
 
           if (gameWon) { // game won
-            let victoryStr;         
-            let victoryStr2;         
+            let victoryStr;
+            let victoryStr2;
             let nb_attempts_for_max_score;
             let time_in_seconds_corresponding_to_one_attempt_in_score;
             let multiply_factor;
@@ -1978,7 +1984,7 @@ function draw_graphic_bis() {
                 nb_attempts_for_max_score = 3;
                 time_in_seconds_corresponding_to_one_attempt_in_score = 450.0; // (time corresponding to 2 attempts: 15 min)
                 multiply_factor = 0.75;
-                break;                
+                break;
               case 5:
                 nb_attempts_for_max_score = 4;
                 time_in_seconds_corresponding_to_one_attempt_in_score = 630.0; // (time corresponding to 2 attempts: 21 min) // See (*)
@@ -1988,7 +1994,7 @@ function draw_graphic_bis() {
                 nb_attempts_for_max_score = 5;
                 time_in_seconds_corresponding_to_one_attempt_in_score = 1200.0;  // (time corresponding to 2 attempts: 40 min) // See (*)
                 multiply_factor = 1.5;
-                break;                
+                break;
               case 7:
                 nb_attempts_for_max_score = 6;
                 time_in_seconds_corresponding_to_one_attempt_in_score = 1800.0;  // (time corresponding to 2 attempts: 60 min) // See (*)
@@ -2014,14 +2020,14 @@ function draw_graphic_bis() {
             else { // scoring rule for other players
               // "good player's slope / 2"
               time_delta_score = 10.0 + (10.0 * (totalTimeInSeconds - time_in_seconds_short_games)) / (2*time_in_seconds_corresponding_to_one_attempt_in_score - time_in_seconds_short_games);
-            }            
+            }
             let max_time_delta_score = 2*10.0; // the time spent will tend not to cost more than 2 attempts in the score
-            if ( (time_delta_score <= max_time_delta_score) 
+            if ( (time_delta_score <= max_time_delta_score)
                  || (currentAttemptNumber-1 /* number of attempts */ >= nbMaxAttempts) /* at last attempt, score will tend towards zero "more quickly" as time goes on */ ) {
               score = multiply_factor * (score_from_nb_attempts - time_delta_score) + 0.499;
             }
             else {
-              score = multiply_factor * (score_from_nb_attempts - max_time_delta_score 
+              score = multiply_factor * (score_from_nb_attempts - max_time_delta_score
                                          - (time_delta_score - max_time_delta_score)/1.5) + 0.499; // "good player's slope / 3"
             }
             if (score < min_score) {
@@ -2035,8 +2041,8 @@ function draw_graphic_bis() {
               score = 0.0;
             }
             else if (playerWasHelpedSlightly) {
-              victoryStr = "You won with help!"; 
-              victoryStr2 = "You won /?"             
+              victoryStr = "You won with help!";
+              victoryStr2 = "You won /?"
               nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
                 score = Math.max(score / 2.0, min_score);
@@ -2048,7 +2054,7 @@ function draw_graphic_bis() {
                 score = Math.max(score / 8.0, min_score);
               }
               else {
-                score = 0.0;                
+                score = 0.0;
                 displayGUIError("internal error: nbColorsRevealed = " + nbColorsRevealed, new Error().stack);
               }
             }
@@ -2060,7 +2066,7 @@ function draw_graphic_bis() {
             if (!displayString(victoryStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                           greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
               displayString(victoryStr2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
-                            greenColor, backgroundColor_2, ctx, true, 0, false, 0);                            
+                            greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
             if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
@@ -2070,12 +2076,12 @@ function draw_graphic_bis() {
             // if (score > 0.0) {
             let rounded_score = Math.round(score);
             displayString("Score: " + rounded_score, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                          greenColor, backgroundColor_2, ctx, true, 0, false, 0);                          
+                          greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             // }
-            
+
           }
           else if (currentAttemptNumber == nbMaxAttemptsToDisplay+1) { // game lost
-          
+
             score = 0.0;
             displayString("You lost!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
@@ -2085,12 +2091,12 @@ function draw_graphic_bis() {
                             redColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
             displayString("Score: 0", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                          redColor, backgroundColor_2, ctx, true, 0, false, 0);                          
-                          
-                          
+                          redColor, backgroundColor_2, ctx, true, 0, false, 0);
+
+
           }
           else {
-            displayGUIError("game over inconsistency", new Error().stack);  
+            displayGUIError("game over inconsistency", new Error().stack);
           }
 
         }
@@ -2131,7 +2137,7 @@ function draw_graphic_bis() {
         ctx.fillStyle = darkGray;
 
         ctx.font = medium_bold_font;
-        if ((nbGamesWon == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
+        if ((nbGames == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
           let x_delta = 0.75;
           if (!displayString("Click on the colors to select them!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+1+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
@@ -2176,7 +2182,7 @@ function draw_graphic_bis() {
               if (!res) {
                 res = displayString(String(nbOfCodes), 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
                                     darkGray, backgroundColor_2, ctx, true, 0, true, 0);
-              }                                  
+              }
             }
           }
           let currentPossibleCodeShownStr;
@@ -2205,7 +2211,7 @@ function draw_graphic_bis() {
                                      darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
                     displayString("+\u2009" + "1", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                                   darkGray, backgroundColor_2, ctx, true, 0, true, 0);
-                  }                                     
+                  }
                 }
               }
               else {
@@ -2215,15 +2221,15 @@ function draw_graphic_bis() {
                                      darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
                     displayString("+\u2009" + (nbOfCodes-nbOfCodesListed), 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                                   darkGray, backgroundColor_2, ctx, true, 0, true, 0);
-                  }                                     
-                }                                    
+                  }
+                }
               }
-            }                          
+            }
           }
-          
+
         }
         else {
-          displayGUIError("invalid currentPossibleCodeShown: " + currentPossibleCodeShown, new Error().stack);  
+          displayGUIError("invalid currentPossibleCodeShown: " + currentPossibleCodeShown, new Error().stack);
         }
 
         // Draw always present and impossible colors
@@ -2346,7 +2352,7 @@ function draw_graphic_bis() {
            && (secretCodeRevealed == 0)
            && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
-          document.getElementById("revealSecretColorButton").className = "button blinking";
+          document.getElementById("revealSecretColorButton").className = (androidMode ? "button fast_blinking" : "button blinking");
       }
       else if (document.getElementById("revealSecretColorButton").disabled) {
         document.getElementById("revealSecretColorButton").className = "button disabled";
@@ -2360,15 +2366,15 @@ function draw_graphic_bis() {
       }
       else {
         document.getElementById("playPossibleCodeButton").className = "button";
-      }      
+      }
       document.getElementById("showPossibleCodesButton").disabled = !((!gameOnGoing()) && allPossibleCodesFilled());
       if (document.getElementById("showPossibleCodesButton").disabled) {
         document.getElementById("showPossibleCodesButton").className = "button disabled";
       }
       else {
-        document.getElementById("showPossibleCodesButton").className = "button blinking";
+        document.getElementById("showPossibleCodesButton").className = (androidMode ? "button fast_blinking" : "button blinking");
       }
-      
+
       if (CompressedDisplayMode) {
         if (showPossibleCodesMode) {
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonBackToGameCompressedName;
@@ -2384,7 +2390,7 @@ function draw_graphic_bis() {
         else {
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
         }
-      }      
+      }
 
       checkArraySizes();
 
@@ -2399,10 +2405,10 @@ function draw_graphic_bis() {
         else if (score > 0.0) {
           store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), nbColorsRevealed); // XXX to be filled properly (with perfs)
         }
-      }      
-      
+      }
+
       main_graph_update_needed = false;
-      
+
     }
 
     // ******************
@@ -2420,10 +2426,10 @@ function draw_graphic_bis() {
            && (secretCodeRevealed == 0)
            && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
-          document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + " blinking";
+          document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + (androidMode ? " fast_blinking" : " blinking");
       }
     }
-    
+
     document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != secretCodeRevealed));
     if (document.getElementById("resetCurrentCodeButton").disabled) {
       document.getElementById("resetCurrentCodeButton").className = "button disabled";
@@ -2431,14 +2437,14 @@ function draw_graphic_bis() {
     else {
       document.getElementById("resetCurrentCodeButton").className = "button";
     }
-    
+
 
   }
   catch (err) {
     draw_exception = true;
     displayGUIError("draw error: " + err, err.stack);
   }
- 
+
 }
 
 function displayString(str, x_cell, y_cell, x_cell_width,
@@ -2491,8 +2497,8 @@ function displayString(str, x_cell, y_cell, x_cell_width,
         }
         else {
           ctx.strokeStyle = "black";
-        }       
-        ctx.beginPath();              
+        }
+        ctx.beginPath();
         let lineWidthIni = ctx.lineWidth;
         ctx.lineWidth = 2;
         ctx.moveTo(x_0 + 2, y_0 - 2);
@@ -2501,7 +2507,7 @@ function displayString(str, x_cell, y_cell, x_cell_width,
         ctx.lineTo(x_0_next - 2, y_0 - 2);
         ctx.stroke();  // Draw it
         ctx.lineWidth = lineWidthIni;
-        
+
         ctx.fillStyle = backgroundColor;
         let half_hidding_rect_width = Math.min(16*(x_0_next - x_0)/100, str_width/2+2);
         ctx.fillRect(x_0 + (x_0_next - x_0)/2 - half_hidding_rect_width, y_0_next + 1, 2*half_hidding_rect_width+2, y_0 - y_0_next - 1);
@@ -2643,7 +2649,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     circleBorderWidth = 0.6;
     whiteBckg = "#FFFFFF";
   }
-  
+
   for (let i = 0; i < mark.nbBlacks; i++) {
     x_0_pos = Math.round(x_0 + 1.0 + Math.floor(space_btw_marks) + i*(circle_width_applied+1.0+Math.floor(space_btw_marks))); // Math.floor(space_btw_marks) instead of space_btw_marks to have constant spacing between all circles
 
@@ -2723,7 +2729,7 @@ function displayPerf(perf, y_cell, backgroundColor, ctx) {
       if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
         displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                      redColor, backgroundColor, ctx);                     
+                      redColor, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator <= -0.25) {
@@ -2761,7 +2767,7 @@ function displayPerf(perf, y_cell, backgroundColor, ctx) {
   else {
     // Nothing is displayed in case of PerformanceIndicatorNA (but the background is updated if needed)
     displayString("\u2234", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
-                  lightGray, backgroundColor, ctx);  
+                  lightGray, backgroundColor, ctx);
   }
 
 }
