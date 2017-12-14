@@ -180,7 +180,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_J";    
+      let html_compatibility_game_version = "Ver_K";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -204,35 +204,11 @@
             console.log('modal open');
           },
           onClose: function() {
-            console.log('modal closed');
-            
-            if (modal_mode == 1) {
-              if (typeof(Storage) !== 'undefined') {
-                if (localStorage.countryname && localStorage.cityname) {
-                  console.log("new countryname: " + localStorage.countryname + '~');
-                  document.getElementById('form_country_id').value = localStorage.countryname + '~';
-                  console.log("new region: -");
-                  document.getElementById('form_region_id').value = "-"; // (skipped to simplify)
-                  console.log("new city: " + localStorage.cityname + '~');
-                  document.getElementById('form_city_id').value = localStorage.cityname + '~';                    
-                }
-              }
-              setTimeout("submitForm();",444);
-            }
-            else if (modal_mode == 2) {
-              if (typeof(Storage) !== 'undefined') {
-                if (localStorage.firstname) {
-                  console.log("new firstname: " + localStorage.firstname);
-                  document.getElementById('form_firstname_id').value = localStorage.firstname;                 
-                }
-              }
-              setTimeout("submitForm();",444);              
-            }
-            
-            modal_mode = -1;
+            console.log('(modal onClose)');
           },
           beforeClose: function() {  
           
+            console.log('(modal beforeClose)');
             if (modal_mode == 1) {
           
               let country_warning = false;
@@ -272,7 +248,20 @@
               catch (exc) {            
                 console.log("error encountered at city name selection: " + exc);
               }
+
+              if (typeof(Storage) !== 'undefined') {
+                if (localStorage.countryname && localStorage.cityname) {
+                  console.log("new countryname: " + localStorage.countryname + '~');
+                  document.getElementById('form_country_id').value = localStorage.countryname + '~';
+                  console.log("new region: -");
+                  document.getElementById('form_region_id').value = "-"; // (skipped to simplify)
+                  console.log("new city: " + localStorage.cityname + '~');
+                  document.getElementById('form_city_id').value = localStorage.cityname + '~';                    
+                }
+              }
+              setTimeout("submitForm();",444);
               
+              modal_mode = -1;
               return true; // close the modal
               // return false; // nothing happens
               
@@ -297,15 +286,26 @@
                 console.log("error encountered at first name selection: " + exc);
               }
               
+              if (typeof(Storage) !== 'undefined') {
+                if (localStorage.firstname) {
+                  console.log("new firstname: " + localStorage.firstname);
+                  document.getElementById('form_firstname_id').value = localStorage.firstname;                 
+                }
+              }
+              setTimeout("submitForm();",444);              
+              
+              modal_mode = -1;
               return true; // close the modal              
               
             }
             
             else if (modal_mode == 3) {
+              modal_mode = -1;
               // (No particular action)
               return true; // close the modal
             }
             
+            modal_mode = -1;
             return true; // close the modal 
             // return false; // nothing happens            
             
@@ -505,7 +505,7 @@
             modal.open();          
           }
           else {
-            console.log("modal display conditions not fulfilled");
+            console.log("modal display conditions not fulfilled (" + modal_mode + ")");
           }
         }
         else {
