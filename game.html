@@ -180,7 +180,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_K";    
+      let html_compatibility_game_version = "Ver_L";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -473,6 +473,7 @@
         my_form_url = my_form_url + "my_callback_fct=handle_rsp";        
         // console.log(my_form_url);          
         // Submit form
+        console.log("(jQuery.ajax get/jsonp)");        
         jQuery.ajax({
           crossDomain: true,
           url: my_form_url,
@@ -517,7 +518,9 @@
           }
         }
       }      
-      function handle_rsp(e) {
+      function handle_rsp(e) {      
+        console.log("(handle_rsp)");
+      
         var score_display_time = 4444; // (see blinking time)
         var time_to_wait = 44;
         var time_diff = new Date().getTime() - store_time;
@@ -834,11 +837,11 @@
           
         })
         .done(function() {
-          console.log("geolocation success!");
+          console.log("(geolocation success)");
         })
         .fail(function(jqxhr, textStatus, error) {
-          var errorStr = ("geolocation failure! " + textStatus + " " + error).trim(); 
-          console.log(errorStr);
+          var errorStr = ("geolocation failure: " + textStatus + " " + error).trim(); 
+          console.log("(" + errorStr + ")");
           if (localStorage.firstname) {
             errorStr = errorStr + " for " + localStorage.firstname;
           }
