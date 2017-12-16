@@ -108,7 +108,7 @@ let myCanvasIniWidth = document.getElementById("my_canvas").style.width;
 let myCanvasIniHeight = document.getElementById("my_canvas").style.height;
 
 let CompressedDisplayMode = false;
-let CompressedDisplayMode_compressWidth = 488;
+let CompressedDisplayMode_compressWidth = 555;
 let CompressedDisplayMode_uncompressWidth = 999;
 let mobileMode = false;
 let androidMode = false;
@@ -1785,9 +1785,11 @@ function draw_graphic_bis() {
         // Display game version
         // ********************
 
-        ctx.font = very_small_italic_font;
-        displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors, 5,
-                      lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
+        if (!CompressedDisplayMode) {
+          ctx.font = very_small_italic_font;
+          displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors, 5,
+                        lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
+        }
 
         // Display column headers
         // **********************
