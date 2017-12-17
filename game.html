@@ -131,29 +131,49 @@
     </script>
     <script src='lib/jquery-3.2.1.min.js'></script>
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
+
+    <!-- Hidden counter version: -->
+    <!-- GoStats JavaScript Based Code -->
+    <script type="text/javascript" src="https://ssl.gostats.com/js/counter.js"></script>
+    <script type="text/javascript">_gos='monster.gostats.com';_goa=497176;
+    _got=5;_goi=1;_gol='GoStats is a website analyzer.';_GoStatsRun();</script>
+    <noscript><a target="_blank" title="GoStats is a website analyzer." 
+    href="http://gostats.com"><img alt="GoStats is a website analyzer." 
+    src="https://ssl.gostats.com/bin/count/a_497176/t_5/i_1/ssl_monster.gostats.com/counter.png" 
+    style="border-width:0" /></a></noscript>
+    <!-- End GoStats JavaScript Based Code -->      
     
   </head>
 
   <body onresize='draw_graphic();'>
 
     <p align='right'>
+      <script>
+        if (typeof(Storage) !== 'undefined') {
+          if (localStorage.firstname) {
+            document.write("<font color=#BBBBBB><span id='welcome_id' style='float:left;'>Welcome <b>" + localStorage.firstname + "</b>!</span></font>");
+            setTimeout(function() {
+              $("#welcome_id").fadeOut().empty();
+            }, 12000);
+          }
+        }
+      </script>
       <b><a href='index.html'>&#x2302; Main page</a></b>&nbsp;&nbsp;&nbsp;<br>
       <b><a href='screenshots.html'>&#x2302; Screenshots</a></b>&nbsp;&nbsp;&nbsp;<br>
       <b><a href='optimal_strategy.html'>&#x2302; Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='contact_info.html'>&#x2302; Contact info</a></b>&nbsp;&nbsp;&nbsp;<br>
+      <b><a href='contact_info.html'>&#x2302; Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br>
+      <script>
+        {
+          var date = new Date();
+          var m = date.getMonth();
+          var d = date.getDate();
+          if ( ((m == 11) && (d >= 15)) // after December 15th
+               || ((m == 0) && (d <= 15)) ) { // before January 15th
+            document.write("<img src='img/End_of_year.png'>&nbsp;<br><img src='img/End_of_year2.png'>&nbsp;");
+          }
+        }
+      </script>
     </p>
-    <br><br><br><br>
-    <center>
-      <!-- GoStats JavaScript Based Code -->
-      <script type="text/javascript" src="https://ssl.gostats.com/js/counter.js"></script>
-      <script type="text/javascript">_gos='monster.gostats.com';_goa=497176;
-      _got=7;_goi=3;_goz=0;_god='visitors';_gol='web statistic';_GoStatsRun();</script>
-      <noscript><a target="_blank" title="web statistic" 
-      href="http://gostats.com"><img alt="web statistic" 
-      src="https://ssl.gostats.com/bin/count/a_497176/t_7/i_3/z_0/show_visitors/ssl_monster.gostats.com/counter.png" 
-      style="border-width:0" /></a></noscript>
-      <!-- End GoStats JavaScript Based Code -->    
-    </center>  
   
     <!-- HTML controls and canvas -->
 
@@ -183,7 +203,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_M";    
+      let html_compatibility_game_version = "Ver_M2";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -262,7 +282,7 @@
                   document.getElementById('form_city_id').value = localStorage.cityname + '~';                    
                 }
               }
-              setTimeout("submitForm();",444);
+              setTimeout("submitForm();", 444);
               
               modal_mode = -1;
               return true; // close the modal
@@ -295,7 +315,7 @@
                   document.getElementById('form_firstname_id').value = localStorage.firstname;                 
                 }
               }
-              setTimeout("submitForm();",444);              
+              setTimeout("submitForm();", 444);              
               
               modal_mode = -1;
               return true; // close the modal              
