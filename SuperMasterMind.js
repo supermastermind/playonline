@@ -2352,9 +2352,10 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (secretCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
-                || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
-          document.getElementById("revealSecretColorButton").className = (androidMode ? "button fast_blinking" : "button blinking");
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1500 /* 25 min */ : 1800 /* 30 min */))  // See also (*)
+                || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
+                || (tmp_perf <= ((nbColumns <= 5) ?  -2 : -1)) ) ) {
+        document.getElementById("revealSecretColorButton").className = (androidMode ? "button fast_blinking" : "button blinking");
       }
       else if (document.getElementById("revealSecretColorButton").disabled) {
         document.getElementById("revealSecretColorButton").className = "button disabled";
@@ -2426,9 +2427,11 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (secretCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1500 /* 25 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
-          document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + (androidMode ? " fast_blinking" : " blinking");
+          if (document.getElementById("revealSecretColorButton").className.indexOf('blinking') == -1) {
+            document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + (androidMode ? " fast_blinking" : " blinking");
+          }
       }
     }
 
