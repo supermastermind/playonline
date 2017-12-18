@@ -1383,6 +1383,12 @@ function draw_graphic_bis() {
             document.getElementById("my_canvas").style.height = "99%";
           }
 
+          try { // (try/catch because optional pictures)
+            document.getElementById("img_1").style.display='none';
+            document.getElementById("img_2").style.display='none';
+          }
+          catch (err) {}
+
           left_border_margin_x = 1.0;   // Left border margin for x axis in %
           right_border_margin_x = 1.0;  // Right border margin for x axis in %
           bottom_border_margin_y = 1.5; // Bottom border margin for y axis in %
@@ -1408,6 +1414,12 @@ function draw_graphic_bis() {
           document.getElementById("my_table").style["border-radius"] = tableIniBorderRadius;
           document.getElementById("my_canvas").style.width = myCanvasIniWidth;
           document.getElementById("my_canvas").style.height = myCanvasIniHeight;
+
+          try { // (try/catch because optional pictures)
+            document.getElementById("img_1").style.display='inline';
+            document.getElementById("img_2").style.display='inline';
+          }
+          catch (err) {}
 
           left_border_margin_x = 5.0;   // Left border margin for x axis in %
           right_border_margin_x = 5.0;  // Right border margin for x axis in %

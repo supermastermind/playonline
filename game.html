@@ -171,11 +171,42 @@
         <td style='width:93%;margin:0;padding:0;vertical-align:middle;align:right;text-align:left;'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
       </tr>
     </table>
+
+    <!-- Display extra text and pictures -->
+    
+    <p align='right'>
+      <script>
+        if (typeof(Storage) !== 'undefined') {
+          if (localStorage.firstname) {
+            document.write("<font color=#C3C3C3><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;Welcome <b><font color=#DDDDDD>" + localStorage.firstname + "</font></b>!</span></font>");
+            setTimeout(function() {
+              $("#welcome_id").fadeOut().empty();
+            }, 60000);
+          }
+        }
+      </script>
+      <b><a href='index.html'>&#x2302; Main page</a></b>&nbsp;&nbsp;&nbsp;<br>
+      <b><a href='screenshots.html'>&#x2302; Screenshots</a></b>&nbsp;&nbsp;&nbsp;<br>
+      <b><a href='optimal_strategy.html'>&#x2302; Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>
+      <b><a href='contact_info.html'>&#x2302; Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br>
+      <script>
+        {
+          var date = new Date();
+          var m = date.getMonth();
+          var d = date.getDate();
+          if ( ((m == 11) && (d >= 16)) // after December 16th
+               || ((m == 0) && (d <= 8)) ) { // before January 8th
+            // (Display values will be updated below if necessary)
+            document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>&nbsp;<br><img id='img_2' style='display:none;' src='img/End_of_year2.png'>&nbsp;");
+          }
+        }
+      </script>
+    </p>    
     
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_N2";    
+      let html_compatibility_game_version = "Ver_O";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -352,6 +383,8 @@
     </form>
   
     <script>   
+
+      setTimeout("reload_needed = true;",12*3600*1000); // (reload the page from server every 12 hours)
     
       function sleep(ms) { // To be called like "await sleep(1000);"
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -841,58 +874,28 @@
         })
         .fail(function(jqxhr, textStatus, error) {
           var errorStr = ("geolocation failure: " + textStatus + " " + error).trim(); 
-          console.log("(" + errorStr + ")");
-          if (localStorage.firstname) {
-            errorStr = errorStr + " for " + localStorage.firstname;
-          }
-          if (localStorage.countryname) {
-            errorStr = errorStr + " in " + localStorage.countryname;
-          }
-          if (localStorage.cityname) {
-            errorStr = errorStr + " in " + localStorage.cityname;
-          }
-          if (localStorage.gamesok) {
-            errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+          if (typeof(Storage) !== 'undefined') {          
+            if (localStorage.firstname) {
+              errorStr = errorStr + " for " + localStorage.firstname;
+            }
+            if (localStorage.countryname) {
+              errorStr = errorStr + " in " + localStorage.countryname;
+            }
+            if (localStorage.cityname) {
+              errorStr = errorStr + " in " + localStorage.cityname;
+            }
+            if (localStorage.gamesok) {
+              errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+            }
           }
           errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
+          console.log("(" + errorStr + ")");          
           submitForm(errorStr);
         });
       }
-            
-      setTimeout("reload_needed = true;",20*3600*1000); // (reload the page from server ~ every day if necessary)
       
     </script>
-    
-    <!-- Display extra text and pictures -->
-    
-    <p align='right'>
-      <script>
-        if (typeof(Storage) !== 'undefined') {
-          if (localStorage.firstname) {
-            document.write("<font color=#C3C3C3><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;Welcome <b><font color=#DDDDDD>" + localStorage.firstname + "</font></b>!</span></font>");
-            setTimeout(function() {
-              $("#welcome_id").fadeOut().empty();
-            }, 60000);
-          }
-        }
-      </script>
-      <b><a href='index.html'>&#x2302; Main page</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='screenshots.html'>&#x2302; Screenshots</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='optimal_strategy.html'>&#x2302; Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='contact_info.html'>&#x2302; Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br>
-      <script>
-        {
-          var date = new Date();
-          var m = date.getMonth();
-          var d = date.getDate();
-          if ( ((m == 11) && (d >= 16)) // after December 16th
-               || ((m == 0) && (d <= 8)) ) { // before January 8th
-            document.write("<img src='img/End_of_year.png'>&nbsp;<br><img src='img/End_of_year2.png'>&nbsp;");
-          }
-        }
-      </script>
-    </p>    
-    
+        
   </body>
 
 </html>
