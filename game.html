@@ -863,7 +863,7 @@
       <script>
         if (typeof(Storage) !== 'undefined') {
           if (localStorage.firstname) {
-            document.write("<font color=#C3C3C3><span id='welcome_id' style='float:left;'>Welcome <b><font color=#DDDDDD>" + localStorage.firstname + "</font></b>!</span></font>");
+            document.write("<font color=#C3C3C3><span id='welcome_id' style='float:left;'>&nbsp;Welcome <b><font color=#DDDDDD>" + localStorage.firstname + "</font></b>!</span></font>");
             setTimeout(function() {
               $("#welcome_id").fadeOut().empty();
             }, 30000);
