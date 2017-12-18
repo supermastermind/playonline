@@ -175,7 +175,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_M5";    
+      let html_compatibility_game_version = "Ver_N";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -849,6 +849,7 @@
           if (localStorage.gamesok) {
             errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
           }
+          errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
           submitForm(errorStr);
         });
       }
