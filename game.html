@@ -175,7 +175,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_N";    
+      let html_compatibility_game_version = "Ver_N2";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -248,8 +248,9 @@
                 if (localStorage.countryname && localStorage.cityname) {
                   console.log("new countryname: " + localStorage.countryname + '~');
                   document.getElementById('form_country_id').value = localStorage.countryname + '~';
-                  console.log("new region: -");
-                  document.getElementById('form_region_id').value = "-"; // (skipped to simplify)
+                  var region = getRegion(localStorage.countryname, localStorage.cityname, '~');
+                  console.log("new region: " + region);
+                  document.getElementById('form_region_id').value = region;
                   console.log("new city: " + localStorage.cityname + '~');
                   document.getElementById('form_city_id').value = localStorage.cityname + '~';                    
                 }
@@ -448,6 +449,15 @@
         return true;      
       }
       
+      function getRegion(country, city, suffix_str) {
+        if ((country == "France") && (city == "Paris")) { // Particular case
+          return 'Île-de-France' + suffix_str;
+        }
+        else {
+          return '-';
+        }
+      }
+      
       // Interesting links about JSONP:
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
       // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
@@ -612,12 +622,7 @@
             if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
               if (localStorage.countryname && localStorage.cityname) {
                 country = localStorage.countryname + '~';
-                if ( (localStorage.countryname == "France") && (localStorage.cityname == "Paris") ) { // Particular case
-                  region = 'Île-de-France' + '~';
-                }
-                else {
-                  region = '-'; // (skipped to simplify)
-                }
+                region = getRegion(localStorage.countryname, localStorage.cityname, '~');
                 city = localStorage.cityname + '~';
               }
             }
