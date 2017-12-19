@@ -889,7 +889,7 @@
           let now = new Date().getTime();
           while(new Date().getTime() < now + 3000){} // (interface is frozen during this short time)
           
-          $.getJSON('https://freegeoip.net/json/toto', geolocation_handler.run)
+          $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
           .fail(function(jqxhr, textStatus, error) {        
             var errorStr = ("geolocation retry failure: " + textStatus + " " + error).trim(); 
             if (typeof(Storage) !== 'undefined') {          
