@@ -884,7 +884,11 @@
           errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
           console.log(errorStr);          
           submitForm(errorStr);
-        
+
+          // Keep some time between the 2 potential calls to submitForm(). This may also allow to make the 2nd getJSON in different server load conditions.
+          let now = new Date().getTime();
+          while(new Date().getTime() < now + 2000){} // (interface is frozen during this short time)
+          
           $.getJSON('https://freegeoip.net/json/toto', geolocation_handler.run)
           .fail(function(jqxhr, textStatus, error) {        
             var errorStr = ("geolocation retry failure: " + textStatus + " " + error).trim(); 
