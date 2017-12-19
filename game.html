@@ -195,7 +195,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_O3";    
+      let html_compatibility_game_version = "Ver_O4";    
       let reload_needed = false;
     </script>    
     <script src='SuperMasterMind.js'></script>
@@ -849,17 +849,16 @@
               }            
             }
           }
+
+          console.log("(geolocation success)");   
           
           if (form_to_be_submitted) {
             submitForm();
           }          
           else {
             console.log("(form submission skipped)");
-          }
+          }          
           
-        })
-        .done(function() {
-          console.log("(geolocation success)");
         })
         .fail(function(jqxhr, textStatus, error) {
           var errorStr = ("geolocation failure: " + textStatus + " " + error).trim(); 
@@ -878,10 +877,14 @@
             }
           }
           errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
-          console.log(errorStr);
+          console.log(errorStr);          
           submitForm(errorStr);
+        })
+        .always(function() {
+          console.log("(store player info completed)");
         });
-      }
+
+      } // store_player_info
       
     </script>
         
