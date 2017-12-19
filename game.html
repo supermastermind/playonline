@@ -887,7 +887,7 @@
 
           // Keep some time between the 2 potential calls to submitForm(). This may also allow to make the 2nd getJSON in different server load conditions.
           let now = new Date().getTime();
-          while(new Date().getTime() < now + 2000){} // (interface is frozen during this short time)
+          while(new Date().getTime() < now + 3000){} // (interface is frozen during this short time)
           
           $.getJSON('https://freegeoip.net/json/toto', geolocation_handler.run)
           .fail(function(jqxhr, textStatus, error) {        
