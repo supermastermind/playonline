@@ -883,7 +883,7 @@ function resetGameAttributes(nbColumnsSelected) {
     case 3:
       nbColors = Math.max(nbMinColors, nominalGameNbColors - 2);
       nbMaxAttempts = nominalGameNbMaxAttempts - 4;
-      document.title = "Very easy";
+      document.title = "Very easy game";
       break;
     case 4:
       nbColors = Math.max(nbMinColors, nominalGameNbColors - 1);
