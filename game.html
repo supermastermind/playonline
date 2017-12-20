@@ -2,19 +2,19 @@
 <html>
 
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Super Master Mind</title> <!-- (this title will be overwritten) -->
     <meta name="title" content="Super Master Mind">
     <meta name="description" content="Play Super Master Mind / Code breaker online, assisted by a calculator which knows the optimal strategy">
-    <meta name="keywords" content="super master mind, code breaker, game, online, optimal strategy, javascript">    
-    
+    <meta name="keywords" content="super master mind, code breaker, game, online, optimal strategy, javascript">
+
     <!-- Remote console at http://console.re/supermastermind displaying console text (provided all calls to "console.log(xxx)" are replaced by "console.re.log(xxx)")
-         and console errors (provided the .js scripts to be debugged are copied/pasted directly into this HTML file between <script>...</script> tags, 
+         and console errors (provided the .js scripts to be debugged are copied/pasted directly into this HTML file between <script>...</script> tags,
          otherwise error details, among which error line numbers, will be lost):
       <script src="https://console.re/connector.js" data-channel="supermastermind" id="consolerescript"></script>
-      <script>console.re.log('remote log enabled!');</script>    
+      <script>console.re.log('remote log enabled!');</script>
     -->
-    
+
     <style>
       /* *** Main styles *** */
       body {
@@ -85,7 +85,7 @@
         87%  {background-color: purple;}
         100% {background-color: white;}
       }
-      
+
       .blinking {
         -webkit-animation-name: glowing; /* Safari 4.0 - 8.0 */
         -webkit-animation-duration: 3.75s; /* Safari 4.0 - 8.0 */
@@ -97,8 +97,8 @@
         -webkit-animation-duration: 2.75s; /* Safari 4.0 - 8.0 */
         animation-name: glowing;
         animation-duration: 2.75s;
-       }       
-       
+       }
+
       .radio {
         font-family: Verdana;
         color: black;
@@ -131,11 +131,11 @@
     </script>
     <script src='lib/jquery-3.2.1.min.js'></script>
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
-    
+
   </head>
 
   <body onresize='draw_graphic();'>
-  
+
     <!-- HTML controls and canvas -->
 
     <table id='my_table' style='background:#E3E3E3;width:75%;height:90%;position:absolute;left:12.5%;top:2%;border:5px ridge white;border-radius:1%;margin:0;padding:0;'>
@@ -153,7 +153,7 @@
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset the current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code to help you...' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-          <input id='playPossibleCodeButton' class='button disabled' type='button' value='Play possible code' title='Play a code which is possible' onclick='playPossibleCodeButtonClick()' onfocus='this.blur()' disabled>          
+          <input id='playPossibleCodeButton' class='button disabled' type='button' value='Play possible code' title='Play a code which is possible' onclick='playPossibleCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show the possible codes at each stage of the game (can only be selected when the game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
         </td>
         <td style='width:0.4%;margin:0;padding:0;'></td>
@@ -162,7 +162,7 @@
     </table>
 
     <!-- Display extra text and pictures -->
-    
+
     <p align='right'>
       <script>
         if (typeof(Storage) !== 'undefined') {
@@ -190,24 +190,24 @@
           }
         }
       </script>
-    </p>    
-    
+    </p>
+
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_O9";    
+      let html_compatibility_game_version = "Ver_O9";
       let reload_needed = false;
-    </script>    
+    </script>
     <script src='SuperMasterMind.js'></script>
-    
+
     <!-- Handle player's info -->
 
     <script src='lib/tingle-master/dist/tingle.min.js'></script>
     <script>
-    
+
       var modal_mode = -1;
       var store_time = new Date().getTime();
-    
+
       var modal = new tingle.modal({
           footer: true,
           stickyFooter: false,
@@ -221,19 +221,19 @@
           onClose: function() {
             console.log('(modal onClose)');
           },
-          beforeClose: function() {  
-          
+          beforeClose: function() {
+
             console.log('(modal beforeClose)');
             if (modal_mode == 1) {
-          
+
               let country_warning = false;
-          
+
               // Get selected country name
-              try {          
+              try {
                 let elt = document.getElementById("country_selection");
                 if ( (elt.selectedIndex != -1) && (elt.selectedIndex > 0) /* (skip very first option) */) {
                   if (typeof(Storage) !== 'undefined') {
-                    localStorage.countryname = elt.options[elt.selectedIndex].text;                
+                    localStorage.countryname = elt.options[elt.selectedIndex].text;
                   }
                 }
                 else {
@@ -241,12 +241,12 @@
                   country_warning = true;
                 }
               }
-              catch (exc) {            
+              catch (exc) {
                 console.log("error encountered at country name selection: " + exc);
               }
-              
+
               // Get city name entered
-              try {          
+              try {
                 let city_entered = document.getElementById("city_input").value;
                 city_entered = city_entered.trim();
                 if ( (city_entered.length >= 3) && (city_entered.length <= 20) && (/^[A-zÀ-ÿ '-]+$/.test(city_entered)) /* (only letters) */ && isCorrect(city_entered) ) {
@@ -258,9 +258,9 @@
                   if (!country_warning) {
                     alert("Invalid city name: " + city_entered);
                   }
-                }              
+                }
               }
-              catch (exc) {            
+              catch (exc) {
                 console.log("error encountered at city name selection: " + exc);
               }
 
@@ -272,21 +272,21 @@
                   console.log("new region: " + region);
                   document.getElementById('form_region_id').value = region;
                   console.log("new city: " + localStorage.cityname + '~');
-                  document.getElementById('form_city_id').value = localStorage.cityname + '~';                    
+                  document.getElementById('form_city_id').value = localStorage.cityname + '~';
                 }
               }
               setTimeout("submitForm();", 444);
-              
+
               modal_mode = -1;
               return true; // close the modal
               // return false; // nothing happens
-              
+
             }
-            
+
             else if (modal_mode == 2) {
-              
+
               // Get firstname entered
-              try {          
+              try {
                 let firstname_entered = document.getElementById("firstname_input").value;
                 firstname_entered = firstname_entered.trim();
                 if ( (firstname_entered.length >= 3) && (firstname_entered.length <= 12) && (/^[A-zÀ-ÿ'-]+$/.test(firstname_entered)) /* (only letters) */ && isCorrect(firstname_entered) ) {
@@ -296,89 +296,89 @@
                 }
                 else {
                   alert("Invalid first name: " + firstname_entered);
-                }              
+                }
               }
-              catch (exc) {            
+              catch (exc) {
                 console.log("error encountered at first name selection: " + exc);
               }
-              
+
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.firstname) {
                   console.log("new firstname: " + localStorage.firstname);
-                  document.getElementById('form_firstname_id').value = localStorage.firstname;                 
+                  document.getElementById('form_firstname_id').value = localStorage.firstname;
                 }
               }
-              setTimeout("submitForm();", 444);              
-              
+              setTimeout("submitForm();", 444);
+
               modal_mode = -1;
-              return true; // close the modal              
-              
+              return true; // close the modal
+
             }
-            
+
             else if (modal_mode == 3) {
               modal_mode = -1;
               // (No particular action)
               return true; // close the modal
             }
-            
+
             modal_mode = -1;
-            return true; // close the modal 
-            // return false; // nothing happens            
-            
+            return true; // close the modal
+            // return false; // nothing happens
+
           }
       });
       // add a button
       modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary', function() {
         // here goes some logic
         modal.close();
-      });   
-      
-    </script>    
-    
+      });
+
+    </script>
+
     <iframe style='display:none;' name='my_frame'>Your browser does not support iframes!</iframe> <!-- suppress style='display:none;' to see the form's response -->
     <form  style='display:none;' id='my_form' target='my_frame' action='https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec'>
 
       playerid: <input id='form_playerid_id' name='playerid' type='text' value='-'><br>
       firstname: <input id='form_firstname_id' name='firstname' type='text' value='-'><br>
-      
+
       nbcolumns: <input id='form_nbcolumns_id' name='nbcolumns' type='text' value='-'><br>
-      score: <input id='form_score_id' name='score' type='text' value='-'><br>      
-      attempts: <input id='form_attempts_id' name='attempts' type='text' value='-'><br>      
-      time: <input id='form_time_id' name='time' type='text' value='-'><br>      
-      perfs: <input id='form_perfs_id' name='perfs' type='text' value='-'><br>            
+      score: <input id='form_score_id' name='score' type='text' value='-'><br>
+      attempts: <input id='form_attempts_id' name='attempts' type='text' value='-'><br>
+      time: <input id='form_time_id' name='time' type='text' value='-'><br>
+      perfs: <input id='form_perfs_id' name='perfs' type='text' value='-'><br>
       help: <input id='form_help_id' name='help' type='text' value='-'><br>
 
       gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-'><br>
       deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-'><br>
 
-      country: <input id='form_country_id' name='country' type='text' value='-'><br>      
+      country: <input id='form_country_id' name='country' type='text' value='-'><br>
       region: <input id='form_region_id' name='region' type='text' value='-'><br>
       zip: <input id='form_zip_id' name='zip' type='text' value='-'><br>
       city: <input id='form_city_id' name='city' type='text' value='-'><br>
       timezone: <input id='form_timezone_id' name='timezone' type='text' value='-'><br>
       latitude: <input id='form_latitude_id' name='latitude' type='text' value='-'><br>
       longitude: <input id='form_longitude_id' name='longitude' type='text' value='-'><br>
-      ipaddress: <input id='form_ipaddress_id' name='ipaddress' type='text' value='-'><br>            
-       
+      ipaddress: <input id='form_ipaddress_id' name='ipaddress' type='text' value='-'><br>
+
       platform: <input id='form_platform_id' name='platform' type='text' value='-'><br> <!-- OS -->
       browserlanguage: <input id='form_browserlanguage_id' name='browserlanguage' type='text' value='-'><br> <!-- Browser language -->
       useragent: <input id='form_useragent_id' name='useragent' type='text' value='-'><br> <!-- Browser (more or less) -->
-      href: <input id='form_href_id' name='href' type='text' value='-'><br>      
+      href: <input id='form_href_id' name='href' type='text' value='-'><br>
       formsubmitdate: <input id='form_formsubmitdate_id' name='formsubmitdate' type='text' value='-'><br>
       debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-'><br>
-      
+
       rankings: <input id='form_rankings_id' name='rankings' type='text' value='-'><br>
-      
+
     </form>
-  
-    <script>   
+
+    <script>
 
       setTimeout("reload_needed = true;",12*3600*1000); // (reload the page from server every 12 hours)
-    
+
       function sleep(ms) { // To be called like "await sleep(1000);"
         return new Promise(resolve => setTimeout(resolve, ms));
       }
-      
+
       function makeid() {
         let text = "";
         let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -386,7 +386,7 @@
           text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
         return text;
-      }      
+      }
       function capitalizeFirstLetters(str) {
         if (str.length == 0) {
           return "";
@@ -397,8 +397,8 @@
         else {
           let res = str.toLowerCase();
           res = res.charAt(0).toUpperCase() + res.slice(1);
-          
-          let res2 = "";          
+
+          let res2 = "";
           let index = res.indexOf('-');
           while ((index != -1) && (index+1 < res.length)) {
             res2 = res2 + res.substring(0, index+1) + res.charAt(index+1).toUpperCase();
@@ -413,7 +413,7 @@
           }
           res2 = res2 + res;
           res = res2;
-          res2 = "";          
+          res2 = "";
           index = res.indexOf(' ');
           while ((index != -1) && (index+1 < res.length)) {
             res2 = res2 + res.substring(0, index+1) + res.charAt(index+1).toUpperCase();
@@ -426,10 +426,10 @@
               index = -1;
             }
           }
-          res2 = res2 + res;          
-          
+          res2 = res2 + res;
+
           res = res2;
-          res2 = "";          
+          res2 = "";
           index = res.indexOf("'");
           while ((index != -1) && (index+1 < res.length)) {
             res2 = res2 + res.substring(0, index+1) + res.charAt(index+1).toUpperCase();
@@ -442,11 +442,11 @@
               index = -1;
             }
           }
-          res2 = res2 + res;          
-          
+          res2 = res2 + res;
+
           res2 = res2.replace(" D'"," d'");
           res2 = res2.replace(" Sur "," sur ");
-          
+
           return res2;
         }
       }
@@ -458,19 +458,19 @@
              return 'P1b';
            case 'file:':
              return 'P2';
-           default: 
+           default:
              // (other protocols)
              return 'P3';
         }
       }
-      
+
       function isCorrect(str) {
         if ( (str.toLowerCase().indexOf('bastard') != -1) || (str.toLowerCase().indexOf('fuck') != -1) ) {
           return false;
         }
-        return true;      
+        return true;
       }
-      
+
       function getRegion(country, city, suffix_str) {
         if ((country == "France") && (city == "Paris")) { // Particular case
           return 'Île-de-France' + suffix_str;
@@ -479,58 +479,92 @@
           return '-';
         }
       }
-      
+
       // Interesting links about JSONP:
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
       // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
       //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
       function submitForm(errorCaseStr = "") {
-      
-        let my_form_url = document.getElementById("my_form").action + '?';        
+
+        let my_form_url = document.getElementById("my_form").action + '?';
         if (errorCaseStr == "") { // Nominal case
           // console.log(JSON.stringify($("#my_form").serializeArray()));
           let elements = document.getElementById("my_form").elements;
           for (let i = 0, element; element = elements[i++];) {
             my_form_url = my_form_url + element.name + '=' + element.value + '&';
-          }      
+          }
         }
         else { // Error case
           my_form_url = my_form_url + 'form_error=' + errorCaseStr + '&';
-        }        
-        my_form_url = my_form_url + "my_callback_fct=handle_rsp";        
-        // console.log(my_form_url);          
+        }
+        my_form_url = my_form_url + "my_callback_fct=handle_rsp";
+        // console.log(my_form_url);
         // Submit form
-        console.log("(jQuery.ajax get/jsonp)");        
+        console.log("(jQuery.ajax get/jsonp" + ((errorCaseStr == "") ? "" : " for error case") + ")");
         jQuery.ajax({
           crossDomain: true,
-          url: my_form_url,
+          url: "http://" + my_form_url,
           method: "GET",
           dataType: "jsonp"
-        });
+        })
+        .fail(function(jqxhr, textStatus, error) {
         
-        // document.getElementById('my_form').submit(); 
+          try {
+            if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
+              console.log(("script submission failure: " + textStatus + " " + error).trim());
+              // Keep some time between the 2 form submissions
+              let now = new Date().getTime();
+              while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
+
+              my_form_url = my_form_url + '&FormSubmissionRetry=true'
+
+              jQuery.ajax({
+                crossDomain: true,
+                url: my_form_url,
+                method: "GET",
+                dataType: "jsonp"
+              })
+              .fail(function(jqxhr, textStatus, error) {
+                try {
+                  if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
+                    console.log(("script submission retry failure: " + textStatus + " " + error).trim());
+                  } // else: systematic parse error is ignored
+                }
+                catch (exc) {
+                  console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error).trim());
+                }                
+              });
+            } // else: systematic parse error is ignored
+          }
+          catch (exc) {
+            console.log(("script submission failure (abnormal case): " + textStatus + " " + error).trim());
+          }
+            
+        });
+
+        // document.getElementById('my_form').submit();
         // $("#my_form").submit();
       }
-      
-      var playerid_prefix = "ID/";    
-      function handle_rsp_delayed(e) {      
+
+      var playerid_prefix = "ID/";
+      function handle_rsp_delayed(e) {
         if ( (typeof e.parameter !== 'undefined')
              && (typeof e.parameter.playerid !== 'undefined')
              && (e.parameter.playerid.indexOf(playerid_prefix) == 0)
-             && (typeof e.rsp_cd == 'undefined') 
-             && (typeof e.parameter.rankings !== 'undefined') 
+             && (typeof e.rsp_cd == 'undefined')
+             && (typeof e.parameter.rankings !== 'undefined')
              && (e.parameter.rankings.length > 10) ) {
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
-          console.log(rsp_rankings_str);   
+          console.log(rsp_rankings_str);
           // Rk: top scores are always displayed, even if current game score is not in them
           if (modal_mode == -1) {
             modal_mode = 3;
             // set modal content
-            modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>" 
-                             + rsp_rankings_str 
-                             + "</div>");   
+            modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+                             + rsp_rankings_str
+                             + "</div>");
             // open modal
-            modal.open();          
+            modal.open();
           }
           else {
             console.log("modal display conditions not fulfilled (" + modal_mode + ")");
@@ -544,10 +578,10 @@
             console.log('rsp_cd: ?');
           }
         }
-      }      
-      function handle_rsp(e) {      
+      }
+      function handle_rsp(e) {
         console.log("(handle_rsp)");
-      
+
         var score_display_time = 4444; // (see blinking time)
         var time_to_wait = 44;
         var time_diff = new Date().getTime() - store_time;
@@ -563,21 +597,50 @@
         console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
       }
+
+      var last_data_used = null;
       var last_game_cnt = -1;
       async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, help) { // asynchronous function
-        
+
         if (game_cnt == last_game_cnt) { // At most one storage per game
           return;
         }
-        last_game_cnt = game_cnt;       
+        last_game_cnt = game_cnt;
         store_time = new Date().getTime();
-        
+
         var geolocation_handler = {
-          run: function (data) {
+          run: function (data_p) {
 
             // Check that the response contains valid information
             // **************************************************
-           
+
+            let this_data_is_valid = false;
+            if ( (typeof data_p.latitude != 'undefined') && (typeof data_p.longitude != 'undefined') // (redundant lines)
+                 && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1))
+                 && ((typeof data_p.country_name != 'undefined') && (data_p.country_name.length >= 3))
+                 && ((typeof data_p.city != 'undefined') && (data_p.city.length >= 3)) ) {
+              this_data_is_valid = true;
+            }
+            let last_data_used_is_valid = false;
+            if ( (last_data_used != null)
+                 && (typeof last_data_used.latitude != 'undefined') && (typeof last_data_used.longitude != 'undefined') // (redundant lines)
+                 && ((String(last_data_used.latitude).indexOf('.') != -1) || (String(last_data_used.longitude).indexOf('.') != -1))
+                 && ((typeof last_data_used.country_name != 'undefined') && (last_data_used.country_name.length >= 3))
+                 && ((typeof last_data_used.city != 'undefined') && (last_data_used.city.length >= 3)) ) {
+              last_data_used_is_valid = true;
+            }
+            let successcase__this_data_is_used;
+            let data;
+            if (this_data_is_valid || (!last_data_used_is_valid)) {
+              data = data_p;
+            }
+            else { // Reuse last geolocation data
+              data = last_data_used;
+            }
+            successcase__this_data_is_used = (data != last_data_used); // (data_p and last_data_used may be equal pointers)
+            console.log("(geolocation: this_data:" + this_data_is_valid + ", last_data_used:" + last_data_used_is_valid + ", this_data_is_used: " + successcase__this_data_is_used + ")");            
+            last_data_used = data;
+
             let country = '-';
             let region = '-';
             let zip = '-';
@@ -586,61 +649,61 @@
             let latitude = '-';
             let longitude = '-';
             let ipaddress = '-';
-            if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined')
+            if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined') // (redundant lines)
                  && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
-                        
-              if ((typeof data.country_name != 'undefined') && (data.country_name.length >= 3)) {
-                country = data.country_name;            
+
+              if ((typeof data.country_name != 'undefined') && (data.country_name.length >= 3)) { // (redundant lines)
+                country = data.country_name;
               }
               else {
                 console.log('invalid country name in response');
               }
               if ((typeof data.region_name != 'undefined') && (data.region_name.length >= 2)) {
-                region = data.region_name;            
+                region = data.region_name;
               }
               else {
                 console.log('invalid region name in response');
               }
               if ((typeof data.zip_code != 'undefined') && (data.zip_code.length >= 2)) {
-                zip = data.zip_code;            
+                zip = data.zip_code;
               }
               else {
                 console.log('invalid zip code in response');
-              }          
-              if ((typeof data.city != 'undefined') && (data.city.length >= 3)) {
-                city = data.city;            
+              }
+              if ((typeof data.city != 'undefined') && (data.city.length >= 3)) { // (redundant lines)
+                city = data.city;
               }
               else {
                 console.log('invalid city name in response');
-              }          
+              }
               if ((typeof data.time_zone != 'undefined') && (data.time_zone.length >= 2)) {
-                timezone = data.time_zone;            
+                timezone = data.time_zone;
               }
               else {
                 console.log('invalid time zone in response');
-              }          
+              }
               if (typeof data.latitude != 'undefined') {
-                latitude = data.latitude;            
+                latitude = data.latitude;
               }
               else {
                 console.log('invalid latitude response');
-              }          
+              }
               if (typeof data.longitude != 'undefined') {
-                longitude = data.longitude;            
+                longitude = data.longitude;
               }
               else {
                 console.log('invalid longitude in response');
-              }   
-              
-            }            
-            
+              }
+
+            }
+
             if ((typeof data.ip != 'undefined') && (data.ip.length >= 7)) {
-              ipaddress = data.ip;            
+              ipaddress = data.ip;
             }
             else {
               console.log('invalid ip address in response');
-            }          
-          
+            }
+
             if (typeof(Storage) !== 'undefined') {
               if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
                 if (localStorage.countryname && localStorage.cityname) {
@@ -650,151 +713,141 @@
                 }
               }
             }
-            if ( (country == '-') || (city == '-') ) { // Country and/or city are still not clear
-              if (country != '-') {
-                country = country + '?';
-              }
-              if (region != '-') {
-                region = region + '?';
-              }
-              if (city != '-') {
-                city = city + '?';
-              }
-            }
+
             console.log(country);
             document.getElementById('form_country_id').value = country;
             console.log(region);
             document.getElementById('form_region_id').value = region;
             console.log(zip);
-            document.getElementById('form_zip_id').value = zip;          
+            document.getElementById('form_zip_id').value = zip;
             console.log(city);
             document.getElementById('form_city_id').value = city;
             console.log(timezone);
-            document.getElementById('form_timezone_id').value = timezone;                    
+            document.getElementById('form_timezone_id').value = timezone;
             console.log(latitude);
-            document.getElementById('form_latitude_id').value = latitude;                    
+            document.getElementById('form_latitude_id').value = latitude;
             console.log(longitude);
-            document.getElementById('form_longitude_id').value = longitude;                              
+            document.getElementById('form_longitude_id').value = longitude;
             console.log(ipaddress);
-            document.getElementById('form_ipaddress_id').value = ipaddress;                                                  
-                      
-            // Other fields  
+            document.getElementById('form_ipaddress_id').value = ipaddress;
+
+            // Other fields
             // ************
             let playerid;
             let firstname = "-";
             let gamesok = -1;
-            let deltagames = -1;         
+            let deltagames = -1;
             if (typeof(Storage) !== 'undefined') {
               if (!localStorage.gamesok) {
                 localStorage.gamesok = 0;
               }
               localStorage.gamesok = Number(localStorage.gamesok) + 1;
               gamesok = Number(localStorage.gamesok);
-              
+
               switch (nbcolumns) {
-              
+
                 case 3:
                   if (!localStorage.nbgamesstarted3) {
                     localStorage.nbgamesstarted3 = 0;
-                  }     
+                  }
                   if (!localStorage.nbgamesstarted3_ref) {
                     localStorage.nbgamesstarted3_ref = 0;
                   }
-                  deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;            
+                  deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;
                   localStorage.nbgamesstarted3_ref = localStorage.nbgamesstarted3;
                   break;
                 case 4:
                   if (!localStorage.nbgamesstarted4) {
                     localStorage.nbgamesstarted4 = 0;
-                  }     
+                  }
                   if (!localStorage.nbgamesstarted4_ref) {
                     localStorage.nbgamesstarted4_ref = 0;
                   }
-                  deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;            
+                  deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;
                   localStorage.nbgamesstarted4_ref = localStorage.nbgamesstarted4;
                   break;
                 case 5:
                   if (!localStorage.nbgamesstarted5) {
                     localStorage.nbgamesstarted5 = 0;
-                  }     
+                  }
                   if (!localStorage.nbgamesstarted5_ref) {
                     localStorage.nbgamesstarted5_ref = 0;
                   }
-                  deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;            
+                  deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;
                   localStorage.nbgamesstarted5_ref = localStorage.nbgamesstarted5;
                   break;
                 case 6:
                   if (!localStorage.nbgamesstarted6) {
                     localStorage.nbgamesstarted6 = 0;
-                  }     
+                  }
                   if (!localStorage.nbgamesstarted6_ref) {
                     localStorage.nbgamesstarted6_ref = 0;
                   }
-                  deltagames = localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref - 1;            
+                  deltagames = localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref - 1;
                   localStorage.nbgamesstarted6_ref = localStorage.nbgamesstarted6;
                   break;
-                  
+
                 case 7:
                   if (!localStorage.nbgamesstarted7) {
                     localStorage.nbgamesstarted7 = 0;
-                  }     
+                  }
                   if (!localStorage.nbgamesstarted7_ref) {
                     localStorage.nbgamesstarted7_ref = 0;
                   }
-                  deltagames = localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref - 1;            
+                  deltagames = localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref - 1;
                   localStorage.nbgamesstarted7_ref = localStorage.nbgamesstarted7;
                   break;
-                  
+
                 default:
                   console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
                   return;
-                  
+
               }
-              
+
               if (localStorage.firstname) {
                 firstname = localStorage.firstname;
               }
               if (!localStorage.playerid) {
-                let id = makeid() + ' - ' + new Date();            
+                let id = makeid() + ' - ' + new Date();
                 localStorage.playerid = id;
               }
               playerid = playerid_prefix + localStorage.playerid;
-            } 
+            }
             else {
               console.log("Error: your browser does not support web storage...");
               playerid = playerid_prefix + "Default";
-            }            
-            
+            }
+
             console.log(playerid);
-            document.getElementById('form_playerid_id').value = playerid;                    
+            document.getElementById('form_playerid_id').value = playerid;
             console.log(firstname);
-            document.getElementById('form_firstname_id').value = firstname;                              
+            document.getElementById('form_firstname_id').value = firstname;
             console.log(nbcolumns);
-            document.getElementById('form_nbcolumns_id').value = nbcolumns;                    
+            document.getElementById('form_nbcolumns_id').value = nbcolumns;
             console.log(score);
-            document.getElementById('form_score_id').value = score;            
+            document.getElementById('form_score_id').value = score;
             console.log(attempts);
-            document.getElementById('form_attempts_id').value = attempts;            
+            document.getElementById('form_attempts_id').value = attempts;
             console.log(timestr);
-            document.getElementById('form_time_id').value = timestr;                 
+            document.getElementById('form_time_id').value = timestr;
             console.log(perfs);
-            document.getElementById('form_perfs_id').value = perfs;                                                        
+            document.getElementById('form_perfs_id').value = perfs;
             console.log(help);
-            document.getElementById('form_help_id').value = help;                                                                                   
+            document.getElementById('form_help_id').value = help;
             console.log(gamesok);
-            document.getElementById('form_gamesok_id').value = gamesok;          
+            document.getElementById('form_gamesok_id').value = gamesok;
             console.log(deltagames);
-            document.getElementById('form_deltagames_id').value = deltagames;  
-            
+            document.getElementById('form_deltagames_id').value = deltagames;
+
             console.log(navigator.platform);
-            document.getElementById('form_platform_id').value = navigator.platform;          
+            document.getElementById('form_platform_id').value = navigator.platform;
             console.log(navigator.language);
-            document.getElementById('form_browserlanguage_id').value = navigator.language;          
+            document.getElementById('form_browserlanguage_id').value = navigator.language;
             console.log(navigator.userAgent);
             document.getElementById('form_useragent_id').value = navigator.userAgent;
-            document.getElementById('form_href_id').value = decodeURI(location.href);          
-            document.getElementById('form_formsubmitdate_id').value = new Date();                    
-            
+            document.getElementById('form_href_id').value = decodeURI(location.href);
+            document.getElementById('form_formsubmitdate_id').value = new Date();
+
             var extra_debug_info = "";
             try {
               extra_debug_info = "/Cookies:" + navigator.cookieEnabled;
@@ -803,71 +856,71 @@
               extra_debug_info =  extra_debug_info + "/Plugins:" + pluginsLength;
               if (pluginsLength > 0) {
                 for (var i = 0; i < pluginsLength; i++) {
-                  extra_debug_info = extra_debug_info + "|" + i + ":" + navigator.plugins[i].filename + (navigator.plugins[i].version?navigator.plugins[i].version:"");
+                  extra_debug_info = extra_debug_info + "|" + i + ":" + navigator.plugins[i].filename + (navigator.plugins[i].version ? navigator.plugins[i].version : "");
                 }
               }
               extra_debug_info = extra_debug_info + "/MimeTypes:" + navigator.mimeTypes.length;
             }
             catch (exc) {}
-            document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + extra_debug_info;
-            
-            document.getElementById('form_rankings_id').value = '-';                    
-            
+            document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/GeolocStatus:' + successcase__this_data_is_used + extra_debug_info;
+
+            document.getElementById('form_rankings_id').value = '-';
+
             var form_to_be_submitted = true;
             if (typeof(Storage) !== 'undefined') {
               if ( ((city == '-') && (!localStorage.cityname))
                    || ((country == '-') && (!localStorage.countryname)) ) {
                 if (modal_mode == -1) {
                   modal_mode = 1;
-                  // set modal content                
-                  modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"  
+                  // set modal content
+                  modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
                                    + "<h2>Storing your scores...<br>Please enter your country and city names, they will be stored together with your next scores:</h2>"
                                    + "<h3>Your country:</h3><select id='country_selection'><option value=\"-\">Select your country...</option><option value=\"AF\">Afghanistan</option><option value=\"AX\">Åland Islands</option><option value=\"AL\">Albania</option><option value=\"DZ\">Algeria</option><option value=\"AS\">American Samoa</option><option value=\"AD\">Andorra</option><option value=\"AO\">Angola</option><option value=\"AI\">Anguilla</option><option value=\"AQ\">Antarctica</option><option value=\"AG\">Antigua and Barbuda</option><option value=\"AR\">Argentina</option><option value=\"AM\">Armenia</option><option value=\"AW\">Aruba</option><option value=\"AU\">Australia</option><option value=\"AT\">Austria</option><option value=\"AZ\">Azerbaijan</option><option value=\"BS\">Bahamas</option><option value=\"BH\">Bahrain</option><option value=\"BD\">Bangladesh</option><option value=\"BB\">Barbados</option><option value=\"BY\">Belarus</option><option value=\"BE\">Belgium</option><option value=\"BZ\">Belize</option><option value=\"BJ\">Benin</option><option value=\"BM\">Bermuda</option><option value=\"BT\">Bhutan</option><option value=\"BO\">Bolivia, Plurinational State of</option><option value=\"BQ\">Bonaire, Sint Eustatius and Saba</option><option value=\"BA\">Bosnia and Herzegovina</option><option value=\"BW\">Botswana</option><option value=\"BV\">Bouvet Island</option><option value=\"BR\">Brazil</option><option value=\"IO\">British Indian Ocean Territory</option><option value=\"BN\">Brunei Darussalam</option><option value=\"BG\">Bulgaria</option><option value=\"BF\">Burkina Faso</option><option value=\"BI\">Burundi</option><option value=\"KH\">Cambodia</option><option value=\"CM\">Cameroon</option><option value=\"CA\">Canada</option><option value=\"CV\">Cape Verde</option><option value=\"KY\">Cayman Islands</option><option value=\"CF\">Central African Republic</option><option value=\"TD\">Chad</option><option value=\"CL\">Chile</option><option value=\"CN\">China</option><option value=\"CX\">Christmas Island</option><option value=\"CC\">Cocos (Keeling) Islands</option><option value=\"CO\">Colombia</option><option value=\"KM\">Comoros</option><option value=\"CG\">Congo</option><option value=\"CD\">Congo, the Democratic Republic of the</option><option value=\"CK\">Cook Islands</option><option value=\"CR\">Costa Rica</option><option value=\"CI\">Côte d'Ivoire</option><option value=\"HR\">Croatia</option><option value=\"CU\">Cuba</option><option value=\"CW\">Curaçao</option><option value=\"CY\">Cyprus</option><option value=\"CZ\">Czech Republic</option><option value=\"DK\">Denmark</option><option value=\"DJ\">Djibouti</option><option value=\"DM\">Dominica</option><option value=\"DO\">Dominican Republic</option><option value=\"EC\">Ecuador</option><option value=\"EG\">Egypt</option><option value=\"SV\">El Salvador</option><option value=\"GQ\">Equatorial Guinea</option><option value=\"ER\">Eritrea</option><option value=\"EE\">Estonia</option><option value=\"ET\">Ethiopia</option><option value=\"FK\">Falkland Islands (Malvinas)</option><option value=\"FO\">Faroe Islands</option><option value=\"FJ\">Fiji</option><option value=\"FI\">Finland</option><option value=\"FR\">France</option><option value=\"GF\">French Guiana</option><option value=\"PF\">French Polynesia</option><option value=\"TF\">French Southern Territories</option><option value=\"GA\">Gabon</option><option value=\"GM\">Gambia</option><option value=\"GE\">Georgia</option><option value=\"DE\">Germany</option><option value=\"GH\">Ghana</option><option value=\"GI\">Gibraltar</option><option value=\"GR\">Greece</option><option value=\"GL\">Greenland</option><option value=\"GD\">Grenada</option><option value=\"GP\">Guadeloupe</option><option value=\"GU\">Guam</option><option value=\"GT\">Guatemala</option><option value=\"GG\">Guernsey</option><option value=\"GN\">Guinea</option><option value=\"GW\">Guinea-Bissau</option><option value=\"GY\">Guyana</option><option value=\"HT\">Haiti</option><option value=\"HM\">Heard Island and McDonald Islands</option><option value=\"VA\">Holy See (Vatican City State)</option><option value=\"HN\">Honduras</option><option value=\"HK\">Hong Kong</option><option value=\"HU\">Hungary</option><option value=\"IS\">Iceland</option><option value=\"IN\">India</option><option value=\"ID\">Indonesia</option><option value=\"IR\">Iran, Islamic Republic of</option><option value=\"IQ\">Iraq</option><option value=\"IE\">Ireland</option><option value=\"IM\">Isle of Man</option><option value=\"IL\">Israel</option><option value=\"IT\">Italy</option><option value=\"JM\">Jamaica</option><option value=\"JP\">Japan</option><option value=\"JE\">Jersey</option><option value=\"JO\">Jordan</option><option value=\"KZ\">Kazakhstan</option><option value=\"KE\">Kenya</option><option value=\"KI\">Kiribati</option><option value=\"KP\">Korea, Democratic People's Republic of</option><option value=\"KR\">Korea, Republic of</option><option value=\"KW\">Kuwait</option><option value=\"KG\">Kyrgyzstan</option><option value=\"LA\">Lao People's Democratic Republic</option><option value=\"LV\">Latvia</option><option value=\"LB\">Lebanon</option><option value=\"LS\">Lesotho</option><option value=\"LR\">Liberia</option><option value=\"LY\">Libya</option><option value=\"LI\">Liechtenstein</option><option value=\"LT\">Lithuania</option><option value=\"LU\">Luxembourg</option><option value=\"MO\">Macao</option><option value=\"MK\">Macedonia, the former Yugoslav Republic of</option><option value=\"MG\">Madagascar</option><option value=\"MW\">Malawi</option><option value=\"MY\">Malaysia</option><option value=\"MV\">Maldives</option><option value=\"ML\">Mali</option><option value=\"MT\">Malta</option><option value=\"MH\">Marshall Islands</option><option value=\"MQ\">Martinique</option><option value=\"MR\">Mauritania</option><option value=\"MU\">Mauritius</option><option value=\"YT\">Mayotte</option><option value=\"MX\">Mexico</option><option value=\"FM\">Micronesia, Federated States of</option><option value=\"MD\">Moldova, Republic of</option><option value=\"MC\">Monaco</option><option value=\"MN\">Mongolia</option><option value=\"ME\">Montenegro</option><option value=\"MS\">Montserrat</option><option value=\"MA\">Morocco</option><option value=\"MZ\">Mozambique</option><option value=\"MM\">Myanmar</option><option value=\"NA\">Namibia</option><option value=\"NR\">Nauru</option><option value=\"NP\">Nepal</option><option value=\"NL\">Netherlands</option><option value=\"NC\">New Caledonia</option><option value=\"NZ\">New Zealand</option><option value=\"NI\">Nicaragua</option><option value=\"NE\">Niger</option><option value=\"NG\">Nigeria</option><option value=\"NU\">Niue</option><option value=\"NF\">Norfolk Island</option><option value=\"MP\">Northern Mariana Islands</option><option value=\"NO\">Norway</option><option value=\"OM\">Oman</option><option value=\"PK\">Pakistan</option><option value=\"PW\">Palau</option><option value=\"PS\">Palestinian Territory, Occupied</option><option value=\"PA\">Panama</option><option value=\"PG\">Papua New Guinea</option><option value=\"PY\">Paraguay</option><option value=\"PE\">Peru</option><option value=\"PH\">Philippines</option><option value=\"PN\">Pitcairn</option><option value=\"PL\">Poland</option><option value=\"PT\">Portugal</option><option value=\"PR\">Puerto Rico</option><option value=\"QA\">Qatar</option><option value=\"RE\">Réunion</option><option value=\"RO\">Romania</option><option value=\"RU\">Russian Federation</option><option value=\"RW\">Rwanda</option><option value=\"BL\">Saint Barthélemy</option><option value=\"SH\">Saint Helena, Ascension and Tristan da Cunha</option><option value=\"KN\">Saint Kitts and Nevis</option><option value=\"LC\">Saint Lucia</option><option value=\"MF\">Saint Martin (French part)</option><option value=\"PM\">Saint Pierre and Miquelon</option><option value=\"VC\">Saint Vincent and the Grenadines</option><option value=\"WS\">Samoa</option><option value=\"SM\">San Marino</option><option value=\"ST\">Sao Tome and Principe</option><option value=\"SA\">Saudi Arabia</option><option value=\"SN\">Senegal</option><option value=\"RS\">Serbia</option><option value=\"SC\">Seychelles</option><option value=\"SL\">Sierra Leone</option><option value=\"SG\">Singapore</option><option value=\"SX\">Sint Maarten (Dutch part)</option><option value=\"SK\">Slovakia</option><option value=\"SI\">Slovenia</option><option value=\"SB\">Solomon Islands</option><option value=\"SO\">Somalia</option><option value=\"ZA\">South Africa</option><option value=\"GS\">South Georgia and the South Sandwich Islands</option><option value=\"SS\">South Sudan</option><option value=\"ES\">Spain</option><option value=\"LK\">Sri Lanka</option><option value=\"SD\">Sudan</option><option value=\"SR\">Suriname</option><option value=\"SJ\">Svalbard and Jan Mayen</option><option value=\"SZ\">Swaziland</option><option value=\"SE\">Sweden</option><option value=\"CH\">Switzerland</option><option value=\"SY\">Syrian Arab Republic</option><option value=\"TW\">Taiwan, Province of China</option><option value=\"TJ\">Tajikistan</option><option value=\"TZ\">Tanzania, United Republic of</option><option value=\"TH\">Thailand</option><option value=\"TL\">Timor-Leste</option><option value=\"TG\">Togo</option><option value=\"TK\">Tokelau</option><option value=\"TO\">Tonga</option><option value=\"TT\">Trinidad and Tobago</option><option value=\"TN\">Tunisia</option><option value=\"TR\">Turkey</option><option value=\"TM\">Turkmenistan</option><option value=\"TC\">Turks and Caicos Islands</option><option value=\"TV\">Tuvalu</option><option value=\"UG\">Uganda</option><option value=\"UA\">Ukraine</option><option value=\"AE\">United Arab Emirates</option><option value=\"GB\">United Kingdom</option><option value=\"US\">United States</option><option value=\"UM\">United States Minor Outlying Islands</option><option value=\"UY\">Uruguay</option><option value=\"UZ\">Uzbekistan</option><option value=\"VU\">Vanuatu</option><option value=\"VE\">Venezuela, Bolivarian Republic of</option><option value=\"VN\">Viet Nam</option><option value=\"VG\">Virgin Islands, British</option><option value=\"VI\">Virgin Islands, U.S.</option><option value=\"WF\">Wallis and Futuna</option><option value=\"EH\">Western Sahara</option><option value=\"YE\">Yemen</option><option value=\"ZM\">Zambia</option><option value=\"ZW\">Zimbabwe</option></select>"
                                    + "<h3>Your city (between 3 and 20 characters):</h3><input id='city_input' type='text' value='Paris?' maxlength='20'></input>"
                                    + "<h4>Close this dialog to skip this step</h4>"
-                                   + "</div>");   
+                                   + "</div>");
                   // open modal
                   modal.open();
-                  form_to_be_submitted = false; // form to be submitted when modal is closed                  
+                  form_to_be_submitted = false; // form to be submitted when modal is closed
                 }
               }
               else {
                 if ( (!localStorage.firstname)
                      && (gamesok >= 3) // (coherent with "history_clear_advice")
                      && ( (gamesok >= 9) || ((gamesok >= 5) && (score >= 33)) || ((nbcolumns == 4) && (score >= 33)) || ((nbcolumns == 5) && (score >= 44)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
-                  if (modal_mode == -1) {                   
+                  if (modal_mode == -1) {
                     modal_mode = 2;
                     // set modal content
-                    modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"  
+                    modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
                                      + "<h2>You seem to be an experienced player!<br>Please enter your first name, it will be stored together with your next scores:</h2>"
                                      + "<h3>Your first name (between 3 and 12 letters, no spaces):</h3><input id='firstname_input' type='text' value='John?' maxlength='12'></input>"
                                      + "<h4>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</h4>"
                                      + "</div>");
                     // open modal
-                    modal.open(); 
-                    form_to_be_submitted = false; // form to be submitted when modal is closed                  
+                    modal.open();
+                    form_to_be_submitted = false; // form to be submitted when modal is closed
                   }
-                }            
+                }
               }
             }
 
-            console.log("(geolocation success)");   
-            
+            console.log("(run completed)");
+
             if (form_to_be_submitted) {
               submitForm();
-            }          
+            }
             else {
               console.log("(form submission skipped)");
-            }          
-            
+            }
+
           } // run
-        } // geolocation_handler        
-        
+        } // geolocation_handler
+
         $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
         .fail(function(jqxhr, textStatus, error) {
 
-          var errorStr = ("geolocation failure: " + textStatus + " " + error).trim(); 
-          if (typeof(Storage) !== 'undefined') {          
+          var errorStr = ("geolocation failure: " + textStatus + " " + error).trim();
+          if (typeof(Storage) !== 'undefined') {
             if (localStorage.firstname) {
               errorStr = errorStr + " for " + localStorage.firstname;
             }
@@ -882,17 +935,17 @@
             }
           }
           errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
-          console.log(errorStr);          
+          console.log(errorStr);
           submitForm(errorStr);
 
           // Keep some time between the 2 potential calls to submitForm(). This may also allow to make the 2nd getJSON in different server load conditions.
           let now = new Date().getTime();
-          while(new Date().getTime() < now + 3000){} // (interface is frozen during this short time)
-          
+          while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
+
           $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
-          .fail(function(jqxhr, textStatus, error) {        
-            var errorStr = ("geolocation retry failure: " + textStatus + " " + error).trim(); 
-            if (typeof(Storage) !== 'undefined') {          
+          .fail(function(jqxhr, textStatus, error) { // (here, to solve geolocation retry failures, a solution could be to call another geolocation server)
+            var errorStr = ("geolocation retry failure: " + textStatus + " " + error).trim();
+            if (typeof(Storage) !== 'undefined') {
               if (localStorage.firstname) {
                 errorStr = errorStr + " for " + localStorage.firstname;
               }
@@ -907,29 +960,38 @@
               }
             }
             errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
-            console.log(errorStr);          
-            submitForm(errorStr);
+            console.log(errorStr);
+
+            // Reuse last geolocation data if any
+            if (last_data_used != null) {
+              console.log("reuse last geolocation data");
+              geolocation_handler.run(last_data_used);
+            }
+            else { // Minimize the number of forms submitted in sequence
+              submitForm(errorStr);
+            }
+
           })
           .always(function() {
             console.log("(getJSON completed #2)");
           });
-          
+
         })
         .always(function() {
           console.log("(getJSON completed #1)");
         });
 
         console.log("(store player info exit)");
-        
+
       } // store_player_info
-      
+
     </script>
-        
+
     <!-- Start of StatCounter Code for Default Guide -->
     <script type="text/javascript">
-    var sc_project=11577634; 
-    var sc_invisible=1; 
-    var sc_security="7dce62ad"; 
+    var sc_project=11577634;
+    var sc_invisible=1;
+    var sc_security="7dce62ad";
     var scJsHost = (("https:" == document.location.protocol) ?
     "https://secure." : "http://www.");
     document.write("<sc"+"ript type='text/javascript' src='" +
@@ -942,7 +1004,7 @@
     src="//c.statcounter.com/11577634/0/7dce62ad/1/" alt="Web
     Analytics Made Easy - StatCounter"></a></div></noscript>
     <!-- End of StatCounter Code for Default Guide -->
-        
+
   </body>
 
 </html>
