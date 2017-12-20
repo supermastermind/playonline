@@ -195,7 +195,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_O10";
+      let html_compatibility_game_version = "Ver_P";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -503,7 +503,7 @@
         console.log("(jQuery.ajax get/jsonp" + ((errorCaseStr == "") ? "" : " for error case") + ")");
         jQuery.ajax({
           crossDomain: true,
-          url: "https://" + my_form_url,
+          url: my_form_url,
           method: "GET",
           dataType: "jsonp"
         })
