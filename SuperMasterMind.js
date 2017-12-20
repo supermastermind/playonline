@@ -883,22 +883,27 @@ function resetGameAttributes(nbColumnsSelected) {
     case 3:
       nbColors = Math.max(nbMinColors, nominalGameNbColors - 2);
       nbMaxAttempts = nominalGameNbMaxAttempts - 4;
+      document.title = "Very easy";
       break;
     case 4:
       nbColors = Math.max(nbMinColors, nominalGameNbColors - 1);
       nbMaxAttempts = nominalGameNbMaxAttempts - 2;
+      document.title = "Master Mind";
       break;
     case 5: // nominalGameNbColumns
       nbColors = nominalGameNbColors;
       nbMaxAttempts = nominalGameNbMaxAttempts;
+      document.title = "Super Master Mind";
       break;
     case 6:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 1);
       nbMaxAttempts = nominalGameNbMaxAttempts;
+      document.title = "Advanced Master Mind";
       break;
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
       nbMaxAttempts = nominalGameNbMaxAttempts;
+      document.title = "Ultra Master Mind";
       break;
     default:
       throw new Error("invalid selection of number of columns: " + nbColumns + " (#1)");
