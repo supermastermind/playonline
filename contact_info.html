@@ -2,15 +2,39 @@
 <html>
 
   <head>
+
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">        
     <title>Play Super Master Mind online</title>
     <meta name="robots" content="noindex">    
     
     <link rel="stylesheet" type="text/css" href="style/style.css">
     <script src="common_functions.js"></script>
+    
+    <script src='lib/jquery-3.2.1.min.js'></script>
+    <script>
+      // Animation during page loading:
+      // 1) when document is ready
+      $(document).ready(function () {
+        console.log("(ready)");
+        $(".main").hide(); // hide the main div
+      });
+      // 2) when all elements of the page are completely loaded
+      $(window).on('load', function() {
+        console.log("(on load)");
+        $(".loading").fadeOut("slow"); // loading div fades out
+        $(".main").fadeIn("slow"); // main div fades in
+      });      
+    </script>
+    
   </head>
 
   <body>
+
+    <div class="loading">
+      <img src="img/loading.gif"><br>
+      Loading...
+    </div>  
+
     <div id="main">
 
       <!-- HEADER -->
