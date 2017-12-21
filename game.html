@@ -140,8 +140,8 @@
       // 2) when all elements of the page are completely loaded
       $(window).on('load', function() {
         console.log("(on load)");
-        $(".game_loading").fadeOut(0); // game_loading div fades out
-        $(".main_game").fadeIn(0); // main_game div fades in
+        $(".game_loading").hide(); // game_loading div fades out
+        $(".main_game").show(); // main_game div fades in
       });      
     </script>    
     
