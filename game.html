@@ -942,7 +942,7 @@
           while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
 
           $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
-          .fail(function(jqxhr, textStatus, error) { // (here, to solve geolocation retry failures, a solution could be to call another geolocation server)
+          .fail(function(jqxhr, textStatus, error) { // (here, to solve geolocation retry failures, a solution could be to call another geolocation server) (*)
             var errorStr = ("geolocation retry failure: " + textStatus + " " + error).trim();
             if (typeof(Storage) !== 'undefined') {
               if (localStorage.firstname) {
@@ -966,7 +966,8 @@
               console.log("reuse last geolocation data");
               geolocation_handler.run(last_data_used);
             }
-            else { // Minimize the number of forms submitted in sequence
+            else { // No form is submitted in this retry failure case: see also (*)
+              // Minimize the number of forms submitted in sequence
               submitForm(errorStr);
             }
 
