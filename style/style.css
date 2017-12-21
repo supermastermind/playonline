@@ -292,3 +292,17 @@ table tr td
 { background: #E5E5DB;
   color: #47433F;
   border-top: 1px solid #FFF;}
+
+.loading /* (used during page loading) */
+{ position: fixed;
+  height: 100%;
+  width: 100%;
+  top:0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index:11111;
+  font-size: 20px;
+  text-align: center;
+  padding-top: 255px;
+  color: #fff;
+}  
