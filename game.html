@@ -194,7 +194,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_S";
+      let html_compatibility_game_version = "Ver_T";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -478,6 +478,36 @@
           return '-';
         }
       }
+      
+      function str_from_jqxhr(jqxhr) { // (jqxhr: XMLHTTPRequest)
+        try {
+          let str = "jqxhr={";
+          try {
+            /* Status:
+               200: "OK"
+               403: "Forbidden"
+               404: "Page not found" 
+               ... */
+            str = str + "status:" + jqxhr.status;
+            str = str + ",statusText:" + jqxhr.statusText;
+            /* readyState holds the status of the XMLHttpRequest:
+               0: request not initialized
+               1: server connection established
+               2: request received
+               3: processing request
+               4: request finished and response is ready */
+            str = str + ",readyState:" + jqxhr.readyState;
+          }
+          catch (exc) {
+            str = str + "?";
+          }
+          str = str + "}";
+          return str;
+        }
+        catch (exc) {
+          return "jqxhr=?";
+        }
+      }
 
       // Interesting links about JSONP:
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
@@ -507,11 +537,11 @@
           method: "GET",
           dataType: "jsonp"
         })
-        .fail(function(jqxhr, textStatus, error) {
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
         
           try {
             if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
-              console.log(("script submission failure: " + textStatus + " " + error).trim());
+              console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
               // Keep some time between the 2 form submissions
               let now = new Date().getTime();
               while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
@@ -522,20 +552,20 @@
                 method: "GET",
                 dataType: "jsonp"
               })
-              .fail(function(jqxhr, textStatus, error) {
+              .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 try {
                   if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
-                    console.log(("script submission retry failure: " + textStatus + " " + error).trim());
+                    console.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                   } // else: systematic parse error is ignored
                 }
                 catch (exc) {
-                  console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error).trim());
+                  console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                 }                
               });
             } // else: systematic parse error is ignored
           }
           catch (exc) {
-            console.log(("script submission failure (abnormal case): " + textStatus + " " + error).trim());
+            console.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           }
             
         });
@@ -915,9 +945,9 @@
         } // geolocation_handler
 
         $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
-        .fail(function(jqxhr, textStatus, error) {
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
 
-          var errorStr = ("geolocation failure: " + textStatus + " " + error).trim();
+          var errorStr = ("geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           if (typeof(Storage) !== 'undefined') {
             if (localStorage.firstname) {
               errorStr = errorStr + " for " + localStorage.firstname;
@@ -940,9 +970,10 @@
           let now = new Date().getTime();
           while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
 
+          // Here, to solve geolocation retry failures, a solution could be to call another geolocation server (*)
           $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
-          .fail(function(jqxhr, textStatus, error) { // (here, to solve geolocation retry failures, a solution could be to call another geolocation server) (*)
-            var errorStr = ("geolocation retry failure: " + textStatus + " " + error).trim();
+          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
+            var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
             if (typeof(Storage) !== 'undefined') {
               if (localStorage.firstname) {
                 errorStr = errorStr + " for " + localStorage.firstname;
