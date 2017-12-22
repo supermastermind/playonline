@@ -132,7 +132,7 @@ ol li
 
 #menubar
 { height: 24px;
-  width: 75%;} 
+  margin: 0px 0px 0px 75px;} 
 
 ul#menu
 { float: left;
@@ -166,7 +166,7 @@ ul#menu li a:hover
 #site_content
 { width: 75%;
   overflow: hidden;
-  margin: 0 auto 0 auto;
+  margin: 75px 75px 0px 75px;
   padding: 10px 20px 20px 20px;
   background: #F6F6F6;
   border: 15px solid #FFF;} 
