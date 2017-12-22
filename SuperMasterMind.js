@@ -1958,6 +1958,9 @@ function draw_graphic_bis() {
           if (timeInHours >= 24) {
             timeStr = "> 1 day";
           }
+          else if (timeInHours >= 5) {
+            timeStr = timeInHours + "h";
+          }
           else if (timeInHours > 0) {
             if (timeInMinutes > 0) {
               if (timeInMinutes < 10) {
