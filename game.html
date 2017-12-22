@@ -117,6 +117,21 @@
         -ms-user-select: none;
         user-select: none;
       }
+      
+      .game_loading /* (used during page loading) */
+      { position: fixed;
+        height: 100%;
+        width: 100%;
+        top:0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index:11111;
+        font-size: 20px;
+        text-align: center;
+        padding-top: 255px;
+        color: #fff;
+      }        
+      
     </style>
 
     <script>
@@ -129,11 +144,31 @@
         alert("Your browser cannot run this game because it does not support Web workers: update your browser version if necessary.");
       }
     </script>
-    <script src='lib/jquery-3.2.1.min.js'></script>    
+    <script src='lib/jquery-3.2.1.min.js'></script>
+    <script>
+      // Animation during page loading:
+      // 1) when document is ready
+      $(document).ready(function () {
+        console.log("(ready)");
+        // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").hide(); // hide the main div
+      });
+      // 2) when all elements of the page are completely loaded
+      $(window).on('load', function() {
+        console.log("(on load)");
+        $(".game_loading").fadeOut("slow"); // game_loading div fades out
+        // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").fadeIn("slow"); // main div fades in
+      });      
+    </script>
+    
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
   <body onresize='draw_graphic();'>
+   
+    <div class="game_loading">
+      <img src="img/loading.gif"><br>
+      Loading...
+    </div>   
    
     <!-- HTML controls and canvas -->
 
@@ -194,7 +229,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_T";
+      let html_compatibility_game_version = "Ver_U";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
