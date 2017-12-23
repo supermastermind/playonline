@@ -150,13 +150,13 @@
       // 1) when document is ready
       $(document).ready(function () {
         console.log("(ready)");
-        // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").hide(); // hide the main div
+        // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").hide(); // hide the mainxxx div
       });
       // 2) when all elements of the page are completely loaded
       $(window).on('load', function() {
         console.log("(on load)");
         $(".game_loading").fadeOut("slow"); // game_loading div fades out
-        // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").fadeIn("slow"); // main div fades in
+        // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").fadeIn("slow"); // mainxxx div fades in
       });      
     </script>
     
