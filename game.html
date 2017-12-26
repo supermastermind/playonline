@@ -229,7 +229,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_V";
+      let html_compatibility_game_version = "Ver_W";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -768,16 +768,11 @@
             }
             
             // Particular cases
-            if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 14) ) { // 176.130.42.* IPv4 addresses
+            if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 15) ) { // 176.130.42.* IPv4 addresses
               country = "France" + '~';            
               region = "Alsace" + '~';
               city = "Munster" + '~';
             }            
-            else if ( (ipaddress.indexOf("94.239.24.") == 0) && (ipaddress.length <= 14) ) { // 176.130.42.* IPv4 addresses
-              country = "France" + '~';            
-              region = "Île-de-France" + '~';
-              city = "Montrouge" + '~';
-            } 
             
             if (typeof(Storage) !== 'undefined') {
               if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
