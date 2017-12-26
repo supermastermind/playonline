@@ -715,44 +715,44 @@
             if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined') // (redundant lines)
                  && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
 
-              if ((typeof data.country_name != 'undefined') && (data.country_name.length >= 3)) { // (redundant lines)
-                country = data.country_name;
+              if ((typeof data.country_name != 'undefined') && (data.country_name.trim().length >= 3)) { // (redundant lines)
+                country = data.country_name.trim();
               }
               else {
                 console.log('invalid country name in response');
               }
-              if ((typeof data.region_name != 'undefined') && (data.region_name.length >= 2)) {
-                region = data.region_name;
+              if ((typeof data.region_name != 'undefined') && (data.region_name.trim().length >= 2)) {
+                region = data.region_name.trim();
               }
               else {
                 console.log('invalid region name in response');
               }
-              if ((typeof data.zip_code != 'undefined') && (data.zip_code.length >= 2)) {
-                zip = data.zip_code;
+              if ((typeof data.zip_code != 'undefined') && (data.zip_code.trim().length >= 2)) {
+                zip = data.zip_code.trim();
               }
               else {
                 console.log('invalid zip code in response');
               }
-              if ((typeof data.city != 'undefined') && (data.city.length >= 3)) { // (redundant lines)
-                city = data.city;
+              if ((typeof data.city != 'undefined') && (data.city.trim().length >= 3)) { // (redundant lines)
+                city = data.city.trim();
               }
               else {
                 console.log('invalid city name in response');
               }
-              if ((typeof data.time_zone != 'undefined') && (data.time_zone.length >= 2)) {
-                timezone = data.time_zone;
+              if ((typeof data.time_zone != 'undefined') && (data.time_zone.trim().length >= 2)) {
+                timezone = data.time_zone.trim();
               }
               else {
                 console.log('invalid time zone in response');
               }
               if (typeof data.latitude != 'undefined') {
-                latitude = data.latitude;
+                latitude = data.latitude.trim();
               }
               else {
                 console.log('invalid latitude response');
               }
               if (typeof data.longitude != 'undefined') {
-                longitude = data.longitude;
+                longitude = data.longitude.trim();
               }
               else {
                 console.log('invalid longitude in response');
@@ -760,20 +760,25 @@
 
             }
 
-            if ((typeof data.ip != 'undefined') && (data.ip.length >= 7)) {
-              ipaddress = data.ip;
+            if ((typeof data.ip != 'undefined') && (data.ip.trim().length >= 7)) {
+              ipaddress = data.ip.trim();
             }
             else {
               console.log('invalid ip address in response');
             }
             
             // Particular cases
-            if (ipaddress == "176.130.42.175") {
+            if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 14) ) { // 176.130.42.* IPv4 addresses
               country = "France" + '~';            
               region = "Alsace" + '~';
               city = "Munster" + '~';
             }            
-
+            else if ( (ipaddress.indexOf("94.239.24.") == 0) && (ipaddress.length <= 14) ) { // 176.130.42.* IPv4 addresses
+              country = "France" + '~';            
+              region = "Île-de-France" + '~';
+              city = "Montrouge" + '~';
+            } 
+            
             if (typeof(Storage) !== 'undefined') {
               if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
                 if (localStorage.countryname && localStorage.cityname) {
