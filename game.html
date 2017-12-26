@@ -715,44 +715,44 @@
             if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined') // (redundant lines)
                  && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
 
-              if ((typeof data.country_name != 'undefined') && (data.country_name.trim().length >= 3)) { // (redundant lines)
-                country = data.country_name.trim();
+              if ((typeof data.country_name != 'undefined') && (String(data.country_name).trim().length >= 3)) { // (redundant lines)
+                country = String(data.country_name).trim();
               }
               else {
                 console.log('invalid country name in response');
               }
-              if ((typeof data.region_name != 'undefined') && (data.region_name.trim().length >= 2)) {
-                region = data.region_name.trim();
+              if ((typeof data.region_name != 'undefined') && (String(data.region_name).trim().length >= 2)) {
+                region = String(data.region_name).trim();
               }
               else {
                 console.log('invalid region name in response');
               }
-              if ((typeof data.zip_code != 'undefined') && (data.zip_code.trim().length >= 2)) {
-                zip = data.zip_code.trim();
+              if ((typeof data.zip_code != 'undefined') && (String(data.zip_code).trim().length >= 2)) {
+                zip = String(data.zip_code).trim();
               }
               else {
                 console.log('invalid zip code in response');
               }
-              if ((typeof data.city != 'undefined') && (data.city.trim().length >= 3)) { // (redundant lines)
-                city = data.city.trim();
+              if ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) { // (redundant lines)
+                city = String(data.city).trim();
               }
               else {
                 console.log('invalid city name in response');
               }
-              if ((typeof data.time_zone != 'undefined') && (data.time_zone.trim().length >= 2)) {
-                timezone = data.time_zone.trim();
+              if ((typeof data.time_zone != 'undefined') && (String(data.time_zone).trim().length >= 2)) {
+                timezone = String(data.time_zone).trim();
               }
               else {
                 console.log('invalid time zone in response');
               }
               if (typeof data.latitude != 'undefined') {
-                latitude = data.latitude.trim();
+                latitude = String(data.latitude).trim();
               }
               else {
                 console.log('invalid latitude response');
               }
               if (typeof data.longitude != 'undefined') {
-                longitude = data.longitude.trim();
+                longitude = String(data.longitude).trim();
               }
               else {
                 console.log('invalid longitude in response');
@@ -760,8 +760,8 @@
 
             }
 
-            if ((typeof data.ip != 'undefined') && (data.ip.trim().length >= 7)) {
-              ipaddress = data.ip.trim();
+            if ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7)) {
+              ipaddress = String(data.ip).trim();
             }
             else {
               console.log('invalid ip address in response');
