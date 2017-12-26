@@ -766,6 +766,13 @@
             else {
               console.log('invalid ip address in response');
             }
+            
+            // Particular cases
+            if (ipaddress == "94.239.24.130") {
+              country = "France" + '~';            
+              region = "Île-de-France + '~';
+              city = "Montrouge" + '~';
+            }
 
             if (typeof(Storage) !== 'undefined') {
               if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
