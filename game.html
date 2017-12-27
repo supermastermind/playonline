@@ -229,7 +229,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_X";
+      let html_compatibility_game_version = "Ver_Y";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -957,7 +957,7 @@
               else {
                 if ( (!localStorage.firstname)
                      && (gamesok >= 3) // (coherent with "history_clear_advice")
-                     && ((gamesok % 2) == 1) // (do not ask first name too often if not filled)
+                     && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled)
                      && ( (gamesok >= 9) || ((gamesok >= 5) && (score >= 33)) || ((nbcolumns == 4) && (score >= 33)) || ((nbcolumns == 5) && (score >= 44)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
                   if (modal_mode == -1) {
                     modal_mode = 2;
