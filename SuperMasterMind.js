@@ -2400,7 +2400,7 @@ function draw_graphic_bis() {
             helpStr = nbColorsRevealed + "x";
           }
           else if (nbRandomCodesPlayed > 0) {
-            helpStr = nbRandomCodesPlayed + "&#x266C;";
+            helpStr = nbRandomCodesPlayed + "rnd";
           }
           store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), helpStr); // XXX to be filled properly (with perfs)
         }
