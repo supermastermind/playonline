@@ -940,7 +940,7 @@
             var firstNameAskedStr = "0x";
             if (typeof(Storage) !== 'undefined') {
               if (localStorage.firstnameAsked) {
-                firstNameAskedStr = localStorage.firstnameAsked + "x";
+                firstNameAskedStr = localStorage.firstnameAsked + "x"; // (past game counter to simplify)
               }
             }
             document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/GeolocStatus:' + successcase__this_data_is_used + '/FirstNameAsked:' + firstNameAskedStr + extra_debug_info;
