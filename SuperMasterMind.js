@@ -2395,12 +2395,12 @@ function draw_graphic_bis() {
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
-          let helpStr = "no";
+          let helpStr = "-";
           if (nbColorsRevealed > 0) {
-            helpStr = nbColorsRevealed + "x";
+            helpStr = nbColorsRevealed + "x"; // help case
           }
           else if (nbRandomCodesPlayed > 0) {
-            helpStr = nbRandomCodesPlayed + "rnd";
+            helpStr = nbRandomCodesPlayed + "rnd"; // random code case
           }
           store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), helpStr); // XXX to be filled properly (with perfs)
         }
