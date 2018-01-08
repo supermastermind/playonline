@@ -51,7 +51,8 @@ function write_sidebar() {
     <div class='sidebar'>\
       <h1>History</h1>\
       Site under construction...<br><br>\
-      <b>Version 0.7</b><br>\
+      <b>Current version: 0.77</b><br><br>\
+      Version 0.7<br>\
       possible codes can be displayed for each attempt<br>\
       November 19th 2017\
       <br><br>\
