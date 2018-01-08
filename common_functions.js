@@ -50,7 +50,6 @@ function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
-      Site under construction...<br><br>\
       <b>Current version: 0.77</b><br><br>\
       Version 0.7<br>\
       possible codes can be displayed for each attempt<br>\
