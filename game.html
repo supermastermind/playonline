@@ -187,7 +187,6 @@
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset the current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code to help you...' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-          <input id='playPossibleCodeButton' class='button disabled' type='button' value='Play possible code' title='Play a code which is possible' onclick='playPossibleCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show the possible codes at each stage of the game (can only be selected when the game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
         </td>
         <td style='width:0.4%;margin:0;padding:0;'></td>
@@ -229,7 +228,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_Y";
+      let html_compatibility_game_version = "Ver_Z";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -337,6 +336,10 @@
               }
 
               if (typeof(Storage) !== 'undefined') {
+                if (!localStorage.firstnameAsked) {
+                  localStorage.firstnameAsked = 0;
+                }
+                localStorage.firstnameAsked = Number(localStorage.firstnameAsked) + 1;
                 if (localStorage.firstname) {
                   console.log("new firstname: " + localStorage.firstname);
                   document.getElementById('form_firstname_id').value = localStorage.firstname;
@@ -350,8 +353,10 @@
             }
 
             else if (modal_mode == 3) {
+            
+              setTimeout("showPossibleCodesButtonClick(false, -1, true);", 111);
+
               modal_mode = -1;
-              // (No particular action)
               return true; // close the modal
             }
 
@@ -407,7 +412,7 @@
 
     <script>
 
-      setTimeout("reload_needed = true;",12*3600*1000); // (reload the page from server every 12 hours)
+      setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours)
 
       function sleep(ms) { // To be called like "await sleep(1000);"
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -561,7 +566,7 @@
         else { // Error case
           my_form_url = my_form_url + 'form_error=' + errorCaseStr + '&';
         }
-        my_form_url = my_form_url + 'key=' + Math.floor(Math.random()*9999999999+1) + '&';
+        my_form_url = my_form_url + 'k=' + Math.floor(Math.random()*9999999999+1) + '&';
         my_form_url = my_form_url + 'my_callback_fct=handle_rsp';
         // console.log(my_form_url);
         // Submit form
@@ -932,7 +937,13 @@
               extra_debug_info = extra_debug_info + "/MimeTypes:" + navigator.mimeTypes.length;
             }
             catch (exc) {}
-            document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/GeolocStatus:' + successcase__this_data_is_used + extra_debug_info;
+            var firstNameAskedStr = "0x";
+            if (typeof(Storage) !== 'undefined') {
+              if (localStorage.firstnameAsked) {
+                firstNameAskedStr = localStorage.firstnameAsked + "x";
+              }
+            }
+            document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/GeolocStatus:' + successcase__this_data_is_used + '/FirstNameAsked:' + firstNameAskedStr + extra_debug_info;
 
             document.getElementById('form_rankings_id').value = '-';
 
@@ -957,8 +968,9 @@
               else {
                 if ( (!localStorage.firstname)
                      && (gamesok >= 3) // (coherent with "history_clear_advice")
+                     && (attempts >= 4) // (game not too easy)
                      && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled)
-                     && ( (gamesok >= 9) || ((gamesok >= 5) && (score >= 33)) || ((nbcolumns == 4) && (score >= 33)) || ((nbcolumns == 5) && (score >= 44)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
+                     && ( (gamesok >= 12) || ((gamesok >= 5) && (score >= 33)) || ((nbcolumns == 4) && (score >= 33)) || ((nbcolumns == 5) && (score >= 44)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
                   if (modal_mode == -1) {
                     modal_mode = 2;
                     // set modal content

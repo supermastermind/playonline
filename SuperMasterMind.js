@@ -64,15 +64,13 @@ let nbOfStatsFilled = 0;
 let currentAttemptNumber = 1;
 let gameWon = false;
 let nbGames = 0;
-let secretCode = -1;
-let secretCodeRevealed = -1;
+let sCode = -1;
+let sCodeRevealed = -1;
 let game_cnt = 0;
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
-let playerWasHelpedSignificantly = false;
-let lastConsecutiveAttemptNumberForSignificantHelp = 1;
-let playerWasHelpedSlightly = false;
+let playerWasHelped = false;
 
 let errorStr = "";
 let errorCnt = 0;
@@ -92,7 +90,6 @@ for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
 let resetCurrentCodeButtonIniName = document.getElementById("resetCurrentCodeButton").value;
 let playRandomCodeButtonIniName = document.getElementById("playRandomCodeButton").value;
 let revealSecretColorButtonIniName = document.getElementById("revealSecretColorButton").value;
-let playPossibleCodeButtonIniName = document.getElementById("playPossibleCodeButton").value;
 let showPossibleCodesButtonIniName = document.getElementById("showPossibleCodesButton").value;
 let showPossibleCodesButtonCompressedName = "\u2606";
 let showPossibleCodesButtonBackToGameName = "Back to game";
@@ -450,6 +447,10 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
   markToString(mark) {
     return mark.nbBlacks + "B" + mark.nbWhites + "W";
   }
+  
+  convert(code) {
+    return ~code;
+  }
 
 }
 
@@ -607,7 +608,7 @@ function newGameButtonClick(nbColumns) {
 
 function resetCurrentCodeButtonClick() {
   if (!document.getElementById("resetCurrentCodeButton").disabled) {
-    currentCode = secretCodeRevealed;
+    currentCode = sCodeRevealed;
     draw_graphic(false);
   }
 }
@@ -619,41 +620,31 @@ function playRandomCodeButtonClick() {
   }
 }
 
-function playPossibleCodeButtonClick() {
-  if (!document.getElementById("playPossibleCodeButton").disabled) {
-    if (currentAttemptNumber > 1) {
-      if (lastConsecutiveAttemptNumberForSignificantHelp+1 == currentAttemptNumber) {
-        lastConsecutiveAttemptNumberForSignificantHelp = currentAttemptNumber;
-      }
-      playerWasHelpedSignificantly = true;
-    }
-    currentCode = possibleCodesLists[nbOfStatsFilled-1][0]; // select first code of the list
-    draw_graphic(false);
-  }
-}
-
 function revealSecretColorButtonClick() {
   if ( (!document.getElementById("revealSecretColorButton").disabled)
        && gameOnGoing()
-       && (secretCode != -1) && (secretCodeRevealed != -1) ) {
-    let nbEmptyColors = simpleCodeHandler.nbEmptyColors(secretCodeRevealed);
+       && (sCode != -1) && (sCodeRevealed != -1) ) {
+    let nbEmptyColors = simpleCodeHandler.nbEmptyColors(sCodeRevealed);
     if (nbEmptyColors <= 1) {
       displayGUIError("too many revealed colors", new Error().stack);
     }
     else if ((nbColumns-nbEmptyColors+1) < (nbColumns+1)/2) {
-      playerWasHelpedSlightly = true;
+      playerWasHelped = true;
       let revealedColorIdx = Math.floor(Math.random() * nbEmptyColors);
-      secretCodeRevealed = simpleCodeHandler.replaceEmptyColor(secretCodeRevealed, revealedColorIdx, secretCode);
-      currentCode = secretCodeRevealed;
+      sCodeRevealed = simpleCodeHandler.replaceEmptyColor(sCodeRevealed, revealedColorIdx, simpleCodeHandler.convert(sCode));
+      currentCode = sCodeRevealed;
       main_graph_update_needed = true;
       draw_graphic(false);
     }
   }
 }
 
-function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1) {
+function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false) {
   if (!document.getElementById("showPossibleCodesButton").disabled) {
-    if (invertMode) {
+    if (showModeForced) {
+      showPossibleCodesMode = true;
+    }
+    else if (invertMode) {
       showPossibleCodesMode = !showPossibleCodesMode;
     }
     if (!showPossibleCodesMode) {
@@ -960,10 +951,8 @@ function resetGameAttributes(nbColumnsSelected) {
   nbOfStatsFilled = 0;
   currentAttemptNumber = 1;
   gameWon = false;
-  secretCode = simpleCodeHandler.createRandomCode();
-  // secretCode = 0x07777777;
-  // console.log("Secret code: " + simpleCodeHandler.codeToString(secretCode));
-  secretCodeRevealed = 0;
+  sCode = ~(simpleCodeHandler.createRandomCode());
+  sCodeRevealed = 0;
 
   game_cnt++;
   if (game_cnt > 1000000) {
@@ -971,9 +960,7 @@ function resetGameAttributes(nbColumnsSelected) {
   }
 
   newGameEvent = false;
-  playerWasHelpedSignificantly = false;
-  lastConsecutiveAttemptNumberForSignificantHelp = 1;
-  playerWasHelpedSlightly = false;
+  playerWasHelped = false;
 
   errorStr = "";
   errorCnt = 0;
@@ -994,7 +981,7 @@ function resetGameAttributes(nbColumnsSelected) {
   else {
     first_session_game = false;
   }
-  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'secretCode': secretCode, 'first_session_game': first_session_game, 'game_id': game_cnt});
+  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt});
 }
 
 function checkArraySizes() {
@@ -1297,7 +1284,7 @@ function draw_graphic_bis() {
   let draw_exception = false;
 
   let timeStr = "";
-  let game_won_without_big_help = false;
+  let game_just_won = false;
   let score = -1.0;
   let nbColorsRevealed = 0;
 
@@ -1375,7 +1362,6 @@ function draw_graphic_bis() {
           document.getElementById("resetCurrentCodeButton").value = "\u2718";
           document.getElementById("playRandomCodeButton").value = "\u266C";
           document.getElementById("revealSecretColorButton").value = "?";
-          document.getElementById("playPossibleCodeButton").value = "??";
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
           document.getElementById("my_table").style.width = "100%";
           document.getElementById("my_table").style.left = "0%";
@@ -1409,7 +1395,6 @@ function draw_graphic_bis() {
           document.getElementById("resetCurrentCodeButton").value = resetCurrentCodeButtonIniName;
           document.getElementById("playRandomCodeButton").value = playRandomCodeButtonIniName;
           document.getElementById("revealSecretColorButton").value = revealSecretColorButtonIniName;
-          document.getElementById("playPossibleCodeButton").value = playPossibleCodeButtonIniName;
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
           document.getElementById("my_table").style.width = tableIniWidth;
           document.getElementById("my_table").style.left = tableIniLeft;
@@ -1503,21 +1488,14 @@ function draw_graphic_bis() {
           updateAndStoreNbGamesStarted(+1);
         }
         codesPlayed[currentAttemptNumber-1] = currentCode;
-        simpleCodeHandler.fillMark(secretCode, currentCode, marks[currentAttemptNumber-1]);
+        simpleCodeHandler.fillMark(simpleCodeHandler.convert(sCode), currentCode, marks[currentAttemptNumber-1]);
         if (marks[currentAttemptNumber-1].nbBlacks == nbColumns) { // game over (game won)
           stopTime = (new Date()).getTime(); // time in milliseconds
           currentAttemptNumber++;
           currentCode = -1;
           gameWon = true;
-          // if ((!playerWasHelpedSignificantly) && (!playerWasHelpedSlightly)) {
           nbGames++;
-          // }
-          if (!playerWasHelpedSignificantly) {
-            game_won_without_big_help = true;
-          }
-          if (lastConsecutiveAttemptNumberForSignificantHelp+1 == currentAttemptNumber) { // only consecutive significant helps
-            updateAndStoreNbGamesStarted(-1);
-          }
+          game_just_won = true;
         }
         else {
           currentAttemptNumber++;
@@ -1527,7 +1505,7 @@ function draw_graphic_bis() {
             nbGames++;
           }
           else {
-            currentCode = secretCodeRevealed;
+            currentCode = sCodeRevealed;
           }
         }
         main_graph_update_needed = true;
@@ -1937,10 +1915,10 @@ function draw_graphic_bis() {
         displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                       darkGray, backgroundColor_2, ctx, true, 2, true, 0);
         if (gameOnGoing()) {
-          displayCode(secretCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
+          displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
         }
         else { // game over
-          displayCode(secretCode, nbMaxAttemptsToDisplay+transition_height, ctx);
+          displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
         }
 
         // Display game over status
@@ -2053,19 +2031,14 @@ function draw_graphic_bis() {
                                          - (time_delta_score - max_time_delta_score)/1.5) + 0.499; // "good player's slope / 3"
             }
             if (score < min_score) {
-              score = min_score; /* (score will never be zero in case the game was won without significant help) */
+              score = min_score; /* (score will never be zero in case the game was won) */
             }
 
             // Check if the player was helped
-            if (playerWasHelpedSignificantly) {
-              victoryStr = "You won with help!";
-              victoryStr2 = "You won /??"
-              score = 0.0;
-            }
-            else if (playerWasHelpedSlightly) {
+            if (playerWasHelped) {
               victoryStr = "You won with help!";
               victoryStr2 = "You won /?"
-              nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed));
+              nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
                 score = Math.max(score / 2.0, min_score);
               }
@@ -2368,10 +2341,10 @@ function draw_graphic_bis() {
       else {
         document.getElementById("playRandomCodeButton").className  = "button";
       }
-      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-simpleCodeHandler.nbEmptyColors(secretCodeRevealed)+1) < (nbColumns+1)/2);
+      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed)+1) < (nbColumns+1)/2);
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
-           && (secretCodeRevealed == 0)
+           && (sCodeRevealed == 0)
            && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1500 /* 25 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || (tmp_perf <= ((nbColumns <= 5) ?  -2 : -1)) ) ) { /* (number of useless attempts) */
@@ -2382,13 +2355,6 @@ function draw_graphic_bis() {
       }
       else {
         document.getElementById("revealSecretColorButton").className = "button";
-      }
-      document.getElementById("playPossibleCodeButton").disabled = !(gameOnGoing() && allPossibleCodesFilled());
-      if (document.getElementById("playPossibleCodeButton").disabled) {
-        document.getElementById("playPossibleCodeButton").className = "button disabled";
-      }
-      else {
-        document.getElementById("playPossibleCodeButton").className = "button";
       }
       document.getElementById("showPossibleCodesButton").disabled = !((!gameOnGoing()) && allPossibleCodesFilled());
       if (document.getElementById("showPossibleCodesButton").disabled) {
@@ -2421,7 +2387,7 @@ function draw_graphic_bis() {
       // Store player's info distantly
       // *****************************
 
-      if (game_won_without_big_help) {
+      if (game_just_won) {
         if ((timeStr.length == 0) || (score < 0.0)) { // XXX storage to be done only when all perfs have been computed
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
@@ -2429,7 +2395,7 @@ function draw_graphic_bis() {
           store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), nbColorsRevealed); // XXX to be filled properly (with perfs)
         }
       }
-
+        
       main_graph_update_needed = false;
 
     }
@@ -2446,7 +2412,7 @@ function draw_graphic_bis() {
       // Useful to trigger button blinking due to time only
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
-           && (secretCodeRevealed == 0)
+           && (sCodeRevealed == 0)
            && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1500 /* 25 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
           if (document.getElementById("revealSecretColorButton").className.indexOf('blinking') == -1) {
@@ -2455,7 +2421,7 @@ function draw_graphic_bis() {
       }
     }
 
-    document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != secretCodeRevealed));
+    document.getElementById("resetCurrentCodeButton").disabled  = !(gameOnGoing() && (currentCode != sCodeRevealed));
     if (document.getElementById("resetCurrentCodeButton").disabled) {
       document.getElementById("resetCurrentCodeButton").className = "button disabled";
     }

@@ -24,7 +24,6 @@ let nbColumns = -1;
 let nbColors = -1;
 let nbMaxAttempts = -1;
 let nbMaxPossibleCodesShown = -1;
-let secretCodeForDebugOnly = -1;
 let game_id = -1;
 
 let codesPlayed;
@@ -970,11 +969,6 @@ self.addEventListener('message', function(e) {
     if ( isNaN(nbMaxPossibleCodesShown) || (nbMaxPossibleCodesShown < 5) || (nbMaxPossibleCodesShown > 100) ) {
       throw new Error("INIT phase / invalid nbMaxPossibleCodesShown: " + nbMaxPossibleCodesShown);
     }
-
-    if (data.secretCode == undefined) {
-      throw new Error("INIT phase / secretCode is undefined");
-    }
-    secretCodeForDebugOnly = data.secretCode;
 
     if (data.first_session_game == undefined) {
       throw new Error("INIT phase / first_session_game is undefined");
