@@ -654,7 +654,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       
     // Transition effect 1/2
     try {
-      $(".page_transition").fadeIn("slow");
+      $(".page_transition").fadeIn("fast");
     }
     catch (exc) {
     }    
@@ -702,7 +702,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
 
     // Transition effect 2/2
     try {
-      $(".page_transition").fadeOut("slow");
+      $(".page_transition").fadeOut("fast");
     }
     catch (exc) {
     }    
