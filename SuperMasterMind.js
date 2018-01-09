@@ -655,8 +655,8 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       
     // Transition effect
     try {
-      $(".page_transition").fadeIn("fast");
-      $(".page_transition").fadeOut("fast");
+      $(".page_transition").fadeIn("slow");
+      $(".page_transition").fadeOut("slow");
     }
     catch (exc) {
     }    
