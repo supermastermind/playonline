@@ -602,16 +602,22 @@ function newGameButtonClick(nbColumns) {
   if ( (nbColumns == 0) // ("NEW GAME" button event)
        || (currentAttemptNumber <= 1) ) { // (radio buttons events)
      
-    // Transition effect
+    // Transition effect 1/2
     try {
       $(".page_transition").fadeIn("fast");
-      $(".page_transition").fadeOut("fast");
     }
     catch (exc) {
     }     
      
     newGameEvent = true;
     draw_graphic();
+    
+    // Transition effect 2/2
+    try {
+      $(".page_transition").fadeOut("fast");
+    }
+    catch (exc) {
+    }         
     
   }
 }
@@ -655,7 +661,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
     // Transition effect 1/2
     if (invertMode || showModeForced) {
       try {
-        $(".page_transition").fadeIn("slow");
+        $(".page_transition").fadeIn("fast");
       }
       catch (exc) {
       }    
