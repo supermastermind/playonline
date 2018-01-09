@@ -53,12 +53,10 @@ function write_sidebar() {
       <b>Current version: 0.77</b><br><br>\
       Version 0.7<br>\
       possible codes can be displayed for each attempt<br>\
-      November 19th 2017\
+      (November 2017)\
       <br><br>\
       Version 0.6<br>\
-      online game scores<br>\
-      October 18th 2017\
-      <br><br>\
+      online game scores<br><br>\
       Version 0.5<br>\
       simple gameplay available<br>\
       <br>\
