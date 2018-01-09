@@ -650,13 +650,11 @@ function revealSecretColorButtonClick() {
 }
 
 function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false) {
-   
   if (!document.getElementById("showPossibleCodesButton").disabled) {
       
-    // Transition effect
+    // Transition effect 1/2
     try {
       $(".page_transition").fadeIn("slow");
-      $(".page_transition").fadeOut("slow");
     }
     catch (exc) {
     }    
@@ -701,6 +699,13 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
     }
     updateGameSizes();
     draw_graphic();
+
+    // Transition effect 2/2
+    try {
+      $(".page_transition").fadeOut("slow");
+    }
+    catch (exc) {
+    }    
     
   }
 }
