@@ -601,8 +601,18 @@ function onGameSolverError(e) {
 function newGameButtonClick(nbColumns) {
   if ( (nbColumns == 0) // ("NEW GAME" button event)
        || (currentAttemptNumber <= 1) ) { // (radio buttons events)
+     
+    // Transition effect
+    try {
+      $(".page_transition").fadeIn("fast");
+      $(".page_transition").fadeOut("fast");
+    }
+    catch (exc) {
+    }     
+     
     newGameEvent = true;
     draw_graphic();
+    
   }
 }
 
@@ -640,16 +650,17 @@ function revealSecretColorButtonClick() {
 }
 
 function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false) {
-  
-  // Transition effect
-  try {
-    $(".page_transition").fadeIn("fast");
-    $(".page_transition").fadeOut("fast");
-  }
-  catch (exc) {
-  }
-  
+   
   if (!document.getElementById("showPossibleCodesButton").disabled) {
+      
+    // Transition effect
+    try {
+      $(".page_transition").fadeIn("fast");
+      $(".page_transition").fadeOut("fast");
+    }
+    catch (exc) {
+    }    
+    
     if (showModeForced) {
       showPossibleCodesMode = true;
     }
@@ -690,6 +701,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
     }
     updateGameSizes();
     draw_graphic();
+    
   }
 }
 
