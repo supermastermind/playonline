@@ -131,6 +131,20 @@
         padding-top: 222px;
         color: #fff;
       }        
+
+      .page_transition /* (used during page transition) */
+      { position: fixed;
+        height: 100%;
+        width: 100%;
+        top:0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index:11111;
+        font-size: 20px;
+        text-align: center;
+        padding-top: 222px;
+        color: #fff;
+      }        
       
     </style>
 
@@ -169,7 +183,10 @@
       <img src="img/loading.gif"><br>
       Loading...
     </div>   
-   
+
+    <div class="page_transition" style='display:none;'>
+    </div>   
+    
     <!-- HTML controls and canvas -->
 
     <table id='my_table' style='background:#E3E3E3;width:75%;height:90%;position:absolute;left:12.5%;top:2%;border:5px ridge white;border-radius:1%;margin:0;padding:0;'>
@@ -228,7 +245,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AA";
+      let html_compatibility_game_version = "Ver_AB";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -624,6 +641,7 @@
              && (typeof e.parameter.rankings !== 'undefined')
              && (e.parameter.rankings.length > 10) ) {
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
+          rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;'>"); // <td>'s style is applied        
           console.log(rsp_rankings_str);
           // Rk: top scores are always displayed, even if current game score is not in them
           if (modal_mode == -1) {

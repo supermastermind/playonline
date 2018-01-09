@@ -640,6 +640,15 @@ function revealSecretColorButtonClick() {
 }
 
 function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false) {
+  
+  // Transition effect
+  try {
+    $(".page_transition").fadeIn("fast");
+    $(".page_transition").fadeOut("fast");
+  }
+  catch (exc) {
+  }
+  
   if (!document.getElementById("showPossibleCodesButton").disabled) {
     if (showModeForced) {
       showPossibleCodesMode = true;
