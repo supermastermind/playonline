@@ -653,11 +653,13 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
   if (!document.getElementById("showPossibleCodesButton").disabled) {
       
     // Transition effect 1/2
-    try {
-      $(".page_transition").fadeIn("slow");
+    if (invertMode || showModeForced) {
+      try {
+        $(".page_transition").fadeIn("slow");
+      }
+      catch (exc) {
+      }    
     }
-    catch (exc) {
-    }    
     
     if (showModeForced) {
       showPossibleCodesMode = true;
@@ -701,11 +703,13 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
     draw_graphic();
 
     // Transition effect 2/2
-    try {
-      $(".page_transition").fadeOut("slow");
+    if (invertMode || showModeForced) {
+      try {
+        $(".page_transition").fadeOut("fast");
+      }
+      catch (exc) {
+      }    
     }
-    catch (exc) {
-    }    
     
   }
 }
