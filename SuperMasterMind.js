@@ -658,6 +658,10 @@ function revealSecretColorButtonClick() {
 function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false) {
   if (!document.getElementById("showPossibleCodesButton").disabled) {
       
+    if (showModeForced && showPossibleCodesMode) { // (showPossibleCodesMode is already true)
+      return;
+    }
+      
     // Transition effect 1/2
     if (invertMode || showModeForced) {
       try {
