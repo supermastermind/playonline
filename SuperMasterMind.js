@@ -601,6 +601,22 @@ function onGameSolverError(e) {
 function newGameButtonClick(nbColumns) {
   if ( (nbColumns == 0) // ("NEW GAME" button event)
        || (currentAttemptNumber <= 1) ) { // (radio buttons events)
+
+    if (gameOnGoing() && (currentAttemptNumber > 1)) {
+      // Transition effect 1/2
+      try {
+        $(".game_aborted").fadeIn(3500);
+      }
+      catch (exc) {
+      }     
+      
+      // Transition effect 2/2
+      try {
+        $(".game_aborted").fadeOut(3500);
+      }
+      catch (exc) {
+      }
+    }
      
     // Transition effect 1/2
     try {
@@ -2374,7 +2390,7 @@ function draw_graphic_bis() {
         document.getElementById("columnslabel_7").className = "radio";
       }
 
-      document.getElementById("playRandomCodeButton").disabled = !gameOnGoing();
+      document.getElementById("playRandomCodeButton").disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts - 1)) ;
       if (document.getElementById("playRandomCodeButton").disabled) {
         document.getElementById("playRandomCodeButton").className  = "button disabled";
       }

@@ -145,6 +145,20 @@
         padding-top: 222px;
         color: #fff;
       }        
+
+      .game_aborted /* (used at game abortion) */
+      { position: fixed;
+        height: 100%;
+        width: 100%;
+        top:0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index:11111;
+        font-size: 20px;
+        text-align: center;
+        padding-top: 222px;
+        color: #fff;
+      }        
       
     </style>
 
@@ -185,6 +199,13 @@
     </div>   
 
     <div class="page_transition" style='display:none;'>
+    </div>   
+
+    <div class="game_aborted" style='display:none;'>
+      You lost!<br> 
+      Current game was aborted<br>
+      <img src="img/loading.gif"><br>
+      Starting a new game...    
     </div>   
     
     <!-- HTML controls and canvas -->
@@ -245,7 +266,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AH";
+      let html_compatibility_game_version = "Ver_AI";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
