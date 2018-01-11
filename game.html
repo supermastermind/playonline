@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AL";
+      let html_compatibility_game_version = "Ver_AM";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -486,6 +486,14 @@
         }
         return text;
       }
+      
+      if (typeof(Storage) !== 'undefined') {
+        if (!localStorage.firstaccessid) {
+          let firstaccessid = 'FA - ' + makeid() + ' - ' + new Date();
+          localStorage.firstaccessid = firstaccessid;
+        }
+      }
+      
       function capitalizeFirstLetters(str) {
         if (str.length == 0) {
           return "";
@@ -549,6 +557,7 @@
           return res2;
         }
       }
+      
       function getLocation() {
         switch(location.protocol) {
            case 'http:':
@@ -1003,12 +1012,16 @@
             }
             catch (exc) {}
             var firstNameAskedStr = "0x";
+            var firstAccessIdStr = "-";
             if (typeof(Storage) !== 'undefined') {
               if (localStorage.firstnameAsked) {
                 firstNameAskedStr = localStorage.firstnameAsked + "x"; // (past game counter to simplify)
               }
+              if (localStorage.firstaccessid) {
+                firstAccessIdStr = localStorage.firstaccessid;
+              }              
             }
-            document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/GeolocStatus:' + successcase__this_data_is_used + '/FirstNameAsked:' + firstNameAskedStr + extra_debug_info;
+            document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/GeolocStatus:' + successcase__this_data_is_used + '/FirstNameAsked:' + firstNameAskedStr + '/FirstAccessId:' + firstAccessIdStr + extra_debug_info;
 
             document.getElementById('form_rankings_id').value = '-';
 
@@ -1072,6 +1085,9 @@
             if (localStorage.firstname) {
               errorStr = errorStr + " for " + localStorage.firstname;
             }
+            else if (localStorage.firstaccessid) {
+              errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
+            }
             if (localStorage.countryname) {
               errorStr = errorStr + " in " + localStorage.countryname;
             }
@@ -1098,6 +1114,9 @@
               if (localStorage.firstname) {
                 errorStr = errorStr + " for " + localStorage.firstname;
               }
+              else if (localStorage.firstaccessid) {
+                errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
+              }              
               if (localStorage.countryname) {
                 errorStr = errorStr + " in " + localStorage.countryname;
               }
