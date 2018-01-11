@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AK";
+      let html_compatibility_game_version = "Ver_AL";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -571,8 +571,11 @@
       }
 
       function getRegion(country, city, suffix_str) {
-        if ((country == "France") && (city == "Paris")) { // Particular case
+        if ((country == "France") && (city == "Paris")) { // Particular case #1
           return 'Île-de-France' + suffix_str;
+        }
+        else if ((country == "Germany") && (city == "Dortmund")) { // Particular case #2
+          return 'Nordrhein-Westfalen' + suffix_str;
         }
         else {
           return '-';
