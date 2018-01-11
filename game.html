@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AM";
+      let html_compatibility_game_version = "Ver_AN";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -580,6 +580,7 @@
       }
 
       function getRegion(country, city, suffix_str) {
+        // Manual region setting
         if ((country == "France") && (city == "Paris")) { // Particular case #1
           return 'Île-de-France' + suffix_str;
         }
@@ -790,7 +791,7 @@
             let timezone = '-';
             let latitude = '-';
             let longitude = '-';
-            let ipaddress = '-';
+            let ipaddress = '0.0.0.0'; // (ipaddress may stay equal to this default value)
             if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined') // (redundant lines)
                  && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
 
@@ -846,7 +847,7 @@
               console.log('invalid ip address in response');
             }
             
-            // Particular cases
+            // Manual geolocation table corrections for particular IP addresses
             if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 15) ) { // 176.130.42.* IPv4 addresses
               country = "France" + '~';            
               region = "Alsace" + '~';
