@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AN";
+      let html_compatibility_game_version = "Ver_AO";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -787,11 +787,11 @@
             let country = '-';
             let region = '-';
             let zip = '-';
-            let city = '-';
+            let city = '-'; // (city may stay equal to this default value if not defined)
             let timezone = '-';
             let latitude = '-';
             let longitude = '-';
-            let ipaddress = '0.0.0.0'; // (ipaddress may stay equal to this default value)
+            let ipaddress = '-'; // (ipaddress may stay equal to this default value if not valid)
             if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined') // (redundant lines)
                  && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
 
@@ -840,7 +840,7 @@
 
             }
 
-            if ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7)) {
+            if ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) {
               ipaddress = String(data.ip).trim();
             }
             else {
@@ -884,7 +884,7 @@
             // Other fields
             // ************
             let playerid;
-            let firstname = "-";
+            let firstname = "-"; // (firstname may stay equal to this default value if not defined)
             let gamesok = -1;
             let deltagames = -1;
             if (typeof(Storage) !== 'undefined') {
