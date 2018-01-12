@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AP";
+      let html_compatibility_game_version = "Ver_AQ";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -358,13 +358,14 @@
 
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.countryname && localStorage.cityname) {
-                  console.log("new countryname: " + localStorage.countryname + '~');
-                  document.getElementById('form_country_id').value = localStorage.countryname + '~';
-                  var region = getRegion(localStorage.countryname, localStorage.cityname, '~');
+                  console.log("new countryname: " + localStorage.countryname);
+                  document.getElementById('form_country_id').value = localStorage.countryname;
+                  var region = getRegion(localStorage.countryname, localStorage.cityname);
                   console.log("new region: " + region);
                   document.getElementById('form_region_id').value = region;
-                  console.log("new city: " + localStorage.cityname + '~');
-                  document.getElementById('form_city_id').value = localStorage.cityname + '~';
+                  console.log("new city: " + localStorage.cityname);
+                  document.getElementById('form_city_id').value = localStorage.cityname;
+                  document.getElementById('form_geoloc_id').value = '~';
                 }
               }
               setTimeout("submitForm();", 444);
@@ -454,6 +455,7 @@
       region: <input id='form_region_id' name='region' type='text' value='-'><br>
       zip: <input id='form_zip_id' name='zip' type='text' value='-'><br>
       city: <input id='form_city_id' name='city' type='text' value='-'><br>
+      geoloc: <input id='form_geoloc_id' name='geoloc' type='text' value='-'><br>
       timezone: <input id='form_timezone_id' name='timezone' type='text' value='-'><br>
       latitude: <input id='form_latitude_id' name='latitude' type='text' value='-'><br>
       longitude: <input id='form_longitude_id' name='longitude' type='text' value='-'><br>
@@ -579,13 +581,13 @@
         return true;
       }
 
-      function getRegion(country, city, suffix_str) {
+      function getRegion(country, city) {
         // Manual region setting
         if ((country == "France") && (city == "Paris")) { // Particular case #1
-          return 'Île-de-France' + suffix_str;
+          return 'Île-de-France';
         }
         else if ((country == "Germany") && (city == "Dortmund")) { // Particular case #2
-          return 'North Rhine-Westphalia' + suffix_str;
+          return 'North Rhine-Westphalia';
         }
         else {
           return '-';
@@ -787,7 +789,8 @@
             let country = '-';
             let region = '-';
             let zip = '-';
-            let city = '-'; // (city may stay equal to this default value if not defined)
+            let city = '-'; // (city may stay equal to this default value if not valid)
+            let geoloc = '-';  // (geoloc may stay equal to this default value if not valid)
             let timezone = '-';
             let latitude = '-';
             let longitude = '-';
@@ -815,6 +818,7 @@
               }
               if ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) { // (redundant lines)
                 city = String(data.city).trim();
+                geoloc = 'ok';
               }
               else {
                 console.log('invalid city name in response');
@@ -849,17 +853,19 @@
             
             // Manual geolocation table corrections for particular IP addresses
             if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 15) ) { // 176.130.42.* IPv4 addresses
-              country = "France" + '~';            
-              region = "Alsace" + '~';
-              city = "Munster" + '~';
+              country = "France";            
+              region = "Alsace";
+              city = "Munster";
+              geoloc = 'ok+';
             }            
             
             if (typeof(Storage) !== 'undefined') {
               if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
                 if (localStorage.countryname && localStorage.cityname) {
-                  country = localStorage.countryname + '~';
-                  region = getRegion(localStorage.countryname, localStorage.cityname, '~');
-                  city = localStorage.cityname + '~';
+                  country = localStorage.countryname;
+                  region = getRegion(localStorage.countryname, localStorage.cityname);
+                  city = localStorage.cityname;
+                  geoloc = '~';
                 }
               }
             }
@@ -872,6 +878,8 @@
             document.getElementById('form_zip_id').value = zip;
             console.log(city);
             document.getElementById('form_city_id').value = city;
+            console.log(geoloc);
+            document.getElementById('form_geoloc_id').value = geoloc;
             console.log(timezone);
             document.getElementById('form_timezone_id').value = timezone;
             console.log(latitude);
