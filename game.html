@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AR";
+      let html_compatibility_game_version = "Ver_AS";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -1238,7 +1238,7 @@
           
         } // geolocation_handler
         
-        $.getJSON('https://freegeoip.net/json/2', geolocation_handler.run)
+        $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
         })
