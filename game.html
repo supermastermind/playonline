@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AT";
+      let html_compatibility_game_version = "Ver_AU";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -1194,7 +1194,7 @@
             let now = new Date().getTime();
             while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
 
-            // Another geolocation server is used (*)
+            // Another geolocation server is used
             geolocation_handler.nb_JSON_queries_posted++;          
             if (geolocation_handler.nb_JSON_queries_posted > 2) {
               console.log("error: too many recursive calls to run()! (#1)");
@@ -1224,14 +1224,16 @@
               console.log(errorStr);
 
               // Reuse last geolocation data if any
+              /* skipped to simplify and to avoid complex scenarios:
               if (last_data_used != null) {
                 console.log("reuse last geolocation data");
-                geolocation_handler.run(last_data_used, true);
+                geolocation_handler.run(last_data_used);
               }
-              else { // No form is submitted in this retry failure case: see also (*)
-                // Minimize the number of forms submitted in sequence
-                submitForm(errorStr);
-              }
+              else { // No form is submitted in this retry failure case
+              */
+              // Minimize the number of forms submitted in sequence
+              submitForm(errorStr);
+              /* } */
             })
             .always(function() {
               console.log("(getJSON completed #2)");
