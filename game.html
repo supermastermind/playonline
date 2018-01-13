@@ -1245,7 +1245,7 @@
           console.log("error: too many recursive calls to run()! (#2)");
           return; // defense against infinite loops
         }        
-        $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
+        $.getJSON('https://freegeoip.net/json2/', geolocation_handler.run)
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
         })
