@@ -1983,12 +1983,13 @@ function draw_graphic_bis() {
         if (!gameOnGoing()) {
 
           let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);
+          let timeInMilliSeconds = (stopTime - startTime) % 1000;
 
           let timeInHours = Math.floor(totalTimeInSeconds/3600);
           let timeInSecondsWithinHour = (totalTimeInSeconds - timeInHours*3600); // (range: [0;3599]
           let timeInMinutes = Math.floor(timeInSecondsWithinHour/60);
           let timeInSeconds = timeInSecondsWithinHour - timeInMinutes*60; // (range: [0;59])
-
+          
           if (timeInHours >= 24) {
             timeStr = "> 1 day";
           }
@@ -2080,11 +2081,11 @@ function draw_graphic_bis() {
             let max_time_delta_score = 2*10.0; // the time spent will tend not to cost more than 2 attempts in the score
             if ( (time_delta_score <= max_time_delta_score)
                  || (currentAttemptNumber-1 /* number of attempts */ >= nbMaxAttempts) /* at last attempt, score will tend towards zero "more quickly" as time goes on */ ) {
-              score = multiply_factor * (score_from_nb_attempts - time_delta_score) + 0.499;
+              score = multiply_factor * (score_from_nb_attempts - time_delta_score) + 0.499 - timeInMilliSeconds/10000000;
             }
             else {
               score = multiply_factor * (score_from_nb_attempts - max_time_delta_score
-                                         - (time_delta_score - max_time_delta_score)/1.5) + 0.499; // "good player's slope / 3"
+                                         - (time_delta_score - max_time_delta_score)/1.5) + 0.499 - timeInMilliSeconds/10000000; // "good player's slope / 3"
             }
             if (score < min_score) {
               score = min_score; /* (score will never be zero in case the game was won) */
