@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AQ";
+      let html_compatibility_game_version = "Ver_AR";
       let reload_needed = false;
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -742,7 +742,7 @@
         console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
       }
-
+   
       var last_data_used = null;
       var last_game_cnt = -1;
       async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, help) { // asynchronous function
@@ -751,27 +751,84 @@
           return;
         }
         last_game_cnt = game_cnt;
-        store_time = new Date().getTime();
-
+        store_time = new Date().getTime();  
+        
         var geolocation_handler = {
-          run: function (data_p) {
+        
+          run_retry: function (data_p) {
+            
+            /* ipinfodb.com response format:         
+               - SUCCESS case:
+                statusCode	"OK"
+                statusMessage	""
+                ipAddress	"94.239.111.222"
+                countryCode	"FR"
+                countryName	"France"
+                regionName	"Ile-de-France"
+                cityName	"Paris"
+                zipCode	"75000"
+                latitude	"48.8534"
+                longitude	"2.3488"
+                timeZone	"+01:00"      
+              - FAILURE case:
+                statusCode	"ERROR"
+                statusMessage	"Invalid IP Address."
+                ipAddress	"994.239.111.222"
+                countryCode	""
+                countryName	""
+                regionName	""
+                cityName	""
+                zipCode	""
+                latitude	"0"
+                longitude	"0"
+                timeZone	""        
+            */   
+            let converted_data = JSON.stringify(data_p);            
+
+            console.log("(geolocalisation retry data conversion for " + converted_data + ")");
+            
+            if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {            
+              console.log("geolocation error in run_retry(): " + data_p.statusCode + " " + data_p.statusMessage);
+            }
+            
+            // latitude -> latitude
+            // longitude -> longitude
+            // countryName -> country_name
+            converted_data = converted_data.replace("countryName", "country_name");
+            // regionName -> region_name
+            converted_data = converted_data.replace("regionName", "region_name");
+            // zipCode -> zip_code
+            converted_data = converted_data.replace("zipCode", "zip_code");
+            // cityName -> city
+            converted_data = converted_data.replace("cityName", "city");
+            // timeZone -> time_zone
+            converted_data = converted_data.replace("timeZone", "time_zone");
+            // ipAddress -> ip
+            converted_data = converted_data.replace("ipAddress", "ip");
+            
+            geolocation_handler.run(JSON.parse(converted_data), true);
+          },
+        
+          run: function (data_p, retry_mode = false) {
 
             // Check that the response contains valid information
             // **************************************************
 
             let this_data_is_valid = false;
             if ( (typeof data_p.latitude != 'undefined') && (typeof data_p.longitude != 'undefined') // (redundant lines)
-                 && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1))
-                 && ((typeof data_p.country_name != 'undefined') && (data_p.country_name.length >= 3))
-                 && ((typeof data_p.city != 'undefined') && (data_p.city.length >= 3)) ) {
+                 && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1)) // (redundant lines)
+                 && ((typeof data_p.country_name != 'undefined') && (data_p.country_name.length >= 3)) // (redundant lines)
+                 && ((typeof data_p.city != 'undefined') && (data_p.city.length >= 3)) // (redundant lines)
+                 && ((typeof data_p.ip != 'undefined') && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
               this_data_is_valid = true;
             }
             let last_data_used_is_valid = false;
             if ( (last_data_used != null)
                  && (typeof last_data_used.latitude != 'undefined') && (typeof last_data_used.longitude != 'undefined') // (redundant lines)
-                 && ((String(last_data_used.latitude).indexOf('.') != -1) || (String(last_data_used.longitude).indexOf('.') != -1))
-                 && ((typeof last_data_used.country_name != 'undefined') && (last_data_used.country_name.length >= 3))
-                 && ((typeof last_data_used.city != 'undefined') && (last_data_used.city.length >= 3)) ) {
+                 && ((String(last_data_used.latitude).indexOf('.') != -1) || (String(last_data_used.longitude).indexOf('.') != -1)) // (redundant lines)
+                 && ((typeof last_data_used.country_name != 'undefined') && (last_data_used.country_name.length >= 3)) // (redundant lines)
+                 && ((typeof last_data_used.city != 'undefined') && (last_data_used.city.length >= 3)) // (redundant lines)
+                 && ((typeof last_data_used.ip != 'undefined') && (String(last_data_used.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
               last_data_used_is_valid = true;
             }
             let successcase__this_data_is_used;
@@ -818,7 +875,12 @@
               }
               if ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) { // (redundant lines)
                 city = String(data.city).trim();
-                geoloc = 'ok';
+                if (!retry_mode) {
+                  geoloc = 'ok1';
+                }
+                else {
+                  geoloc = 'ok2';
+                }
               }
               else {
                 console.log('invalid city name in response');
@@ -844,8 +906,10 @@
 
             }
 
-            if ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) {
+            let valid_ipaddress = false;
+            if ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) { // (redundant lines)
               ipaddress = String(data.ip).trim();
+              valid_ipaddress = true;
             }
             else {
               console.log('invalid ip address in response');
@@ -858,6 +922,27 @@
               city = "Munster";
               geoloc = 'ok+';
             }            
+            
+            // Check if geolocation data are valid
+            if (!retry_mode) {
+              if ((!valid_ipaddress) || (city == '-')) {
+                let retry_error_str = "";
+                if (!valid_ipaddress) {
+                  retry_error_str += "invalid IP address ";
+                  if (typeof data.ip != 'undefined') {
+                    retry_error_str += String(data.ip).trim() + " ";
+                  }
+                }
+                if (city == '-') {
+                  retry_error_str += "invalid city ";
+                  if (typeof data.city != 'undefined') {
+                    retry_error_str += String(data.city).trim();
+                  }
+                }
+                // => exit the function and retry
+                return geolocation_handler.geolocation_retry("", "manual geolocation retry due to invalid geolocation data", retry_error_str.trim());
+              }
+            }
             
             if (typeof(Storage) !== 'undefined') {
               if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
@@ -1083,49 +1168,17 @@
               console.log("(form submission skipped)");
             }
 
-          } // run
-        } // geolocation_handler
-
-        $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
-        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-
-          var errorStr = ("geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-          if (typeof(Storage) !== 'undefined') {
-            if (localStorage.firstname) {
-              errorStr = errorStr + " for " + localStorage.firstname;
-            }
-            else if (localStorage.firstaccessid) {
-              errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
-            }
-            if (localStorage.countryname) {
-              errorStr = errorStr + " in " + localStorage.countryname;
-            }
-            if (localStorage.cityname) {
-              errorStr = errorStr + " in " + localStorage.cityname;
-            }
-            if (localStorage.gamesok) {
-              errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
-            }
-          }
-          errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
-          console.log(errorStr);
-          submitForm(errorStr);
-
-          // Keep some time between the 2 potential calls to submitForm(). This may also allow to make the 2nd getJSON in different server load conditions.
-          let now = new Date().getTime();
-          while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
-
-          // Here, to solve geolocation retry failures, a solution could be to call another geolocation server (*)
-          $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
-          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
-            var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+          }, // run
+          
+          geolocation_retry: function (jqxhr, textStatus, error) {
+            var errorStr = ("geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
             if (typeof(Storage) !== 'undefined') {
               if (localStorage.firstname) {
                 errorStr = errorStr + " for " + localStorage.firstname;
               }
               else if (localStorage.firstaccessid) {
                 errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
-              }              
+              }
               if (localStorage.countryname) {
                 errorStr = errorStr + " in " + localStorage.countryname;
               }
@@ -1138,22 +1191,56 @@
             }
             errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
             console.log(errorStr);
+            submitForm(errorStr);
 
-            // Reuse last geolocation data if any
-            if (last_data_used != null) {
-              console.log("reuse last geolocation data");
-              geolocation_handler.run(last_data_used);
-            }
-            else { // No form is submitted in this retry failure case: see also (*)
-              // Minimize the number of forms submitted in sequence
-              submitForm(errorStr);
-            }
+            // Keep some time between the 2 potential calls to submitForm(). This may also allow to make the 2nd getJSON in different server load conditions.
+            let now = new Date().getTime();
+            while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
 
-          })
-          .always(function() {
-            console.log("(getJSON completed #2)");
-          });
+            // Another geolocation server is used (*)
+            $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
+            .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
+              var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+              if (typeof(Storage) !== 'undefined') {
+                if (localStorage.firstname) {
+                  errorStr = errorStr + " for " + localStorage.firstname;
+                }
+                else if (localStorage.firstaccessid) {
+                  errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
+                }              
+                if (localStorage.countryname) {
+                  errorStr = errorStr + " in " + localStorage.countryname;
+                }
+                if (localStorage.cityname) {
+                  errorStr = errorStr + " in " + localStorage.cityname;
+                }
+                if (localStorage.gamesok) {
+                  errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+                }
+              }
+              errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
+              console.log(errorStr);
 
+              // Reuse last geolocation data if any
+              if (last_data_used != null) {
+                console.log("reuse last geolocation data");
+                geolocation_handler.run(last_data_used, true);
+              }
+              else { // No form is submitted in this retry failure case: see also (*)
+                // Minimize the number of forms submitted in sequence
+                submitForm(errorStr);
+              }
+            })
+            .always(function() {
+              console.log("(getJSON completed #2)");
+            });        
+          }          
+          
+        } // geolocation_handler
+        
+        $.getJSON('https://freegeoip.net/json/2', geolocation_handler.run)
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
         })
         .always(function() {
           console.log("(getJSON completed #1)");
