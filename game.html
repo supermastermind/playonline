@@ -287,8 +287,9 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AU";
+      let html_compatibility_game_version = "Ver_AUtmp";
       let reload_needed = false;
+      setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours: not too short to allow "last_data_used" benefits, not too long to allow fast application of corrections)      
     </script>
     <script src='SuperMasterMind.js'></script>
 
@@ -365,7 +366,7 @@
                   document.getElementById('form_region_id').value = region;
                   console.log("new city: " + localStorage.cityname);
                   document.getElementById('form_city_id').value = localStorage.cityname;
-                  document.getElementById('form_geoloc_id').value = '~';
+                  document.getElementById('form_geoloc_id').value = '~i';
                 }
               }
               setTimeout("submitForm();", 444);
@@ -472,9 +473,7 @@
 
     </form>
 
-    <script>
-
-      setTimeout("reload_needed = true;",5*3600*1000); // (reload the page from server every 5 hours)
+    <script>      
 
       function sleep(ms) { // To be called like "await sleep(1000);"
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -785,7 +784,7 @@
             */   
             let converted_data = JSON.stringify(data_p);            
 
-            console.log("(geolocalisation retry data conversion for " + converted_data + ")");
+            console.log("(geolocation retry data conversion for " + converted_data + ")");
             
             if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {            
               console.log("geolocation error in run_retry(): " + data_p.statusCode + " " + data_p.statusMessage);
@@ -835,11 +834,13 @@
             }
             let successcase__this_data_is_used;
             let data;
+            let last_data_tag = "";
             if (this_data_is_valid || (!last_data_used_is_valid)) {
               data = data_p;
             }
             else { // Reuse last geolocation data
               data = last_data_used;
+              last_data_tag = "r";
             }
             successcase__this_data_is_used = (data != last_data_used); // (data_p and last_data_used may be equal pointers)
             console.log("(geolocation: this_data:" + this_data_is_valid + ", last_data_used:" + last_data_used_is_valid + ", this_data_is_used: " + successcase__this_data_is_used + ")");            
@@ -877,7 +878,7 @@
               }
               if ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) { // (redundant lines)
                 city = String(data.city).trim();
-                geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted);
+                geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag;
               }
               else {
                 console.log('invalid city name in response');
@@ -917,7 +918,7 @@
               country = "France";            
               region = "Alsace";
               city = "Munster";
-              geoloc = 'ok+';
+              geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
             }            
             
             // Check if geolocation data are valid
@@ -1224,7 +1225,7 @@
               console.log(errorStr);
 
               // Reuse last geolocation data if any
-              /* skipped to simplify and to avoid complex scenarios:
+              /* skipped to simplify because nearly useless in practice (double unaccessibility after some past geolocation success(es)) and avoids complex scenarios:
               if (last_data_used != null) {
                 console.log("reuse last geolocation data");
                 geolocation_handler.run(last_data_used);
@@ -1247,7 +1248,7 @@
           console.log("error: too many recursive calls to run()! (#2)");
           return; // defense against infinite loops
         }        
-        $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
+        $.getJSON('https://freegeoip.net/json/2001:16b8:145c:2900:ec6e:967:d392:1f50', geolocation_handler.run)
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
         })
