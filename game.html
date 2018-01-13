@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AUtmp";
+      let html_compatibility_game_version = "Ver_AV";
       let reload_needed = false;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours: not too short to allow "last_data_used" benefits, not too long to allow fast application of corrections)      
     </script>
@@ -1248,7 +1248,7 @@
           console.log("error: too many recursive calls to run()! (#2)");
           return; // defense against infinite loops
         }        
-        $.getJSON('https://freegeoip.net/json/2001:16b8:145c:2900:ec6e:967:d392:1f50', geolocation_handler.run)
+        $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
         })
