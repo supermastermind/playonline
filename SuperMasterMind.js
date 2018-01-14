@@ -45,6 +45,7 @@ let nbMinPossibleCodesShown = -1; // N.A.
 let nbMaxPossibleCodesShown = -1; // N.A.
 let nbPossibleCodesShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let currentPossibleCodeShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
+let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
 
 let currentCode = -1;
 let codesPlayed;
@@ -671,7 +672,7 @@ function revealSecretColorButtonClick() {
   }
 }
 
-function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false) {
+function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false, transientMode = false) {
   if (!document.getElementById("showPossibleCodesButton").disabled) {
       
     if (showModeForced && showPossibleCodesMode) { // (showPossibleCodesMode is already true)
@@ -725,8 +726,11 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
         currentPossibleCodeShown = newPossibleCodeShown;
       }
     }
+    if (!transientMode) {
+      currentPossibleCodeShownBeforeMouseMove = currentPossibleCodeShown;
+    }    
     updateGameSizes();
-    draw_graphic();
+    draw_graphic(!transientMode);
 
     // Transition effect 2/2
     if (invertMode || showModeForced) {
@@ -796,7 +800,7 @@ function mouseClick(e) {
   // Attempt selection
   // *****************
 
-  else if ((!gameOnGoing()) && allPossibleCodesFilled()) {
+  else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
 
     if (!showPossibleCodesMode) {
       event_y_min = get_y_pixel(y_min+y_step*nbMaxAttempts);
@@ -806,7 +810,7 @@ function mouseClick(e) {
     }
     event_y_max = get_y_pixel(y_min+y_step*0);
 
-    if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) {
+    if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (code duplicated)
       for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
         let y_0 = get_y_pixel(y_min+y_step*(idx+1));
         let y_1 = get_y_pixel(y_min+y_step*(idx));
@@ -821,8 +825,40 @@ function mouseClick(e) {
         showPossibleCodesButtonClick();
       }
     }
+
   }
 
+}
+
+function mouseMove(e) {
+  if (!showPossibleCodesMode) {
+    return;
+  }
+  else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
+    
+    let event_y_min, event_y_max;
+    let rect = canvas.getBoundingClientRect();
+    let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
+    let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
+    
+    event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
+    event_y_max = get_y_pixel(y_min+y_step*0);
+
+    if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (code duplicated)
+      for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
+        let y_0 = get_y_pixel(y_min+y_step*(idx+1));
+        let y_1 = get_y_pixel(y_min+y_step*(idx));
+        if ((mouse_y > y_0) && (mouse_y < y_1)) {
+          showPossibleCodesButtonClick(false, idx+1, false, true);
+          break;
+        }
+      }
+    }
+    else {
+      showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforeMouseMove, false, true);
+    }
+    
+  }
 }
 
 function playAColor(color, column) {
@@ -875,7 +911,7 @@ function updateGameSizes() {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
     optimal_width = 2.25;
-    tick_width = 1.35;
+    tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
     transition_height = 0.4;
   }
@@ -1324,7 +1360,12 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
 }
 
 function draw_graphic(fullMode = true) {
+  let gameOnGoingIni = gameOnGoing();
   draw_graphic_bis();
+  if (gameOnGoingIni != gameOnGoing()) {
+   updateGameSizes();
+   draw_graphic_bis();
+  }  
   if (fullMode) {
     draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
   }
@@ -1776,7 +1817,8 @@ function draw_graphic_bis() {
         if (i < currentAttemptNumber) {
           if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
                || performanceIndicatorsEvaluatedSystematically[i-1]
-               || (nbColumns < nominalGameNbColumns) /* (easy games) */ ) {
+               || (nbColumns < nominalGameNbColumns) /* (easy games) */ 
+               || (performanceIndicators[i-1] == -1.00) ) {
             displayPerf(performanceIndicators[i-1], i-1, backgroundColor, ctx);
           }
           else {
@@ -1789,45 +1831,47 @@ function draw_graphic_bis() {
       // Draw whether codes are possible or not
       // **************************************
 
-      ctx.font = basic_bold_font;
-      for (let i = 1 ; i < currentAttemptNumber; i++) {
+      if (tick_width > 0) {
+        ctx.font = basic_bold_font;
+        for (let i = 1 ; i < currentAttemptNumber; i++) {
 
-        let backgroundColor = backgroundColor_2;
-        if (i == currentPossibleCodeShown) {
-          backgroundColor = highlightColor;
-        }
+          let backgroundColor = backgroundColor_2;
+          if (i == currentPossibleCodeShown) {
+            backgroundColor = highlightColor;
+          }
 
-        let isPossible = isAttemptPossible(i);
-        if ( gameOnGoing() && (i > nbMaxHintsDisplayed)
-             && (performanceIndicators[i-1] != -1.0 /* (useless code) */)
-             && (nbColumns >= nominalGameNbColumns) /* (not easy games) */ ) {
-          displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                        lightGray, backgroundColor, ctx);
-        }
-        else if (0 == isPossible) { // code is possible
-          if (performanceIndicators[i-1] == -1.0 /* (useless code) */) {
-            displayGUIError("useless code inconsistency", new Error().stack);
+          let isPossible = isAttemptPossible(i);
+          if ( gameOnGoing() && (i > nbMaxHintsDisplayed)
+               && (performanceIndicators[i-1] != -1.0 /* (useless code) */)
+               && (nbColumns >= nominalGameNbColumns) /* (not easy games) */ ) {
+            displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                          lightGray, backgroundColor, ctx);
           }
-          displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                        greenColor, backgroundColor, ctx);
-        }
-        else { // code is not possible
-          if (i <= 2) {
-            displayString(crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                          redColor, backgroundColor, ctx);
+          else if (0 == isPossible) { // code is possible
+            if (performanceIndicators[i-1] == -1.0 /* (useless code) */) {
+              displayGUIError("useless code inconsistency", new Error().stack);
+            }
+            displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                          greenColor, backgroundColor, ctx);
           }
-          else {
-            if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                               redColor, backgroundColor, ctx, true, 0, true, 0)) {
-              if (!displayString(isPossible, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+          else { // code is not possible
+            if (i <= 2) {
+              displayString(crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                            redColor, backgroundColor, ctx);
+            }
+            else {
+              if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                                  redColor, backgroundColor, ctx, true, 0, true, 0)) {
-                displayString(crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                              redColor, backgroundColor, ctx);
+                if (!displayString(isPossible, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                   redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                  displayString(crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                redColor, backgroundColor, ctx);
+                }
               }
             }
           }
-        }
 
+        }
       }
 
       let HintsThreshold = 5;
@@ -1836,7 +1880,7 @@ function draw_graphic_bis() {
         // Display game version
         // ********************
 
-        if (!CompressedDisplayMode) {
+        if ((!CompressedDisplayMode) && (tick_width > 0)) {
           ctx.font = very_small_italic_font;
           displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors, 5,
                         lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
@@ -1901,7 +1945,7 @@ function draw_graphic_bis() {
               res_header2 = true;
             }
           }
-          if (res_header1 && res_header2) {
+          if (res_header1 && res_header2 && (tick_width > 0)) {
             if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                darkGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
@@ -1934,7 +1978,7 @@ function draw_graphic_bis() {
               res_header2 = true;
             }
           }
-          if (res_header1 && res_header2) {
+          if (res_header1 && res_header2 && (tick_width > 0)) {
             if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
@@ -2764,7 +2808,7 @@ function displayPerf(perf, y_cell, backgroundColor, ctx) {
   }
   else if (performanceIndicator != PerformanceIndicatorNA) {
     if (performanceIndicator == -1.0) { // useless code
-      if (!displayString(" useless ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString("  useless  ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
         if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
                            redColor, backgroundColor, ctx, true, 0, true, 0)) {
@@ -2958,3 +3002,4 @@ draw_graphic();
 
 let canvas = document.getElementById("my_canvas");
 canvas.addEventListener("click", mouseClick, false);
+canvas.addEventListener("mousemove", mouseMove, false);
