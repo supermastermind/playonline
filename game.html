@@ -922,7 +922,12 @@
             }            
             
             // Manual conversions
-            if (region == "North Rhine-Westphalia") {
+            if (localStorage.firstname && (localStorage.firstname == "Ghislain") && (region == "Illinois") && (city == "Naperville")) {
+              country = "France";            
+              region = "Île-de-France";
+              city = "Paris";              
+            }
+            else if (region == "North Rhine-Westphalia") {
               region = "Nordrhein-Westfalen";
             }
             
