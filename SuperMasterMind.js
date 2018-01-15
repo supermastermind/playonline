@@ -46,6 +46,7 @@ let nbMaxPossibleCodesShown = -1; // N.A.
 let nbPossibleCodesShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let currentPossibleCodeShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
+let lastidxBeforeMouseMove = -1;
 
 let currentCode = -1;
 let codesPlayed;
@@ -802,6 +803,8 @@ function mouseClick(e) {
 
   else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
 
+    lastidxBeforeMouseMove = -1;
+    
     if (!showPossibleCodesMode) {
       event_y_min = get_y_pixel(y_min+y_step*nbMaxAttempts);
     }
@@ -849,13 +852,19 @@ function mouseMove(e) {
         let y_0 = get_y_pixel(y_min+y_step*(idx+1));
         let y_1 = get_y_pixel(y_min+y_step*(idx));
         if ((mouse_y > y_0) && (mouse_y < y_1)) {
-          showPossibleCodesButtonClick(false, idx+1, false, true);
+          if (lastidxBeforeMouseMove != idx+1) {
+            showPossibleCodesButtonClick(false, idx+1, false, true);
+            lastidxBeforeMouseMove = idx+1;
+          }
           break;
         }
       }
     }
     else {
-      showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforeMouseMove, false, true);
+      if (lastidxBeforeMouseMove != currentPossibleCodeShownBeforeMouseMove) {
+        showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforeMouseMove, false, true);
+        lastidxBeforeMouseMove = currentPossibleCodeShownBeforeMouseMove;
+      }
     }
     
   }
