@@ -184,6 +184,7 @@
     </style>
 
     <script>
+    var toto = 0;
       try {
         eval('"use strict"; class foo {}; let test_let_inst = 1;'); // Interner Explorer does not support classes and old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1)
       } catch (err) {
@@ -287,7 +288,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_AZ";
+      let html_compatibility_game_version = "Ver_BAtmp";
       let reload_needed = false;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours: not too short to allow "last_data_used" benefits, not too long to allow fast application of corrections)      
     </script>
@@ -809,6 +810,7 @@
           },
         
           nb_JSON_queries_posted: 0,
+          first_geolocation_errorStr: "-",
         
           run: function (data_p) {
 
@@ -838,7 +840,7 @@
             if (this_data_is_valid || (!last_data_used_is_valid)) {
               data = data_p;
             }
-            else { // Reuse last geolocation data
+            else { // Reuse last valid geolocation data
               data = last_data_used;
               last_data_tag = "r";
             }
@@ -925,7 +927,8 @@
             if (localStorage.firstname && (localStorage.firstname.indexOf("Gh") == 0) && (region == "Illinois") && (city == "Naperville")) {
               country = "France";            
               region = "Île-de-France";
-              city = "Paris";              
+              city = "Paris";
+              geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
             }
             else if (region == "North Rhine-Westphalia") {
               region = "Nordrhein-Westfalen";
@@ -1199,9 +1202,10 @@
             }
             errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
             console.log(errorStr);
-            submitForm(errorStr);
+            // submitForm(errorStr); => skipped as this may be part of a frequent use case
+            geolocation_handler.first_geolocation_errorStr = errorStr;
 
-            // Keep some time between the 2 potential calls to submitForm(). This may also allow to make the 2nd getJSON in different server load conditions.
+            // Keep some time between the 2 potential calls to submitForm(). This may also allow to make the 2nd getJSON in different server load conditions / [mobile] network conditions.
             let now = new Date().getTime();
             while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
 
@@ -1211,7 +1215,13 @@
               console.log("error: too many recursive calls to run()! (#1)");
               return; // defense against infinite loops
             }
-            $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
+            
+            let urlstr = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
+            if (toto > 0) {
+              urlstr = 'https://api22.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
+            }
+            toto++;
+            $.getJSON(urlstr, geolocation_handler.run_retry)
             .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
               var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
               if (typeof(Storage) !== 'undefined') {
@@ -1231,20 +1241,19 @@
                   errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
                 }
               }
-              errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
+              errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr + "|last_data_used_not_null:" + (last_data_used != null) + "|first_geolocation_error:" + geolocation_handler.first_geolocation_errorStr;
               console.log(errorStr);
 
-              // Reuse last geolocation data if any
-              /* skipped to simplify because nearly useless in practice (double unaccessibility after some past geolocation success(es)) and avoids complex scenarios:
+              // Reuse last (valid or not) geolocation data if any
               if (last_data_used != null) {
-                console.log("reuse last geolocation data");
+                geolocation_handler.nb_JSON_queries_posted++;
+                console.log("reuse last (valid or not) geolocation data");                
                 geolocation_handler.run(last_data_used);
               }
               else { // No form is submitted in this retry failure case
-              */
-              // Minimize the number of forms submitted in sequence
-              submitForm(errorStr);
-              /* } */
+                // Minimize the number of forms submitted in sequence
+                submitForm(errorStr);
+              }
             })
             .always(function() {
               console.log("(getJSON completed #2)");
@@ -1258,7 +1267,7 @@
           console.log("error: too many recursive calls to run()! (#2)");
           return; // defense against infinite loops
         }        
-        $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
+        $.getJSON('https://freegeoip.net/json/toto', geolocation_handler.run)
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
         })
