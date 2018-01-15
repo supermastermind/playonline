@@ -184,7 +184,6 @@
     </style>
 
     <script>
-    var toto = 0;
       try {
         eval('"use strict"; class foo {}; let test_let_inst = 1;'); // Interner Explorer does not support classes and old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1)
       } catch (err) {
@@ -288,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_BAtmp";
+      let html_compatibility_game_version = "Ver_BA";
       let reload_needed = false;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours: not too short to allow "last_data_used" benefits, not too long to allow fast application of corrections)      
     </script>
@@ -1215,13 +1214,7 @@
               console.log("error: too many recursive calls to run()! (#1)");
               return; // defense against infinite loops
             }
-            
-            let urlstr = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
-            if (toto >= 0) {
-              urlstr = 'https://api22.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
-            }
-            toto++;
-            $.getJSON(urlstr, geolocation_handler.run_retry)
+            $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
             .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
               var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
               if (typeof(Storage) !== 'undefined') {
@@ -1251,7 +1244,6 @@
                 geolocation_handler.run(last_data_used);
               }
               else { // No form is submitted in this retry failure case
-                // Minimize the number of forms submitted in sequence
                 submitForm(errorStr);
               }
             })
@@ -1267,7 +1259,7 @@
           console.log("error: too many recursive calls to run()! (#2)");
           return; // defense against infinite loops
         }        
-        $.getJSON('https://freegeoip.net/json/toto', geolocation_handler.run)
+        $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
         })
