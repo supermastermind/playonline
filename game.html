@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_BA";
+      let html_compatibility_game_version = "Ver_BB";
       let reload_needed = false;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours: not too short to allow "last_data_used" benefits, not too long to allow fast application of corrections)      
     </script>
@@ -1234,7 +1234,7 @@
                   errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
                 }
               }
-              errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr + "|last_data_used_not_null:" + (last_data_used != null) + "|first_geolocation_error:" + geolocation_handler.first_geolocation_errorStr;
+              errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr + "|last_data_used_not_null:" + (last_data_used != null) + "|first_geolocation_error:" + geolocation_handler.first_geolocation_errorStr + "|html_compatibility_game_version:" + html_compatibility_game_version;
               console.log(errorStr);
 
               // Reuse last (valid or not) geolocation data if any
