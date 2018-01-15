@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_BB";
+      let html_compatibility_game_version = "Ver_BC";
       let reload_needed = false;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours: not too short to allow "last_data_used" benefits, not too long to allow fast application of corrections)      
     </script>
@@ -365,8 +365,13 @@
                   console.log("new region: " + region);
                   document.getElementById('form_region_id').value = region;
                   console.log("new city: " + localStorage.cityname);
-                  document.getElementById('form_city_id').value = localStorage.cityname;
-                  document.getElementById('form_geoloc_id').value = '~i';
+                  document.getElementById('form_city_id').value = localStorage.cityname;                  
+                  if (localStorage.automaticPositioning) {
+                    document.getElementById('form_geoloc_id').value = '~i';
+                  }
+                  else {
+                    document.getElementById('form_geoloc_id').value = '~~i';
+                  }                  
                 }
               }
               setTimeout("submitForm();", 444);
@@ -822,7 +827,12 @@
                  && ((typeof data_p.country_name != 'undefined') && (data_p.country_name.length >= 3)) // (redundant lines)
                  && ((typeof data_p.city != 'undefined') && (data_p.city.length >= 3)) // (redundant lines)
                  && ((typeof data_p.ip != 'undefined') && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
-              this_data_is_valid = true;
+              this_data_is_valid = true;              
+              if (typeof(Storage) !== 'undefined') { // Better than manual positioning (and will be updated if necessary)
+                localStorage.countryname = String(data_p.country_name).trim();
+                localStorage.cityname = String(data_p.city).trim();
+                localStorage.automaticPositioning = true;
+              }              
             }
             let last_data_used_is_valid = false;
             if ( (last_data_used != null)
@@ -846,7 +856,7 @@
             successcase__this_data_is_used = (data != last_data_used); // (data_p and last_data_used may be equal pointers)
             console.log("(geolocation: this_data:" + this_data_is_valid + ", last_data_used:" + last_data_used_is_valid + ", this_data_is_used: " + successcase__this_data_is_used + ")");            
             last_data_used = data;
-
+            
             let country = '-';
             let region = '-';
             let zip = '-';
@@ -960,7 +970,12 @@
                   country = localStorage.countryname;
                   region = getRegion(localStorage.countryname, localStorage.cityname);
                   city = localStorage.cityname;
-                  geoloc = '~';
+                  if (localStorage.automaticPositioning) {
+                    geoloc = '~';
+                  }
+                  else {
+                    geoloc = '~~';
+                  }
                 }
               }
             }
