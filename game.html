@@ -705,7 +705,7 @@
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
           console.log("1: " + rsp_rankings_str);
           rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // <td>'s style is applied
-          rsp_rankings_str = rsp_rankings_str.replaceAll("<TD>", "<td style='border:1px solid black;margin:1px;padding:0px;text-align:center;color:#495252;'>"); // "light <td>"'s style is applied          
+          rsp_rankings_str = rsp_rankings_str.replaceAll("<TD>", "<td style='border:1px solid black;margin:1px;padding:1px;text-align:center;color:#495252;'>"); // "light <td>"'s style is applied          
           console.log("2: " + rsp_rankings_str);
           // Rk: top scores are always displayed, even if current game score is not in them
           if (modal_mode == -1) {
