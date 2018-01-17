@@ -1232,6 +1232,7 @@
               // This may also allow to make the 2nd getJSON in different mobile network conditions
               let now = new Date().getTime();
               while(new Date().getTime() < now + 222){}; // (interface is frozen during this short time)
+
               // Another geolocation server is used
               geolocation_handler.nb_JSON_queries_posted++;          
               if (geolocation_handler.nb_JSON_queries_posted > 2) {
