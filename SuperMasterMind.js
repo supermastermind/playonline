@@ -57,6 +57,7 @@ let minNbColorsTables;
 let maxNbColorsTables;
 let performanceIndicators;
 let performanceIndicatorsEvaluatedSystematically;
+let performanceIndicatorsDisplayed;
 let possibleCodesLists;
 let possibleCodesListsSizes;
 let PerformanceIndicatorNA = -3.00;
@@ -1053,7 +1054,11 @@ function resetGameAttributes(nbColumnsSelected) {
   for (i = 0; i < nbMaxAttempts; i++) {
     performanceIndicatorsEvaluatedSystematically[i] = false;
   }
-
+  performanceIndicatorsDisplayed = new Array(nbMaxAttempts);
+  for (i = 0; i < nbMaxAttempts; i++) {
+    performanceIndicatorsDisplayed[i] = false;
+  }
+  
   possibleCodesLists = new Array(nbMaxAttempts);
   possibleCodesListsSizes = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
@@ -1098,24 +1103,25 @@ function resetGameAttributes(nbColumnsSelected) {
 }
 
 function checkArraySizes() {
-  if (codesPlayed.length > nbMaxAttempts) {displayGUIError("array is wider than expected", new Error().stack);}
-  if (marks.length > nbMaxAttempts) {displayGUIError("array is wider than expected", new Error().stack);}
-  if (nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
-  if (colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
-  if (minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
+  if (codesPlayed.length > nbMaxAttempts) {displayGUIError("array is wider than expected #1", new Error().stack);}
+  if (marks.length > nbMaxAttempts) {displayGUIError("array is wider than expected #2", new Error().stack);}
+  if (nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected #3", new Error().stack);}
+  if (colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected #4", new Error().stack);}
+  if (minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected #5", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected", new Error().stack);}
+    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected #6", new Error().stack);}
   }
-  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
+  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected #7", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected", new Error().stack);}
+    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected #8", new Error().stack);}
   }
-  if (performanceIndicators.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
-  if (performanceIndicatorsEvaluatedSystematically.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
-  if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
-  if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected", new Error().stack);}
+  if (performanceIndicators.length > nbMaxAttempts){displayGUIError("array is wider than expected #9", new Error().stack);}
+  if (performanceIndicatorsEvaluatedSystematically.length > nbMaxAttempts){displayGUIError("array is wider than expected #10", new Error().stack);}
+  if (performanceIndicatorsDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected #11", new Error().stack);}
+  if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected #12", new Error().stack);}
+  if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected #13", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected", new Error().stack);}
+    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected #14", new Error().stack);}
   }
 }
 
@@ -1817,13 +1823,47 @@ function draw_graphic_bis() {
 
       ctx.font = stats_font;
       let nbMaxHintsDisplayed = 2;
+      
+      for (let i = 0; i < nbMaxAttempts; i++) {
+        performanceIndicatorsDisplayed[i] = false;
+      }
+      
+      for (let i = 1 ; i <= nbOfStatsFilled_Perfs; i++) {
+        let backgroundColor = backgroundColor_2;
+        if (i == currentPossibleCodeShown) {
+          backgroundColor = highlightColor;
+        }        
+        
+        if (i < currentAttemptNumber) {
+          if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
+               || performanceIndicatorsEvaluatedSystematically[i-1]
+               || (nbColumns < nominalGameNbColumns) /* (easy games) */ 
+               || (performanceIndicators[i-1] == -1.00) ) {
+            if ((optimal_width > 0) || (performanceIndicators[i-1] != PerformanceIndicatorNA)) {
+              displayPerf(performanceIndicators[i-1], i-1, backgroundColor, ctx);
+              performanceIndicatorsDisplayed[i-1] = true;
+            }
+          }
+          else {
+            if (optimal_width > 0) {
+              displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, i-1, optimal_width,
+                            lightGray, backgroundColor, ctx);
+            }
+            // else { /* (nb of possible codes <-> perf switch) */
+            //  displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+            //                lightGray, backgroundColor, ctx);            
+            // }
+          }
+        }      
+      }      
+      
       for (let i = 1 ; i <= nbOfStatsFilled_NbPossibleCodes; i++) {
         let backgroundColor = backgroundColor_2;
         if (i == currentPossibleCodeShown) {
           backgroundColor = highlightColor;
         }
 
-        if ((optimal_width > 0) || (i == currentAttemptNumber) /* (nb of possible codes <-> perf switch) */) {
+        if ((optimal_width > 0) || (i == currentAttemptNumber) /* (nb of possible codes <-> perf switch) */ || (!performanceIndicatorsDisplayed[i-1])) {
           let statsColor;
           if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
             statsColor = darkGray;
@@ -1839,32 +1879,6 @@ function draw_graphic_bis() {
         }
       }
       
-      for (let i = 1 ; i <= nbOfStatsFilled_Perfs; i++) {
-        let backgroundColor = backgroundColor_2;
-        if (i == currentPossibleCodeShown) {
-          backgroundColor = highlightColor;
-        }        
-        
-        if (i < currentAttemptNumber) {
-          if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
-               || performanceIndicatorsEvaluatedSystematically[i-1]
-               || (nbColumns < nominalGameNbColumns) /* (easy games) */ 
-               || (performanceIndicators[i-1] == -1.00) ) {
-            displayPerf(performanceIndicators[i-1], i-1, backgroundColor, ctx);
-          }
-          else {
-            if (optimal_width > 0) {
-              displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, i-1, optimal_width,
-                            lightGray, backgroundColor, ctx);
-            }
-            else { /* (nb of possible codes <-> perf switch) */
-              displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
-                            lightGray, backgroundColor, ctx);            
-            }
-          }
-        }      
-      }
-
       // Draw whether codes are possible or not
       // **************************************
 
