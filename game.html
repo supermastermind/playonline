@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_BS";
+      let html_compatibility_game_version = "Ver_BT";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours at next game start: not too short to allow "last_data_used" benefits, not too long to allow fast application of changes)
@@ -759,6 +759,78 @@
           }
           last_game_cnt = game_cnt;
           store_time = new Date().getTime();  
+
+          let gamesok = -1;
+          let deltagames = -1;
+          if (typeof(Storage) !== 'undefined') {
+          
+            if (!localStorage.gamesok) {
+              localStorage.gamesok = 0;
+            }
+            localStorage.gamesok = Number(localStorage.gamesok) + 1;
+            gamesok = Number(localStorage.gamesok);
+            
+            switch (nbcolumns) {
+
+              case 3:
+                if (!localStorage.nbgamesstarted3) {
+                  localStorage.nbgamesstarted3 = 0;
+                }
+                if (!localStorage.nbgamesstarted3_ref) {
+                  localStorage.nbgamesstarted3_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;
+                localStorage.nbgamesstarted3_ref = localStorage.nbgamesstarted3;
+                break;
+              case 4:
+                if (!localStorage.nbgamesstarted4) {
+                  localStorage.nbgamesstarted4 = 0;
+                }
+                if (!localStorage.nbgamesstarted4_ref) {
+                  localStorage.nbgamesstarted4_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;
+                localStorage.nbgamesstarted4_ref = localStorage.nbgamesstarted4;
+                break;
+              case 5:
+                if (!localStorage.nbgamesstarted5) {
+                  localStorage.nbgamesstarted5 = 0;
+                }
+                if (!localStorage.nbgamesstarted5_ref) {
+                  localStorage.nbgamesstarted5_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;
+                localStorage.nbgamesstarted5_ref = localStorage.nbgamesstarted5;
+                break;
+              case 6:
+                if (!localStorage.nbgamesstarted6) {
+                  localStorage.nbgamesstarted6 = 0;
+                }
+                if (!localStorage.nbgamesstarted6_ref) {
+                  localStorage.nbgamesstarted6_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref - 1;
+                localStorage.nbgamesstarted6_ref = localStorage.nbgamesstarted6;
+                break;
+
+              case 7:
+                if (!localStorage.nbgamesstarted7) {
+                  localStorage.nbgamesstarted7 = 0;
+                }
+                if (!localStorage.nbgamesstarted7_ref) {
+                  localStorage.nbgamesstarted7_ref = 0;
+                }
+                deltagames = localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref - 1;
+                localStorage.nbgamesstarted7_ref = localStorage.nbgamesstarted7;
+                break;
+
+              default:
+                console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
+                return;
+
+            }
+            
+          }
           
           var geolocation_handler = {
           
@@ -1010,77 +1082,10 @@
 
               // Other fields
               // ************
+              
               let playerid;
               let firstname = "-"; // (firstname may stay equal to this default value if not defined)
-              let gamesok = -1;
-              let deltagames = -1;
               if (typeof(Storage) !== 'undefined') {
-                if (!localStorage.gamesok) {
-                  localStorage.gamesok = 0;
-                }
-                localStorage.gamesok = Number(localStorage.gamesok) + 1;
-                gamesok = Number(localStorage.gamesok);
-
-                switch (nbcolumns) {
-
-                  case 3:
-                    if (!localStorage.nbgamesstarted3) {
-                      localStorage.nbgamesstarted3 = 0;
-                    }
-                    if (!localStorage.nbgamesstarted3_ref) {
-                      localStorage.nbgamesstarted3_ref = 0;
-                    }
-                    deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;
-                    localStorage.nbgamesstarted3_ref = localStorage.nbgamesstarted3;
-                    break;
-                  case 4:
-                    if (!localStorage.nbgamesstarted4) {
-                      localStorage.nbgamesstarted4 = 0;
-                    }
-                    if (!localStorage.nbgamesstarted4_ref) {
-                      localStorage.nbgamesstarted4_ref = 0;
-                    }
-                    deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;
-                    localStorage.nbgamesstarted4_ref = localStorage.nbgamesstarted4;
-                    break;
-                  case 5:
-                    if (!localStorage.nbgamesstarted5) {
-                      localStorage.nbgamesstarted5 = 0;
-                    }
-                    if (!localStorage.nbgamesstarted5_ref) {
-                      localStorage.nbgamesstarted5_ref = 0;
-                    }
-                    deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;
-                    localStorage.nbgamesstarted5_ref = localStorage.nbgamesstarted5;
-                    break;
-                  case 6:
-                    if (!localStorage.nbgamesstarted6) {
-                      localStorage.nbgamesstarted6 = 0;
-                    }
-                    if (!localStorage.nbgamesstarted6_ref) {
-                      localStorage.nbgamesstarted6_ref = 0;
-                    }
-                    deltagames = localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref - 1;
-                    localStorage.nbgamesstarted6_ref = localStorage.nbgamesstarted6;
-                    break;
-
-                  case 7:
-                    if (!localStorage.nbgamesstarted7) {
-                      localStorage.nbgamesstarted7 = 0;
-                    }
-                    if (!localStorage.nbgamesstarted7_ref) {
-                      localStorage.nbgamesstarted7_ref = 0;
-                    }
-                    deltagames = localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref - 1;
-                    localStorage.nbgamesstarted7_ref = localStorage.nbgamesstarted7;
-                    break;
-
-                  default:
-                    console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
-                    return;
-
-                }
-
                 if (localStorage.firstname) {
                   firstname = localStorage.firstname;
                 }
