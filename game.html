@@ -262,7 +262,7 @@
             document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;Welcome <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>");
             setTimeout(function() {
               $("#welcome_id").fadeOut().empty();
-            }, 44400);
+            }, 60000);
           }
         }
       </script>
@@ -287,7 +287,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_BR";
+      let html_compatibility_game_version = "Ver_BS";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours at next game start: not too short to allow "last_data_used" benefits, not too long to allow fast application of changes)
