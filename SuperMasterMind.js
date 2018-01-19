@@ -925,8 +925,15 @@ function updateGameSizes() {
     optimal_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?2.25:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
-    transition_height = 0.4;
-    scode_height = (((nbColumns<=4)||(!gameOnGoing()))?1:0);
+    if ((nbColumns<=4)||(!gameOnGoing())) {
+      transition_height = 0.4;
+      scode_height = 1;
+    }
+    else {
+      transition_height = 0.2;
+      scode_height = 0;
+    }
+
   }
 
   x_step = (x_max - x_min) / (attempt_nb_width // attempt number
