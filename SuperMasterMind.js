@@ -62,7 +62,8 @@ let possibleCodesListsSizes;
 let PerformanceIndicatorNA = -3.00;
 let PerformanceIndicatorUNKNOWN = -2.00;
 let equivalenceClassIdUNKNOWN = -100;
-let nbOfStatsFilled = 0;
+let nbOfStatsFilled_NbPossibleCodes = 0;
+let nbOfStatsFilled_Perfs = 0;
 let currentAttemptNumber = 1;
 let gameWon = false;
 let nbGames = 0;
@@ -141,6 +142,7 @@ let nb_possible_codes_width = 5;
 let optimal_width = 4;
 let tick_width = 3;
 let transition_height = 1;
+let scode_height = 1;
 
 // Colors
 // ******
@@ -760,7 +762,7 @@ function mouseClick(e) {
 
     event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
     event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
-    event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts+transition_height+1+transition_height+nbColors));
+    event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts+transition_height+scode_height+transition_height+nbColors));
     event_y_max = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 
     if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
@@ -774,8 +776,8 @@ function mouseClick(e) {
           if ((mouse_x > x_0) && (mouse_x < x_1)) {
             let colorSelected = false;
             for (let color = 0; color < nbColors; color++) {
-              y_0 = get_y_pixel(y_min+y_step*(nbMaxAttempts+transition_height+1+transition_height+(color+1)));
-              y_1 = get_y_pixel(y_min+y_step*(nbMaxAttempts+transition_height+1+transition_height+color));
+              y_0 = get_y_pixel(y_min+y_step*(nbMaxAttempts+transition_height+scode_height+transition_height+(color+1)));
+              y_1 = get_y_pixel(y_min+y_step*(nbMaxAttempts+transition_height+scode_height+transition_height+color));
               if ((mouse_y > y_0) && (mouse_y < y_1)) {
                 colorSelected = true;
                 playAColor(color+1, column+1);
@@ -915,14 +917,16 @@ function updateGameSizes() {
     tick_width = 3;
 
     transition_height = 1;
+    scode_height = 1;
   }
   else {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
-    optimal_width = 2.25;
+    optimal_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?2.25:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
     transition_height = 0.4;
+    scode_height = (((nbColumns<=4)||(!gameOnGoing()))?1:0);
   }
 
   x_step = (x_max - x_min) / (attempt_nb_width // attempt number
@@ -935,7 +939,7 @@ function updateGameSizes() {
   if (!showPossibleCodesMode) {
     y_step = (y_max - y_min) / (nbMaxAttempts // max number of attempts
                                 +transition_height // margin
-                                +1 // secret code
+                                +scode_height // secret code
                                 +transition_height // margin
                                 +nbColors); // color selection
   }
@@ -1049,7 +1053,8 @@ function resetGameAttributes(nbColumnsSelected) {
     possibleCodesLists[i] = new Array(nbMaxPossibleCodesShown);
     possibleCodesListsSizes[i] = 0;
   }
-  nbOfStatsFilled = 0;
+  nbOfStatsFilled_NbPossibleCodes = 0;
+  nbOfStatsFilled_Perfs = 0;
   currentAttemptNumber = 1;
   gameWon = false;
   sCode = ~(simpleCodeHandler.createRandomCode());
@@ -1111,20 +1116,20 @@ function gameOnGoing() {
   return ((!gameWon) && (currentAttemptNumber <= nbMaxAttempts));
 }
 
-function allPerformanceIndicatorsFilled() {
+function allPerformanceIndicatorsFilled() { // XXX TEMP: code to review (should be different from 2nd below function): nbOfStatsFilled_NbPossibleCodes -> nbOfStatsFilled_Perfs
   return ( // game on-going and all performance indicators filled
-            (gameOnGoing() && (currentAttemptNumber == nbOfStatsFilled) && (nbOfStatsFilled >= 1) && (performanceIndicators[nbOfStatsFilled-1] != PerformanceIndicatorNA))
+            (gameOnGoing() && (currentAttemptNumber == nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (performanceIndicators[nbOfStatsFilled_NbPossibleCodes-1] != PerformanceIndicatorNA))
             ||
             // game over and all performance indicators filled
-            ((!gameOnGoing()) && (currentAttemptNumber-1 == nbOfStatsFilled) && (nbOfStatsFilled >= 1) && (performanceIndicators[nbOfStatsFilled-1] != PerformanceIndicatorNA)) );
+            ((!gameOnGoing()) && (currentAttemptNumber-1 == nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (performanceIndicators[nbOfStatsFilled_NbPossibleCodes-1] != PerformanceIndicatorNA)) );
 }
 
 function allPossibleCodesFilled() {
   return ( // game on-going and all stats filled
-            (gameOnGoing() && (currentAttemptNumber == nbOfStatsFilled) && (nbOfStatsFilled >= 1) && (possibleCodesListsSizes[nbOfStatsFilled-1] > 0))
+            (gameOnGoing() && (currentAttemptNumber == nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (possibleCodesListsSizes[nbOfStatsFilled_NbPossibleCodes-1] > 0))
             ||
             // game over and all stats filled
-            ((!gameOnGoing()) && (currentAttemptNumber-1 == nbOfStatsFilled) && (nbOfStatsFilled >= 1) && (possibleCodesListsSizes[nbOfStatsFilled-1] > 0)) );
+            ((!gameOnGoing()) && (currentAttemptNumber-1 == nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (possibleCodesListsSizes[nbOfStatsFilled_NbPossibleCodes-1] > 0)) );
 }
 
 function isAttemptPossible(attempt_nb) { // (returns 0 if the attempt_nb th code is possible, returns the first attempt number with which there is a contradiction otherwise)
@@ -1152,11 +1157,11 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     return false;
   }
   if (  (nbOfPossibleCodes_p <= 0)
-        || (attempt_nb != nbOfStatsFilled + 1) // stats shall be filled consecutively
+        || (attempt_nb != nbOfStatsFilled_NbPossibleCodes + 1) // stats shall be filled consecutively
         || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
         || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
         || (!simpleCodeHandler.isValid(colorsFoundCode_p)) ) {
-    displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (#1)", new Error().stack);
+    displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (#1)", new Error().stack);
     return false;
   }
   nbOfPossibleCodes[attempt_nb-1] = nbOfPossibleCodes_p;
@@ -1177,7 +1182,8 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     tmp_perf = tmp_perf-1;
   }
   // XXX Temporary code: to be done in the worker - end
-  nbOfStatsFilled = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
+  nbOfStatsFilled_NbPossibleCodes = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
+  nbOfStatsFilled_Perfs = attempt_nb; // XXX Temporary
   main_graph_update_needed = true;
   draw_graphic(false);
   return true;
@@ -1189,24 +1195,24 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attem
     return false;
   }
   if ( (nb_possible_codes_listed <= 0) || (possibleCodesList_p.length < nb_possible_codes_listed)
-        || (attempt_nb != nbOfStatsFilled) // (cf. above assumption on stats writing)
+        || (attempt_nb != nbOfStatsFilled_NbPossibleCodes) // (cf. above assumption on stats writing)
         || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
         || (possibleCodesListsSizes[attempt_nb-1] != 0 /* initial value */)
         || ((nbOfPossibleCodes[attempt_nb-1] <= nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbOfPossibleCodes[attempt_nb-1])) // (cf. above assumption on stats writing)
         || ((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbMaxPossibleCodesShown)) ) { // (cf. above assumption on stats writing)
-    displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (#3)", new Error().stack);
+    displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (#3)", new Error().stack);
     return false;
   }
   for (let i = 0; i < nb_possible_codes_listed; i++) {
     let code = possibleCodesList_p[i];
     if (!simpleCodeHandler.isFullAndValid(code)) {
-      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled + ", " + code + ")  (#4)", new Error().stack);
+      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + code + ")  (#4)", new Error().stack);
       return false;
     }
     possibleCodesLists[attempt_nb-1][i] = code;
   }
   possibleCodesListsSizes[attempt_nb-1] = nb_possible_codes_listed;
-  // nbOfStatsFilled keeps unchanged (cf. above assumption on stats writing)
+  // nbOfStatsFilled_NbPossibleCodes keeps unchanged (cf. above assumption on stats writing)
   main_graph_update_needed = true;
   draw_graphic(false);
   return true;
@@ -1802,27 +1808,36 @@ function draw_graphic_bis() {
       // Draw stats
       // **********
 
+      ctx.font = stats_font;
       let nbMaxHintsDisplayed = 2;
-      for (let i = 1 ; i <= nbOfStatsFilled; i++) {
-
+      for (let i = 1 ; i <= nbOfStatsFilled_NbPossibleCodes; i++) {
         let backgroundColor = backgroundColor_2;
         if (i == currentPossibleCodeShown) {
           backgroundColor = highlightColor;
         }
 
-        let statsColor;
-        ctx.font = stats_font;
-        if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
-          statsColor = darkGray;
+        if ((optimal_width > 0) || (i == currentAttemptNumber) /* (nb of possible codes <-> perf switch) */) {
+          let statsColor;
+          if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
+            statsColor = darkGray;
+          }
+          else {
+            statsColor = lightGray;
+          }
+          if (!displayString("\u2009" /* (thin space) */ + nbOfPossibleCodes[i-1] + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+                             statsColor, backgroundColor, ctx, true, 0, true, 0)) {
+            displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+                                       statsColor, backgroundColor, ctx);
+          }
         }
-        else {
-          statsColor = lightGray;
-        }
-        if (!displayString("\u2009" /* (thin space) */ + nbOfPossibleCodes[i-1] + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
-                           statsColor, backgroundColor, ctx, true, 0, true, 0)) {
-          displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
-                                     statsColor, backgroundColor, ctx);
-        }
+      }
+      
+      for (let i = 1 ; i <= nbOfStatsFilled_Perfs; i++) {
+        let backgroundColor = backgroundColor_2;
+        if (i == currentPossibleCodeShown) {
+          backgroundColor = highlightColor;
+        }        
+        
         if (i < currentAttemptNumber) {
           if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
                || performanceIndicatorsEvaluatedSystematically[i-1]
@@ -1831,10 +1846,16 @@ function draw_graphic_bis() {
             displayPerf(performanceIndicators[i-1], i-1, backgroundColor, ctx);
           }
           else {
-            displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, i-1, optimal_width,
-                          lightGray, backgroundColor, ctx);
+            if (optimal_width > 0) {
+              displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, i-1, optimal_width,
+                            lightGray, backgroundColor, ctx);
+            }
+            else { /* (nb of possible codes <-> perf switch) */
+              displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+                            lightGray, backgroundColor, ctx);            
+            }
           }
-        }
+        }      
       }
 
       // Draw whether codes are possible or not
@@ -1889,9 +1910,9 @@ function draw_graphic_bis() {
         // Display game version
         // ********************
 
-        if ((!CompressedDisplayMode) && (tick_width > 0)) {
+        if ((!CompressedDisplayMode) && (optimal_width > 0) && (tick_width > 0)) {
           ctx.font = very_small_italic_font;
-          displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors, 5,
+          displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors, 5,
                         lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
         }
 
@@ -1903,7 +1924,7 @@ function draw_graphic_bis() {
         if ((!gameOnGoing()) && allPerformanceIndicatorsFilled()) {
           let sum = 0.0;
           let approx = false;
-          for (let i = 1 ; i <= nbOfStatsFilled; i++) {
+          for (let i = 1 ; i <= nbOfStatsFilled_NbPossibleCodes; i++) {
             if (performanceIndicators[i-1] == PerformanceIndicatorNA) {
               displayGUIError("performanceIndicatorNA inconsistency (" + i + ")", new Error().stack);
             }
@@ -1932,7 +1953,7 @@ function draw_graphic_bis() {
           }
           let res_header1 = false;
           let res_header2 = false;
-          if (!display2Strings("number", "\u2009" /* (thin space) */ + "of codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                darkGray, backgroundColor_2, ctx, 0, true)) {
             if (displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                               darkGray, backgroundColor_2, ctx, true, 0, true, 1)) {
@@ -1942,7 +1963,7 @@ function draw_graphic_bis() {
           else {
             res_header1 = true;
           }
-          if (res_header1) {
+          if (res_header1 && (optimal_width > 0)) {
             if (!display2Strings("Total" + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                  darkGray, backgroundColor_2, ctx, 0, true)) {
               if (display2Strings("\u03A3" /* (capital sigma) */ + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
@@ -1965,7 +1986,7 @@ function draw_graphic_bis() {
         else {
           let res_header1 = false;
           let res_header2 = false;
-          if (!display2Strings("number", "\u2009" /* (thin space) */ + "of codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, 0, true)) {
             if (displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                               lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
@@ -1975,7 +1996,7 @@ function draw_graphic_bis() {
           else {
             res_header1 = true;
           }
-          if (res_header1) {
+          if (res_header1 && (optimal_width > 0)) {
             if (!display2Strings("0: optimal", "-1: useless", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                  lightGray, backgroundColor_2, ctx, 0, true)) {
               if (displayString("perf", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
@@ -1999,37 +2020,39 @@ function draw_graphic_bis() {
         // Draw secret code
         // ****************
 
-        ctx.fillStyle = darkGray;
-        for (let col = 0; col <= nbColumns; col++) {
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+        ctx.fillStyle = darkGray;        
+        if (scode_height > 0) {
+          for (let col = 0; col <= nbColumns; col++) {
+            x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+            y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
+            x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+            y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height));
+            drawLine(ctx, x_0, y_0, x_1, y_1);
+          }
+
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
-          y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+1));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+          y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
+          drawLine(ctx, x_0, y_0, x_1+1, y_1);
+
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+          y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+          y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height));
           drawLine(ctx, x_0, y_0, x_1, y_1);
+
+          ctx.font = basic_bold_font;
+          displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                        darkGray, backgroundColor_2, ctx, true, 2, true, 0);
+          if (gameOnGoing()) {
+            displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
+          }
+          else { // game over
+            displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
+          }
         }
-
-        x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
-        y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
-        x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
-        y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
-        drawLine(ctx, x_0, y_0, x_1+1, y_1);
-
-        x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
-        y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+1));
-        x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
-        y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+1));
-        drawLine(ctx, x_0, y_0, x_1, y_1);
-
-        ctx.font = basic_bold_font;
-        displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
-                      darkGray, backgroundColor_2, ctx, true, 2, true, 0);
-        if (gameOnGoing()) {
-          displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
-        }
-        else { // game over
-          displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
-        }
-
+        
         // Display game over status
         // ************************
 
@@ -2168,19 +2191,19 @@ function draw_graphic_bis() {
               victoryStr2 = "You won!"
             }
 
-            if (!displayString(victoryStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+            if (!displayString(victoryStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                           greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString(victoryStr2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+              displayString(victoryStr2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                             greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
-            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString(timeStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+              displayString(timeStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                             greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
             // if (score > 0.0) {
             let rounded_score = Math.round(score);
-            displayString("Score: " + rounded_score, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+            displayString("Score: " + rounded_score, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                           greenColor, backgroundColor_2, ctx, true, 0, false, 0);
             // }
 
@@ -2188,14 +2211,14 @@ function draw_graphic_bis() {
           else if (currentAttemptNumber == nbMaxAttemptsToDisplay+1) { // game lost
 
             score = 0.0;
-            displayString("You lost!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+            displayString("You lost!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
-            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString(timeStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+              displayString(timeStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                             redColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
-            displayString("Score: 0", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+            displayString("Score: 0", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
 
 
@@ -2217,17 +2240,17 @@ function draw_graphic_bis() {
         }
         for (let color = 0; color <= nbColors; color++) {
           x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
-          y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+1+transition_height+color));
+          y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color));
           x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
-          y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+1+transition_height+color));
+          y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color));
           drawLine(ctx, x_0, y_0, x_1+1, y_1);
         }
 
         for (let col = 0; col <= nbColumns; col++) {
           x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
-          y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+1+transition_height));
+          y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height));
           x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
-          y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+1+transition_height+nbColors));
+          y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors));
           drawLine(ctx, x_0, y_0, x_1, y_1);
         }
 
@@ -2236,7 +2259,7 @@ function draw_graphic_bis() {
           for (let col = 0; col < nbColumns; col++) {
             color_selection_code = simpleCodeHandler.setColor(color_selection_code, color+1, col+1);
           }
-          displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+1+transition_height+color, ctx);
+          displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx);
         }
 
         ctx.fillStyle = darkGray;
@@ -2244,12 +2267,12 @@ function draw_graphic_bis() {
         ctx.font = medium_bold_font;
         if ((nbGames == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
           let x_delta = 0.75;
-          if (!displayString("Click on the colors to select them!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+1+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
+          if (!displayString("Click on the colors to select them!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
             if (font_size >= 27) { // (very big font cases)
               ctx.font = small_bold_font;
             }
-            displayString("Click on the colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+1+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
+            displayString("Click on the colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
                           darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
           }
         }
@@ -2810,64 +2833,75 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth)
 function displayPerf(perf, y_cell, backgroundColor, ctx) {
 
   let performanceIndicator = Math.round(perf * 100.0) / 100.0;
+  
+  let x_cell;
+  let str_width;  
+  if (optimal_width > 0) {
+    x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width;
+    str_width = optimal_width;
+  }
+  else { /* (nb of possible codes <-> perf switch) */
+    x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2;
+    str_width = nb_possible_codes_width;
+  }
 
   if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
-    displayString("?", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+    displayString("?", x_cell, y_cell, str_width,
                   lightGray, backgroundColor, ctx);
   }
   else if (performanceIndicator != PerformanceIndicatorNA) {
     if (performanceIndicator == -1.0) { // useless code
-      if (!displayString("  useless  ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString("  useless  ", x_cell, y_cell, str_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
                            redColor, backgroundColor, ctx, true, 0, true, 0)) {
-          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
                         redColor, backgroundColor, ctx);
         }
       }
     }
     else if (performanceIndicator <= -0.50) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
                       redColor, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator <= -0.25) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
                          orangeColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
                       orangeColor, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator < 0.0) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
                          lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
                       lightGray, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator == 0.0) { // optimal code
-      if (!displayString(" optimal ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString(" optimal ", x_cell, y_cell, str_width,
                          lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
                        lightGray, backgroundColor, ctx);
         }
       }
     }
     else { // (an illogical code can be better than the optimal logical code)
-      if (!displayString("\u2009" + "+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!" + "\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+      if (!displayString("\u2009" + "+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, str_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString("+" + performanceIndicator.toFixed(1).replaceAll(",",".") + "!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+        displayString("+" + performanceIndicator.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, str_width,
                       greenColor, backgroundColor, ctx);
       }
     }
   }
   else {
     // Nothing is displayed in case of PerformanceIndicatorNA (but the background is updated if needed)
-    displayString("\u2234", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, y_cell, optimal_width,
+    displayString("\u2234", x_cell, y_cell, str_width,
                   lightGray, backgroundColor, ctx);
   }
 
