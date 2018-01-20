@@ -290,12 +290,21 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CB";
+      let html_compatibility_game_version = "Ver_CC";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
       let androidMode = false;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours at next game start: not too short to allow "last_data_used" benefits, not too long to allow fast application of changes)
+      document.body.onkeydown = function(e) {
+        if (String.fromCharCode(e.keyCode).toLowerCase() == 'l') {
+          var mode = prompt("Which mode do you want to select?", "444");
+          if (mode != null) {
+            document.getElementById('form_list_id').value = mode.trim();
+            setTimeout("submitForm();", 444);
+          }
+        }
+      };      
     </script>
     <script src='SuperMasterMind.js'></script>
 
@@ -479,6 +488,8 @@
       href: <input id='form_href_id' name='href' type='text' value='-'><br>
       formsubmitdate: <input id='form_formsubmitdate_id' name='formsubmitdate' type='text' value='-'><br>
       debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-'><br>
+      
+      list: <input id='form_list_id' name='list' type='text' value='-'><br>
 
       rankings: <input id='form_rankings_id' name='rankings' type='text' value='-'><br>
 
@@ -703,7 +714,6 @@
       function handle_rsp_delayed(e) {
         if ( (typeof e.parameter !== 'undefined')
              && (typeof e.parameter.playerid !== 'undefined')
-             && (e.parameter.playerid.indexOf(playerid_prefix) == 0)
              && (typeof e.rsp_cd == 'undefined')
              && (typeof e.parameter.rankings !== 'undefined')
              && (e.parameter.rankings.length > 10) ) {
