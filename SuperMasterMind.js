@@ -923,7 +923,7 @@ function updateGameSizes() {
   else {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
-    optimal_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?2.25:0);
+    optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.25:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
     if ((nbColumns<=4)||(!gameOnGoing())) {
@@ -931,7 +931,7 @@ function updateGameSizes() {
       scode_height = 1;
     }
     else {
-      transition_height = 0.2;
+      transition_height = 0.15;
       scode_height = 0;
     }
 
@@ -1563,10 +1563,10 @@ function draw_graphic_bis() {
         }
         else if (height >= 1000) {
           for (let i = 0; i < allButtons.length; i ++) {
-            allButtons[i].style.fontSize = "22px";
+            allButtons[i].style.fontSize = "23px";
           }
           for (let i = 0; i < allRadioButtons.length; i ++) {
-            allRadioButtons[i].style.fontSize = "22px";
+            allRadioButtons[i].style.fontSize = "23px";
           }
         }
         else {
@@ -1840,7 +1840,7 @@ function draw_graphic_bis() {
                || (nbColumns < nominalGameNbColumns) /* (easy games) */ 
                || (performanceIndicators[i-1] == -1.00) ) {
             if ((optimal_width > 0) || (performanceIndicators[i-1] != PerformanceIndicatorNA)) {
-              displayPerf(performanceIndicators[i-1], i-1, backgroundColor, ctx);
+              displayPerf(performanceIndicators[i-1], i-1, backgroundColor, isAttemptPossible(i), ctx);
               performanceIndicatorsDisplayed[i-1] = true;
             }
           }
@@ -2450,7 +2450,7 @@ function draw_graphic_bis() {
           // ctx.font = basic_bold_font;
           // displayString(globalPerfStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, y_cell, nb_possible_codes_width,
                         // lightGray, backgroundColor_2, ctx);
-          // displayPerf(codeAndPerfs.relativePerformance, y_cell, backgroundColor_2, ctx);
+          // displayPerf(codeAndPerfs.relativePerformance, y_cell, backgroundColor_2, xxx, ctx);
           // if ( (codeAndPerfs.equivalenceClassId != equivalenceClassIdUNKNOWN) && (codeAndPerfs.equivalenceClassId >= 0) /* (valid value) */ ) {
             // ctx.font = basic_bold_font;
             // displayString("(" + codeAndPerfs.equivalenceClassId + ")", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell, tick_width,
@@ -2851,78 +2851,100 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth)
   ctx.stroke();
 }
 
-function displayPerf(perf, y_cell, backgroundColor, ctx) {
+function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
 
   let performanceIndicator = Math.round(perf * 100.0) / 100.0;
   
   let x_cell;
-  let str_width;  
+  let cell_width;  
   if (optimal_width > 0) {
     x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width;
-    str_width = optimal_width;
+    cell_width = optimal_width;
   }
   else { /* (nb of possible codes <-> perf switch) */
     x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2;
-    str_width = nb_possible_codes_width;
+    cell_width = nb_possible_codes_width;
+  }
+  
+  let isPossible_str;  
+  if (tick_width > 0) {
+    isPossible_str = "";
+  }
+  else {
+    if (0 == isPossible) { // code is possible
+      isPossible_str = "";
+    }
+    else { // code is not possible
+      isPossible_str = "(" + isPossible + ")";
+    }    
   }
 
   if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
-    displayString("?", x_cell, y_cell, str_width,
+    displayString("?", x_cell, y_cell, cell_width,
                   lightGray, backgroundColor, ctx);
   }
   else if (performanceIndicator != PerformanceIndicatorNA) {
-    if (performanceIndicator == -1.0) { // useless code
-      if (!displayString("  useless  ", x_cell, y_cell, str_width,
+    if (performanceIndicator == -1.0) { // useless code    
+      if (!displayString("  useless" + "\u2009" + isPossible_str + "  ", x_cell, y_cell, cell_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
+        if (!displayString(" " + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009" + isPossible_str + " ", x_cell, y_cell, cell_width,
                            redColor, backgroundColor, ctx, true, 0, true, 0)) {
-          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
-                        redColor, backgroundColor, ctx);
+          if (!displayString(performanceIndicator.toFixed(1).replaceAll(",",".") + "\u2009" + isPossible_str, x_cell, y_cell, cell_width,
+                             redColor, backgroundColor, ctx, true, 0, true, 0)) {
+            if (!displayString("  useless  ", x_cell, y_cell, cell_width,
+                               redColor, backgroundColor, ctx, true, 0, true, 0)) {
+              if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+                                 redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                              redColor, backgroundColor, ctx);
+              }
+            }
+          }
         }
       }
     }
     else if (performanceIndicator <= -0.50) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                       redColor, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator <= -0.25) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                          orangeColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                       orangeColor, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator < 0.0) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
+      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                          lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
+        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                       lightGray, backgroundColor, ctx);
       }
     }
     else if (performanceIndicator == 0.0) { // optimal code
-      if (!displayString(" optimal ", x_cell, y_cell, str_width,
+      if (!displayString(" optimal ", x_cell, y_cell, cell_width,
                          lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, str_width,
+        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, str_width,
+          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                        lightGray, backgroundColor, ctx);
         }
       }
     }
     else { // (an illogical code can be better than the optimal logical code)
-      if (!displayString("\u2009" + "+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, str_width,
+      if (!displayString("\u2009" + "+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString("+" + performanceIndicator.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, str_width,
+        displayString("+" + performanceIndicator.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, cell_width,
                       greenColor, backgroundColor, ctx);
       }
     }
   }
   else {
     // Nothing is displayed in case of PerformanceIndicatorNA (but the background is updated if needed)
-    displayString("\u2234", x_cell, y_cell, str_width,
+    displayString("\u2234", x_cell, y_cell, cell_width,
                   lightGray, backgroundColor, ctx);
   }
 
