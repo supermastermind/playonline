@@ -1398,7 +1398,8 @@ function draw_graphic(fullMode = true, flickeringMode = false) {
     draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
   }
   if (flickeringMode) {
-    setTimeout("draw_graphic_bis();", 1000);
+    console.log(".......");
+    setTimeout("console.log('yes!!!!!!!!!!');draw_graphic_bis();", 1000);
   }
 }
 
@@ -1588,7 +1589,7 @@ function draw_graphic_bis() {
 
       }
 
-    } while (resize_detected && (resize_cnt <= 40)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+    } while (resize_detected && (resize_cnt <= 100)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
