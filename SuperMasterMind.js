@@ -111,8 +111,6 @@ let myCanvasIniHeight = document.getElementById("my_canvas").style.height;
 let CompressedDisplayMode = false;
 let CompressedDisplayMode_compressWidth = 577;
 let CompressedDisplayMode_uncompressWidth = 1044;
-let mobileMode = false;
-let androidMode = false;
 
 // Widths and heights
 // ******************

@@ -290,9 +290,11 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_BZ";
+      let html_compatibility_game_version = "Ver_CA";
       let reload_needed = false;
       let nb_errors_submitted = 0;
+      let mobileMode = false;      
+      let androidMode = false;
       setTimeout("reload_needed = true;",8*3600*1000); // (reload the page from server every 8 hours at next game start: not too short to allow "last_data_used" benefits, not too long to allow fast application of changes)
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -736,6 +738,10 @@
         console.log("(handle_rsp)");
 
         var score_display_time = 4444; // (see blinking time)
+        if (androidMode) {
+          score_display_time = 1111; // (no blinking)
+        }
+        
         var time_to_wait = 44;
         var time_diff = new Date().getTime() - store_time;
         if (time_diff < 0) { // (invalid case)
