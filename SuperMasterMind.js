@@ -1389,21 +1389,17 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
 
 function draw_graphic(fullMode = true, flickeringMode = false) {
   let gameOnGoingIni = gameOnGoing();
-  draw_graphic_bis();
+  draw_graphic_bis(flickeringMode);
   if (gameOnGoingIni != gameOnGoing()) {
    updateGameSizes();
-   draw_graphic_bis();
+   draw_graphic_bis(flickeringMode);
   }  
   if (fullMode) {
-    draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
-  }
-  if (flickeringMode) {
-    console.log(".......");
-    setTimeout("console.log('yes!!!!!!!!!!');draw_graphic_bis();", 1000);
+    draw_graphic_bis(flickeringMode); // sometimes improves the display  - not perfect but best solution found
   }
 }
 
-function draw_graphic_bis() {
+function draw_graphic_bis(flickeringMode = false) {
 
   let canvas = document.getElementById("my_canvas");
   let ctx = canvas.getContext("2d");
@@ -1446,7 +1442,7 @@ function draw_graphic_bis() {
       //  height = positionInfo.height;
       //  width = positionInfo.width;
 
-      if ( (current_width != width) || (current_height != height) ) {
+      if ( ( (current_width != width) || (current_height != height) ) && (!flickeringMode) ) {
 
         resize_detected = true;
         resize_cnt++;
@@ -1589,7 +1585,7 @@ function draw_graphic_bis() {
 
       }
 
-    } while (resize_detected && (resize_cnt <= 33)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+    } while (resize_detected && (resize_cnt <= 40)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
