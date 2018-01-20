@@ -734,7 +734,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       currentPossibleCodeShownBeforeMouseMove = currentPossibleCodeShown;
     }    
     updateGameSizes();
-    draw_graphic(!transientMode, true);
+    draw_graphic(!transientMode);
 
     // Transition effect 2/2
     if (invertMode || showModeForced) {
@@ -1387,19 +1387,19 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
   ctx.stroke();
 }
 
-function draw_graphic(fullMode = true, flickeringMode = false) {
+function draw_graphic(fullMode = true) {
   let gameOnGoingIni = gameOnGoing();
-  draw_graphic_bis(flickeringMode);
+  draw_graphic_bis();
   if (gameOnGoingIni != gameOnGoing()) {
    updateGameSizes();
-   draw_graphic_bis(flickeringMode);
+   draw_graphic_bis();
   }  
   if (fullMode) {
-    draw_graphic_bis(flickeringMode); // sometimes improves the display  - not perfect but best solution found
+    draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
   }
 }
 
-function draw_graphic_bis(flickeringMode = false) {
+function draw_graphic_bis() {
 
   let canvas = document.getElementById("my_canvas");
   let ctx = canvas.getContext("2d");
@@ -1442,7 +1442,7 @@ function draw_graphic_bis(flickeringMode = false) {
       //  height = positionInfo.height;
       //  width = positionInfo.width;
 
-      if ( ( (current_width != width) || (current_height != height) ) && (!flickeringMode) ) {
+      if ( (current_width != width) || (current_height != height) ) {
 
         resize_detected = true;
         resize_cnt++;
@@ -2515,7 +2515,7 @@ function draw_graphic_bis(flickeringMode = false) {
         document.getElementById("showPossibleCodesButton").className = "button disabled";
       }
       else {
-        document.getElementById("showPossibleCodesButton").className = (androidMode ? "button fast_blinking" : "button blinking");
+        document.getElementById("showPossibleCodesButton").className = (androidMode ? "button" : "button blinking");
       }
 
       if (CompressedDisplayMode) {
