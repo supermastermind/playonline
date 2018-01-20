@@ -734,7 +734,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       currentPossibleCodeShownBeforeMouseMove = currentPossibleCodeShown;
     }    
     updateGameSizes();
-    draw_graphic(!transientMode);
+    draw_graphic(!transientMode, true);
 
     // Transition effect 2/2
     if (invertMode || showModeForced) {
@@ -1387,7 +1387,7 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
   ctx.stroke();
 }
 
-function draw_graphic(fullMode = true) {
+function draw_graphic(fullMode = true, flickeringMode = false) {
   let gameOnGoingIni = gameOnGoing();
   draw_graphic_bis();
   if (gameOnGoingIni != gameOnGoing()) {
@@ -1396,6 +1396,9 @@ function draw_graphic(fullMode = true) {
   }  
   if (fullMode) {
     draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
+  }
+  if (flickeringMode) {
+    setTimeout("draw_graphic_bis();", 1000);
   }
 }
 
@@ -1585,7 +1588,7 @@ function draw_graphic_bis() {
 
       }
 
-    } while (resize_detected && (resize_cnt <= 75)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+    } while (resize_detected && (resize_cnt <= 40)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
