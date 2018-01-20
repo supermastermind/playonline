@@ -2515,7 +2515,7 @@ function draw_graphic_bis() {
         document.getElementById("showPossibleCodesButton").className = "button disabled";
       }
       else {
-        document.getElementById("showPossibleCodesButton").className = (androidMode ? "button" : "button blinking");
+        document.getElementById("showPossibleCodesButton").className = (androidMode ? "button" : "button");
       }
 
       if (CompressedDisplayMode) {
