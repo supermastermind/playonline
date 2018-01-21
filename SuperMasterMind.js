@@ -924,7 +924,7 @@ function updateGameSizes() {
     optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.25:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
-    if ((nbColumns<=4)||(!gameOnGoing())) {
+    if (!gameOnGoing()) {
       transition_height = 0.4;
       scode_height = 1;
     }
@@ -932,7 +932,6 @@ function updateGameSizes() {
       transition_height = 0.15;
       scode_height = 0;
     }
-
   }
 
   x_step = (x_max - x_min) / (attempt_nb_width // attempt number
@@ -1468,7 +1467,7 @@ function draw_graphic_bis() {
             androidMode = true;
           }
         }
-        if (mobileMode && (/Android/i.test(navigator.userAgent))) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
+        if (mobileMode && androidMode) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
           tickChar = "\u2713"; /* (check mark/tick) */
           crossChar = "\u2715"; /* (cross) */
         }
@@ -1492,10 +1491,6 @@ function draw_graphic_bis() {
           document.getElementById("my_table").style.top = "0%";
           document.getElementById("my_table").style.border = "none";
           document.getElementById("my_table").style["border-radius"] = "0%";
-          if (mobileMode) { // (The below settings can lead to issues when resizing windows on PCs, in particular with Firefox)
-            document.getElementById("my_canvas").style.width = "99%";
-            document.getElementById("my_canvas").style.height = "99%";
-          }
 
           try { // (try/catch because optional pictures)
             document.getElementById("img_1").style.display='none';
@@ -2286,12 +2281,12 @@ function draw_graphic_bis() {
         ctx.font = medium_bold_font;
         if ((nbGames == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
           let x_delta = 0.75;
-          if (!displayString("Click on the colors to select them!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
+          if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
             if (font_size >= 27) { // (very big font cases)
               ctx.font = small_bold_font;
             }
-            displayString("Click on the colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
+            displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
                           darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
           }
         }
@@ -2513,7 +2508,7 @@ function draw_graphic_bis() {
         document.getElementById("showPossibleCodesButton").className = "button disabled";
       }
       else {
-        document.getElementById("showPossibleCodesButton").className = (androidMode ? "button" /* ("button fast_blinking" generates display issues) */ : "button blinking");
+        document.getElementById("showPossibleCodesButton").className = (mobileMode ? "button" /* ("button fast_blinking" generates display issues) */ : "button blinking");
       }
 
       if (CompressedDisplayMode) {

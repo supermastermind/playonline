@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CC";
+      let html_compatibility_game_version = "Ver_CD";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -748,8 +748,8 @@
         console.log("(handle_rsp)");
 
         var score_display_time = 4444; // (see blinking time)
-        if (androidMode) {
-          score_display_time = 1111; // (no blinking)
+        if (mobileMode) {
+          score_display_time = 1444; // (no blinking)
         }
         
         var time_to_wait = 44;
