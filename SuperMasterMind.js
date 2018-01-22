@@ -197,6 +197,7 @@ let small_italic_font = defaultFont;
 let very_small_italic_font = defaultFont;
 let medium_basic_font = defaultFont;
 let medium_bold_font = defaultFont;
+let medium2_bold_font = defaultFont;
 let medium_bold_italic_font = defaultFont;
 let stats_font = defaultFont;
 let error_font = defaultFont;
@@ -1687,6 +1688,7 @@ function draw_graphic_bis() {
 
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
+      medium2_bold_font = "bold " + Math.max(Math.floor(font_size/1.5)+2, min_font_size) + "px " + fontFamily;
       medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
 
       stats_font = medium_bold_font;
@@ -2278,18 +2280,28 @@ function draw_graphic_bis() {
 
         ctx.fillStyle = darkGray;
 
-        ctx.font = medium_bold_font;
-        if ((nbGames == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
-          let x_delta = 0.75;
-          if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
-                             darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
-            if (font_size >= 27) { // (very big font cases)
-              ctx.font = small_bold_font;
+        try {
+          ctx.font = medium2_bold_font;          
+          if ((nbGames == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
+            let x_delta = 0.75;
+            if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
+                               darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
+              if (!displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
+                                 darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
+                ctx.font = medium_bold_font;
+                if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
+                                   darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
+                  if (font_size >= 27) { // (very big font cases)
+                    ctx.font = small_bold_font;
+                  }
+                  displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
+                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
+                }                          
+              }        
             }
-            displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-1, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
-                          darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
           }
         }
+        catch (err_help) {}
 
       }
 
