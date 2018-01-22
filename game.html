@@ -289,7 +289,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CEDEBUG3";
+      let html_compatibility_game_version = "Ver_CEDEBUG4";
       console.re.log(html_compatibility_game_version);
       let reload_needed = false;
       let nb_errors_submitted = 0;
@@ -1920,6 +1920,7 @@
                     currentAttemptNumber++;
                     currentCode = -1;
                     gameWon = true;
+                    console.re.log("GAME WON!");
                     nbGames++;
                     game_just_won = true;
                   }
@@ -3814,9 +3815,9 @@
              && (typeof e.parameter.rankings !== 'undefined')
              && (e.parameter.rankings.length > 10) ) {
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
-          console.re.log("1: " + rsp_rankings_str);
+          // console.re.log("1: " + rsp_rankings_str);
           rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // <td>'s style is applied
-          console.re.log("2: " + rsp_rankings_str);
+          // console.re.log("2: " + rsp_rankings_str);
           // Rk: top scores are always displayed, even if current game score is not in them
           if (modal_mode == -1) {
             modal_mode = 3;
