@@ -697,7 +697,7 @@
                   if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
                     console.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                   } // else: systematic parse error is ignored
-                  if (!skipErrorDisplay) {
+                  if ((errorCaseStr == "") && (!skipErrorDisplay)) {
                     alert("Oops... a network error occurred, game scores could not be displayed");
                   }                  
                 }
@@ -1257,7 +1257,7 @@
               }
               errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
               console.log(errorStr);
-              // submitForm(errorStr); => skipped as this may be part of a frequent use case (*)
+              // submitForm(errorStr, true); => skipped as this may be part of a frequent use case (*)
               geolocation_handler.first_geolocation_errorStr = errorStr;
 
               // Keep some time between the 2 potential calls to submitForm() -> no longer applicable (*)
