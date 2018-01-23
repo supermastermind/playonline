@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CH";
+      let html_compatibility_game_version = "Ver_CI";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -307,7 +307,7 @@
       };
       // Set AJAX timeout to X seconds (this will set all AJAX requests the program makes, even via $.getJSON, to have a timeout of X seconds)
       $.ajaxSetup({
-        timeout: 25*1000 // 25 seconds
+        timeout: 30*1000 // 30 seconds
       });
     </script>
     <script src='SuperMasterMind.js'></script>
@@ -653,7 +653,7 @@
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
       // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
       //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
-      function submitForm(errorCaseStr = "") {
+      function submitForm(errorCaseStr = "", skipErrorDisplay = false) {
 
         let my_form_url = document.getElementById("my_form").action + '?';
         if (errorCaseStr == "") { // Nominal case
@@ -697,6 +697,9 @@
                   if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
                     console.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                   } // else: systematic parse error is ignored
+                  if (!skipErrorDisplay) {
+                    alert("Oops... a network error occurred, game scores could not be displayed");
+                  }                  
                 }
                 catch (exc) {
                   console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
@@ -1298,8 +1301,8 @@
                   geolocation_handler.run(last_data_used);
                 }
                 else { // No form is submitted in this retry failure case
-                  alert("Oops... a network error occurred, your score will not be stored for this game");                
-                  submitForm(errorStr);
+                  alert("Oops... a network error occurred, game scores could not be stored");
+                  submitForm(errorStr, true);
                 }
               })
               .always(function() {
@@ -1328,7 +1331,8 @@
         catch (exc) {
           console.log("internal error while storing scores: " + exc);
           if (nb_errors_submitted == 0) {
-            submitForm("internal error while storing scores: " + exc);
+            // alert("Oops... an internal error occurred: " + exc);
+            submitForm("internal error while storing scores: " + exc, true);
             nb_errors_submitted++;
           }
         }
