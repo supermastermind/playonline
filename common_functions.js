@@ -52,13 +52,13 @@ function write_sidebar() {
       <h1>History</h1>\
       <b>Current version: 0.77</b><br><br>\
       Version 0.7<br>\
-      possible codes can be displayed for each attempt<br>\
-      (November 2017)\
+      possible codes displayed for each attempt<br>\
+      (January 2018)\
       <br><br>\
       Version 0.6<br>\
       online game scores<br><br>\
       Version 0.5<br>\
-      simple gameplay available<br>\
+      simple gameplay<br>\
       <br>\
       <h1>Interesting links</h1>\
       <ul>\
