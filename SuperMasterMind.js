@@ -330,10 +330,17 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
     return res;
   }
 
-  createRandomCode() {
+  createRandomCode(codeRevealed = 0 /* (empty code) */) {
     let code = 0;
     for (let col = 0; col < this.nbColumns; col++) {
-      code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);
+      let colorRevealed = this.getColor(codeRevealed, col+1);
+      if ( (colorRevealed >= 1) && (colorRevealed <= this.nbColors)
+           && (colorRevealed != this.emptyColor) ) {
+        code = this.setColor(code, colorRevealed, col+1);             
+      }
+      else {
+        code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);        
+      }         
     }
     return code;
   }
@@ -651,7 +658,7 @@ function resetCurrentCodeButtonClick() {
 
 function playRandomCodeButtonClick() {
   if (!document.getElementById("playRandomCodeButton").disabled) {
-    currentCode = simpleCodeHandler.createRandomCode(nbColumns);
+    currentCode = simpleCodeHandler.createRandomCode(sCodeRevealed);
     draw_graphic(false);
   }
 }
