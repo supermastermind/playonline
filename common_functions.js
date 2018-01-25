@@ -71,7 +71,6 @@ function write_sidebar() {
 
 function write_introduction() {
   document.write("\
-    <h2 style='margin-top:0px;'><font color=#000000><i>Fond of this good old game?</i></font></h2>\
     <a href='game.html' onfocus='this.blur()'>\
       <div id='game_images'>");
   var img_str = "<img src='img/SuperMasterMind_1.png' style='width:auto;height:188px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:188px;border:0;margin:0px'>";
