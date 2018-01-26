@@ -32,7 +32,7 @@ let nominalGameNbColumns = 5; // classical Super Master Mind game
 let nominalGameNbColors = 8; // classical Super Master Mind game
 let nominalGameNbMaxAttempts = 12; // classical Super Master Mind game
 
-let defaultNbColumns = 5;
+let defaultNbColumns = 4;
 
 let nbColumns = -1; // N.A.
 let nbColors = -1; // N.A.
