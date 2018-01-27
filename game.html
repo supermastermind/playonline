@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CN";
+      let html_compatibility_game_version = "Ver_CO";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1344,41 +1344,59 @@
         
       } // store_player_info
 
+      // ***********************
+      // Handle page access info
+      // ***********************
+      
+      function submitAccessForm(data, access_type) {
+        last_data_used = data;
+        var countryNameStr = "-";
+        if (typeof data.country_name != 'undefined') {
+          countryNameStr = String(data.country_name).trim();
+        }
+        var regionNameStr = "-";
+        if (typeof data.region_name != 'undefined') {
+          regionNameStr = String(data.region_name).trim();
+        }
+        var cityNameStr = "-";
+        if (typeof data.city != 'undefined') {
+          cityNameStr = String(data.city).trim();
+        }    
+        var ipAddressStr = "-";
+        if (typeof data.ip != 'undefined') {
+          ipAddressStr = String(data.ip).trim();
+        }
+        var firstHomePageAccessIdStr = "-"; 
+        if (typeof(Storage) !== 'undefined') {
+          if (localStorage.firsthomepageaccessid) {
+            firstHomePageAccessIdStr = localStorage.firsthomepageaccessid;
+          }
+        }            
+        var firstAccessIdStr = "-"; 
+        if (typeof(Storage) !== 'undefined') {
+          if (localStorage.firstaccessid) {
+            firstAccessIdStr = localStorage.firstaccessid;
+          }
+        }            
+        submitForm('-&' + 'access=' + access_type + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr, true, 111);
+      }
+
       function storeFirstAccess(access_type) {
         if (firstAccess) {
-          $.getJSON('https://freegeoip.net/json/', function(data) {
-            var countryNameStr = "-";
-            if (typeof data.country_name != 'undefined') {
-              countryNameStr = String(data.country_name).trim();
-            }
-            var regionNameStr = "-";
-            if (typeof data.region_name != 'undefined') {
-              regionNameStr = String(data.region_name).trim();
-            }
-            var cityNameStr = "-";
-            if (typeof data.city != 'undefined') {
-              cityNameStr = String(data.city).trim();
-            }    
-            var ipAddressStr = "-";
-            if (typeof data.ip != 'undefined') {
-              ipAddressStr = String(data.ip).trim();
-            }
-            var firstHomePageAccessIdStr = "-"; 
-            if (typeof(Storage) !== 'undefined') {
-              if (localStorage.firsthomepageaccessid) {
-                firstHomePageAccessIdStr = localStorage.firsthomepageaccessid;
-              }
-            }            
-            var firstAccessIdStr = "-"; 
-            if (typeof(Storage) !== 'undefined') {
-              if (localStorage.firstaccessid) {
-                firstAccessIdStr = localStorage.firstaccessid;
-              }
-            }            
-            submitForm('-&' + 'access=' + access_type + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr, true, 111);
-          }); // to simplify, failure cases are not handled
+          if (last_data_used != null) {
+            submitAccessForm(last_data_used, access_type);
+          }
+          else {
+            $.getJSON('https://freegeoip.net/json/', function(data) {
+              submitAccessForm(data, access_type);
+            }) // to simplify, failure cases are not handled
+            .always(function() {
+              console.log("(getJSON completed #0)");
+            });            
+          }
         }
-      } 
+      }
+
       if (firstAccess) {
         setTimeout("storeFirstAccess('game');", 111);
         setTimeout("storeFirstAccess('game 5s');", 5000); // 5 sec
