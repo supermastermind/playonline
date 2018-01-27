@@ -139,7 +139,7 @@
             firstHomePageAccess = true;
           }
         }      
-        function storeFirstHomePageAccess() {
+        function storeFirstHomePageAccess(access_type) {
           if (firstHomePageAccess) {
             $.getJSON('https://freegeoip.net/json/', function(data) {
               var countryNameStr = "-";
@@ -170,7 +170,7 @@
                   firstAccessIdStr = localStorage.firstaccessid;
                 }
               }              
-              let formStr = 'access=home&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr;
+              let formStr = 'access=' + access_type + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr;
               let my_form_url = 'https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec' + '?';
               my_form_url = my_form_url + formStr + '&';
               my_form_url = my_form_url + 'my_callback_fct=dummy_handle_rsp';
@@ -185,9 +185,10 @@
               })
             }); // to simplify, failure cases are not handled
           }
-        } 
+        }
         if (firstHomePageAccess) {
-          setTimeout("storeFirstHomePageAccess();", 111);
+          setTimeout("storeFirstHomePageAccess('home');", 111);
+          setTimeout("storeFirstHomePageAccess('home 3s');", 3000);
         }
         
       </script>
