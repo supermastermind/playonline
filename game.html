@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CJ";
+      let html_compatibility_game_version = "Ver_CK";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -513,11 +513,13 @@
         }
         return text;
       }
-      
+
+      let firstAccess = false;      
       if (typeof(Storage) !== 'undefined') {
         if (!localStorage.firstaccessid) {
           let firstaccessid = 'FA - ' + makeid() + ' - ' + new Date();
           localStorage.firstaccessid = firstaccessid;
+          firstAccess = true;
         }
       }
       
@@ -653,24 +655,24 @@
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
       // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
       //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
-      function submitForm(errorCaseStr = "", skipErrorDisplay = false) {
+      function submitForm(formStr = "", skipErrorDisplay = false, retryTime = 3333) {
 
         let my_form_url = document.getElementById("my_form").action + '?';
-        if (errorCaseStr == "") { // Nominal case
+        if (formStr == "") { // Nominal case
           // console.log(JSON.stringify($("#my_form").serializeArray()));
           let elements = document.getElementById("my_form").elements;
           for (let i = 0, element; element = elements[i++];) {
             my_form_url = my_form_url + element.name + '=' + element.value + '&';
           }
         }
-        else { // Error case
-          my_form_url = my_form_url + 'form_error=' + errorCaseStr + '&';
+        else { // Specific case
+          my_form_url = my_form_url + 'form_str=' + formStr + '&';
         }
         my_form_url = my_form_url + 'k=' + Math.floor(Math.random()*9999999999+1) + '&';
         my_form_url = my_form_url + 'my_callback_fct=handle_rsp';
         // console.log(my_form_url);
         // Submit form
-        console.log("(jQuery.ajax get/jsonp" + ((errorCaseStr == "") ? "" : " for error case") + ")");
+        console.log("(jQuery.ajax get/jsonp" + ((formStr == "") ? "" : " for a specific case") + ")");
         jQuery.ajax({
           crossDomain: true,
           url: my_form_url,
@@ -684,7 +686,7 @@
               console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
               // Keep some time between the 2 form submissions
               let now = new Date().getTime();
-              while(new Date().getTime() < now + 3333){}; // (interface is frozen during this short time)
+              while(new Date().getTime() < now + retryTime){}; // (interface is frozen during this short time)
 
               jQuery.ajax({
                 crossDomain: true,
@@ -697,7 +699,7 @@
                   if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
                     console.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                   } // else: systematic parse error is ignored
-                  if ((errorCaseStr == "") && (!skipErrorDisplay)) {
+                  if ((formStr == "") && (!skipErrorDisplay)) {
                     alert("Oops... a network error occurred, game scores could not be displayed");
                   }                  
                 }
@@ -719,11 +721,11 @@
 
       var playerid_prefix = "ID/";
       function handle_rsp_delayed(e) {
-        if ( (typeof e.parameter !== 'undefined')
+        if ( (e !== undefined) 
+             && (typeof e.parameter !== 'undefined')
              && (typeof e.parameter.playerid !== 'undefined')
              && (typeof e.rsp_cd == 'undefined')
-             && (typeof e.parameter.rankings !== 'undefined')
-             && (e.parameter.rankings.length > 10) ) {
+             && (typeof e.parameter.rankings !== 'undefined') && (e.parameter.rankings.length > 10) ) {
           var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
           console.log("1: " + rsp_rankings_str);
           rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // <td>'s style is applied
@@ -743,7 +745,10 @@
           }
         }
         else {
-          if (typeof e.rsp_cd !== 'undefined') {
+          if (e == undefined) {
+            console.log('rsp_cd: ?');
+          }
+          else if (typeof e.rsp_cd !== 'undefined') {
             console.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
           }
           else {
@@ -1338,6 +1343,39 @@
         }
         
       } // store_player_info
+
+      function storeFirstAccess() {
+        if (firstAccess) {
+          $.getJSON('https://freegeoip.net/json/', function(data) {
+            var countryNameStr = "-";
+            if (typeof data.country_name != 'undefined') {
+              countryNameStr = String(data.country_name).trim();
+            }
+            var regionNameStr = "-";
+            if (typeof data.region_name != 'undefined') {
+              regionNameStr = String(data.region_name).trim();
+            }
+            var cityNameStr = "-";
+            if (typeof data.city != 'undefined') {
+              cityNameStr = String(data.city).trim();
+            }    
+            var ipAddressStr = "-";
+            if (typeof data.ip != 'undefined') {
+              ipAddressStr = String(data.ip).trim();
+            }
+            var firstAccessIdStr = "-"; 
+            if (typeof(Storage) !== 'undefined') {
+              if (localStorage.firstaccessid) {
+                firstAccessIdStr = localStorage.firstaccessid;
+              }
+            }            
+            submitForm('-&' + 'first_access=yes&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr, true, 111);
+          }); // to simplify, failure cases are not handled
+        }
+      }
+      if (firstAccess) {      
+        setTimeout("storeFirstAccess();", 111);
+      }
 
     </script>
 
