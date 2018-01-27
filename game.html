@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CM";
+      let html_compatibility_game_version = "Ver_CN";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1381,7 +1381,8 @@
       } 
       if (firstAccess) {
         setTimeout("storeFirstAccess('game');", 111);
-        setTimeout("storeFirstAccess('game 3s');", 3000);
+        setTimeout("storeFirstAccess('game 5s');", 5000); // 5 sec
+        setTimeout("storeFirstAccess('game 30s');", 30000); // 30 sec
       }
 
     </script>
