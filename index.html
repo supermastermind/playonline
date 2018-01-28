@@ -146,7 +146,9 @@
         
         var last_data_used = null;        
         function submitHomePageAccessForm(data, access_type) {
-          last_data_used = data;
+          if (data != null) {
+            last_data_used = data;
+          }
           var countryNameStr = "-";
           if ((data != null) && (typeof data.country_name != 'undefined')) {
             countryNameStr = String(data.country_name).trim();
@@ -202,7 +204,7 @@
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 // Keep some time between the 2 potential calls to submitHomePageAccessForm()
                 let now = new Date().getTime();
-                while(new Date().getTime() < now + 1444){}; // (interface is frozen during this short time)              
+                while(new Date().getTime() < now + 999){}; // (interface is frozen during this short time)              
                 submitHomePageAccessForm(null, access_type);
               }) // to simplify, failure cases are not handled in a more complex way
               .always(function() {

@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CO";
+      let html_compatibility_game_version = "Ver_CP";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1349,21 +1349,23 @@
       // ***********************
       
       function submitAccessForm(data, access_type) {
-        last_data_used = data;
+        if (data != null) {
+          last_data_used = data;
+        }
         var countryNameStr = "-";
-        if (typeof data.country_name != 'undefined') {
+        if ((data != null) && (typeof data.country_name != 'undefined')) {
           countryNameStr = String(data.country_name).trim();
         }
         var regionNameStr = "-";
-        if (typeof data.region_name != 'undefined') {
+        if ((data != null) && (typeof data.region_name != 'undefined')) {
           regionNameStr = String(data.region_name).trim();
         }
         var cityNameStr = "-";
-        if (typeof data.city != 'undefined') {
+        if ((data != null) && (typeof data.city != 'undefined')) {
           cityNameStr = String(data.city).trim();
         }    
         var ipAddressStr = "-";
-        if (typeof data.ip != 'undefined') {
+        if ((data != null) && (typeof data.ip != 'undefined')) {
           ipAddressStr = String(data.ip).trim();
         }
         var firstHomePageAccessIdStr = "-"; 
@@ -1389,7 +1391,13 @@
           else {
             $.getJSON('https://freegeoip.net/json/', function(data) {
               submitAccessForm(data, access_type);
-            }) // to simplify, failure cases are not handled
+            })
+            .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+              // Keep some time between the 2 potential calls to submitAccessForm()
+              let now = new Date().getTime();
+              while(new Date().getTime() < now + 444){}; // (interface is frozen during this short time)              
+              submitAccessForm(null, access_type);
+            }) // to simplify, failure cases are not handled in a more complex way            
             .always(function() {
               console.log("(getJSON completed #0)");
             });            
