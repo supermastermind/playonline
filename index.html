@@ -192,7 +192,7 @@
           })
         }
         
-        function storeFirstHomePageAccess(access_type) {
+        function storeFirstHomePageAccess(access_type, timeToWait) {
           if (firstHomePageAccess) {
             if (last_data_used != null) {
               submitHomePageAccessForm(last_data_used, access_type);
@@ -204,7 +204,7 @@
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 // Keep some time between the 2 potential calls to submitHomePageAccessForm()
                 let now = new Date().getTime();
-                while(new Date().getTime() < now + 999){}; // (interface is frozen during this short time)              
+                while(new Date().getTime() < now + timeToWait){}; // (interface is frozen during this short time)              
                 submitHomePageAccessForm(null, access_type);
               }) // to simplify, failure cases are not handled in a more complex way
               .always(function() {
@@ -215,9 +215,9 @@
         }
 
         if (firstHomePageAccess) {
-          setTimeout("storeFirstHomePageAccess('home');", 111);
-          setTimeout("storeFirstHomePageAccess('home 5s');", 5000); // 5 sec
-          setTimeout("storeFirstHomePageAccess('home 30s');", 30000); // 30 sec
+          setTimeout("storeFirstHomePageAccess('home', 111);", 111);
+          setTimeout("storeFirstHomePageAccess('home 5s', 999);", 5000); // 5 sec
+          setTimeout("storeFirstHomePageAccess('home 30s', 999);", 30000); // 30 sec
         }
         
       </script>

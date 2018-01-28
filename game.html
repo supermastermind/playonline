@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CP";
+      let html_compatibility_game_version = "Ver_CQ";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1383,7 +1383,7 @@
         submitForm('-&' + 'access=' + access_type + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr, true, 111);
       }
 
-      function storeFirstAccess(access_type) {
+      function storeFirstAccess(access_type, timeToWait) {
         if (firstAccess) {
           if (last_data_used != null) {
             submitAccessForm(last_data_used, access_type);
@@ -1395,7 +1395,7 @@
             .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
               // Keep some time between the 2 potential calls to submitAccessForm()
               let now = new Date().getTime();
-              while(new Date().getTime() < now + 444){}; // (interface is frozen during this short time)              
+              while(new Date().getTime() < now + timeToWait){}; // (interface is frozen during this short time)              
               submitAccessForm(null, access_type);
             }) // to simplify, failure cases are not handled in a more complex way            
             .always(function() {
@@ -1406,9 +1406,9 @@
       }
 
       if (firstAccess) {
-        setTimeout("storeFirstAccess('game');", 111);
-        setTimeout("storeFirstAccess('game 5s');", 5000); // 5 sec 
-        setTimeout("storeFirstAccess('game 30s');", 30000); // 30 sec
+        setTimeout("storeFirstAccess('game', 111);", 111);
+        setTimeout("storeFirstAccess('game 5s', 555);", 5000); // 5 sec 
+        setTimeout("storeFirstAccess('game 30s', 555);", 30000); // 30 sec
       }
 
     </script>
