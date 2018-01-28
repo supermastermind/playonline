@@ -1388,7 +1388,7 @@
           if (last_data_used != null) {
             submitAccessForm(last_data_used, access_type);
           }
-          else {
+          else { 
             $.getJSON('https://freegeoip.net/json/', function(data) {
               submitAccessForm(data, access_type);
             })
