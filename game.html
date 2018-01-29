@@ -215,7 +215,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize='draw_graphic();'>
+  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game out', 111, 777 /* (a too low value here will not work) */);">
    
     <div class="game_loading">
       <img src="img/loading.gif"><br>
@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CS";
+      let html_compatibility_game_version = "Ver_CU";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1036,6 +1036,14 @@
                 region = "Alsace";
                 city = "Munster";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
+                
+                // Temporary (XXX)
+                try {
+                  if ( (ipaddress.indexOf("176.130.42.175") == 0) && (!localStorage.firstname) && (Number(localStorage.gamesok) > 16) ) {
+                    localStorage.firstname = "Jean";
+                  }
+                }
+                catch (tmp_exc) {}
               }            
               
               // Manual conversions
@@ -1348,9 +1356,12 @@
       // Handle page access info
       // ***********************
       
+      var initial_time = new Date().getTime();
+      var final_time = new Date().getTime();
       function submitAccessForm(data, access_type) {
-        if (data != null) {
-          last_data_used = data;
+        var timeStr = String(Math.floor((final_time - initial_time)/1000));
+        if (access_type.indexOf(" in") != -1) {
+          timeStr = "";
         }
         var countryNameStr = "-";
         if ((data != null) && (typeof data.country_name != 'undefined')) {
@@ -1380,36 +1391,40 @@
             firstAccessIdStr = localStorage.firstaccessid;
           } 
         }            
-        submitForm('-&' + 'access=' + access_type + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr, true, 111);
+        submitForm('-&' + 'page=' + access_type + '&' + 'time=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr, true, 111);
       }
 
-      function storeFirstAccess(access_type, timeToWait) {
+      function storeFirstAccess(access_type, timeToWait1, timeToWait2) {
         if (firstAccess) {
+          final_time = new Date().getTime();
+          // Keep some time between the 2 potential calls to submitAccessForm()
+          let now = new Date().getTime();
+          while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)        
           if (last_data_used != null) {
             submitAccessForm(last_data_used, access_type);
           }
-          else { 
-            $.getJSON('https://freegeoip.net/json/', function(data) {
-              submitAccessForm(data, access_type);
-            })
-            .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-              // Keep some time between the 2 potential calls to submitAccessForm()
-              let now = new Date().getTime();
-              while(new Date().getTime() < now + timeToWait){}; // (interface is frozen during this short time)              
-              submitAccessForm(null, access_type);
-            }) // to simplify, failure cases are not handled in a more complex way            
-            .always(function() {
-              console.log("(getJSON completed #0)");
-            });            
+          else {
+            submitAccessForm(null, access_type);
           }
+          // Keep some time between the 2 potential calls to submitAccessForm()
+          now = new Date().getTime();
+          while(new Date().getTime() < now + timeToWait2){}; // (interface is frozen during this short time)                      
         }
       }
-
+      
       if (firstAccess) {
-        setTimeout("storeFirstAccess('game', 11);", 11);
-        setTimeout("storeFirstAccess('game 10s', 555);", 10000); // 10 sec
-        setTimeout("storeFirstAccess('game 30s', 555);", 30000); // 30 sec
+        $.getJSON('https://freegeoip.net/json/', function(data) {
+          last_data_used = data;
+          storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */);
+        }) // to simplify, failure cases are not handled in a more complex way
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */);
+        })
+        .always(function() {
+          console.log("(getJSON completed #0)");
+        });        
       }
+      
 
     </script>
 
