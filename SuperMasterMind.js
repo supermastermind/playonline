@@ -1499,6 +1499,8 @@ function draw_graphic_bis() {
           document.getElementById("my_table").style.top = "0%";
           document.getElementById("my_table").style.border = "none";
           document.getElementById("my_table").style["border-radius"] = "0%";
+          document.getElementById("my_canvas").style.width = myCanvasIniWidth;
+          document.getElementById("my_canvas").style.height = "95%";          
 
           try { // (try/catch because optional pictures)
             document.getElementById("img_1").style.display='none';
