@@ -1504,7 +1504,7 @@ function draw_graphic_bis() {
             document.getElementById("my_canvas").style.height = "95%";
           }
           else {
-            document.getElementById("my_canvas").style.height = "99%"; // (does not work with Firefox)
+            document.getElementById("my_canvas").style.height = "98.5%"; // (does not work with Firefox)
           }
 
           try { // (try/catch because optional pictures)
