@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_CX";
+      let html_compatibility_game_version = "Ver_CY";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -865,8 +865,7 @@
           
           var geolocation_handler = {
                     
-            run_retry: function (data_p) {
-              
+            run_retry: function (data_p) {              
               /* ipinfodb.com response format:         
                  - SUCCESS case:
                   statusCode	"OK"
@@ -1439,14 +1438,66 @@
         storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */);
       }) // to simplify, failure cases are not handled in a more complex way
       .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-        storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */);
+        var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+        console.log(errorStr);
+        $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
+          /* ipinfodb.com response format:         
+             - SUCCESS case:
+              statusCode	"OK"
+              statusMessage	""
+              ipAddress	"94.239.111.222"
+              countryCode	"FR"
+              countryName	"France"
+              regionName	"Ile-de-France"
+              cityName	"Paris"
+              zipCode	"75000"
+              latitude	"48.8534"
+              longitude	"2.3488"
+              timeZone	"+01:00"      
+            - FAILURE case:
+              statusCode	"ERROR"
+              statusMessage	"Invalid IP Address."
+              ipAddress	"994.239.111.222"
+              countryCode	""
+              countryName	""
+              regionName	""
+              cityName	""
+              zipCode	""
+              latitude	"0"
+              longitude	"0"
+              timeZone	""        
+          */
+          let converted_data = JSON.stringify(data_p);
+
+          // latitude -> latitude
+          // longitude -> longitude
+          // countryName -> country_name
+          converted_data = converted_data.replace("countryName", "country_name");
+          // regionName -> region_name
+          converted_data = converted_data.replace("regionName", "region_name");
+          // cityName -> city
+          converted_data = converted_data.replace("cityName", "city");
+          // ipAddress -> ip
+          converted_data = converted_data.replace("ipAddress", "ip");
+          
+          last_data_used = JSON.parse(converted_data);
+          storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */);
+        })
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+          console.log(errorStr);
+          storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */);
+        })
+        .always(function() {
+          console.log("(getJSON completed #i2)");
+        });                     
       })
       .always(function() {
-        console.log("(getJSON completed #0)");
+        console.log("(getJSON completed #i1)");
       });             
 
     </script>
 
   </body>
 
-</html> 
+</html>
