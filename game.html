@@ -215,7 +215,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game out', 111, 777 /* (a too low value here will not work) */);">
+  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game out', 333, 777 /* (a too low value here will not work) */);">
    
     <div class="game_loading">
       <img src="img/loading.gif"><br>
@@ -290,7 +290,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DA";
+      let html_compatibility_game_version = "Ver_DB";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1494,7 +1494,15 @@
       })
       .always(function() {
         console.log("(getJSON completed #i1)");
-      });             
+      });  
+
+      if (firstAccess) {
+        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 10000);
+        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 30000);
+        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 60000);
+        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 120000);
+        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 300000);
+      }      
 
     </script>
 
