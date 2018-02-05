@@ -195,6 +195,8 @@
       if (typeof(Worker) == "undefined") {
         alert("Your browser cannot run this game because it does not support Web workers: update your browser version if necessary.");
       }
+      var nbGamesPlayed = 0;
+      var nbCodesPlayed = 0;
     </script>
     <script src='lib/jquery-3.2.1.min.js'></script>
     <script>
@@ -290,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DC";
+      let html_compatibility_game_version = "Ver_DD";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1412,7 +1414,7 @@
             firstAccessIdStr = localStorage.firstaccessid;
           } 
         }            
-        submitForm('-&' + 'page=' + access_type + '&' + 'time=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr + '&useragent=' + navigator.userAgent, true, 111);
+        submitForm('-&' + 'page=' + access_type + '&' + 'time=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=' + String(nbGamesPlayed) + '&nbcodes=' + String(nbCodesPlayed) +  '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr + '&useragent=' + navigator.userAgent, true, 111);
       }
 
       function storeFirstAccess(access_type, timeToWait1, timeToWait2) {
@@ -1502,6 +1504,7 @@
         setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 60000);
         setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 120000);
         setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 300000);
+        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */)", 600000);
       }      
 
     </script>

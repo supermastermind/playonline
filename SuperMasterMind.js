@@ -67,7 +67,6 @@ let nbOfStatsFilled_NbPossibleCodes = 0;
 let nbOfStatsFilled_Perfs = 0;
 let currentAttemptNumber = 1;
 let gameWon = false;
-let nbGames = 0;
 let sCode = -1;
 let sCodeRevealed = -1;
 let game_cnt = 0;
@@ -1615,6 +1614,8 @@ function draw_graphic_bis() {
       if ( gameOnGoing() // playing phase
            && simpleCodeHandler.isFullAndValid(currentCode) ) { // New code submitted
 
+        nbCodesPlayed++;   
+
         if (1 == currentAttemptNumber) {
           startTime = (new Date()).getTime(); // time in milliseconds
           stopTime = startTime;
@@ -1627,7 +1628,7 @@ function draw_graphic_bis() {
           currentAttemptNumber++;
           currentCode = -1;
           gameWon = true;
-          nbGames++;
+          nbGamesPlayed++;
           game_just_won = true;
         }
         else {
@@ -1635,7 +1636,7 @@ function draw_graphic_bis() {
           if (currentAttemptNumber == nbMaxAttempts+1) { // game over (game lost)
             currentCode = -1;
             stopTime = (new Date()).getTime(); // time in milliseconds
-            nbGames++;
+            nbGamesPlayed++;
           }
           else {
             currentCode = sCodeRevealed;
@@ -2296,7 +2297,7 @@ function draw_graphic_bis() {
 
         try {
           ctx.font = medium2_bold_font;          
-          if ((nbGames == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
+          if ((nbGamesPlayed == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
             let x_delta = 0.75;
             if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
