@@ -217,7 +217,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game out', 333, 777 /* (a too low value here will not work) */, 'debug-out');">
+  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game', 333, 777 /* (a too low value here will not work) */, 'debug-out');">
    
     <div class="game_loading">
       <img src="img/loading.gif"><br>
@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DF";
+      let html_compatibility_game_version = "Ver_DG";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
