@@ -30,7 +30,7 @@
     
   </head>
 
-  <body onunload="console.log('exit...');storeFirstHomePageAccess('home out', 111, 777 /* (a too low value here will not work) */);">
+  <body onunload="console.log('exit...');storeFirstHomePageAccess('home out', 111, 777 /* (a too low value here will not work) */, 'debug-out');">
   
     <div class="loading">
       <img src="img/loading.gif"><br>
@@ -146,8 +146,8 @@
         
         var last_data_used = null;
         var initial_time = new Date().getTime();
-        var final_time = new Date().getTime();
-        function submitHomePageAccessForm(data, access_type) {
+        function submitHomePageAccessForm(data, access_type, debug_info) {
+          var final_time = new Date().getTime();
           var timeStr = String(Math.floor((final_time - initial_time)/1000));
           if (access_type.indexOf(" in") != -1) {
             timeStr = "";
@@ -179,8 +179,9 @@
             if (localStorage.firstaccessid) {
               firstAccessIdStr = localStorage.firstaccessid;
             }
-          }              
-          let formStr = 'page=' + access_type + '&' + 'time=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=-' + '&nbcodes=-' + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr + '&useragent=' + navigator.userAgent;
+          }
+          var debugStr = navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
+          let formStr = 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=-' + '&nbcodes=-' + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr;
           let my_form_url = 'https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec' + '?';
           my_form_url = my_form_url + formStr + '&';
           my_form_url = my_form_url + 'my_callback_fct=dummy_handle_rsp';
@@ -195,17 +196,16 @@
           })
         }
         
-        function storeFirstHomePageAccess(access_type, timeToWait1, timeToWait2) {
+        function storeFirstHomePageAccess(access_type, timeToWait1, timeToWait2, debug_info) {
           if (firstHomePageAccess) {
-            final_time = new Date().getTime();
             // Keep some time between the 2 potential calls to submitHomePageAccessForm()
             let now = new Date().getTime();
             while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)            
             if (last_data_used != null) {
-              submitHomePageAccessForm(last_data_used, access_type);
+              submitHomePageAccessForm(last_data_used, access_type, debug_info);
             }
             else {
-              submitHomePageAccessForm(null, access_type);
+              submitHomePageAccessForm(null, access_type, debug_info);
             }
             // Keep some time between the 2 potential calls to submitHomePageAccessForm()
             now = new Date().getTime();
@@ -216,7 +216,7 @@
         if (firstHomePageAccess) {
           $.getJSON('https://freegeoip.net/json/', function(data) {
             last_data_used = data;
-            storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */);
+            storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */, 'debug-ok1');
           }) // to simplify, failure cases are not handled in a more complex way
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
             var errorStr = ("first access geolocation failure: " + textStatus + " " + error).trim();
@@ -262,12 +262,12 @@
               converted_data = converted_data.replace("ipAddress", "ip");
               
               last_data_used = JSON.parse(converted_data);
-              storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */);
+              storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */, 'debug-ok2');
             })
             .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
               var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error).trim();
               console.log(errorStr);
-              storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */);
+              storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */, 'debug-fail');
             })
             .always(function() {
               console.log("(getJSON completed #2)");
@@ -276,14 +276,14 @@
           .always(function() {
             console.log("(getJSON completed #1)");
           });
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 10000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 30000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 60000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 120000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 300000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 600000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 1200000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */)", 1800000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-10s')", 10000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-30s')", 30000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-1min')", 60000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-2min')", 120000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-5min')", 300000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-10min')", 600000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-20min')", 1200000);
+          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-30min')", 1800000);
         }
         
       </script>
