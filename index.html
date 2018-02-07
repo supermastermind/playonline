@@ -30,7 +30,7 @@
     
   </head>
 
-  <body onunload="console.log('exit...');storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-out');">
+  <body onunload="console.log('exit...');storeFirstHomePageAccess('home', 444, 777 /* (a too low value here will not work) */, 'debug-out');">
   
     <div class="loading">
       <img src="img/loading.gif"><br>
@@ -216,7 +216,7 @@
         if (firstHomePageAccess) {
           $.getJSON('https://freegeoip.net/json/', function(data) {
             last_data_used = data;
-            storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */, 'debug-ok1');
+            storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
           }) // to simplify, failure cases are not handled in a more complex way
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
             var errorStr = ("first access geolocation failure: " + textStatus + " " + error).trim();
@@ -262,12 +262,12 @@
               converted_data = converted_data.replace("ipAddress", "ip");
               
               last_data_used = JSON.parse(converted_data);
-              storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */, 'debug-ok2');
+              storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
             })
             .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
               var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error).trim();
               console.log(errorStr);
-              storeFirstHomePageAccess('home in', 111, 777 /* (a too low value here will not work) */, 'debug-fail');
+              storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
             })
             .always(function() {
               console.log("(getJSON completed #2)");
@@ -276,14 +276,21 @@
           .always(function() {
             console.log("(getJSON completed #1)");
           });
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-10s')", 10000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-30s')", 30000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-1min')", 60000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-2min')", 120000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-5min')", 300000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-10min')", 600000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-20min')", 1200000);
-          setTimeout("storeFirstHomePageAccess('home', 111, 777 /* (a too low value here will not work) */, 'debug-30min')", 1800000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-ini')",        44);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-5s')",       5000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-10s')",     10000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-15s')",     15000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-20s')",     20000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-30s')",     30000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-40s')",     40000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-50s')",     50000);          
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-1min')",    60000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-1min30')",  90000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-2min')",   120000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-2min30')", 150000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-3min')",   180000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-4min')",   240000);          
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-5min')",   300000);          
         }
         
       </script>

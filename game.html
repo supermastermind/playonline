@@ -217,7 +217,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game', 333, 777 /* (a too low value here will not work) */, 'debug-out');">
+  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
    
     <div class="game_loading">
       <img src="img/loading.gif"><br>
@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DG";
+      let html_compatibility_game_version = "Ver_DH";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1437,7 +1437,7 @@
       
       $.getJSON('https://freegeoip.net/json/', function(data) {
         last_data_used = data;
-        storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */, 'debug-ok1');
+        storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
       }) // to simplify, failure cases are not handled in a more complex way
       .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
@@ -1483,12 +1483,12 @@
           converted_data = converted_data.replace("ipAddress", "ip");
           
           last_data_used = JSON.parse(converted_data);
-          storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */, 'debug-ok2');
+          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
-          storeFirstAccess('game in', 111, 777 /* (a too low value here will not work) */, 'debug-fail');
+          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
         })
         .always(function() {
           console.log("(getJSON completed #i2)");
@@ -1499,14 +1499,21 @@
       });  
 
       if (firstAccess) {
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-10s')", 10000);
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-30s')", 30000);
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-1min')", 60000);
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-2min')", 120000);
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-5min')", 300000);
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-10min')", 600000);
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-20min')", 1200000);
-        setTimeout("storeFirstAccess('game', 111, 333 /* (a too low value here will not work) */, 'debug-30min')", 1800000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",        44);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-5s')",       5000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-10s')",     10000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-15s')",     15000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-20s')",     20000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-30s')",     30000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-40s')",     40000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-50s')",     50000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-1min')",    60000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-1min30')",  90000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-2min')",   120000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-2min30')", 150000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-3min')",   180000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-4min')",   240000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-5min')",   300000);
       }      
 
     </script>
