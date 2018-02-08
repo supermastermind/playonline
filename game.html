@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DN";
+      let html_compatibility_game_version = "Ver_DNtmp";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1286,7 +1286,7 @@
                 console.log("error: too many recursive calls to run()! (#1)");
                 return; // defense against infinite loops
               }
-              $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
+              $.getJSON('https://api2.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
                 var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
                 if (typeof(Storage) !== 'undefined') {
@@ -1335,6 +1335,7 @@
             }, // geolocation_retry
             
             getIpAddressForIdentifiedUser: function () {
+            localStorage.firstaccessid = "FA - 8Q0RU - Wed Feb 07";
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.firstaccessid) {
                   if (localStorage.firstaccessid.indexOf("FA - 0KQI0 - Fri Jan 12 2018") != -1) {
@@ -1357,7 +1358,7 @@
             console.log("error: too many recursive calls to run()! (#2)");
             return; // defense against infinite loops
           }        
-          $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
+          $.getJSON('https://freegeoip2.net/json/', geolocation_handler.run)
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
             geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
           })
@@ -1445,7 +1446,7 @@
       function firstAccessGeolocFailure(jqxhr, textStatus, error) {
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
-        $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
+        $.getJSON('https://api2.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
           /* ipinfodb.com response format:         
              - SUCCESS case:
               statusCode	"OK"
@@ -1498,7 +1499,7 @@
         });    
       }
       
-      $.getJSON('https://freegeoip.net/json/', function(data) {
+      $.getJSON('https://freegeoip2.net/json/', function(data) {
         last_data_used = data;
         if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
              && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
