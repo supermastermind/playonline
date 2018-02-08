@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DHtmp2";
+      let html_compatibility_game_version = "Ver_DHtmp3";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1336,7 +1336,7 @@
             getIpAddressForIdentifiedUser: function () {
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.firstaccessid) {
-                  if (localStorage.firstaccessid.indexOf("FA - YZOMM - Thu Feb 08 2018")) {
+                  if (localStorage.firstaccessid.indexOf("FA - YZOMM - Thu Feb 08 2018") != -1) {
                     return "1.1.1.1"; // (unique fixed IP address)
                   }
                 }
