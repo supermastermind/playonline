@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DL";
+      let html_compatibility_game_version = "Ver_DM";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1339,7 +1339,7 @@
                   if (localStorage.firstaccessid.indexOf("FA - 0KQI0 - Fri Jan 12 2018") != -1) {
                     return "1.1.1.1"; // (unique fixed IP address)
                   }
-                  else if (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1) {
+                  else if (localStorage.firstname && (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1)) { // (he did not fill his country/city)
                     return "1.1.1.2"; // (unique fixed IP address)
                   }
                 }
