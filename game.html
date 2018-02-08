@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DM";
+      let html_compatibility_game_version = "Ver_DN";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -340,7 +340,7 @@
             console.log('(modal beforeClose)');
             if (modal_mode == 1) {
 
-              let country_warning = false;
+              let place_error = false;
 
               // Get selected country name
               try {
@@ -352,7 +352,7 @@
                 }
                 else {
                   alert("No country was selected!");
-                  country_warning = true;
+                  place_error = true;
                 }
               }
               catch (exc) {
@@ -369,8 +369,9 @@
                   }
                 }
                 else {
-                  if (!country_warning) {
+                  if (!place_error) {
                     alert("Invalid city name: " + city_entered);
+                    place_error = true;
                   }
                 }
               }
@@ -379,7 +380,7 @@
               }
 
               if (typeof(Storage) !== 'undefined') {
-                if (localStorage.countryname && localStorage.cityname) {
+                if (localStorage.countryname && localStorage.cityname && (!place_error)) {
                   console.log("new countryname: " + localStorage.countryname);
                   document.getElementById('form_country_id').value = localStorage.countryname;
                   var region = getRegion(localStorage.countryname, localStorage.cityname);
@@ -392,10 +393,10 @@
                   }
                   else {
                     document.getElementById('form_geoloc_id').value = '~~i';
-                  }                  
+                  }
+                  setTimeout("submitForm();", 444);
                 }
               }
-              setTimeout("submitForm();", 444);
 
               modal_mode = -1;
               return true; // close the modal
@@ -1339,7 +1340,7 @@
                   if (localStorage.firstaccessid.indexOf("FA - 0KQI0 - Fri Jan 12 2018") != -1) {
                     return "1.1.1.1"; // (unique fixed IP address)
                   }
-                  else if (localStorage.firstname && (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1)) { // (he did not fill his country/city)
+                  else if (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1) { // (he did not fill his country/city)
                     return "1.1.1.2"; // (unique fixed IP address)
                   }
                 }
