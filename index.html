@@ -212,66 +212,76 @@
             while(new Date().getTime() < now + timeToWait2){}; // (interface is frozen during this short time)                                      
           }
         }
+
+        function firstHomePageAccessGeolocFailure(jqxhr, textStatus, error) {
+          var errorStr = ("first home page access geolocation failure: " + textStatus + " " + error).trim();
+          console.log(errorStr);
+          $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
+            /* ipinfodb.com response format:         
+               - SUCCESS case:
+                statusCode	"OK"
+                statusMessage	""
+                ipAddress	"94.239.111.222"
+                countryCode	"FR"
+                countryName	"France"
+                regionName	"Ile-de-France"
+                cityName	"Paris"
+                zipCode	"75000"
+                latitude	"48.8534"
+                longitude	"2.3488"
+                timeZone	"+01:00"      
+              - FAILURE case:
+                statusCode	"ERROR"
+                statusMessage	"Invalid IP Address."
+                ipAddress	"994.239.111.222"
+                countryCode	""
+                countryName	""
+                regionName	""
+                cityName	""
+                zipCode	""
+                latitude	"0"
+                longitude	"0"
+                timeZone	""        
+            */
+            let converted_data = JSON.stringify(data_p);
+
+            // latitude -> latitude
+            // longitude -> longitude
+            // countryName -> country_name
+            converted_data = converted_data.replace("countryName", "country_name");
+            // regionName -> region_name
+            converted_data = converted_data.replace("regionName", "region_name");
+            // cityName -> city
+            converted_data = converted_data.replace("cityName", "city");
+            // ipAddress -> ip
+            converted_data = converted_data.replace("ipAddress", "ip");
+            
+            last_data_used = JSON.parse(converted_data);
+            storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
+          })
+          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+            var errorStr = ("first home page access geolocation retry failure: " + textStatus + " " + error).trim();
+            console.log(errorStr);
+            storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
+          })
+          .always(function() {
+            console.log("(getJSON completed #2)");
+          });   
+        }
         
         if (firstHomePageAccess) {
           $.getJSON('https://freegeoip.net/json/', function(data) {
             last_data_used = data;
-            storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
+            if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
+                 && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+              storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
+            }
+            else {
+              return firstHomePageAccessGeolocFailure("", "manual first home page access geolocation retry due to invalid geolocation data", "");
+            }
           }) // to simplify, failure cases are not handled in a more complex way
-          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-            var errorStr = ("first access geolocation failure: " + textStatus + " " + error).trim();
-            console.log(errorStr);
-            $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
-              /* ipinfodb.com response format:         
-                 - SUCCESS case:
-                  statusCode	"OK"
-                  statusMessage	""
-                  ipAddress	"94.239.111.222"
-                  countryCode	"FR"
-                  countryName	"France"
-                  regionName	"Ile-de-France"
-                  cityName	"Paris"
-                  zipCode	"75000"
-                  latitude	"48.8534"
-                  longitude	"2.3488"
-                  timeZone	"+01:00"      
-                - FAILURE case:
-                  statusCode	"ERROR"
-                  statusMessage	"Invalid IP Address."
-                  ipAddress	"994.239.111.222"
-                  countryCode	""
-                  countryName	""
-                  regionName	""
-                  cityName	""
-                  zipCode	""
-                  latitude	"0"
-                  longitude	"0"
-                  timeZone	""        
-              */
-              let converted_data = JSON.stringify(data_p);
-
-              // latitude -> latitude
-              // longitude -> longitude
-              // countryName -> country_name
-              converted_data = converted_data.replace("countryName", "country_name");
-              // regionName -> region_name
-              converted_data = converted_data.replace("regionName", "region_name");
-              // cityName -> city
-              converted_data = converted_data.replace("cityName", "city");
-              // ipAddress -> ip
-              converted_data = converted_data.replace("ipAddress", "ip");
-              
-              last_data_used = JSON.parse(converted_data);
-              storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
-            })
-            .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-              var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error).trim();
-              console.log(errorStr);
-              storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
-            })
-            .always(function() {
-              console.log("(getJSON completed #2)");
-            });            
+          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)    
+            firstHomePageAccessGeolocFailure(jqxhr, textStatus, error);          
           })
           .always(function() {
             console.log("(getJSON completed #1)");

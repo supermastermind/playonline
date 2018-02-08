@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DI";
+      let html_compatibility_game_version = "Ver_DJ";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1339,6 +1339,9 @@
                   if (localStorage.firstaccessid.indexOf("FA - 0KQI0 - Fri Jan 12 2018") != -1) {
                     return "1.1.1.1"; // (unique fixed IP address)
                   }
+                  else if (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1) {
+                    return "1.1.1.2"; // (unique fixed IP address)
+                  }
                 }
                 return "";
               }
@@ -1435,11 +1438,7 @@
         }
       }
       
-      $.getJSON('https://freegeoip.net/json/', function(data) {
-        last_data_used = data;
-        storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
-      }) // to simplify, failure cases are not handled in a more complex way
-      .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+      function firstAccessGeolocFailure(jqxhr, textStatus, error) {
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
         $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
@@ -1492,7 +1491,21 @@
         })
         .always(function() {
           console.log("(getJSON completed #i2)");
-        });                     
+        });    
+      }
+      
+      $.getJSON('https://freegeoip.net/json/', function(data) {
+        last_data_used = data;
+        if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
+             && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');        
+        }
+        else {
+          return firstAccessGeolocFailure("", "manual first access geolocation retry due to invalid geolocation data", "");
+        }
+      }) // to simplify, failure cases are not handled in a more complex way
+      .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+        firstAccessGeolocFailure(jqxhr, textStatus, error);
       })
       .always(function() {
         console.log("(getJSON completed #i1)");
