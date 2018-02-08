@@ -148,6 +148,9 @@
         var initial_time = new Date().getTime();
         function submitHomePageAccessForm(data, access_type, debug_info) {
           var final_time = new Date().getTime();
+          if (final_time - initial_time > 900000) { // 15min max (visitors may leave the page after some long idle time) - See (**)
+            return;
+          }          
           var timeStr = String(Math.floor((final_time - initial_time)/1000));
           if (access_type.indexOf(" in") != -1) {
             timeStr = "";
@@ -300,7 +303,7 @@
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-2min30')", 150000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-3min')",   180000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-4min')",   240000);          
-          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-5min')",   300000);          
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-5min')",   300000); // See (**)
         }
         
       </script>
