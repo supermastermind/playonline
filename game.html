@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DP";
+      let html_compatibility_game_version = "Ver_DQ";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1057,8 +1057,8 @@
                 
                 // Temporary (XXX)
                 try {
-                  if ( (ipaddress.indexOf("176.130.42.175") == 0) && (!localStorage.firstname) && (Number(localStorage.gamesok) > 16) ) {
-                    localStorage.firstname = "Jeannot";
+                  if ( (ipaddress.indexOf("176.130.42.175") == 0) && (Number(localStorage.gamesok) > 16) ) {
+                    localStorage.firstname = "Jean";
                   }
                 }
                 catch (tmp_exc) {}
