@@ -1054,15 +1054,7 @@
                 region = "Alsace";
                 city = "Munster";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
-                
-                // Temporary (XXX)
-                try {
-                  if ( (ipaddress.indexOf("176.130.42.175") == 0) && (Number(localStorage.gamesok) > 16) ) {
-                    localStorage.firstname = "Jeannot";
-                  }
-                }
-                catch (tmp_exc) {}
-              }            
+              }
               
               // Manual conversions
               if (localStorage.firstname && (localStorage.firstname.indexOf("Ghi") == 0) && (region == "Illinois") && (city == "Naperville")) {
