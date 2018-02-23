@@ -292,7 +292,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DP";
+      let html_compatibility_game_version = "Ver_DR";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -1054,15 +1054,7 @@
                 region = "Alsace";
                 city = "Munster";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
-                
-                // Temporary (XXX)
-                try {
-                  if ( (ipaddress.indexOf("176.130.42.175") == 0) && (!localStorage.firstname) && (Number(localStorage.gamesok) > 16) ) {
-                    localStorage.firstname = "Jeannot";
-                  }
-                }
-                catch (tmp_exc) {}
-              }            
+              }
               
               // Manual conversions
               if (localStorage.firstname && (localStorage.firstname.indexOf("Ghi") == 0) && (region == "Illinois") && (city == "Naperville")) {
@@ -1402,7 +1394,7 @@
       var initial_time = new Date().getTime();
       function submitAccessForm(data, access_type, debug_info) {
         var final_time = new Date().getTime();
-        if (final_time - initial_time > 900000) { // 15min max (visitors may leave the page after some long idle time) - See (**)
+        if (final_time - initial_time > 1200000) { // 20min max (visitors may leave the page after some long idle time) - See (**)
           return;
         }
         var timeStr = String(Math.floor((final_time - initial_time)/1000));
@@ -1547,11 +1539,12 @@
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-3min')",   180000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-4min')",   240000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-5min')",   300000); 
-        setTimeout("storeFirstAccess('game', 0, 0, 'debug-10min')",  600000); // See (**)
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-10min')",  600000); 
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-15min')",  900000); // See (**)
       }      
 
     </script>
 
   </body>
 
-</html> 
+</html>
