@@ -78,6 +78,7 @@ let playerWasHelped = false;
 let errorStr = "";
 let errorCnt = 0;
 
+let nb_random_codes_played = 0;
 let tmp_perf = 0; // XXX Temporary code
 
 let gameSolver = undefined;
@@ -657,6 +658,7 @@ function resetCurrentCodeButtonClick() {
 
 function playRandomCodeButtonClick() {
   if (!document.getElementById("playRandomCodeButton").disabled) {
+    nb_random_codes_played++;
     currentCode = simpleCodeHandler.createRandomCode(sCodeRevealed);
     draw_graphic(false);
   }
@@ -1087,6 +1089,8 @@ function resetGameAttributes(nbColumnsSelected) {
   errorStr = "";
   errorCnt = 0;
 
+  nb_random_codes_played = 0;
+  
   tmp_perf = 0; // XXX Temporary code
 
   updateGameSizes();
@@ -2566,7 +2570,7 @@ function draw_graphic_bis() {
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
-          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), nbColorsRevealed); // XXX to be filled properly (with perfs)
+          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), ((nbColorsRevealed > 0) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'rnd')); // XXX to be filled properly (with perfs)
         }
       }
         
