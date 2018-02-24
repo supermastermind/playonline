@@ -2570,7 +2570,7 @@ function draw_graphic_bis() {
           displayGUIError("internal error at store_player_info call", new Error().stack);
         }
         else if (score > 0.0) {
-          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), ((nbColorsRevealed > 0) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'rm')); // XXX to be filled properly (with perfs)
+          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), ((nbColorsRevealed > 0) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'rn')); // XXX to be filled properly (with perfs)
         }
       }
         
