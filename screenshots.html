@@ -25,7 +25,28 @@
         console.log("(on load)");
         $(".loading").fadeOut("slow"); // loading div fades out
         // $(".main").fadeIn("slow"); // main div fades in
-      });      
+      });
+
+      function makeid() {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 5; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }
+
+      let firstScreenshotsAccess = false;      
+      if (typeof(Storage) !== 'undefined') {
+        if (!localStorage.firstscreenshotsaccessdone) {
+          localStorage.firstscreenshotsaccessdone = "first screenshots access done";
+          firstScreenshotsAccess = true;
+        }      
+        if (!localStorage.firstaccessid) {
+          let firstaccessid = 'SC - ' + makeid() + ' - ' + new Date();
+          localStorage.firstaccessid = firstaccessid;
+        }
+      }
     </script>
     
   </head>

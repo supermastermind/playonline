@@ -28,6 +28,28 @@
       });      
     </script> -->
     
+    <script>
+      function makeid() {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 5; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }
+
+      let firstOptimalStrategyAccess = false;      
+      if (typeof(Storage) !== 'undefined') {
+        if (!localStorage.firstoptimalstrategydone) {
+          localStorage.firstoptimalstrategydone = "first optimal strategy access done";
+          firstOptimalStrategyAccess = true;
+        }      
+        if (!localStorage.firstaccessid) {
+          let firstaccessid = 'OP - ' + makeid() + ' - ' + new Date();
+          localStorage.firstaccessid = firstaccessid;
+        }
+      }    
+    </script>
   </head>
 
   <body>

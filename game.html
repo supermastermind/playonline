@@ -211,7 +211,28 @@
         console.log("(on load)");
         $(".game_loading").fadeOut("slow"); // game_loading div fades out
         // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").fadeIn("slow"); // mainxxx div fades in
-      });      
+      });
+
+      function makeid() {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 5; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }
+
+      let firstAccess = false;      
+      if (typeof(Storage) !== 'undefined') {
+        if (!localStorage.firstgameaccessdone) {
+          localStorage.firstgameaccessdone = "first game access done";
+          firstAccess = true;
+        }      
+        if (!localStorage.firstaccessid) {
+          let firstaccessid = 'GA - ' + makeid() + ' - ' + new Date();
+          localStorage.firstaccessid = firstaccessid;
+        }
+      }
     </script>
     
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
@@ -292,7 +313,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_DV";
+      let html_compatibility_game_version = "Ver_DW";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -524,24 +545,6 @@
         return new Promise(resolve => setTimeout(resolve, ms));
       }
 
-      function makeid() {
-        let text = "";
-        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        for (let i = 0; i < 5; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-      }
-
-      let firstAccess = false;      
-      if (typeof(Storage) !== 'undefined') {
-        if (!localStorage.firstaccessid) {
-          let firstaccessid = 'FA - ' + makeid() + ' - ' + new Date();
-          localStorage.firstaccessid = firstaccessid;
-          firstAccess = true;
-        }
-      }
-      
       function capitalizeFirstLetters(str) {
         if (str.length == 0) {
           return "";
@@ -1417,12 +1420,6 @@
         if ((data != null) && (typeof data.ip != 'undefined')) {
           ipAddressStr = String(data.ip).trim();
         }
-        var firstHomePageAccessIdStr = "-"; 
-        if (typeof(Storage) !== 'undefined') {
-          if (localStorage.firsthomepageaccessid) {
-            firstHomePageAccessIdStr = localStorage.firsthomepageaccessid;
-          }
-        }            
         var firstAccessIdStr = "-"; 
         if (typeof(Storage) !== 'undefined') {
           if (localStorage.firstaccessid) {
@@ -1430,7 +1427,7 @@
           } 
         }
         var debugStr = navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
-        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) +  '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true, 111);
+        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true, 111);
       }
 
       function storeFirstAccess(access_type, timeToWait1, timeToWait2, debug_info) {

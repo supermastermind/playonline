@@ -25,7 +25,28 @@
         console.log("(on load)");
         $(".loading").fadeOut("slow"); // loading div fades out
         // $(".main").fadeIn("slow"); // main div fades in
-      });      
+      });
+
+        function makeid() {
+          let text = "";
+          let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+          for (let i = 0; i < 5; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+          }
+          return text;
+        }
+      
+        let firstHomePageAccess = false;      
+        if (typeof(Storage) !== 'undefined') {
+          if (!localStorage.firsthomepageaccessdone) {
+            localStorage.firsthomepageaccessdone = "first home page access done";
+            firstHomePageAccess = true;            
+          }
+          if (!localStorage.firstaccessid) {
+            let firstaccessid = 'HP - ' + makeid() + ' - ' + new Date();
+            localStorage.firstaccessid = firstaccessid;
+          }
+        }      
     </script>
     
   </head>
@@ -122,27 +143,9 @@
         // ***********************
         // Handle page access info
         // ***********************      
-      
-        function makeid() {
-          let text = "";
-          let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-          for (let i = 0; i < 5; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-          }
-          return text;
-        }  
 
         function dummy_handle_rsp(e) {
         }
-      
-        let firstHomePageAccess = false;      
-        if (typeof(Storage) !== 'undefined') {
-          if (!localStorage.firsthomepageaccessid) {
-            let firsthomepageaccessid = 'FHPA - ' + makeid() + ' - ' + new Date();
-            localStorage.firsthomepageaccessid = firsthomepageaccessid;
-            firstHomePageAccess = true;
-          }
-        }      
         
         var last_data_used = null;
         var initial_time = new Date().getTime();
@@ -171,12 +174,6 @@
           if ((data != null) && (typeof data.ip != 'undefined')) {
             ipAddressStr = String(data.ip).trim();
           }
-          var firstHomePageAccessIdStr = "-"; 
-          if (typeof(Storage) !== 'undefined') {
-            if (localStorage.firsthomepageaccessid) {
-              firstHomePageAccessIdStr = localStorage.firsthomepageaccessid;
-            }
-          }
           var firstAccessIdStr = "-"; 
           if (typeof(Storage) !== 'undefined') {
             if (localStorage.firstaccessid) {
@@ -184,7 +181,7 @@
             }
           }
           var debugStr = navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
-          let formStr = 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=-' + '&nbcodes=-' + '&ipaddress=' + ipAddressStr + '&firsthpaccessid=' + firstHomePageAccessIdStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr;
+          let formStr = 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=-' + '&nbcodes=-' + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr;
           let my_form_url = 'https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec' + '?';
           my_form_url = my_form_url + formStr + '&';
           my_form_url = my_form_url + 'my_callback_fct=dummy_handle_rsp';
