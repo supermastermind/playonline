@@ -26,6 +26,28 @@
       });      
     </script> -->
     
+    <script>
+      function makeid() {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 5; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }
+
+      let firstContactInfoAccess = false;      
+      if (typeof(Storage) !== 'undefined') {
+        if (!localStorage.firstcontactinfoaccessdone) {
+          localStorage.firstcontactinfoaccessdone = "first contact info access done";
+          firstContactInfoAccess = true;
+        }      
+        if (!localStorage.firstaccessid) {
+          let firstaccessid = 'CO - ' + makeid() + ' - ' + new Date();
+          localStorage.firstaccessid = firstaccessid;
+        }
+      }
+    </script>    
   </head>
 
   <body>
