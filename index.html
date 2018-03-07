@@ -151,7 +151,7 @@
         var initial_time = new Date().getTime();
         function submitHomePageAccessForm(data, access_type, debug_info) {
           var final_time = new Date().getTime();
-          if (final_time - initial_time > 1200000) { // 20min max (visitors may leave the page after some long idle time) - See (**)
+          if (final_time - initial_time > 999000) { // 15min+delta max - See (**)
             return;
           }          
           var timeStr = String(Math.floor((final_time - initial_time)/1000));
