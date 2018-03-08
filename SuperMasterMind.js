@@ -41,10 +41,12 @@ let nbMaxAttempts = -1; // N.A.
 let simpleCodeHandler = null;
 
 let showPossibleCodesMode = false;
+let showPossibleCodesOffsetMode = false;
 let nbMinPossibleCodesShown = -1; // N.A.
 let nbMaxPossibleCodesShown = -1; // N.A.
 let nbPossibleCodesShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let currentPossibleCodeShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
+let disableMouseMoveEffects = false;
 let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let lastidxBeforeMouseMove = -1;
 
@@ -336,11 +338,11 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
       let colorRevealed = this.getColor(codeRevealed, col+1);
       if ( (colorRevealed >= 1) && (colorRevealed <= this.nbColors)
            && (colorRevealed != this.emptyColor) ) {
-        code = this.setColor(code, colorRevealed, col+1);             
+        code = this.setColor(code, colorRevealed, col+1);
       }
       else {
-        code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);        
-      }         
+        code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);
+      }
     }
     return code;
   }
@@ -458,7 +460,7 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
   markToString(mark) {
     return mark.nbBlacks + "B" + mark.nbWhites + "W";
   }
-  
+
   convert(code) {
     return ~code;
   }
@@ -619,8 +621,8 @@ function newGameButtonClick(nbColumns) {
         $(".game_aborted").fadeIn(3500);
       }
       catch (exc) {
-      }     
-      
+      }
+
       // Transition effect 2/2
       try {
         $(".game_aborted").fadeOut(3500);
@@ -628,24 +630,24 @@ function newGameButtonClick(nbColumns) {
       catch (exc) {
       }
     }
-     
+
     // Transition effect 1/2
     try {
       $(".page_transition").fadeIn("fast");
     }
     catch (exc) {
-    }     
-     
+    }
+
     newGameEvent = true;
     draw_graphic();
-    
+
     // Transition effect 2/2
     try {
       $(".page_transition").fadeOut("fast");
     }
     catch (exc) {
-    }         
-    
+    }
+
   }
 }
 
@@ -685,20 +687,20 @@ function revealSecretColorButtonClick() {
 
 function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = -1, showModeForced = false, transientMode = false) {
   if (!document.getElementById("showPossibleCodesButton").disabled) {
-      
+
     if (showModeForced && showPossibleCodesMode) { // (showPossibleCodesMode is already true)
       return;
     }
-      
+
     // Transition effect 1/2
     if (invertMode || showModeForced) {
       try {
         $(".page_transition").fadeIn("fast");
       }
       catch (exc) {
-      }    
+      }
     }
-    
+
     if (showModeForced) {
       showPossibleCodesMode = true;
     }
@@ -710,7 +712,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       currentPossibleCodeShown = -1;
     }
     else {
-      nbPossibleCodesShown = Math.max(nbMinPossibleCodesShown, Math.min(nbMaxPossibleCodesShown, 20 + (nbMaxAttempts+1 - currentAttemptNumber)));
+      nbPossibleCodesShown = Math.max(nbMinPossibleCodesShown, Math.min(nbMaxPossibleCodesShown/2 /* (half display) */, 20 + (nbMaxAttempts+1 - currentAttemptNumber)));
       let interesting_attempt_idx = 0;
       let cnt = 0;
       if (!gameWon) {
@@ -739,7 +741,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
     }
     if (!transientMode) {
       currentPossibleCodeShownBeforeMouseMove = currentPossibleCodeShown;
-    }    
+    }
     updateGameSizes();
     draw_graphic(!transientMode);
 
@@ -749,9 +751,9 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
         $(".page_transition").fadeOut("fast");
       }
       catch (exc) {
-      }    
+      }
     }
-    
+
   }
 }
 
@@ -813,8 +815,6 @@ function mouseClick(e) {
 
   else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
 
-    lastidxBeforeMouseMove = -1;
-    
     if (!showPossibleCodesMode) {
       event_y_min = get_y_pixel(y_min+y_step*nbMaxAttempts);
     }
@@ -823,11 +823,14 @@ function mouseClick(e) {
     }
     event_y_max = get_y_pixel(y_min+y_step*0);
 
-    if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (code duplicated)
+    if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (below code duplicated)
+      lastidxBeforeMouseMove = -1;
       for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
         let y_0 = get_y_pixel(y_min+y_step*(idx+1));
         let y_1 = get_y_pixel(y_min+y_step*(idx));
         if ((mouse_y > y_0) && (mouse_y < y_1)) {
+          showPossibleCodesOffsetMode = false;
+          disableMouseMoveEffects = true;
           showPossibleCodesButtonClick(!showPossibleCodesMode, idx+1);
           break;
         }
@@ -835,7 +838,24 @@ function mouseClick(e) {
     }
     else {
       if (showPossibleCodesMode) {
-        showPossibleCodesButtonClick();
+        let x_0_half_display = get_x_pixel(x_min);
+        let x_1_half_display = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+        let y_0_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1))
+        let y_1_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height));
+        if ( (mouse_x > x_0_half_display) && (mouse_x < x_1_half_display)
+             && (mouse_y > y_0_half_display) && (mouse_y < y_1_half_display) ) { // (half display - always tested to simplify)
+          showPossibleCodesOffsetMode = !showPossibleCodesOffsetMode;
+          main_graph_update_needed = true;
+          draw_graphic(false);
+        }
+        else { // (other zones)
+          showPossibleCodesOffsetMode = false;
+          lastidxBeforeMouseMove = -1;
+          showPossibleCodesButtonClick();
+        }
+      }
+      else {
+        lastidxBeforeMouseMove = -1;
       }
     }
 
@@ -847,22 +867,29 @@ function mouseMove(e) {
   if (!showPossibleCodesMode) {
     return;
   }
+  else if (disableMouseMoveEffects) {
+    return;
+  }
   else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
-    
-    let event_y_min, event_y_max;
+
+    let event_x_min, event_x_max, event_y_min, event_y_max;
     let rect = canvas.getBoundingClientRect();
     let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
     let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
-    
+
+    event_x_min = get_x_pixel(x_min);
+    event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));    
     event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
     event_y_max = get_y_pixel(y_min+y_step*0);
 
-    if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (code duplicated)
+    if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
+          && (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (below code duplicated)
       for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
         let y_0 = get_y_pixel(y_min+y_step*(idx+1));
         let y_1 = get_y_pixel(y_min+y_step*(idx));
         if ((mouse_y > y_0) && (mouse_y < y_1)) {
           if (lastidxBeforeMouseMove != idx+1) {
+            showPossibleCodesOffsetMode = false;
             showPossibleCodesButtonClick(false, idx+1, false, true);
             lastidxBeforeMouseMove = idx+1;
           }
@@ -870,13 +897,14 @@ function mouseMove(e) {
         }
       }
     }
-    else {
+    else { // (other zones)
       if (lastidxBeforeMouseMove != currentPossibleCodeShownBeforeMouseMove) {
+        showPossibleCodesOffsetMode = false;
         showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforeMouseMove, false, true);
         lastidxBeforeMouseMove = currentPossibleCodeShownBeforeMouseMove;
       }
     }
-    
+
   }
 }
 
@@ -1025,10 +1053,12 @@ function resetGameAttributes(nbColumnsSelected) {
   simpleCodeHandler = new SimpleCodeHandler(nbColumns, nbColors, nbMinColumns, nbMaxColumns, emptyColor);
 
   showPossibleCodesMode = false;
+  showPossibleCodesOffsetMode = false;
   nbMinPossibleCodesShown = nbColumns+nbColors+4;
-  nbMaxPossibleCodesShown = 30;
+  nbMaxPossibleCodesShown = 60;
   nbPossibleCodesShown = -1;
   currentPossibleCodeShown = -1;
+  disableMouseMoveEffects = false;
 
   currentCode = 0;
   codesPlayed = new Array(nbMaxAttempts);
@@ -1064,7 +1094,7 @@ function resetGameAttributes(nbColumnsSelected) {
   for (i = 0; i < nbMaxAttempts; i++) {
     performanceIndicatorsDisplayed[i] = false;
   }
-  
+
   possibleCodesLists = new Array(nbMaxAttempts);
   possibleCodesListsSizes = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
@@ -1090,7 +1120,7 @@ function resetGameAttributes(nbColumnsSelected) {
   errorCnt = 0;
 
   nb_random_codes_played = 0;
-  
+
   tmp_perf = 0; // XXX Temporary code
 
   updateGameSizes();
@@ -1401,7 +1431,7 @@ function draw_graphic(fullMode = true) {
   if (gameOnGoingIni != gameOnGoing()) {
    updateGameSizes();
    draw_graphic_bis();
-  }  
+  }
   if (fullMode) {
     draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
   }
@@ -1618,7 +1648,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() // playing phase
            && simpleCodeHandler.isFullAndValid(currentCode) ) { // New code submitted
 
-        nbCodesPlayed++;   
+        nbCodesPlayed++;
 
         if (1 == currentAttemptNumber) {
           startTime = (new Date()).getTime(); // time in milliseconds
@@ -1837,21 +1867,21 @@ function draw_graphic_bis() {
 
       ctx.font = stats_font;
       let nbMaxHintsDisplayed = 2;
-      
+
       for (let i = 0; i < nbMaxAttempts; i++) {
         performanceIndicatorsDisplayed[i] = false;
       }
-      
+
       for (let i = 1 ; i <= nbOfStatsFilled_Perfs; i++) {
         let backgroundColor = backgroundColor_2;
         if (i == currentPossibleCodeShown) {
           backgroundColor = highlightColor;
-        }        
-        
+        }
+
         if (i < currentAttemptNumber) {
           if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
                || performanceIndicatorsEvaluatedSystematically[i-1]
-               || (nbColumns < nominalGameNbColumns) /* (easy games) */ 
+               || (nbColumns < nominalGameNbColumns) /* (easy games) */
                || (performanceIndicators[i-1] == -1.00) ) {
             if ((optimal_width > 0) || (performanceIndicators[i-1] != PerformanceIndicatorNA)) {
               displayPerf(performanceIndicators[i-1], i-1, backgroundColor, isAttemptPossible(i), ctx);
@@ -1865,12 +1895,12 @@ function draw_graphic_bis() {
             }
             // else { /* (nb of possible codes <-> perf switch) */
             //  displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
-            //                lightGray, backgroundColor, ctx);            
+            //                lightGray, backgroundColor, ctx);
             // }
           }
-        }      
-      }      
-      
+        }
+      }
+
       for (let i = 1 ; i <= nbOfStatsFilled_NbPossibleCodes; i++) {
         let backgroundColor = backgroundColor_2;
         if (i == currentPossibleCodeShown) {
@@ -1892,7 +1922,7 @@ function draw_graphic_bis() {
           }
         }
       }
-      
+
       // Draw whether codes are possible or not
       // **************************************
 
@@ -2055,7 +2085,7 @@ function draw_graphic_bis() {
         // Draw secret code
         // ****************
 
-        ctx.fillStyle = darkGray;        
+        ctx.fillStyle = darkGray;
         if (scode_height > 0) {
           for (let col = 0; col <= nbColumns; col++) {
             x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
@@ -2087,7 +2117,7 @@ function draw_graphic_bis() {
             displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
           }
         }
-        
+
         // Display game over status
         // ************************
 
@@ -2100,7 +2130,7 @@ function draw_graphic_bis() {
           let timeInSecondsWithinHour = (totalTimeInSeconds - timeInHours*3600); // (range: [0;3599]
           let timeInMinutes = Math.floor(timeInSecondsWithinHour/60);
           let timeInSeconds = timeInSecondsWithinHour - timeInMinutes*60; // (range: [0;59])
-          
+
           if (timeInHours >= 24) {
             timeStr = "> 1 day";
           }
@@ -2300,7 +2330,7 @@ function draw_graphic_bis() {
         ctx.fillStyle = darkGray;
 
         try {
-          ctx.font = medium2_bold_font;          
+          ctx.font = medium2_bold_font;
           if ((nbGamesPlayed == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
             let x_delta = 0.75;
             if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
@@ -2315,8 +2345,8 @@ function draw_graphic_bis() {
                   }
                   displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
-                }                          
-              }        
+                }
+              }
             }
           }
         }
@@ -2330,7 +2360,16 @@ function draw_graphic_bis() {
         // **************************************
 
         let nbOfCodes = nbOfPossibleCodes[currentPossibleCodeShown-1];
-        let nbOfCodesListed = Math.min(nbOfCodes,nbPossibleCodesShown);
+        let nbOfCodesListed;
+        let code_list_offset;
+        if ((!showPossibleCodesOffsetMode) || (nbOfCodes <= nbPossibleCodesShown)) { // (first half display)
+          nbOfCodesListed = Math.min(nbOfCodes,nbPossibleCodesShown);
+          code_list_offset = 0;
+        }
+        else { // (second half display)
+          nbOfCodesListed = Math.min(nbOfCodes-nbPossibleCodesShown,nbPossibleCodesShown);
+          code_list_offset = nbPossibleCodesShown;
+        }
         if ( (currentPossibleCodeShown >= 1) && (currentPossibleCodeShown <= nbMaxAttempts) && (nbOfCodes>=1) ) {
 
           ctx.font = basic_bold_font;
@@ -2377,23 +2416,36 @@ function draw_graphic_bis() {
                           darkGray, backgroundColor_2, ctx, true, 0, true, 0);
             if (nbOfCodesListed < nbOfCodes) {
               ctx.font = basic_bold_font;
+              let offset_str;
+              if (!showPossibleCodesOffsetMode) {
+                offset_str = "\u25bc";
+              }
+              else {
+                offset_str = "\u25b2";
+              }
               if (nbOfCodes-nbOfCodesListed == 1) {
-                if (!displayString("+ 1 other code ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                if (!displayString("+ 1 other code\u2009" + offset_str + " ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                                    darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  if (!displayString("+\u2009" + "1" + "\u2009code ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                  if (!displayString("+\u2009" + "1" + "\u2009code\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                                      darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                    displayString("+\u2009" + "1", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
-                                  darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+                    if (!displayString("+\u2009" + "1" + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                       darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
+                      displayString("+\u2009" + "1", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                    darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+                    }
                   }
                 }
               }
               else {
-                if(!displayString("+ " + (nbOfCodes-nbOfCodesListed) + " other codes ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                if(!displayString("+ " + (nbOfCodes-nbOfCodesListed) + " other codes\u2009" + offset_str + " ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                                   darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009codes ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                  if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009codes\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
                                      darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                    displayString("+\u2009" + (nbOfCodes-nbOfCodesListed), 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
-                                  darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+                    if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                       darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
+                      displayString("+\u2009" + (nbOfCodes-nbOfCodesListed), 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                                    darkGray, backgroundColor_2, ctx, true, 0, true, 0);
+                    }
                   }
                 }
               }
@@ -2457,7 +2509,7 @@ function draw_graphic_bis() {
         }
 
         for (let codeidx = 0; codeidx < nbOfCodesListed; codeidx++) {
-          let code = possibleCodesLists[currentPossibleCodeShown-1][codeidx];
+          let code = possibleCodesLists[currentPossibleCodeShown-1][codeidx+code_list_offset];
           let y_cell = nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1-codeidx;
           ctx.font = basic_bold_font;
           displayCode(code, y_cell, ctx);
@@ -2573,7 +2625,7 @@ function draw_graphic_bis() {
           store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra')); // XXX to be filled properly (with perfs)
         }
       }
-        
+
       main_graph_update_needed = false;
 
     }
@@ -2878,9 +2930,9 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth)
 function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
 
   let performanceIndicator = Math.round(perf * 100.0) / 100.0;
-  
+
   let x_cell;
-  let cell_width;  
+  let cell_width;
   if (optimal_width > 0) {
     x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width;
     cell_width = optimal_width;
@@ -2889,8 +2941,8 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
     x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2;
     cell_width = nb_possible_codes_width;
   }
-  
-  let isPossible_str;  
+
+  let isPossible_str;
   if (tick_width > 0) {
     isPossible_str = "";
   }
@@ -2900,7 +2952,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
     }
     else { // code is not possible
       isPossible_str = "(" + isPossible + ")";
-    }    
+    }
   }
 
   if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
@@ -2908,7 +2960,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
                   lightGray, backgroundColor, ctx);
   }
   else if (performanceIndicator != PerformanceIndicatorNA) {
-    if (performanceIndicator == -1.0) { // useless code    
+    if (performanceIndicator == -1.0) { // useless code
       if (!displayString("  useless" + "\u2009" + isPossible_str + "  ", x_cell, y_cell, cell_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
         if (!displayString(" " + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009" + isPossible_str + " ", x_cell, y_cell, cell_width,
