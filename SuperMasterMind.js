@@ -840,8 +840,8 @@ function mouseClick(e) {
       if (showPossibleCodesMode) {
         let x_0_half_display = get_x_pixel(x_min);
         let x_1_half_display = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
-        let y_0_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1))
-        let y_1_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height));
+        let y_0_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75/* (margin) */))
+        let y_1_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2/* (margin) */));
         if ( (mouse_x > x_0_half_display) && (mouse_x < x_1_half_display)
              && (mouse_y > y_0_half_display) && (mouse_y < y_1_half_display) ) { // (half display - always tested to simplify)
           showPossibleCodesOffsetMode = !showPossibleCodesOffsetMode;
