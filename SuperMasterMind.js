@@ -838,6 +838,7 @@ function mouseClick(e) {
     }
     else {
       if (showPossibleCodesMode) {
+        disableMouseMoveEffects = false;
         let x_0_half_display = get_x_pixel(x_min);
         let x_1_half_display = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
         let y_0_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75/* (margin) */))
@@ -867,9 +868,6 @@ function mouseMove(e) {
   if (!showPossibleCodesMode) {
     return;
   }
-  else if (disableMouseMoveEffects) {
-    return;
-  }
   else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
 
     let event_x_min, event_x_max, event_y_min, event_y_max;
@@ -878,9 +876,17 @@ function mouseMove(e) {
     let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
 
     event_x_min = get_x_pixel(x_min);
-    event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));    
+    event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
     event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
     event_y_max = get_y_pixel(y_min+y_step*0);
+
+    if (mouse_y < event_y_min) {
+      disableMouseMoveEffects = false;
+    }
+
+    if (disableMouseMoveEffects) {
+      return;
+    }
 
     if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
           && (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (below code duplicated)
