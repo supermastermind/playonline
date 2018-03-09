@@ -313,7 +313,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_EA";
+      let html_compatibility_game_version = "Ver_EB";
       let reload_needed = false;
       let nb_errors_submitted = 0;
       let mobileMode = false;      
@@ -624,10 +624,23 @@
       }
 
       function isCorrect(str) {
-        if ( (str.toLowerCase().indexOf('bastard') != -1) || (str.toLowerCase().indexOf('fuck') != -1) ) {
+        if ( (str.toLowerCase().indexOf('bastard') != -1)
+             || (str.toLowerCase().indexOf('fuck') != -1)
+             || (str.toLowerCase().indexOf('xxx') != -1)
+             || (str.toLowerCase().indexOf('noname') != -1)
+             || (str.toLowerCase().indexOf('myname') != -1)             
+             || (str.toLowerCase().indexOf('nobody') != -1)
+             || (str.toLowerCase().indexOf('noone') != -1)
+             || (str.toLowerCase().indexOf('dummy') != -1)
+             || (str.toLowerCase().indexOf('empty') != -1) ) {
           return false;
         }
         return true;
+      }
+      if (typeof(Storage) !== 'undefined') {
+        if (localStorage.firstname && (!isCorrect(localStorage.firstname))) {
+          localStorage.removeItem('firstname'); // localStorage.firstname
+        }
       }
 
       function getRegion(country, city) {
