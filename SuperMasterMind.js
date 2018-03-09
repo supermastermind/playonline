@@ -1670,6 +1670,7 @@ function draw_graphic_bis() {
           currentCode = -1;
           gameWon = true;
           nbGamesPlayed++;
+          nbGamesPlayedAndWon++;
           game_just_won = true;
         }
         else {
@@ -2338,7 +2339,7 @@ function draw_graphic_bis() {
 
         try {
           ctx.font = medium2_bold_font;
-          if ((nbGamesPlayed == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
+          if ((nbGamesPlayedAndWon == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
             let x_delta = 0.75;
             if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
