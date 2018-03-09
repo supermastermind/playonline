@@ -706,6 +706,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
     }
     else if (invertMode) {
       showPossibleCodesMode = !showPossibleCodesMode;
+      disableMouseMoveEffects = false;
     }
     if (!showPossibleCodesMode) {
       nbPossibleCodesShown = -1;
