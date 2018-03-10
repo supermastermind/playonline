@@ -181,7 +181,7 @@
             }
           }
           var debugStr = navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
-          let formStr = 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgames=-' + '&nbcodes=-' + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr;
+          let formStr = 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + "" + '&nbgames=-' + '&nbcodes=-' + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr;
           let my_form_url = 'https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec' + '?';
           my_form_url = my_form_url + formStr + '&';
           my_form_url = my_form_url + 'my_callback_fct=dummy_handle_rsp';
