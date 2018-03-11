@@ -72,6 +72,7 @@ let gameWon = false;
 let sCode = -1;
 let sCodeRevealed = -1;
 let game_cnt = 0;
+let loadTime = (new Date()).getTime(); // time in milliseconds
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
@@ -1015,8 +1016,8 @@ function resetGameAttributes(nbColumnsSelected) {
     gameSolver = undefined;
   }
 
-  if ((typeof reload_needed !== "undefined") && reload_needed) {
-    reload_needed = false;
+  if ((new Date()).getTime() - loadTime >= 8*3600*1000) { // (reload the page from server every 8 hours at next game start: not too short to allow game.html's "last_data_used" benefits, not too long to allow fast application of changes)
+    loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
     location.reload(true);
   }
 
