@@ -1458,6 +1458,8 @@ function draw_graphic_bis() {
   let game_just_won = false;
   let score = -1.0;
   let nbColorsRevealed = 0;
+  
+  let last_attempt_event = false;
 
   try {
 
@@ -1682,6 +1684,7 @@ function draw_graphic_bis() {
             nbGamesPlayed++;
           }
           else {
+            last_attempt_event = (currentAttemptNumber == nbMaxAttempts) /* (last attempt) */                      
             currentCode = sCodeRevealed;
           }
         }
@@ -2668,6 +2671,18 @@ function draw_graphic_bis() {
       document.getElementById("resetCurrentCodeButton").className = "button";
     }
 
+    if ( last_attempt_event
+         && (nbGamesPlayed == 0) /* (first game) */
+         && (gameOnGoing())
+         && !(document.getElementById("revealSecretColorButton").disabled)
+         && (sCodeRevealed == 0) ) {
+      if (!CompressedDisplayMode) {
+        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button!" );
+      }
+      else {
+        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button to reveal a secret color!" );
+      }
+    }
 
   }
   catch (err) {
