@@ -3,8 +3,6 @@
 // ********** Main Super Master Mind script **********
 // ***************************************************
 
-// XXXs globally: .js, .html and google scripts / trace of right code to be suppressed
-
 "use strict";
 
 console.log("Running SuperMasterMind.js...");
@@ -57,18 +55,25 @@ let nbOfPossibleCodes;
 let colorsFoundCodes;
 let minNbColorsTables;
 let maxNbColorsTables;
-let performanceIndicators;
-let performanceIndicatorsEvaluatedSystematically;
-let performanceIndicatorsDisplayed;
+let performances;
+let performancesEvaluatedSystematically;
+let performancesDisplayed;
 let possibleCodesLists;
 let possibleCodesListsSizes;
-let PerformanceIndicatorNA = -3.00;
-let PerformanceIndicatorUNKNOWN = -2.00;
-let equivalenceClassIdUNKNOWN = -100;
+let PerformanceLOW = -0.25; 
+let PerformanceVERYLOW = -0.50;
+let PerformanceNA = -3.00;
+let PerformanceUNKNOWN = -2.00; // (duplicated in GameSolver.js)
 let nbOfStatsFilled_NbPossibleCodes = 0;
 let nbOfStatsFilled_Perfs = 0;
 let currentAttemptNumber = 1;
+
 let gameWon = false;
+let timeStr = ""; // (only valid if game over)
+let score = -1.0;  // (only valid if game over)
+let sumPerfs = 0.00;  // (only valid if game over and all performances filled)
+let nbUnknownPerfs = 0;  // (only valid if game over and all performances filled)
+
 let sCode = -1;
 let sCodeRevealed = -1;
 let game_cnt = 0;
@@ -82,7 +87,7 @@ let errorStr = "";
 let errorCnt = 0;
 
 let nb_random_codes_played = 0;
-let tmp_perf = 0; // XXX Temporary code
+let at_least_one_useless_code_played = false;
 
 let gameSolver = undefined;
 
@@ -342,7 +347,7 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
         code = this.setColor(code, colorRevealed, col+1);
       }
       else {
-        code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);
+        code = this.setColor(code, 3 /* XXX Math.floor((Math.random() * this.nbColors) + 1) */, col+1);
       }
     }
     return code;
@@ -592,6 +597,47 @@ function onGameSolverMsg(e) {
 
   }
 
+  // **************************
+  // Performance of code played
+  // **************************
+
+  else if (data.rsp_type == 'CODE_PLAYED_PERFORMANCE') {
+
+    if (data.relative_perf_p == undefined) {
+      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined", new Error().stack);
+    }
+    let relative_perf_p = Number(data.relative_perf_p);
+
+    if (data.systematic_evaluation_p == undefined) {
+      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: systematic_evaluation_p is undefined", new Error().stack);
+    }
+    let systematic_evaluation_p = Boolean(data.systematic_evaluation_p);
+    
+    if (data.code_p == undefined) {
+      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined", new Error().stack);
+    }
+    let code_p = Number(data.code_p);
+
+    if (data.attempt_nb == undefined) {
+      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+    }
+    let attempt_nb = Number(data.attempt_nb);
+    if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
+      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
+    }
+
+    if (data.game_id == undefined) {
+      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined", new Error().stack);
+    }
+    let game_id = Number(data.game_id);
+    if ( isNaN(game_id) || (game_id < 0) ) {
+      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+    }
+
+    writePerformanceOfCodePlayed(relative_perf_p, systematic_evaluation_p, code_p, attempt_nb, game_id);
+
+  }
+  
   // **********
   // Error case
   // **********
@@ -613,42 +659,44 @@ function onGameSolverError(e) {
 // ***********************
 
 function newGameButtonClick(nbColumns) {
-  if ( (nbColumns == 0) // ("NEW GAME" button event)
-       || (currentAttemptNumber <= 1) ) { // (radio buttons events)
+  if (!document.getElementById("newGameButton").disabled) {
+    if ( (nbColumns == 0) // ("NEW GAME" button event)
+         || (currentAttemptNumber <= 1) ) { // (radio buttons events)
 
-    if (gameOnGoing() && (currentAttemptNumber > 1)) {
+      if (gameOnGoing() && (currentAttemptNumber > 1)) {
+        // Transition effect 1/2
+        try {
+          $(".game_aborted").fadeIn(3500);
+        }
+        catch (exc) {
+        }
+
+        // Transition effect 2/2
+        try {
+          $(".game_aborted").fadeOut(3500);
+        }
+        catch (exc) {
+        }
+      }
+
       // Transition effect 1/2
       try {
-        $(".game_aborted").fadeIn(3500);
+        $(".page_transition").fadeIn("fast");
       }
       catch (exc) {
       }
+
+      newGameEvent = true;
+      draw_graphic();
 
       // Transition effect 2/2
       try {
-        $(".game_aborted").fadeOut(3500);
+        $(".page_transition").fadeOut("fast");
       }
       catch (exc) {
       }
-    }
 
-    // Transition effect 1/2
-    try {
-      $(".page_transition").fadeIn("fast");
     }
-    catch (exc) {
-    }
-
-    newGameEvent = true;
-    draw_graphic();
-
-    // Transition effect 2/2
-    try {
-      $(".page_transition").fadeOut("fast");
-    }
-    catch (exc) {
-    }
-
   }
 }
 
@@ -1090,17 +1138,17 @@ function resetGameAttributes(nbColumnsSelected) {
   for (i = 0; i < nbMaxAttempts; i++) {
     maxNbColorsTables[i] = new Array(nbColors+1);
   }
-  performanceIndicators = new Array(nbMaxAttempts);
+  performances = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
-    performanceIndicators[i] = PerformanceIndicatorNA;
+    performances[i] = PerformanceNA;
   }
-  performanceIndicatorsEvaluatedSystematically = new Array(nbMaxAttempts);
+  performancesEvaluatedSystematically = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
-    performanceIndicatorsEvaluatedSystematically[i] = false;
+    performancesEvaluatedSystematically[i] = false;
   }
-  performanceIndicatorsDisplayed = new Array(nbMaxAttempts);
+  performancesDisplayed = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
-    performanceIndicatorsDisplayed[i] = false;
+    performancesDisplayed[i] = false;
   }
 
   possibleCodesLists = new Array(nbMaxAttempts);
@@ -1112,7 +1160,13 @@ function resetGameAttributes(nbColumnsSelected) {
   nbOfStatsFilled_NbPossibleCodes = 0;
   nbOfStatsFilled_Perfs = 0;
   currentAttemptNumber = 1;
+  
   gameWon = false;
+  timeStr = "";
+  score = -1.0;
+  sumPerfs = 0.00;
+  nbUnknownPerfs = 0;
+
   sCode = ~(simpleCodeHandler.createRandomCode());
   sCodeRevealed = 0;
 
@@ -1128,8 +1182,7 @@ function resetGameAttributes(nbColumnsSelected) {
   errorCnt = 0;
 
   nb_random_codes_played = 0;
-
-  tmp_perf = 0; // XXX Temporary code
+  at_least_one_useless_code_played = false;
 
   updateGameSizes();
 
@@ -1161,9 +1214,9 @@ function checkArraySizes() {
   for (let i = 0; i < nbMaxAttempts; i++) {
     if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected #8", new Error().stack);}
   }
-  if (performanceIndicators.length > nbMaxAttempts){displayGUIError("array is wider than expected #9", new Error().stack);}
-  if (performanceIndicatorsEvaluatedSystematically.length > nbMaxAttempts){displayGUIError("array is wider than expected #10", new Error().stack);}
-  if (performanceIndicatorsDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected #11", new Error().stack);}
+  if (performances.length > nbMaxAttempts){displayGUIError("array is wider than expected #9", new Error().stack);}
+  if (performancesEvaluatedSystematically.length > nbMaxAttempts){displayGUIError("array is wider than expected #10", new Error().stack);}
+  if (performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected #11", new Error().stack);}
   if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected #12", new Error().stack);}
   if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected #13", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
@@ -1175,12 +1228,8 @@ function gameOnGoing() {
   return ((!gameWon) && (currentAttemptNumber <= nbMaxAttempts));
 }
 
-function allPerformanceIndicatorsFilled() { // XXX TEMP: code to review (should be different from 2nd below function): nbOfStatsFilled_NbPossibleCodes -> nbOfStatsFilled_Perfs
-  return ( // game on-going and all performance indicators filled
-            (gameOnGoing() && (currentAttemptNumber == nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (performanceIndicators[nbOfStatsFilled_NbPossibleCodes-1] != PerformanceIndicatorNA))
-            ||
-            // game over and all performance indicators filled
-            ((!gameOnGoing()) && (currentAttemptNumber-1 == nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (performanceIndicators[nbOfStatsFilled_NbPossibleCodes-1] != PerformanceIndicatorNA)) );
+function allPerformancesFilled() {
+  return ((!gameOnGoing()) && (currentAttemptNumber-1 == nbOfStatsFilled_Perfs) && (nbOfStatsFilled_Perfs >= 1) && (performances[nbOfStatsFilled_Perfs-1] != PerformanceNA));
 }
 
 function allPossibleCodesFilled() {
@@ -1210,16 +1259,17 @@ function isAttemptPossible(attempt_nb) { // (returns 0 if the attempt_nb th code
 // Statistics related functions
 // ****************************
 
+// Number of possible codes
 function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id) {
   if (game_id != game_cnt) { // ignore other threads
     console.log("writeNbOfPossibleCodes() call ignored: " + game_id + ", " + game_cnt);
     return false;
   }
-  if (  (nbOfPossibleCodes_p <= 0)
-        || (attempt_nb != nbOfStatsFilled_NbPossibleCodes + 1) // stats shall be filled consecutively
-        || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
-        || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
-        || (!simpleCodeHandler.isValid(colorsFoundCode_p)) ) {
+  if ( (nbOfPossibleCodes_p <= 0)
+       || (attempt_nb != nbOfStatsFilled_NbPossibleCodes + 1) // stats shall be filled consecutively
+       || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
+       || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
+       || (!simpleCodeHandler.isValid(colorsFoundCode_p)) ) {
     displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (#1)", new Error().stack);
     return false;
   }
@@ -1232,22 +1282,73 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     sum_max += maxNbColorsTables[attempt_nb-1][color];
   }
   if (sum_max < nbColumns) {
-    displayGUIError("invalid stats (sum_max=" + sum_max + ")", new Error().stack);
+    displayGUIError("invalid stats (sum_max=" + sum_max + ") (#2)", new Error().stack);
     return false;
   }
-  // XXX Temporary code: to be done in the worker - being
-  if ((attempt_nb >= 2) && (nbOfPossibleCodes[attempt_nb-1] == nbOfPossibleCodes[attempt_nb-2])) {
-    performanceIndicators[attempt_nb-2] = -1.0;
-    tmp_perf = tmp_perf-1;
-  }
-  // XXX Temporary code: to be done in the worker - end
-  nbOfStatsFilled_NbPossibleCodes = attempt_nb; // Assumption: nbOfPossibleCodes is assumed to be the first stat to be written among all stats
-  nbOfStatsFilled_Perfs = attempt_nb; // XXX Temporary
+  nbOfStatsFilled_NbPossibleCodes = attempt_nb; // Assumption: the number of possible codes is assumed to be the first stat to be written among all stats
+
   main_graph_update_needed = true;
   draw_graphic(false);
   return true;
 }
 
+// Code performances
+function writePerformanceOfCodePlayed(relative_perf_p, systematic_evaluation_p, code_p, attempt_nb, game_id) {
+  if (game_id != game_cnt) { // ignore other threads
+    console.log("writePerformanceOfCodePlayed() call ignored: " + game_id + ", " + game_cnt);
+    return false;
+  }
+  if ( ((relative_perf_p < -1.00) && (relative_perf_p != PerformanceUNKNOWN)) || (relative_perf_p >= 1.00) /* possible range of relative performances */
+       || (relative_perf_p == PerformanceNA)
+       || ((relative_perf_p == -1.00) /* useless code */ && (!systematic_evaluation_p))
+       || (code_p != codesPlayed[attempt_nb-1])
+       || (attempt_nb != nbOfStatsFilled_Perfs + 1) // perfs shall be filled consecutively
+       || (attempt_nb > nbOfStatsFilled_NbPossibleCodes) // performances shall be filled after numbers of possible codes
+       || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
+       || (performances[attempt_nb-1] != PerformanceNA /* initial value */)
+       || (performancesEvaluatedSystematically[attempt_nb-1] /* initial value */) ) {
+    displayGUIError("invalid perfs (" + relative_perf_p + ", " + systematic_evaluation_p + ", " + code_p + ", " + attempt_nb + ")", new Error().stack);
+    return false;
+  }  
+  performances[attempt_nb-1] = relative_perf_p;
+  if (relative_perf_p == PerformanceUNKNOWN) {
+    nbUnknownPerfs++;
+  }
+  else {
+    sumPerfs = sumPerfs + relative_perf_p;    
+  }
+  if (relative_perf_p == -1.00) { // useless code
+    at_least_one_useless_code_played = true;
+  }
+  performancesEvaluatedSystematically[attempt_nb-1] = systematic_evaluation_p;  
+  nbOfStatsFilled_Perfs = attempt_nb;
+
+  main_graph_update_needed = true;
+  draw_graphic(false);
+  
+  // ***************************************
+  // Store player's info distantly if needed
+  // ***************************************
+
+  if (gameWon && allPerformancesFilled()) {
+    if ((timeStr.length == 0) || (score < 0.0)) {
+      displayGUIError("internal error at store_player_info call: " + timeStr.length + ", " + score, new Error().stack);
+    }
+    else { // (score > 0.0 because game won)
+      let nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
+      
+      let str = "";
+      /* if (nbUnknownPerfs > 0) {
+        str = "\u2248 ";
+      } */
+      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, str + sumPerfs, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'));
+    }
+  }
+  
+  return true;
+}
+
+// List of possible codes
 function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attempt_nb, game_id) {
   if (game_id != game_cnt) { // ignore other threads
     console.log("writePossibleCodes() call ignored: " + game_id + ", " + game_cnt);
@@ -1265,13 +1366,14 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, attem
   for (let i = 0; i < nb_possible_codes_listed; i++) {
     let code = possibleCodesList_p[i];
     if (!simpleCodeHandler.isFullAndValid(code)) {
-      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + code + ")  (#4)", new Error().stack);
+      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + code + ") (#4)", new Error().stack);
       return false;
     }
     possibleCodesLists[attempt_nb-1][i] = code;
   }
   possibleCodesListsSizes[attempt_nb-1] = nb_possible_codes_listed;
   // nbOfStatsFilled_NbPossibleCodes keeps unchanged (cf. above assumption on stats writing)
+  
   main_graph_update_needed = true;
   draw_graphic(false);
   return true;
@@ -1454,9 +1556,6 @@ function draw_graphic_bis() {
   let nbMaxAttemptsToDisplay = nbMaxAttempts;
   let draw_exception = false;
 
-  let timeStr = "";
-  let game_just_won = false;
-  let score = -1.0;
   let nbColorsRevealed = 0;
   
   let last_attempt_event = false;
@@ -1674,7 +1773,6 @@ function draw_graphic_bis() {
           gameWon = true;
           nbGamesPlayed++;
           nbGamesPlayedAndWon++;
-          game_just_won = true;
         }
         else {
           currentAttemptNumber++;
@@ -1881,7 +1979,7 @@ function draw_graphic_bis() {
       let nbMaxHintsDisplayed = 2;
 
       for (let i = 0; i < nbMaxAttempts; i++) {
-        performanceIndicatorsDisplayed[i] = false;
+        performancesDisplayed[i] = false;
       }
 
       for (let i = 1 ; i <= nbOfStatsFilled_Perfs; i++) {
@@ -1891,24 +1989,22 @@ function draw_graphic_bis() {
         }
 
         if (i < currentAttemptNumber) {
+          // Performance displayed is wished
           if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
-               || performanceIndicatorsEvaluatedSystematically[i-1]
-               || (nbColumns < nominalGameNbColumns) /* (easy games) */
-               || (performanceIndicators[i-1] == -1.00) ) {
-            if ((optimal_width > 0) || (performanceIndicators[i-1] != PerformanceIndicatorNA)) {
-              displayPerf(performanceIndicators[i-1], i-1, backgroundColor, isAttemptPossible(i), ctx);
-              performanceIndicatorsDisplayed[i-1] = true;
-            }
+               || performancesEvaluatedSystematically[i-1]
+               || (nbColumns < nominalGameNbColumns) // easy games
+               || (performances[i-1] == -1.00) ) { // useless code
+            displayPerf(performances[i-1], i-1, backgroundColor, isAttemptPossible(i), ctx);
+            if ((performances[i-1] != PerformanceUNKNOWN) && (performances[i-1] <= PerformanceLOW)) { // No overwriting
+              performancesDisplayed[i-1] = true;
+            } // else: allow overwriting
           }
+          // Performance shall be hidden
           else {
             if (optimal_width > 0) {
-              displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, i-1, optimal_width,
+              displayString("\u2234" /* (performance temporarily hidden or unknown) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, i-1, optimal_width,
                             lightGray, backgroundColor, ctx);
-            }
-            // else { /* (nb of possible codes <-> perf switch) */
-            //  displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
-            //                lightGray, backgroundColor, ctx);
-            // }
+            } // else: nothing is displayed, as it will be overwritten below by the nb of possible codes <-> perf switch
           }
         }
       }
@@ -1919,7 +2015,7 @@ function draw_graphic_bis() {
           backgroundColor = highlightColor;
         }
 
-        if ((optimal_width > 0) || (i == currentAttemptNumber) /* (nb of possible codes <-> perf switch) */ || (!performanceIndicatorsDisplayed[i-1])) {
+        if ((optimal_width > 0) || (i == currentAttemptNumber) || (!performancesDisplayed[i-1]) /* (nb of possible codes <-> perf switch) */) {
           let statsColor;
           if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
             statsColor = darkGray;
@@ -1949,13 +2045,15 @@ function draw_graphic_bis() {
 
           let isPossible = isAttemptPossible(i);
           if ( gameOnGoing() && (i > nbMaxHintsDisplayed)
-               && (performanceIndicators[i-1] != -1.0 /* (useless code) */)
-               && (nbColumns >= nominalGameNbColumns) /* (not easy games) */ ) {
-            displayString("...", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+               && (performances[i-1] != -1.00) // useless code
+               && (nbColumns >= nominalGameNbColumns) ) { // not easy games
+            ctx.font = stats_font;
+            displayString("\u2234" /* tick hidden */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                           lightGray, backgroundColor, ctx);
+            ctx.font = basic_bold_font;                          
           }
           else if (0 == isPossible) { // code is possible
-            if (performanceIndicators[i-1] == -1.0 /* (useless code) */) {
+            if (performances[i-1] == -1.00) { // useless code
               displayGUIError("useless code inconsistency", new Error().stack);
             }
             displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
@@ -1998,30 +2096,19 @@ function draw_graphic_bis() {
 
         // Note: when showPossibleCodesMode is true, this line is used for displayGUIError()
         ctx.font = medium_bold_font;
-        if ((!gameOnGoing()) && allPerformanceIndicatorsFilled()) {
-          let sum = 0.0;
-          let approx = false;
-          for (let i = 1 ; i <= nbOfStatsFilled_NbPossibleCodes; i++) {
-            if (performanceIndicators[i-1] == PerformanceIndicatorNA) {
-              displayGUIError("performanceIndicatorNA inconsistency (" + i + ")", new Error().stack);
-            }
-            else if (performanceIndicators[i-1] == PerformanceIndicatorUNKNOWN) {
-              approx = true;
-            }
-            else {
-              sum = sum + performanceIndicators[i-1];
-            }
-          }
+        if ((!gameOnGoing()) && allPerformancesFilled()) {
           let str1, str1bis, str2;
-          let sum_rounded = Math.round(sum * 100.0) / 100.0;
-          if (!approx) {
+          let sum_rounded = Math.round(sumPerfs * 100.0) / 100.0;
+          str1 = ":";
+          str1bis = "";
+          /* if (nbUnknownPerfs == 0) {
             str1 = ":";
             str1bis = "";
           }
           else {
             str1 = "";
-            str1bis = "\u2264\u200A"; // ("<= ")
-          }
+            str1bis = "\u2248 ";
+          } */
           if (sum_rounded > 0.0) {
             str2 = "+" + sum_rounded.toFixed(2) + "!"; // 2 decimal figures
           }
@@ -2031,9 +2118,9 @@ function draw_graphic_bis() {
           let res_header1 = false;
           let res_header2 = false;
           if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
-                               darkGray, backgroundColor_2, ctx, 0, true)) {
+                               lightGray, backgroundColor_2, ctx, 0, true)) {
             if (displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
-                              darkGray, backgroundColor_2, ctx, true, 0, true, 1)) {
+                              lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               res_header1 = true;
             }
           }
@@ -2041,10 +2128,10 @@ function draw_graphic_bis() {
             res_header1 = true;
           }
           if (res_header1 && (optimal_width > 0)) {
-            if (!display2Strings("Total" + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
-                                 darkGray, backgroundColor_2, ctx, 0, true)) {
+            if (!display2Strings("total" + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
+                                 lightGray, backgroundColor_2, ctx, 0, true)) {
               if (display2Strings("\u03A3" /* (capital sigma) */ + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
-                                  darkGray, backgroundColor_2, ctx, 0, true)) {
+                                  lightGray, backgroundColor_2, ctx, 0, true)) {
                 res_header2 = true;
               }
             }
@@ -2054,9 +2141,9 @@ function draw_graphic_bis() {
           }
           if (res_header1 && (res_header2 || (optimal_width <= 0)) && (tick_width > 0)) {
             if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
-                               darkGray, backgroundColor_2, ctx, true, 0, true, 1)) {
+                               lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
-                            darkGray, backgroundColor_2, ctx, true, 0, true, 1);
+                            lightGray, backgroundColor_2, ctx, true, 0, true, 1);
             }
           }
         }
@@ -2298,7 +2385,6 @@ function draw_graphic_bis() {
             displayString("Score: 0", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                           redColor, backgroundColor_2, ctx, true, 0, false, 0);
 
-
           }
           else {
             displayGUIError("game over inconsistency", new Error().stack);
@@ -2527,14 +2613,14 @@ function draw_graphic_bis() {
           displayCode(code, y_cell, ctx);
           // XXX TBC:
           // let globalPerfStr = "";
-          // let performanceIndicator = Math.round(codeAndPerfs.globalPerformance * 100.0) / 100.0;
-          // if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
+          // let performance = Math.round(codeAndPerfs.globalPerformance * 100.0) / 100.0;
+          // if (performance == PerformanceUNKNOWN) {
             // globalPerfStr = "?";
           // }
-          // else if (performanceIndicator != PerformanceIndicatorNA) {
-            // globalPerfStr = performanceIndicator.toFixed(2).replaceAll(",",".");
+          // else if (performance != PerformanceNA) {
+            // globalPerfStr = performance.toFixed(2).replaceAll(",",".");
           // }
-          // else: nothing is displayed in case of PerformanceIndicatorNA
+          // else: nothing is displayed in case of PerformanceNA
           // ctx.font = basic_bold_font;
           // displayString(globalPerfStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, y_cell, nb_possible_codes_width,
                         // lightGray, backgroundColor_2, ctx);
@@ -2551,6 +2637,14 @@ function draw_graphic_bis() {
       // Enable or disable GUI controls
       // ******************************
 
+      document.getElementById("newGameButton").disabled = (gameWon && !allPerformancesFilled() && (nbOfStatsFilled_Perfs > 0) /* (gameSolver worker is running fine) */);
+      if (document.getElementById("newGameButton").disabled) {
+        document.getElementById("newGameButton").className  = "button disabled";
+      }
+      else {
+        document.getElementById("newGameButton").className  = "button";
+      }      
+      
       if (currentAttemptNumber > 1) {
         document.getElementById("columnslabel_3b").disabled = true;
         document.getElementById("columnslabel_4b").disabled = true;
@@ -2589,7 +2683,7 @@ function draw_graphic_bis() {
            && (sCodeRevealed == 0)
            && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1500 /* 25 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
-                || (tmp_perf <= -1) ) ) { /* (number of useless attempts) */
+                || at_least_one_useless_code_played ) ) { /* (number of useless attempts) */
         document.getElementById("revealSecretColorButton").className = (androidMode ? "button fast_blinking" : "button blinking");
       }
       else if (document.getElementById("revealSecretColorButton").disabled) {
@@ -2624,19 +2718,6 @@ function draw_graphic_bis() {
       }
 
       checkArraySizes();
-
-      // *****************************
-      // Store player's info distantly
-      // *****************************
-
-      if (game_just_won) {
-        if ((timeStr.length == 0) || (score < 0.0)) { // XXX storage to be done only when all perfs have been computed
-          displayGUIError("internal error at store_player_info call", new Error().stack);
-        }
-        else if (score > 0.0) {
-          store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, ((tmp_perf == 0) ? "-" : String(tmp_perf)), (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra')); // XXX to be filled properly (with perfs)
-        }
-      }
 
       main_graph_update_needed = false;
 
@@ -2953,7 +3034,7 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth)
 
 function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
 
-  let performanceIndicator = Math.round(perf * 100.0) / 100.0;
+  let performance = Math.round(perf * 100.0) / 100.0;
 
   let x_cell;
   let cell_width;
@@ -2979,23 +3060,23 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
     }
   }
 
-  if (performanceIndicator == PerformanceIndicatorUNKNOWN) {
-    displayString("?", x_cell, y_cell, cell_width,
+  if (performance == PerformanceUNKNOWN) {
+    displayString("\u2234", x_cell, y_cell, cell_width,
                   lightGray, backgroundColor, ctx);
   }
-  else if (performanceIndicator != PerformanceIndicatorNA) {
-    if (performanceIndicator == -1.0) { // useless code
+  else if (performance != PerformanceNA) {
+    if (performance == -1.00) { // useless code
       if (!displayString("  useless" + "\u2009" + isPossible_str + "  ", x_cell, y_cell, cell_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString(" " + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009" + isPossible_str + " ", x_cell, y_cell, cell_width,
+        if (!displayString(" " + performance.toFixed(2).replaceAll(",",".") + "\u2009" + isPossible_str + " ", x_cell, y_cell, cell_width,
                            redColor, backgroundColor, ctx, true, 0, true, 0)) {
-          if (!displayString(performanceIndicator.toFixed(1).replaceAll(",",".") + "\u2009" + isPossible_str, x_cell, y_cell, cell_width,
+          if (!displayString(performance.toFixed(1).replaceAll(",",".") + "\u2009" + isPossible_str, x_cell, y_cell, cell_width,
                              redColor, backgroundColor, ctx, true, 0, true, 0)) {
             if (!displayString("  useless  ", x_cell, y_cell, cell_width,
                                redColor, backgroundColor, ctx, true, 0, true, 0)) {
-              if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+              if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                                  redColor, backgroundColor, ctx, true, 0, true, 0)) {
-                displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                               redColor, backgroundColor, ctx);
               }
             }
@@ -3003,48 +3084,48 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
         }
       }
     }
-    else if (performanceIndicator <= -0.50) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+    else if (performance <= PerformanceVERYLOW) {
+      if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+        displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                       redColor, backgroundColor, ctx);
       }
     }
-    else if (performanceIndicator <= -0.25) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+    else if (performance <= PerformanceLOW) {
+      if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                          orangeColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+        displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                       orangeColor, backgroundColor, ctx);
       }
     }
-    else if (performanceIndicator < 0.0) {
-      if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+    else if (performance < 0.00) {
+      if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                          lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+        displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                       lightGray, backgroundColor, ctx);
       }
     }
-    else if (performanceIndicator == 0.0) { // optimal code
+    else if (performance == 0.00) { // optimal code
       if (!displayString(" optimal ", x_cell, y_cell, cell_width,
                          lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + performanceIndicator.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+        if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-          displayString(performanceIndicator.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+          displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                        lightGray, backgroundColor, ctx);
         }
       }
     }
     else { // (an illogical code can be better than the optimal logical code)
-      if (!displayString("\u2009" + "+" + performanceIndicator.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
+      if (!displayString("\u2009" + "+" + performance.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString("+" + performanceIndicator.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, cell_width,
+        displayString("+" + performance.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, cell_width,
                       greenColor, backgroundColor, ctx);
       }
     }
   }
   else {
-    // Nothing is displayed in case of PerformanceIndicatorNA (but the background is updated if needed)
-    displayString("\u2234", x_cell, y_cell, cell_width,
+    // Nothing is displayed in case of PerformanceNA (but the background is updated if needed)
+    displayString("NA", x_cell, y_cell, cell_width,
                   lightGray, backgroundColor, ctx);
   }
 
