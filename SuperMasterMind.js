@@ -347,7 +347,7 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
         code = this.setColor(code, colorRevealed, col+1);
       }
       else {
-        code = this.setColor(code, 3 /* XXX Math.floor((Math.random() * this.nbColors) + 1) */, col+1);
+        code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);
       }
     }
     return code;
