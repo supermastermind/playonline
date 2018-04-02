@@ -1614,6 +1614,7 @@ function draw_graphic_bis() {
           }
           mobileMode = true;
           backgroundColor_2 = "#FFFFFF";
+          backgroundColor_3 = "#E3E3E3";
           if (/Android/i.test(navigator.userAgent)) {
             androidMode = true;
           }
