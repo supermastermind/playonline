@@ -213,6 +213,8 @@
         $(".game_loading").fadeOut("slow"); // game_loading div fades out
         // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").fadeIn("slow"); // mainxxx div fades in
       });
+      // 2') Defense timeout to allow interactions with the page
+      setTimeout("console.log('(on load timeout)');$('.game_loading').fadeOut('slow');", 5000); // game_loading div fades out
 
       function makeid() {
         let text = "";
