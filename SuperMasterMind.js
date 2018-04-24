@@ -2276,27 +2276,27 @@ function draw_graphic_bis() {
             switch (nbColumns) {
               case 3:
                 nb_attempts_for_max_score = 2;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 90.0; // (time corresponding to 2 attempts: 3 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 60.0; // (time corresponding to 2 attempts: 2 min)
                 multiply_factor = 0.50;
                 break;
               case 4:
                 nb_attempts_for_max_score = 3;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 450.0; // (time corresponding to 2 attempts: 15 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 300.0; // (time corresponding to 2 attempts: 10 min)
                 multiply_factor = 0.75;
                 break;
               case 5:
                 nb_attempts_for_max_score = 4;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 630.0; // (time corresponding to 2 attempts: 21 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 450.0; // (time corresponding to 2 attempts: 15 min) // See (*)
                 multiply_factor = 1.0;
                 break;
               case 6:
                 nb_attempts_for_max_score = 5;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 1200.0;  // (time corresponding to 2 attempts: 40 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 750.0;  // (time corresponding to 2 attempts: 25 min) // See (*)
                 multiply_factor = 1.5;
                 break;
               case 7:
                 nb_attempts_for_max_score = 6;
-                time_in_seconds_corresponding_to_one_attempt_in_score = 1800.0;  // (time corresponding to 2 attempts: 60 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 1000.0;  // (time corresponding to 2 attempts: 33.3 min) // See (*)
                 multiply_factor = 2.0;
                 break;
               default:
