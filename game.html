@@ -315,7 +315,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_EK";
+      let html_compatibility_game_version = "Ver_EL";
       let nb_errors_submitted = 0;
       let mobileMode = false;      
       let androidMode = false;
@@ -362,6 +362,8 @@
             if (modal_mode == 1) {
 
               let place_error = false;
+              let country_debug = "NA";
+              let city_debug = "NA";
 
               // Get selected country name
               try {
@@ -370,10 +372,12 @@
                   if (typeof(Storage) !== 'undefined') {
                     localStorage.countryname = elt.options[elt.selectedIndex].text;
                   }
+                  country_debug = elt.options[elt.selectedIndex].text;
                 }
                 else {
-                  alert("No country was selected!\nYour score will not be stored...");
+                  alert("No country was selected!\nYou shall select a country in order to store your games scores...");
                   place_error = true;
+                  country_debug = "no country was selected";
                 }
               }
               catch (exc) {
@@ -391,10 +395,11 @@
                 }
                 else {
                   if (!place_error) {
-                    alert("Invalid city name: " + city_entered + "\nYour score will not be stored...");
+                    alert("Invalid city name: " + city_entered + "\nYou shall enter a valid city name in order to store your games scores...");
                     place_error = true;
                   }
                 }
+                city_debug = city_entered;                
               }
               catch (exc) {
                 console.log("error encountered at city name selection: " + exc);
@@ -431,7 +436,7 @@
                       errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
                     }                    
                   }
-                  submitForm("warning: invalid place information entered" + errorStr, true); 
+                  submitForm("warning: invalid place information entered (" + country_debug + ", " + city_debug + ")" + errorStr, true); 
                 }
               }
 
