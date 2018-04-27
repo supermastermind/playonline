@@ -316,7 +316,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_EO";
+      let html_compatibility_game_version = "Ver_EP";
       let nb_errors_submitted = 0;
       let mobileMode = false;      
       let androidMode = false;
@@ -407,6 +407,9 @@
               }
 
               if (typeof(Storage) !== 'undefined') {
+
+                localStorage.removeItem('automaticPositioning'); // localStorage.automaticPositioning
+
                 if (localStorage.countryname && localStorage.cityname && (!place_error)) {
                   console.log("new countryname: " + localStorage.countryname);
                   document.getElementById('form_country_id').value = localStorage.countryname;
@@ -441,8 +444,9 @@
                     }
                   }
                   submitForm("warning: invalid place information entered (" + country_debug + ", " + city_debug + ")" + errorStr, true);
-                  attempt_HTML_geolocation();
+                  attempt_HTML_geolocation(true); // Subject to user acceptance
                 }
+
               }
 
               modal_mode = -1;
@@ -688,7 +692,14 @@
               console.log(" address: " + location.results[0].formatted_address);
               if ((country.length >= 3) && (city.length >= 3)) { // (redundant lines)
                 localStorage.countryname = country;
+                if (region.length >= 2) { // (redundant lines)
+                  localStorage.regionname = region;
+                }
+                else {
+                  localStorage.regionname = '-';
+                }
                 localStorage.cityname = city;
+                localStorage.automaticPositioning = true;
                 localStorage.html_geoloc_already_done = "ok";
               }
               else {
@@ -729,8 +740,14 @@
         }      
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_already_done = "nok-5/" + error_str;
-      }                  
-      function attempt_HTML_geolocation() {
+      }
+      let attempt_HTML_geolocation_already_done = false;
+      function attempt_HTML_geolocation(forced_mode) {
+        if ((!forced_mode) && attempt_HTML_geolocation_already_done) {
+          console.log("attempt_HTML_geolocation: skipped");
+          return;
+        }
+        attempt_HTML_geolocation_already_done = true;
         if (typeof(Storage) !== 'undefined') {
           if (navigator.geolocation) {
             // Subject to user acceptance
@@ -1057,6 +1074,12 @@
                 this_data_is_valid = true;              
                 if (typeof(Storage) !== 'undefined') { // Better than manual positioning (and will be updated if necessary)
                   localStorage.countryname = String(data_p.country_name).trim();
+                  if ((typeof data_p.region_name != 'undefined') && (data_p.region_name.length >= 2)) { // (redundant lines)
+                    localStorage.regionname = String(data_p.region_name).trim();
+                  }
+                  else {
+                    localStorage.regionname = '-';
+                  }
                   localStorage.cityname = String(data_p.city).trim();
                   localStorage.automaticPositioning = true;
                 }              
@@ -1201,7 +1224,12 @@
                 if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
                   if (localStorage.countryname && localStorage.cityname) {
                     country = localStorage.countryname;
-                    region = getRegion(localStorage.countryname, localStorage.cityname);
+                    if (localStorage.automaticPositioning && localStorage.regionname) {
+                      region = localStorage.regionname;
+                    }
+                    else {
+                      region = getRegion(localStorage.countryname, localStorage.cityname);
+                    }
                     city = localStorage.cityname;
                     if (localStorage.automaticPositioning) {
                       geoloc = '~' + String(geolocation_handler.nb_JSON_queries_posted);
@@ -1402,6 +1430,7 @@
               $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
                 var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+                let html_geoloc_already_done_str = "";                
                 if (typeof(Storage) !== 'undefined') {
                   if (localStorage.firstname) {
                     errorStr = errorStr + " for " + localStorage.firstname;
@@ -1418,8 +1447,11 @@
                   if (localStorage.gamesok) {
                     errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
                   }
+                  if (localStorage.html_geoloc_already_done) {
+                    html_geoloc_already_done_str = "|HTML geolocation status:" + localStorage.html_geoloc_already_done;
+                  }                  
                 }
-                errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr + "|last_data_used_not_null:" + (last_data_used != null) + "|first_geolocation_error:" + geolocation_handler.first_geolocation_errorStr + "|html_compatibility_game_version:" + html_compatibility_game_version;
+                errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr + "|last_data_used_not_null:" + (last_data_used != null) + "|first_geolocation_error:" + geolocation_handler.first_geolocation_errorStr + html_geoloc_already_done_str + "|html_compatibility_game_version:" + html_compatibility_game_version;
                 console.log(errorStr);
 
                 // Reuse last (valid or not) geolocation data if any
@@ -1432,13 +1464,26 @@
                   var fixed_ip_address = geolocation_handler.getIpAddressForIdentifiedUser();
                   if (fixed_ip_address != "") { // Identified user
                     geolocation_handler.nb_JSON_queries_posted++;
-                    console.log("use fixed IP address");
+                    console.log("use fixed IP address: " + fixed_ip_address);
                     var fixed_data = {'ip':fixed_ip_address};
                     geolocation_handler.run(fixed_data);
+                  }
+                  else if ( (typeof(Storage) !== 'undefined') 
+                            && localStorage.automaticPositioning && localStorage.countryname && localStorage.regionname && localStorage.cityname ) { // Relevant location
+                    geolocation_handler.nb_JSON_queries_posted++;
+                    var sum = 0;
+                    for (var i = 0; i < localStorage.regionname.length; i++) { // regionname instead of cityname to better identify unique players
+                      sum = sum + localStorage.regionname.charCodeAt(i);
+                    }
+                    var inferred_ip_address = "2.2.2." + String(sum % 256);
+                    console.log("use inferred IP address: " + inferred_ip_address);
+                    var inferred_data = {'ip':inferred_ip_address};
+                    geolocation_handler.run(inferred_data);                    
                   }
                   else { // No form is submitted in this retry failure case
                     alert("Oops... a network error occurred, game scores could not be stored");
                     submitForm(errorStr, true);
+                    attempt_HTML_geolocation(true); // Subject to user acceptance
                   }
                 }
               })
@@ -1599,6 +1644,7 @@
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
+          setTimeout("attempt_HTML_geolocation(false)", 25000); // Subject to user acceptance
         })
         .always(function() {
           console.log("(getJSON completed #i2)");
@@ -1640,7 +1686,7 @@
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-5min')",   300000); 
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-10min')",  600000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-15min')",  900000); // See (**)
-      }      
+      }
 
     </script>
 
