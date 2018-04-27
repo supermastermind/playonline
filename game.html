@@ -316,7 +316,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_EL";
+      let html_compatibility_game_version = "Ver_EM";
       let nb_errors_submitted = 0;
       let mobileMode = false;      
       let androidMode = false;
@@ -426,6 +426,7 @@
                 else {
                   // country and city names shall be consistent with each other
                   localStorage.removeItem('countryname'); // localStorage.countryname
+                  localStorage.removeItem('regionname'); // localStorage.regionname
                   localStorage.removeItem('cityname'); // localStorage.cityname
                   
                   let errorStr = "";
@@ -661,6 +662,73 @@
         }
         else {
           return '-';
+        }
+      }
+
+      function HTML_geolocation_success(position) {
+        let latitude = position.coords.latitude;
+        let longitude = position.coords.longitude;
+        console.log("HTML geolocation:");
+        console.log(" latitude: " + latitude);
+        console.log(" longitude: " + longitude);
+        let GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + '%2C' + longitude + '&language=en&key=AIzaSyBhO3CSP-LxypDUjC-MYa_b8iPfJ9qJBko';
+        $.getJSON(GEOCODING).done(function(location) {
+          try {
+            if (location.status.toUpperCase() == "OK") {
+              let country = String(location.results[0].address_components[5].long_name).trim();
+              let region = String(location.results[0].address_components[4].long_name).trim();
+              let city = String(location.results[0].address_components[2].long_name).trim();
+              console.log(location);
+              console.log(" country: " + country);
+              console.log(" region: " + region);
+              console.log(" city: " + city);
+              console.log(" address: " + location.results[0].formatted_address);
+              if ((country.length >= 3) && (region.length >= 2) && (city.length >= 3)) { // (redundant lines)
+                localStorage.countryname = country;
+                localStorage.regionname = region;
+                localStorage.cityname = city;
+              }
+              else {
+                console.log("HTML geolocation error: invalid location values");
+              }
+            }
+            else {
+              console.log("HTML geolocation error: status: " + location.status);
+            }
+          }
+          catch (exc) {
+            console.log("HTML geolocation error: " + exc);
+          }
+        })
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
+          console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+        });
+      }
+      function HTML_geolocation_error(error) {
+        let error_str = "?";
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            error_str = "user denied the request for geolocation"
+            break;
+          case error.POSITION_UNAVAILABLE:
+            error_str = "location information is unavailable"
+            break;
+          case error.TIMEOUT:
+            error_str = "the request to get user location timed out"
+            break;
+          case error.UNKNOWN_ERROR:
+            error_str = "an unknown error occurred"
+            break;
+        }      
+        console.log("HTML geolocation error: " + error_str);
+      }                  
+      function attempt_HTML_geolocation() {
+        if (navigator.geolocation) {
+          // Subject to user acceptance
+          navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error);
+        }
+        else {
+          console.log("HTML geolocation error: geolocation is not supported by the browser");
         }
       }
       
@@ -905,7 +973,7 @@
             }
             
           }
-          
+
           var geolocation_handler = {
                     
             run_retry: function (data_p) {              
@@ -978,6 +1046,9 @@
                 this_data_is_valid = true;              
                 if (typeof(Storage) !== 'undefined') { // Better than manual positioning (and will be updated if necessary)
                   localStorage.countryname = String(data_p.country_name).trim();
+                  if ((typeof data_p.region_name != 'undefined') && (String(data_p.region_name).trim().length >= 2)) {                  
+                    localStorage.regionname = String(data_p.region_name).trim();
+                  }
                   localStorage.cityname = String(data_p.city).trim();
                   localStorage.automaticPositioning = true;
                 }              
@@ -1122,7 +1193,12 @@
                 if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
                   if (localStorage.countryname && localStorage.cityname) {
                     country = localStorage.countryname;
-                    region = getRegion(localStorage.countryname, localStorage.cityname);
+                    if (localStorage.regionname) {
+                      region = localStorage.regionname;
+                    }
+                    else {
+                      region = getRegion(localStorage.countryname, localStorage.cityname);
+                    }
                     city = localStorage.cityname;
                     if (localStorage.automaticPositioning) {
                       geoloc = '~' + String(geolocation_handler.nb_JSON_queries_posted);
@@ -1358,8 +1434,9 @@
                     geolocation_handler.run(fixed_data);
                   }
                   else { // No form is submitted in this retry failure case
-                    alert("Oops... a network error occurred, game scores could not be stored");
+                    alert("Oops... a network error occurred, game scores could not be stored.\nAllowing geolocation may solve this error...");
                     submitForm(errorStr, true);
+                    attempt_HTML_geolocation();
                   }
                 }
               })
