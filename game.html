@@ -1483,7 +1483,7 @@
                     geolocation_handler.run(inferred_data);                    
                   }
                   else { // No form is submitted in this retry failure case
-                    alert("Oops... a network error occurred, game scores could not be stored.\nSharing your position/location information may solve this error: the scores will be stored with country/region/city as identifier");
+                    alert("Oops... a network error occurred, game scores could not be stored.\nSharing your position/location information may solve this error:\nyour scores will be stored with country/region/city as identifier");
                     submitForm(errorStr, true);
                     attempt_HTML_geolocation(true); // Subject to user acceptance
                   }
