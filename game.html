@@ -15,7 +15,7 @@
       <script>console.re.log('remote log enabled!');</script>
     -->
 
-    <style> 
+    <style>
       /* *** Main styles *** */
       body {
           font-family: 'Verdana';
@@ -120,7 +120,7 @@
         -ms-user-select: none;
         user-select: none;
       }
-      
+
       .game_loading /* (used during page loading) */
       { position: fixed;
         height: 100%;
@@ -139,8 +139,8 @@
         -khtml-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
-        user-select: none;        
-      }        
+        user-select: none;
+      }
 
       .page_transition /* (used during page transition) */
       { position: fixed;
@@ -160,8 +160,8 @@
         -khtml-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
-        user-select: none;        
-      }        
+        user-select: none;
+      }
 
       .game_aborted /* (used at game abortion) */
       { position: fixed;
@@ -181,9 +181,9 @@
         -khtml-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
-        user-select: none;        
-      }        
-      
+        user-select: none;
+      }
+
     </style>
 
     <script>
@@ -225,39 +225,39 @@
         return text;
       }
 
-      let firstAccess = false;      
+      let firstAccess = false;
       if (typeof(Storage) !== 'undefined') {
         if (!localStorage.firstgameaccessdone) {
           localStorage.firstgameaccessdone = "first game access done";
           firstAccess = true;
-        }      
+        }
         if (!localStorage.firstaccessid) {
           let firstaccessid = 'GA - ' + makeid() + ' - ' + new Date();
           localStorage.firstaccessid = firstaccessid;
         }
       }
     </script>
-    
+
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
   <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
-   
+
     <div class="game_loading">
       <img src="img/loading.gif"><br>
       Loading...
-    </div>   
+    </div>
 
     <div class="page_transition" style='display:none;'>
-    </div>   
+    </div>
 
     <div class="game_aborted" style='display:none;'>
       Current game was lost because you aborted it<br>
       Score: 0<br>
       <img src="img/loading.gif"><br>
-      Starting a new game...    
-    </div>   
-    
+      Starting a new game...
+    </div>
+
     <!-- HTML controls and canvas -->
 
     <table id='my_table' style='background:#E3E3E3;width:75%;height:90%;position:absolute;left:12.5%;top:2%;border:5px ridge white;border-radius:1%;margin:0;padding:0;'>
@@ -318,7 +318,7 @@
     <script>
       let html_compatibility_game_version = "Ver_ER";
       let nb_errors_submitted = 0;
-      let mobileMode = false;      
+      let mobileMode = false;
       let androidMode = false;
       document.body.onkeydown = function(e) {
         if (String.fromCharCode(e.keyCode).toLowerCase() == 'l') {
@@ -400,7 +400,7 @@
                   place_error = true;
                   // }
                 }
-                city_debug = city_entered;                
+                city_debug = city_entered;
               }
               catch (exc) {
                 console.log("error encountered at city name selection: " + exc);
@@ -417,7 +417,7 @@
                   console.log("new region: " + region);
                   document.getElementById('form_region_id').value = region;
                   console.log("new city: " + localStorage.cityname);
-                  document.getElementById('form_city_id').value = localStorage.cityname;                  
+                  document.getElementById('form_city_id').value = localStorage.cityname;
                   if (localStorage.automaticPositioning) {
                     document.getElementById('form_geoloc_id').value = '~i';
                   }
@@ -430,7 +430,7 @@
                   // country and city names shall be consistent with each other
                   localStorage.removeItem('countryname'); // localStorage.countryname
                   localStorage.removeItem('cityname'); // localStorage.cityname
-                  
+
                   let errorStr = "";
                   if (typeof(Storage) !== 'undefined') {
                     if (localStorage.firstaccessid) {
@@ -492,10 +492,10 @@
             }
 
             else if (modal_mode == 3) {
-            
+
               setTimeout("showPossibleCodesButtonClick(false, -1, true);", 444);
               // (same effect: setTimeout("document.getElementById('showPossibleCodesButton').click();", 444);)
-              
+
               modal_mode = -1;
               return true; // close the modal
             }
@@ -527,7 +527,7 @@
       perfs: <input id='form_perfs_id' name='perfs' type='text' value='-'><br>
       nbuknperfs: <input id='form_nbuknperfs_id' name='nbuknperfs' type='text' value='-'><br>
       help: <input id='form_help_id' name='help' type='text' value='-'><br>
- 
+
       gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-'><br>
       deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-'><br>
 
@@ -547,14 +547,14 @@
       href: <input id='form_href_id' name='href' type='text' value='-'><br>
       formsubmitdate: <input id='form_formsubmitdate_id' name='formsubmitdate' type='text' value='-'><br>
       debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-'><br>
-      
+
       list: <input id='form_list_id' name='list' type='text' value='-'><br>
 
       rankings: <input id='form_rankings_id' name='rankings' type='text' value='-'><br>
 
     </form>
 
-    <script>      
+    <script>
 
       function sleep(ms) { // To be called like "await sleep(1000);"
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -623,7 +623,7 @@
           return res2;
         }
       }
-      
+
       function getLocation() {
         switch(location.protocol) {
            case 'http:':
@@ -643,7 +643,7 @@
              || (str.toLowerCase().indexOf('fuck') != -1)
              || (str.toLowerCase().indexOf('xxx') != -1)
              || (str.toLowerCase().indexOf('noname') != -1)
-             || (str.toLowerCase().indexOf('myname') != -1)             
+             || (str.toLowerCase().indexOf('myname') != -1)
              || (str.toLowerCase().indexOf('nobody') != -1)
              || (str.toLowerCase().indexOf('noone') != -1)
              || (str.toLowerCase().indexOf('dummy') != -1)
@@ -717,7 +717,7 @@
             localStorage.html_geoloc_already_done = "nok-3/" + exc;
           }
         })
-        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           localStorage.html_geoloc_already_done = "nok-4";
         });
@@ -737,7 +737,7 @@
           case error.UNKNOWN_ERROR:
             error_str = "an unknown error occurred"
             break;
-        }      
+        }
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_already_done = "nok-5/" + error_str;
       }
@@ -759,7 +759,7 @@
           }
         }
       }
-      
+
       function str_from_jqxhr(jqxhr) { // (jqxhr: XMLHTTPRequest)
         try {
           let str = "jqxhr={";
@@ -767,7 +767,7 @@
             /* Status:
                200: "OK"
                403: "Forbidden"
-               404: "Page not found" 
+               404: "Page not found"
                ... */
             str = str + "status:" + jqxhr.status;
             str = str + ",statusText:" + jqxhr.statusText;
@@ -819,7 +819,7 @@
           dataType: "jsonp"
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-        
+
           try {
             if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
               console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
@@ -840,18 +840,18 @@
                   } // else: systematic parse error is ignored
                   if ((formStr == "") && (!skipErrorDisplay)) {
                     alert("Oops... a network error occurred, game scores could not be displayed");
-                  }                  
+                  }
                 }
                 catch (exc) {
                   console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-                }                
+                }
               });
             } // else: systematic parse error is ignored
           }
           catch (exc) {
             console.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           }
-            
+
         });
 
         // document.getElementById('my_form').submit();
@@ -860,7 +860,7 @@
 
       var playerid_prefix = "ID/";
       function handle_rsp_delayed(e) {
-        if ( (e !== undefined) 
+        if ( (e !== undefined)
              && (typeof e.parameter !== 'undefined')
              && (typeof e.parameter.playerid !== 'undefined')
              && (typeof e.rsp_cd == 'undefined')
@@ -902,7 +902,7 @@
         if (mobileMode) {
           score_display_time = 1444; // (no blinking)
         }
-        
+
         var time_to_wait = 44;
         var time_diff = new Date().getTime() - store_time;
         if (time_diff < 0) { // (invalid case)
@@ -917,29 +917,29 @@
         console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
       }
-   
+
       var last_data_used = null;
       var last_game_cnt = -1;
       async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help) { // asynchronous function
 
         try {
-      
+
           if (game_cnt == last_game_cnt) { // At most one storage per game
             return;
           }
           last_game_cnt = game_cnt;
-          store_time = new Date().getTime();  
+          store_time = new Date().getTime();
 
           let gamesok = -1;
           let deltagames = -1;
           if (typeof(Storage) !== 'undefined') {
-          
+
             if (!localStorage.gamesok) {
               localStorage.gamesok = 0;
             }
             localStorage.gamesok = Number(localStorage.gamesok) + 1;
             gamesok = Number(localStorage.gamesok);
-            
+
             switch (nbcolumns) {
 
               case 3:
@@ -999,13 +999,13 @@
                 return;
 
             }
-            
+
           }
-          
+
           var geolocation_handler = {
-                    
-            run_retry: function (data_p) {              
-              /* ipinfodb.com response format:         
+
+            run_retry: function (data_p) {
+              /* ipinfodb.com response format:
                  - SUCCESS case:
                   statusCode	"OK"
                   statusMessage	""
@@ -1017,7 +1017,7 @@
                   zipCode	"75000"
                   latitude	"48.8534"
                   longitude	"2.3488"
-                  timeZone	"+01:00"      
+                  timeZone	"+01:00"
                 - FAILURE case:
                   statusCode	"ERROR"
                   statusMessage	"Invalid IP Address."
@@ -1029,16 +1029,16 @@
                   zipCode	""
                   latitude	"0"
                   longitude	"0"
-                  timeZone	""        
-              */   
-              let converted_data = JSON.stringify(data_p);            
+                  timeZone	""
+              */
+              let converted_data = JSON.stringify(data_p);
 
               console.log("(geolocation retry data conversion for " + converted_data + ")");
-              
-              if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {            
+
+              if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {
                 console.log("geolocation error in run_retry(): " + data_p.statusCode + " " + data_p.statusMessage);
               }
-              
+
               // latitude -> latitude
               // longitude -> longitude
               // countryName -> country_name
@@ -1053,25 +1053,25 @@
               converted_data = converted_data.replace("timeZone", "time_zone");
               // ipAddress -> ip
               converted_data = converted_data.replace("ipAddress", "ip");
-              
+
               geolocation_handler.run(JSON.parse(converted_data), true);
             },
-          
+
             nb_JSON_queries_posted: 0,
             first_geolocation_errorStr: "-",
-          
+
             run: function (data_p) {
 
               // Check that the response contains valid information
               // **************************************************
-   
+
               let this_data_is_valid = false;
               if ( (typeof data_p.latitude != 'undefined') && (typeof data_p.longitude != 'undefined') // (redundant lines)
                    && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1)) // (redundant lines)
                    && ((typeof data_p.country_name != 'undefined') && (data_p.country_name.length >= 3)) // (redundant lines)
                    && ((typeof data_p.city != 'undefined') && (data_p.city.length >= 3)) // (redundant lines)
                    && ((typeof data_p.ip != 'undefined') && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
-                this_data_is_valid = true;              
+                this_data_is_valid = true;
                 if (typeof(Storage) !== 'undefined') { // Better than manual positioning (and will be updated if necessary)
                   localStorage.countryname = String(data_p.country_name).trim();
                   if ((typeof data_p.region_name != 'undefined') && (data_p.region_name.length >= 2)) { // (redundant lines)
@@ -1082,7 +1082,7 @@
                   }
                   localStorage.cityname = String(data_p.city).trim();
                   localStorage.automaticPositioning = true;
-                }              
+                }
               }
               let last_data_used_is_valid = false;
               if ( (last_data_used != null)
@@ -1104,9 +1104,9 @@
                 last_data_tag = "r";
               }
               successcase__this_data_is_used = (data != last_data_used); // (data_p and last_data_used may be equal pointers)
-              console.log("(geolocation: this_data:" + this_data_is_valid + ", last_data_used:" + last_data_used_is_valid + ", this_data_is_used: " + successcase__this_data_is_used + ")");            
+              console.log("(geolocation: this_data:" + this_data_is_valid + ", last_data_used:" + last_data_used_is_valid + ", this_data_is_used: " + successcase__this_data_is_used + ")");
               last_data_used = data;
-              
+
               let country = '-';
               let region = '-';
               let zip = '-';
@@ -1173,32 +1173,32 @@
               else {
                 console.log('invalid ip address in response');
               }
-              
+
               // Manual geolocation table corrections for particular IP addresses
               if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 15) ) { // 176.130.42.* IPv4 addresses
-                country = "France";            
+                country = "France";
                 region = "Alsace";
                 city = "Munster";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
-              
+
               // Manual conversions
               if (localStorage.firstname && (localStorage.firstname.indexOf("Ghi") == 0) && (region == "Illinois") && (city == "Naperville")) {
-                country = "France";            
+                country = "France";
                 region = "Île-de-France";
                 city = "Paris";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
               else if (localStorage.firstname && (localStorage.firstname.indexOf("Ghi") == 0) && (region == "California") && (city == "San Jose")) {
-                country = "France";            
+                country = "France";
                 region = "Île-de-France";
                 city = "Paris";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
-              }              
+              }
               else if (region == "North Rhine-Westphalia") {
                 region = "Nordrhein-Westfalen";
               }
-              
+
               // Check if geolocation data are valid
               if (geolocation_handler.nb_JSON_queries_posted == 1) {
                 if ((!valid_ipaddress) || (city == '-')) {
@@ -1219,7 +1219,7 @@
                   return geolocation_handler.geolocation_retry("", "manual geolocation retry due to invalid geolocation data", retry_error_str.trim());
                 }
               }
-              
+
               if (typeof(Storage) !== 'undefined') {
                 if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
                   if (localStorage.countryname && localStorage.cityname) {
@@ -1262,7 +1262,7 @@
 
               // Other fields
               // ************
-              
+
               let playerid;
               let firstname = "-"; // (firstname may stay equal to this default value if not defined)
               if (typeof(Storage) !== 'undefined') {
@@ -1334,12 +1334,12 @@
                 }
                 if (localStorage.firstaccessid) {
                   firstAccessIdStr = localStorage.firstaccessid;
-                }              
+                }
               }
               document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/GeolocStatus:' + successcase__this_data_is_used + '/FirstNameAsked:' + firstNameAskedStr + '/FirstAccessId:' + firstAccessIdStr + extra_debug_info;
 
               document.getElementById('form_rankings_id').value = '-';
-              document.getElementById('form_list_id').value = '-';              
+              document.getElementById('form_list_id').value = '-';
 
               var form_to_be_submitted = true;
               if (typeof(Storage) !== 'undefined') {
@@ -1391,7 +1391,7 @@
               }
 
             }, // run
-            
+
             geolocation_retry: function (jqxhr, textStatus, error) {
               var errorStr = ("geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
               if (typeof(Storage) !== 'undefined') {
@@ -1422,22 +1422,22 @@
               while(new Date().getTime() < now + 111){}; // (interface is frozen during this short time)
 
               // Another geolocation server is used
-              geolocation_handler.nb_JSON_queries_posted++;          
+              geolocation_handler.nb_JSON_queries_posted++;
               if (geolocation_handler.nb_JSON_queries_posted > 2) {
                 console.log("error: too many recursive calls to run()! (#1)");
                 return; // defense against infinite loops
               }
               $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
-              .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest) 
+              .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-                let html_geoloc_already_done_str = "";                
+                let html_geoloc_already_done_str = "";
                 if (typeof(Storage) !== 'undefined') {
                   if (localStorage.firstname) {
                     errorStr = errorStr + " for " + localStorage.firstname;
                   }
                   else if (localStorage.firstaccessid) {
                     errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
-                  }              
+                  }
                   if (localStorage.countryname) {
                     errorStr = errorStr + " in " + localStorage.countryname;
                   }
@@ -1449,7 +1449,7 @@
                   }
                   if (localStorage.html_geoloc_already_done) {
                     html_geoloc_already_done_str = "|HTML geolocation status:" + localStorage.html_geoloc_already_done;
-                  }                  
+                  }
                 }
                 errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr + "|last_data_used_not_null:" + (last_data_used != null) + "|first_geolocation_error:" + geolocation_handler.first_geolocation_errorStr + html_geoloc_already_done_str + "|html_compatibility_game_version:" + html_compatibility_game_version;
                 console.log(errorStr);
@@ -1457,7 +1457,7 @@
                 // Reuse last (valid or not) geolocation data if any
                 if (last_data_used != null) {
                   geolocation_handler.nb_JSON_queries_posted++;
-                  console.log("reuse last (valid or not) geolocation data");                
+                  console.log("reuse last (valid or not) geolocation data");
                   geolocation_handler.run(last_data_used);
                 }
                 else {
@@ -1468,19 +1468,19 @@
                     var fixed_data = {'ip':fixed_ip_address};
                     geolocation_handler.run(fixed_data);
                   }
-                  else if ( (typeof(Storage) !== 'undefined') 
+                  else if ( (typeof(Storage) !== 'undefined')
                             && localStorage.automaticPositioning && localStorage.countryname && localStorage.regionname && localStorage.cityname ) { // Relevant location
                     geolocation_handler.nb_JSON_queries_posted++;
                     var sum = 0;
-                    // regionname is used instead of cityname below to better identify unique players 
-                    // => one unique "geolocation retry failure" player is supported per region                    
+                    // regionname is used instead of cityname below to better identify unique players
+                    // => one unique "geolocation retry failure" player is supported per region
                     for (var i = 0; i < localStorage.regionname.length; i++) {
                       sum = sum + localStorage.regionname.charCodeAt(i);
                     }
                     var inferred_ip_address = "2.2.2." + String(sum % 256);
                     console.log("use inferred IP address: " + inferred_ip_address);
                     var inferred_data = {'ip':inferred_ip_address};
-                    geolocation_handler.run(inferred_data);                    
+                    geolocation_handler.run(inferred_data);
                   }
                   else { // No form is submitted in this retry failure case
                     alert("Oops... a network error occurred, game scores could not be stored.\nSharing your position/location information may solve this error:\nyour scores will be stored with country/region/city as identifier");
@@ -1491,9 +1491,9 @@
               })
               .always(function() {
                 console.log("(getJSON completed #2)");
-              });        
+              });
             }, // geolocation_retry
-            
+
             getIpAddressForIdentifiedUser: function () {
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.firstaccessid) {
@@ -1508,15 +1508,15 @@
               }
               return "";
             },
-          
-            
+
+
           } // geolocation_handler
 
-          geolocation_handler.nb_JSON_queries_posted++;          
+          geolocation_handler.nb_JSON_queries_posted++;
           if (geolocation_handler.nb_JSON_queries_posted > 2) {
             console.log("error: too many recursive calls to run()! (#2)");
             return; // defense against infinite loops
-          }        
+          }
           $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
             geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
@@ -1536,13 +1536,13 @@
             nb_errors_submitted++;
           }
         }
-        
+
       } // store_player_info
 
       // ***********************
       // Handle page access info
       // ***********************
-      
+
       var initial_time = new Date().getTime();
       function submitAccessForm(data, access_type, debug_info) {
         var final_time = new Date().getTime();
@@ -1564,16 +1564,16 @@
         var cityNameStr = "-";
         if ((data != null) && (typeof data.city != 'undefined')) {
           cityNameStr = String(data.city).trim();
-        }    
+        }
         var ipAddressStr = "-";
         if ((data != null) && (typeof data.ip != 'undefined')) {
           ipAddressStr = String(data.ip).trim();
         }
-        var firstAccessIdStr = "-"; 
+        var firstAccessIdStr = "-";
         if (typeof(Storage) !== 'undefined') {
           if (localStorage.firstaccessid) {
             firstAccessIdStr = localStorage.firstaccessid;
-          } 
+          }
         }
         var debugStr = navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
         submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true, 111);
@@ -1583,7 +1583,7 @@
         if (firstAccess) {
           // Keep some time between the 2 potential calls to submitAccessForm()
           let now = new Date().getTime();
-          while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)        
+          while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)
           if (last_data_used != null) {
             submitAccessForm(last_data_used, access_type, debug_info);
           }
@@ -1592,15 +1592,15 @@
           }
           // Keep some time between the 2 potential calls to submitAccessForm()
           now = new Date().getTime();
-          while(new Date().getTime() < now + timeToWait2){}; // (interface is frozen during this short time)                      
+          while(new Date().getTime() < now + timeToWait2){}; // (interface is frozen during this short time)
         }
       }
-      
+
       function firstAccessGeolocFailure(jqxhr, textStatus, error) {
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
-        $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
-          /* ipinfodb.com response format:         
+        $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {
+          /* ipinfodb.com response format:
              - SUCCESS case:
               statusCode	"OK"
               statusMessage	""
@@ -1612,7 +1612,7 @@
               zipCode	"75000"
               latitude	"48.8534"
               longitude	"2.3488"
-              timeZone	"+01:00"      
+              timeZone	"+01:00"
             - FAILURE case:
               statusCode	"ERROR"
               statusMessage	"Invalid IP Address."
@@ -1624,7 +1624,7 @@
               zipCode	""
               latitude	"0"
               longitude	"0"
-              timeZone	""        
+              timeZone	""
           */
           let converted_data = JSON.stringify(data_p);
 
@@ -1638,7 +1638,7 @@
           converted_data = converted_data.replace("cityName", "city");
           // ipAddress -> ip
           converted_data = converted_data.replace("ipAddress", "ip");
-          
+
           last_data_used = JSON.parse(converted_data);
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
         })
@@ -1650,14 +1650,14 @@
         })
         .always(function() {
           console.log("(getJSON completed #i2)");
-        });    
+        });
       }
-      
+
       $.getJSON('https://freegeoip.net/json/', function(data) {
         last_data_used = data;
         if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
              && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
-          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');        
+          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
         }
         else {
           return firstAccessGeolocFailure("", "manual first access geolocation retry due to invalid geolocation data", "");
@@ -1668,7 +1668,7 @@
       })
       .always(function() {
         console.log("(getJSON completed #i1)");
-      });  
+      });
 
       if (firstAccess) {
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",        44);
@@ -1685,7 +1685,7 @@
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-2min30')", 150000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-3min')",   180000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-4min')",   240000);
-        setTimeout("storeFirstAccess('game', 0, 0, 'debug-5min')",   300000); 
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-5min')",   300000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-10min')",  600000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-15min')",  900000); // See (**)
       }
@@ -1694,4 +1694,4 @@
 
   </body>
 
-</html> 
+</html>
