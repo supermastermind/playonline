@@ -316,7 +316,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_EQ";
+      let html_compatibility_game_version = "Ver_ER";
       let nb_errors_submitted = 0;
       let mobileMode = false;      
       let androidMode = false;
@@ -376,7 +376,7 @@
                   country_debug = elt.options[elt.selectedIndex].text;
                 }
                 else {
-                  alert("No country was selected!\nYou shall select a country in order to store your games scores...");
+                  alert("No country was selected!\nYou shall select a country in order to store your game scores...");
                   place_error = true;
                   country_debug = "no country was selected";
                 }
@@ -395,10 +395,10 @@
                   }
                 }
                 else {
-                  if (!place_error) {
-                    alert("Invalid city name: " + city_entered + "\nYou shall enter a valid city name in order to store your games scores...");
-                    place_error = true;
-                  }
+                  // if (!place_error) {
+                  alert("Invalid city name: " + city_entered + "\nYou shall enter a valid city name in order to store your game scores...");
+                  place_error = true;
+                  // }
                 }
                 city_debug = city_entered;                
               }
@@ -444,8 +444,8 @@
                     }
                   }
                   submitForm("warning: invalid place information entered (" + country_debug + ", " + city_debug + ")" + errorStr, true);
-                  attempt_HTML_geolocation(true); // Subject to user acceptance
                 }
+                attempt_HTML_geolocation(true); // Subject to user acceptance
 
               }
 
@@ -1500,9 +1500,9 @@
                   if (localStorage.firstaccessid.indexOf("FA - 0KQI0 - Fri Jan 12 2018") != -1) {
                     return "1.1.1.1"; // (unique fixed IP address)
                   }
-                  else if (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1) {
+                  /* else if (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1) {
                     return "1.1.1.2"; // (unique fixed IP address)
-                  }
+                  } */
                 }
                 return "";
               }
@@ -1646,7 +1646,7 @@
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
-          setTimeout("attempt_HTML_geolocation(false)", 25000); // Subject to user acceptance
+          // setTimeout("attempt_HTML_geolocation(false)", 25000); // Subject to user acceptance => not done because may prevent future requests in case of initial rejection
         })
         .always(function() {
           console.log("(getJSON completed #i2)");
