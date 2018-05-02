@@ -317,7 +317,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_ET";
+      let html_compatibility_game_version = "Ver_EU";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1049,10 +1049,10 @@
               // longitude -> longitude
               // countryName -> country_name
               converted_data = converted_data.replace("countryName", "country_name");
-              // regionName -> region_name
-              converted_data = converted_data.replace("regionName", "region_name");
-              // zipCode -> zip_code
-              converted_data = converted_data.replace("zipCode", "zip_code");
+              // regionName -> region
+              converted_data = converted_data.replace("regionName", "region");
+              // zipCode -> postal
+              converted_data = converted_data.replace("zipCode", "postal");
               // cityName -> city
               converted_data = converted_data.replace("cityName", "city");
               // timeZone -> time_zone
@@ -1080,8 +1080,8 @@
                 this_data_is_valid = true;
                 if (typeof(Storage) !== 'undefined') { // Better than manual positioning (and will be updated if necessary)
                   localStorage.countryname = String(data_p.country_name).trim();
-                  if ((typeof data_p.region_name != 'undefined') && (data_p.region_name.length >= 2)) { // (redundant lines)
-                    localStorage.regionname = String(data_p.region_name).trim();
+                  if ((typeof data_p.region != 'undefined') && (data_p.region.length >= 2)) { // (redundant lines)
+                    localStorage.regionname = String(data_p.region).trim();
                   }
                   else {
                     localStorage.regionname = '-';
@@ -1131,14 +1131,14 @@
                 else {
                   console.log('invalid country name in response');
                 }
-                if ((typeof data.region_name != 'undefined') && (String(data.region_name).trim().length >= 2)) {
-                  region = String(data.region_name).trim();
+                if ((typeof data.region != 'undefined') && (String(data.region).trim().length >= 2)) {
+                  region = String(data.region).trim();
                 }
                 else {
                   console.log('invalid region name in response');
                 }
-                if ((typeof data.zip_code != 'undefined') && (String(data.zip_code).trim().length >= 2)) {
-                  zip = String(data.zip_code).trim();
+                if ((typeof data.postal != 'undefined') && (String(data.postal).trim().length >= 2)) {
+                  zip = String(data.postal).trim();
                 }
                 else {
                   console.log('invalid zip code in response');
@@ -1398,6 +1398,10 @@
               }
 
             }, // run
+            
+            stringify_and_run: function (response) {
+              geolocation_handler.run(JSON.stringify(response));
+            }, 
 
             geolocation_retry: function (jqxhr, textStatus, error) {
               var errorStr = ("geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
@@ -1524,7 +1528,9 @@
             console.log("error: too many recursive calls to run()! (#2)");
             return; // defense against infinite loops
           }
-          $.getJSON('https://freegeoip.net/json/', geolocation_handler.run)
+          $.getJSON('https://api.ipdata.co', function(response) {
+            geolocation_handler.stringify_and_run(response);
+          })
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
             geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
           })
@@ -1565,8 +1571,8 @@
           countryNameStr = String(data.country_name).trim();
         }
         var regionNameStr = "-";
-        if ((data != null) && (typeof data.region_name != 'undefined')) {
-          regionNameStr = String(data.region_name).trim();
+        if ((data != null) && (typeof data.region != 'undefined')) {
+          regionNameStr = String(data.region).trim();
         }
         var cityNameStr = "-";
         if ((data != null) && (typeof data.city != 'undefined')) {
@@ -1639,8 +1645,8 @@
           // longitude -> longitude
           // countryName -> country_name
           converted_data = converted_data.replace("countryName", "country_name");
-          // regionName -> region_name
-          converted_data = converted_data.replace("regionName", "region_name");
+          // regionName -> region
+          converted_data = converted_data.replace("regionName", "region");
           // cityName -> city
           converted_data = converted_data.replace("cityName", "city");
           // ipAddress -> ip
@@ -1661,7 +1667,8 @@
         });
       }
 
-      $.getJSON('https://freegeoip.net/json/', function(data) {
+      $.getJSON('https://api.ipdata.co', function(response) {
+        let data = JSON.stringify(response);
         firstgamegeoloc = "fax";
         last_data_used = data;      
         if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
