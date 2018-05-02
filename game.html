@@ -317,7 +317,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_EV";
+      let html_compatibility_game_version = "Ver_EW";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1151,7 +1151,12 @@
                   console.log('invalid city name in response');
                 }
                 if ((typeof data.time_zone != 'undefined') && (String(data.time_zone).trim().length >= 2)) {
-                  timezone = String(data.time_zone).trim();
+                  if ((typeof data.time_zone.name != 'undefined') && (String(data.time_zone.name).trim().length >= 2)) {
+                    timezone = String(data.time_zone.name).trim();
+                  }
+                  else {
+                    timezone = String(data.time_zone).trim();
+                  }
                 }
                 else {
                   console.log('invalid time zone in response');
