@@ -317,7 +317,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_ES";
+      let html_compatibility_game_version = "Ver_ET";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -396,10 +396,10 @@
                   }
                 }
                 else {
-                  // if (!place_error) {
-                  alert("Invalid city name: " + city_entered + "\nYou shall enter a valid city name in order to store your game scores...");
-                  place_error = true;
-                  // }
+                  if (!place_error) {
+                    alert("Invalid city name: " + city_entered + "\nYou shall enter a valid city name in order to store your game scores...");
+                    place_error = true;
+                  }
                 }
                 city_debug = city_entered;
               }
@@ -444,6 +444,7 @@
                       errorStr = errorStr + " with HTML geolocation status " + localStorage.html_geoloc_already_done;
                     }
                   }
+                  alert("If you accept to share your location,\nthis information will be used to store your score\nand you will also see the other players scores and rankings"); // (duplicated line)
                   submitForm("warning: invalid place information entered (" + country_debug + ", " + city_debug + ")" + errorStr, true);
                 }
                 attempt_HTML_geolocation(true); // Subject to user acceptance => may complete / correct (in an automated way) above user inputs
@@ -1489,7 +1490,7 @@
                     geolocation_handler.run(inferred_data);
                   }
                   else { // No form is submitted in this retry failure case
-                    alert("If you accept to share your location,\nthis information will be used to store your score\nand you will also see the other players scores and rankings");
+                    alert("If you accept to share your location,\nthis information will be used to store your score\nand you will also see the other players scores and rankings"); // (duplicated line)
                     submitForm(errorStr, true);
                     attempt_HTML_geolocation(true); // Subject to user acceptance
                   }
@@ -1500,7 +1501,7 @@
               });
             }, // geolocation_retry
 
-            getIpAddressForIdentifiedUser: function () {
+            getIpAddressForIdentifiedUser: function () { // "Reliable" users having played for a certain time, whose location is unknown and who did not want to share it
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.firstaccessid) {
                   if (localStorage.firstaccessid.indexOf("FA - 0KQI0 - Fri Jan 12 2018") != -1) {
