@@ -1066,6 +1066,9 @@ function updateGameSizes() {
       else if (nbColumns == 5) {
         nb_attempts_not_displayed = Math.min(3, nb_attempts_not_displayed);
       }
+      else if (nbColumns == 6) {
+        nb_attempts_not_displayed = Math.min(2, nb_attempts_not_displayed);
+      }      
     }
     y_step = (y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed // number of attempts displayed
                                 +transition_height // margin
