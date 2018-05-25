@@ -84,6 +84,7 @@ let loadTime = (new Date()).getTime(); // time in milliseconds
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
+let nbNewGameEventsCancelled = 0;
 let playerWasHelped = false;
 
 let errorStr = "";
@@ -682,10 +683,13 @@ function newGameButtonClick(nbColumns) {
 
       if (gameOnGoing() && (currentAttemptNumber > 1)) {
         
-        var rsp = confirm("Do you really want to abort and lose current game?");
-        if (!rsp) {
-          return; // Cancel or "x" (close) button
-        }          
+        if (nbNewGameEventsCancelled <= 2) {
+          var rsp = confirm("Do you really want to abort and lose current game?");
+          if (!rsp) {
+            nbNewGameEventsCancelled++;
+            return; // Cancel or "x" (close) button
+          }          
+        }
         
         // Transition effect 1/2
         try {
