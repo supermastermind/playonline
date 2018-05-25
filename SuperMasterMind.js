@@ -681,6 +681,12 @@ function newGameButtonClick(nbColumns) {
          || (currentAttemptNumber <= 1) ) { // (radio buttons events)
 
       if (gameOnGoing() && (currentAttemptNumber > 1)) {
+        
+        var rsp = confirm("Do you really want to abort and lose current game?");
+        if (!rsp) {
+          return; // Cancel or "x" (close) button
+        }          
+        
         // Transition effect 1/2
         try {
           $(".game_aborted").fadeIn(3500);
