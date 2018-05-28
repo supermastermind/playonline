@@ -1212,7 +1212,10 @@
               if (country == "Lao People's Democratic Republic") {
                 country = "Laos";
               }
-
+              if ((country == "Portugal") && (region == "Regiao Autonoma da Madeira")) {              
+                region = "Madeira";
+              }
+              
               // Check if geolocation data are valid
               if (geolocation_handler.nb_JSON_queries_posted == 1) {
                 if ((!valid_ipaddress) || (city == '-')) {
