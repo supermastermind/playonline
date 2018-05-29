@@ -2752,13 +2752,7 @@ function draw_graphic_bis() {
         document.getElementById("playRandomCodeButton").className = "button disabled";
       }
       else {
-        if ( gameOnGoing() && (currentAttemptNumber == 1)
-             && (nbGamesPlayedAndWon == 4) ) { // (specific event to make games funnier)
-          document.getElementById("playRandomCodeButton").className = (androidMode ? "button fast_blinking" : "button blinking");
-        }
-        else {
-          document.getElementById("playRandomCodeButton").className = "button";
-        }
+        document.getElementById("playRandomCodeButton").className = "button";
       }
 
       document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed)+1) < (nbColumns+1)/2);
