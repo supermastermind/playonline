@@ -683,8 +683,8 @@ function newGameButtonClick(nbColumns) {
 
       if (gameOnGoing() && (currentAttemptNumber > 1)) {
         
-        if (nbNewGameEventsCancelled <= 2) {
-          var rsp = confirm("Do you really want to abort and lose current game?");
+        if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
+          var rsp = confirm("Do you really want to abort and lose current game?"); // (code duplicated)
           if (!rsp) {
             nbNewGameEventsCancelled++;
             return; // Cancel or "x" (close) button

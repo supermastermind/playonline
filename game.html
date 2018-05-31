@@ -217,6 +217,18 @@
       // 2') Defense timeout to allow interactions with the page
       setTimeout("console.log('(on load timeout)');$('.game_loading').fadeOut('slow');", 5000); // game_loading div fades out
 
+      $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
+        try {
+          if (gameOnGoing() && (currentAttemptNumber > 1)) {
+            return "Do you really want to abort and lose current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
+          }
+        }
+        catch (exc) {
+          console.log("error encountered at game abortion: " + exc);
+          return; // (no confirmation asked)
+        }
+      });
+
       function makeid() {
         let text = "";
         let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -242,7 +254,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="draw_graphic();" onunload="console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
+  <body onresize="draw_graphic();" onunload="/* See (***) */ console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
 
     <div class="game_loading">
       <img src="img/loading.gif"><br>
@@ -317,7 +329,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_F2";
+      let html_compatibility_game_version = "Ver_F3";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
