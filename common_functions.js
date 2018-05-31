@@ -47,18 +47,34 @@ function write_menu(selected_idx) {
 }
 
 function write_sidebar() {
+  var month = new Array();
+  month[0] = "January";
+  month[1] = "February";
+  month[2] = "March";
+  month[3] = "April";
+  month[4] = "May";
+  month[5] = "June";
+  month[6] = "July";
+  month[7] = "August";
+  month[8] = "September";
+  month[9] = "October";
+  month[10] = "November";
+  month[11] = "December";
+  var d = new Date();
+  var month_and_year_str = '(' + month[d.getMonth()] + ' ' + d.getFullYear() + ')';
+  
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
-      <b>Current version: 0.8</b><br><br>\
+      <b>Current version: 0.8<br>"
+      + month_and_year_str +
+      "</b><br><br>\
       Version 0.7<br>\
-      possible codes displayed for each attempt<br>\
-      (January 2018)\
-      <br><br>\
+      possible codes at each attempt can be displayed<br><br>\
       Version 0.6<br>\
       online game scores<br><br>\
       Version 0.5<br>\
-      simple gameplay<br>\
+      basic gameplay<br>\
       <br>\
       <h1>Interesting links</h1>\
       <ul>\
