@@ -88,19 +88,20 @@
             
             <h3><b>Rules</b></h3>
             The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>
-            The player makes successive attempts and has to find out the secret code before the maximum number of attempts is reached. At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
+            The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>
+            At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
             <ul style="list-style-type:disc;margin:0">
             <li>a <b>black peg</b> indicates the existence of a correct color placed in a correct position,</li>
             <li>a <b>white peg</b> indicates the existence of a correct color placed in a wrong position.</li>
             </ul>
-            Once this feedback has been provided, another attempt is made. The game ends when the secret code is found, which means the player got N black pegs, or when the maximum number of attempts is reached, in which case the game is lost.<br><br>
+            Once this feedback has been provided, another attempt is made. The game ends when the secret code is found, which means the player got N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br><br>
             
             <h3><b>Strategy</b></h3>
-            This page allows to play online directly in your browser. Behind the graphical game board, the program (fully written in <b>HTML/javascript</b>) is assisted by a calculator which will give you tips and tricks to find the optimal strategy!
+            This page allows to play online directly in your browser. Behind the graphical game board, the program (fully written in HTML/javascript) is assisted by a calculator which will give you tips and tricks to find the optimal strategy!
             <hr style="height:7px; visibility:hidden;" />
             Several game modes are possible, from <b>3</b> (very easy) <b>to 7 columns</b> (expert) and from <b>6 to 10 colors</b>.
             <hr style="height:7px; visibility:hidden;" />
-            Ongoing work: At each stage of the game, the <b>number of possible remaining codes</b> is automatically computed and displayed.
+            At each stage of the game, the <b>number of possible remaining codes</b> is automatically computed and displayed.
             The associated <b>list of possible codes</b> can also be displayed (once the game is over, otherwise it would be cheating!).
             <hr style="height:7px; visibility:hidden;" />
             The calculator also compares what you played to what the <b>"optimal mathematical strategy"</b> would have played. For each code played,
@@ -112,7 +113,7 @@
             <li><b>-0.50</b> means that what you played was not optimal: you lost 1/2 attempt on average
             to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches
             secret codes in 4 attempts on average, your code (followed by an optimal strategy) will reach them in 4.5 attempts on average.
-            Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game! :)<br>
+            Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win instantly the game!<br>
             </ul>
 
             <!-- OPTIMAL STRATEGY DETAILS -->
@@ -121,11 +122,10 @@
             <h3><b>About</b></h3>
             <font color=black>
             This program is fully written in <b>HTML 5 and javascript</b><br>
-            It works on Firefox, Chrome, Safari on Windows, Mac, Android, iPhone. <br>
-            <hr style="height:7px; visibility:hidden;" />
+            It works in Firefox, Chrome, Safari on Windows, Mac, Android, iPhone.<br>
             It is free and open source, under <a href='LICENSE.txt' onfocus='this.blur()'><b>GNU General Public License</b></a><br>
             <hr style="height:7px; visibility:hidden;" />
-            Any comments or ideas? See <a href='contact_info.html' onfocus='this.blur()'><b>Contact info</b></a> <a href='contact_info.html' onfocus='this.blur()'><img src="img/email.png" style="vertical-align:middle;width:auto;height:22px;margin:0px"></a>
+            Any comments or ideas?<br>See <a href='contact_info.html' onfocus='this.blur()'><b>Contact info</b></a> <a href='contact_info.html' onfocus='this.blur()'><img src="img/email.png" style="vertical-align:middle;width:auto;height:22px;margin:0px"></a>
             </font>            
             
           </td></tr></table>
