@@ -2512,13 +2512,13 @@ function draw_graphic_bis() {
             let x_delta = 0.75;
             if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-              if (!displayString("Select me!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
+              if (!displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
                                  darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-                ctx.font = medium_bold_font;
-                if (!displayString("Select colors here!", x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
+                // ctx.font = medium_bold_font;
+                if (!displayString("Select colors!", x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (font_size >= 27) { // (very big font cases)
-                    ctx.font = small_bold_font;
+                    ctx.font = medium_bold_font;
                   }
                   displayString("Select me!", x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
@@ -2940,7 +2940,7 @@ function displayString(str, x_cell, y_cell, x_cell_width,
     }
 
     if (drawInBubble) {
-      let delta_x = 5;
+      let delta_x = 7;
       let delta_y = 3;
       drawBubble(ctx, x_0_for_drawBubble - delta_x, y_0_next - delta_y, str_width + 2*delta_x, y_0 - y_0_next + 2*delta_y, Math.floor(str_height/2), foregroundColor, 1, bottomRightBubble);
     }
