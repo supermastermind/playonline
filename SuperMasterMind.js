@@ -2517,9 +2517,9 @@ function draw_graphic_bis() {
                 // ctx.font = medium_bold_font;
                 if (!displayString("Select colors!", x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
-                  if (font_size >= 27) { // (very big font cases)
-                    ctx.font = medium_bold_font;
-                  }
+                  // if (font_size >= 27) { // (very big font cases)
+                  //  ctx.font = medium_bold_font;
+                  // }
                   displayString("Select me!", x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                 }
