@@ -682,15 +682,15 @@ function newGameButtonClick(nbColumns) {
          || (currentAttemptNumber <= 1) ) { // (radio buttons events)
 
       if (gameOnGoing() && (currentAttemptNumber > 1)) {
-        
+
         if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
           var rsp = confirm("Do you really want to abort and lose current game?"); // (code duplicated)
           if (!rsp) {
             nbNewGameEventsCancelled++;
             return; // Cancel or "x" (close) button
-          }          
+          }
         }
-        
+
         // Transition effect 1/2
         try {
           $(".game_aborted").fadeIn(3500);
@@ -1072,13 +1072,13 @@ function updateGameSizes() {
       }
       if (nbColumns == 4) {
         nb_attempts_not_displayed = Math.min(1, nb_attempts_not_displayed);
-      }      
+      }
       else if (nbColumns == 5) {
         nb_attempts_not_displayed = Math.min(3, nb_attempts_not_displayed);
       }
       else if (nbColumns == 6) {
         nb_attempts_not_displayed = Math.min(2, nb_attempts_not_displayed);
-      }      
+      }
     }
     y_step = (y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed // number of attempts displayed
                                 +transition_height // margin
@@ -2510,18 +2510,18 @@ function draw_graphic_bis() {
           ctx.font = medium2_bold_font;
           if ((nbGamesPlayedAndWon == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
             let x_delta = 0.75;
-            if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
-                               darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
-              if (!displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
-                                 darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
+            if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
+                               darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+              if (!displayString("Select me!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
+                                 darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
                 ctx.font = medium_bold_font;
-                if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.11*x_delta,
-                                   darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true)) {
+                if (!displayString("Select colors here!", x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
+                                   darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (font_size >= 27) { // (very big font cases)
                     ctx.font = small_bold_font;
                   }
-                  displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.4*x_delta,
-                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true);
+                  displayString("Select me!", x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
+                                darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                 }
               }
             }
@@ -2859,9 +2859,10 @@ function displayString(str, x_cell, y_cell, x_cell_width,
                        displayIfEnoughRoom = false,
                        halfLine = 0 /* 0 = full line, 1 = bottom half line, 2 = top half line */,
                        ignoreRanges = false,
-                       drawInBubble = false) {
+                       drawInBubble = false, bottomRightBubble = true) {
 
   let x_0 = get_x_pixel(x_min+x_step*x_cell);
+  let x_0_for_drawBubble;
   let x_0_next = get_x_pixel(x_min+x_step*(x_cell+x_cell_width));
   let y_0;
   let y_0_next;
@@ -2920,6 +2921,7 @@ function displayString(str, x_cell, y_cell, x_cell_width,
       ctx.textAlign = "center"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
       ctx.fillText(str, (x_0 + x_0_next)/2, (y_0 + y_0_next)/2 + y_offset);
+      x_0_for_drawBubble = Math.max((x_0 + x_0_next)/2 - str_width/2, 0);
       // subPixelText(ctx, str, (x_0 + x_0_next)/2, y_0, 25);
     }
     else if (justify == 2) { // right
@@ -2927,18 +2929,20 @@ function displayString(str, x_cell, y_cell, x_cell_width,
       ctx.textAlign = "end"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
       ctx.fillText(str, x_0_next, (y_0 + y_0_next)/2 + y_offset);
+      x_0_for_drawBubble = Math.max(x_0_next - str_width, 0);
     }
     else { // left
       ctx.fillStyle = foregroundColor;
       ctx.textAlign = "start"; // horizontal alignment
       ctx.textBaseline = "middle"; // vertical alignment
       ctx.fillText(str, x_0, (y_0 + y_0_next)/2 + y_offset);
+      x_0_for_drawBubble = x_0;
     }
 
     if (drawInBubble) {
-      let delta_x = 10;
+      let delta_x = 5;
       let delta_y = 3;
-      drawBubble(ctx, x_0 - delta_x, y_0_next - delta_y, str_width + 2*delta_x, y_0 - y_0_next + 2*delta_y, Math.floor(str_height/2), foregroundColor, 1);
+      drawBubble(ctx, x_0_for_drawBubble - delta_x, y_0_next - delta_y, str_width + 2*delta_x, y_0 - y_0_next + 2*delta_y, Math.floor(str_height/2), foregroundColor, 1, bottomRightBubble);
     }
 
     return true;
@@ -3089,25 +3093,44 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
 
 }
 
-function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth)
+function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomRightBubble)
 {
   let r = x + w;
   let b = y + h;
-  ctx.beginPath();
-  ctx.strokeStyle = foregroundColor;
-  ctx.lineWidth = lineWidth;
-  ctx.moveTo(x+radius, y);
-  ctx.lineTo(x+radius/2, y-10);
-  ctx.lineTo(x+radius * 2, y);
-  ctx.lineTo(r-radius, y);
-  ctx.quadraticCurveTo(r, y, r, y+radius);
-  ctx.lineTo(r, y+h-radius);
-  ctx.quadraticCurveTo(r, b, r-radius, b);
-  ctx.lineTo(x+radius, b);
-  ctx.quadraticCurveTo(x, b, x, b-radius);
-  ctx.lineTo(x, y+radius);
-  ctx.quadraticCurveTo(x, y, x+radius, y);
-  ctx.stroke();
+  if (bottomRightBubble) { // bottom-right bubble
+    ctx.beginPath();
+    ctx.strokeStyle = foregroundColor;
+    ctx.lineWidth = lineWidth;
+    ctx.moveTo(x+radius, y);
+    ctx.lineTo(x+radius/2, y-10);
+    ctx.lineTo(x+radius*2, y);
+    ctx.lineTo(r-radius, y);
+    ctx.quadraticCurveTo(r, y, r, y+radius);
+    ctx.lineTo(r, y+h-radius);
+    ctx.quadraticCurveTo(r, b, r-radius, b);
+    ctx.lineTo(x+radius, b);
+    ctx.quadraticCurveTo(x, b, x, b-radius);
+    ctx.lineTo(x, y+radius);
+    ctx.quadraticCurveTo(x, y, x+radius, y);
+    ctx.stroke();
+  }
+  else { // bottom-left bubble
+    ctx.beginPath();
+    ctx.strokeStyle = foregroundColor;
+    ctx.lineWidth = lineWidth;
+    ctx.moveTo(r-radius*2, y);
+    ctx.lineTo(r-radius/2, y-10);
+    ctx.lineTo(r-radius, y);
+    ctx.quadraticCurveTo(r, y, r, y+radius);
+    ctx.lineTo(r, y+h-radius);
+    ctx.quadraticCurveTo(r, b, r-radius, b);
+    ctx.lineTo(x+radius, b);
+    ctx.quadraticCurveTo(x, b, x, b-radius);
+    ctx.lineTo(x, y+radius);
+    ctx.quadraticCurveTo(x, y, x+radius, y);
+    ctx.lineTo(r-radius*2, y);
+    ctx.stroke();
+  }
 }
 
 function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
