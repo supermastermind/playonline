@@ -329,7 +329,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_F6";
+      let html_compatibility_game_version = "Ver_F7";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1224,10 +1224,10 @@
               if (country == "Lao People's Democratic Republic") {
                 country = "Laos";
               }
-              if ((country == "Portugal") && (region == "Regiao Autonoma da Madeira")) {              
+              if ((country == "Portugal") && (region == "Regiao Autonoma da Madeira")) {
                 region = "Madeira";
               }
-              
+
               // Check if geolocation data are valid
               if (geolocation_handler.nb_JSON_queries_posted == 1) {
                 if ((!valid_ipaddress) || (city == '-')) {
@@ -1492,8 +1492,14 @@
                 }
                 else {
                   var fixed_ip_address = geolocation_handler.getIpAddressForIdentifiedUser();
-                  if ( (typeof(Storage) !== 'undefined')
-                       && localStorage.automaticPositioning && localStorage.countryname && localStorage.regionname && localStorage.cityname ) { // Relevant location
+                  if (fixed_ip_address != "") { // Identified user
+                    geolocation_handler.nb_JSON_queries_posted++;
+                    console.log("use fixed IP address: " + fixed_ip_address);
+                    var fixed_data = {'ip':fixed_ip_address};
+                    geolocation_handler.run(fixed_data);
+                  }
+                  else if ( (typeof(Storage) !== 'undefined')
+                            && localStorage.automaticPositioning && localStorage.countryname && localStorage.regionname && localStorage.cityname ) { // Relevant location
                     geolocation_handler.nb_JSON_queries_posted++;
                     var sum = 0;
                     // regionname is used instead of cityname below to better identify unique players
@@ -1506,12 +1512,6 @@
                     var inferred_data = {'ip':inferred_ip_address};
                     geolocation_handler.run(inferred_data);
                   }
-                  else if (fixed_ip_address != "") { // Identified user
-                    geolocation_handler.nb_JSON_queries_posted++;
-                    console.log("use fixed IP address: " + fixed_ip_address);
-                    var fixed_data = {'ip':fixed_ip_address};
-                    geolocation_handler.run(fixed_data);
-                  }                  
                   else { // No form is submitted in this retry failure case
                     alert("If you accept to share your location,\nthis information will be used to store your score\nand you will also see the other players scores and rankings"); // (duplicated line)
                     submitForm(errorStr, true);
@@ -1687,7 +1687,7 @@
 
       $.getJSON('https://api.ipdata.co', function(data) {
         firstgamegeoloc = "fax";
-        last_data_used = data;  
+        last_data_used = data;
         if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
              && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
           firstgamegeoloc = "fa1";
