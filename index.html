@@ -7,11 +7,11 @@
     <title>Play Super Master Mind online</title>
     <meta name="title" content="Play Super Master Mind online">
     <meta name="description" content="Play Super Master Mind / Code breaker online, assisted by a calculator which knows the optimal strategy!">
-    <meta name="keywords" content="super master mind, code breaker, game, online, optimal strategy, javascript">    
+    <meta name="keywords" content="super master mind, code breaker, game, online, optimal strategy, javascript">
 
     <link rel="stylesheet" type="text/css" href="style/style.css">
     <script src="common_functions.js"></script>
-    
+
     <script src='lib/jquery-3.2.1.min.js'></script>
     <script>
       // Animation during page loading:
@@ -37,29 +37,31 @@
           }
           return text;
         }
-      
-        let firstHomePageAccess = false;      
+
+        let firstHomePageAccess = false;
         if (typeof(Storage) !== 'undefined') {
           if (!localStorage.firsthomepageaccessdone) {
             localStorage.firsthomepageaccessdone = "first home page access done";
-            firstHomePageAccess = true;            
+            firstHomePageAccess = true;
           }
           if (!localStorage.firstaccessid) {
             let firstaccessid = 'HP - ' + makeid() + ' - ' + new Date();
             localStorage.firstaccessid = firstaccessid;
           }
-        }      
+        }
+
+        var firstaccessgeoloc = "fa";
     </script>
-    
+
   </head>
 
   <body onunload="console.log('exit...');storeFirstHomePageAccess('home', 444, 777 /* (a too low value here will not work) */, 'debug-out');">
-  
+
     <div class="loading">
       <img src="img/loading.gif"><br>
       Loading...
-    </div>  
-  
+    </div>
+
     <div id="main">
 
       <!-- HEADER -->
@@ -72,20 +74,20 @@
 
         <!-- MAIN CONTENT -->
         <div id="content">
-        
+
           <script>write_introduction()</script>
 
           <hr style="height:7px; visibility:hidden;" />
           <h2 style='margin-top:0px;'><font color=#000000><b>Fond of this good old game?</b>
           Train your mind by <font color="#F00000"><b>playing </font><font color="#FF7700">Super </font><font color="#C0C000">Master </font><font color="#00D000">Mind </font><font color="black">/ </font> <font color="#0000A8">Code </font><font color="#954400">breaker </font><font color="#FF7700">online</b></font>, assisted by a calculator which knows the optimal strategy!
-          </font></h2>          
-          
+          </font></h2>
+
           <table style='border:0;margin:0;padding:0;'><tr><td style='border:0;margin:0;padding:0;background:#F6F6F6;color:black'>
-         
+
             <a href='game.html' onfocus='this.blur()' style="text-decoration:none;"><h3><b><img src="img/Pegs.png" style="border-color:#F00000;margin-right:8px;vertical-align:middle">Play online now!</b></h3>
             <img src="img/SuperMasterMind_game_example.png" style="width:80%;border-color:#F00000;margin-top: 4px"><br>
-            <img src="img/SuperMasterMind_game_possible_codes_2.png" style="width:80%;border-color:#F00000;margin-top: 4px"></a><br><br>               
-            
+            <img src="img/SuperMasterMind_game_possible_codes_2.png" style="width:80%;border-color:#F00000;margin-top: 4px"></a><br><br>
+
             <h3><b>Rules</b></h3>
             The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>
             The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded. At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
@@ -94,7 +96,7 @@
             <li>a <b>white peg</b> indicates the existence of a correct color placed in a wrong position.</li>
             </ul>
             Once this feedback has been provided, another attempt is made. The game ends when the secret code is found, which means the player gets N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br><br>
-            
+
             <h3><b>Strategy</b></h3>
             You can play online directly in your browser. Behind the graphical game board, the program is assisted by a calculator which will give you tips and tricks to find the optimal strategy!
             <hr style="height:7px; visibility:hidden;" />
@@ -123,8 +125,8 @@
             This program works in Firefox, Chrome, Safari on Windows, Mac, Android, iPhone.<br>
             <hr style="height:7px; visibility:hidden;" />
             Any comments or ideas?<br>See <a href='contact_info.html' onfocus='this.blur()'><b>Contact info</b></a> <a href='contact_info.html' onfocus='this.blur()'><img src="img/email.png" style="vertical-align:middle;width:auto;height:22px;margin:0px"></a>
-            </font>            
-            
+            </font>
+
           </td></tr></table>
 
         </div>
@@ -141,45 +143,45 @@
 
         // ***********************
         // Handle page access info
-        // ***********************      
+        // ***********************
 
         function dummy_handle_rsp(e) {
         }
-        
+
         var last_data_used = null;
         var initial_time = new Date().getTime();
         function submitHomePageAccessForm(data, access_type, debug_info) {
           var final_time = new Date().getTime();
           if (final_time - initial_time > 999000) { // 15min+delta max - See (**)
             return;
-          }          
+          }
           var timeStr = String(Math.floor((final_time - initial_time)/1000));
           if (access_type.indexOf(" in") != -1) {
             timeStr = "";
-          }          
+          }
           var countryNameStr = "-";
           if ((data != null) && (typeof data.country_name != 'undefined')) {
             countryNameStr = String(data.country_name).trim();
           }
           var regionNameStr = "-";
-          if ((data != null) && (typeof data.region_name != 'undefined')) {
-            regionNameStr = String(data.region_name).trim();
+          if ((data != null) && (typeof data.region != 'undefined')) {
+            regionNameStr = String(data.region).trim();
           }
           var cityNameStr = "-";
           if ((data != null) && (typeof data.city != 'undefined')) {
             cityNameStr = String(data.city).trim();
-          }    
+          }
           var ipAddressStr = "-";
           if ((data != null) && (typeof data.ip != 'undefined')) {
             ipAddressStr = String(data.ip).trim();
           }
-          var firstAccessIdStr = "-"; 
+          var firstAccessIdStr = "-";
           if (typeof(Storage) !== 'undefined') {
             if (localStorage.firstaccessid) {
               firstAccessIdStr = localStorage.firstaccessid;
             }
           }
-          var debugStr = navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
+          var debugStr = "firstgeoloc:" + firstaccessgeoloc + "/" + navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
           let formStr = 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + "" + '&nbgames=' + '&nbcodes=' + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr;
           let my_form_url = 'https://script.google.com/macros/s/AKfycbwHJh1Tz7idd8VQJNdWIqWd-6jMxInhRtqY_O96NN7OvEKiY_ox/exec' + '?';
           my_form_url = my_form_url + formStr + '&';
@@ -194,12 +196,12 @@
             dataType: "jsonp"
           })
         }
-        
+
         function storeFirstHomePageAccess(access_type, timeToWait1, timeToWait2, debug_info) {
           if (firstHomePageAccess) {
             // Keep some time between the 2 potential calls to submitHomePageAccessForm()
             let now = new Date().getTime();
-            while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)            
+            while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)
             if (last_data_used != null) {
               submitHomePageAccessForm(last_data_used, access_type, debug_info);
             }
@@ -208,15 +210,16 @@
             }
             // Keep some time between the 2 potential calls to submitHomePageAccessForm()
             now = new Date().getTime();
-            while(new Date().getTime() < now + timeToWait2){}; // (interface is frozen during this short time)                                      
+            while(new Date().getTime() < now + timeToWait2){}; // (interface is frozen during this short time)
           }
         }
 
         function firstHomePageAccessGeolocFailure(jqxhr, textStatus, error) {
           var errorStr = ("first home page access geolocation failure: " + textStatus + " " + error).trim();
           console.log(errorStr);
-          $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {        
-            /* ipinfodb.com response format:         
+          $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {
+            firstaccessgeoloc = "fa2";
+            /* ipinfodb.com response format:
                - SUCCESS case:
                 statusCode	"OK"
                 statusMessage	""
@@ -228,7 +231,7 @@
                 zipCode	"75000"
                 latitude	"48.8534"
                 longitude	"2.3488"
-                timeZone	"+01:00"      
+                timeZone	"+01:00"
               - FAILURE case:
                 statusCode	"ERROR"
                 statusMessage	"Invalid IP Address."
@@ -240,7 +243,7 @@
                 zipCode	""
                 latitude	"0"
                 longitude	"0"
-                timeZone	""        
+                timeZone	""
             */
             let converted_data = JSON.stringify(data_p);
 
@@ -248,39 +251,44 @@
             // longitude -> longitude
             // countryName -> country_name
             converted_data = converted_data.replace("countryName", "country_name");
-            // regionName -> region_name
-            converted_data = converted_data.replace("regionName", "region_name");
+            // regionName -> region
+            converted_data = converted_data.replace("regionName", "region");
             // cityName -> city
             converted_data = converted_data.replace("cityName", "city");
             // ipAddress -> ip
             converted_data = converted_data.replace("ipAddress", "ip");
-            
+
             last_data_used = JSON.parse(converted_data);
             storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
           })
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+            firstaccessgeoloc = "faerr2";
             var errorStr = ("first home page access geolocation retry failure: " + textStatus + " " + error).trim();
             console.log(errorStr);
             storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
           })
           .always(function() {
             console.log("(getJSON completed #2)");
-          });   
+          });
         }
-        
+
         if (firstHomePageAccess) {
-          $.getJSON('https://freegeoip.net/json/', function(data) {
+          $.getJSON('https://api.ipdata.co', function(data) {
+            firstaccessgeoloc = "fatmp1";
             last_data_used = data;
             if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
                  && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+              firstaccessgeoloc = "fa1";
               storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
             }
             else {
+              firstaccessgeoloc = "faerr1a";
               return firstHomePageAccessGeolocFailure("", "manual first home page access geolocation retry due to invalid geolocation data", "");
             }
           }) // to simplify, failure cases are not handled in a more complex way
-          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)    
-            firstHomePageAccessGeolocFailure(jqxhr, textStatus, error);          
+          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+            firstaccessgeoloc = "faerr1b";
+            firstHomePageAccessGeolocFailure(jqxhr, textStatus, error);
           })
           .always(function() {
             console.log("(getJSON completed #1)");
@@ -292,22 +300,22 @@
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-20s')",     20000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-30s')",     30000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-40s')",     40000);
-          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-50s')",     50000);          
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-50s')",     50000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-1min')",    60000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-1min30')",  90000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-2min')",   120000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-2min30')", 150000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-3min')",   180000);
-          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-4min')",   240000);          
-          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-5min')",   300000); 
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-4min')",   240000);
+          setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-5min')",   300000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-10min')",  600000);
           setTimeout("storeFirstHomePageAccess('home', 0, 0, 'debug-15min')",  900000); // See (**)
         }
-        
+
       </script>
-      
+
     </div>
-   
+
   </body>
 
-</html> 
+</html>

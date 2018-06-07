@@ -329,7 +329,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_F8";
+      let html_compatibility_game_version = "Ver_F9";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1631,7 +1631,7 @@
             firstAccessIdStr = localStorage.firstaccessid;
           }
         }
-        var debugStr = navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
+        var debugStr = "firstgeoloc:" + firstgamegeoloc + "/" + navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
         submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true, 111);
       }
 
@@ -1656,6 +1656,7 @@
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
         $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {
+          firstgamegeoloc = "fa2";
           /* ipinfodb.com response format:
              - SUCCESS case:
               statusCode	"OK"
@@ -1696,10 +1697,10 @@
           converted_data = converted_data.replace("ipAddress", "ip");
 
           last_data_used = JSON.parse(converted_data);
-          firstgamegeoloc = "fa2";
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          firstgamegeoloc = "faerr2";
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
@@ -1711,7 +1712,7 @@
       }
 
       $.getJSON('https://api.ipdata.co', function(data) {
-        firstgamegeoloc = "fax";
+        firstgamegeoloc = "fatmp1";
         last_data_used = data;
         if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
              && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
@@ -1719,10 +1720,12 @@
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
         }
         else {
+          firstgamegeoloc = "faerr1a";
           return firstAccessGeolocFailure("", "manual first access geolocation retry due to invalid geolocation data", "");
         }
       }) // to simplify, failure cases are not handled in a more complex way
       .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+        firstgamegeoloc = "faerr1b";
         firstAccessGeolocFailure(jqxhr, textStatus, error);
       })
       .always(function() {
