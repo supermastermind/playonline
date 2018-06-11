@@ -2416,13 +2416,13 @@ function draw_graphic_bis() {
               victoryStr2 = "You won /?"
               nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
-                score = Math.max(score / 2.0, min_score);
+                score = Math.max(score / 2.5, min_score);
               }
               else if (nbColorsRevealed == 2) { // 2 colors revealed
-                score = Math.max(score / 4.0, min_score);
+                score = Math.max(score / (2.5*2.5), min_score);
               }
               else if (nbColorsRevealed > 2) { // > 2 colors revealed
-                score = Math.max(score / 8.0, min_score);
+                score = Math.max(score / (2.5*2.5*2.5), min_score);
               }
               else {
                 score = 0.0;
