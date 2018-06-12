@@ -1701,7 +1701,7 @@ function draw_graphic_bis() {
 
           document.getElementById("newGameButton").value = "N";
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
-            document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);;
+            document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);
           }
           document.getElementById("resetCurrentCodeButton").value = "\u2718";
           document.getElementById("playRandomCodeButton").value = "\u266C";
