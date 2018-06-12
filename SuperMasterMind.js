@@ -24,7 +24,7 @@ let nbMaxColors = 10;
 let nbMinColumns = 3;
 let nbMaxColumns = 7;
 let overallNbMinAttempts = 4;
-let overallNbMaxAttempts = 12;
+let overallNbMaxAttempts = 14;
 
 let nominalGameNbColumns = 5; // classical Super Master Mind game
 let nominalGameNbColors = 8; // classical Super Master Mind game
@@ -1077,8 +1077,11 @@ function updateGameSizes() {
         nb_attempts_not_displayed = Math.min(3, nb_attempts_not_displayed);
       }
       else if (nbColumns == 6) {
-        nb_attempts_not_displayed = Math.min(2, nb_attempts_not_displayed);
+        nb_attempts_not_displayed = Math.min(4, nb_attempts_not_displayed);
       }
+      else if (nbColumns == 7) {
+        nb_attempts_not_displayed = Math.min(4, nb_attempts_not_displayed);
+      }      
     }
     y_step = (y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed // number of attempts displayed
                                 +transition_height // margin
@@ -1137,12 +1140,12 @@ function resetGameAttributes(nbColumnsSelected) {
       break;
     case 6:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 1);
-      nbMaxAttempts = nominalGameNbMaxAttempts;
+      nbMaxAttempts = nominalGameNbMaxAttempts + 2;
       document.title = "Advanced Master Mind";
       break;
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
-      nbMaxAttempts = nominalGameNbMaxAttempts;
+      nbMaxAttempts = nominalGameNbMaxAttempts + 2;
       document.title = "Ultra Master Mind";
       break;
     default:
@@ -1980,7 +1983,8 @@ function draw_graphic_bis() {
               displayString(attempt_nb_str_to_display, 0, attempt, str_width,
                             redColor, backgroundColor, ctx, true, 0, true, 0);
             }
-            else if (attempt+2 == nbMaxAttempts) {
+            else if ( (attempt+2 == nbMaxAttempts)
+                      || ((attempt+3 == nbMaxAttempts) && (nbColumns >= 6)) ) {
               displayString(attempt_nb_str_to_display, 0, attempt, str_width,
                             orangeColor, backgroundColor, ctx, true, 0, true, 0);
             }
@@ -2510,17 +2514,17 @@ function draw_graphic_bis() {
           ctx.font = medium2_bold_font;
           if ((nbGamesPlayedAndWon == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
             let x_delta = 0.75;
-            if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
+            if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-              if (!displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
+              if (!displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.40*x_delta,
                                  darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
                 // ctx.font = medium_bold_font;
-                if (!displayString("Select colors!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
+                if (!displayString("Select colors!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-2.22*x_delta,
                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   // if (font_size >= 27) { // (very big font cases)
                   //  ctx.font = medium_bold_font;
                   // }
-                  displayString("Select me!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-1.88*x_delta,
+                  displayString("Select me!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-2.22*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                 }
               }
@@ -2747,7 +2751,7 @@ function draw_graphic_bis() {
         document.getElementById("columnslabel_7").className = "radio";
       }
 
-      document.getElementById("playRandomCodeButton").disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts - 1)) ;
+      document.getElementById("playRandomCodeButton").disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts - ((nbColumns >= 6) ? 2 : 1)));
       if (document.getElementById("playRandomCodeButton").disabled) {
         document.getElementById("playRandomCodeButton").className = "button disabled";
       }
