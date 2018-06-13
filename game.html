@@ -329,7 +329,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_FF";
+      let html_compatibility_game_version = "Ver_FG";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1243,14 +1243,14 @@
                 city = "Paris";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
-              if (region == "North Rhine-Westphalia") {
-                region = "Nordrhein-Westfalen";
-              }
               if (country == "Lao People's Democratic Republic") {
                 country = "Laos";
               }
               if ((country == "Portugal") && (region == "Regiao Autonoma da Madeira")) {
                 region = "Madeira";
+              }
+              if (country.indexOf("Republic of") == 0) {
+                country = country.replace("Republic of", "").trim();
               }
 
               // Check if geolocation data are valid
