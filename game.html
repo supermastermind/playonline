@@ -329,7 +329,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_FE";
+      let html_compatibility_game_version = "Ver_FF";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -963,7 +963,7 @@
 
       var last_data_used = null;
       var last_game_cnt = -1;
-      async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help) { // asynchronous function
+      async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help, gamestr) { // asynchronous function
 
         try {
 
@@ -1369,7 +1369,13 @@
 
               var extra_debug_info = "";
               try {
-                extra_debug_info = "/Cookies:" + navigator.cookieEnabled;
+                if (typeof(Storage) !== 'undefined') {
+                  if (localStorage.previousfirstname) {
+                    extra_debug_info = extra_debug_info + "/PreviousFirstName:" + localStorage.previousfirstname;
+                  }
+                }
+                extra_debug_info = extra_debug_info + "/Game:" + gamestr;
+                extra_debug_info = extra_debug_info + "/Cookies:" + navigator.cookieEnabled;
                 extra_debug_info = extra_debug_info + "/Java:" + navigator.javaEnabled();
                 var pluginsLength = navigator.plugins.length; // (Note: plugin listing is no longer allowed in Firefox for security reasons => length will be less than the actual value)
                 extra_debug_info =  extra_debug_info + "/Plugins:" + pluginsLength;

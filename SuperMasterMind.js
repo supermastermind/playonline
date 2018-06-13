@@ -1081,7 +1081,7 @@ function updateGameSizes() {
       }
       else if (nbColumns == 7) {
         nb_attempts_not_displayed = Math.min(5, nb_attempts_not_displayed);
-      }      
+      }
     }
     y_step = (y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed // number of attempts displayed
                                 +transition_height // margin
@@ -1402,11 +1402,18 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
     else { // (score > 0.0 because game won)
       let nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
 
-      let str = "";
+      let strSumPerfs = "";
       /* if (nbUnknownPerfs > 0) {
-        str = "\u2248 ";
+        strSumPerfs = "\u2248 ";
       } */
-      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, str + sumPerfs, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'));
+
+      let strGame = "";
+      for (let i = 1; i < Math.min(4, currentAttemptNumber); i++) {
+        strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
+      }
+      strGame = strGame.trim();
+
+      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, strSumPerfs + sumPerfs, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
     }
   }
 
@@ -2043,7 +2050,7 @@ function draw_graphic_bis() {
       // **************************************
 
       ctx.font = basic_bold_font;
-      for (let i = 1 ; i < currentAttemptNumber; i++) {
+      for (let i = 1; i < currentAttemptNumber; i++) {
 
         displayCode(codesPlayed[i-1], i-1, ctx);
 
