@@ -24,7 +24,7 @@ let nbMaxColors = 10;
 let nbMinColumns = 3;
 let nbMaxColumns = 7;
 let overallNbMinAttempts = 4;
-let overallNbMaxAttempts = 14;
+let overallNbMaxAttempts = 15;
 
 let nominalGameNbColumns = 5; // classical Super Master Mind game
 let nominalGameNbColors = 8; // classical Super Master Mind game
@@ -199,7 +199,7 @@ let highlightColor = "#FFFF00"; // Yellow
 
 let fontFamily = "Verdana";
 let defaultFont = "10px " + fontFamily;
-let min_font_size = 8;
+let min_font_size = 7;
 let max_font_size = 40;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
@@ -1145,7 +1145,7 @@ function resetGameAttributes(nbColumnsSelected) {
       break;
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
-      nbMaxAttempts = nominalGameNbMaxAttempts + 2;
+      nbMaxAttempts = nominalGameNbMaxAttempts + 3;
       document.title = "Ultra Master Mind";
       break;
     default:

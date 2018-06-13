@@ -18,7 +18,7 @@ let nbMaxColors = 10;
 let nbMinColumns = 3;
 let nbMaxColumns = 7;
 let overallNbMinAttempts = 4;
-let overallNbMaxAttempts = 14;
+let overallNbMaxAttempts = 15;
 
 let init_done = false;
 let nbColumns = -1;
