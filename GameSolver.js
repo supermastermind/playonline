@@ -835,12 +835,28 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed, possibleCodes
 
       case 7:
 
+        if (!codeHandler.isFullAndValid(codesPlayed[0])) {
+          throw new Error("computeNbOfPossibleCodes: internal error (codesPlayed[0] is not full and valid)");
+        }
+        let mark0_nb_pegs = marks[0].nbBlacks + marks[0].nbWhites;
         for (let color1 = 1; color1 <= nbColors; color1++) {
           for (let color2 = 1; color2 <= nbColors; color2++) {
             for (let color3 = 1; color3 <= nbColors; color3++) {
               for (let color4 = 1; color4 <= nbColors; color4++) {
                 for (let color5 = 1; color5 <= nbColors; color5++) {
                   for (let color6 = 1; color6 <= nbColors; color6++) {
+
+                    // Optimization
+                    code_tmp = codeHandler.setAllColors(color1, color2, color3, color4, color5, color6, emptyColor);
+                    codeHandler.fillMark(codesPlayed[0], code_tmp, mark_tmp);
+                    let mark_tmp_nb_pegs = mark_tmp.nbBlacks + mark_tmp.nbWhites;
+                    if ( (mark_tmp_nb_pegs > mark0_nb_pegs)
+                         || (mark_tmp_nb_pegs < mark0_nb_pegs - 1)
+                         || (mark_tmp.nbBlacks > marks[0].nbBlacks)
+                         || (mark_tmp.nbBlacks < marks[0].nbBlacks - 1) ) {
+                      continue;
+                    }
+
                     for (let color7 = 1; color7 <= nbColors; color7++) {
                       code_tmp = codeHandler.setAllColors(color1, color2, color3, color4, color5, color6, color7);
                       let isPossible = true;
@@ -1019,11 +1035,11 @@ function evaluatePerformances(depth, markIdx, listOfCodes, nbCodes, particularCo
   let next_depth = depth+1;
   let sum;
   let best_perf = 100000000000;
-  
+
   // Initializations
   // ***************
 
-  if (depth == -1) { // first call  
+  if (depth == -1) { // first call
     for (idx = 0; idx < previousNbOfPossibleCodes; idx++) {
       listOfGlobalPerformances[idx] = PerformanceUNKNOWN; // output
     }
@@ -1031,23 +1047,23 @@ function evaluatePerformances(depth, markIdx, listOfCodes, nbCodes, particularCo
   }
   nextListOfCodes = listsOfPossibleCodes[next_depth]; // XXX optim: reference marche???
   nextNbCodes = nbOfPossibleCodes[next_depth];
-  
+
   // Determine groups of next possible codes
   // ***************************************
 
   if (depth < 3) {
-    // console.log("----- depth=" + depth + " nbCodes=" + nbCodes + " markIdx=" + markIdx);  
+    // console.log("----- depth=" + depth + " nbCodes=" + nbCodes + " markIdx=" + markIdx);
   }
-  
+
   for (idx1 = 0; idx1 < nbCodes; idx1++) {
-    
+
     current_code = listOfCodes[idx1];
 
     /* for (idx = 0; idx < nbMaxMarks; idx++) {
       nextNbCodes[idx] = 0;
     } */
     nextNbCodes.fill(0);
-    
+
     // Determine all possible marks for current code
     for (idx2 = 0; idx2 < nbCodes; idx2++) {
       other_code = listOfCodes[idx2];
@@ -1057,19 +1073,19 @@ function evaluatePerformances(depth, markIdx, listOfCodes, nbCodes, particularCo
       nextNbCodes[mark_tmp_idx]++;
       // console.log("(" + idx2 + ") depth = " + depth + ",mark=" + mark_tmp_idx + ", nb=" + nextNbCodes[mark_tmp_idx]);
     }
-    
+
     /* let str = "";
     for (idx = 0; idx < nbMaxMarks; idx++) {
       str += idx + ":" + nextNbCodes[idx] + ",";
     }
     console.log("depth:" + depth + "  possible marks:" + str); */
-        
+
     // Assess current code
     sum = 0.0;
     let sum_marks = 0;
-    for (idx = 0; idx < nbMaxMarks; idx++) { // Possible future improvement: loop on the number of different marks?      
+    for (idx = 0; idx < nbMaxMarks; idx++) { // Possible future improvement: loop on the number of different marks?
       if (nextNbCodes[idx] > 0) {
-        sum_marks += nextNbCodes[idx];        
+        sum_marks += nextNbCodes[idx];
         if (idx == best_mark_idx) { // XXX other leavess
           // sum = sum + 0.0;
         }
@@ -1084,24 +1100,24 @@ function evaluatePerformances(depth, markIdx, listOfCodes, nbCodes, particularCo
     if (sum_marks != nbCodes) {
       console.log("error: (depth=" + depth + "): " + sum_marks + "," + nbCodes);
     }
-    
-    if (depth == -1) { // first call 
+
+    if (depth == -1) { // first call
       // console.log(idx1 + "out of " + nbCodes);    // XXX
       listOfGlobalPerformances[idx1] = 1.0 + best_perf / nbCodes;
     }
-    
+
   }
-  if (depth == -1) { // first call  
+  if (depth == -1) { // first call
     console.log("FINAL PERF=" + (1.0 + best_perf / nbCodes));
   }
   else {
     // console.log("best_perf=" + best_perf + ", res=" + (1.0 + best_perf / nbCodes));
   }
   return 1.0 + best_perf / nbCodes;
-  
+
 }
 
-// XXX Take particularCode into account  
+// XXX Take particularCode into account
 
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -1481,7 +1497,7 @@ self.addEventListener('message', function(e) {
         // ********************
 
         let code_played_global_performance = PerformanceNA;
-        let index = (currentAttemptNumber%2);        
+        let index = (currentAttemptNumber%2);
         if (0 == isAttemptPossibleinGameSolver(currentAttemptNumber)) { // code played is possible
           // Evaluate performances for possibleCodesForPerfEvaluation[currentAttemptNumber%2]:
           let startTime = (new Date()).getTime(); // XXX
