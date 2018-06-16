@@ -839,6 +839,10 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed, possibleCodes
           throw new Error("computeNbOfPossibleCodes: internal error (codesPlayed[0] is not full and valid)");
         }
         let mark0_nb_pegs = marks[0].nbBlacks + marks[0].nbWhites;
+        let mark1_nb_pegs = -1;
+        if (attempt_nb == 3) {
+          mark1_nb_pegs = marks[1].nbBlacks + marks[1].nbWhites;
+        }
         for (let color1 = 1; color1 <= nbColors; color1++) {
           for (let color2 = 1; color2 <= nbColors; color2++) {
             for (let color3 = 1; color3 <= nbColors; color3++) {
@@ -855,6 +859,16 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed, possibleCodes
                          || (mark_tmp.nbBlacks > marks[0].nbBlacks)
                          || (mark_tmp.nbBlacks < marks[0].nbBlacks - 1) ) {
                       continue;
+                    }
+                    if (mark1_nb_pegs != -1) {
+                      codeHandler.fillMark(codesPlayed[1], code_tmp, mark_tmp);
+                      let mark_tmp_nb_pegs = mark_tmp.nbBlacks + mark_tmp.nbWhites;
+                      if ( (mark_tmp_nb_pegs > mark1_nb_pegs)
+                           || (mark_tmp_nb_pegs < mark1_nb_pegs - 1)
+                           || (mark_tmp.nbBlacks > marks[1].nbBlacks)
+                           || (mark_tmp.nbBlacks < marks[1].nbBlacks - 1) ) {
+                        continue;
+                      }
                     }
 
                     for (let color7 = 1; color7 <= nbColors; color7++) {
