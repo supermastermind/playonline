@@ -2842,7 +2842,7 @@ function draw_graphic_bis() {
     }
 
     if ( last_attempt_event
-         && (nbGamesPlayed == 0) /* (first game) */
+         && (nbGamesPlayedAndWon == 0)
          && (gameOnGoing())
          && !(document.getElementById("revealSecretColorButton").disabled)
          && (sCodeRevealed == 0) ) {
