@@ -121,8 +121,8 @@ let myCanvasIniWidth = document.getElementById("my_canvas").style.width;
 let myCanvasIniHeight = document.getElementById("my_canvas").style.height;
 
 let CompressedDisplayMode = false;
-let CompressedDisplayMode_compressWidth = 577;
-let CompressedDisplayMode_uncompressWidth = 1044;
+let CompressedDisplayMode_compressWidth = 677;
+let CompressedDisplayMode_uncompressWidth = 1144;
 
 // Widths and heights
 // ******************
@@ -1793,8 +1793,8 @@ function draw_graphic_bis() {
 
           left_border_margin_x = 5.0;   // Left border margin for x axis in %
           right_border_margin_x = 5.0;  // Right border margin for x axis in %
-          bottom_border_margin_y = 5.0; // Bottom border margin for y axis in %
-          top_border_margin_y = 5.0;    // Top border margin for y axis in %
+          bottom_border_margin_y = 2.5; // Bottom border margin for y axis in %
+          top_border_margin_y = 2.5;    // Top border margin for y axis in %
 
         }
 
@@ -1954,8 +1954,14 @@ function draw_graphic_bis() {
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium2_bold_font = "bold " + Math.min(Math.max(Math.floor(font_size/1.5)+2, min_font_size), font_size) + "px " + fontFamily;
       medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
+      if (!showPossibleCodesMode) {
+        // Same as medium_bold_font
+        stats_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
+      }
+      else {
+        stats_font = "bold " + Math.max(Math.floor(font_size/1.1), min_font_size) + "px " + fontFamily;
+      }
 
-      stats_font = medium_bold_font;
       error_font = font_size + "px " + fontFamily;
 
       // Draw main game table
@@ -2550,12 +2556,8 @@ function draw_graphic_bis() {
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                  darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-                // ctx.font = medium_bold_font;
                 if (!displayString("Select colors!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-2.22*x_delta,
                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
-                  // if (font_size >= 27) { // (very big font cases)
-                  //  ctx.font = medium_bold_font;
-                  // }
                   displayString("Select me!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-2.22*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                 }
@@ -3255,8 +3257,11 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
           if (!displayString("\u2009" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-            displayString(starStr + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
-                         lightGray, backgroundColor, ctx);
+            if (!displayString(starStr + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                               lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+              displayString(starStr + performance.toFixed(0).replaceAll(",",".") /* star0 */, x_cell, y_cell, cell_width,
+                            lightGray, backgroundColor, ctx);
+            }
           }
         }
       }
