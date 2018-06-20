@@ -63,7 +63,7 @@ let max_performance_evaluation_time = 4888; // XXX 4888
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 200; // XXX 200
+let baseOfNbOfCodesForSystematicEvaluation = 175; // XXX 175
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
