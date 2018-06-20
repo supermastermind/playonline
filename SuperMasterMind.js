@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v0.81";
+let version = "v0.9";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 6;
@@ -262,11 +262,12 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
     }
     this.nbColumns = nbColumns_p;
     this.nbColors = nbColors_p;
+    this.nbMaxColumns = nbMaxColumns_p;
     this.emptyColor = emptyColor_p;
 
-    this.code1_colors = new Array(nbMaxColumns_p);
-    this.code2_colors = new Array(nbMaxColumns_p);
-    this.colors_int = new Array(nbMaxColumns_p);
+    this.code1_colors = new Array(this.nbMaxColumns);
+    this.code2_colors = new Array(this.nbMaxColumns);
+    this.colors_int = new Array(this.nbMaxColumns);
   }
 
   getNbColumns() {
@@ -355,6 +356,22 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
         code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);
       }
     }
+
+    // XXX TMP - begin
+    /*
+    code = this.setColor(code, 4, 1);
+    code = this.setColor(code, 2, 2);
+    code = this.setColor(code, 4, 3);
+    code = this.setColor(code, 3, 4);
+    code = this.setColor(code, 4, 5);
+    code = this.setColor(code, 5, 6);
+    code = this.setColor(code, 4, 7);
+    for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
+      code = this.setColor(code, this.emptyColor, col);
+    }
+    */
+    // XXX TMP - end
+
     return code;
   }
 
@@ -366,6 +383,12 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
         return false;
       }
     }
+    for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
+      let color = this.getColor(code, col);
+      if (color != this.emptyColor) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -374,6 +397,12 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
       let color = this.getColor(code, col+1);
       if ( (color < 1) || (color > this.nbColors)
            || (color == this.emptyColor) ) {
+        return false;
+      }
+    }
+    for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
+      let color = this.getColor(code, col);
+      if (color != this.emptyColor) {
         return false;
       }
     }
@@ -797,10 +826,10 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       }
       let previous_nb = -1;
       for (let i = currentAttemptNumber-2; i >= 0; i--) {
-        if (nbOfPossibleCodes[i] > 1) {
+        if ((nbOfPossibleCodes[i] > 1) && (relative_performances_of_codes_played[i] != -1.00) /* not a useless code */) {
           interesting_attempt_idx = i;
           cnt++;
-          if (nbOfPossibleCodes[i] >= 3) {
+          if (nbOfPossibleCodes[i] >= 3)  {
             break;
           }
           if ((cnt > 1) && (nbOfPossibleCodes[i] != previous_nb)) {
@@ -997,7 +1026,6 @@ function playAColor(color, column) {
     draw_graphic(false);
   }
 }
-
 
 let previousNbColumns = -1;
 function getNbColumnsSelected() {
@@ -2084,8 +2112,10 @@ function draw_graphic_bis() {
                || relativePerformancesEvaluationDone[i-1]
                || (nbColumns < nominalGameNbColumns) // easy games
                || (relative_performances_of_codes_played[i-1] == -1.00) ) { // useless code
-            displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), ctx);
-            if ((relative_performances_of_codes_played[i-1] != PerformanceUNKNOWN) && (relative_performances_of_codes_played[i-1] <= PerformanceLOW)) { // No overwriting
+            displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), showPossibleCodesMode, false, PerformanceNA, ctx);
+            if ( (relativePerformancesEvaluationDone[i-1])
+                 && (relative_performances_of_codes_played[i-1] != PerformanceUNKNOWN)
+                 && (relative_performances_of_codes_played[i-1] <= PerformanceLOW) ) {
               performancesDisplayed[i-1] = true;
             } // else: allow overwriting
           }
@@ -2696,6 +2726,8 @@ function draw_graphic_bis() {
           drawLine(ctx, x_0, y_0, x_1, y_1);
         }
 
+        let best_global_perf = global_best_performances[currentPossibleCodeShown-1];
+        let valid_best_global_perf = ((best_global_perf != PerformanceUNKNOWN) && (best_global_perf > 0.01)); // valid global_best_performances value
         for (let codeidx = 0; codeidx < nbOfCodesListed; codeidx++) {
 
           // Display code
@@ -2706,17 +2738,15 @@ function draw_graphic_bis() {
 
           // Display performances
           let global_perf = PerformanceUNKNOWN;
-          let best_perf = PerformanceUNKNOWN;
           let relative_perf = PerformanceUNKNOWN;
-          if ( (global_best_performances[currentPossibleCodeShown-1] != PerformanceUNKNOWN) && (global_best_performances[currentPossibleCodeShown-1] > 0.01) // valid global_best_performances value
+          if ( valid_best_global_perf
                && (globalPerformancesList[currentPossibleCodeShown-1][codeidx+code_list_offset] != PerformanceUNKNOWN) && (globalPerformancesList[currentPossibleCodeShown-1][codeidx+code_list_offset] > 0.01) ) { // valid globalPerformancesList value
             global_perf = globalPerformancesList[currentPossibleCodeShown-1][codeidx+code_list_offset];
-            best_perf = global_best_performances[currentPossibleCodeShown-1];
-            relative_perf = best_perf - global_perf;
+            relative_perf = best_global_perf - global_perf;
           }
           ctx.font = stats_font;
           let backgroundColor = backgroundColor_2;
-          displayPerf(relative_perf, y_cell, backgroundColor, global_perf, ctx);
+          displayPerf(relative_perf, y_cell, backgroundColor, global_perf, true, valid_best_global_perf && (currentPossibleCodeShown <= 2), best_global_perf, ctx);
 
         }
 
@@ -2725,7 +2755,7 @@ function draw_graphic_bis() {
       // Enable or disable GUI controls
       // ******************************
 
-      document.getElementById("newGameButton").disabled = (gameWon && !allPerformancesFilled() && (nbOfStatsFilled_Perfs > 0) /* (gameSolver worker is running fine) */);
+      document.getElementById("newGameButton").disabled = (gameWon && !allPerformancesFilled());
       if (document.getElementById("newGameButton").disabled) {
         document.getElementById("newGameButton").className  = "button disabled";
       }
@@ -3144,9 +3174,10 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomR
   }
 }
 
-function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
+function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx) {
 
-  let performance = Math.round(perf * 100.0) / 100.0;
+  let performance = Math.round(perf * 100.0) / 100.0; // 0.01 precision
+  let optimalglobalperformance = Math.round(optimalGlobalPerf * 100.0) / 100.0; // 0.01 precision
 
   let x_cell;
   let cell_width;
@@ -3168,7 +3199,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
       isPossible_str = "";
     }
     else { // code is not possible
-      isPossible_str = "(" + isPossible + ")";
+      isPossible_str = "\u2009(" + isPossible + ")";
     }
   }
 
@@ -3178,11 +3209,11 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
   }
   else if (performance != PerformanceNA) {
     if (performance == -1.00) { // useless code
-      if (!displayString("  useless" + "\u2009" + isPossible_str + "  ", x_cell, y_cell, cell_width,
+      if (!displayString("  useless" + isPossible_str + "  ", x_cell, y_cell, cell_width,
                          redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString(" " + performance.toFixed(2).replaceAll(",",".") + "\u2009" + isPossible_str + " ", x_cell, y_cell, cell_width,
+        if (!displayString(" " + performance.toFixed(2).replaceAll(",",".") + isPossible_str + " ", x_cell, y_cell, cell_width,
                            redColor, backgroundColor, ctx, true, 0, true, 0)) {
-          if (!displayString(performance.toFixed(1).replaceAll(",",".") + "\u2009" + isPossible_str, x_cell, y_cell, cell_width,
+          if (!displayString(performance.toFixed(1).replaceAll(",",".") + isPossible_str, x_cell, y_cell, cell_width,
                              redColor, backgroundColor, ctx, true, 0, true, 0)) {
             if (!displayString("  useless  ", x_cell, y_cell, cell_width,
                                redColor, backgroundColor, ctx, true, 0, true, 0)) {
@@ -3217,17 +3248,25 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, ctx) {
                       lightGray, backgroundColor, ctx);
       }
     }
-    else if (performance == 0.00) { // optimal code
-      if (!displayString(" optimal ", x_cell, y_cell, cell_width,
-                         lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+    else if (performance == 0.00) { // optimal code (+/-0.005 precision)
+      let starStr = "";
+      if (starDisplayIfOptimal) {
+        starStr = "\u2B50\u2009";
+      }
+      if ( (!globalPerfDisplayIfOptimal)
+           || (!displayString("\u2009" + starStr + "optimal\u2009(" + optimalglobalperformance.toFixed(2).replaceAll(",",".") + ")\u2009", x_cell, y_cell, cell_width,
+                              lightGray, backgroundColor, ctx, true, 0, true, 0)) ) {
+        if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-          displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
-                       lightGray, backgroundColor, ctx);
+          if (!displayString("\u2009" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+                             lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+            displayString(starStr + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                         lightGray, backgroundColor, ctx);
+          }
         }
       }
     }
-    else { // (an illogical code can be better than the optimal logical code)
+    else { // > 0.00: an illogical code can be better than the optimal logical code(s)
       if (!displayString("\u2009" + "+" + performance.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
         displayString("+" + performance.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, cell_width,

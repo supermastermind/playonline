@@ -58,10 +58,12 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = attempt_refresh_time_1*2;
 
+let max_performance_evaluation_time = 4888; // XXX 4888
+
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 400;
+let baseOfNbOfCodesForSystematicEvaluation = 200; // XXX 200
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
@@ -76,8 +78,6 @@ let nbOfPossibleCodes;
 
 let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
 let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
-
-let best_global_performance = PerformanceUNKNOWN;
 
 // *************************************************************************
 // *************************************************************************
@@ -254,11 +254,12 @@ class CodeHandler { // NOTE: the code of this class is partially duplicated in S
     }
     this.nbColumns = nbColumns_p;
     this.nbColors = nbColors_p;
+    this.nbMaxColumns = nbMaxColumns_p;
     this.emptyColor = emptyColor_p;
 
-    this.code1_colors = new Array(nbMaxColumns_p);
-    this.code2_colors = new Array(nbMaxColumns_p);
-    this.colors_int = new Array(nbMaxColumns_p);
+    this.code1_colors = new Array(this.nbMaxColumns);
+    this.code2_colors = new Array(this.nbMaxColumns);
+    this.colors_int = new Array(this.nbMaxColumns);
   }
 
   getNbColumns() {
@@ -351,6 +352,12 @@ class CodeHandler { // NOTE: the code of this class is partially duplicated in S
         return false;
       }
     }
+    for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
+      let color = this.getColor(code, col);
+      if (color != this.emptyColor) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -359,6 +366,12 @@ class CodeHandler { // NOTE: the code of this class is partially duplicated in S
       let color = this.getColor(code, col+1);
       if ( (color < 1) || (color > this.nbColors)
            || (color == this.emptyColor) ) {
+        return false;
+      }
+    }
+    for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
+      let color = this.getColor(code, col);
+      if (color != this.emptyColor) {
         return false;
       }
     }
@@ -400,7 +413,7 @@ class CodeHandler { // NOTE: the code of this class is partially duplicated in S
   }
 
   // Fill a mark between 2 codes in a fast way
-  fillMark(code1, code2, mark) {
+  fillMark(code1, code2, mark) { // (duplicated code)
 
     let nbBlacks = 0;
     let nbWhites = 0;
@@ -985,9 +998,9 @@ function computeNbOfPossibleCodes(attempt_nb, nb_codes_max_listed, possibleCodes
 
 }
 
-// ****************************************
-// Evaluate performances on a list of codes
-// ****************************************
+// ******************************
+// Handle multidimensional arrays
+// ******************************
 
 function new2DArray(x, y) {
   var my_array = new Array(x);
@@ -1033,107 +1046,286 @@ function check3DArraySizes(my_array, x, y, z, reduc) {
   return true;
 }
 
-// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// *********************
+// Evaluate performances
+// *********************
 
+function spaces(nb) {
+  let str = "";
+  for (let i = -1; i < nb; i++) {
+    str = str + "  ";
+  }
+  return str;
+}
+
+let evaluatePerformancesStartTime;
+
+let mark_perf_tmp = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmp1 = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmp2 = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmp3 = {nbBlacks:-1, nbWhites:-1}; // N.A.
+
+let code1_colors = new Array(nbMaxColumns);
+let code2_colors = new Array(nbMaxColumns);
+let colors_int = new Array(nbMaxColumns);
+
+let particularCodeToAssess = 0; /* empty code */
 let particularCodeGlobalPerformance = PerformanceNA;
-let mark_tmp = {nbBlacks:-1, nbWhites:-1}; // N.A.
-let mark_tmp_idx = -1; // N.A.
 
-function evaluatePerformances(depth, markIdx, listOfCodes, nbCodes, particularCode) {
+// Outputs: listOfGlobalPerformances[]
+//          particularCodeGlobalPerformance in case of impossible code
+function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 
-  let nextListOfCodes;
-  let nextNbCodes;
-  let idx, idx1, idx2;
+  let idx;
+
+  evaluatePerformancesStartTime = new Date().getTime();
+
+  if (depth == -1) { // first call
+    // Initialize outputs
+    if (nbCodes != previousNbOfPossibleCodes) {
+      throw new Error("evaluatePerformances: (nbCodes != previousNbOfPossibleCodes)");
+    }
+    for (idx = 0; idx < nbCodes; idx++) {
+      listOfGlobalPerformances[idx] = PerformanceNA; // output
+    }
+    particularCodeGlobalPerformance = PerformanceNA; // output
+    // Main processing
+    particularCodeToAssess = particularCode;
+    return recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
+  }
+  else {
+    throw new Error("evaluatePerformances: (depth == -1)");
+  }
+
+}
+// XXX Further optimizations:
+// - 4 deep leave
+// - throw new Exc in Solver/MainScript => recorded by google script
+// - mark computing optimization: dictionary with depth?, hash code and limited history
+// - tous les XXX des fichiers .js (celui-ci + SMM.js notamment)
+function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
+
+  let first_call = (depth == -1);
+  let next_depth = depth+1;
+  let nextListsOfCodes;
+  let nextNbsCodes;
+  let mark_idx, idx1, idx2;
   let current_code;
   let other_code;
-  let next_depth = depth+1;
+  let mark_perf_tmp_idx;
   let sum;
-  let best_perf = 100000000000;
+  let sum_marks;
+  let best_sum = 100000000000.0;
 
   // Initializations
   // ***************
 
-  if (depth == -1) { // first call
-    for (idx = 0; idx < previousNbOfPossibleCodes; idx++) {
-      listOfGlobalPerformances[idx] = PerformanceUNKNOWN; // output
-    }
-    particularCodeGlobalPerformance = PerformanceNA; // output
+  if (next_depth >= nbMaxDepth) {
+    throw new Error("recursiveEvaluatePerformances: max depth reached");
   }
-  nextListOfCodes = listsOfPossibleCodes[next_depth]; // XXX optim: reference marche???
-  nextNbCodes = nbOfPossibleCodes[next_depth];
 
-  // Determine groups of next possible codes
+  nextListsOfCodes = listsOfPossibleCodes[next_depth]; // [nbMaxMarks][n]
+  nextNbsCodes = nbOfPossibleCodes[next_depth]; // [nbMaxMarks] array
+
+  // Evaluate performances of possible codes
   // ***************************************
-
-  if (depth < 3) {
-    // console.log("----- depth=" + depth + " nbCodes=" + nbCodes + " markIdx=" + markIdx);
-  }
 
   for (idx1 = 0; idx1 < nbCodes; idx1++) {
 
     current_code = listOfCodes[idx1];
+    // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + "current_code:" + codeHandler.codeToString(current_code));}
 
-    /* for (idx = 0; idx < nbMaxMarks; idx++) {
-      nextNbCodes[idx] = 0;
-    } */
-    nextNbCodes.fill(0);
+    nextNbsCodes.fill(0); // (faster than a for loop on 0..nbMaxMarks-1)
+
+    // (duplicated code from fillMark() for better performances (1/2) - begin)
+    code1_colors[0] = (current_code & 0x0000000F);
+    code1_colors[1] = ((current_code >> 4) & 0x0000000F);
+    code1_colors[2] = ((current_code >> 8) & 0x0000000F);
+    code1_colors[3] = ((current_code >> 12) & 0x0000000F);
+    code1_colors[4] = ((current_code >> 16) & 0x0000000F);
+    code1_colors[5] = ((current_code >> 20) & 0x0000000F);
+    code1_colors[6] = ((current_code >> 24) & 0x0000000F);
+    // (duplicated code from fillMark() for better performances (1/2) - end)
 
     // Determine all possible marks for current code
     for (idx2 = 0; idx2 < nbCodes; idx2++) {
       other_code = listOfCodes[idx2];
-      codeHandler.fillMark(current_code, other_code, mark_tmp);
-      mark_tmp_idx = marksTable_MarkToNb[mark_tmp.nbBlacks][mark_tmp.nbWhites];
-      nextListOfCodes[mark_tmp_idx][nextNbCodes[mark_tmp_idx]] = other_code;
-      nextNbCodes[mark_tmp_idx]++;
-      // console.log("(" + idx2 + ") depth = " + depth + ",mark=" + mark_tmp_idx + ", nb=" + nextNbCodes[mark_tmp_idx]);
-    }
 
-    /* let str = "";
-    for (idx = 0; idx < nbMaxMarks; idx++) {
-      str += idx + ":" + nextNbCodes[idx] + ",";
+      // codeHandler.fillMark(current_code, other_code, mark_perf_tmp);
+      // (duplicated code from fillMark() for better performances (2/2) - begin)
+      {
+        let code2 = other_code;
+
+        let nbBlacks = 0;
+        let nbWhites = 0;
+        let col1, col2;
+
+        // The below operations are unrolled for better performances
+        colors_int[0] = true;
+        colors_int[1] = true;
+        colors_int[2] = true;
+        colors_int[3] = true;
+        colors_int[4] = true;
+        colors_int[5] = true;
+        colors_int[6] = true;
+        code2_colors[0] = (code2 & 0x0000000F);
+        code2_colors[1] = ((code2 >> 4) & 0x0000000F);
+        code2_colors[2] = ((code2 >> 8) & 0x0000000F);
+        code2_colors[3] = ((code2 >> 12) & 0x0000000F);
+        code2_colors[4] = ((code2 >> 16) & 0x0000000F);
+        code2_colors[5] = ((code2 >> 20) & 0x0000000F);
+        code2_colors[6] = ((code2 >> 24) & 0x0000000F);
+
+        for (col1 = 0; col1 < nbColumns; col1++) {
+          if (code1_colors[col1] == code2_colors[col1]) {
+            nbBlacks++;
+          }
+          else {
+            for (col2 = 0; col2 < nbColumns; col2++) {
+              if ((code1_colors[col1] == code2_colors[col2]) && (code1_colors[col2] != code2_colors[col2]) && colors_int[col2]) {
+                colors_int[col2] = false;
+                nbWhites++;
+                break;
+              }
+            }
+          }
+        }
+
+        mark_perf_tmp.nbBlacks = nbBlacks;
+        mark_perf_tmp.nbWhites = nbWhites;
+      }
+      // (duplicated code from fillMark() for better performances (2/2) - end)
+
+      mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
+      nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
+      nextNbsCodes[mark_perf_tmp_idx]++;
     }
-    console.log("depth:" + depth + "  possible marks:" + str); */
 
     // Assess current code
     sum = 0.0;
-    let sum_marks = 0;
-    for (idx = 0; idx < nbMaxMarks; idx++) { // Possible future improvement: loop on the number of different marks?
-      if (nextNbCodes[idx] > 0) {
-        sum_marks += nextNbCodes[idx];
-        if (idx == best_mark_idx) { // XXX other leavess
-          // sum = sum + 0.0;
+    sum_marks = 0;
+    for (mark_idx = nbMaxMarks-1; mark_idx >= 0; mark_idx--) {
+      let nextNbCodes = nextNbsCodes[mark_idx];
+      // Go through all sets of possible marks
+      if (nextNbCodes > 0) {
+        sum_marks += nextNbCodes;
+        if (mark_idx == best_mark_idx) {
+          // sum = sum + 0.0; // 1.0 * 0.0 = 0.0
+          if (sum_marks == nbCodes) break;
+          // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + "win");}
+        }
+        else if (nextNbCodes == 1) {
+          sum = sum + 1.0; // 1.0 * 1.0 = 1.0
+          if (sum_marks == nbCodes) break;
+          // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 1 code")};
+        }
+        else if (nextNbCodes == 2) {
+          sum = sum + 3.0 // 2 * 1.5 = 3.0
+          if (sum_marks == nbCodes) break;
+          // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 2 codes")};
+        }
+        else if (nextNbCodes == 3) {
+          let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
+          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmp1);
+          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmp2);
+          if ((mark_perf_tmp1.nbBlacks == mark_perf_tmp2.nbBlacks) && (mark_perf_tmp1.nbWhites == mark_perf_tmp2.nbWhites)) {
+            codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmp3);
+            if ((mark_perf_tmp1.nbBlacks == mark_perf_tmp3.nbBlacks) && (mark_perf_tmp1.nbWhites == mark_perf_tmp3.nbWhites)) {
+              sum = sum + 6.0; // 3 * ((1+2+3)/3.0) = 6.0
+            }
+            else {
+              sum = sum + 5.0; // 3 * ((1+2+2)/3.0) = 5.0
+            }
+          }
+          else {
+            sum = sum + 5.0; // 3 * ((1+2+2)/3.0) = 5.0
+          }
+          if (sum_marks == nbCodes) break;
+          // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 3 codes")};
         }
         else {
-          sum = sum + evaluatePerformances(next_depth, idx, nextListOfCodes[mark_tmp_idx], nextNbCodes[mark_tmp_idx], 0  /* empty code */) * nextNbCodes[idx];
+          sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
         }
       }
     }
-    if (sum < best_perf) {
-      best_perf = sum;
+    if (sum_marks != nbCodes) {
+      throw new Error("recursiveEvaluatePerformances: invalid sum_marks value #1 (depth=" + depth + ", sum_marks=" + sum_marks + ", sum_marks=" + sum_marks + ")");
+    }
+
+    // Max possible value of sum = 24 bits (10.000.000 for 7 columns case) + 20 bits (for value 999999 so that < 1/10000 precision) = 44 bits << 52 mantissa bits of double type
+    if (sum < best_sum) {
+      best_sum = sum;
+    }
+
+    // Fill output in case of first call
+    if (first_call) {
+
+      // Processing is aborted when too long
+      if (new Date().getTime() - evaluatePerformancesStartTime > max_performance_evaluation_time) {
+        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+        particularCodeGlobalPerformance = PerformanceNA; // output
+        return PerformanceUNKNOWN;
+      }
+
+      listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
+      // console.log(spaces(depth) + "(depth " + depth + ") " + "=> perf=" + listOfGlobalPerformances[idx1]);
+    }
+
+  }
+
+  // Evaluate performance of impossible code if needed
+  // *************************************************
+
+  if (first_call && (particularCodeToAssess != 0 /* empty code */)) {
+
+    current_code = particularCodeToAssess;
+
+    nextNbsCodes.fill(0); // (faster than a for loop)
+
+    // Determine all possible marks for current code
+    for (idx2 = 0; idx2 < nbCodes; idx2++) {
+      other_code = listOfCodes[idx2];
+      codeHandler.fillMark(current_code, other_code, mark_perf_tmp);
+      mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
+      nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
+      nextNbsCodes[mark_perf_tmp_idx]++;
+    }
+
+    // Assess current code
+    sum = 0.0;
+    sum_marks = 0;
+    for (mark_idx = nbMaxMarks-1; mark_idx >= 0; mark_idx--) {
+      let nextNbCodes = nextNbsCodes[mark_idx];
+      // Go through all sets of possible marks
+      if (nextNbCodes > 0) {
+        sum_marks += nextNbCodes;
+        if (mark_idx == best_mark_idx) {
+          throw new Error("recursiveEvaluatePerformances: impossible code is possible");
+        }
+        else if (nextNbCodes == 1) {
+          sum = sum + 1.0; // 1.0 * 1.0 = 1.0
+        }
+        else if (nextNbCodes == 2) {
+          sum = sum + 3.0 // 2 * 1.5 = 3.0
+        }
+        else {
+          sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
+        }
+      }
     }
     if (sum_marks != nbCodes) {
-      console.log("error: (depth=" + depth + "): " + sum_marks + "," + nbCodes);
+      throw new Error("recursiveEvaluatePerformances: invalid sum_marks value #2 (depth=" + depth + ", sum_marks=" + sum_marks + ", sum_marks=" + sum_marks + ")");
     }
 
-    if (depth == -1) { // first call
-      // console.log(idx1 + "out of " + nbCodes);    // XXX
-      listOfGlobalPerformances[idx1] = 1.0 + best_perf / nbCodes;
-    }
+    // Fill output
+    particularCodeGlobalPerformance = 1.0 + sum / nbCodes; // output
 
   }
-  if (depth == -1) { // first call
-    console.log("FINAL PERF=" + (1.0 + best_perf / nbCodes));
-  }
-  else {
-    // console.log("best_perf=" + best_perf + ", res=" + (1.0 + best_perf / nbCodes));
-  }
-  return 1.0 + best_perf / nbCodes;
+
+  return 1.0 + best_sum / nbCodes;
 
 }
-
-// XXX Take particularCode into account
-
-// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 // ********************************
 // Handle messages from main thread
@@ -1203,7 +1395,7 @@ self.addEventListener('message', function(e) {
     possibleCodesShown = new Array(nbMaxPossibleCodesShown);
     globalPerformancesShown = new Array(nbMaxPossibleCodesShown);
     for (let i = 0; i < nbMaxPossibleCodesShown; i++) {
-      globalPerformancesShown[i] = PerformanceUNKNOWN;
+      globalPerformancesShown[i] = PerformanceNA;
     }
 
     if (data.first_session_game == undefined) {
@@ -1395,8 +1587,8 @@ self.addEventListener('message', function(e) {
       throw new Error("NEW_ATTEMPT phase / code is undefined");
     }
     codesPlayed[currentAttemptNumber-1] = Number(data.code);
-    if ( isNaN(codesPlayed[currentAttemptNumber-1]) || !codeHandler.isFullAndValid(codesPlayed[currentAttemptNumber-1])  ) {
-      throw new Error("NEW_ATTEMPT phase / invalid code: " + code);
+    if ( isNaN(codesPlayed[currentAttemptNumber-1]) || !codeHandler.isFullAndValid(codesPlayed[currentAttemptNumber-1]) ) {
+      throw new Error("NEW_ATTEMPT phase / invalid code: " + codesPlayed[currentAttemptNumber-1]);
     }
 
     if (data.mark_nbBlacks == undefined) {
@@ -1462,16 +1654,16 @@ self.addEventListener('message', function(e) {
     // B.1) Compute performance of code played
     // ***************************************
 
-    let code_played_relative_perf = PerformanceUNKNOWN;
+    let best_global_performance = PerformanceNA;
+    let code_played_relative_perf = PerformanceNA;
     let relative_perf_evaluation_done = false;
-    let useless_code_played = false;
 
     // a) Useless code
     // ***************
 
     if ((nextNbOfPossibleCodes == previousNbOfPossibleCodes) && (!gameWon)) {
-      useless_code_played = true;
-      // same best_global_performance value as previous attempt is kept
+      // To simplify, for an useless code, performances will be computed at next useful code
+      best_global_performance = PerformanceUNKNOWN;
       code_played_relative_perf = -1.00;
       relative_perf_evaluation_done = true;
     }
@@ -1481,8 +1673,7 @@ self.addEventListener('message', function(e) {
 
     else {
 
-      if (previousNbOfPossibleCodes <= -1) { // XXX to replace by the below line
-      // if (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) {
+      if (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) {
 
         // Initializations
         // ***************
@@ -1510,44 +1701,85 @@ self.addEventListener('message', function(e) {
         // Compute performances
         // ********************
 
+        // XXX TEST TMP - BEGIN
+        /* let test_code_1 = codeHandler.setAllColors(1, 2, 3, 4, 5, 6, 7);
+        let test_code_2 = codeHandler.setAllColors(1, 3, 2, 1, 1, 1, 1);
+        let test_code_3 = codeHandler.setAllColors(1, 1, 1, 1, 1, 1, 1);
+        let test_code_4 = codeHandler.setAllColors(1, 4, 4, 1, 1, 1, 1);
+        let test_code_5 = codeHandler.setAllColors(2, 2, 2, 1, 1, 1, 1);
+        let test_array = new Array(nbOfCodesForSystematicEvaluation);
+        test_array[0] = test_code_1;
+        test_array[1] = test_code_2;
+        test_array[2] = test_code_3;
+        test_array[3] = test_code_4;
+        previousNbOfPossibleCodes = 3;
+        let res = evaluatePerformances(-1, test_array, previousNbOfPossibleCodes, test_code_5);
+        console.log("RES = " + res);
+        return; */
+        // XXX TEMP TEST - END
+
         let code_played_global_performance = PerformanceNA;
         let index = (currentAttemptNumber%2);
         if (0 == isAttemptPossibleinGameSolver(currentAttemptNumber)) { // code played is possible
           // Evaluate performances for possibleCodesForPerfEvaluation[currentAttemptNumber%2]:
-          let startTime = (new Date()).getTime(); // XXX
-          best_global_performance = evaluatePerformances(-1 /* first depth */, -1 /* N.A.*/, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */);
-          console.log(((new Date()).getTime() - startTime)/1000.0); // XXX
-          let code_played_found = false;
-          for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-            if (possibleCodesForPerfEvaluation[index][i] == codesPlayed[currentAttemptNumber-1]) {
-              code_played_global_performance = listOfGlobalPerformances[i];
-              code_played_found = true;
-              break;
+          let startTime = (new Date()).getTime();
+          best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */);
+          if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
+            console.log("(perfeval#1: best performance: " + best_global_performance
+                        + " / " + ((new Date()).getTime() - startTime) + "ms)");
+            let code_played_found = false;
+            for (let i = 0; i < previousNbOfPossibleCodes; i++) {
+              if ( (possibleCodesForPerfEvaluation[index][i] == codesPlayed[currentAttemptNumber-1]) && (listOfGlobalPerformances[i] != PerformanceNA) ) {
+                code_played_global_performance = listOfGlobalPerformances[i];
+                code_played_found = true;
+                break;
+              }
+            }
+            if (!code_played_found) { // error to test
+              throw new Error("NEW_ATTEMPT phase / performance of possible code played was not evaluated (" + codeHandler.codeToString(codesPlayed[currentAttemptNumber-1]) + ", " + currentAttemptNumber + ")");
             }
           }
-          if (!code_played_found) { // error to test
-            throw new Error("NEW_ATTEMPT phase / performance of possible code played was not evaluated (" + codesPlayed[currentAttemptNumber-1] + ", " + currentAttemptNumber + ")");
+          else {
+            console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms)");
           }
         }
         else { // code played is not possible
           // Evaluate performances for possibleCodesForPerfEvaluation[currentAttemptNumber%2]:
-          best_global_performance = evaluatePerformances(-1 /* first depth */, -1 /* N.A.*/, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[currentAttemptNumber-1]);
-          code_played_global_performance = best_global_performance; // XXX to be replaced by particularCodeGlobalPerformance + check that not N.A.=> throw Exception as in the possible code
+          let startTime = (new Date()).getTime();
+          best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[currentAttemptNumber-1]);
+          if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
+            console.log("(perfeval#2: best performance: " + best_global_performance
+                        + " / particular code performance: " + particularCodeGlobalPerformance
+                        + " / " + ((new Date()).getTime() - startTime) + "ms)");
+            if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
+              throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance");
+            }
+            code_played_global_performance = particularCodeGlobalPerformance;
+          }
+          else {
+            console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms)");
+          }
         }
 
-        if ((best_global_performance == PerformanceNA) || (best_global_performance == PerformanceUNKNOWN) || (best_global_performance <= 0.01)) { // XXX error to test
-          throw new Error("NEW_ATTEMPT phase / invalid best_global_performance: " + best_global_performance);
+        if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
+          if ((best_global_performance == PerformanceNA) || (best_global_performance <= 0.01)) {
+            throw new Error("NEW_ATTEMPT phase / invalid best_global_performance: " + best_global_performance);
+          }
+          if ((code_played_global_performance == PerformanceNA) || (code_played_global_performance == PerformanceUNKNOWN) || (code_played_global_performance <= 0.01)) {
+            throw new Error("NEW_ATTEMPT phase / invalid code_played_global_performance: " + code_played_global_performance);
+          }
+          code_played_relative_perf = best_global_performance - code_played_global_performance;
+          relative_perf_evaluation_done = true;
         }
-        if ((code_played_global_performance == PerformanceNA) || (code_played_global_performance == PerformanceUNKNOWN) || (code_played_global_performance <= 0.01)) { // XXX error to test
-          throw new Error("NEW_ATTEMPT phase / invalid code_played_global_performance: " + code_played_global_performance);
+        else { // performance evaluation failed
+          best_global_performance = PerformanceUNKNOWN;
+          code_played_relative_perf = PerformanceUNKNOWN;
+          relative_perf_evaluation_done = false;
         }
-
-        code_played_relative_perf = best_global_performance - code_played_global_performance;
-        relative_perf_evaluation_done = true;
 
         // Post-processing checks
         // **********************
-        // XXX N below errors to test
+
         if (listOfGlobalPerformances.length != arraySizeAtInit) {
           throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
         }
@@ -1559,12 +1791,16 @@ self.addEventListener('message', function(e) {
         }
 
       }
-      else { // Possible future improvement: statically precomputed perfs could be used here
+      else {
         best_global_performance = PerformanceUNKNOWN;
         code_played_relative_perf = PerformanceUNKNOWN;
         relative_perf_evaluation_done = false;
       }
 
+    }
+
+    if (code_played_relative_perf == PerformanceNA) {
+      throw new Error("NEW_ATTEMPT phase / code_played_relative_perf is NA");
     }
 
     // ***************
@@ -1584,14 +1820,14 @@ self.addEventListener('message', function(e) {
     let nb_codes_shown = Math.min(previousNbOfPossibleCodes, nbMaxPossibleCodesShown);
     for (let i = 0; i < nb_codes_shown; i++) {
       possibleCodesShown[i] = possibleCodesForPerfEvaluation[currentAttemptNumber%2][i];
-      if (useless_code_played) {
-        // same globalPerformancesShown values as previous attempt are kept
-      }
-      else if (relative_perf_evaluation_done) {
-        globalPerformancesShown[i] = listOfGlobalPerformances[i];
+      if (best_global_performance == PerformanceUNKNOWN) {
+        globalPerformancesShown[i] = PerformanceUNKNOWN;
       }
       else {
-        globalPerformancesShown[i] = PerformanceUNKNOWN;
+        if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
+          throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (index " + i + ")");
+        }
+        globalPerformancesShown[i] = listOfGlobalPerformances[i];
       }
     }
 

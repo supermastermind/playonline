@@ -66,9 +66,11 @@ function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
-      <b>Current version: 0.81<br>"
+      <b>Current version: 0.9<br>"
       + month_and_year_str +
       "</b><br><br>\
+      Version 0.9<br>\
+      optimal strategy assessed at end of game<br><br>\
       Version 0.7<br>\
       possible codes at each attempt can be displayed<br><br>\
       Version 0.6<br>\
