@@ -1436,7 +1436,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
       }
       strGame = strGame.trim();
 
-      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, Math.round(sumPerfs * 100.0) / 100.0 /* 0.01 precision */, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
+      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, (Math.round(sumPerfs * 100.0) / 100.0).toFixed(2) /* 0.01 precision */, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
     }
   }
 
@@ -2213,7 +2213,7 @@ function draw_graphic_bis() {
         ctx.font = medium_bold_font;
         if ((!gameOnGoing()) && allPerformancesFilled()) {
           let str1, str1bis, str2;
-          let sum_rounded = Math.round(sumPerfs * 100.0) / 100.0;
+          let sum_rounded = Math.round(sumPerfs * 100.0) / 100.0; // 0.01 precision
           str1 = ":";
           str1bis = "";
           /* if (nbUnknownPerfs == 0) {
