@@ -70,7 +70,7 @@ function write_sidebar() {
       + month_and_year_str +
       "</b><br><br>\
       Version 0.9<br>\
-      optimal strategy assessed at end of game<br><br>\
+      optimal strategy is assessed at end of game<br><br>\
       Version 0.7<br>\
       possible codes at each attempt can be displayed<br><br>\
       Version 0.6<br>\
