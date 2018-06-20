@@ -1430,18 +1430,13 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
     else { // (score > 0.0 because game won)
       let nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
 
-      let strSumPerfs = "";
-      /* if (nbUnknownPerfs > 0) {
-        strSumPerfs = "\u2248 ";
-      } */
-
       let strGame = "";
       for (let i = 1; i < Math.min(4, currentAttemptNumber); i++) {
         strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
       }
       strGame = strGame.trim();
 
-      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, strSumPerfs + sumPerfs, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
+      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, Math.round(sumPerfs * 100.0) / 100.0; /* 0.01 precision */, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
     }
   }
 
