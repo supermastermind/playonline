@@ -1436,7 +1436,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
       }
       strGame = strGame.trim();
 
-      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, Math.round(sumPerfs * 100.0) / 100.0; /* 0.01 precision */, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
+      store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, Math.round(sumPerfs * 100.0) / 100.0 /* 0.01 precision */, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
     }
   }
 
