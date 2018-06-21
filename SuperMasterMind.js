@@ -1949,7 +1949,7 @@ function draw_graphic_bis() {
       ctx.font = star_font_tmp;
       let star_font_width_1char = ctx.measureText("\u2B50").width; // star
       let star_font_height = star_font_size;
-      while ((star_font_height <= y_cell_delta-8) && (star_font_size <= max_font_size) && (star_font_width_1char <= x_cell_delta-3)) {
+      while ((star_font_height <= y_cell_delta-7) && (star_font_size <= max_font_size) && (star_font_width_1char <= x_cell_delta-3)) {
         last_valid_star_font_size = star_font_size;
         star_font_size = star_font_size + 1;
         star_font_tmp = "bold " + star_font_size + "px " + fontFamily;
