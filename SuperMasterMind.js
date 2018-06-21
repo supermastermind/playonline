@@ -3275,7 +3275,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
             if (!displayString("\u2009" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                                lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-              if (!displayString(starStr + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+              if (!displayString("\u2009" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                                  lightGray, backgroundColor, ctx, true, 0, true, 0)) {
                 displayString(starStr + performance.toFixed(0).replaceAll(",",".") /* star0 */, x_cell, y_cell, cell_width,
                               lightGray, backgroundColor, ctx);
