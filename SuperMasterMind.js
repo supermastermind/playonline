@@ -1973,8 +1973,8 @@ function draw_graphic_bis() {
       medium2_bold_font = "bold " + Math.min(Math.max(Math.floor(font_size/1.5)+2, min_font_size), font_size) + "px " + fontFamily;
       medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       if (!showPossibleCodesMode) {
-        // Same as medium_bold_font
-        stats_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
+        // (related to medium_bold_font)
+        stats_font = "bold " + Math.max(Math.floor(font_size/1.3), min_font_size) + "px " + fontFamily;
       }
       else {
         stats_font = "bold " + Math.max(Math.floor(star_font_height), min_font_size) + "px " + fontFamily;
