@@ -215,6 +215,7 @@ let medium_bold_italic_font = defaultFont;
 let stats_font = defaultFont;
 let error_font = defaultFont;
 let font_size = min_font_size;
+let star_font_size = min_font_size;
 
 // Other variables
 // ****************
@@ -1923,10 +1924,11 @@ function draw_graphic_bis() {
       // Adapt font size
       // ***************
 
-      font_size = min_font_size;
-      let last_valid_font_size = font_size;
       let x_cell_delta = get_x_pixel(x_min+x_step) - get_x_pixel(x_min);
       let y_cell_delta = get_y_pixel(y_min) - get_y_pixel(y_min+y_step);
+
+      font_size = min_font_size;
+      let last_valid_font_size = font_size;
       let font_tmp = "bold " + font_size + "px " + fontFamily;
       ctx.font = font_tmp;
       let font_width_1char = ctx.measureText("X").width;
@@ -1940,6 +1942,22 @@ function draw_graphic_bis() {
         font_height = font_size;
       }
       font_size = last_valid_font_size;
+
+      star_font_size = min_font_size;
+      let last_valid_star_font_size = star_font_size;
+      let star_font_tmp = "bold " + star_font_size + "px " + fontFamily;
+      ctx.font = star_font_tmp;
+      let star_font_width_1char = ctx.measureText("\u2B50").width; // star
+      let star_font_height = star_font_size;
+      while ((star_font_height <= y_cell_delta-8) && (star_font_size <= max_font_size) && (star_font_width_1char <= x_cell_delta-3)) {
+        last_valid_star_font_size = star_font_size;
+        star_font_size = star_font_size + 1;
+        star_font_tmp = "bold " + star_font_size + "px " + fontFamily;
+        ctx.font = star_font_tmp;
+        star_font_width_1char = ctx.measureText("\u2B50").width; // star
+        star_font_height = star_font_size;
+      }
+      star_font_size = last_valid_star_font_size;
 
       basic_font = font_size + "px " + fontFamily;
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
@@ -1959,7 +1977,7 @@ function draw_graphic_bis() {
         stats_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       }
       else {
-        stats_font = "bold " + Math.max(Math.floor(font_size/1.1), min_font_size) + "px " + fontFamily;
+        stats_font = "bold " + Math.max(Math.floor(star_font_height), min_font_size) + "px " + fontFamily;
       }
 
       error_font = font_size + "px " + fontFamily;
@@ -3251,19 +3269,19 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
         starStr = "\u2B50\u2009";
       }
       if ( (!globalPerfDisplayIfOptimal)
-           || (!displayString("\u2009" + starStr + "optimal\u2009(" + optimalglobalperformance.toFixed(2).replaceAll(",",".") + ")\u2009", x_cell, y_cell, cell_width,
+           || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(2).replaceAll(",","."), x_cell, y_cell, cell_width,
                               lightGray, backgroundColor, ctx, true, 0, true, 0)) ) {
-        if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
-                           lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-          if (!displayString("\u2009" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+          if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-            if (!displayString(starStr + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+            if (!displayString("\u2009" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                                lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-              displayString(starStr + performance.toFixed(0).replaceAll(",",".") /* star0 */, x_cell, y_cell, cell_width,
-                            lightGray, backgroundColor, ctx);
+              if (!displayString(starStr + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                                 lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+                displayString(starStr + performance.toFixed(0).replaceAll(",",".") /* star0 */, x_cell, y_cell, cell_width,
+                              lightGray, backgroundColor, ctx);
+              }
             }
           }
-        }
       }
     }
     else { // > 0.00: an illogical code can be better than the optimal logical code(s)
