@@ -1101,8 +1101,12 @@ function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 // XXX Further optimizations:
 // - 4 deep leave
 // - throw new Exc in Solver/MainScript => recorded by google script
-// - mark computing optimization: dictionary with depth?, hash code and limited history
+// - mark computing optimization: dictionary with depth?, hash code and limited history => gain x2/x3?
+// - circular permutation optimization => gain x5000?
 // - tous les XXX des fichiers .js (celui-ci + SMM.js notamment)
+// - check "Code_at_-0.01_perf.docx"
+// - 3rd geoloc backup site + email warning if reached?
+// - web page image updates with perfs
 function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
   let first_call = (depth == -1);
