@@ -2407,6 +2407,7 @@ function draw_graphic_bis() {
           if (gameWon) { // game won
             let victoryStr;
             let victoryStr2;
+            let victoryStr3;
             let nb_attempts_for_max_score;
             let time_in_seconds_corresponding_to_one_attempt_in_score;
             let multiply_factor;
@@ -2472,8 +2473,9 @@ function draw_graphic_bis() {
 
             // Check if the player was helped
             if (playerWasHelped) {
-              victoryStr = "You won with help!";
-              victoryStr2 = "You won /?"
+              victoryStr = "\u2009You won with help!\u2009";
+              victoryStr2 = "\u2009You won /?\u2009";
+              victoryStr3 = "Yes!";
               nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
                 score = Math.max(score / 3.0, min_score);
@@ -2490,40 +2492,74 @@ function draw_graphic_bis() {
               }
             }
             else {
-              victoryStr = "You won!!!";
-              victoryStr2 = "You won!"
+              victoryStr = "\u2009You won!!!\u2009";
+              victoryStr2 = "\u2009You won!\u2009";
+              victoryStr3 = "Yes!";
             }
 
+            // (code duplicated:)
             if (!displayString(victoryStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
-                          greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString(victoryStr2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
-                            greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+                               greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+              if (!displayString(victoryStr2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+                                 greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                displayString(victoryStr3, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+                              greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+              }
             }
             if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString(timeStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                            greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+              if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                 greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                   greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                  displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                                   greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+                }
+              }
             }
-            // if (score > 0.0) {
             let rounded_score = Math.round(score);
-            displayString("Score: " + rounded_score, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                          greenColor, backgroundColor_2, ctx, true, 0, false, 0);
-            // }
+            let ptsStr;
+            if (rounded_score > 1) {
+              ptsStr = "pts"
+            }
+            else {
+              ptsStr = "pt";
+            }
+            if (!displayString("\u2009" /* (thin space) */ + "Score: " + rounded_score + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                               greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+              if (!displayString("\u2009" /* (thin space) */ + rounded_score + "\u2009" /* (thin space) */ + ptsStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                                 greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                displayString(rounded_score + ptsStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                              greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+              }
+            }
 
           }
           else if (currentAttemptNumber == nbMaxAttemptsToDisplay+1) { // game lost
 
             score = 0.0;
-            displayString("You lost!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
-                          redColor, backgroundColor_2, ctx, true, 0, false, 0);
-            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+            // (code duplicated:)
+            if (!displayString("\u2009You lost!\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                                redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString(timeStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+              displayString("No!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                             redColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
-            displayString("Score: 0", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                          redColor, backgroundColor_2, ctx, true, 0, false, 0);
-
+            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                               redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+              if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                 redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                   redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                  displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                                   redColor, backgroundColor_2, ctx, true, 0, false, 0);
+                }
+              }
+            }
+            if (!displayString("\u2009Score: 0\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                               redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+              displayString("0\u2009pt", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                            redColor, backgroundColor_2, ctx, true, 0, false, 0);
+            }
           }
           else {
             displayGUIError("game over inconsistency", new Error().stack);
