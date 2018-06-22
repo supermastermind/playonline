@@ -199,8 +199,8 @@ let highlightColor = "#FFFF00"; // Yellow
 
 let fontFamily = "Verdana";
 let defaultFont = "10px " + fontFamily;
-let min_font_size = 7;
-let max_font_size = 99;
+let min_font_size = 7; // (font size below 7 may not be easily readable in canvas)
+let max_font_size = 222;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
 let basic_bold_italic_font = defaultFont;
@@ -1933,7 +1933,7 @@ function draw_graphic_bis() {
       ctx.font = font_tmp;
       let font_width_1char = ctx.measureText("X").width;
       let font_height = font_size;
-      while ((font_height <= y_cell_delta-4) && (font_size <= max_font_size) && (font_width_1char <= x_cell_delta-3)) {
+      while ((font_height <= Math.min(y_cell_delta-4,y_cell_delta*80.0/100.0) /* (margin + char height imprecision) */) && (font_size <= max_font_size) && (font_width_1char <= x_cell_delta-3)) {
         last_valid_font_size = font_size;
         font_size = font_size + 1;
         font_tmp = "bold " + font_size + "px " + fontFamily;
@@ -1949,7 +1949,7 @@ function draw_graphic_bis() {
       ctx.font = star_font_tmp;
       let star_font_width_1char = ctx.measureText("\u2B50").width; // star
       let star_font_height = star_font_size;
-      while ((star_font_height <= y_cell_delta-7) && (star_font_size <= max_font_size) && (star_font_width_1char <= x_cell_delta-3)) {
+      while ((star_font_height <= Math.min(y_cell_delta-6,y_cell_delta*85.0/100.0) /* (margin + char height imprecision) */) && (star_font_size <= max_font_size) && (star_font_width_1char <= x_cell_delta-3)) {
         last_valid_star_font_size = star_font_size;
         star_font_size = star_font_size + 1;
         star_font_tmp = "bold " + star_font_size + "px " + fontFamily;
@@ -1957,7 +1957,7 @@ function draw_graphic_bis() {
         star_font_width_1char = ctx.measureText("\u2B50").width; // star
         star_font_height = star_font_size;
       }
-      star_font_size = last_valid_star_font_size;
+      star_font_size = Math.min(last_valid_star_font_size, font_size);
 
       basic_font = font_size + "px " + fontFamily;
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
@@ -1977,7 +1977,7 @@ function draw_graphic_bis() {
         stats_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       }
       else {
-        stats_font = "bold " + Math.max(Math.floor(star_font_height), min_font_size) + "px " + fontFamily;
+        stats_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily;
       }
 
       error_font = font_size + "px " + fontFamily;
