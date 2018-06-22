@@ -273,7 +273,7 @@
         }
 
         if (firstHomePageAccess) {
-          $.getJSON('https://api.ipdata.co', function(data) {
+          $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
             firstaccessgeoloc = "fatmp1";
             last_data_used = data;
             if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)

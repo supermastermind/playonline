@@ -1105,7 +1105,7 @@ function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 // - circular permutation optimization => gain x5000?
 // - tous les XXX des fichiers .js (celui-ci + SMM.js notamment)
 // - check "Code_at_-0.01_perf.docx"
-// - 3rd geoloc backup site + email warning if reached?
+// - 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
 // - web page image updates with perfs
 function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
