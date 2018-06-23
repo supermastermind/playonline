@@ -58,7 +58,7 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = attempt_refresh_time_1*2;
 
-let max_performance_evaluation_time = 4888; // XXX 4888
+let max_performance_evaluation_time = 5555;
 
 // Performance-related variables
 // *****************************
@@ -1080,6 +1080,11 @@ function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 
   evaluatePerformancesStartTime = new Date().getTime();
 
+  // Defensive check
+  if (best_mark_idx != marksTable_MarkToNb[nbColumns][0]) {
+    throw new Error("evaluatePerformances: (best_mark_idx != marksTable_MarkToNb[nbColumns][0])");
+  }
+
   if (depth == -1) { // first call
     // Initialize outputs
     if (nbCodes != previousNbOfPossibleCodes) {
@@ -1195,18 +1200,19 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
           }
         }
 
-        mark_perf_tmp.nbBlacks = nbBlacks;
-        mark_perf_tmp.nbWhites = nbWhites;
+        // mark_perf_tmp.nbBlacks = nbBlacks;
+        // mark_perf_tmp.nbWhites = nbWhites;
         // (duplicated code from fillMark() for better performances (2/2) - end)
+
+        mark_perf_tmp_idx = marksTable_MarkToNb[nbBlacks][nbWhites];
+        nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
+        nextNbsCodes[mark_perf_tmp_idx]++;
       }
       else {
-        mark_perf_tmp.nbBlacks = nbColumns;
-        mark_perf_tmp.nbWhites = 0;
+        nextListsOfCodes[best_mark_idx][nextNbsCodes[best_mark_idx]] = other_code;
+        nextNbsCodes[best_mark_idx]++;
       }
 
-      mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
-      nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
-      nextNbsCodes[mark_perf_tmp_idx]++;
     }
 
     // Assess current code
