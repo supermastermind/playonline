@@ -1155,9 +1155,9 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
     for (idx2 = 0; idx2 < nbCodes; idx2++) {
       other_code = listOfCodes[idx2];
 
-      // codeHandler.fillMark(current_code, other_code, mark_perf_tmp);
-      // (duplicated code from fillMark() for better performances (2/2) - begin)
-      {
+      if (current_code != other_code) {
+        // codeHandler.fillMark(current_code, other_code, mark_perf_tmp);
+        // (duplicated code from fillMark() for better performances (2/2) - begin)
         let code2 = other_code;
 
         let nbBlacks = 0;
@@ -1197,8 +1197,12 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
         mark_perf_tmp.nbBlacks = nbBlacks;
         mark_perf_tmp.nbWhites = nbWhites;
+        // (duplicated code from fillMark() for better performances (2/2) - end)
       }
-      // (duplicated code from fillMark() for better performances (2/2) - end)
+      else {
+        mark_perf_tmp.nbBlacks = nbColumns;
+        mark_perf_tmp.nbWhites = 0;
+      }
 
       mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
       nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;

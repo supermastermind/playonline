@@ -361,11 +361,11 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
     // XXX TMP - begin
     /*
     code = this.setColor(code, 4, 1);
-    code = this.setColor(code, 2, 2);
+    code = this.setColor(code, 4, 2);
     code = this.setColor(code, 4, 3);
-    code = this.setColor(code, 3, 4);
+    code = this.setColor(code, 4, 4);
     code = this.setColor(code, 4, 5);
-    code = this.setColor(code, 5, 6);
+    code = this.setColor(code, 4, 6);
     code = this.setColor(code, 4, 7);
     for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
       code = this.setColor(code, this.emptyColor, col);
