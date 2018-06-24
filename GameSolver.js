@@ -63,7 +63,7 @@ let max_performance_evaluation_time = 10001; // XXX 10001
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 444;
+let baseOfNbOfCodesForSystematicEvaluation = 404;
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
@@ -1274,7 +1274,7 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
     // Fill output in case of first call
     if (first_call) {
 
-      if (nbCodes > 100) { // Basic defense against CPU variations
+      if (nbCodes > 100) { // (basic defense against CPU variations)
         let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
 
         // Processing is aborted when too long
@@ -1286,24 +1286,24 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
         }
 
         // Anticipation of processing abortion
-        if ( (time_elapsed > max_performance_evaluation_time/5) && (idx1 < Math.round(nbCodes/7)) ) {
+        if ( (time_elapsed > max_performance_evaluation_time*33/100) && (idx1 < Math.round(nbCodes*17/100)) ) { // XXX not compatible with equivalent codes
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
         }
-        if ( (time_elapsed > max_performance_evaluation_time/3) && (idx1 < Math.round(nbCodes/5)) ) {
+        if ( (time_elapsed > max_performance_evaluation_time*50/100) && (idx1 < Math.round(nbCodes*37/100)) ) { // XXX not compatible with equivalent codes
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
         }
-        if ( (time_elapsed > max_performance_evaluation_time/2) && (idx1 < Math.round(nbCodes/2.5)) ) {
+        if ( (time_elapsed > max_performance_evaluation_time*67/100) && (idx1 < Math.round(nbCodes*57/100)) ) { // XXX not compatible with equivalent codes
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
-        }
+        }        
       }
 
       listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
