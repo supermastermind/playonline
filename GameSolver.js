@@ -55,8 +55,8 @@ let nbMaxAttemptsForEndOfGame = -1;
 let message_processing_ongoing = false;
 
 let init_refresh_time = 1222;
-let attempt_refresh_time_1 = 222;
-let attempt_refresh_time_2 = attempt_refresh_time_1*2;
+let attempt_refresh_time_1 = 0;
+let attempt_refresh_time_2 = 0;
 
 let max_performance_evaluation_time = 10001; // XXX 10001
 
