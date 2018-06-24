@@ -63,7 +63,7 @@ let max_performance_evaluation_time = 10001; // XXX 10001
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 300;
+let baseOfNbOfCodesForSystematicEvaluation = 444;
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
@@ -1483,12 +1483,12 @@ self.addEventListener('message', function(e) {
         // *                *** TOTAL:  9 marks *** *
         // ******************************************
         nbMaxMarks = 9;
-        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*120/100), initialNbPossibleCodes);
+        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 11;
         break;
       case 4:
         nbMaxMarks = 14;
-        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*110/100), initialNbPossibleCodes);
+        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 12;
         break;
       case 5:
@@ -1498,7 +1498,7 @@ self.addEventListener('message', function(e) {
         break;
       case 6:
         nbMaxMarks = 27;
-        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*90/100), initialNbPossibleCodes);
+        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 14;
         break;
       case 7:
@@ -1514,7 +1514,7 @@ self.addEventListener('message', function(e) {
         // *                *** TOTAL: 35 marks *** *
         // ******************************************
         nbMaxMarks = 35;
-        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*80/100), initialNbPossibleCodes);
+        nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 15;
         break;
       default:
