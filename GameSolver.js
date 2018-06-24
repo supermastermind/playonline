@@ -58,12 +58,12 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = attempt_refresh_time_1*2;
 
-let max_performance_evaluation_time = 8888; // XXX 8888
+let max_performance_evaluation_time = 10001; // XXX 10001
 
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 256;
+let baseOfNbOfCodesForSystematicEvaluation = 300;
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
