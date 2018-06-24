@@ -1274,34 +1274,36 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
     // Fill output in case of first call
     if (first_call) {
 
-      let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
+      if (nbCodes > 100) { // Basic defense against CPU variations
+        let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
 
-      // Processing is aborted when too long
-      if (time_elapsed > max_performance_evaluation_time) {
-        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
-        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
-        particularCodeGlobalPerformance = PerformanceNA; // output
-        return PerformanceUNKNOWN;
-      }
+        // Processing is aborted when too long
+        if (time_elapsed > max_performance_evaluation_time) {
+          listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+          listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+          particularCodeGlobalPerformance = PerformanceNA; // output
+          return PerformanceUNKNOWN;
+        }
 
-      // Anticipation of processing abortion
-      if ( (time_elapsed > max_performance_evaluation_time/5) && (idx1 < Math.round(nbCodes/7)) ) {
-        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
-        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
-        particularCodeGlobalPerformance = PerformanceNA; // output
-        return PerformanceUNKNOWN;
-      }
-      if ( (time_elapsed > max_performance_evaluation_time/3) && (idx1 < Math.round(nbCodes/5)) ) {
-        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
-        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
-        particularCodeGlobalPerformance = PerformanceNA; // output
-        return PerformanceUNKNOWN;
-      }
-      if ( (time_elapsed > max_performance_evaluation_time/2) && (idx1 < Math.round(nbCodes/2.5)) ) {
-        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
-        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
-        particularCodeGlobalPerformance = PerformanceNA; // output
-        return PerformanceUNKNOWN;
+        // Anticipation of processing abortion
+        if ( (time_elapsed > max_performance_evaluation_time/5) && (idx1 < Math.round(nbCodes/7)) ) {
+          listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+          listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+          particularCodeGlobalPerformance = PerformanceNA; // output
+          return PerformanceUNKNOWN;
+        }
+        if ( (time_elapsed > max_performance_evaluation_time/3) && (idx1 < Math.round(nbCodes/5)) ) {
+          listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+          listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+          particularCodeGlobalPerformance = PerformanceNA; // output
+          return PerformanceUNKNOWN;
+        }
+        if ( (time_elapsed > max_performance_evaluation_time/2) && (idx1 < Math.round(nbCodes/2.5)) ) {
+          listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+          listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+          particularCodeGlobalPerformance = PerformanceNA; // output
+          return PerformanceUNKNOWN;
+        }
       }
 
       listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
