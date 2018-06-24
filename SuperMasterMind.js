@@ -1402,7 +1402,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
     displayGUIError("invalid perfs (" + attempt_nb + ", " + nbOfStatsFilled_Perfs + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + relative_perf_p + ", " + best_global_performance_p + ", " + relative_perf_evaluation_done_p + ", " + code_p + ", " + attempt_nb + ")", new Error().stack);
     return false;
   }
-  relative_performances_of_codes_played[attempt_nb-1] = relative_perf_p;
+  relative_performances_of_codes_played[attempt_nb-1] = relative_perf_p; // may be known or unknown
   global_best_performances[attempt_nb-1] = best_global_performance_p; // may be PerformanceUNKNOWN
 
   if (relative_perf_p == PerformanceUNKNOWN) {
@@ -2126,25 +2126,34 @@ function draw_graphic_bis() {
         }
 
         if (i < currentAttemptNumber) {
-          // Performance displayed is wished
-          if ( (!gameOnGoing()) || (i <= nbMaxHintsDisplayed)
-               || relativePerformancesEvaluationDone[i-1]
-               || (nbColumns < nominalGameNbColumns) // easy games
-               || (relative_performances_of_codes_played[i-1] == -1.00) ) { // useless code
-            displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), showPossibleCodesMode, false, PerformanceNA, ctx);
-            if ( (relativePerformancesEvaluationDone[i-1])
-                 && (relative_performances_of_codes_played[i-1] != PerformanceUNKNOWN)
-                 && (relative_performances_of_codes_played[i-1] <= PerformanceLOW) ) {
-              performancesDisplayed[i-1] = true;
-            } // else: allow overwriting
-          }
-          // Performance shall be hidden
-          else {
-            if (optimal_width > 0) {
-              displayString("\u2234" /* (performance temporarily hidden or unknown) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, i-1, optimal_width,
-                            lightGray, backgroundColor, ctx);
-            } // else: nothing is displayed, as it will be overwritten below by the nb of possible codes <-> perf switch
-          }
+          // Relative performance was filled and may be known or unknown
+          displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), showPossibleCodesMode, false, PerformanceNA, ctx);
+          if ( relativePerformancesEvaluationDone[i-1]
+               && (relative_performances_of_codes_played[i-1] != PerformanceUNKNOWN)
+               && (relative_performances_of_codes_played[i-1] <= PerformanceLOW) ) {
+            performancesDisplayed[i-1] = true;
+          } // else: allow overwriting
+        }
+      }
+
+      if (optimal_width > 0) { // (the below x_cell values are only valid for (optimal_width > 0), as in displayPerf())
+        if (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1) {
+          displayString("\u23F0" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
+                        lightGray, backgroundColor_2, ctx);
+        }
+        else if (!gameOnGoing() && (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs)) {
+          displayString("\u23F0" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
+                        lightGray, backgroundColor_2, ctx);
+        }
+        if (gameOnGoing() && (currentAttemptNumber == 1) && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
+          displayString("\u23F0" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
+                        lightGray, backgroundColor_2, ctx);
+        }
+      }
+      else {
+        if (gameOnGoing() && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes < nbMaxAttempts)) {
+          displayString("\u23F0" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_NbPossibleCodes+1-1, nb_possible_codes_width,
+                        lightGray, backgroundColor_2, ctx);
         }
       }
 

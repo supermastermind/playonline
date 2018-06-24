@@ -58,12 +58,12 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = attempt_refresh_time_1*2;
 
-let max_performance_evaluation_time = 5555;
+let max_performance_evaluation_time = 8888; // XXX 8888
 
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 175; // XXX 175
+let baseOfNbOfCodesForSystematicEvaluation = 256;
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
@@ -1144,7 +1144,7 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
     current_code = listOfCodes[idx1];
     // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + "current_code:" + codeHandler.codeToString(current_code));}
 
-    nextNbsCodes.fill(0); // (faster than a for loop on 0..nbMaxMarks-1)
+    nextNbsCodes.fill(0); // (faster than (or close to) a loop on 0..nbMaxMarks-1)
 
     // (duplicated code from fillMark() for better performances (1/2) - begin)
     code1_colors[0] = (current_code & 0x0000000F);
@@ -1274,8 +1274,30 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
     // Fill output in case of first call
     if (first_call) {
 
+      let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
+
       // Processing is aborted when too long
-      if (new Date().getTime() - evaluatePerformancesStartTime > max_performance_evaluation_time) {
+      if (time_elapsed > max_performance_evaluation_time) {
+        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+        particularCodeGlobalPerformance = PerformanceNA; // output
+        return PerformanceUNKNOWN;
+      }
+
+      // Anticipation of processing abortion
+      if ( (time_elapsed > max_performance_evaluation_time/5) && (idx1 < Math.round(nbCodes/7)) ) {
+        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+        particularCodeGlobalPerformance = PerformanceNA; // output
+        return PerformanceUNKNOWN;
+      }
+      if ( (time_elapsed > max_performance_evaluation_time/3) && (idx1 < Math.round(nbCodes/5)) ) {
+        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+        particularCodeGlobalPerformance = PerformanceNA; // output
+        return PerformanceUNKNOWN;
+      }
+      if ( (time_elapsed > max_performance_evaluation_time/2) && (idx1 < Math.round(nbCodes/2.5)) ) {
         listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
         listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
         particularCodeGlobalPerformance = PerformanceNA; // output
@@ -1295,7 +1317,7 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
     current_code = particularCodeToAssess;
 
-    nextNbsCodes.fill(0); // (faster than a for loop)
+    nextNbsCodes.fill(0); // (faster than (or close to) a loop on 0..nbMaxMarks-1)
 
     // Determine all possible marks for current code
     for (idx2 = 0; idx2 < nbCodes; idx2++) {
