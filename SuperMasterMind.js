@@ -2138,24 +2138,24 @@ function draw_graphic_bis() {
 
       if (optimal_width > 0) { // (the below x_cell values are only valid for (optimal_width > 0), as in displayPerf())
         if (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1) {
-          displayString("\u23F3" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
+          displayString("\u301C" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
                         lightGray, backgroundColor_2, ctx);
         }
         else if (!gameOnGoing() && (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs)) {
-          displayString("\u23F3" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
+          displayString("\u301C" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
                         lightGray, backgroundColor_2, ctx);
         }
         if (gameOnGoing() && (currentAttemptNumber == 1) && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
-          displayString("\u23F3" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
+          displayString("\u301C" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
         }
       }
       else {
-        if ( gameOnGoing() 
+        if ( gameOnGoing()
              && ( (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes + 1 /* (+1 to simplify) */)
                   || ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes == 0)) )
              && (nbOfStatsFilled_NbPossibleCodes < nbMaxAttempts) ) {
-          displayString("\u23F3" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_NbPossibleCodes+1-1, nb_possible_codes_width,
+          displayString("\u301C" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_NbPossibleCodes+1-1, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
         }
       }
