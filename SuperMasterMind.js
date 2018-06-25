@@ -2151,7 +2151,10 @@ function draw_graphic_bis() {
         }
       }
       else {
-        if (gameOnGoing() && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes + 1 /* (+1 to simplify) */) && (nbOfStatsFilled_NbPossibleCodes < nbMaxAttempts)) {
+        if ( gameOnGoing() 
+             && ( (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes + 1 /* (+1 to simplify) */)
+                  || ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes == 0)) )
+             && (nbOfStatsFilled_NbPossibleCodes < nbMaxAttempts) ) {
           displayString("\ud83d\udd52" /* clock */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_NbPossibleCodes+1-1, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
         }
