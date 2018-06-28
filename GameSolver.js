@@ -58,16 +58,16 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = 0;
 
-let max_performance_evaluation_time = 10001; // XXX 10001
+let max_performance_evaluation_time = 12444;
 
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 404;
+let baseOfNbOfCodesForSystematicEvaluation = 444;
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
-let mem_reduc_factor = 0.8;
+let mem_reduc_factor = 0.99; // (values <= 0.9 can lead to dynamic memory allocations)
 let nbMaxDepth = -1;
 
 let performanceListsInitDone = false;
@@ -1012,10 +1012,12 @@ function new2DArray(x, y) {
 
 function check2DArraySizes(my_array, x, y) {
   if (my_array.length != x) {
+    console.log("check2DArraySizes/0: " + my_array.length + " != " + x);
     return false;
   }
   for (let i = 0; i < my_array.length; i++) {
     if (my_array[i].length != y) {
+      console.log("check2DArraySizes/1(" + i + "): " + my_array[i].length + " != " + y);
       return false;
     }
   }
@@ -1034,6 +1036,7 @@ function new3DArray(x, y, z, reduc) {
 
 function check3DArraySizes(my_array, x, y, z, reduc) {
   if (my_array.length != x) {
+    console.log("check3DArraySizes/0: " + my_array.length + " != " + x);
     return false;
   }
   var reduced_z = z;
@@ -1061,9 +1064,12 @@ function spaces(nb) {
 let evaluatePerformancesStartTime;
 
 let mark_perf_tmp = {nbBlacks:-1, nbWhites:-1}; // N.A.
-let mark_perf_tmp1 = {nbBlacks:-1, nbWhites:-1}; // N.A.
-let mark_perf_tmp2 = {nbBlacks:-1, nbWhites:-1}; // N.A.
-let mark_perf_tmp3 = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmpa = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmpb = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmpc = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmpd = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmpe = {nbBlacks:-1, nbWhites:-1}; // N.A.
+let mark_perf_tmpf = {nbBlacks:-1, nbWhites:-1}; // N.A.
 
 let code1_colors = new Array(nbMaxColumns);
 let code2_colors = new Array(nbMaxColumns);
@@ -1240,11 +1246,11 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
         }
         else if (nextNbCodes == 3) {
           let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
-          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmp1);
-          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmp2);
-          if ((mark_perf_tmp1.nbBlacks == mark_perf_tmp2.nbBlacks) && (mark_perf_tmp1.nbWhites == mark_perf_tmp2.nbWhites)) {
-            codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmp3);
-            if ((mark_perf_tmp1.nbBlacks == mark_perf_tmp3.nbBlacks) && (mark_perf_tmp1.nbWhites == mark_perf_tmp3.nbWhites)) {
+          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmpa);
+          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmpb);
+          if ((mark_perf_tmpa.nbBlacks == mark_perf_tmpb.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpb.nbWhites)) {
+            codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmpc);
+            if ((mark_perf_tmpa.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpc.nbWhites)) {
               sum = sum + 6.0; // 3 * ((1+2+3)/3.0) = 6.0
             }
             else {
@@ -1256,6 +1262,64 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
           }
           if (sum_marks == nbCodes) break;
           // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 3 codes")};
+        }
+        else if (nextNbCodes == 4) {
+
+          // An optimal code being played, if it is not the secret code, can lead to:
+          // a) 3 groups of 1 code => obviously optimal (performance will be 1+2+2+2=7).
+          // b) 1 group of 3 codes => at best, the performance will be 1+2+3+3=9. Thus there can't be any other c) case for the other codes
+          //    (because performance would be 8 < 9), which means all marks are equal for the 6 pairs of codes (performance will be 1+2+3+4=10).
+          // c) 1 group of 1 code and 1 group of 2 codes (performance will be 1+2+2+3=8).
+
+          let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
+          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmpa); // a
+          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmpb); // b
+          codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[3], mark_perf_tmpc); // c
+          let a_b = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpb.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpb.nbWhites));
+          let a_c = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpc.nbWhites));
+          let b_c = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpc.nbWhites));
+          if ((!a_b) && (!a_c) && (!b_c)) { // a) 3 different marks when code 0 is played
+            sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
+          }
+          else {
+            codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmpd); // d
+            codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[3], mark_perf_tmpe); // e
+            codeHandler.fillMark(nextListOfCodesToConsider[2], nextListOfCodesToConsider[3], mark_perf_tmpf); // f
+            let a_d = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpd.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpd.nbWhites));
+            let a_e = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpe.nbWhites));
+            let a_f = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpf.nbWhites));
+            if (a_b && a_c && a_d && a_e && a_f) { // b) all marks are equal
+              sum = sum + 10.0; // 4 * ((1+2+3+4)/4.0)
+            }
+            else {
+              let d_e = ((mark_perf_tmpd.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpd.nbWhites == mark_perf_tmpe.nbWhites));
+              if ((!a_d) && (!a_e) && (!d_e)) { // a) 3 different marks when code 1 is played
+                sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
+              }
+              else {
+                let c_e = ((mark_perf_tmpc.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpc.nbWhites == mark_perf_tmpe.nbWhites));
+                let c_f = ((mark_perf_tmpc.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpc.nbWhites == mark_perf_tmpf.nbWhites));
+                let e_f = ((mark_perf_tmpe.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpe.nbWhites == mark_perf_tmpf.nbWhites));
+                if ((!c_e) && (!c_f) && (!e_f)) { // a) 3 different marks when code 3 is played
+                  sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
+                }
+                else {
+                  let b_d = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpd.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpd.nbWhites));
+                  let b_f = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpf.nbWhites));
+                  let d_f = ((mark_perf_tmpd.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpd.nbWhites == mark_perf_tmpf.nbWhites));
+                  if ((!b_d) && (!b_f) && (!d_f)) { // a) 3 different marks when code 2 is played
+                    sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
+                  }
+                  else {
+                    // c) after an optimal code is played, if it is not the secret code, there will be 1 group of 1 code and 1 group of 2 codes
+                    sum = sum + 8.0; // 4 * ((1+2+2+3)/4.0)
+                  }
+                }
+              }
+            }
+          }
+          if (sum_marks == nbCodes) break;
+
         }
         else {
           sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
@@ -1286,27 +1350,32 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
         }
 
         // Anticipation of processing abortion
-        if ( (time_elapsed > max_performance_evaluation_time*33/100) && (idx1 < Math.round(nbCodes*17/100)) ) { // XXX not compatible with equivalent codes
+        if ( (time_elapsed > max_performance_evaluation_time*30/100) && (idx1 < Math.round(nbCodes*10/100)) ) { // XXX not compatible with equivalent codes
+          console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #1)");
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
         }
-        if ( (time_elapsed > max_performance_evaluation_time*50/100) && (idx1 < Math.round(nbCodes*37/100)) ) { // XXX not compatible with equivalent codes
+        if ( (time_elapsed > max_performance_evaluation_time*50/100) && (idx1 < Math.round(nbCodes*20/100)) ) { // XXX not compatible with equivalent codes
+          console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #2)");
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
         }
-        if ( (time_elapsed > max_performance_evaluation_time*67/100) && (idx1 < Math.round(nbCodes*57/100)) ) { // XXX not compatible with equivalent codes
+        if ( (time_elapsed > max_performance_evaluation_time*70/100) && (idx1 < Math.round(nbCodes*30/100)) ) { // XXX not compatible with equivalent codes
+          console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #3)");
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
-        }        
+        }
       }
 
       listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
+      // console.log("perf #" + idx1 + ": " + listOfGlobalPerformances[idx1]); // XXX
+
       // console.log(spaces(depth) + "(depth " + depth + ") " + "=> perf=" + listOfGlobalPerformances[idx1]);
     }
 
@@ -1721,7 +1790,7 @@ self.addEventListener('message', function(e) {
           performanceListsInitDone = true;
           arraySizeAtInit = previousNbOfPossibleCodes;
           listOfGlobalPerformances = new Array(arraySizeAtInit);
-          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, Math.ceil((arraySizeAtInit+nbOfCodesForSystematicEvaluation)*mem_reduc_factor/2.0) /* (code duplicated) */, mem_reduc_factor);
+          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, arraySizeAtInit /* *mem_reduc_factor */, mem_reduc_factor);
           nbOfPossibleCodes = new2DArray(nbMaxDepth, nbMaxMarks);
         }
 
@@ -1821,7 +1890,7 @@ self.addEventListener('message', function(e) {
         if (listOfGlobalPerformances.length != arraySizeAtInit) {
           throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
         }
-        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, Math.ceil((arraySizeAtInit+nbOfCodesForSystematicEvaluation)*mem_reduc_factor/2.0) /* (code duplicated) */, mem_reduc_factor)) {
+        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, arraySizeAtInit /* *mem_reduc_factor */, mem_reduc_factor)) {
           throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
         }
         if (!check2DArraySizes(nbOfPossibleCodes, nbMaxDepth, nbMaxMarks)) {

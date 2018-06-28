@@ -357,22 +357,9 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
         code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);
       }
     }
-
-    // XXX TMP - begin
-    /*
-    code = this.setColor(code, 4, 1);
-    code = this.setColor(code, 4, 2);
-    code = this.setColor(code, 4, 3);
-    code = this.setColor(code, 4, 4);
-    code = this.setColor(code, 4, 5);
-    code = this.setColor(code, 4, 6);
-    code = this.setColor(code, 4, 7);
     for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
       code = this.setColor(code, this.emptyColor, col);
-    }
-    */
-    // XXX TMP - end
-
+    }    
     return code;
   }
 
@@ -1252,6 +1239,17 @@ function resetGameAttributes(nbColumnsSelected) {
   nbUnknownPerfs = 0;
 
   sCode = ~(simpleCodeHandler.createRandomCode());
+  /* XXX
+  let toto = simpleCodeHandler.createRandomCode(sCodeRevealed);
+  toto = simpleCodeHandler.setColor(toto, 4, 1);
+  toto = simpleCodeHandler.setColor(toto, 4, 2);
+  toto = simpleCodeHandler.setColor(toto, 4, 3);
+  toto = simpleCodeHandler.setColor(toto, 4, 4);
+  toto = simpleCodeHandler.setColor(toto, 4, 5);
+  toto = simpleCodeHandler.setColor(toto, 4, 6);
+  toto = simpleCodeHandler.setColor(toto, 4, 7);    
+  sCode = ~(toto);
+  */ 
   sCodeRevealed = 0;
 
   game_cnt++;
