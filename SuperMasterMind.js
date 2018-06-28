@@ -1430,7 +1430,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
       let nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
 
       let strGame = "";
-      for (let i = 1; i < Math.min(4, currentAttemptNumber); i++) {
+      for (let i = 1; i < Math.min(6, currentAttemptNumber); i++) {
         strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
       }
       strGame = strGame.trim();
