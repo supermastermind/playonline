@@ -89,6 +89,7 @@ let playerWasHelped = false;
 
 let errorStr = "";
 let errorCnt = 0;
+let errorGlobalCnt = 0;
 
 let nb_random_codes_played = 0;
 let at_least_one_useless_code_played = false;
@@ -359,7 +360,7 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
     }
     for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
       code = this.setColor(code, this.emptyColor, col);
-    }    
+    }
     return code;
   }
 
@@ -1247,9 +1248,9 @@ function resetGameAttributes(nbColumnsSelected) {
   toto = simpleCodeHandler.setColor(toto, 4, 4);
   toto = simpleCodeHandler.setColor(toto, 4, 5);
   toto = simpleCodeHandler.setColor(toto, 4, 6);
-  toto = simpleCodeHandler.setColor(toto, 4, 7);    
+  toto = simpleCodeHandler.setColor(toto, 4, 7);
   sCode = ~(toto);
-  */ 
+  */
   sCodeRevealed = 0;
 
   game_cnt++;
@@ -3360,17 +3361,30 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
 
 function displayGUIError(GUIErrorStr, errStack) {
 
-  // Error displayed in Javascript console
-  // **************************************
+  // Display error in Javascript console
+  // ***********************************
 
   if (errorCnt < 50) {
     console.log("***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n");
     console.log("Stack:");
     let stack = new Error().stack;
     console.log(stack);
-    errorCnt++;
     console.log("\n");
   }
+  errorCnt++;
+
+  // Submit form if very first error
+  // *******************************
+
+  if (errorGlobalCnt == 0) {
+    try {
+      submitForm("error: " + GUIErrorStr + " / " + errStack + " / " + navigator.platform + " / " + navigator.userAgent, true);
+    }
+    catch (exc) {
+      console.log("internal error at error form submission: " + exc);
+    }
+  }
+  errorGlobalCnt++;
 
   // Alert
   // *****

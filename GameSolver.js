@@ -1111,7 +1111,7 @@ function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 }
 // XXX Further optimizations:
 // - 4 deep leave
-// - throw new Exc in Solver/MainScript => recorded by google script
+// - home page accessible from compressed mode
 // - mark computing optimization: dictionary with depth?, hash code and limited history => gain x2/x3?
 // - circular permutation optimization => gain x5000?
 // - tous les XXX des fichiers .js (celui-ci + SMM.js notamment)
