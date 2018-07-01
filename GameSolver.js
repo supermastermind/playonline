@@ -67,7 +67,7 @@ let baseOfNbOfCodesForSystematicEvaluation = 444;
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
-let mem_reduc_factor = 0.99; // (values <= 0.9 can lead to dynamic memory allocations)
+let mem_reduc_factor = 1.00; // (values <= 0.9 can lead to dynamic memory allocations)
 let nbMaxDepth = -1;
 
 let performanceListsInitDone = false;
@@ -1321,7 +1321,7 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
           if (sum_marks == nbCodes) break;
 
         }
-        else {
+        else { // (nextNbCodes >= 5). Note: from 5 codes, "leaf algos" would be very long to write & to optimize
           sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
         }
       }
@@ -1790,7 +1790,7 @@ self.addEventListener('message', function(e) {
           performanceListsInitDone = true;
           arraySizeAtInit = previousNbOfPossibleCodes;
           listOfGlobalPerformances = new Array(arraySizeAtInit);
-          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, arraySizeAtInit /* *mem_reduc_factor */, mem_reduc_factor);
+          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, arraySizeAtInit * mem_reduc_factor, mem_reduc_factor);
           nbOfPossibleCodes = new2DArray(nbMaxDepth, nbMaxMarks);
         }
 
@@ -1890,7 +1890,7 @@ self.addEventListener('message', function(e) {
         if (listOfGlobalPerformances.length != arraySizeAtInit) {
           throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
         }
-        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, arraySizeAtInit /* *mem_reduc_factor */, mem_reduc_factor)) {
+        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, arraySizeAtInit * mem_reduc_factor, mem_reduc_factor)) {
           throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
         }
         if (!check2DArraySizes(nbOfPossibleCodes, nbMaxDepth, nbMaxMarks)) {
