@@ -58,7 +58,7 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = 0;
 
-let max_performance_evaluation_time = 12444;
+let max_performance_evaluation_time = 13333;
 
 // Performance-related variables
 // *****************************
@@ -69,12 +69,14 @@ let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
 let mem_reduc_factor = 1.00; // (values <= 0.9 can lead to dynamic memory allocations)
 let nbMaxDepth = -1;
+let marks_optimization_mask;
 
 let performanceListsInitDone = false;
 let arraySizeAtInit = -1;
 let listOfGlobalPerformances;
 let listsOfPossibleCodes;
 let nbOfPossibleCodes;
+let marks_already_computed_table = null;
 
 let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
 let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
@@ -415,50 +417,114 @@ class CodeHandler { // NOTE: the code of this class is partially duplicated in S
   // Fill a mark between 2 codes in a fast way
   fillMark(code1, code2, mark) { // (duplicated code)
 
-    let nbBlacks = 0;
-    let nbWhites = 0;
-    let col1, col2;
+    let marks_already_computed_table_cell;
+    let codeX;
+    let codeY;
 
-    // The below operations are unrolled for better performances
-    this.colors_int[0] = true;
-    this.colors_int[1] = true;
-    this.colors_int[2] = true;
-    this.colors_int[3] = true;
-    this.colors_int[4] = true;
-    this.colors_int[5] = true;
-    this.colors_int[6] = true;
-    this.code1_colors[0] = (code1 & 0x0000000F);
-    this.code1_colors[1] = ((code1 >> 4) & 0x0000000F);
-    this.code1_colors[2] = ((code1 >> 8) & 0x0000000F);
-    this.code1_colors[3] = ((code1 >> 12) & 0x0000000F);
-    this.code1_colors[4] = ((code1 >> 16) & 0x0000000F);
-    this.code1_colors[5] = ((code1 >> 20) & 0x0000000F);
-    this.code1_colors[6] = ((code1 >> 24) & 0x0000000F);
-    this.code2_colors[0] = (code2 & 0x0000000F);
-    this.code2_colors[1] = ((code2 >> 4) & 0x0000000F);
-    this.code2_colors[2] = ((code2 >> 8) & 0x0000000F);
-    this.code2_colors[3] = ((code2 >> 12) & 0x0000000F);
-    this.code2_colors[4] = ((code2 >> 16) & 0x0000000F);
-    this.code2_colors[5] = ((code2 >> 20) & 0x0000000F);
-    this.code2_colors[6] = ((code2 >> 24) & 0x0000000F);
-
-    for (col1 = 0; col1 < this.nbColumns; col1++) {
-      if (this.code1_colors[col1] == this.code2_colors[col1]) {
-        nbBlacks++;
+    // Marks optimization (1/2) - begin
+    // Notes: - Hash key computing shall be symetrical wrt code1 and code2 and very fast.
+    //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative).
+    //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator.
+    let key = ( (code1 + code2 /* (use LSBs) */
+                 + (code1 >> 9) + (code2 >> 9) /* (use MSBs) */
+                 + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
+    marks_already_computed_table_cell = marks_already_computed_table[key];
+    codeX = marks_already_computed_table_cell.code1a;
+    codeY = marks_already_computed_table_cell.code2a;
+    if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+      mark.nbBlacks = marks_already_computed_table_cell.nbBlacksa;
+      mark.nbWhites = marks_already_computed_table_cell.nbWhitesa;
+    }
+    else {
+      codeX = marks_already_computed_table_cell.code1b;
+      codeY = marks_already_computed_table_cell.code2b;
+      if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+        mark.nbBlacks = marks_already_computed_table_cell.nbBlacksb;
+        mark.nbWhites = marks_already_computed_table_cell.nbWhitesb;
       }
       else {
-        for (col2 = 0; col2 < this.nbColumns; col2++) {
-          if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
-            this.colors_int[col2] = false;
-            nbWhites++;
-            break;
+        codeX = marks_already_computed_table_cell.code1c;
+        codeY = marks_already_computed_table_cell.code2c;
+        if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+          mark.nbBlacks = marks_already_computed_table_cell.nbBlacksc;
+          mark.nbWhites = marks_already_computed_table_cell.nbWhitesc;
+        }
+        // Marks optimization (1/2) - end
+        else {
+          let nbBlacks = 0;
+          let nbWhites = 0;
+          let col1, col2;
+
+          // The below operations are unrolled for better performances
+          this.colors_int[0] = true;
+          this.colors_int[1] = true;
+          this.colors_int[2] = true;
+          this.colors_int[3] = true;
+          this.colors_int[4] = true;
+          this.colors_int[5] = true;
+          this.colors_int[6] = true;
+          this.code1_colors[0] = (code1 & 0x0000000F);
+          this.code1_colors[1] = ((code1 >> 4) & 0x0000000F);
+          this.code1_colors[2] = ((code1 >> 8) & 0x0000000F);
+          this.code1_colors[3] = ((code1 >> 12) & 0x0000000F);
+          this.code1_colors[4] = ((code1 >> 16) & 0x0000000F);
+          this.code1_colors[5] = ((code1 >> 20) & 0x0000000F);
+          this.code1_colors[6] = ((code1 >> 24) & 0x0000000F);
+          this.code2_colors[0] = (code2 & 0x0000000F);
+          this.code2_colors[1] = ((code2 >> 4) & 0x0000000F);
+          this.code2_colors[2] = ((code2 >> 8) & 0x0000000F);
+          this.code2_colors[3] = ((code2 >> 12) & 0x0000000F);
+          this.code2_colors[4] = ((code2 >> 16) & 0x0000000F);
+          this.code2_colors[5] = ((code2 >> 20) & 0x0000000F);
+          this.code2_colors[6] = ((code2 >> 24) & 0x0000000F);
+
+          for (col1 = 0; col1 < this.nbColumns; col1++) {
+            if (this.code1_colors[col1] == this.code2_colors[col1]) {
+              nbBlacks++;
+            }
+            else {
+              for (col2 = 0; col2 < this.nbColumns; col2++) {
+                if ((this.code1_colors[col1] == this.code2_colors[col2]) && (this.code1_colors[col2] != this.code2_colors[col2]) && this.colors_int[col2]) {
+                  this.colors_int[col2] = false;
+                  nbWhites++;
+                  break;
+                }
+              }
+            }
           }
+
+          mark.nbBlacks = nbBlacks;
+          mark.nbWhites = nbWhites;
+
+          // Marks optimization (2/2) - begin
+          if (marks_already_computed_table_cell.write_index == 0) {
+            marks_already_computed_table_cell.code1a = code1;
+            marks_already_computed_table_cell.code2a = code2;
+            marks_already_computed_table_cell.nbBlacksa = nbBlacks;
+            marks_already_computed_table_cell.nbWhitesa = nbWhites;
+            marks_already_computed_table_cell.write_index = 1;
+          }
+          else if (marks_already_computed_table_cell.write_index == 1) {
+            marks_already_computed_table_cell.code1b = code1;
+            marks_already_computed_table_cell.code2b = code2;
+            marks_already_computed_table_cell.nbBlacksb = nbBlacks;
+            marks_already_computed_table_cell.nbWhitesb = nbWhites;
+            marks_already_computed_table_cell.write_index = 2;
+          }
+          else if (marks_already_computed_table_cell.write_index == 2) {
+            marks_already_computed_table_cell.code1c = code1;
+            marks_already_computed_table_cell.code2c = code2;
+            marks_already_computed_table_cell.nbBlacksc = nbBlacks;
+            marks_already_computed_table_cell.nbWhitesc = nbWhites;
+            marks_already_computed_table_cell.write_index = 0;
+          }
+          else {
+            throw new Error("CodeHandler: fillMark (wrong write_index: " + marks_already_computed_table_cell.write_index + ")");
+          }
+          // Marks optimization (2/2) - end
         }
       }
     }
-
-    mark.nbBlacks = nbBlacks;
-    mark.nbWhites = nbWhites;
 
   }
 
@@ -1131,6 +1197,9 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
   let sum;
   let sum_marks;
   let best_sum = 100000000000.0;
+  let marks_already_computed_table_cell;
+  let codeX;
+  let codeY;
 
   // Initializations
   // ***************
@@ -1168,49 +1237,111 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
       if (current_code != other_code) {
         // codeHandler.fillMark(current_code, other_code, mark_perf_tmp);
+
         // (duplicated code from fillMark() for better performances (2/2) - begin)
+        let code1 = current_code;
         let code2 = other_code;
 
-        let nbBlacks = 0;
-        let nbWhites = 0;
-        let col1, col2;
-
-        // The below operations are unrolled for better performances
-        colors_int[0] = true;
-        colors_int[1] = true;
-        colors_int[2] = true;
-        colors_int[3] = true;
-        colors_int[4] = true;
-        colors_int[5] = true;
-        colors_int[6] = true;
-        code2_colors[0] = (code2 & 0x0000000F);
-        code2_colors[1] = ((code2 >> 4) & 0x0000000F);
-        code2_colors[2] = ((code2 >> 8) & 0x0000000F);
-        code2_colors[3] = ((code2 >> 12) & 0x0000000F);
-        code2_colors[4] = ((code2 >> 16) & 0x0000000F);
-        code2_colors[5] = ((code2 >> 20) & 0x0000000F);
-        code2_colors[6] = ((code2 >> 24) & 0x0000000F);
-
-        for (col1 = 0; col1 < nbColumns; col1++) {
-          if (code1_colors[col1] == code2_colors[col1]) {
-            nbBlacks++;
+        // Marks optimization (1/2) - begin
+        // Notes: - Hash key computing shall be symetrical wrt code1 and code2 and very fast.
+        //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative).
+        //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator.
+        let key = ( (code1 + code2 /* (use LSBs) */
+                     + (code1 >> 9) + (code2 >> 9) /* (use MSBs) */
+                     + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
+        marks_already_computed_table_cell = marks_already_computed_table[key];
+        codeX = marks_already_computed_table_cell.code1a;
+        codeY = marks_already_computed_table_cell.code2a;
+        if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+          mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksa;
+          mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesa;
+        }
+        else {
+          codeX = marks_already_computed_table_cell.code1b;
+          codeY = marks_already_computed_table_cell.code2b;
+          if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+            mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksb;
+            mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesb;
           }
           else {
-            for (col2 = 0; col2 < nbColumns; col2++) {
-              if ((code1_colors[col1] == code2_colors[col2]) && (code1_colors[col2] != code2_colors[col2]) && colors_int[col2]) {
-                colors_int[col2] = false;
-                nbWhites++;
-                break;
+            codeX = marks_already_computed_table_cell.code1c;
+            codeY = marks_already_computed_table_cell.code2c;
+            if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+              mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksc;
+              mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesc;
+            }
+            // Marks optimization (1/2) - end
+            else {
+              let nbBlacks = 0;
+              let nbWhites = 0;
+              let col1, col2;
+
+              // The below operations are unrolled for better performances
+              colors_int[0] = true;
+              colors_int[1] = true;
+              colors_int[2] = true;
+              colors_int[3] = true;
+              colors_int[4] = true;
+              colors_int[5] = true;
+              colors_int[6] = true;
+              code2_colors[0] = (code2 & 0x0000000F);
+              code2_colors[1] = ((code2 >> 4) & 0x0000000F);
+              code2_colors[2] = ((code2 >> 8) & 0x0000000F);
+              code2_colors[3] = ((code2 >> 12) & 0x0000000F);
+              code2_colors[4] = ((code2 >> 16) & 0x0000000F);
+              code2_colors[5] = ((code2 >> 20) & 0x0000000F);
+              code2_colors[6] = ((code2 >> 24) & 0x0000000F);
+
+              for (col1 = 0; col1 < nbColumns; col1++) {
+                if (code1_colors[col1] == code2_colors[col1]) {
+                  nbBlacks++;
+                }
+                else {
+                  for (col2 = 0; col2 < nbColumns; col2++) {
+                    if ((code1_colors[col1] == code2_colors[col2]) && (code1_colors[col2] != code2_colors[col2]) && colors_int[col2]) {
+                      colors_int[col2] = false;
+                      nbWhites++;
+                      break;
+                    }
+                  }
+                }
               }
+
+              mark_perf_tmp.nbBlacks = nbBlacks;
+              mark_perf_tmp.nbWhites = nbWhites;
+
+              // Marks optimization (2/2) - begin
+              if (marks_already_computed_table_cell.write_index == 0) {
+                marks_already_computed_table_cell.code1a = code1;
+                marks_already_computed_table_cell.code2a = code2;
+                marks_already_computed_table_cell.nbBlacksa = nbBlacks;
+                marks_already_computed_table_cell.nbWhitesa = nbWhites;
+                marks_already_computed_table_cell.write_index = 1;
+              }
+              else if (marks_already_computed_table_cell.write_index == 1) {
+                marks_already_computed_table_cell.code1b = code1;
+                marks_already_computed_table_cell.code2b = code2;
+                marks_already_computed_table_cell.nbBlacksb = nbBlacks;
+                marks_already_computed_table_cell.nbWhitesb = nbWhites;
+                marks_already_computed_table_cell.write_index = 2;
+              }
+              else if (marks_already_computed_table_cell.write_index == 2) {
+                marks_already_computed_table_cell.code1c = code1;
+                marks_already_computed_table_cell.code2c = code2;
+                marks_already_computed_table_cell.nbBlacksc = nbBlacks;
+                marks_already_computed_table_cell.nbWhitesc = nbWhites;
+                marks_already_computed_table_cell.write_index = 0;
+              }
+              else {
+                throw new Error("recursiveEvaluatePerformances: wrong write_index: " + marks_already_computed_table_cell.write_index);
+              }
+              // Marks optimization (2/2) - end
             }
           }
         }
-
-        // mark_perf_tmp.nbBlacks = nbBlacks;
-        // mark_perf_tmp.nbWhites = nbWhites;
         // (duplicated code from fillMark() for better performances (2/2) - end)
 
-        mark_perf_tmp_idx = marksTable_MarkToNb[nbBlacks][nbWhites];
+        mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
         nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
         nextNbsCodes[mark_perf_tmp_idx]++;
       }
@@ -1554,21 +1685,25 @@ self.addEventListener('message', function(e) {
         nbMaxMarks = 9;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 11;
+        marks_optimization_mask = 0x7FFFF;
         break;
       case 4:
         nbMaxMarks = 14;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 12;
+        marks_optimization_mask = 0x7FFFF;
         break;
       case 5:
         nbMaxMarks = 20;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 13;
+        marks_optimization_mask = 0x7FFFF;
         break;
       case 6:
         nbMaxMarks = 27;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 14;
+        marks_optimization_mask = 0x7FFFF;
         break;
       case 7:
         // ******************************************
@@ -1585,6 +1720,7 @@ self.addEventListener('message', function(e) {
         nbMaxMarks = 35;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 15;
+        marks_optimization_mask = 0x7FFFF;
         break;
       default:
         throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
@@ -1734,6 +1870,16 @@ self.addEventListener('message', function(e) {
     // A.1) Compute number and list of new possible codes
     // **************************************************
 
+    if (marks_already_computed_table == null) {
+      marks_already_computed_table = new Array(marks_optimization_mask+1);
+      for (let i = 0; i < marks_already_computed_table.length; i++) {
+        marks_already_computed_table[i] = { code1a:0, code2a:0, nbBlacksa:-1, nbWhitesa:-1,
+                                            code1b:0, code2b:0, nbBlacksb:-1, nbWhitesb:-1,
+                                            code1c:0, code2c:0, nbBlacksc:-1, nbWhitesc:-1,
+                                            write_index:0};
+      }
+    }
+
     if (currentAttemptNumber == 1) { // first attempt
       possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
     }
@@ -1792,6 +1938,9 @@ self.addEventListener('message', function(e) {
           listOfGlobalPerformances = new Array(arraySizeAtInit);
           listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, arraySizeAtInit * mem_reduc_factor, mem_reduc_factor);
           nbOfPossibleCodes = new2DArray(nbMaxDepth, nbMaxMarks);
+          if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
+            throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table");
+          }
         }
 
         // - Other initializations
