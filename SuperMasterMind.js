@@ -2820,7 +2820,7 @@ function draw_graphic_bis() {
           }
           ctx.font = stats_font;
           let backgroundColor = backgroundColor_2;
-          displayPerf(relative_perf, y_cell, backgroundColor, global_perf, true, valid_best_global_perf && (currentPossibleCodeShown <= 2), best_global_perf, ctx);
+          displayPerf(relative_perf, y_cell, backgroundColor, global_perf, true, valid_best_global_perf && (currentPossibleCodeShown <= 2), best_global_perf, ctx, (code == codesPlayed[currentPossibleCodeShown-1]));
 
         }
 
@@ -3248,7 +3248,7 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomR
   }
 }
 
-function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx) {
+function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag = false) {
 
   let performance = Math.round(perf * 100.0) / 100.0; // 0.01 precision
   let optimalglobalperformance = Math.round(optimalGlobalPerf * 100.0) / 100.0; // 0.01 precision
@@ -3277,6 +3277,11 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
     }
   }
 
+  let prefixStr = "";
+  if (ideaFlag) {
+    prefixStr = "\uD83D\uDCA1\u2009"; // idea/bulb
+  }
+  
   if (performance == PerformanceUNKNOWN) {
     displayString("\u2234", x_cell, y_cell, cell_width,
                   lightGray, backgroundColor, ctx);
@@ -3302,30 +3307,39 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
       }
     }
     else if (performance <= PerformanceVERYLOW) {
-      if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
-                         redColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
-                      redColor, backgroundColor, ctx);
+      if (!displayString("\u2009" + prefixStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+                         redColor, backgroundColor, ctx, true, 0, true, 0)) {      
+        if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+                           redColor, backgroundColor, ctx, true, 0, true, 0)) {
+          displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                        redColor, backgroundColor, ctx);
+        }
       }
     }
     else if (performance <= PerformanceLOW) {
-      if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
-                         orangeColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
-                      orangeColor, backgroundColor, ctx);
+      if (!displayString("\u2009" + prefixStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+                         orangeColor, backgroundColor, ctx, true, 0, true, 0)) {      
+        if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+                           orangeColor, backgroundColor, ctx, true, 0, true, 0)) {
+          displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                        orangeColor, backgroundColor, ctx);
+        }
       }
     }
     else if (performance < 0.00) {
-      if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+      if (!displayString("\u2009" + prefixStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                          lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
-                      lightGray, backgroundColor, ctx);
+        if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+                           lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+          displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                        lightGray, backgroundColor, ctx);
+        }
       }
     }
     else if (performance == 0.00) { // optimal code (+/-0.005 precision)
       let starStr = "";
       if (starDisplayIfOptimal) {
-        starStr = "\u2B50\u2009";
+        starStr = "\u2B50\u2009"; // star
       }
       if ( (!globalPerfDisplayIfOptimal)
            || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(2).replaceAll(",","."), x_cell, y_cell, cell_width,
