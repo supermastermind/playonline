@@ -58,7 +58,7 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = 0;
 
-let max_performance_evaluation_time = 14444;
+let max_performance_evaluation_time = 144440;
 
 // Performance-related variables
 // *****************************
@@ -1981,6 +1981,8 @@ self.addEventListener('message', function(e) {
           let startTime = (new Date()).getTime();
           best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */);
           if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
+            throw new Error("(perfeval#1: best performance: " + best_global_performance
+                        + " / " + ((new Date()).getTime() - startTime) + "ms)");
             console.log("(perfeval#1: best performance: " + best_global_performance
                         + " / " + ((new Date()).getTime() - startTime) + "ms)");
             let code_played_found = false;
