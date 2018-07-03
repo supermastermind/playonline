@@ -1481,22 +1481,29 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
         }
 
         // Anticipation of processing abortion
-        if ( (time_elapsed > max_performance_evaluation_time*30/100) && (idx1 < Math.round(nbCodes*10/100)) ) { // XXX not compatible with equivalent codes
+        if ( (time_elapsed > max_performance_evaluation_time*25/100) && (idx1 < Math.round(nbCodes*7/100)) ) { // XXX not compatible with equivalent codes
           console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #1)");
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
         }
-        if ( (time_elapsed > max_performance_evaluation_time*50/100) && (idx1 < Math.round(nbCodes*20/100)) ) { // XXX not compatible with equivalent codes
+        if ( (time_elapsed > max_performance_evaluation_time*30/100) && (idx1 < Math.round(nbCodes*10/100)) ) { // XXX not compatible with equivalent codes
           console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #2)");
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
           return PerformanceUNKNOWN;
         }
-        if ( (time_elapsed > max_performance_evaluation_time*70/100) && (idx1 < Math.round(nbCodes*30/100)) ) { // XXX not compatible with equivalent codes
+        if ( (time_elapsed > max_performance_evaluation_time*50/100) && (idx1 < Math.round(nbCodes*20/100)) ) { // XXX not compatible with equivalent codes
           console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #3)");
+          listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+          listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+          particularCodeGlobalPerformance = PerformanceNA; // output
+          return PerformanceUNKNOWN;
+        }
+        if ( (time_elapsed > max_performance_evaluation_time*70/100) && (idx1 < Math.round(nbCodes*30/100)) ) { // XXX not compatible with equivalent codes
+          console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #4)");
           listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
           listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
           particularCodeGlobalPerformance = PerformanceNA; // output
