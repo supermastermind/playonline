@@ -58,7 +58,7 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = 0;
 
-let max_performance_evaluation_time = 13333;
+let max_performance_evaluation_time = 14444;
 
 // Performance-related variables
 // *****************************
