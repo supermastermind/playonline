@@ -2951,10 +2951,10 @@ function draw_graphic_bis() {
          && !(document.getElementById("revealSecretColorButton").disabled)
          && (sCodeRevealed == 0) ) {
       if (!CompressedDisplayMode) {
-        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button!" );
+        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button!");
       }
       else {
-        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button to reveal a secret color!" );
+        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button to reveal a secret color!");
       }
     }
 
