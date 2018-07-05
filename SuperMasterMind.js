@@ -87,9 +87,9 @@ let newGameEvent = true;
 let nbNewGameEventsCancelled = 0;
 let playerWasHelped = false;
 
-let errorStr = "";
-let errorCnt = 0;
-let errorGlobalCnt = 0;
+let gameErrorStr = "";
+let gameErrorCnt = 0;
+let globalErrorCnt = 0;
 
 let nb_random_codes_played = 0;
 let at_least_one_useless_code_played = false;
@@ -687,7 +687,13 @@ function onGameSolverMsg(e) {
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
-  displayGUIError("gameSolver error:" + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
+  if (e.message.indexOf("_error!") == -1) {
+    displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
+  }
+  else { // debug error
+    displayGUIError("error", "?");
+  }
+
 }
 
 // ***********************
@@ -1123,6 +1129,7 @@ function resetGameAttributes(nbColumnsSelected) {
 
   let i;
   let first_session_game;
+  let debug_mode = '';
 
   // Clear gameSolver worker if necessary
   if (gameSolver !== undefined) {
@@ -1261,8 +1268,8 @@ function resetGameAttributes(nbColumnsSelected) {
   newGameEvent = false;
   playerWasHelped = false;
 
-  errorStr = "";
-  errorCnt = 0;
+  gameErrorStr = "";
+  gameErrorCnt = 0;
 
   nb_random_codes_played = 0;
   at_least_one_useless_code_played = false;
@@ -1281,7 +1288,12 @@ function resetGameAttributes(nbColumnsSelected) {
   else {
     first_session_game = false;
   }
-  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt});
+  if (typeof(Storage) !== 'undefined') {
+    if (localStorage.debugMode) {
+      debug_mode = 'yes';
+    }
+  }
+  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode});
 }
 
 function checkArraySizes() {
@@ -3369,34 +3381,44 @@ function displayGUIError(GUIErrorStr, errStack) {
   // Display error in Javascript console
   // ***********************************
 
-  if (errorCnt < 50) {
+  if (gameErrorCnt < 50) {
     console.log("***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n");
     console.log("Stack:");
     let stack = new Error().stack;
     console.log(stack);
     console.log("\n");
   }
-  errorCnt++;
+  gameErrorCnt++;
 
   // Submit form if very first error
   // *******************************
 
-  if (errorGlobalCnt == 0) {
+  if (globalErrorCnt == 0) {
     try {
-      submitForm("error: " + GUIErrorStr + " / " + errStack + " / " + navigator.platform + " / " + navigator.userAgent, true);
+      var errorStr = "";
+      if (typeof(Storage) !== 'undefined') {
+        if (localStorage.firstname) {
+          errorStr = errorStr + " for " + localStorage.firstname;
+        }
+        if (localStorage.firstaccessid) {
+          errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
+        }
+      }
+      errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
+      submitForm("game error" + errorStr + ": " + GUIErrorStr + " / " + errStack, true);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
     }
   }
-  errorGlobalCnt++;
+  globalErrorCnt++;
 
   // Alert
   // *****
 
-  if (errorStr.length < 750) {
-    errorStr += "***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n";
-    alert(errorStr + "\nSee Javascript console for more details (Ctrl+Shift+I in Chrome or Firefox)\n\n");
+  if (gameErrorStr.length < 750) {
+    gameErrorStr += "***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n";
+    alert(gameErrorStr + "\nSee Javascript console for more details (Ctrl+Shift+I in Chrome or Firefox)\n\n");
   }
 
 }

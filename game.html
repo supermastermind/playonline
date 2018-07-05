@@ -330,7 +330,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_GS";
+      let html_compatibility_game_version = "Ver_GT";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1459,7 +1459,7 @@
                 if (localStorage.firstname) {
                   errorStr = errorStr + " for " + localStorage.firstname;
                 }
-                else if (localStorage.firstaccessid) {
+                if (localStorage.firstaccessid) {
                   errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
                 }
                 if (localStorage.countryname) {
@@ -1496,7 +1496,7 @@
                   if (localStorage.firstname) {
                     errorStr = errorStr + " for " + localStorage.firstname;
                   }
-                  else if (localStorage.firstaccessid) {
+                  if (localStorage.firstaccessid) {
                     errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
                   }
                   if (localStorage.countryname) {
@@ -1606,7 +1606,17 @@
           console.log("internal error while storing scores: " + exc);
           if (nb_errors_submitted == 0) {
             // alert("Oops... an internal error occurred: " + exc);
-            submitForm("internal error while storing scores: " + exc, true);
+            var errorStr = "";
+            if (typeof(Storage) !== 'undefined') {
+              if (localStorage.firstname) {
+                errorStr = errorStr + " for " + localStorage.firstname;
+              }
+              if (localStorage.firstaccessid) {
+                errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
+              }
+            }
+            errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
+            submitForm("internal error while storing scores" + errorStr + ": " + exc, true);
             nb_errors_submitted++;
           }
         }

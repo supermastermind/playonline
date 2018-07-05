@@ -81,6 +81,8 @@ let marks_already_computed_table = null;
 let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
 let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
 
+let debugError = new Error("_error!");
+
 // *************************************************************************
 // *************************************************************************
 // Classes
@@ -1654,6 +1656,13 @@ self.addEventListener('message', function(e) {
     game_id = Number(data.game_id);
     if ( isNaN(game_id) || (game_id < 0) ) {
       throw new Error("INIT phase / invalid game_id: " + game_id);
+    }
+
+    if (data.debug_mode == undefined) {
+      throw new Error("INIT phase / debug_mode is undefined");
+    }
+    if (data.debug_mode != "") {
+      throw debugError;
     }
 
     // ********************
