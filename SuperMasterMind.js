@@ -3403,6 +3403,15 @@ function displayGUIError(GUIErrorStr, errStack) {
         if (localStorage.firstaccessid) {
           errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
         }
+        if (localStorage.countryname) {
+          errorStr = errorStr + " in " + localStorage.countryname;
+        }
+        if (localStorage.cityname) {
+          errorStr = errorStr + " in " + localStorage.cityname;
+        }
+        if (localStorage.gamesok) {
+          errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+        }
       }
       errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
       submitForm("game error" + errorStr + ": " + GUIErrorStr + " / " + errStack, true);
