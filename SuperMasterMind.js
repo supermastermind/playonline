@@ -1290,7 +1290,7 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   if (typeof(Storage) !== 'undefined') {
     if (localStorage.debugMode) {
-      debug_mode = 'yes';
+      debug_mode = localStorage.debugMode;
     }
   }
   gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode});

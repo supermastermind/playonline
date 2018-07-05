@@ -1662,7 +1662,17 @@ self.addEventListener('message', function(e) {
       throw new Error("INIT phase / debug_mode is undefined");
     }
     if (data.debug_mode != "") {
-      throw debugError;
+      if (data.debug_mode == "err") {
+        throw debugError;
+      }
+      else if (data.debug_mode == "return") {
+        return;
+      }
+      else if (data.debug_mode == "log") {
+        for (let i = 0; i >= 0; i++) {
+          console.log("t" + i); // log test
+        }
+      }
     }
 
     // ********************
