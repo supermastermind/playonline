@@ -1665,12 +1665,13 @@ self.addEventListener('message', function(e) {
       if (data.debug_mode == "err") {
         throw debugError;
       }
-      else if (data.debug_mode == "return") {
-        return;
-      }
-      else if (data.debug_mode == "log") {
+      else if (data.debug_mode == "loops") {
         for (let i = 0; i >= 0; i++) {
-          console.log("t" + i); // log test
+        }
+      }
+      else if (data.debug_mode == "logs") {
+        for (let i = 0; i >= 0; i++) {
+          if (i % 2 == 0) {console.log(" ");} else {console.log("  ")};
         }
       }
     }
