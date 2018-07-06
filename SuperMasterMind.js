@@ -687,13 +687,7 @@ function onGameSolverMsg(e) {
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
-  if (e.message.indexOf("_error!") == -1) {
-    displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
-  }
-  else { // debug error
-    displayGUIError("error", "?");
-  }
-
+  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
 }
 
 // ***********************
@@ -1289,8 +1283,8 @@ function resetGameAttributes(nbColumnsSelected) {
     first_session_game = false;
   }
   if (typeof(Storage) !== 'undefined') {
-    if (localStorage.debugMode) {
-      debug_mode = localStorage.debugMode;
+    if (localStorage.debug_mode) {
+      debug_mode = localStorage.debug_mode;
     }
   }
   gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode});

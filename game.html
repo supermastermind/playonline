@@ -330,17 +330,19 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_GV";
+      let html_compatibility_game_version = "Ver_GX";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
+      let modeAlreadySelected = false;
       document.body.onkeydown = function(e) {
-        if (String.fromCharCode(e.keyCode).toLowerCase() == 'l') {
+        if ((String.fromCharCode(e.keyCode).toLowerCase() == 'l') && e.shiftKey && (!modeAlreadySelected)) {
           var mode = prompt("Which mode do you want to select?", "444");
           if (mode != null) {
             document.getElementById('form_list_id').value = mode.trim();
             setTimeout("submitForm();", 444);
           }
+          modeAlreadySelected = true;
         }
       };
       // Set AJAX timeout to X seconds (this will set all AJAX requests the program makes, even via $.getJSON, to have a timeout of X seconds)
@@ -1739,28 +1741,28 @@
         });
       }
 
-      $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
-        firstgamegeoloc = "fatmp1";
-        last_data_used = data;
-        if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
-             && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
-          firstgamegeoloc = "fa1";
-          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
-        }
-        else {
-          firstgamegeoloc = "faerr1a";
-          return firstAccessGeolocFailure("", "manual first access geolocation retry due to invalid geolocation data", "");
-        }
-      }) // to simplify, failure cases are not handled in a more complex way
-      .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-        firstgamegeoloc = "faerr1b";
-        firstAccessGeolocFailure(jqxhr, textStatus, error);
-      })
-      .always(function() {
-        console.log("(getJSON completed #i1)");
-      });
-
       if (firstAccess) {
+        $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
+          firstgamegeoloc = "fatmp1";
+          last_data_used = data;
+          if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
+               && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+            firstgamegeoloc = "fa1";
+            storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
+          }
+          else {
+            firstgamegeoloc = "faerr1a";
+            return firstAccessGeolocFailure("", "manual first access geolocation retry due to invalid geolocation data", "");
+          }
+        }) // to simplify, failure cases are not handled in a more complex way
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          firstgamegeoloc = "faerr1b";
+          firstAccessGeolocFailure(jqxhr, textStatus, error);
+        })
+        .always(function() {
+          console.log("(getJSON completed #i1)");
+        });
+
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",        44);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-5s')",       5000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-10s')",     10000);

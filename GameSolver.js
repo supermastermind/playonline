@@ -81,8 +81,6 @@ let marks_already_computed_table = null;
 let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
 let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
 
-let debugError = new Error("_error!");
-
 // *************************************************************************
 // *************************************************************************
 // Classes
@@ -1662,16 +1660,9 @@ self.addEventListener('message', function(e) {
       throw new Error("INIT phase / debug_mode is undefined");
     }
     if (data.debug_mode != "") {
-      if (data.debug_mode == "err") {
-        throw debugError;
-      }
-      else if (data.debug_mode == "loops") {
-        for (let i = 0; i >= 0; i++) {
-        }
-      }
-      else if (data.debug_mode == "logs") {
-        for (let i = 0; i >= 0; i++) {
-          if (i % 2 == 0) {console.log(" ");} else {console.log("  ")};
+      if (data.debug_mode == "dbg") {
+        for (let i = 0; i == i; i++) {
+          // if (i % 2 == 0) {console.log(" ");} else {console.log("  ")};
         }
       }
     }
