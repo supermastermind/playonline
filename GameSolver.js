@@ -2043,6 +2043,9 @@ self.addEventListener('message', function(e) {
             throw new Error("NEW_ATTEMPT phase / invalid code_played_global_performance: " + code_played_global_performance);
           }
           code_played_relative_perf = best_global_performance - code_played_global_performance;
+          if ( (code_played_relative_perf < -1.00) || (code_played_relative_perf >= 1.00) ) {
+            throw new Error("NEW_ATTEMPT phase / invalid relative performance: " + code_played_relative_perf + ", " + best_global_performance + ", " + code_played_global_performance);
+          }
           relative_perf_evaluation_done = true;
         }
         else { // performance evaluation failed

@@ -1437,7 +1437,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
       let nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
 
       let strGame = "";
-      for (let i = 1; i < Math.min(8, currentAttemptNumber); i++) {
+      for (let i = 1; i < currentAttemptNumber; i++) {
         strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
       }
       strGame = strGame.trim();
@@ -3408,6 +3408,19 @@ function displayGUIError(GUIErrorStr, errStack) {
         }
       }
       errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
+
+      let strGame = "";
+      try {
+        for (let i = 1; i < currentAttemptNumber; i++) {
+          strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
+        }
+        strGame = strGame.trim();
+      }
+      catch (game_exc) {
+        strGame = strGame + " " + game_exc;
+      }
+      errorStr = errorStr + " for game " + strGame;
+
       submitForm("game error" + errorStr + ": " + GUIErrorStr + " / " + errStack, true);
     }
     catch (exc) {
