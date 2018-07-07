@@ -1153,8 +1153,8 @@ function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
   evaluatePerformancesStartTime = new Date().getTime();
 
   // Defensive check
-  if (best_mark_idx != marksTable_MarkToNb[nbColumns][0]) {
-    throw new Error("evaluatePerformances: (best_mark_idx != marksTable_MarkToNb[nbColumns][0])");
+  if ((best_mark_idx != marksTable_MarkToNb[nbColumns][0]) || (best_mark_idx >= nbMaxMarks)) {
+    throw new Error("evaluatePerformances: invalid best_mark_idx");
   }
 
   if (depth == -1) { // first call
