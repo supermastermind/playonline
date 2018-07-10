@@ -1,4 +1,3 @@
-// XXXs + TBCs check RAM after repetitive gameResets w/ N codes played at 7 columns
 
 // ***************************************
 // ********** GameSolver script **********
@@ -80,6 +79,8 @@ let marks_already_computed_table = null;
 
 let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
 let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
+let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in SuperMasterMind.js)
+let PerformanceMaxValidValue = +0.90; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in SuperMasterMind.js)
 
 // *************************************************************************
 // *************************************************************************
@@ -1176,14 +1177,13 @@ function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 
 }
 // XXX Further optimizations:
-// - 4 deep leave
-// - home page accessible from compressed mode
-// - mark computing optimization: dictionary with depth?, hash code and limited history => gain x2/x3?
-// - circular permutation optimization => gain x5000?
-// - tous les XXX des fichiers .js (celui-ci + SMM.js notamment)
+// - circular permutation optimization for equivalent games/codes to avoid useless performance recomputing => gain x5000?
+// - XXXs/TBCs/TBDs in all files
+// - home page accessible from compressed mode, or F1 key at game beginning?
+// - all exceptions should be captured
 // - check "Code_at_-0.01_perf.docx"
 // - 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
-// - web page image updates with perfs
+// - sheet compression to retest
 function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
   let first_call = (depth == -1);
@@ -1371,7 +1371,7 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
           // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 1 code")};
         }
         else if (nextNbCodes == 2) {
-          sum = sum + 3.0 // 2 * 1.5 = 3.0
+          sum = sum + 3.0; // 2 * 1.5 = 3.0
           if (sum_marks == nbCodes) break;
           // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 2 codes")};
         }
@@ -1552,7 +1552,7 @@ function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
           sum = sum + 1.0; // 1.0 * 1.0 = 1.0
         }
         else if (nextNbCodes == 2) {
-          sum = sum + 3.0 // 2 * 1.5 = 3.0
+          sum = sum + 3.0; // 2 * 1.5 = 3.0
         }
         else {
           sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
@@ -2039,11 +2039,20 @@ self.addEventListener('message', function(e) {
           if ((best_global_performance == PerformanceNA) || (best_global_performance <= 0.01)) {
             throw new Error("NEW_ATTEMPT phase / invalid best_global_performance: " + best_global_performance);
           }
+          for (let i = 0; i < previousNbOfPossibleCodes; i++) {
+            let global_performance = listOfGlobalPerformances[i];
+            if ( (global_performance == PerformanceNA) || (global_performance == PerformanceUNKNOWN) || (global_performance <= 0.01) ) {
+              throw new Error("invalid global performance in listOfGlobalPerformances (#1): " + global_performance + ", " + best_global_performance);
+            }
+            if ((best_global_performance - global_performance <= -0.9999) || (best_global_performance - global_performance >= +0.0001) ) {
+              throw new Error("invalid global performance in listOfGlobalPerformances (#2): " + global_performance + ", " + best_global_performance);
+            }
+          }
           if ((code_played_global_performance == PerformanceNA) || (code_played_global_performance == PerformanceUNKNOWN) || (code_played_global_performance <= 0.01)) {
             throw new Error("NEW_ATTEMPT phase / invalid code_played_global_performance: " + code_played_global_performance);
           }
           code_played_relative_perf = best_global_performance - code_played_global_performance;
-          if ( (code_played_relative_perf < -1.00) || (code_played_relative_perf >= 1.00) ) {
+          if ( (code_played_relative_perf < PerformanceMinValidValue) || (code_played_relative_perf > PerformanceMaxValidValue) ) {
             throw new Error("NEW_ATTEMPT phase / invalid relative performance: " + code_played_relative_perf + ", " + best_global_performance + ", " + code_played_global_performance);
           }
           relative_perf_evaluation_done = true;

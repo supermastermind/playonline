@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v0.93";
+let version = "v0.94";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 6;
@@ -66,6 +66,8 @@ let PerformanceLOW = -0.25;
 let PerformanceVERYLOW = -0.50;
 let PerformanceNA = -3.00; // (duplicated in GameSolver.js)
 let PerformanceUNKNOWN = -2.00; // (duplicated in GameSolver.js)
+let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in GameSolver.js)
+let PerformanceMaxValidValue = +0.90; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver.js)
 let nbOfStatsFilled_NbPossibleCodes = 0;
 let nbOfStatsFilled_ListsOfPossibleCodes = 0;
 let nbOfStatsFilled_Perfs = 0;
@@ -815,7 +817,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
       }
       let previous_nb = -1;
       for (let i = currentAttemptNumber-2; i >= 0; i--) {
-        if ((nbOfPossibleCodes[i] > 1) && (relative_performances_of_codes_played[i] != -1.00) /* not a useless code */) {
+        if ((nbOfPossibleCodes[i] > 1) && (relative_performances_of_codes_played[i] != -1.00) /* not a useless code (simplified test) */) {
           interesting_attempt_idx = i;
           cnt++;
           if (nbOfPossibleCodes[i] >= 3)  {
@@ -1250,8 +1252,8 @@ function resetGameAttributes(nbColumnsSelected) {
   toto = simpleCodeHandler.setColor(toto, 4, 5);
   toto = simpleCodeHandler.setColor(toto, 4, 6);
   toto = simpleCodeHandler.setColor(toto, 4, 7);
-  sCode = ~(toto);
-  */
+  sCode = ~(toto); */
+
   sCodeRevealed = 0;
 
   game_cnt++;
@@ -1391,10 +1393,10 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
     console.log("writePerformanceOfCodePlayed() call ignored: " + game_id + ", " + game_cnt);
     return false;
   }
-  if ( ((relative_perf_p < -1.00) && (relative_perf_p != PerformanceUNKNOWN)) || (relative_perf_p >= 1.00) /* possible range of relative performances */
+  if ( ((relative_perf_p < PerformanceMinValidValue) && (relative_perf_p != PerformanceUNKNOWN)) || (relative_perf_p > PerformanceMaxValidValue) /* possible range of relative performances */
        || (relative_perf_p == PerformanceNA)
        || (relative_perf_evaluation_done_p && (relative_perf_p == PerformanceUNKNOWN))
-       || ((relative_perf_p == -1.00) /* useless code */ && (!relative_perf_evaluation_done_p))
+       || (((relative_perf_p <= -1.00) && (relative_perf_p != PerformanceUNKNOWN)) /* useless code */ && (!relative_perf_evaluation_done_p))
        || ((best_global_performance_p <= 0.01) && (best_global_performance_p != PerformanceUNKNOWN))
        || (best_global_performance_p == PerformanceNA)
        || (code_p != codesPlayed[attempt_nb-1])
@@ -1416,7 +1418,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
   else {
     sumPerfs = sumPerfs + relative_perf_p;
   }
-  if (relative_perf_p == -1.00) { // useless code
+  if ((relative_perf_p <= -1.00) && (relative_perf_p != PerformanceUNKNOWN)) { // useless code
     at_least_one_useless_code_played = true;
   }
   relativePerformancesEvaluationDone[attempt_nb-1] = relative_perf_evaluation_done_p;
@@ -1440,6 +1442,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
       for (let i = 1; i < currentAttemptNumber; i++) {
         strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
       }
+      strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
       strGame = strGame.trim();
 
       store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, (Math.round(sumPerfs * 100.0) / 100.0).toFixed(2) /* 0.01 precision */, nbUnknownPerfs, (((nbColorsRevealed > 0) || (nb_random_codes_played == 0)) ? nbColorsRevealed + 'x' : Math.min(nb_random_codes_played,9) + 'ra'), strGame);
@@ -1876,7 +1879,11 @@ function draw_graphic_bis() {
           updateAndStoreNbGamesStarted(+1);
         }
         codesPlayed[currentAttemptNumber-1] = currentCode;
-        simpleCodeHandler.fillMark(simpleCodeHandler.convert(sCode), currentCode, marks[currentAttemptNumber-1]);
+        let sCodeConv = simpleCodeHandler.convert(sCode);
+        if (!simpleCodeHandler.isFullAndValid(sCodeConv)) {
+          throw new Error("inconsistent code (" + sCodeConv + ")");
+        }
+        simpleCodeHandler.fillMark(sCodeConv, currentCode, marks[currentAttemptNumber-1]);
         if (marks[currentAttemptNumber-1].nbBlacks == nbColumns) { // game over (game won)
           stopTime = (new Date()).getTime(); // time in milliseconds
           currentAttemptNumber++;
@@ -2201,7 +2208,7 @@ function draw_graphic_bis() {
 
           let isPossible = isAttemptPossible(i);
           if ( gameOnGoing() && (i > nbMaxHintsDisplayed)
-               && (relative_performances_of_codes_played[i-1] != -1.00) // useless code
+               && ((relative_performances_of_codes_played[i-1] > -0.9999) || (relative_performances_of_codes_played[i-1] == PerformanceUNKNOWN) || (relative_performances_of_codes_played[i-1] == PerformanceNA)) // not a useless code (simplified test)
                && (nbColumns >= nominalGameNbColumns) ) { // not easy games
             ctx.font = stats_font;
             displayString("\u2234" /* tick hidden */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
@@ -2209,8 +2216,8 @@ function draw_graphic_bis() {
             ctx.font = basic_bold_font;
           }
           else if (0 == isPossible) { // code is possible
-            if (relative_performances_of_codes_played[i-1] == -1.00) { // useless code
-              displayGUIError("useless code inconsistency", new Error().stack);
+            if (relative_performances_of_codes_played[i-1] == -1.00) { // useless code (simplified test)
+              displayGUIError("useless code inconsistency: " + relative_performances_of_codes_played[i-1], new Error().stack);
             }
             displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                           greenColor, backgroundColor, ctx);
@@ -3288,19 +3295,23 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
                   lightGray, backgroundColor, ctx);
   }
   else if (performance != PerformanceNA) {
-    if (performance == -1.00) { // useless code
+    if (performance <= -1.00) { // useless code
+      let color = redColor;
+      if (perf != -1.00) { // "-1.00" is set explicitly for "classical" useless codes, thus "!=" being valid here (simplified test)
+        color = "#4B0082"; // purple to highlight those very particular cases
+      }
       if (!displayString("  useless" + isPossible_str + "  ", x_cell, y_cell, cell_width,
-                         redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                         color, backgroundColor, ctx, true, 0, true, 0)) {
         if (!displayString(" " + performance.toFixed(2).replaceAll(",",".") + isPossible_str + " ", x_cell, y_cell, cell_width,
-                           redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                           color, backgroundColor, ctx, true, 0, true, 0)) {
           if (!displayString(performance.toFixed(1).replaceAll(",",".") + isPossible_str, x_cell, y_cell, cell_width,
-                             redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                             color, backgroundColor, ctx, true, 0, true, 0)) {
             if (!displayString("  useless  ", x_cell, y_cell, cell_width,
-                               redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                               color, backgroundColor, ctx, true, 0, true, 0)) {
               if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
-                                 redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                                 color, backgroundColor, ctx, true, 0, true, 0)) {
                 displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
-                              redColor, backgroundColor, ctx);
+                              color, backgroundColor, ctx);
               }
             }
           }
@@ -3328,7 +3339,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
                       lightGray, backgroundColor, ctx);
       }
     }
-    else if (performance == 0.00) { // optimal code (+/-0.005 precision)
+    else if (performance == 0.00) { // optimal code (perf with +/-0.005 precision is considered for optimality)
       let starStr = "";
       if (starDisplayIfOptimal) {
         starStr = "\u2B50\u2009"; // star
@@ -3350,6 +3361,9 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
       }
     }
     else { // > 0.00: an illogical code can be better than the optimal logical code(s)
+      if (performance <= 0.00) {
+        throw new Error("internal error in displayPerf: " + performance);
+      }
       if (!displayString("\u2009" + "+" + performance.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
         displayString("+" + performance.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, cell_width,
@@ -3414,6 +3428,7 @@ function displayGUIError(GUIErrorStr, errStack) {
         for (let i = 1; i < currentAttemptNumber; i++) {
           strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
         }
+        strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
         strGame = strGame.trim();
       }
       catch (game_exc) {
