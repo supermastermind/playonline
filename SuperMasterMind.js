@@ -97,6 +97,7 @@ let nb_random_codes_played = 0;
 let at_least_one_useless_code_played = false;
 
 let gameSolver = undefined;
+let gameSolverDbg = -1; // (debug value)
 
 // GUI variables
 // *************
@@ -689,7 +690,7 @@ function onGameSolverMsg(e) {
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
-  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
+  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + currentCode + ")", new Error().stack);
 }
 
 // ***********************
@@ -1128,8 +1129,10 @@ function resetGameAttributes(nbColumnsSelected) {
   let debug_mode = '';
 
   // Clear gameSolver worker if necessary
+  gameSolverDbg = 0;
   if (gameSolver !== undefined) {
-    gameSolver.terminate();
+    gameSolverDbg = 1;
+    gameSolver.terminate(); gameSolverDbg = 2;
     gameSolver = undefined;
   }
 
@@ -1273,9 +1276,9 @@ function resetGameAttributes(nbColumnsSelected) {
   updateGameSizes();
 
   // Create a new worker for gameSolver
-  gameSolver = new Worker("Game" + "Solver.js");
-  gameSolver.addEventListener('message', onGameSolverMsg, false);
-  gameSolver.addEventListener('error', onGameSolverError, false);
+  gameSolver = new Worker("Game" + "Solver.js"); gameSolverDbg = 3;
+  gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
+  gameSolver.addEventListener('message', onGameSolverMsg, false); gameSolverDbg = 5;
   // Send a message to the gameSolver worker to initialize it
   if ( (typeof(Storage) !== 'undefined') && (!sessionStorage.first_session_game) ) {
     sessionStorage.first_session_game = 1;
@@ -1290,6 +1293,7 @@ function resetGameAttributes(nbColumnsSelected) {
     }
   }
   gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode});
+  gameSolverDbg = 6;
 }
 
 function checkArraySizes() {
@@ -1914,7 +1918,14 @@ function draw_graphic_bis() {
         else {
           nbMaxAttemptsForEndOfGame = nbMaxAttempts;
         }
-        gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'currentAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
+        if (gameSolver !== undefined) {
+          gameSolverDbg++;
+          gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'currentAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
+          gameSolverDbg++;
+        }
+        else {
+          throw new Error("undefined gameSolver (" + currentAttemptNumber + ")");
+        }
 
       }
     }
