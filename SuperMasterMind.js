@@ -100,6 +100,7 @@ let at_least_one_useless_code_played = false;
 let gameSolver = undefined;
 let gameSolverDbg = -1; // (debug value)
 let gameSolverConfigDbg = null; // (debug value)
+let gameSolverErrorDbg = null; // (debug value)
 
 // GUI variables
 // *************
@@ -692,6 +693,7 @@ function onGameSolverMsg(e) {
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
+  gameSolverErrorDbg = fullObjToString(e);
   displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + currentCode + ")", new Error().stack);
 }
 
@@ -3449,6 +3451,9 @@ function displayGUIError(GUIErrorStr, errStack) {
         if (gameSolverConfigDbg != null) {
           errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
         }
+        if (gameSolverErrorDbg != null) {
+          errorStr = errorStr + " with gameSolver error " + gameSolverErrorDbg;
+        }
       }
       errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
 
@@ -3481,6 +3486,22 @@ function displayGUIError(GUIErrorStr, errStack) {
     alert(gameErrorStr + "\nSee Javascript console for more details (Ctrl+Shift+I in Chrome or Firefox)\n\n");
   }
 
+}
+
+function fullObjToString(obj) {
+  try {
+    let str = '';
+    for (let p in obj) {
+      // if (obj.hasOwnProperty(p)) {
+        str += p + ':' + obj[p] + '\n';
+      // }
+    }
+    str = str.replaceAll("\n", "|");
+    return str.trim();
+  }
+  catch (exc) {
+    return "?";
+  }
 }
 
 // *************************************************************************
