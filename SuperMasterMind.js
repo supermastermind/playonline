@@ -99,6 +99,7 @@ let at_least_one_useless_code_played = false;
 
 let gameSolver = undefined;
 let gameSolverDbg = -1; // (debug value)
+let gameSolverConfigDbg = null; // (debug value)
 
 // GUI variables
 // *************
@@ -1296,7 +1297,9 @@ function resetGameAttributes(nbColumnsSelected) {
       debug_mode = localStorage.debug_mode;
     }
   }
-  gameSolver.postMessage({'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode});
+  let gameSolverInitMsgContents = {'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
+  gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
+  gameSolver.postMessage(gameSolverInitMsgContents);
   gameSolverDbg = 6;
 }
 
@@ -3441,6 +3444,9 @@ function displayGUIError(GUIErrorStr, errStack) {
         }
         if (localStorage.gamesok) {
           errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+        }
+        if (gameSolverConfigDbg != null) {
+          errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
         }
       }
       errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
