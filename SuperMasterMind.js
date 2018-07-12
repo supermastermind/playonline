@@ -45,6 +45,7 @@ let nbMaxPossibleCodesShown = -1; // N.A.
 let nbPossibleCodesShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let currentPossibleCodeShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let disableMouseMoveEffects = false;
+let atLeastOneAttemptSelection = false;
 let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let lastidxBeforeMouseMove = -1;
 
@@ -929,6 +930,9 @@ function mouseClick(e) {
         if ((mouse_y > y_0) && (mouse_y < y_1)) {
           showPossibleCodesOffsetMode = false;
           disableMouseMoveEffects = true;
+          if (showPossibleCodesMode) {
+            atLeastOneAttemptSelection = true;
+          }
           showPossibleCodesButtonClick(!showPossibleCodesMode, idx+1);
           break;
         }
@@ -1986,9 +1990,9 @@ function draw_graphic_bis() {
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
       basic_bold_italic_font = "bold italic " + font_size + "px " + fontFamily;
 
-      small_basic_font = Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
-      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
-      small_italic_font = "italic " + Math.max(Math.floor(font_size/1.7), min_font_size) + "px " + fontFamily;
+      small_basic_font = Math.max(Math.floor(font_size/1.333), min_font_size) + "px " + fontFamily;
+      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.333), min_font_size) + "px " + fontFamily;
+      small_italic_font = "italic " + Math.max(Math.floor(font_size/1.333), min_font_size) + "px " + fontFamily;
       very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.2), min_font_size) + "px " + fontFamily;
 
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
@@ -2765,8 +2769,15 @@ function draw_graphic_bis() {
                   }
                 }
               }
+
+              // Display hint to see other codes
+              if ((!atLeastOneAttemptSelection) && (!CompressedDisplayMode) && (transition_height >= 1)) {
+                ctx.font = small_bold_font;
+                displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(90*(nbColumns+1))/100,
+                              "#4B0082" /* purple */, backgroundColor_2, ctx, true, 0, true, 0);
+              }
             }
-          }
+          } // (res)
 
         }
         else {
