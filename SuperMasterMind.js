@@ -948,6 +948,7 @@ function mouseClick(e) {
         let y_1_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2/* (margin) */));
         if ( (mouse_x > x_0_half_display) && (mouse_x < x_1_half_display)
              && (mouse_y > y_0_half_display) && (mouse_y < y_1_half_display) ) { // (half display - always tested to simplify)
+          atLeastOneAttemptSelection = true;
           showPossibleCodesOffsetMode = !showPossibleCodesOffsetMode;
           main_graph_update_needed = true;
           draw_graphic(false);
@@ -1993,9 +1994,9 @@ function draw_graphic_bis() {
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
       basic_bold_italic_font = "bold italic " + font_size + "px " + fontFamily;
 
-      small_basic_font = Math.max(Math.floor(font_size/1.333), min_font_size) + "px " + fontFamily;
-      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.333), min_font_size) + "px " + fontFamily;
-      small_italic_font = "italic " + Math.max(Math.floor(font_size/1.333), min_font_size) + "px " + fontFamily;
+      small_basic_font = Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
+      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
+      small_italic_font = "italic " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.2), min_font_size) + "px " + fontFamily;
 
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
