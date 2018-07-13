@@ -66,7 +66,7 @@ let baseOfNbOfCodesForSystematicEvaluation = 444;
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
-let mem_reduc_factor = 1.00; // (values <= 0.9 can lead to dynamic memory allocations)
+let mem_reduc_factor = 0.95; // (values <= 0.9 can lead to dynamic memory allocations)
 let nbMaxDepth = -1;
 let marks_optimization_mask;
 
@@ -1703,25 +1703,25 @@ self.addEventListener('message', function(e) {
         nbMaxMarks = 9;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 11;
-        marks_optimization_mask = 0x7FFFF;
+        marks_optimization_mask = 0x1FFF;
         break;
       case 4:
         nbMaxMarks = 14;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 12;
-        marks_optimization_mask = 0x7FFFF;
+        marks_optimization_mask = 0x3FFF;
         break;
       case 5:
         nbMaxMarks = 20;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 13;
-        marks_optimization_mask = 0x7FFFF;
+        marks_optimization_mask = 0x7FFF;
         break;
       case 6:
         nbMaxMarks = 27;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 14;
-        marks_optimization_mask = 0x7FFFF;
+        marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
         break;
       case 7:
         // ******************************************
@@ -1738,7 +1738,7 @@ self.addEventListener('message', function(e) {
         nbMaxMarks = 35;
         nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
         nbMaxDepth = 15;
-        marks_optimization_mask = 0x7FFFF;
+        marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
         break;
       default:
         throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
@@ -1954,7 +1954,7 @@ self.addEventListener('message', function(e) {
           performanceListsInitDone = true;
           arraySizeAtInit = previousNbOfPossibleCodes;
           listOfGlobalPerformances = new Array(arraySizeAtInit);
-          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, arraySizeAtInit * mem_reduc_factor, mem_reduc_factor);
+          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, Math.ceil(arraySizeAtInit * mem_reduc_factor), mem_reduc_factor);
           nbOfPossibleCodes = new2DArray(nbMaxDepth, nbMaxMarks);
           if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
             throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table");
@@ -2069,7 +2069,7 @@ self.addEventListener('message', function(e) {
         if (listOfGlobalPerformances.length != arraySizeAtInit) {
           throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
         }
-        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, arraySizeAtInit * mem_reduc_factor, mem_reduc_factor)) {
+        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, Math.ceil(arraySizeAtInit * mem_reduc_factor), mem_reduc_factor)) {
           throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
         }
         if (!check2DArraySizes(nbOfPossibleCodes, nbMaxDepth, nbMaxMarks)) {

@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v0.94";
+let version = "v0.95";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 6;
@@ -235,7 +235,6 @@ let tickChar = "\u2714"; /* (check mark/tick) */
 let crossChar = "\u2716"; /* (cross) */
 
 let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
-console.log("navigator's user agent: " + navigator.userAgent);
 
 // *************************************************************************
 // *************************************************************************
@@ -1256,13 +1255,12 @@ function resetGameAttributes(nbColumnsSelected) {
   sCode = ~(simpleCodeHandler.createRandomCode());
   /* XXX
   let toto = simpleCodeHandler.createRandomCode(sCodeRevealed);
-  toto = simpleCodeHandler.setColor(toto, 4, 1);
-  toto = simpleCodeHandler.setColor(toto, 4, 2);
-  toto = simpleCodeHandler.setColor(toto, 4, 3);
-  toto = simpleCodeHandler.setColor(toto, 4, 4);
-  toto = simpleCodeHandler.setColor(toto, 4, 5);
-  toto = simpleCodeHandler.setColor(toto, 4, 6);
-  toto = simpleCodeHandler.setColor(toto, 4, 7);
+  toto = simpleCodeHandler.setColor(toto, 1, 1);
+  toto = simpleCodeHandler.setColor(toto, 9, 2);
+  toto = simpleCodeHandler.setColor(toto, 1, 3);
+  toto = simpleCodeHandler.setColor(toto, 5, 4);
+  toto = simpleCodeHandler.setColor(toto, 9, 5);
+  toto = simpleCodeHandler.setColor(toto, 6, 6);
   sCode = ~(toto); */
 
   sCodeRevealed = 0;
@@ -3455,10 +3453,10 @@ function displayGUIError(GUIErrorStr, errStack) {
           errorStr = errorStr + " with gameSolver error " + gameSolverErrorDbg;
         }
       }
-      errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
 
       let strGame = "";
       try {
+        errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
         for (let i = 1; i < currentAttemptNumber; i++) {
           strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
         }
@@ -3466,7 +3464,7 @@ function displayGUIError(GUIErrorStr, errStack) {
         strGame = strGame.trim();
       }
       catch (game_exc) {
-        strGame = strGame + " " + game_exc;
+        strGame = strGame.trim() + " " + game_exc;
       }
       errorStr = errorStr + " for game " + strGame;
 
