@@ -57,16 +57,16 @@ let init_refresh_time = 1222;
 let attempt_refresh_time_1 = 222;
 let attempt_refresh_time_2 = 0;
 
-let max_performance_evaluation_time = 14888;
+let max_performance_evaluation_time = 14888; // (actual total time can be longer than this value due to impossible code performance evaluation)
 
 // Performance-related variables
 // *****************************
 
-let baseOfNbOfCodesForSystematicEvaluation = 444;
+let baseOfNbOfCodesForSystematicEvaluation = 488; // (impact on memory consumption)
 let nbOfCodesForSystematicEvaluation = -1;
 let possibleCodesForPerfEvaluation;
 let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
-let mem_reduc_factor = 0.95; // (values <= 0.9 can lead to dynamic memory allocations)
+let mem_reduc_factor = 0.90; // (too low values can lead to dynamic memory allocations)
 let nbMaxDepth = -1;
 let marks_optimization_mask;
 
@@ -1952,9 +1952,9 @@ self.addEventListener('message', function(e) {
         // - Array allocations
         if (!performanceListsInitDone) {
           performanceListsInitDone = true;
-          arraySizeAtInit = previousNbOfPossibleCodes;
+          arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
           listOfGlobalPerformances = new Array(arraySizeAtInit);
-          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, Math.ceil(arraySizeAtInit * mem_reduc_factor), mem_reduc_factor);
+          listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
           nbOfPossibleCodes = new2DArray(nbMaxDepth, nbMaxMarks);
           if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
             throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table");
@@ -2069,7 +2069,7 @@ self.addEventListener('message', function(e) {
         if (listOfGlobalPerformances.length != arraySizeAtInit) {
           throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
         }
-        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, Math.ceil(arraySizeAtInit * mem_reduc_factor), mem_reduc_factor)) {
+        if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor)) {
           throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
         }
         if (!check2DArraySizes(nbOfPossibleCodes, nbMaxDepth, nbMaxMarks)) {
