@@ -238,6 +238,96 @@ let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
 
 // *************************************************************************
 // *************************************************************************
+// Error handling
+// *************************************************************************
+// *************************************************************************
+
+function displayGUIError(GUIErrorStr, errStack) {
+
+  // Display error in Javascript console
+  // ***********************************
+
+  if (gameErrorCnt < 50) {
+    console.log("***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n");
+    console.log("Stack:");
+    let stack = new Error().stack;
+    console.log(stack);
+    console.log("\n");
+  }
+  gameErrorCnt++;
+
+  // Submit form if very first error
+  // *******************************
+
+  if (globalErrorCnt == 0) {
+    try {
+      var errorStr = "";
+      if (typeof(Storage) !== 'undefined') {
+        if (localStorage.firstname) {
+          errorStr = errorStr + " for " + localStorage.firstname;
+        }
+        if (localStorage.firstaccessid) {
+          errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
+        }
+        if (localStorage.countryname) {
+          errorStr = errorStr + " in " + localStorage.countryname;
+        }
+        if (localStorage.cityname) {
+          errorStr = errorStr + " in " + localStorage.cityname;
+        }
+        if (localStorage.gamesok) {
+          errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+        }
+        if (gameSolverConfigDbg != null) {
+          errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
+        }
+        if (gameSolverErrorDbg != null) {
+          errorStr = errorStr + " with gameSolver error " + gameSolverErrorDbg;
+        }
+      }
+
+      let strGame = "";
+      try {
+        errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
+        for (let i = 1; i < currentAttemptNumber; i++) {
+          strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
+        }
+        strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
+        strGame = strGame.trim();
+      }
+      catch (game_exc) {
+        strGame = strGame.trim() + " " + game_exc;
+      }
+      errorStr = errorStr + " for game " + strGame;
+
+      submitForm("game error" + errorStr + ": " + GUIErrorStr + " / " + errStack, true);
+    }
+    catch (exc) {
+      console.log("internal error at error form submission: " + exc);
+    }
+  }
+  globalErrorCnt++;
+
+  // Alert
+  // *****
+
+  if (gameErrorStr.length < 750) {
+    gameErrorStr += "***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n";
+    alert(gameErrorStr + "\nSee Javascript console for more details (Ctrl+Shift+I in Chrome or Firefox)\n\n");
+  }
+
+}
+
+window.addEventListener('error', displayGUIError, false);
+
+// Function called on gameSolver worker's error
+function onGameSolverError(e) {
+  // gameSolverErrorDbg = fullObjToString(e);
+  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + currentCode + ")", new Error().stack);
+}
+
+// *************************************************************************
+// *************************************************************************
 // New methods
 // *************************************************************************
 // *************************************************************************
@@ -688,12 +778,6 @@ function onGameSolverMsg(e) {
     return;
   }
 
-}
-
-// Function called on gameSolver worker's error
-function onGameSolverError(e) {
-  gameSolverErrorDbg = fullObjToString(e);
-  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + currentCode + ")", new Error().stack);
 }
 
 // ***********************
@@ -1179,7 +1263,7 @@ function resetGameAttributes(nbColumnsSelected) {
       document.title = "Ultra Master Mind";
       break;
     default:
-      throw new Error("invalid selection of number of columns: " + nbColumns + " (#1)");
+      throw new Error("invalid selection of number of columns: " + nbColumns + " (1)");
   }
   if ( (nbMaxAttempts < overallNbMinAttempts) || (nbMaxAttempts > overallNbMaxAttempts) ) {
     throw new Error("invalid nbMaxAttempts: " + nbMaxAttempts);
@@ -1255,12 +1339,11 @@ function resetGameAttributes(nbColumnsSelected) {
   sCode = ~(simpleCodeHandler.createRandomCode());
   /* XXX
   let toto = simpleCodeHandler.createRandomCode(sCodeRevealed);
-  toto = simpleCodeHandler.setColor(toto, 1, 1);
-  toto = simpleCodeHandler.setColor(toto, 9, 2);
-  toto = simpleCodeHandler.setColor(toto, 1, 3);
-  toto = simpleCodeHandler.setColor(toto, 5, 4);
-  toto = simpleCodeHandler.setColor(toto, 9, 5);
-  toto = simpleCodeHandler.setColor(toto, 6, 6);
+  toto = simpleCodeHandler.setColor(toto, 4, 1);
+  toto = simpleCodeHandler.setColor(toto, 4, 2);
+  toto = simpleCodeHandler.setColor(toto, 4, 3);
+  toto = simpleCodeHandler.setColor(toto, 4, 4);
+  toto = simpleCodeHandler.setColor(toto, 4, 5);
   sCode = ~(toto); */
 
   sCodeRevealed = 0;
@@ -1305,28 +1388,28 @@ function resetGameAttributes(nbColumnsSelected) {
 }
 
 function checkArraySizes() {
-  if (codesPlayed.length > nbMaxAttempts) {displayGUIError("array is wider than expected #1", new Error().stack);}
-  if (marks.length > nbMaxAttempts) {displayGUIError("array is wider than expected #2", new Error().stack);}
-  if (nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected #3", new Error().stack);}
-  if (colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected #4", new Error().stack);}
-  if (minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected #5", new Error().stack);}
+  if (codesPlayed.length > nbMaxAttempts) {displayGUIError("array is wider than expected (1)", new Error().stack);}
+  if (marks.length > nbMaxAttempts) {displayGUIError("array is wider than expected (2)", new Error().stack);}
+  if (nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (3)", new Error().stack);}
+  if (colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (4)", new Error().stack);}
+  if (minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (5)", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected #6", new Error().stack);}
+    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected (6)", new Error().stack);}
   }
-  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected #7", new Error().stack);}
+  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (7)", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected #8", new Error().stack);}
+    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (8)", new Error().stack);}
   }
-  if (relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected #9", new Error().stack);}
-  if (global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected #10", new Error().stack);}
-  if (relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected #11", new Error().stack);}
-  if (performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected #12", new Error().stack);}
-  if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected #13", new Error().stack);}
-  if (globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected #14", new Error().stack);}
-  if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected #15", new Error().stack);}
+  if (relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (9)", new Error().stack);}
+  if (global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (10)", new Error().stack);}
+  if (relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)", new Error().stack);}
+  if (performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)", new Error().stack);}
+  if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)", new Error().stack);}
+  if (globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)", new Error().stack);}
+  if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected #16", new Error().stack);}
-    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected #17", new Error().stack);}
+    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (16)", new Error().stack);}
+    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (17)", new Error().stack);}
   }
 }
 
@@ -1377,7 +1460,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
        || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
        || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
        || (!simpleCodeHandler.isValid(colorsFoundCode_p)) ) {
-    displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (#1)", new Error().stack);
+    displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (1)", new Error().stack);
     return false;
   }
   nbOfPossibleCodes[attempt_nb-1] = nbOfPossibleCodes_p;
@@ -1389,7 +1472,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     sum_max += maxNbColorsTables[attempt_nb-1][color];
   }
   if (sum_max < nbColumns) {
-    displayGUIError("invalid stats (sum_max=" + sum_max + ") (#2)", new Error().stack);
+    displayGUIError("invalid stats (sum_max=" + sum_max + ") (2)", new Error().stack);
     return false;
   }
   nbOfStatsFilled_NbPossibleCodes = attempt_nb; // Assumption: the number of possible codes is assumed to be the first stat to be written among all stats
@@ -1477,19 +1560,19 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globa
         || (possibleCodesListsSizes[attempt_nb-1] != 0 /* initial value */)
         || ((nbOfPossibleCodes[attempt_nb-1] <= nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbOfPossibleCodes[attempt_nb-1])) // (cf. above assumption on stats writing)
         || ((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbMaxPossibleCodesShown)) ) { // (cf. above assumption on stats writing)
-    displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (#3)", new Error().stack);
+    displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (3)", new Error().stack);
     return false;
   }
   for (let i = 0; i < nb_possible_codes_listed; i++) {
     let code = possibleCodesList_p[i];
     let global_perf = globalPerformancesList_p[i];
     if (!simpleCodeHandler.isFullAndValid(code)) {
-      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + code + ") (#4)", new Error().stack);
+      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + code + ") (4)", new Error().stack);
       return false;
     }
    if ( ((global_perf <= 0.01) && (global_perf != PerformanceUNKNOWN))
         || (global_perf == PerformanceNA) ) {
-      displayGUIError("invalid stats (unknown code performance(s) after evaluation) (#5)", new Error().stack);
+      displayGUIError("invalid stats (unknown code performance(s) after evaluation) (5)", new Error().stack);
       return false;
     }
     possibleCodesLists[attempt_nb-1][i] = code;
@@ -3410,92 +3493,16 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
 
 }
 
-function displayGUIError(GUIErrorStr, errStack) {
-
-  // Display error in Javascript console
-  // ***********************************
-
-  if (gameErrorCnt < 50) {
-    console.log("***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n");
-    console.log("Stack:");
-    let stack = new Error().stack;
-    console.log(stack);
-    console.log("\n");
-  }
-  gameErrorCnt++;
-
-  // Submit form if very first error
-  // *******************************
-
-  if (globalErrorCnt == 0) {
-    try {
-      var errorStr = "";
-      if (typeof(Storage) !== 'undefined') {
-        if (localStorage.firstname) {
-          errorStr = errorStr + " for " + localStorage.firstname;
-        }
-        if (localStorage.firstaccessid) {
-          errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
-        }
-        if (localStorage.countryname) {
-          errorStr = errorStr + " in " + localStorage.countryname;
-        }
-        if (localStorage.cityname) {
-          errorStr = errorStr + " in " + localStorage.cityname;
-        }
-        if (localStorage.gamesok) {
-          errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
-        }
-        if (gameSolverConfigDbg != null) {
-          errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
-        }
-        if (gameSolverErrorDbg != null) {
-          errorStr = errorStr + " with gameSolver error " + gameSolverErrorDbg;
-        }
-      }
-
-      let strGame = "";
-      try {
-        errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
-        for (let i = 1; i < currentAttemptNumber; i++) {
-          strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
-        }
-        strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
-        strGame = strGame.trim();
-      }
-      catch (game_exc) {
-        strGame = strGame.trim() + " " + game_exc;
-      }
-      errorStr = errorStr + " for game " + strGame;
-
-      submitForm("game error" + errorStr + ": " + GUIErrorStr + " / " + errStack, true);
-    }
-    catch (exc) {
-      console.log("internal error at error form submission: " + exc);
-    }
-  }
-  globalErrorCnt++;
-
-  // Alert
-  // *****
-
-  if (gameErrorStr.length < 750) {
-    gameErrorStr += "***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n";
-    alert(gameErrorStr + "\nSee Javascript console for more details (Ctrl+Shift+I in Chrome or Firefox)\n\n");
-  }
-
-}
-
 function fullObjToString(obj) {
   try {
-    let str = '';
+    let str = '{';
     for (let p in obj) {
-      // if (obj.hasOwnProperty(p)) {
+      // if (obj.hasOwnProperty(p)) { // Note: this condition can be commented for (plenty of) more fields
         str += p + ':' + obj[p] + '\n';
       // }
     }
-    str = str.replaceAll("\n", "|");
-    return str.trim();
+    str = str.trim().replaceAll("\n", "|") + "}";
+    return str;
   }
   catch (exc) {
     return "?";
