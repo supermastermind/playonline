@@ -1148,12 +1148,14 @@ try {
 
   let particularCodeToAssess = 0; /* empty code */
   let particularCodeGlobalPerformance = PerformanceNA;
+  let recursiveEvaluatePerformancesWasAborted = false;
 
   // Outputs: listOfGlobalPerformances[]
   //          particularCodeGlobalPerformance in case of impossible code
   function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 
     let idx;
+    let res;
 
     evaluatePerformancesStartTime = new Date().getTime();
 
@@ -1163,6 +1165,7 @@ try {
     }
 
     if (depth == -1) { // first call
+
       // Initialize outputs
       if (nbCodes != previousNbOfPossibleCodes) {
         throw new Error("evaluatePerformances: (nbCodes != previousNbOfPossibleCodes)");
@@ -1171,12 +1174,27 @@ try {
         listOfGlobalPerformances[idx] = PerformanceNA; // output
       }
       particularCodeGlobalPerformance = PerformanceNA; // output
+      recursiveEvaluatePerformancesWasAborted = false; // output
+
       // Main processing
       particularCodeToAssess = particularCode;
-      return recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
+      res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
+
+      if (recursiveEvaluatePerformancesWasAborted) {
+        for (idx = 0; idx < nbCodes; idx++) {
+          listOfGlobalPerformances[idx] = PerformanceNA; // output
+        }
+        particularCodeGlobalPerformance = PerformanceNA; // output
+        return PerformanceUNKNOWN;
+      }
+      if (res <= 0.01) { // result is always known if the process was not aborted
+        throw new Error("evaluatePerformances: invalid global performance: " + res);
+      }
+      return res;
+
     }
     else {
-      throw new Error("evaluatePerformances: (depth == -1)");
+      throw new Error("evaluatePerformances: invalid depth: " + depth);
     }
 
   }
@@ -1484,7 +1502,7 @@ try {
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
-              return PerformanceUNKNOWN;
+              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
 
             // Anticipation of processing abortion
@@ -1493,28 +1511,28 @@ try {
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
-              return PerformanceUNKNOWN;
+              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
             if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idx1 < Math.round(nbCodes*10/100)) ) {
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #2)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
-              return PerformanceUNKNOWN;
+              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
             if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idx1 < Math.round(nbCodes*20/100)) ) {
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #3)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
-              return PerformanceUNKNOWN;
+              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
             if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idx1 < Math.round(nbCodes*30/100)) ) {
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #4)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
-              return PerformanceUNKNOWN;
+              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
           }
 
@@ -1531,7 +1549,7 @@ try {
             listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
             listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
             particularCodeGlobalPerformance = PerformanceNA; // output
-            return PerformanceUNKNOWN;
+            recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN; // (final returned value will be invalid)
           }
         }
 
@@ -2053,7 +2071,7 @@ try {
                             + " / particular code performance: " + particularCodeGlobalPerformance
                             + " / " + ((new Date()).getTime() - startTime) + "ms)");
                 if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
-                  throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance");
+                  throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: " + particularCodeGlobalPerformance);
                 }
                 code_played_global_performance = particularCodeGlobalPerformance;
               }
@@ -2069,10 +2087,10 @@ try {
               for (let i = 0; i < previousNbOfPossibleCodes; i++) {
                 let global_performance = listOfGlobalPerformances[i];
                 if ( (global_performance == PerformanceNA) || (global_performance == PerformanceUNKNOWN) || (global_performance <= 0.01) ) {
-                  throw new Error("invalid global performance in listOfGlobalPerformances (1): " + global_performance + ", " + best_global_performance);
+                  throw new Error("invalid global performance in listOfGlobalPerformances (1): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
                 }
                 if ((best_global_performance - global_performance <= -0.9999) || (best_global_performance - global_performance >= +0.0001) ) {
-                  throw new Error("invalid global performance in listOfGlobalPerformances (2): " + global_performance + ", " + best_global_performance);
+                  throw new Error("invalid global performance in listOfGlobalPerformances (2): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
                 }
               }
               if ((code_played_global_performance == PerformanceNA) || (code_played_global_performance == PerformanceUNKNOWN) || (code_played_global_performance <= 0.01)) {
