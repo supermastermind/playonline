@@ -66,7 +66,7 @@ try {
   let baseOfMaxPerformanceEvaluationTime = 20000; // 20 seconds XXX
   let maxPerformanceEvaluationTime = -1;
 
-  let baseOfNbOfCodesForSystematicEvaluation = 750; // (impact on memory consumption) XXX
+  let baseOfNbOfCodesForSystematicEvaluation = 1000; // (impact on memory consumption) XXX
   let nbOfCodesForSystematicEvaluation = -1;
 
   let initialNbClasses = -1;
