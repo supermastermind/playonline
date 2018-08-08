@@ -66,8 +66,11 @@ try {
   let baseOfMaxPerformanceEvaluationTime = 20000; // 20 seconds XXX
   let maxPerformanceEvaluationTime = -1;
 
-  let baseOfNbOfCodesForSystematicEvaluation = 500; // (impact on memory consumption) XXX
+  let baseOfNbOfCodesForSystematicEvaluation = 750; // (impact on memory consumption) XXX
   let nbOfCodesForSystematicEvaluation = -1;
+
+  let initialNbClasses = -1;
+  let currentNbClasses = -1;
 
   let possibleCodesForPerfEvaluation;
   let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
@@ -1634,6 +1637,14 @@ try {
         }
       }
 
+      // Determine current number of classes: XXX TBC
+      if (currentGameSize == 0) {
+        currentNbClasses = initialNbClasses;
+      }
+      else {
+        currentNbClasses = -1; // N.A. XXX TBC
+      }
+
       // Initialize equivalent codes and performances
       for (let idx1 = 0; idx1 < listOfEquivalentCodesAndPerformances.length; idx1++) {
         for (let idx2 = 0; idx2 < listOfEquivalentCodesAndPerformances[idx1].length; idx2++) {
@@ -1716,6 +1727,7 @@ try {
     let marks_already_computed_table_cell;
     let codeX;
     let codeY;
+    let nb_classes_cnt = 0;
 
     // Initializations
     // ***************
@@ -2061,8 +2073,24 @@ try {
 
         if (first_call) {
 
-          if (nbCodes > 100) { // (basic defense against CPU variations)
+          if ((!compute_sum_ini) && (nbCodes > 100)) {
+
+            if (compute_sum) { // a new class has been evaluated
+              nb_classes_cnt++;
+            }
+
             let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
+
+            let idxToConsider;
+            let totalNbToConsider;
+            if (currentNbClasses != -1) {
+              idxToConsider = nb_classes_cnt-1;
+              totalNbToConsider = currentNbClasses;
+            }
+            else { // XXX TMP code
+              idxToConsider = idx1;
+              totalNbToConsider = nbCodes;
+            }
 
             // Processing is aborted when too long
             if (time_elapsed > maxPerformanceEvaluationTime) {
@@ -2073,29 +2101,29 @@ try {
             }
 
             // Anticipation of processing abortion
-            if ( (time_elapsed > maxPerformanceEvaluationTime*25/100) && (idx1 < Math.round(nbCodes*7/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #1)");
+            if ( (time_elapsed > maxPerformanceEvaluationTime*25/100) && (idxToConsider < Math.round(totalNbToConsider*7/100)) ) {
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #1)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idx1 < Math.round(nbCodes*10/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #2)");
+            if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.round(totalNbToConsider*10/100)) ) {
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #2)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idx1 < Math.round(nbCodes*20/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #3)");
+            if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.round(totalNbToConsider*20/100)) ) {
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #3)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idx1 < Math.round(nbCodes*30/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idx1/nbCodes) + "%) #4)");
+            if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.round(totalNbToConsider*30/100)) ) {
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #4)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
@@ -2343,6 +2371,7 @@ try {
             nbMaxMarks = 9;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes;
+            initialNbClasses = 3; // {111, 112, 123}
             maxDepth = Math.min(11, overallMaxDepth);
             marks_optimization_mask = 0x1FFF;
             break;
@@ -2350,6 +2379,7 @@ try {
             nbMaxMarks = 14;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes;
+            initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
             marks_optimization_mask = 0x3FFF;
             break;
@@ -2357,6 +2387,7 @@ try {
             nbMaxMarks = 20;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
             marks_optimization_mask = 0x7FFF;
             break;
@@ -2364,6 +2395,7 @@ try {
             nbMaxMarks = 27;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
             marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
             break;
@@ -2382,6 +2414,7 @@ try {
             nbMaxMarks = 35;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
             marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
             break;
