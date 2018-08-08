@@ -20,6 +20,7 @@ try {
   let nbMaxColumns = 7;
   let overallNbMinAttempts = 4;
   let overallNbMaxAttempts = 15;
+  let overallMaxDepth = 15;
 
   let init_done = false;
   let nbColumns = -1;
@@ -62,16 +63,16 @@ try {
   // Performance-related variables
   // *****************************
 
-  let baseOfMaxPerformanceEvaluationTime = 20000; // 20 seconds
+  let baseOfMaxPerformanceEvaluationTime = 20000; // 20 seconds XXX
   let maxPerformanceEvaluationTime = -1;
 
-  let baseOfNbOfCodesForSystematicEvaluation = 500; // (impact on memory consumption)
+  let baseOfNbOfCodesForSystematicEvaluation = 500; // (impact on memory consumption) XXX
   let nbOfCodesForSystematicEvaluation = -1;
 
   let possibleCodesForPerfEvaluation;
   let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
   let mem_reduc_factor = 0.90; // (too low values can lead to dynamic memory allocations)
-  let nbMaxDepth = -1;
+  let maxDepth = -1;
   let marks_optimization_mask;
 
   let performanceListsInitDone = false;
@@ -79,12 +80,21 @@ try {
   let listOfGlobalPerformances;
   let listsOfPossibleCodes;
   let nbOfPossibleCodes;
+  let listOfEquivalentCodesAndPerformances;
   let marks_already_computed_table = null;
 
   let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
   let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
   let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in SuperMasterMind.js)
   let PerformanceMaxValidValue = +0.90; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in SuperMasterMind.js)
+
+  let initialInitDone = false;
+  let currentGame;
+  let currentGameSize;
+  let all_permutations_table_size;
+  let all_permutations_table;
+  let current_permutations_table_size = 0;
+  let current_permutations_table;
 
   // *************************************************************************
   // *************************************************************************
@@ -430,9 +440,11 @@ try {
       // Notes: - Hash key computing shall be symetrical wrt code1 and code2 and very fast.
       //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative).
       //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator.
-      let key = ( (code1 + code2 /* (use LSBs) */
-                   + (code1 >> 9) + (code2 >> 9) /* (use MSBs) */
-                   + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
+
+      let sum_codes = code1 + code2;
+      let key = ( (sum_codes /* (use LSBs) */
+                  + (sum_codes >> 9) /* (use MSBs) */
+                  + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
       marks_already_computed_table_cell = marks_already_computed_table[key];
       codeX = marks_already_computed_table_cell.code1a;
       codeY = marks_already_computed_table_cell.code2a;
@@ -1069,6 +1081,244 @@ try {
 
   }
 
+  // *********************
+  // Generate permutations
+  // *********************
+
+  function generateAllPermutations() {
+
+    all_permutations_table_size = new Array(nbMaxColumns+1);
+    all_permutations_table_size.fill(0);
+    all_permutations_table_size[3] = 3*2; // 3! permutations
+    all_permutations_table_size[4] = 4*3*2; // 4! permutations
+    all_permutations_table_size[5] = 5*4*3*2; // 5! permutations
+    all_permutations_table_size[6] = 6*5*4*3*2; // 6! permutations
+    all_permutations_table_size[7] = 7*6*5*4*3*2; // 7! permutations
+
+    if (all_permutations_table_size[nbColumns] <= 0) {
+      throw new Error("generateAllPermutations / error while computing all_permutations_table_size: " + nbColumns);
+    }
+
+    all_permutations_table = new Array(nbMaxColumns+1);
+    for (let nb_elts = nbMinColumns; nb_elts <= nbMaxColumns; nb_elts++) {
+      if (all_permutations_table_size[nb_elts] > 0) {
+        all_permutations_table[nb_elts] = new Array(all_permutations_table_size[nb_elts]);
+      }
+    }
+
+    let NB_ELEMENTS;
+    let indexes = new Array(nbMaxColumns);
+    let permutation_cnt = 0;
+
+    switch (nbColumns) {
+
+      case 3:
+
+        // Generate permutations of 3 elements
+        // ***********************************
+
+        NB_ELEMENTS = 3;
+        // console.log("// Permutations of " + NB_ELEMENTS + " elements:");
+        for (indexes[0] = 0; indexes[0] < NB_ELEMENTS; indexes[0]++) {
+          for (indexes[1] = 0; indexes[1] < NB_ELEMENTS; indexes[1]++) {
+            for (indexes[2] = 0; indexes[2] < NB_ELEMENTS; indexes[2]++) { // NB_ELEMENTS loops
+              // Check if {indexes[0], indexes[1], ... indexes[NB_ELEMENTS-1]} is a permutation
+              let is_a_permutation = true;
+              for (let idx1 = 0; (idx1 < NB_ELEMENTS) && is_a_permutation; idx1++) {
+                for (let idx2 = 0; idx2 < NB_ELEMENTS; idx2++) {
+                  if ((idx1 != idx2) && (indexes[idx1] == indexes[idx2])) {
+                    is_a_permutation = false;
+                    break;
+                  }
+                }
+              }
+              if (is_a_permutation) {
+                all_permutations_table[NB_ELEMENTS][permutation_cnt] = [indexes[0], indexes[1], indexes[2]]; // NB_ELEMENTS elements
+                // console.log("all_permutations_table[" + NB_ELEMENTS + "][" + permutation_cnt + "] = [" + indexes[0] + ", " + indexes[1] + ", " + indexes[2] + "];"); // NB_ELEMENTS elements
+                permutation_cnt++;
+              }
+            }
+          }
+        }
+        if (permutation_cnt != all_permutations_table_size[NB_ELEMENTS]) {
+          throw new Error("generateAllPermutations / error while computing " + NB_ELEMENTS + "-elements permutations!");
+        }
+        break;
+
+      case 4:
+
+        // Generate permutations of 4 elements
+        // ***********************************
+
+        NB_ELEMENTS = 4;
+        // console.log("// Permutations of " + NB_ELEMENTS + " elements:");
+        for (indexes[0] = 0; indexes[0] < NB_ELEMENTS; indexes[0]++) {
+          for (indexes[1] = 0; indexes[1] < NB_ELEMENTS; indexes[1]++) {
+            for (indexes[2] = 0; indexes[2] < NB_ELEMENTS; indexes[2]++) {
+              for (indexes[3] = 0; indexes[3] < NB_ELEMENTS; indexes[3]++) { // NB_ELEMENTS loops
+                // Check if {indexes[0], indexes[1], ... indexes[NB_ELEMENTS-1]} is a permutation
+                let is_a_permutation = true;
+                for (let idx1 = 0; (idx1 < NB_ELEMENTS) && is_a_permutation; idx1++) {
+                  for (let idx2 = 0; idx2 < NB_ELEMENTS; idx2++) {
+                    if ((idx1 != idx2) && (indexes[idx1] == indexes[idx2])) {
+                      is_a_permutation = false;
+                      break;
+                    }
+                  }
+                }
+                if (is_a_permutation) {
+                  all_permutations_table[NB_ELEMENTS][permutation_cnt] = [indexes[0], indexes[1], indexes[2], indexes[3]]; // NB_ELEMENTS elements
+                  // console.log("all_permutations_table[" + NB_ELEMENTS + "][" + permutation_cnt + "] = [" + indexes[0] + ", " + indexes[1] + ", " + indexes[2] + ", " + indexes[3] + "];"); // NB_ELEMENTS elements
+                  permutation_cnt++;
+                }
+              }
+            }
+          }
+        }
+        if (permutation_cnt != all_permutations_table_size[NB_ELEMENTS]) {
+          throw new Error("generateAllPermutations / error while computing " + NB_ELEMENTS + "-elements permutations!");
+        }
+        break;
+
+      case 5:
+
+        // Generate permutations of 5 elements
+        // ***********************************
+
+        NB_ELEMENTS = 5;
+        // console.log("// Permutations of " + NB_ELEMENTS + " elements:");
+        for (indexes[0] = 0; indexes[0] < NB_ELEMENTS; indexes[0]++) {
+          for (indexes[1] = 0; indexes[1] < NB_ELEMENTS; indexes[1]++) {
+            for (indexes[2] = 0; indexes[2] < NB_ELEMENTS; indexes[2]++) {
+              for (indexes[3] = 0; indexes[3] < NB_ELEMENTS; indexes[3]++) {
+                for (indexes[4] = 0; indexes[4] < NB_ELEMENTS; indexes[4]++) { // NB_ELEMENTS loops
+                  // Check if {indexes[0], indexes[1], ... indexes[NB_ELEMENTS-1]} is a permutation
+                  let is_a_permutation = true;
+                  for (let idx1 = 0; (idx1 < NB_ELEMENTS) && is_a_permutation; idx1++) {
+                    for (let idx2 = 0; idx2 < NB_ELEMENTS; idx2++) {
+                      if ((idx1 != idx2) && (indexes[idx1] == indexes[idx2])) {
+                        is_a_permutation = false;
+                        break;
+                      }
+                    }
+                  }
+                  if (is_a_permutation) {
+                    all_permutations_table[NB_ELEMENTS][permutation_cnt] = [indexes[0], indexes[1], indexes[2], indexes[3], indexes[4]]; // NB_ELEMENTS elements
+                    // console.log("all_permutations_table[" + NB_ELEMENTS + "][" + permutation_cnt + "] = [" + indexes[0] + ", " + indexes[1] + ", " + indexes[2] + ", " + indexes[3] + ", " + indexes[4] + "];"); // NB_ELEMENTS elements
+                    permutation_cnt++;
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (permutation_cnt != all_permutations_table_size[NB_ELEMENTS]) {
+          throw new Error("generateAllPermutations / error while computing " + NB_ELEMENTS + "-elements permutations!");
+        }
+        break;
+
+      case 6:
+
+        // Generate permutations of 6 elements
+        // ***********************************
+
+        NB_ELEMENTS = 6;
+        // console.log("// Permutations of " + NB_ELEMENTS + " elements:");
+        for (indexes[0] = 0; indexes[0] < NB_ELEMENTS; indexes[0]++) {
+          for (indexes[1] = 0; indexes[1] < NB_ELEMENTS; indexes[1]++) {
+            for (indexes[2] = 0; indexes[2] < NB_ELEMENTS; indexes[2]++) {
+              for (indexes[3] = 0; indexes[3] < NB_ELEMENTS; indexes[3]++) {
+                for (indexes[4] = 0; indexes[4] < NB_ELEMENTS; indexes[4]++) {
+                  for (indexes[5] = 0; indexes[5] < NB_ELEMENTS; indexes[5]++) { // NB_ELEMENTS loops
+                    // Check if {indexes[0], indexes[1], ... indexes[NB_ELEMENTS-1]} is a permutation
+                    let is_a_permutation = true;
+                    for (let idx1 = 0; (idx1 < NB_ELEMENTS) && is_a_permutation; idx1++) {
+                      for (let idx2 = 0; idx2 < NB_ELEMENTS; idx2++) {
+                        if ((idx1 != idx2) && (indexes[idx1] == indexes[idx2])) {
+                          is_a_permutation = false;
+                          break;
+                        }
+                      }
+                    }
+                    if (is_a_permutation) {
+                      all_permutations_table[NB_ELEMENTS][permutation_cnt] = [indexes[0], indexes[1], indexes[2], indexes[3], indexes[4], indexes[5]]; // NB_ELEMENTS elements
+                      // console.log("all_permutations_table[" + NB_ELEMENTS + "][" + permutation_cnt + "] = [" + indexes[0] + ", " + indexes[1] + ", " + indexes[2] + indexes[3] + ", " + indexes[4] + ", " + indexes[5] + "];"); // NB_ELEMENTS elements
+                      permutation_cnt++;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (permutation_cnt != all_permutations_table_size[NB_ELEMENTS]) {
+          throw new Error("generateAllPermutations / error while computing " + NB_ELEMENTS + "-elements permutations!");
+        }
+        break;
+
+      case 7:
+
+        // Generate permutations of 7 elements
+        // ***********************************
+
+        NB_ELEMENTS = 7;
+        // console.log("// Permutations of " + NB_ELEMENTS + " elements:");
+        for (indexes[0] = 0; indexes[0] < NB_ELEMENTS; indexes[0]++) {
+          for (indexes[1] = 0; indexes[1] < NB_ELEMENTS; indexes[1]++) {
+            for (indexes[2] = 0; indexes[2] < NB_ELEMENTS; indexes[2]++) {
+              for (indexes[3] = 0; indexes[3] < NB_ELEMENTS; indexes[3]++) {
+                for (indexes[4] = 0; indexes[4] < NB_ELEMENTS; indexes[4]++) {
+                  for (indexes[5] = 0; indexes[5] < NB_ELEMENTS; indexes[5]++) {
+                    for (indexes[6] = 0; indexes[6] < NB_ELEMENTS; indexes[6]++) { // NB_ELEMENTS loops
+                      // Check if {indexes[0], indexes[1], ... indexes[NB_ELEMENTS-1]} is a permutation
+                      let is_a_permutation = true;
+                      for (let idx1 = 0; (idx1 < NB_ELEMENTS) && is_a_permutation; idx1++) {
+                        for (let idx2 = 0; idx2 < NB_ELEMENTS; idx2++) {
+                          if ((idx1 != idx2) && (indexes[idx1] == indexes[idx2])) {
+                            is_a_permutation = false;
+                            break;
+                          }
+                        }
+                      }
+                      if (is_a_permutation) {
+                        all_permutations_table[NB_ELEMENTS][permutation_cnt] = [indexes[0], indexes[1], indexes[2], indexes[3], indexes[4], indexes[5], indexes[6]]; // NB_ELEMENTS elements
+                        // console.log("all_permutations_table[" + NB_ELEMENTS + "][" + permutation_cnt + "] = [" + indexes[0] + ", " + indexes[1] + ", " + indexes[2] + ", " + indexes[3] + ", " + indexes[4] + ", " + indexes[5] + ", " + indexes[6] + "];"); // NB_ELEMENTS elements
+                        permutation_cnt++;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (permutation_cnt != all_permutations_table_size[NB_ELEMENTS]) {
+          throw new Error("generateAllPermutations / error while computing " + NB_ELEMENTS + "-elements permutations!");
+        }
+        break;
+
+      default:
+        throw new Error("generateAllPermutations / invalid nbColumns: " + nbColumns);
+
+    }
+
+    if ( (all_permutations_table_size.length != nbMaxColumns+1) || (permutation_cnt != all_permutations_table_size[nbColumns]) ) {
+      throw new Error("generateAllPermutations / internal error");
+    }
+
+    // Update possible permutations
+    // ****************************
+
+    // All permutations are listed by default
+    current_permutations_table_size = new Array(overallNbMaxAttempts+overallMaxDepth);
+    current_permutations_table_size[0] = all_permutations_table_size[nbColumns];
+    current_permutations_table = new2DArray(overallNbMaxAttempts+overallMaxDepth, current_permutations_table_size[0]);
+    for (let i = 0; i < current_permutations_table_size[0]; i++) {
+      current_permutations_table[0][i] = i;
+    }
+
+  }
+
   // ******************************
   // Handle multidimensional arrays
   // ******************************
@@ -1132,6 +1382,210 @@ try {
     return str;
   }
 
+  function print_permutation_list(list, list_size) {
+    let str = "";
+    for (let i = 0; i < list_size; i++) {
+      str = str + all_permutations_table[nbColumns][list[i]] + " | ";
+    }
+    str = "{" + str.trim() + "}";
+    return str;
+  }
+
+  function print_list_of_codes(list, list_size) {
+    let str = "";
+    for (let i = 0; i < list_size; i++) {
+      str = str + codeHandler.codeToString(list[i]) + " ";
+    }
+    str = "{" + str.trim() + "}";
+    return str;
+  }
+
+  let code_colors = new Array(nbMaxColumns);
+  let other_code_colors = new Array(nbMaxColumns);
+  let current_game_code_colors = new2DArray(overallNbMaxAttempts+overallMaxDepth, nbMaxColumns); // first dimension shall be >= currentGame size
+  let permuted_other_code_colors = new Array(nbMaxColumns);
+  let partial_bijection = new Array(nbMaxColors+1);
+  function areCodesEquivalent(code, other_code, current_game_size, assess_current_game_only, forceGlobalPermIdx /* -1 if N.A. */) {
+    let all_permutations = all_permutations_table[nbColumns]; // [nb_permutations][nbColumns] array
+    let global_perm_idx;
+    let perm_idx;
+    let current_game_depth;
+    let current_game_code;
+    let current_game_code_colors_set;
+    let col;
+    let color;
+    let bijection_is_possible_for_this_permutation;
+    let source_color, old_target_color, new_target_color;
+
+    // *****************
+    // Get useful colors
+    // *****************
+
+    // 2 codes colors
+    if (!assess_current_game_only) {
+      // (duplicated code from fillMark() for better performances - begin)
+      code_colors[0] = (code & 0x0000000F);
+      code_colors[1] = ((code >> 4) & 0x0000000F);
+      code_colors[2] = ((code >> 8) & 0x0000000F);
+      code_colors[3] = ((code >> 12) & 0x0000000F);
+      code_colors[4] = ((code >> 16) & 0x0000000F);
+      code_colors[5] = ((code >> 20) & 0x0000000F);
+      code_colors[6] = ((code >> 24) & 0x0000000F);
+
+      other_code_colors[0] = (other_code & 0x0000000F);
+      other_code_colors[1] = ((other_code >> 4) & 0x0000000F);
+      other_code_colors[2] = ((other_code >> 8) & 0x0000000F);
+      other_code_colors[3] = ((other_code >> 12) & 0x0000000F);
+      other_code_colors[4] = ((other_code >> 16) & 0x0000000F);
+      other_code_colors[5] = ((other_code >> 20) & 0x0000000F);
+      other_code_colors[6] = ((other_code >> 24) & 0x0000000F);
+      // (duplicated code from fillMark() for better performances - end)
+    }
+
+    // Current game colors
+    for (current_game_depth = 0; current_game_depth < current_game_size; current_game_depth++) {
+      current_game_code = currentGame[current_game_depth]
+      current_game_code_colors_set = current_game_code_colors[current_game_depth]; // [nbMaxColumns] array
+
+      // (duplicated code from fillMark() for better performances - begin)
+      current_game_code_colors_set[0] = (current_game_code & 0x0000000F);
+      current_game_code_colors_set[1] = ((current_game_code >> 4) & 0x0000000F);
+      current_game_code_colors_set[2] = ((current_game_code >> 8) & 0x0000000F);
+      current_game_code_colors_set[3] = ((current_game_code >> 12) & 0x0000000F);
+      current_game_code_colors_set[4] = ((current_game_code >> 16) & 0x0000000F);
+      current_game_code_colors_set[5] = ((current_game_code >> 20) & 0x0000000F);
+      current_game_code_colors_set[6] = ((current_game_code >> 24) & 0x0000000F);
+      // (duplicated code from fillMark() for better performances - end)
+    }
+
+    // ************************************
+    // Go through all possible permutations
+    // ************************************
+
+    let permLoopStartIdx = 0;
+    let permLoopStopIdx = current_permutations_table_size[current_game_size];
+    if (forceGlobalPermIdx != -1) { // Evaluate one given permutation only
+      if ((forceGlobalPermIdx < 0) || (forceGlobalPermIdx >= all_permutations_table_size[nbColumns])) {
+        throw new Error("areCodesEquivalent: invalid forceGlobalPermIdx: " + forceGlobalPermIdx);
+      }
+      permLoopStartIdx = 0; // one loop only
+      permLoopStopIdx = 1; // one loop only
+    }
+
+    if (permLoopStopIdx <= permLoopStartIdx) {
+      throw new Error("areCodesEquivalent: no permutation");
+    }
+
+    for (perm_idx = permLoopStartIdx; perm_idx < permLoopStopIdx; perm_idx++) {
+
+      if (forceGlobalPermIdx != -1) { // Evaluate one given permutation only
+        global_perm_idx = forceGlobalPermIdx;
+      }
+      else {
+        global_perm_idx = current_permutations_table[current_game_size][perm_idx];
+      }
+      // console.log("permutation:" + all_permutations[global_perm_idx]); XXX console.logs to clean everywhere
+
+      // **********************************************************************
+      // If possible, compute bijection between:
+      // 1) code and permuted other code (if assess_current_game_only is false)
+      // 2) current game and permuted game
+      // **********************************************************************
+
+      bijection_is_possible_for_this_permutation = true;
+      partial_bijection.fill(0);
+
+      // 1) Bijection between code and permuted other code (if assess_current_game_only is false)
+      // ****************************************************************************************
+
+      if (!assess_current_game_only) {
+
+        // Compute permuted other code
+        for (col = 0; col < nbColumns; col++) {
+          permuted_other_code_colors[all_permutations[global_perm_idx][col]] = other_code_colors[col];
+        }
+
+        // console.log("  permuted_other_code_colors = " + permuted_other_code_colors);
+
+        for (col = 0; col < nbColumns; col++) {
+          source_color = code_colors[col];
+          old_target_color = partial_bijection[source_color];
+          new_target_color = permuted_other_code_colors[col];
+          if ((old_target_color != 0) && (old_target_color != new_target_color)) { // target color already allocated differently
+            // console.log("  NOK1:" + old_target_color);
+            bijection_is_possible_for_this_permutation = false;
+            break;
+          }
+          for (color = 1; color <= nbColors; color++) {
+            if ((color != source_color) && (partial_bijection[color] == new_target_color)) { // new target color already allocated to another source color
+              // console.log("  NOK2");
+              bijection_is_possible_for_this_permutation = false;
+              break;
+            }
+          }
+          if (!bijection_is_possible_for_this_permutation) {
+            break;
+          }
+          /* if (partial_bijection[source_color] != new_target_color) { // XXX TMP
+            console.log(source_color + " -> " + new_target_color); // XXX TMP
+          } */
+          partial_bijection[source_color] = new_target_color;
+        }
+
+      }
+
+      // 2) Bijection between current game and permuted game
+      // ***************************************************
+
+      if (bijection_is_possible_for_this_permutation) {
+
+        for (current_game_depth = current_game_size-1; current_game_depth >= 0; current_game_depth--) { // (impacts on permutations are more likely for the last played codes)
+          current_game_code_colors_set = current_game_code_colors[current_game_depth]; // [nbMaxColumns] array
+
+          // Compute permuted other code
+          for (col = 0; col < nbColumns; col++) {
+            permuted_other_code_colors[all_permutations[global_perm_idx][col]] = current_game_code_colors_set[col];
+          }
+
+          // console.log("  permuted_other_code_colors = " + permuted_other_code_colors);
+
+          for (col = 0; col < nbColumns; col++) {
+            source_color = current_game_code_colors_set[col];
+            old_target_color = partial_bijection[source_color];
+            new_target_color = permuted_other_code_colors[col];
+            if ((old_target_color != 0) && (old_target_color != new_target_color)) { // target color already allocated differently
+              // console.log("  NOK1B:" + old_target_color);
+              bijection_is_possible_for_this_permutation = false;
+              break;
+            }
+            for (color = 1; color <= nbColors; color++) {
+              if ((color != source_color) && (partial_bijection[color] == new_target_color)) { // new target color already allocated to another source color
+                // console.log("  NOK2B");
+                bijection_is_possible_for_this_permutation = false;
+                break;
+              }
+            }
+            if (!bijection_is_possible_for_this_permutation) {
+              break;
+            }
+            /* if (partial_bijection[source_color] != new_target_color) { // XXX TMP
+              console.log(source_color + " -> " + new_target_color); // XXX TMP
+            } */
+            partial_bijection[source_color] = new_target_color;
+          }
+        } // end loop on current game
+
+      }
+
+      if (bijection_is_possible_for_this_permutation) {
+        return true; // at least one bijection exists between the 2 games
+      }
+
+    } // end loop on perm_idx
+
+    return false; // no bijection exists between the 2 games
+  }
+
   let evaluatePerformancesStartTime;
 
   let mark_perf_tmp = {nbBlacks:-1, nbWhites:-1}; // N.A.
@@ -1152,6 +1606,7 @@ try {
 
   // Outputs: listOfGlobalPerformances[]
   //          particularCodeGlobalPerformance in case of impossible code
+  let cnt_eq = 0; // XXX
   function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 
     let idx;
@@ -1163,8 +1618,29 @@ try {
     if ((best_mark_idx != marksTable_MarkToNb[nbColumns][0]) || (best_mark_idx >= nbMaxMarks)) {
       throw new Error("evaluatePerformances: invalid best_mark_idx");
     }
+    if (currentAttemptNumber <= 0) {
+      throw new Error("evaluatePerformances: invalid currentAttemptNumber: " + currentAttemptNumber);
+    }
 
     if (depth == -1) { // first call
+
+      // Check current game (useful for subsequent equivalent codes processing - duplicated code)
+      if (currentGameSize != currentAttemptNumber-1) {
+        throw new Error("evaluatePerformances: invalid currentGameSize");
+      }
+      for (idx = 0; idx < currentGameSize; idx++) {
+        if ( (currentGame[idx] != codesPlayed[idx]) || (!codeHandler.isFullAndValid(currentGame[idx])) ) {
+          throw new Error("evaluatePerformances: invalid current game (" + idx + ")");
+        }
+      }
+
+      // Initialize equivalent codes and performances
+      for (let idx1 = 0; idx1 < listOfEquivalentCodesAndPerformances.length; idx1++) {
+        for (let idx2 = 0; idx2 < listOfEquivalentCodesAndPerformances[idx1].length; idx2++) {
+          listOfEquivalentCodesAndPerformances[idx1][idx2].equiv_code = 0; // output
+          listOfEquivalentCodesAndPerformances[idx1][idx2].equiv_sum = PerformanceNA; // output
+        }
+      }
 
       // Initialize outputs
       if (nbCodes != previousNbOfPossibleCodes) {
@@ -1178,7 +1654,9 @@ try {
 
       // Main processing
       particularCodeToAssess = particularCode;
+      // cnt_eq = 0; // XXX
       res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
+      // console.log("cnt_eq=" + cnt_eq);
 
       if (recursiveEvaluatePerformancesWasAborted) {
         for (idx = 0; idx < nbCodes; idx++) {
@@ -1199,24 +1677,39 @@ try {
 
   }
   // XXX Further optimizations:
-  // - circular permutation optimization for equivalent games/codes to avoid useless performance recomputing => gain x5000?
-  // - Optim mémoire gameSolver, sur nb possibles codes par ex (7 cols)
+  // - XXX eval if < 1500 codes && < 500 equivalent codes
+  // - XXX time check during perf evaluation shall take into account equivalent codes! (for ex. that will allow 4-columns games to be fully evaluated)
+  // - XXX "toto" tests in this file to check possible permutations
+  // - DONE: XXX tests with known calculations
+  // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games
+  // - DONE: XXX Test impossible code evaluations
+  // - XXX Test with auto play which makes go through all random codes!!! => exactness is tested
+  // - Listing: optimal & equivalent codes first + their nbers in () par ex
+  // - Optim mémoire gameSolver, sur nb possibles codes par ex (7 cols) / nb codes plutôt que N constant
   // - XXXs/TBCs/TBDs in all files
+  // - Wiki page: optimal LOGICAL strategy / https://arxiv.org/pdf/1305.1010.pdf corresponds to non possible strategy! (?)
+  // - Figures with perfs in home page
   // - home page accessible from compressed mode, or F1 key at game beginning?
-  // - all exceptions should be captured
   // - check "Code_at_-0.01_perf.docx"
   // - 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
   // - sheet compression to retest
+  // - "let" in rec functions induce cycles?
+  // - precalculated perfs x 1ers codes joués (possibles ou non) / execution outside firefox should be faster // skip AAAABB for 6 & 7 cols
+  let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
     let first_call = (depth == -1);
     let next_depth = depth+1;
+    let next_current_game_idx = currentGameSize + next_depth;
     let nextListsOfCodes;
     let nextNbsCodes;
-    let mark_idx, idx1, idx2;
+    let nbOfEquivalentCodesAndPerformances = 0;
+    let mark_idx, idx, idx1, idx2;
     let current_code;
     let other_code;
     let mark_perf_tmp_idx;
+    let compute_sum_ini = (nbCodes <= nbCodesLimitForEquivalentCodesCheck);
+    let compute_sum;
     let sum;
     let sum_marks;
     let best_sum = 100000000000.0;
@@ -1227,7 +1720,7 @@ try {
     // Initializations
     // ***************
 
-    if (next_depth >= nbMaxDepth) {
+    if (next_depth >= maxDepth) {
       throw new Error("recursiveEvaluatePerformances: max depth reached");
     }
 
@@ -1240,249 +1733,323 @@ try {
     for (idx1 = 0; idx1 < nbCodes; idx1++) {
 
       current_code = listOfCodes[idx1];
-      // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + "current_code:" + codeHandler.codeToString(current_code));}
+      /* if ((depth <= 1) &&(!compute_sum_ini)) { // XXX useful trace to keep for debug!!!
+        console.log(spaces(depth) + "(depth " + depth + ") " + "CURRENT_CODE:" + codeHandler.codeToString(current_code));
+        console.log(spaces(depth) + "current game: " + print_list_of_codes(currentGame, next_current_game_idx));
+        console.log(spaces(depth) + "perms: " + current_permutations_table_size[next_current_game_idx] + ": "
+                    + print_permutation_list(current_permutations_table[next_current_game_idx], current_permutations_table_size[next_current_game_idx]));
+      } */
 
-      nextNbsCodes.fill(0); // (faster than (or close to) a loop on 0..nbMaxMarks-1)
-
-      // (duplicated code from fillMark() for better performances (1/2) - begin)
-      code1_colors[0] = (current_code & 0x0000000F);
-      code1_colors[1] = ((current_code >> 4) & 0x0000000F);
-      code1_colors[2] = ((current_code >> 8) & 0x0000000F);
-      code1_colors[3] = ((current_code >> 12) & 0x0000000F);
-      code1_colors[4] = ((current_code >> 16) & 0x0000000F);
-      code1_colors[5] = ((current_code >> 20) & 0x0000000F);
-      code1_colors[6] = ((current_code >> 24) & 0x0000000F);
-      // (duplicated code from fillMark() for better performances (1/2) - end)
-
-      // Determine all possible marks for current code
-      for (idx2 = 0; idx2 < nbCodes; idx2++) {
-        other_code = listOfCodes[idx2];
-
-        if (current_code != other_code) {
-          // codeHandler.fillMark(current_code, other_code, mark_perf_tmp);
-
-          // (duplicated code from fillMark() for better performances (2/2) - begin)
-          let code1 = current_code;
-          let code2 = other_code;
-
-          // Marks optimization (1/2) - begin
-          // Notes: - Hash key computing shall be symetrical wrt code1 and code2 and very fast.
-          //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative).
-          //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator.
-          let key = ( (code1 + code2 /* (use LSBs) */
-                       + (code1 >> 9) + (code2 >> 9) /* (use MSBs) */
-                       + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
-          marks_already_computed_table_cell = marks_already_computed_table[key];
-          codeX = marks_already_computed_table_cell.code1a;
-          codeY = marks_already_computed_table_cell.code2a;
-          if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
-            mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksa;
-            mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesa;
+      compute_sum = compute_sum_ini;
+      if (!compute_sum) {
+        sum = 0.0;
+        for (idx = 0; idx < nbOfEquivalentCodesAndPerformances; idx++) {
+          let known_code = listOfEquivalentCodesAndPerformances[next_depth][idx].equiv_code;
+          if (areCodesEquivalent(current_code, known_code, next_current_game_idx, false, -1 /* N.A. */)) {
+            // cnt_eq++;
+            sum = listOfEquivalentCodesAndPerformances[next_depth][idx].equiv_sum;
+            break;
           }
-          else {
-            codeX = marks_already_computed_table_cell.code1b;
-            codeY = marks_already_computed_table_cell.code2b;
+        }
+        if (sum < 0.00) {
+          throw new Error("recursiveEvaluatePerformances: negative sum: " + sum);
+        }
+        compute_sum = (sum == 0.0);
+      }
+
+      if (compute_sum) { // compute_sum
+
+         // if (first_call) { // XXX
+          // console.log("assessed: " + codeHandler.codeToString(current_code));
+         //}
+
+        nextNbsCodes.fill(0); // (faster than (or close to) a loop on 0..nbMaxMarks-1)
+
+        // (duplicated code from fillMark() for better performances (1/2) - begin)
+        code1_colors[0] = (current_code & 0x0000000F);
+        code1_colors[1] = ((current_code >> 4) & 0x0000000F);
+        code1_colors[2] = ((current_code >> 8) & 0x0000000F);
+        code1_colors[3] = ((current_code >> 12) & 0x0000000F);
+        code1_colors[4] = ((current_code >> 16) & 0x0000000F);
+        code1_colors[5] = ((current_code >> 20) & 0x0000000F);
+        code1_colors[6] = ((current_code >> 24) & 0x0000000F);
+        // (duplicated code from fillMark() for better performances (1/2) - end)
+
+        // Determine all possible marks for current code
+        for (idx2 = 0; idx2 < nbCodes; idx2++) {
+          other_code = listOfCodes[idx2];
+
+          if (current_code != other_code) {
+            // codeHandler.fillMark(current_code, other_code, mark_perf_tmp);
+
+            // (duplicated code from fillMark() for better performances (2/2) - begin)
+            let code1 = current_code;
+            let code2 = other_code;
+
+            // Marks optimization (1/2) - begin
+            // Notes: - Hash key computing shall be symetrical wrt code1 and code2 and very fast.
+            //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative).
+            //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator.
+            let sum_codes = code1 + code2;
+            let key = ( (sum_codes /* (use LSBs) */
+                        + (sum_codes >> 9) /* (use MSBs) */
+                        + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
+            marks_already_computed_table_cell = marks_already_computed_table[key];
+            codeX = marks_already_computed_table_cell.code1a;
+            codeY = marks_already_computed_table_cell.code2a;
             if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
-              mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksb;
-              mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesb;
+              mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksa;
+              mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesa;
             }
             else {
-              codeX = marks_already_computed_table_cell.code1c;
-              codeY = marks_already_computed_table_cell.code2c;
+              codeX = marks_already_computed_table_cell.code1b;
+              codeY = marks_already_computed_table_cell.code2b;
               if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
-                mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksc;
-                mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesc;
+                mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksb;
+                mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesb;
               }
-              // Marks optimization (1/2) - end
               else {
-                let nbBlacks = 0;
-                let nbWhites = 0;
-                let col1, col2;
+                codeX = marks_already_computed_table_cell.code1c;
+                codeY = marks_already_computed_table_cell.code2c;
+                if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+                  mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksc;
+                  mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesc;
+                }
+                // Marks optimization (1/2) - end
+                else {
+                  let nbBlacks = 0;
+                  let nbWhites = 0;
+                  let col1, col2;
 
-                // The below operations are unrolled for better performances
-                colors_int[0] = true;
-                colors_int[1] = true;
-                colors_int[2] = true;
-                colors_int[3] = true;
-                colors_int[4] = true;
-                colors_int[5] = true;
-                colors_int[6] = true;
-                code2_colors[0] = (code2 & 0x0000000F);
-                code2_colors[1] = ((code2 >> 4) & 0x0000000F);
-                code2_colors[2] = ((code2 >> 8) & 0x0000000F);
-                code2_colors[3] = ((code2 >> 12) & 0x0000000F);
-                code2_colors[4] = ((code2 >> 16) & 0x0000000F);
-                code2_colors[5] = ((code2 >> 20) & 0x0000000F);
-                code2_colors[6] = ((code2 >> 24) & 0x0000000F);
+                  // The below operations are unrolled for better performances
+                  colors_int[0] = true;
+                  colors_int[1] = true;
+                  colors_int[2] = true;
+                  colors_int[3] = true;
+                  colors_int[4] = true;
+                  colors_int[5] = true;
+                  colors_int[6] = true;
+                  code2_colors[0] = (code2 & 0x0000000F);
+                  code2_colors[1] = ((code2 >> 4) & 0x0000000F);
+                  code2_colors[2] = ((code2 >> 8) & 0x0000000F);
+                  code2_colors[3] = ((code2 >> 12) & 0x0000000F);
+                  code2_colors[4] = ((code2 >> 16) & 0x0000000F);
+                  code2_colors[5] = ((code2 >> 20) & 0x0000000F);
+                  code2_colors[6] = ((code2 >> 24) & 0x0000000F);
 
-                for (col1 = 0; col1 < nbColumns; col1++) {
-                  if (code1_colors[col1] == code2_colors[col1]) {
-                    nbBlacks++;
-                  }
-                  else {
-                    for (col2 = 0; col2 < nbColumns; col2++) {
-                      if ((code1_colors[col1] == code2_colors[col2]) && (code1_colors[col2] != code2_colors[col2]) && colors_int[col2]) {
-                        colors_int[col2] = false;
-                        nbWhites++;
-                        break;
+                  for (col1 = 0; col1 < nbColumns; col1++) {
+                    if (code1_colors[col1] == code2_colors[col1]) {
+                      nbBlacks++;
+                    }
+                    else {
+                      for (col2 = 0; col2 < nbColumns; col2++) {
+                        if ((code1_colors[col1] == code2_colors[col2]) && (code1_colors[col2] != code2_colors[col2]) && colors_int[col2]) {
+                          colors_int[col2] = false;
+                          nbWhites++;
+                          break;
+                        }
                       }
                     }
                   }
-                }
 
-                mark_perf_tmp.nbBlacks = nbBlacks;
-                mark_perf_tmp.nbWhites = nbWhites;
+                  mark_perf_tmp.nbBlacks = nbBlacks;
+                  mark_perf_tmp.nbWhites = nbWhites;
 
-                // Marks optimization (2/2) - begin
-                if (marks_already_computed_table_cell.write_index == 0) {
-                  marks_already_computed_table_cell.code1a = code1;
-                  marks_already_computed_table_cell.code2a = code2;
-                  marks_already_computed_table_cell.nbBlacksa = nbBlacks;
-                  marks_already_computed_table_cell.nbWhitesa = nbWhites;
-                  marks_already_computed_table_cell.write_index = 1;
+                  // Marks optimization (2/2) - begin
+                  if (marks_already_computed_table_cell.write_index == 0) {
+                    marks_already_computed_table_cell.code1a = code1;
+                    marks_already_computed_table_cell.code2a = code2;
+                    marks_already_computed_table_cell.nbBlacksa = nbBlacks;
+                    marks_already_computed_table_cell.nbWhitesa = nbWhites;
+                    marks_already_computed_table_cell.write_index = 1;
+                  }
+                  else if (marks_already_computed_table_cell.write_index == 1) {
+                    marks_already_computed_table_cell.code1b = code1;
+                    marks_already_computed_table_cell.code2b = code2;
+                    marks_already_computed_table_cell.nbBlacksb = nbBlacks;
+                    marks_already_computed_table_cell.nbWhitesb = nbWhites;
+                    marks_already_computed_table_cell.write_index = 2;
+                  }
+                  else if (marks_already_computed_table_cell.write_index == 2) {
+                    marks_already_computed_table_cell.code1c = code1;
+                    marks_already_computed_table_cell.code2c = code2;
+                    marks_already_computed_table_cell.nbBlacksc = nbBlacks;
+                    marks_already_computed_table_cell.nbWhitesc = nbWhites;
+                    marks_already_computed_table_cell.write_index = 0;
+                  }
+                  else {
+                    throw new Error("recursiveEvaluatePerformances: wrong write_index: " + marks_already_computed_table_cell.write_index);
+                  }
+                  // Marks optimization (2/2) - end
                 }
-                else if (marks_already_computed_table_cell.write_index == 1) {
-                  marks_already_computed_table_cell.code1b = code1;
-                  marks_already_computed_table_cell.code2b = code2;
-                  marks_already_computed_table_cell.nbBlacksb = nbBlacks;
-                  marks_already_computed_table_cell.nbWhitesb = nbWhites;
-                  marks_already_computed_table_cell.write_index = 2;
-                }
-                else if (marks_already_computed_table_cell.write_index == 2) {
-                  marks_already_computed_table_cell.code1c = code1;
-                  marks_already_computed_table_cell.code2c = code2;
-                  marks_already_computed_table_cell.nbBlacksc = nbBlacks;
-                  marks_already_computed_table_cell.nbWhitesc = nbWhites;
-                  marks_already_computed_table_cell.write_index = 0;
-                }
-                else {
-                  throw new Error("recursiveEvaluatePerformances: wrong write_index: " + marks_already_computed_table_cell.write_index);
-                }
-                // Marks optimization (2/2) - end
               }
             }
-          }
-          // (duplicated code from fillMark() for better performances (2/2) - end)
+            // (duplicated code from fillMark() for better performances (2/2) - end)
 
-          mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
-          nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
-          nextNbsCodes[mark_perf_tmp_idx]++;
+            mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
+            nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
+            nextNbsCodes[mark_perf_tmp_idx]++;
+          }
+          else {
+            nextListsOfCodes[best_mark_idx][nextNbsCodes[best_mark_idx]] = other_code;
+            nextNbsCodes[best_mark_idx]++;
+          }
+
         }
-        else {
-          nextListsOfCodes[best_mark_idx][nextNbsCodes[best_mark_idx]] = other_code;
-          nextNbsCodes[best_mark_idx]++;
-        }
 
-      }
-
-      // Assess current code
-      sum = 0.0;
-      sum_marks = 0;
-      for (mark_idx = nbMaxMarks-1; mark_idx >= 0; mark_idx--) {
-        let nextNbCodes = nextNbsCodes[mark_idx];
-        // Go through all sets of possible marks
-        if (nextNbCodes > 0) {
-          sum_marks += nextNbCodes;
-          if (mark_idx == best_mark_idx) {
-            // sum = sum + 0.0; // 1.0 * 0.0 = 0.0
-            if (sum_marks == nbCodes) break;
-            // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + "win");}
-          }
-          else if (nextNbCodes == 1) {
-            sum = sum + 1.0; // 1.0 * 1.0 = 1.0
-            if (sum_marks == nbCodes) break;
-            // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 1 code")};
-          }
-          else if (nextNbCodes == 2) {
-            sum = sum + 3.0; // 2 * 1.5 = 3.0
-            if (sum_marks == nbCodes) break;
-            // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 2 codes")};
-          }
-          else if (nextNbCodes == 3) {
-            let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
-            codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmpa);
-            codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmpb);
-            if ((mark_perf_tmpa.nbBlacks == mark_perf_tmpb.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpb.nbWhites)) {
-              codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmpc);
-              if ((mark_perf_tmpa.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpc.nbWhites)) {
-                sum = sum + 6.0; // 3 * ((1+2+3)/3.0) = 6.0
+        // Assess current code
+        sum = 0.0;
+        sum_marks = 0;
+        for (mark_idx = nbMaxMarks-1; mark_idx >= 0; mark_idx--) {
+          let nextNbCodes = nextNbsCodes[mark_idx];
+          // Go through all sets of possible marks
+          if (nextNbCodes > 0) {
+            //if (depth <= 0) { // XXX
+            //  console.log(spaces(depth) + spaces(depth) + depth + "/ mark: " + codeHandler.markToString(marksTable_NbToMark[mark_idx])); // XXX
+            //}
+            sum_marks += nextNbCodes;
+            if (mark_idx == best_mark_idx) {
+              // sum = sum + 0.0; // 1.0 * 0.0 = 0.0
+              if (sum_marks == nbCodes) break;
+              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + "win");}
+            }
+            else if (nextNbCodes == 1) {
+              sum = sum + 1.0; // 1.0 * 1.0 = 1.0
+              if (sum_marks == nbCodes) break;
+              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 1 code")};
+            }
+            else if (nextNbCodes == 2) {
+              sum = sum + 3.0; // 2 * 1.5 = 3.0
+              if (sum_marks == nbCodes) break;
+              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 2 codes")};
+            }
+            else if (nextNbCodes == 3) {
+              let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
+              codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmpa);
+              codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmpb);
+              if ((mark_perf_tmpa.nbBlacks == mark_perf_tmpb.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpb.nbWhites)) {
+                codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmpc);
+                if ((mark_perf_tmpa.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpc.nbWhites)) {
+                  sum = sum + 6.0; // 3 * ((1+2+3)/3.0) = 6.0
+                }
+                else {
+                  sum = sum + 5.0; // 3 * ((1+2+2)/3.0) = 5.0
+                }
               }
               else {
                 sum = sum + 5.0; // 3 * ((1+2+2)/3.0) = 5.0
               }
+              if (sum_marks == nbCodes) break;
+              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 3 codes")};
             }
-            else {
-              sum = sum + 5.0; // 3 * ((1+2+2)/3.0) = 5.0
-            }
-            if (sum_marks == nbCodes) break;
-            // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 3 codes")};
-          }
-          else if (nextNbCodes == 4) {
+            else if (nextNbCodes == 4) {
 
-            // An optimal code being played, if it is not the secret code, can lead to:
-            // a) 3 groups of 1 code => obviously optimal (performance will be 1+2+2+2=7).
-            // b) 1 group of 3 codes => at best, the performance will be 1+2+3+3=9. Thus there can't be any other c) case for the other codes
-            //    (because performance would be 8 < 9), which means all marks are equal for the 6 pairs of codes (performance will be 1+2+3+4=10).
-            // c) 1 group of 1 code and 1 group of 2 codes (performance will be 1+2+2+3=8).
+              // An optimal code being played, if it is not the secret code, can lead to:
+              // a) 3 groups of 1 code => obviously optimal (performance will be 1+2+2+2=7).
+              // b) 1 group of 3 codes => at best, the performance will be 1+2+3+3=9. Thus there can't be any other c) case for the other codes
+              //    (because performance would be 8 < 9), which means all marks are equal for the 6 pairs of codes (performance will be 1+2+3+4=10).
+              // c) 1 group of 1 code and 1 group of 2 codes (performance will be 1+2+2+3=8).
 
-            let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
-            codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmpa); // a
-            codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmpb); // b
-            codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[3], mark_perf_tmpc); // c
-            let a_b = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpb.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpb.nbWhites));
-            let a_c = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpc.nbWhites));
-            let b_c = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpc.nbWhites));
-            if ((!a_b) && (!a_c) && (!b_c)) { // a) 3 different marks when code 0 is played
-              sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
-            }
-            else {
-              codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmpd); // d
-              codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[3], mark_perf_tmpe); // e
-              codeHandler.fillMark(nextListOfCodesToConsider[2], nextListOfCodesToConsider[3], mark_perf_tmpf); // f
-              let a_d = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpd.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpd.nbWhites));
-              let a_e = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpe.nbWhites));
-              let a_f = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpf.nbWhites));
-              if (a_b && a_c && a_d && a_e && a_f) { // b) all marks are equal
-                sum = sum + 10.0; // 4 * ((1+2+3+4)/4.0)
+              let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
+              codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[1], mark_perf_tmpa); // a
+              codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[2], mark_perf_tmpb); // b
+              codeHandler.fillMark(nextListOfCodesToConsider[0], nextListOfCodesToConsider[3], mark_perf_tmpc); // c
+              let a_b = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpb.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpb.nbWhites));
+              let a_c = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpc.nbWhites));
+              let b_c = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpc.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpc.nbWhites));
+              if ((!a_b) && (!a_c) && (!b_c)) { // a) 3 different marks when code 0 is played
+                sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
               }
               else {
-                let d_e = ((mark_perf_tmpd.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpd.nbWhites == mark_perf_tmpe.nbWhites));
-                if ((!a_d) && (!a_e) && (!d_e)) { // a) 3 different marks when code 1 is played
-                  sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
+                codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[2], mark_perf_tmpd); // d
+                codeHandler.fillMark(nextListOfCodesToConsider[1], nextListOfCodesToConsider[3], mark_perf_tmpe); // e
+                codeHandler.fillMark(nextListOfCodesToConsider[2], nextListOfCodesToConsider[3], mark_perf_tmpf); // f
+                let a_d = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpd.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpd.nbWhites));
+                let a_e = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpe.nbWhites));
+                let a_f = ((mark_perf_tmpa.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpa.nbWhites == mark_perf_tmpf.nbWhites));
+                if (a_b && a_c && a_d && a_e && a_f) { // b) all marks are equal
+                  sum = sum + 10.0; // 4 * ((1+2+3+4)/4.0)
                 }
                 else {
-                  let c_e = ((mark_perf_tmpc.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpc.nbWhites == mark_perf_tmpe.nbWhites));
-                  let c_f = ((mark_perf_tmpc.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpc.nbWhites == mark_perf_tmpf.nbWhites));
-                  let e_f = ((mark_perf_tmpe.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpe.nbWhites == mark_perf_tmpf.nbWhites));
-                  if ((!c_e) && (!c_f) && (!e_f)) { // a) 3 different marks when code 3 is played
+                  let d_e = ((mark_perf_tmpd.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpd.nbWhites == mark_perf_tmpe.nbWhites));
+                  if ((!a_d) && (!a_e) && (!d_e)) { // a) 3 different marks when code 1 is played
                     sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
                   }
                   else {
-                    let b_d = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpd.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpd.nbWhites));
-                    let b_f = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpf.nbWhites));
-                    let d_f = ((mark_perf_tmpd.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpd.nbWhites == mark_perf_tmpf.nbWhites));
-                    if ((!b_d) && (!b_f) && (!d_f)) { // a) 3 different marks when code 2 is played
+                    let c_e = ((mark_perf_tmpc.nbBlacks == mark_perf_tmpe.nbBlacks) && (mark_perf_tmpc.nbWhites == mark_perf_tmpe.nbWhites));
+                    let c_f = ((mark_perf_tmpc.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpc.nbWhites == mark_perf_tmpf.nbWhites));
+                    let e_f = ((mark_perf_tmpe.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpe.nbWhites == mark_perf_tmpf.nbWhites));
+                    if ((!c_e) && (!c_f) && (!e_f)) { // a) 3 different marks when code 3 is played
                       sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
                     }
                     else {
-                      // c) after an optimal code is played, if it is not the secret code, there will be 1 group of 1 code and 1 group of 2 codes
-                      sum = sum + 8.0; // 4 * ((1+2+2+3)/4.0)
+                      let b_d = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpd.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpd.nbWhites));
+                      let b_f = ((mark_perf_tmpb.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpb.nbWhites == mark_perf_tmpf.nbWhites));
+                      let d_f = ((mark_perf_tmpd.nbBlacks == mark_perf_tmpf.nbBlacks) && (mark_perf_tmpd.nbWhites == mark_perf_tmpf.nbWhites));
+                      if ((!b_d) && (!b_f) && (!d_f)) { // a) 3 different marks when code 2 is played
+                        sum = sum + 7.0; // 4 * ((1+2+2+2)/4.0)
+                      }
+                      else {
+                        // c) after an optimal code is played, if it is not the secret code, there will be 1 group of 1 code and 1 group of 2 codes
+                        sum = sum + 8.0; // 4 * ((1+2+2+3)/4.0)
+                      }
                     }
                   }
                 }
               }
-            }
-            if (sum_marks == nbCodes) break;
+              if (sum_marks == nbCodes) break;
 
-          }
-          else { // (nextNbCodes >= 5). Note: from 5 codes, "leaf algos" would be very long to write & to optimize
-            sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
+            }
+            else { // (nextNbCodes >= 5). Note: from 5 codes, "leaf algos" would be very long to write & to optimize
+
+              // 1) Update current game
+              // **********************
+
+              currentGame[next_current_game_idx] = current_code;
+
+              // 2) Update possible permutations
+              // *******************************
+
+              if (nextNbCodes > nbCodesLimitForEquivalentCodesCheck) { // this computing would be useless otherwise
+                let new_perm_cnt = 0;
+                for (let perm_idx = 0; perm_idx < current_permutations_table_size[next_current_game_idx]; perm_idx++) {
+                  if (areCodesEquivalent(0, 0, next_current_game_idx+1, true /* assess current game only */, current_permutations_table[next_current_game_idx][perm_idx]) /* forced permutation */) { // determine which permutations are still valid for current game
+                    if ((current_permutations_table[next_current_game_idx][perm_idx] < 0) || (current_permutations_table[next_current_game_idx][perm_idx] >= all_permutations_table_size[nbColumns])) {
+                      throw new Error("recursiveEvaluatePerformances: invalid permutation index: " + perm_idx);
+                    }
+                    current_permutations_table[next_current_game_idx+1][new_perm_cnt] = current_permutations_table[next_current_game_idx][perm_idx];
+                    new_perm_cnt++;
+                  }
+                }
+                if (new_perm_cnt <= 0) { // identity shall always be valid
+                  throw new Error("recursiveEvaluatePerformances: invalid new_perm_cnt value: " + new_perm_cnt);
+                }
+                current_permutations_table_size[next_current_game_idx+1] = new_perm_cnt;
+              }
+              else {
+                current_permutations_table_size[next_current_game_idx+1] = 0; // (defensive setting)
+              }
+
+              // 3) Recursive call
+              // *****************
+
+              sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
+
+            }
           }
         }
-      }
-      if (sum_marks != nbCodes) {
-        throw new Error("recursiveEvaluatePerformances: invalid sum_marks value (1) (depth=" + depth + ", sum_marks=" + sum_marks + ", sum_marks=" + sum_marks + ")");
-      }
+        if (sum_marks != nbCodes) {
+          throw new Error("recursiveEvaluatePerformances: invalid sum_marks value (1) (depth=" + depth + ", sum_marks=" + sum_marks + ", sum_marks=" + sum_marks + ")");
+        }
+
+        listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_code = current_code;
+        listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_sum = sum;
+        nbOfEquivalentCodesAndPerformances++;
+        // if (first_call) {
+        // console.log("code #" + nbOfEquivalentCodesAndPerformances + ": " + codeHandler.codeToString(current_code)); // XXX
+        // }
+
+      } // compute_sum
 
       // Max possible value of sum = 24 bits (10.000.000 for 7 columns case) + 20 bits (for value 999999 so that < 1/10000 precision) = 44 bits << 52 mantissa bits of double type
       if (sum < best_sum) {
@@ -1537,7 +2104,7 @@ try {
           }
 
           listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
-          // console.log("perf #" + idx1 + ": " + listOfGlobalPerformances[idx1]);
+          // console.log("perf #" + idx1 + ": " + listOfGlobalPerformances[idx1]); // XXX
           // console.log(spaces(depth) + "(depth " + depth + ") " + "=> perf=" + listOfGlobalPerformances[idx1]);
 
         }
@@ -1593,7 +2160,40 @@ try {
             sum = sum + 3.0; // 2 * 1.5 = 3.0
           }
           else {
+
+            // 1) Update current game
+            // **********************
+
+            currentGame[next_current_game_idx] = current_code;
+
+            // 2) Update possible permutations
+            // *******************************
+
+            if (nextNbCodes > nbCodesLimitForEquivalentCodesCheck) { // this computing would be useless otherwise
+              let new_perm_cnt = 0;
+              for (let perm_idx = 0; perm_idx < current_permutations_table_size[next_current_game_idx]; perm_idx++) {
+                if (areCodesEquivalent(0, 0, next_current_game_idx+1, true /* assess current game only */, current_permutations_table[next_current_game_idx][perm_idx]) /* forced permutation */) { // determine which permutations are still valid for current game
+                  if ((current_permutations_table[next_current_game_idx][perm_idx] < 0) || (current_permutations_table[next_current_game_idx][perm_idx] >= all_permutations_table_size[nbColumns])) {
+                    throw new Error("recursiveEvaluatePerformances: invalid permutation index: " + perm_idx);
+                  }
+                  current_permutations_table[next_current_game_idx+1][new_perm_cnt] = current_permutations_table[next_current_game_idx][perm_idx];
+                  new_perm_cnt++;
+                }
+              }
+              if (new_perm_cnt <= 0) { // identity shall always be valid
+                throw new Error("recursiveEvaluatePerformances: invalid new_perm_cnt value: " + new_perm_cnt);
+              }
+              current_permutations_table_size[next_current_game_idx+1] = new_perm_cnt;
+            }
+            else {
+              current_permutations_table_size[next_current_game_idx+1] = 0; // (defensive setting)
+            }
+
+            // 3) Recursive call
+            // *****************
+
             sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
+
           }
         }
       }
@@ -1742,29 +2342,29 @@ try {
             // ******************************************
             nbMaxMarks = 9;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
-            nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
-            nbMaxDepth = 11;
+            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes;
+            maxDepth = Math.min(11, overallMaxDepth);
             marks_optimization_mask = 0x1FFF;
             break;
           case 4:
             nbMaxMarks = 14;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
-            nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
-            nbMaxDepth = 12;
+            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes;
+            maxDepth = Math.min(12, overallMaxDepth);
             marks_optimization_mask = 0x3FFF;
             break;
           case 5:
             nbMaxMarks = 20;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
-            nbMaxDepth = 13;
+            maxDepth = Math.min(13, overallMaxDepth);
             marks_optimization_mask = 0x7FFF;
             break;
           case 6:
             nbMaxMarks = 27;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
-            nbMaxDepth = 14;
+            maxDepth = Math.min(14, overallMaxDepth);
             marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
             break;
           case 7:
@@ -1782,7 +2382,7 @@ try {
             nbMaxMarks = 35;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
-            nbMaxDepth = 15;
+            maxDepth = Math.min(15, overallMaxDepth);
             marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
             break;
           default:
@@ -1925,13 +2525,99 @@ try {
           throw new Error("NEW_ATTEMPT phase / invalid game_id: " + attempt_game_id + " (" + game_id + ")");
         }
 
-        console.log(String(currentAttemptNumber) + ": " + codeHandler.markToString(marks[currentAttemptNumber-1]) + " " + codeHandler.codeToString(codesPlayed[currentAttemptNumber-1]));
+        // ***************
+        // Initializations
+        // ***************
 
-        let now = new Date().getTime();
+        // 1) Update current game
+        // **********************
+
+        if (!initialInitDone) {
+          initialInitDone = true;
+          currentGame = new Array(nbMaxAttempts+maxDepth);
+          currentGame.fill(0);
+          generateAllPermutations();
+        }
+
+        if (currentAttemptNumber >= 2) {
+          currentGame[currentAttemptNumber-2] = codesPlayed[currentAttemptNumber-2]; // Note: to simplify, useless codes are not excluded from current game
+        }
+        currentGameSize = currentAttemptNumber-1; // (equal to 0 at first attempt)
+
+        // Check current game (useful for subsequent equivalent codes processing - duplicated code)
+        if (currentGameSize != currentAttemptNumber-1) {
+          throw new Error("NEW_ATTEMPT phase / invalid currentGameSize");
+        }
+        for (let idx = 0; idx < currentGameSize; idx++) {
+          if ( (currentGame[idx] != codesPlayed[idx]) || (!codeHandler.isFullAndValid(currentGame[idx])) ) {
+            throw new Error("NEW_ATTEMPT phase / invalid current game (" + idx + ")");
+          }
+        }
+
+        // 2) Update possible permutations
+        // *******************************
+
+        if (currentAttemptNumber >= 2) {
+          if (current_permutations_table_size[currentGameSize-1] <= 0) {
+            throw new Error("NEW_ATTEMPT phase / invalid current_permutations_table_size value: " + current_permutations_table_size[currentGameSize-1]);
+          }
+          let new_perm_cnt = 0;
+          for (let perm_idx = 0; perm_idx < current_permutations_table_size[currentGameSize-1]; perm_idx++) {
+            if (areCodesEquivalent(0, 0, currentGameSize, true /* assess current game only */, current_permutations_table[currentGameSize-1][perm_idx]) /* forced permutation */) { // determine which permutations are still valid for current game
+              if ((current_permutations_table[currentGameSize-1][perm_idx] < 0) || (current_permutations_table[currentGameSize-1][perm_idx] >= all_permutations_table_size[nbColumns])) {
+                throw new Error("NEW_ATTEMPT phase / invalid permutation index: " + perm_idx);
+              }
+              current_permutations_table[currentGameSize][new_perm_cnt] = current_permutations_table[currentGameSize-1][perm_idx];
+              new_perm_cnt++;
+            }
+          }
+          if (new_perm_cnt <= 0) { // identity shall always be valid
+            throw new Error("NEW_ATTEMPT phase / invalid new_perm_cnt value: " + new_perm_cnt);
+          }
+          current_permutations_table_size[currentGameSize] = new_perm_cnt;
+        }
+
+        // XXX TEST - BEGIN
+
+        /* console.log("current_permutations_table_size =" + current_permutations_table_size[currentGameSize]); // XXX
+        for (let perm_idx = 0; perm_idx < current_permutations_table_size[currentGameSize]; perm_idx++) { // XXX
+          console.log(" " + all_permutations_table[nbColumns][current_permutations_table[currentGameSize][perm_idx]]);
+        }
+
+        let code0 = 0;
+        code0 = codeHandler.setColor(code0, 1, 1);
+        code0 = codeHandler.setColor(code0, 1, 2);
+        code0 = codeHandler.setColor(code0, 1, 3);
+
+        let code1;
+        code1 = codeHandler.setColor(code1, 2, 1);
+        code1 = codeHandler.setColor(code1, 2, 2);
+        code1 = codeHandler.setColor(code1, 2, 3);
+
+        currentGame[0] = code0;
+        currentGame[1] = code1;
+        currentGameSize = 2;
+
+        let toto = 0;
+        toto = codeHandler.setColor(toto, 2, 1);
+        toto = codeHandler.setColor(toto, 3, 2);
+        toto = codeHandler.setColor(toto, 5, 3);
+
+        let titi;
+        titi = codeHandler.setColor(titi, 2, 1);
+        titi = codeHandler.setColor(titi, 3, 2);
+        titi = codeHandler.setColor(titi, 6, 3);
+
+        console.log("Result: " + areCodesEquivalent(toto, titi, currentGameSize, false, -1 /* N.A. *//*));
+        return; */
 
         // **************************************************
         // A.1) Compute number and list of new possible codes
         // **************************************************
+
+        console.log(String(currentAttemptNumber) + ": " + codeHandler.markToString(marks[currentAttemptNumber-1]) + " " + codeHandler.codeToString(codesPlayed[currentAttemptNumber-1]));
+
+        let now = new Date().getTime();
 
         if (marks_already_computed_table == null) {
           marks_already_computed_table = new Array(marks_optimization_mask+1);
@@ -1999,8 +2685,14 @@ try {
               performanceListsInitDone = true;
               arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
               listOfGlobalPerformances = new Array(arraySizeAtInit);
-              listsOfPossibleCodes = new3DArray(nbMaxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
-              nbOfPossibleCodes = new2DArray(nbMaxDepth, nbMaxMarks);
+              listsOfPossibleCodes = new3DArray(maxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
+              nbOfPossibleCodes = new2DArray(maxDepth, nbMaxMarks);
+              listOfEquivalentCodesAndPerformances = new2DArray(maxDepth, arraySizeAtInit);
+              for (let idx1 = 0; idx1 < maxDepth; idx1++) { // structure allocation
+                for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
+                  listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
+                }
+              }
               if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
                 throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table");
               }
@@ -2011,7 +2703,7 @@ try {
               listOfGlobalPerformances[i] = PerformanceNA;
             }
             // listsOfPossibleCodes is not initialized as this array may be very large
-            for (let i = 0; i < nbMaxDepth; i++) {
+            for (let i = 0; i < maxDepth; i++) {
               for (let j = 0; j < nbMaxMarks; j++) {
                 nbOfPossibleCodes[i][j] = 0;
               }
@@ -2114,11 +2806,40 @@ try {
             if (listOfGlobalPerformances.length != arraySizeAtInit) {
               throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
             }
-            if (!check3DArraySizes(listsOfPossibleCodes, nbMaxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor)) {
+            if (!check3DArraySizes(listsOfPossibleCodes, maxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor)) {
               throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
             }
-            if (!check2DArraySizes(nbOfPossibleCodes, nbMaxDepth, nbMaxMarks)) {
+            if (!check2DArraySizes(nbOfPossibleCodes, maxDepth, nbMaxMarks)) {
               throw new Error("NEW_ATTEMPT phase / nbOfPossibleCodes allocation was modified");
+            }
+            if (currentGame.length != nbMaxAttempts+maxDepth) {
+              throw new Error("NEW_ATTEMPT phase / currentGame allocation was modified");
+            }
+            if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepth, arraySizeAtInit)) {
+              throw new Error("NEW_ATTEMPT phase / listOfEquivalentCodesAndPerformances allocation was modified");
+            }
+            if (current_permutations_table_size.length != overallNbMaxAttempts+overallMaxDepth) {
+              throw new Error("NEW_ATTEMPT phase / current_permutations_table_size allocation was modified");
+            }
+            if (!check2DArraySizes(current_permutations_table, overallNbMaxAttempts+overallMaxDepth, current_permutations_table_size[0])) {
+              throw new Error("NEW_ATTEMPT phase / current_permutations_table allocation was modified");
+            }
+
+            if (code_colors.length != nbMaxColumns) {
+              throw new Error("NEW_ATTEMPT phase / code_colors allocation was modified");
+            }
+            if (other_code_colors.length != nbMaxColumns) {
+              throw new Error("NEW_ATTEMPT phase / other_code_colors allocation was modified");
+            }
+            if ( (!check2DArraySizes(current_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
+                 || (current_game_code_colors.size < currentGame.length) ) { // first dimension shall be >= currentGame size
+              throw new Error("NEW_ATTEMPT phase / current_game_code_colors allocation was modified or is invalid");
+            }
+            if (permuted_other_code_colors.length != nbMaxColumns) {
+              throw new Error("NEW_ATTEMPT phase / permuted_other_code_colors allocation was modified");
+            }
+            if (partial_bijection.length != nbMaxColors+1) {
+              throw new Error("NEW_ATTEMPT phase / partial_bijection allocation was modified");
             }
 
           }

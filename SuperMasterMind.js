@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v0.97";
+let version = "v1.25";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 6;
@@ -1342,8 +1342,8 @@ function resetGameAttributes(nbColumnsSelected) {
   toto = simpleCodeHandler.setColor(toto, 4, 1);
   toto = simpleCodeHandler.setColor(toto, 4, 2);
   toto = simpleCodeHandler.setColor(toto, 4, 3);
-  toto = simpleCodeHandler.setColor(toto, 4, 4);
-  toto = simpleCodeHandler.setColor(toto, 4, 5);
+  // toto = simpleCodeHandler.setColor(toto, 4, 4);
+  // toto = simpleCodeHandler.setColor(toto, 4, 5);
   // toto = simpleCodeHandler.setColor(toto, 4, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 7);
   sCode = ~(toto); */
