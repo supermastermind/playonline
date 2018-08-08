@@ -2084,11 +2084,11 @@ try {
             let idxToConsider;
             let totalNbToConsider;
             if (currentNbClasses != -1) {
-              idxToConsider = nb_classes_cnt-1;
+              idxToConsider = nb_classes_cnt;
               totalNbToConsider = currentNbClasses;
             }
             else { // XXX TMP code
-              idxToConsider = idx1;
+              idxToConsider = idx1+1;
               totalNbToConsider = nbCodes;
             }
 
@@ -2129,6 +2129,7 @@ try {
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
+
           }
 
           listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
