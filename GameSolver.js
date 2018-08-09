@@ -66,7 +66,7 @@ try {
   let baseOfMaxPerformanceEvaluationTime = 20000; // 20 seconds XXX
   let maxPerformanceEvaluationTime = -1;
 
-  let baseOfNbOfCodesForSystematicEvaluation = 1000; // (impact on memory consumption) XXX
+  let baseOfNbOfCodesForSystematicEvaluation = 1000;
   let nbOfCodesForSystematicEvaluation = -1;
 
   let initialNbClasses = -1;
@@ -1691,6 +1691,15 @@ try {
       // Main processing
       // ***************
 
+      /* Skip evaluation if too many codes and classes 
+         => not done because may induce too many delays
+      if ( (nbOfCodesForSystematicEvaluation < initialNbPossibleCodes) // not systematic performance evaluation
+           && (nbCodes > 2*nbOfCodesForSystematicEvaluation/3)
+           && (currentNbClasses > nbOfCodesForSystematicEvaluation/10) ) {
+        console.log("(processing skipped)");
+        return PerformanceUNKNOWN;
+      } */
+
       particularCodeToAssess = particularCode;
       // cnt_eq = 0; // XXX
       res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
@@ -1715,11 +1724,10 @@ try {
 
   }
   // XXX Further optimizations:
-  // - XXX eval if < 1500 codes && < 500 equivalent codes
   // - XXX time check during perf evaluation shall take into account equivalent codes! (for ex. that will allow 4-columns games to be fully evaluated)
   // - XXX "toto" tests in this file to check possible permutations
   // - XXX Test equivalence through identity permutation
-  // - If 0B+0W => classes shall not be modified because order of rows has no impact on game?! Other cases like this? Case of useless codes?
+  // - XXX Other equivalence case: if 0B+0W => classes shall not be modified because order of rows has no impact on game?! Also to be applied to recursive step permutations? Other cases like this: no a priori. Case of useless codes?
   // - DONE: XXX tests with known calculations
   // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games
   // - DONE: XXX Test impossible code evaluations
@@ -2107,6 +2115,7 @@ try {
 
             // Processing is aborted when too long
             if (time_elapsed > maxPerformanceEvaluationTime) {
+              console.log("(processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%))");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
@@ -2389,7 +2398,7 @@ try {
             // ******************************************
             nbMaxMarks = 9;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
-            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes;
+            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
             initialNbClasses = 3; // {111, 112, 123}
             maxDepth = Math.min(11, overallMaxDepth);
             marks_optimization_mask = 0x1FFF;
@@ -2397,7 +2406,7 @@ try {
           case 4:
             nbMaxMarks = 14;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
-            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes;
+            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
             initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
             marks_optimization_mask = 0x3FFF;
@@ -2907,6 +2916,9 @@ try {
 
         }
 
+        if (best_global_performance == PerformanceNA) {
+          throw new Error("NEW_ATTEMPT phase / best_global_performance is NA");
+        }
         if (code_played_relative_perf == PerformanceNA) {
           throw new Error("NEW_ATTEMPT phase / code_played_relative_perf is NA");
         }
