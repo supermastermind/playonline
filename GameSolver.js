@@ -83,6 +83,8 @@ try {
   let listOfGlobalPerformances;
   let listsOfPossibleCodes;
   let nbOfPossibleCodes;
+  let listOfClassesFirstCall;
+  let nbOfClassesFirstCall = -1;
   let listOfEquivalentCodesAndPerformances;
   let marks_already_computed_table = null;
 
@@ -1637,14 +1639,36 @@ try {
         }
       }
 
-      // Determine current number of classes: XXX TBC
-      if (currentGameSize == 0) {
-        currentNbClasses = initialNbClasses;
+      // Determine current number of classes
+      // ***********************************
+
+      listOfClassesFirstCall.fill(0);
+      nbOfClassesFirstCall = 0;
+
+      for (let idx1 = 0; idx1 < nbCodes; idx1++) {
+        let current_code = listOfCodes[idx1];
+        let equiv_code_found = false;
+        for (let idx2 = 0; idx2 < nbOfClassesFirstCall; idx2++) {
+          let known_code = listOfClassesFirstCall[idx2];
+          if (areCodesEquivalent(current_code, known_code, currentGameSize, false, -1 /* N.A. */)) {
+            equiv_code_found = true;
+            break;
+          }
+        }
+        if (!equiv_code_found) {
+          listOfClassesFirstCall[nbOfClassesFirstCall] = current_code;
+          nbOfClassesFirstCall++;
+        }
       }
-      else {
-        currentNbClasses = -1; // N.A. XXX TBC
+
+      currentNbClasses = nbOfClassesFirstCall;
+      if ( (currentNbClasses <= 0) || (currentNbClasses > nbCodes)
+           || ((currentGameSize == 0) && (currentNbClasses != initialNbClasses)) ) {
+        throw new Error("evaluatePerformances: invalid currentNbClasses: " + currentNbClasses);
       }
-      // compression_ratio = currentNbClasses / total nb of codes => to display in console status after evaluation function call
+
+      // Initializations
+      // ***************
 
       // Initialize equivalent codes and performances
       for (let idx1 = 0; idx1 < listOfEquivalentCodesAndPerformances.length; idx1++) {
@@ -1665,6 +1689,8 @@ try {
       recursiveEvaluatePerformancesWasAborted = false; // output
 
       // Main processing
+      // ***************
+
       particularCodeToAssess = particularCode;
       // cnt_eq = 0; // XXX
       res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
@@ -1693,6 +1719,7 @@ try {
   // - XXX time check during perf evaluation shall take into account equivalent codes! (for ex. that will allow 4-columns games to be fully evaluated)
   // - XXX "toto" tests in this file to check possible permutations
   // - XXX Test equivalence through identity permutation
+  // - If 0B+0W => classes shall not be modified because order of rows has no impact on game?! Other cases like this? Case of useless codes?
   // - DONE: XXX tests with known calculations
   // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games
   // - DONE: XXX Test impossible code evaluations
@@ -1747,7 +1774,7 @@ try {
     for (idx1 = 0; idx1 < nbCodes; idx1++) {
 
       current_code = listOfCodes[idx1];
-      /* if ((depth <= 1) &&(!compute_sum_ini)) { // XXX useful trace to keep for debug!!!
+      /* if ((depth <= 1) &&(!compute_sum_ini)) { // Trace useful for debug
         console.log(spaces(depth) + "(depth " + depth + ") " + "CURRENT_CODE:" + codeHandler.codeToString(current_code));
         console.log(spaces(depth) + "current game: " + print_list_of_codes(currentGame, next_current_game_idx));
         console.log(spaces(depth) + "perms: " + current_permutations_table_size[next_current_game_idx] + ": "
@@ -1773,9 +1800,9 @@ try {
 
       if (compute_sum) { // compute_sum
 
-         // if (first_call) { // XXX
-          // console.log("assessed: " + codeHandler.codeToString(current_code));
-         //}
+        /* if (first_call) { // Trace useful for debug
+          console.log("assessed: " + codeHandler.codeToString(current_code));
+        } */
 
         nextNbsCodes.fill(0); // (faster than (or close to) a loop on 0..nbMaxMarks-1)
 
@@ -1918,24 +1945,18 @@ try {
           let nextNbCodes = nextNbsCodes[mark_idx];
           // Go through all sets of possible marks
           if (nextNbCodes > 0) {
-            //if (depth <= 0) { // XXX
-            //  console.log(spaces(depth) + spaces(depth) + depth + "/ mark: " + codeHandler.markToString(marksTable_NbToMark[mark_idx])); // XXX
-            //}
             sum_marks += nextNbCodes;
             if (mark_idx == best_mark_idx) {
               // sum = sum + 0.0; // 1.0 * 0.0 = 0.0
               if (sum_marks == nbCodes) break;
-              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + "win");}
             }
             else if (nextNbCodes == 1) {
               sum = sum + 1.0; // 1.0 * 1.0 = 1.0
               if (sum_marks == nbCodes) break;
-              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 1 code")};
             }
             else if (nextNbCodes == 2) {
               sum = sum + 3.0; // 2 * 1.5 = 3.0
               if (sum_marks == nbCodes) break;
-              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 2 codes")};
             }
             else if (nextNbCodes == 3) {
               let nextListOfCodesToConsider = nextListsOfCodes[mark_idx];
@@ -1954,7 +1975,6 @@ try {
                 sum = sum + 5.0; // 3 * ((1+2+2)/3.0) = 5.0
               }
               if (sum_marks == nbCodes) break;
-              // if (depth <= 2) {console.log(spaces(depth) + "(depth " + depth + ") " + codeHandler.markToString(marksTable_NbToMark[mark_idx]) + ": 3 codes")};
             }
             else if (nextNbCodes == 4) {
 
@@ -2059,9 +2079,6 @@ try {
         listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_code = current_code;
         listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_sum = sum;
         nbOfEquivalentCodesAndPerformances++;
-        // if (first_call) {
-        // console.log("code #" + nbOfEquivalentCodesAndPerformances + ": " + codeHandler.codeToString(current_code)); // XXX
-        // }
 
       } // compute_sum
 
@@ -2085,14 +2102,8 @@ try {
 
             let idxToConsider;
             let totalNbToConsider;
-            if (currentNbClasses != -1) {
-              idxToConsider = nb_classes_cnt;
-              totalNbToConsider = currentNbClasses;
-            }
-            else { // XXX TMP code
-              idxToConsider = idx1+1;
-              totalNbToConsider = nbCodes;
-            }
+            idxToConsider = nb_classes_cnt;
+            totalNbToConsider = currentNbClasses;
 
             // Processing is aborted when too long
             if (time_elapsed > maxPerformanceEvaluationTime) {
@@ -2133,7 +2144,7 @@ try {
             }
 
             if (idx1+1 == nbCodes) { // last loop
-              if (idxToConsider != totalNbToConsider) {
+              if (idxToConsider != totalNbToConsider) { // not 100%
                 throw new Error("recursiveEvaluatePerformances: invalid code numbers (" + idxToConsider + " != " + totalNbToConsider + ")");
               }
             }
@@ -2141,8 +2152,7 @@ try {
           }
 
           listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
-          // console.log("perf #" + idx1 + ": " + listOfGlobalPerformances[idx1]); // XXX
-          // console.log(spaces(depth) + "(depth " + depth + ") " + "=> perf=" + listOfGlobalPerformances[idx1]);
+          // console.log("perf #" + idx1 + ": " + listOfGlobalPerformances[idx1]); // Trace useful for debug
 
         }
         else if (depth == 0) { // first level of recursivity
@@ -2729,6 +2739,7 @@ try {
               listOfGlobalPerformances = new Array(arraySizeAtInit);
               listsOfPossibleCodes = new3DArray(maxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
               nbOfPossibleCodes = new2DArray(maxDepth, nbMaxMarks);
+              listOfClassesFirstCall = new Array(arraySizeAtInit);
               listOfEquivalentCodesAndPerformances = new2DArray(maxDepth, arraySizeAtInit);
               for (let idx1 = 0; idx1 < maxDepth; idx1++) { // structure allocation
                 for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
@@ -2779,7 +2790,7 @@ try {
               best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */);
               if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
                 console.log("(perfeval#1: best performance: " + best_global_performance
-                            + " / " + ((new Date()).getTime() - startTime) + "ms)");
+                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
                 let code_played_found = false;
                 for (let i = 0; i < previousNbOfPossibleCodes; i++) {
                   if ( (possibleCodesForPerfEvaluation[index][i] == codesPlayed[currentAttemptNumber-1]) && (listOfGlobalPerformances[i] != PerformanceNA) ) {
@@ -2793,7 +2804,7 @@ try {
                 }
               }
               else {
-                console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms)");
+                console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
               }
             }
             else { // code played is not possible
@@ -2803,14 +2814,14 @@ try {
               if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
                 console.log("(perfeval#2: best performance: " + best_global_performance
                             + " / particular code performance: " + particularCodeGlobalPerformance
-                            + " / " + ((new Date()).getTime() - startTime) + "ms)");
+                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
                 if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
                   throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: " + particularCodeGlobalPerformance);
                 }
                 code_played_global_performance = particularCodeGlobalPerformance;
               }
               else {
-                console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms)");
+                console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
               }
             }
 
@@ -2856,6 +2867,9 @@ try {
             }
             if (currentGame.length != nbMaxAttempts+maxDepth) {
               throw new Error("NEW_ATTEMPT phase / currentGame allocation was modified");
+            }
+            if (listOfClassesFirstCall.length != arraySizeAtInit) {
+              throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
             }
             if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepth, arraySizeAtInit)) {
               throw new Error("NEW_ATTEMPT phase / listOfEquivalentCodesAndPerformances allocation was modified");
