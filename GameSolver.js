@@ -1644,6 +1644,7 @@ try {
       else {
         currentNbClasses = -1; // N.A. XXX TBC
       }
+      // compression_ratio = currentNbClasses / total nb of codes => to display in console status after evaluation function call
 
       // Initialize equivalent codes and performances
       for (let idx1 = 0; idx1 < listOfEquivalentCodesAndPerformances.length; idx1++) {
@@ -1691,6 +1692,7 @@ try {
   // - XXX eval if < 1500 codes && < 500 equivalent codes
   // - XXX time check during perf evaluation shall take into account equivalent codes! (for ex. that will allow 4-columns games to be fully evaluated)
   // - XXX "toto" tests in this file to check possible permutations
+  // - XXX Test equivalence through identity permutation
   // - DONE: XXX tests with known calculations
   // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games
   // - DONE: XXX Test impossible code evaluations
@@ -2102,32 +2104,38 @@ try {
 
             // Anticipation of processing abortion
             if ( (time_elapsed > maxPerformanceEvaluationTime*25/100) && (idxToConsider < Math.round(totalNbToConsider*7/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #1)");
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
             if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.round(totalNbToConsider*10/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #2)");
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #2)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
             if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.round(totalNbToConsider*20/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #3)");
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #3)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
             if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.round(totalNbToConsider*30/100)) ) {
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(idxToConsider/totalNbToConsider) + "%) #4)");
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #4)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
+            }
+
+            if (idx1+1 == nbCodes) { // last loop
+              if (idxToConsider != totalNbToConsider) {
+                throw new Error("recursiveEvaluatePerformances: invalid code numbers (" + idxToConsider + " != " + totalNbToConsider + ")");
+              }
             }
 
           }

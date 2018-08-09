@@ -1339,11 +1339,11 @@ function resetGameAttributes(nbColumnsSelected) {
   sCode = ~(simpleCodeHandler.createRandomCode());
   /* XXX
   let toto = simpleCodeHandler.createRandomCode(sCodeRevealed);
-  toto = simpleCodeHandler.setColor(toto, 4, 1);
-  toto = simpleCodeHandler.setColor(toto, 4, 2);
-  toto = simpleCodeHandler.setColor(toto, 4, 3);
-  // toto = simpleCodeHandler.setColor(toto, 4, 4);
-  // toto = simpleCodeHandler.setColor(toto, 4, 5);
+  toto = simpleCodeHandler.setColor(toto, 2, 1);
+  toto = simpleCodeHandler.setColor(toto, 7, 2);
+  toto = simpleCodeHandler.setColor(toto, 7, 3);
+  toto = simpleCodeHandler.setColor(toto, 5, 4);
+  // toto = simpleCodeHandler.setColor(toto, 2, 5);
   // toto = simpleCodeHandler.setColor(toto, 4, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 7);
   sCode = ~(toto); */
