@@ -1691,7 +1691,7 @@ try {
       // Main processing
       // ***************
 
-      /* Skip evaluation if too many codes and classes 
+      /* Skip evaluation if too many codes and classes
          => not done because may induce too many delays
       if ( (nbOfCodesForSystematicEvaluation < initialNbPossibleCodes) // not systematic performance evaluation
            && (nbCodes > 2*nbOfCodesForSystematicEvaluation/3)
@@ -1724,25 +1724,21 @@ try {
 
   }
   // XXX Further optimizations:
-  // - XXX time check during perf evaluation shall take into account equivalent codes! (for ex. that will allow 4-columns games to be fully evaluated)
   // - XXX "toto" tests in this file to check possible permutations
-  // - XXX Test equivalence through identity permutation
-  // - XXX Other equivalence case: if 0B+0W => classes shall not be modified because order of rows has no impact on game?! Also to be applied to recursive step permutations? Other cases like this: no a priori. Case of useless codes?
-  // - DONE: XXX tests with known calculations
-  // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games
-  // - DONE: XXX Test impossible code evaluations
+  // - XXX test some known calculations
+  // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games with mixed possible / impossible codes
   // - XXX Test with auto play which makes go through all random codes!!! => exactness is tested
-  // - Listing: optimal & equivalent codes first + their nbers in () par ex
-  // - Optim mémoire gameSolver, sur nb possibles codes par ex (7 cols) / nb codes plutôt que N constant
+  // - XXX Listing: optimal & equivalent codes first + their nbers in () par ex
+  // - XXX Optim memory of gameSolver?
   // - XXXs/TBCs/TBDs in all files
-  // - Wiki page: optimal LOGICAL strategy / https://arxiv.org/pdf/1305.1010.pdf corresponds to non possible strategy! (?)
-  // - Figures with perfs in home page
-  // - home page accessible from compressed mode, or F1 key at game beginning?
-  // - check "Code_at_-0.01_perf.docx"
-  // - 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
-  // - sheet compression to retest
-  // - "let" in rec functions induce cycles?
-  // - precalculated perfs x 1ers codes joués (possibles ou non) / execution outside firefox should be faster // skip AAAABB for 6 & 7 cols
+  // - XXX Wiki page: optimal LOGICAL strategy / https://arxiv.org/pdf/1305.1010.pdf corresponds to non possible strategy! (?)
+  // - XXX Figures with perfs in home page
+  // - XXX Home page accessible from compressed mode, or F1 key at game beginning?
+  // - XXX check "Code_at_-0.01_perf.docx"
+  // - XXX 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
+  // - XXX sheet compression to retest
+  // - XXX "let" in rec functions induce cycles?
+  // - XXX precalculated perfs x 1st codes played (possibles or not) in a javascript environment
   let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
@@ -2601,7 +2597,12 @@ try {
         }
 
         if (currentAttemptNumber >= 2) {
-          currentGame[currentAttemptNumber-2] = codesPlayed[currentAttemptNumber-2]; // Note: to simplify, useless codes are not excluded from current game
+          // Notes:
+          // - to simplify, useless codes (likely to be played near game end) are not excluded from current game.
+          // - to simplify, codes with a 0 black + 0 white mark (likely to be played at game beginning, whose performances are targeted
+          //   to be precalculated) are not excluded from current game. More generally, the fact that impossible colors are interchangeable
+          //   is not exploited (as mostly covered by 0 black + 0 white mark cases).
+          currentGame[currentAttemptNumber-2] = codesPlayed[currentAttemptNumber-2];
         }
         currentGameSize = currentAttemptNumber-1; // (equal to 0 at first attempt)
 
