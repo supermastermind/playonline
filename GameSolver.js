@@ -56,7 +56,7 @@ try {
   let nbMaxAttemptsForEndOfGame = -1;
   let message_processing_ongoing = false;
 
-  let init_refresh_time = 1222;
+  let init_refresh_time = 999;
   let attempt_refresh_time_1 = 222;
   let attempt_refresh_time_2 = 0;
 
@@ -1729,8 +1729,7 @@ try {
   // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games with mixed possible / impossible codes
   // - XXX Test with auto play which makes go through all random codes!!! => exactness is tested
   // - XXX Listing: optimal & equivalent codes first + their nbers in () par ex
-  // - XXX Optim memory of gameSolver?
-  // - XXX Still undefined errors from time to time? => capture all consoles or copy/paste it on error detection and send form or ask user to do it!
+  // - XXX Still undefined errors from time to time? => worker/Worker.onerrorXXX in this file (which should capture all errors), suppr distant error handling + message sending? // ask user to do it!
   // - XXXs/TBCs/TBDs in all files
   // - XXX Wiki page: optimal LOGICAL strategy / https://arxiv.org/pdf/1305.1010.pdf corresponds to non possible strategy! (?)
   // - XXX Figures with perfs in home page
@@ -2414,7 +2413,7 @@ try {
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
-            marks_optimization_mask = 0x7FFF;
+            marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
             break;
           case 6:
             nbMaxMarks = 27;

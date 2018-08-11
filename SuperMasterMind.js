@@ -259,7 +259,8 @@ function displayGUIError(GUIErrorStr, errStack) {
   // Submit form if very first error
   // *******************************
 
-  if (globalErrorCnt == 0) {
+  let maxGlobalErrors = 5;
+  if (globalErrorCnt < maxGlobalErrors) {
     try {
       var errorStr = "";
       if (typeof(Storage) !== 'undefined') {
@@ -278,6 +279,10 @@ function displayGUIError(GUIErrorStr, errStack) {
         if (localStorage.gamesok) {
           errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
         }
+        try {
+          errorStr = errorStr + " for game version " + html_compatibility_game_version;
+        }
+        catch (exc_gv) {}
         if (gameSolverConfigDbg != null) {
           errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
         }
@@ -292,7 +297,7 @@ function displayGUIError(GUIErrorStr, errStack) {
         for (let i = 1; i < currentAttemptNumber; i++) {
           strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
         }
-        strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
+        strGame = strGame + "scode " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
         strGame = strGame.trim();
       }
       catch (game_exc) {
@@ -300,7 +305,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error" + errorStr + ": " + GUIErrorStr + " / " + errStack, true);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + GUIErrorStr + " / " + errStack, true);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -1225,6 +1230,8 @@ function resetGameAttributes(nbColumnsSelected) {
   let i;
   let first_session_game;
   let debug_mode = '';
+
+  console.clear();
 
   // Clear gameSolver worker if necessary
   gameSolverDbg = 0;
