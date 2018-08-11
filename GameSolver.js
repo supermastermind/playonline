@@ -766,7 +766,7 @@ try {
 
     let N; // possibleCodesAfterNAttempts is build at attempt N (shall be >= 1)
     if (nbColumns >= 7) { // (higher memory consumption)
-      N = 3;
+      N = 5;
     }
     else {
       N = 2;
@@ -1730,6 +1730,7 @@ try {
   // - XXX Test with auto play which makes go through all random codes!!! => exactness is tested
   // - XXX Listing: optimal & equivalent codes first + their nbers in () par ex
   // - XXX Optim memory of gameSolver?
+  // - XXX Still undefined errors from time to time? => capture all consoles or copy/paste it on error detection and send form
   // - XXXs/TBCs/TBDs in all files
   // - XXX Wiki page: optimal LOGICAL strategy / https://arxiv.org/pdf/1305.1010.pdf corresponds to non possible strategy! (?)
   // - XXX Figures with perfs in home page

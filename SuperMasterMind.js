@@ -311,19 +311,26 @@ function displayGUIError(GUIErrorStr, errStack) {
   // Alert
   // *****
 
-  if (gameErrorStr.length < 750) {
-    gameErrorStr += "***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n";
-    alert(gameErrorStr + "\nSee Javascript console for more details (Ctrl+Shift+I in Chrome or Firefox)\n\n");
+  if (gameErrorStr == "") { // Only one error alert is displayed per game
+    gameErrorStr = "***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n";
+    alert(gameErrorStr);
   }
 
 }
 
-window.addEventListener('error', displayGUIError, false);
+window.onerror = displayGUIError;
+window.onmessageerror = displayGUIError;
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
   // gameSolverErrorDbg = fullObjToString(e);
   displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + currentCode + ")", new Error().stack);
+}
+
+// Function called on gameSolver worker's MESSAGE error
+function onGameSolverMessageError(e) {
+  // gameSolverErrorDbg = fullObjToString(e);
+  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + currentCode + ")", new Error().stack);
 }
 
 // *************************************************************************
@@ -1368,8 +1375,12 @@ function resetGameAttributes(nbColumnsSelected) {
 
   // Create a new worker for gameSolver
   gameSolver = new Worker("Game" + "Solver.js"); gameSolverDbg = 3;
-  gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
-  gameSolver.addEventListener('message', onGameSolverMsg, false); gameSolverDbg = 5;
+  // gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
+  gameSolver.onerror = onGameSolverError; gameSolverDbg = 4;
+  Worker.onmessageerror = onGameSolverMessageError; gameSolverDbg = 4.5;
+  gameSolver.onmessageerror = onGameSolverMessageError; gameSolverDbg = 4.6;
+  // gameSolver.addEventListener('message', onGameSolverMsg, false); gameSolverDbg = 5;
+  gameSolver.onmessage = onGameSolverMsg; gameSolverDbg = 5;
   // Send a message to the gameSolver worker to initialize it
   if ( (typeof(Storage) !== 'undefined') && (!sessionStorage.first_session_game) ) {
     sessionStorage.first_session_game = 1;
