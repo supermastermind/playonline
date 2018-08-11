@@ -63,7 +63,7 @@ try {
   // Performance-related variables
   // *****************************
 
-  let baseOfMaxPerformanceEvaluationTime = 20000; // 20 seconds XXX
+  let baseOfMaxPerformanceEvaluationTime = 20000;
   let maxPerformanceEvaluationTime = -1;
 
   let baseOfNbOfCodesForSystematicEvaluation = 1000;
@@ -1725,8 +1725,7 @@ try {
   }
   // XXX Further optimizations:
   // - XXX "toto" tests in this file to check possible permutations
-  // - XXX test some known calculations
-  // - XXX auto tests which compare equivalent and non equivalent outputs for plenty of games with mixed possible / impossible codes
+  // - XXX test some new known calculations versus basic version, including impossible codes
   // - XXX Test with auto play which makes go through all random codes!!! => exactness is tested
   // - XXX Listing: optimal & equivalent codes first + their nbers in () par ex
   // - XXX Still undefined errors from time to time? => worker/Worker.onerrorXXX in this file (which should capture all errors), suppr distant error handling + message sending? // ask user to do it!
@@ -2436,7 +2435,7 @@ try {
             // *                *** TOTAL: 35 marks *** *
             // ******************************************
             nbMaxMarks = 35;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*5/4;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
