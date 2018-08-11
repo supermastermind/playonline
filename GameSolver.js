@@ -1731,7 +1731,7 @@ try {
   // - XXX Still undefined errors from time to time? => worker/Worker.onerrorXXX in this file (which should capture all errors), suppr distant error handling + message sending? // ask user to do it!
   // - XXXs/TBCs/TBDs in all files
   // - XXX Wiki page: optimal LOGICAL strategy / https://arxiv.org/pdf/1305.1010.pdf corresponds to non possible strategy! (?)
-  // - XXX Figures with perfs in home page
+  // - XXX Figures with perfs in French home page
   // - XXX Home page accessible from compressed mode, or F1 key at game beginning?
   // - XXX check "Code_at_-0.01_perf.docx"
   // - XXX 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
