@@ -862,6 +862,16 @@ function playRandomCodeButtonClick() {
   }
 }
 
+function displayRandomCodesHint() {
+  if (typeof(Storage) !== 'undefined') {
+    if (localStorage.gamesok) {
+      if ((Number(localStorage.gamesok) >= 75) && ((Number(localStorage.gamesok) % 25) == 0)) {
+        alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first code(s) randomly!");
+      }
+    }
+  }
+}
+
 function revealSecretColorButtonClick() {
   if ( (!document.getElementById("revealSecretColorButton").disabled)
        && gameOnGoing()
@@ -1407,14 +1417,8 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverDbg = 6;
   
   // Propose to play a random code to vary games
-  if (typeof(Storage) !== 'undefined') {
-    if (localStorage.gamesok) {
-      if ((Number(localStorage.gamesok) >= 75) && ((Number(localStorage.gamesok) % 25) == 0)) {
-        alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first code(s) randomly!");
-      }
-    }
-  }
-  
+  setTimeout("displayRandomCodesHint();", 444);
+
 }
 
 function checkArraySizes() {
