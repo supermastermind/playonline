@@ -330,7 +330,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_HW";
+      let html_compatibility_game_version = "Ver_HX";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -473,6 +473,8 @@
 
             else if (modal_mode == 2) {
 
+              let prevent_modal_closure = false;
+            
               // Get firstname entered
               try {
                 let firstname_entered = document.getElementById("firstname_input").value;
@@ -484,6 +486,13 @@
                 }
                 else {
                   alert("Invalid first name: " + firstname_entered);
+                  if (typeof(Storage) !== 'undefined') {
+                    if (localStorage.gamesok) {
+                      if (Number(localStorage.gamesok) >= 150) {
+                        prevent_modal_closure = true;
+                      }
+                    }
+                  }
                 }
               }
               catch (exc) {
@@ -503,6 +512,13 @@
               setTimeout("submitForm();", 444);
 
               modal_mode = -1;
+              
+              if (prevent_modal_closure) {
+                let now = new Date().getTime();
+                while(new Date().getTime() < now + 45000){}
+                alert("Invalid first name");
+                return true; // close the modal
+              }
               return true; // close the modal
 
             }
