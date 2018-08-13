@@ -1410,13 +1410,7 @@ function resetGameAttributes(nbColumnsSelected) {
   if (typeof(Storage) !== 'undefined') {
     if (localStorage.gamesok) {
       if ((Number(localStorage.gamesok) >= 75) && ((Number(localStorage.gamesok) % 25) == 0)) {
-        let rsp = confirm("A little fun?!\nDo you want to play a random code as your first code?");
-        if (!rsp) {
-          // Cancel or "x" (close) button
-        }
-        else {
-          setTimeout("playRandomCodeButtonClick();", 444); // yes
-        }
+        alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first code(s) randomly!");
       }
     }
   }
@@ -3109,10 +3103,10 @@ function draw_graphic_bis() {
          && !(document.getElementById("revealSecretColorButton").disabled)
          && (sCodeRevealed == 0) ) {
       if (!CompressedDisplayMode) {
-        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button!");
+        alert("Need some help?\nClick on the \"" + document.getElementById("revealSecretColorButton").value + "\" button!");
       }
       else {
-        alert("Need some help? Click on the \"" + document.getElementById("revealSecretColorButton").value + "\" button to reveal a secret color!");
+        alert("Need some help?\nClick on the \"" + document.getElementById("revealSecretColorButton").value + "\" button to reveal a secret color!");
       }
     }
 
