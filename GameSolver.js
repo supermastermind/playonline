@@ -2600,7 +2600,7 @@ try {
           // - to simplify, useless codes (likely to be played near game end) are not excluded from current game.
           // - to simplify, codes with a 0 black + 0 white mark (likely to be played at game beginning, whose performances are targeted
           //   to be precalculated) are not excluded from current game. More generally, the fact that impossible colors are interchangeable
-          //   is not exploited (as mostly covered by 0 black + 0 white mark cases at game beginning / as difficult to take into account 
+          //   is not exploited (as mostly covered by 0 black + 0 white mark cases at game beginning / as difficult to take into account
           //   recursively at small cost).
           currentGame[currentAttemptNumber-2] = codesPlayed[currentAttemptNumber-2];
         }
