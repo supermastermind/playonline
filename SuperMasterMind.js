@@ -118,6 +118,8 @@ let showPossibleCodesButtonCompressedName = "\u2606";
 let showPossibleCodesButtonBackToGameName = "Back to game";
 let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
 
+let randomCodesHintAlreadyDisplayed = false;
+
 let tableIniWidth = document.getElementById("my_table").style.width;
 let tableIniLeft = document.getElementById("my_table").style.left;
 let tableIniHeight = document.getElementById("my_table").style.height;
@@ -863,6 +865,9 @@ function playRandomCodeButtonClick() {
 }
 
 function displayRandomCodesHint() {
+  if (randomCodesHintAlreadyDisplayed) {
+    return;
+  }
   if (typeof(Storage) !== 'undefined') {
     if (localStorage.gamesok) {
       if ((Number(localStorage.gamesok) >= 75) && ((Number(localStorage.gamesok) % 25) == 0)) {
@@ -870,6 +875,7 @@ function displayRandomCodesHint() {
       }
     }
   }
+  randomCodesHintAlreadyDisplayed = true; 
 }
 
 function revealSecretColorButtonClick() {
