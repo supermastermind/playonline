@@ -2079,9 +2079,11 @@ try {
           throw new Error("recursiveEvaluatePerformances: invalid sum_marks value (1) (depth=" + depth + ", sum_marks=" + sum_marks + ", sum_marks=" + sum_marks + ")");
         }
 
-        listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_code = current_code;
-        listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_sum = sum;
-        nbOfEquivalentCodesAndPerformances++;
+        if (!compute_sum_ini) {
+          listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_code = current_code;
+          listOfEquivalentCodesAndPerformances[next_depth][nbOfEquivalentCodesAndPerformances].equiv_sum = sum;
+          nbOfEquivalentCodesAndPerformances++;
+        }
 
       } // compute_sum
 
