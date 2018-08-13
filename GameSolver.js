@@ -1531,8 +1531,8 @@ try {
           if (!bijection_is_possible_for_this_permutation) {
             break;
           }
-          /* if (partial_bijection[source_color] != new_target_color) { // XXX TMP
-            console.log(source_color + " -> " + new_target_color); // XXX TMP
+          /* if (partial_bijection[source_color] != new_target_color) {
+            console.log(source_color + " -> " + new_target_color);
           } */
           partial_bijection[source_color] = new_target_color;
         }
@@ -1573,8 +1573,8 @@ try {
             if (!bijection_is_possible_for_this_permutation) {
               break;
             }
-            /* if (partial_bijection[source_color] != new_target_color) { // XXX TMP
-              console.log(source_color + " -> " + new_target_color); // XXX TMP
+            /* if (partial_bijection[source_color] != new_target_color) {
+              console.log(source_color + " -> " + new_target_color);
             } */
             partial_bijection[source_color] = new_target_color;
           }
@@ -1611,7 +1611,6 @@ try {
 
   // Outputs: listOfGlobalPerformances[]
   //          particularCodeGlobalPerformance in case of impossible code
-  let cnt_eq = 0; // XXX
   function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
 
     let idx;
@@ -1701,9 +1700,7 @@ try {
       } */
 
       particularCodeToAssess = particularCode;
-      // cnt_eq = 0; // XXX
       res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
-      // console.log("cnt_eq=" + cnt_eq);
 
       if (recursiveEvaluatePerformancesWasAborted) {
         for (idx = 0; idx < nbCodes; idx++) {
@@ -1736,7 +1733,6 @@ try {
   // - XXX check "Code_at_-0.01_perf.docx"
   // - XXX 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
   // - XXX sheet compression to retest
-  // - XXX "let" in rec functions induce cycles?
   // - XXX precalculated perfs x 1st codes played (possibles or not) in a javascript environment
   let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
@@ -1790,7 +1786,6 @@ try {
         for (idx = 0; idx < nbOfEquivalentCodesAndPerformances; idx++) {
           let known_code = listOfEquivalentCodesAndPerformances[next_depth][idx].equiv_code;
           if (areCodesEquivalent(current_code, known_code, next_current_game_idx, false, -1 /* N.A. */)) {
-            // cnt_eq++;
             sum = listOfEquivalentCodesAndPerformances[next_depth][idx].equiv_sum;
             break;
           }
