@@ -1405,6 +1405,22 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   gameSolver.postMessage(gameSolverInitMsgContents);
   gameSolverDbg = 6;
+  
+  // Propose to play a random code to vary games
+  if (typeof(Storage) !== 'undefined') {
+    if (localStorage.gamesok) {
+      if ((Number(localStorage.gamesok) >= 75) && ((Number(localStorage.gamesok) % 25) == 0)) {
+        let rsp = confirm("A little fun?!\nDo you want to play a random code as your first code?");
+        if (!rsp) {
+          // Cancel or "x" (close) button
+        }
+        else {
+          setTimeout("playRandomCodeButtonClick()();", 444); // yes
+        }
+      }
+    }
+  }
+  
 }
 
 function checkArraySizes() {
