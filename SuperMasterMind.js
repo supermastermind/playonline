@@ -1417,7 +1417,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverDbg = 6;
   
   // Propose to play a random code to vary games
-  setTimeout("displayRandomCodesHint();", 444);
+  setTimeout("displayRandomCodesHint();", 888);
 
 }
 
