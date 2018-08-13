@@ -1415,7 +1415,7 @@ function resetGameAttributes(nbColumnsSelected) {
           // Cancel or "x" (close) button
         }
         else {
-          setTimeout("playRandomCodeButtonClick()();", 444); // yes
+          setTimeout("playRandomCodeButtonClick();", 444); // yes
         }
       }
     }
