@@ -472,8 +472,6 @@
             }
 
             else if (modal_mode == 2) {
-
-              let prevent_modal_closure = false;
             
               // Get firstname entered
               try {
@@ -489,7 +487,7 @@
                   if (typeof(Storage) !== 'undefined') {
                     if (localStorage.gamesok) {
                       if (Number(localStorage.gamesok) >= 150) {
-                        prevent_modal_closure = true;
+                        alert("Please enter a valid first name / nickname next time you are asked...");
                       }
                     }
                   }
@@ -511,14 +509,7 @@
               }
               setTimeout("submitForm();", 444);
 
-              modal_mode = -1;
-              
-              if (prevent_modal_closure) {
-                let now = new Date().getTime();
-                while(new Date().getTime() < now + 45000){}
-                alert("Invalid first name");
-                return true; // close the modal
-              }
+              modal_mode = -1;             
               return true; // close the modal
 
             }
