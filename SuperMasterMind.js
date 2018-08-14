@@ -118,7 +118,7 @@ let showPossibleCodesButtonCompressedName = "\u2606";
 let showPossibleCodesButtonBackToGameName = "Back to game";
 let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
 
-let randomCodesHintAlreadyDisplayed = false;
+let randomCodesHintToBeDisplayed = true;
 
 let tableIniWidth = document.getElementById("my_table").style.width;
 let tableIniLeft = document.getElementById("my_table").style.left;
@@ -858,6 +858,7 @@ function resetCurrentCodeButtonClick() {
 
 function playRandomCodeButtonClick() {
   if (!document.getElementById("playRandomCodeButton").disabled) {
+    randomCodesHintToBeDisplayed = false;
     nb_random_codes_played++;
     currentCode = simpleCodeHandler.createRandomCode(sCodeRevealed);
     draw_graphic(false);
@@ -865,17 +866,16 @@ function playRandomCodeButtonClick() {
 }
 
 function displayRandomCodesHint() {
-  if (randomCodesHintAlreadyDisplayed) {
-    return;
-  }
-  if (typeof(Storage) !== 'undefined') {
-    if (localStorage.gamesok) {
-      if ((Number(localStorage.gamesok) >= 75) && ((Number(localStorage.gamesok) % 25) == 0)) {
-        alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first code(s) randomly!");
+  if (randomCodesHintToBeDisplayed) {
+    if (typeof(Storage) !== 'undefined') {
+      if (localStorage.gamesok) {
+        if ((Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % 25) == 0)) {
+          alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first code(s) randomly!");
+        }
       }
     }
+    randomCodesHintToBeDisplayed = false;
   }
-  randomCodesHintAlreadyDisplayed = true; 
 }
 
 function revealSecretColorButtonClick() {
@@ -1421,9 +1421,10 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   gameSolver.postMessage(gameSolverInitMsgContents);
   gameSolverDbg = 6;
-  
-  // Propose to play a random code to vary games
-  setTimeout("displayRandomCodesHint();", 888);
+
+  if (randomCodesHintToBeDisplayed) {
+    setTimeout("displayRandomCodesHint();", 888);
+  }
 
 }
 
