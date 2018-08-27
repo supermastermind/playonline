@@ -83,10 +83,87 @@
 
             <hr style="height:7px; visibility:hidden;" />
             <h3><b>Optimal strategy statistics</b></h3>
-            The goal of this page is to present the average numbers of attempts reached by the "optimal strategy" (for games from 3 to 7 columns), which are the optimal codes to play at the very first attempt, and other (funny) game statistics...
+                      
+            <!-- OPTIMAL STRATEGY DETAILS -->
+            <script>write_optimal_strategy_details_2();</script>
+            
+            <br><br>
+            <h2><b>Very easy game statistics (3 columns, 6 colors):</b></h2>
+            
+            <b>
+            <table style='margin:0;padding:0;border-collapse:collapse'>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFCC00;color:black;text-align:center'>Code class</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFCC00;color:black;text-align:center'>Average number of attempts to find secret codes</td>                
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFCC00;color:black;text-align:center'>&Delta;</td>                
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>123</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>4.000</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:#008200;text-align:center'>0.00 (optimal)</td>
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>122</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>4.102</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>-0.10</td>
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>111</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>4.537</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:#F00000;text-align:center'>-0.54 (worst)</td>
+              </tr>
+            </table>
+            </b>
             <hr style="height:7px; visibility:hidden;" />
-            <span style='background:lightgray;'>Page under construction...</span>
-          
+            For very easy games, <b>the optimal code to play at the first attempt is 123</b> (or any other equivalent code with 3 different colors).            
+            
+            <br><br>
+            <h2><b>Master Mind game statistics (4 columns, 7 colors):</b></h2>
+            
+            <b>
+            <table style='margin:0;padding:0;border-collapse:collapse'>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFCC00;color:black;text-align:center'>Code class</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFCC00;color:black;text-align:center'>Average number of attempts to find secret codes</td>                
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFCC00;color:black;text-align:center'>&Delta;</td>                
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>1233</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>4.732</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:#008200;text-align:center'>0.00 (optimal)</td>
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>1234</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>4.759</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>-0.03</td>
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>1122</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>4.825</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>-0.09</td>
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>1222</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>4.900</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>-0.17</td>
+              </tr>
+              <tr>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>1111</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:black;text-align:center'>5.308</td>
+                <td style='border:1px solid black;margin:0;padding:10px;background:#FFFFFF;color:#F00000;text-align:center'>-0.58 (worst)</td>
+              </tr>              
+            </table>
+            </b>
+            <hr style="height:7px; visibility:hidden;" />
+            For Master Mind games (4 columns, 7 colors), <b>the optimal code to play at the first attempt is 1233</b> (or any other equivalent code with "1 double + 2 other different colors").<br>
+            <hr style="height:7px; visibility:hidden;" />
+            For <b>"legacy" Master Mind games (4 columns, 6 colors)</b>, whose above (4 columns, 7 colors) variant can just be seen as an extension allowing "holes", <b>the optimal code to play at the first attempt is also 1233</b> with an average number of attempts to find secret codes of <b>4.367</b>. This average number is slightly higher than the number offered by the Koyama and Lai's mathematically optimal strategy (<b>4.340</b> with 1233 as first attempt) which allows playing impossible codes at each stage of the game.
+           
+            <br><br>
+            <h2><b>Super Master Mind game statistics (5 columns, 8 colors):</b></h2>
+            
+            <i>(end of page is under construction)</i>
+           
           </td></tr></table>
 
         </div>
