@@ -337,7 +337,7 @@ function onGameSolverError(e) {
 // Function called on gameSolver worker's MESSAGE error
 function onGameSolverMessageError(e) {
   // gameSolverErrorDbg = fullObjToString(e);
-  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + currentCode + ")", new Error().stack);
+  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + nbOfStatsFilled_Perfs + ", " + currentCode + ")", new Error().stack);
 }
 
 // *************************************************************************
