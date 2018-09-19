@@ -331,13 +331,13 @@ window.onmessageerror = displayGUIError;
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
   // gameSolverErrorDbg = fullObjToString(e);
-  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + nbOfStatsFilled_Perfs + ", " + currentCode + ")", new Error().stack);
+  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (dbg:" + gameSolverDbg + ", attempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", statsfilled:" + nbOfStatsFilled_Perfs + ", currentcode:" + currentCode + ")", new Error().stack);
 }
 
 // Function called on gameSolver worker's MESSAGE error
 function onGameSolverMessageError(e) {
   // gameSolverErrorDbg = fullObjToString(e);
-  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (" + gameSolverDbg + ", " + currentAttemptNumber + ", " + nbOfStatsFilled_Perfs + ", " + currentCode + ")", new Error().stack);
+  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (dbg:" + gameSolverDbg + ", attempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", statsfilled:" + nbOfStatsFilled_Perfs + ", currentcode:" + currentCode + ")", new Error().stack);
 }
 
 // *************************************************************************

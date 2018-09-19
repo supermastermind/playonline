@@ -63,7 +63,7 @@ try {
   // Performance-related variables
   // *****************************
 
-  let baseOfMaxPerformanceEvaluationTime = 20000;
+  let baseOfMaxPerformanceEvaluationTime = 25000;
   let maxPerformanceEvaluationTime = -1;
 
   let baseOfNbOfCodesForSystematicEvaluation = 1000;
@@ -1721,19 +1721,25 @@ try {
 
   }
   // XXX Further optimizations:
-  // - XXX "toto" tests in this file to check possible permutations
-  // - XXX test some new known calculations versus basic version, including impossible codes
-  // - XXX Test with auto play which makes go through all random codes!!! => exactness is tested
-  // - XXX Listing: optimal & equivalent codes first + their nbers in () par ex
-  // - XXX Still undefined errors from time to time? => worker/Worker.onerrorXXX in this file (which should capture all errors), suppr distant error handling + message sending? // ask user to do it!
-  // - XXXs/TBCs/TBDs in all files
-  // - XXX Wiki page: optimal LOGICAL strategy / https://arxiv.org/pdf/1305.1010.pdf corresponds to non possible strategy! (?)
-  // - XXX Figures with perfs in French home page
-  // - XXX Home page accessible from compressed mode, or F1 key at game beginning?
-  // - XXX check "Code_at_-0.01_perf.docx"
-  // - XXX 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
-  // - XXX sheet compression to retest
-  // - XXX precalculated perfs x 1st codes played (possibles or not) in a javascript environment
+  // - 0)  XXX Optimization when sum reaches best_sum with basic reordering applied to assess best codes first
+  // - 1a) XXX Still undefined errors from time to time?
+  //      => check nb codes filled + nb stats filled + current attempt nb => always a big shift!? Most likely to occur on 7 columns games? (due to higher memory usage / too long processing times on old HWs?)
+  //      => test successions of 5 to 10 7-column games (failures always after >= 5 successive games?)
+  //      => see .JPG identified for extra error checks? Worker.onerrorXXX (upper case)? in this file? (which should capture all errors)
+  //      => only ONE worker creation (with possible reinit) instead of n workers (failures always after >= 5 successive games?)
+  // - 1b) Check that numbers of permutations are not underestimated / wrong on some games
+  // - 2) XXX Make a 4 columns test for all random codes => test final numbers
+  // - 3) XXX First code assessed in evaluatePerformances() for 4 columns games
+  // - 4) XXX Simulate 1st codes (several days) - Update optimal strategy web page
+  // - 5) XXX First code assessed in evaluatePerformances() for 5 columns games: 5a) why is is so long? 5b) assessment
+  // - 6) XXX 2nd codes assessed: 1 first loop + a 2nd loop on all impossible codes / equivalent games with marks also tested
+  // - X) XXXs/TBCs/TBDs in all files
+  // - X) first access page not update if IP address unknown (useless lines / redundant lines)
+  // - X) 2nd best last5 score also highlighted
+  // - X) recheck versus old SMM Java on some games
+  // - X) XXX check "Code_at_-0.01_perf.docx"
+  // - X) XXX 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
+  // - X) XXX sheet compression to retest
   let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
@@ -1749,6 +1755,7 @@ try {
     let mark_perf_tmp_idx;
     let compute_sum_ini = (nbCodes <= nbCodesLimitForEquivalentCodesCheck);
     let compute_sum;
+    // let write_me; // (traces useful for debug)
     let sum;
     let sum_marks;
     let best_sum = 100000000000.0;
@@ -1779,6 +1786,7 @@ try {
         console.log(spaces(depth) + "perms: " + current_permutations_table_size[next_current_game_idx] + ": "
                     + print_permutation_list(current_permutations_table[next_current_game_idx], current_permutations_table_size[next_current_game_idx]));
       } */
+      // write_me = false; // (traces useful for debug)
 
       compute_sum = compute_sum_ini;
       if (!compute_sum) {
@@ -1798,8 +1806,9 @@ try {
 
       if (compute_sum) { // compute_sum
 
-        /* if (first_call) { // Trace useful for debug
+        /* if (first_call) { // (traces useful for debug)
           console.log("assessed: " + codeHandler.codeToString(current_code));
+          write_me = true;
         } */
 
         nextNbsCodes.fill(0); // (faster than (or close to) a loop on 0..nbMaxMarks-1)
@@ -2066,6 +2075,7 @@ try {
               // *****************
 
               sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
+              if (sum_marks == nbCodes) break;
 
             }
           }
@@ -2153,7 +2163,10 @@ try {
           }
 
           listOfGlobalPerformances[idx1] = 1.0 + sum / nbCodes; // output
-          // console.log("perf #" + idx1 + ": " + listOfGlobalPerformances[idx1]); // Trace useful for debug
+          /* if (write_me) { // (traces useful for debug)
+            let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
+            console.log("perf #" + idx1 + ": " + listOfGlobalPerformances[idx1] + " / " + time_elapsed + "ms");
+          } */
 
         }
         else if (depth == 0) { // first level of recursivity
@@ -2389,7 +2402,7 @@ try {
             // *                *** TOTAL:  9 marks *** *
             // ******************************************
             nbMaxMarks = 9;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime/3; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
             initialNbClasses = 3; // {111, 112, 123}
             maxDepth = Math.min(11, overallMaxDepth);
@@ -2397,7 +2410,7 @@ try {
             break;
           case 4:
             nbMaxMarks = 14;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*3/4; // (short games)
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*2/3; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
             initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
@@ -2413,7 +2426,7 @@ try {
             break;
           case 6:
             nbMaxMarks = 27;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*6/5;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
@@ -2432,7 +2445,7 @@ try {
             // *                *** TOTAL: 35 marks *** *
             // ******************************************
             nbMaxMarks = 35;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*5/4;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*6/5;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
@@ -2598,7 +2611,7 @@ try {
           // - to simplify, codes with a 0 black + 0 white mark (likely to be played at game beginning, whose performances are targeted
           //   to be precalculated) are not excluded from current game. More generally, the fact that impossible colors are interchangeable
           //   is not exploited (as mostly covered by 0 black + 0 white mark cases at game beginning / as difficult to take into account
-          //   recursively at small cost).
+          //   recursively at small cost / as bijections would have to be calculated in some specific way(s) for those cases).
           currentGame[currentAttemptNumber-2] = codesPlayed[currentAttemptNumber-2];
         }
         currentGameSize = currentAttemptNumber-1; // (equal to 0 at first attempt)
@@ -2635,40 +2648,6 @@ try {
           }
           current_permutations_table_size[currentGameSize] = new_perm_cnt;
         }
-
-        // XXX TEST - BEGIN
-
-        /* console.log("current_permutations_table_size =" + current_permutations_table_size[currentGameSize]); // XXX
-        for (let perm_idx = 0; perm_idx < current_permutations_table_size[currentGameSize]; perm_idx++) { // XXX
-          console.log(" " + all_permutations_table[nbColumns][current_permutations_table[currentGameSize][perm_idx]]);
-        }
-
-        let code0 = 0;
-        code0 = codeHandler.setColor(code0, 1, 1);
-        code0 = codeHandler.setColor(code0, 1, 2);
-        code0 = codeHandler.setColor(code0, 1, 3);
-
-        let code1;
-        code1 = codeHandler.setColor(code1, 2, 1);
-        code1 = codeHandler.setColor(code1, 2, 2);
-        code1 = codeHandler.setColor(code1, 2, 3);
-
-        currentGame[0] = code0;
-        currentGame[1] = code1;
-        currentGameSize = 2;
-
-        let toto = 0;
-        toto = codeHandler.setColor(toto, 2, 1);
-        toto = codeHandler.setColor(toto, 3, 2);
-        toto = codeHandler.setColor(toto, 5, 3);
-
-        let titi;
-        titi = codeHandler.setColor(titi, 2, 1);
-        titi = codeHandler.setColor(titi, 3, 2);
-        titi = codeHandler.setColor(titi, 6, 3);
-
-        console.log("Result: " + areCodesEquivalent(toto, titi, currentGameSize, false, -1 /* N.A. *//*));
-        return; */
 
         // **************************************************
         // A.1) Compute number and list of new possible codes
@@ -2983,7 +2962,7 @@ try {
     }
 
   }, false);
-
+ 
 }
 catch (exc) {
   throw new Error("gameSolver internal error (global): " + exc + ": " + exc.stack);
