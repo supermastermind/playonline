@@ -244,13 +244,19 @@ let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
 // *************************************************************************
 // *************************************************************************
 
+function getExtraDebugInfo() {
+  return "(dbg:" + gameSolverDbg + ", attempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", statsfilled:" + nbOfStatsFilled_Perfs + ", currentcode:" + currentCode + ")";
+}
+
 function displayGUIError(GUIErrorStr, errStack) {
+
+  let completedGUIErrorStr = (GUIErrorStr + " " + getExtraDebugInfo()).trim();
 
   // Display error in Javascript console
   // ***********************************
 
   if (gameErrorCnt < 50) {
-    console.log("***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n");
+    console.log("***** ERROR (" + version + ") *****: " + completedGUIErrorStr + " / " + errStack + "\n");
     console.log("Stack:");
     let stack = new Error().stack;
     console.log(stack);
@@ -307,7 +313,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + GUIErrorStr + " / " + errStack, true);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / " + errStack, true);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -331,13 +337,13 @@ window.onmessageerror = displayGUIError;
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
   // gameSolverErrorDbg = fullObjToString(e);
-  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (dbg:" + gameSolverDbg + ", attempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", statsfilled:" + nbOfStatsFilled_Perfs + ", currentcode:" + currentCode + ")", new Error().stack);
+  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
 }
 
 // Function called on gameSolver worker's MESSAGE error
 function onGameSolverMessageError(e) {
   // gameSolverErrorDbg = fullObjToString(e);
-  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename + " (dbg:" + gameSolverDbg + ", attempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", statsfilled:" + nbOfStatsFilled_Perfs + ", currentcode:" + currentCode + ")", new Error().stack);
+  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
 }
 
 // *************************************************************************

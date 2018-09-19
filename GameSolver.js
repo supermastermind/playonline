@@ -1724,6 +1724,7 @@ try {
   // - 0)  XXX Optimization when sum reaches best_sum with basic reordering applied to assess best codes first
   // - 1a) XXX Still undefined errors from time to time?
   //      => check nb codes filled + nb stats filled + current attempt nb => always a big shift!? Most likely to occur on 7 columns games? (due to higher memory usage / too long processing times on old HWs?)
+  //      => ping-pong debug info immediately at worker's init
   //      => test successions of 5 to 10 7-column games (failures always after >= 5 successive games?)
   //      => see .JPG identified for extra error checks? Worker.onerrorXXX (upper case)? in this file? (which should capture all errors)
   //      => only ONE worker creation (with possible reinit) instead of n workers (failures always after >= 5 successive games?)
