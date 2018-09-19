@@ -55,6 +55,7 @@ try {
   let currentAttemptNumber = 0;
   let nbMaxAttemptsForEndOfGame = -1;
   let message_processing_ongoing = false;
+  let IAmAliveMessageSent = false;
 
   let init_refresh_time = 999;
   let attempt_refresh_time_1 = 222;
@@ -1723,8 +1724,9 @@ try {
   // XXX Further optimizations:
   // - 0)  XXX Optimization when sum reaches best_sum with basic reordering applied to assess best codes first
   // - 1a) XXX Still undefined errors from time to time?
-  //      => check nb codes filled + nb stats filled + current attempt nb => always a big shift!? Most likely to occur on 7 columns games? (due to higher memory usage / too long processing times on old HWs?)
-  //      => ping-pong debug info immediately at worker's init
+  //      => check nb codes filled + nb stats filled + other new debug info fields => always a long time without thread messages!? Most likely to occur on 7 columns games? (due to higher memory usage / too long processing times on old HWs?)
+  //      => send first message only once I_AM_ALIVE was received?
+  //      => thread code in same .js file is possible!
   //      => test successions of 5 to 10 7-column games (failures always after >= 5 successive games?)
   //      => see .JPG identified for extra error checks? Worker.onerrorXXX (upper case)? in this file? (which should capture all errors)
   //      => only ONE worker creation (with possible reinit) instead of n workers (failures always after >= 5 successive games?)
@@ -2276,6 +2278,10 @@ try {
   // Handle messages from main thread
   // ********************************
 
+  if (!IAmAliveMessageSent) {
+    self.postMessage({'rsp_type': 'I_AM_ALIVE'}); // first message sent
+    IAmAliveMessageSent = true;
+  }
   self.addEventListener('message', function(e) {
 
     try {
@@ -2963,7 +2969,7 @@ try {
     }
 
   }, false);
- 
+
 }
 catch (exc) {
   throw new Error("gameSolver internal error (global): " + exc + ": " + exc.stack);

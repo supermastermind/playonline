@@ -100,7 +100,7 @@ let at_least_one_useless_code_played = false;
 let gameSolver = undefined;
 let gameSolverDbg = -1; // (debug value)
 let gameSolverConfigDbg = null; // (debug value)
-let gameSolverErrorDbg = null; // (debug value)
+let isWorkerAlive = false; // (debug value)
 
 // GUI variables
 // *************
@@ -245,7 +245,7 @@ let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
 // *************************************************************************
 
 function getExtraDebugInfo() {
-  return "(dbg:" + gameSolverDbg + ", attempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", statsfilled:" + nbOfStatsFilled_Perfs + ", currentcode:" + currentCode + ")";
+  return "(debug:" + gameSolverDbg + ", currentattempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", nbstatsfilled:" + nbOfStatsFilled_Perfs +  ", gameduration:" + ((startTime > 0) ? ((new Date()).getTime() - startTime) : "NA") + "ms, " + "workeralive: " + isWorkerAlive + ", currentcode:" + currentCode + ")";
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
@@ -294,9 +294,6 @@ function displayGUIError(GUIErrorStr, errStack) {
         if (gameSolverConfigDbg != null) {
           errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
         }
-        if (gameSolverErrorDbg != null) {
-          errorStr = errorStr + " with gameSolver error " + gameSolverErrorDbg;
-        }
       }
 
       let strGame = "";
@@ -336,13 +333,11 @@ window.onmessageerror = displayGUIError;
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
-  // gameSolverErrorDbg = fullObjToString(e);
   displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
 }
 
 // Function called on gameSolver worker's MESSAGE error
 function onGameSolverMessageError(e) {
-  // gameSolverErrorDbg = fullObjToString(e);
   displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
 }
 
@@ -624,178 +619,199 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
 // Function called on gameSolver worker's message reception
 function onGameSolverMsg(e) {
 
-  if (e.data == undefined) {
-    displayGUIError("gameSolver msg error: data is undefined", new Error().stack);
-    return;
+  try {
+
+    if (e.data == undefined) {
+      displayGUIError("gameSolver msg error: data is undefined", new Error().stack);
+      return;
+    }
+    let data = e.data;
+
+    if (data.rsp_type == undefined) {
+      displayGUIError("gameSolver msg error: rsp_type is undefined", new Error().stack);
+      return;
+    }
+
+    // **************************
+    // Check that worker is alive
+    // **************************
+
+    if (!isWorkerAlive) { // first message received from worker
+      if (data.rsp_type == 'I_AM_ALIVE') {
+        isWorkerAlive = true;
+      }
+      else {
+        displayGUIError("gameSolver msg message error: invalid worker initialization (" + data.rsp_type + ")", new Error().stack);
+        return;
+      }
+    }
+
+    // ************************
+    // Number of possible codes
+    // ************************
+
+    else if (data.rsp_type == 'NB_POSSIBLE_CODES') {
+
+      if (data.nbOfPossibleCodes_p == undefined) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);
+      }
+      let nbOfPossibleCodes_p = Number(data.nbOfPossibleCodes_p);
+      if ( isNaN(nbOfPossibleCodes_p) || (nbOfPossibleCodes_p < 0) ) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p, new Error().stack);
+      }
+
+      if (data.colorsFoundCode_p == undefined) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined", new Error().stack);
+      }
+      let colorsFoundCode_p = Number(data.colorsFoundCode_p);
+      if (isNaN(colorsFoundCode_p)) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: " + colorsFoundCode_p, new Error().stack);
+      }
+
+      if (data.minNbColorsTable_p == undefined) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined", new Error().stack);
+      }
+      let minNbColorsTable_p = (data.minNbColorsTable_p).split(",");
+      if (minNbColorsTable_p.length != nbColors+1) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length, new Error().stack);
+      }
+
+      if (data.maxNbColorsTable_p == undefined) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined", new Error().stack);
+      }
+      let maxNbColorsTable_p = (data.maxNbColorsTable_p).split(",");
+      if (maxNbColorsTable_p.length != nbColors+1) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length, new Error().stack);
+      }
+
+      if (data.attempt_nb == undefined) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+      }
+      let attempt_nb = Number(data.attempt_nb);
+      if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
+      }
+
+      if (data.game_id == undefined) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
+      }
+      let game_id = Number(data.game_id);
+      if ( isNaN(game_id) || (game_id < 0) ) {
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+      }
+
+      writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
+
+    }
+
+    // **********************
+    // List of possible codes
+    // **********************
+
+    else if (data.rsp_type == 'LIST_OF_POSSIBLE_CODES') {
+
+      if (data.possibleCodesList_p == undefined) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);
+      }
+      let possibleCodesList_p = (data.possibleCodesList_p).split(",");
+      if ( (possibleCodesList_p.length <= 0) || (possibleCodesList_p.length > nbMaxPossibleCodesShown) ) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + data.possibleCodesList_p + ", length is " + possibleCodesList_p.length, new Error().stack);
+      }
+
+      if (data.nb_possible_codes_listed == undefined) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined", new Error().stack);
+      }
+      let nb_possible_codes_listed = Number(data.nb_possible_codes_listed);
+      if ( isNaN(nb_possible_codes_listed) || (nb_possible_codes_listed <= 0) || (nb_possible_codes_listed > nbMaxPossibleCodesShown) ) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed, new Error().stack);
+      }
+
+      if (data.globalPerformancesList_p == undefined) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
+      }
+      let globalPerformancesList_p = (data.globalPerformancesList_p).split(",");
+      if ( (globalPerformancesList_p.length <= 0) || (globalPerformancesList_p.length > nbMaxPossibleCodesShown) ) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid globalPerformancesList_p: " + data.globalPerformancesList_p + ", length is " + globalPerformancesList_p.length, new Error().stack);
+      }
+
+      if (data.attempt_nb == undefined) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+      }
+      let attempt_nb = Number(data.attempt_nb);
+      if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
+      }
+
+      if (data.game_id == undefined) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
+      }
+      let game_id = Number(data.game_id);
+      if ( isNaN(game_id) || (game_id < 0) ) {
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+      }
+
+      writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globalPerformancesList_p, attempt_nb, game_id);
+
+    }
+
+    // **************************
+    // Performance of code played
+    // **************************
+
+    else if (data.rsp_type == 'CODE_PLAYED_PERFORMANCE') {
+
+      if (data.relative_perf_p == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined", new Error().stack);
+      }
+      let relative_perf_p = Number(data.relative_perf_p);
+
+      if (data.best_global_performance_p == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: best_global_performance_p is undefined", new Error().stack);
+      }
+      let best_global_performance_p = Number(data.best_global_performance_p);
+
+      if (data.relative_perf_evaluation_done_p == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_evaluation_done_p is undefined", new Error().stack);
+      }
+      let relative_perf_evaluation_done_p = Boolean(data.relative_perf_evaluation_done_p);
+
+      if (data.code_p == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined", new Error().stack);
+      }
+      let code_p = Number(data.code_p);
+
+      if (data.attempt_nb == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+      }
+      let attempt_nb = Number(data.attempt_nb);
+      if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
+      }
+
+      if (data.game_id == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined", new Error().stack);
+      }
+      let game_id = Number(data.game_id);
+      if ( isNaN(game_id) || (game_id < 0) ) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+      }
+
+      writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, best_global_performance_p, code_p, attempt_nb, game_id);
+
+    }
+
+    // **********
+    // Error case
+    // **********
+
+    else {
+      displayGUIError("gameSolver error: unexpected rsp_type: " + data.rsp_type, new Error().stack);
+      return;
+    }
+
   }
-  let data = e.data;
-
-  if (data.rsp_type == undefined) {
-    displayGUIError("gameSolver msg error: rsp_type is undefined", new Error().stack);
-    return;
-  }
-
-  // ************************
-  // Number of possible codes
-  // ************************
-
-  if (data.rsp_type == 'NB_POSSIBLE_CODES') {
-
-    if (data.nbOfPossibleCodes_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);
-    }
-    let nbOfPossibleCodes_p = Number(data.nbOfPossibleCodes_p);
-    if ( isNaN(nbOfPossibleCodes_p) || (nbOfPossibleCodes_p < 0) ) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p, new Error().stack);
-    }
-
-    if (data.colorsFoundCode_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined", new Error().stack);
-    }
-    let colorsFoundCode_p = Number(data.colorsFoundCode_p);
-    if (isNaN(colorsFoundCode_p)) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: " + colorsFoundCode_p, new Error().stack);
-    }
-
-    if (data.minNbColorsTable_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined", new Error().stack);
-    }
-    let minNbColorsTable_p = (data.minNbColorsTable_p).split(",");
-    if (minNbColorsTable_p.length != nbColors+1) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length, new Error().stack);
-    }
-
-    if (data.maxNbColorsTable_p == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined", new Error().stack);
-    }
-    let maxNbColorsTable_p = (data.maxNbColorsTable_p).split(",");
-    if (maxNbColorsTable_p.length != nbColors+1) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length, new Error().stack);
-    }
-
-    if (data.attempt_nb == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
-    }
-    let attempt_nb = Number(data.attempt_nb);
-    if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
-    }
-
-    if (data.game_id == undefined) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
-    }
-    let game_id = Number(data.game_id);
-    if ( isNaN(game_id) || (game_id < 0) ) {
-      displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
-    }
-
-    writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
-
-  }
-
-  // **********************
-  // List of possible codes
-  // **********************
-
-  else if (data.rsp_type == 'LIST_OF_POSSIBLE_CODES') {
-
-    if (data.possibleCodesList_p == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);
-    }
-    let possibleCodesList_p = (data.possibleCodesList_p).split(",");
-    if ( (possibleCodesList_p.length <= 0) || (possibleCodesList_p.length > nbMaxPossibleCodesShown) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + data.possibleCodesList_p + ", length is " + possibleCodesList_p.length, new Error().stack);
-    }
-
-    if (data.nb_possible_codes_listed == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined", new Error().stack);
-    }
-    let nb_possible_codes_listed = Number(data.nb_possible_codes_listed);
-    if ( isNaN(nb_possible_codes_listed) || (nb_possible_codes_listed <= 0) || (nb_possible_codes_listed > nbMaxPossibleCodesShown) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed, new Error().stack);
-    }
-
-    if (data.globalPerformancesList_p == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
-    }
-    let globalPerformancesList_p = (data.globalPerformancesList_p).split(",");
-    if ( (globalPerformancesList_p.length <= 0) || (globalPerformancesList_p.length > nbMaxPossibleCodesShown) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid globalPerformancesList_p: " + data.globalPerformancesList_p + ", length is " + globalPerformancesList_p.length, new Error().stack);
-    }
-
-    if (data.attempt_nb == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
-    }
-    let attempt_nb = Number(data.attempt_nb);
-    if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
-    }
-
-    if (data.game_id == undefined) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
-    }
-    let game_id = Number(data.game_id);
-    if ( isNaN(game_id) || (game_id < 0) ) {
-      displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
-    }
-
-    writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globalPerformancesList_p, attempt_nb, game_id);
-
-  }
-
-  // **************************
-  // Performance of code played
-  // **************************
-
-  else if (data.rsp_type == 'CODE_PLAYED_PERFORMANCE') {
-
-    if (data.relative_perf_p == undefined) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined", new Error().stack);
-    }
-    let relative_perf_p = Number(data.relative_perf_p);
-
-    if (data.best_global_performance_p == undefined) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: best_global_performance_p is undefined", new Error().stack);
-    }
-    let best_global_performance_p = Number(data.best_global_performance_p);
-
-    if (data.relative_perf_evaluation_done_p == undefined) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_evaluation_done_p is undefined", new Error().stack);
-    }
-    let relative_perf_evaluation_done_p = Boolean(data.relative_perf_evaluation_done_p);
-
-    if (data.code_p == undefined) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined", new Error().stack);
-    }
-    let code_p = Number(data.code_p);
-
-    if (data.attempt_nb == undefined) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: attempt_nb is undefined", new Error().stack);
-    }
-    let attempt_nb = Number(data.attempt_nb);
-    if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
-    }
-
-    if (data.game_id == undefined) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined", new Error().stack);
-    }
-    let game_id = Number(data.game_id);
-    if ( isNaN(game_id) || (game_id < 0) ) {
-      displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
-    }
-
-    writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, best_global_performance_p, code_p, attempt_nb, game_id);
-
-  }
-
-  // **********
-  // Error case
-  // **********
-
-  else {
-    displayGUIError("gameSolver error: unexpected rsp_type: " + data.rsp_type, new Error().stack);
-    return;
+  catch (exc) {
+    displayGUIError("onGameSolverMsg error: " + exc, exc.stack);
   }
 
 }
@@ -1425,6 +1441,7 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   let gameSolverInitMsgContents = {'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
+  isWorkerAlive = false;
   gameSolver.postMessage(gameSolverInitMsgContents);
   gameSolverDbg = 6;
 
