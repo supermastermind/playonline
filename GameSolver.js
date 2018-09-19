@@ -1736,6 +1736,7 @@ try {
   // - 4) XXX Simulate 1st codes (several days) - Update optimal strategy web page
   // - 5) XXX First code assessed in evaluatePerformances() for 5 columns games: 5a) why is is so long? 5b) assessment
   // - 6) XXX 2nd codes assessed: 1 first loop + a 2nd loop on all impossible codes / equivalent games with marks also tested
+  // - X) XXX Appli Android
   // - X) XXXs/TBCs/TBDs in all files
   // - X) first access page not update if IP address unknown (useless lines / redundant lines)
   // - X) 2nd best last5 score also highlighted
