@@ -114,6 +114,7 @@ let resetCurrentCodeButtonIniName = document.getElementById("resetCurrentCodeBut
 let playRandomCodeButtonIniName = document.getElementById("playRandomCodeButton").value;
 let revealSecretColorButtonIniName = document.getElementById("revealSecretColorButton").value;
 let showPossibleCodesButtonIniName = document.getElementById("showPossibleCodesButton").value;
+let donateButtonIniName = document.getElementById("donateButton").value;
 let showPossibleCodesButtonCompressedName = "\u2606";
 let showPossibleCodesButtonBackToGameName = "Back to game";
 let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
@@ -887,13 +888,26 @@ function playRandomCodeButtonClick() {
   }
 }
 
-function displayRandomCodesHint() {
+function displayRandomCodesHintIfNeeded() {
   if (randomCodesHintToBeDisplayed) {
     if (typeof(Storage) !== 'undefined') {
       if (localStorage.gamesok) {
-        if ((Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % 25) == 0)) {
+        if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % 25) == 0) ) {
           alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first codes randomly!");
           randomCodesHintToBeDisplayed = false;
+        }
+      }
+    }
+  }
+}
+
+function displayDonateButtonIfNeeded() {
+  document.getElementById("donateButton").style.display = 'none'; // make donation button not visible
+  if (donateButtonToBeDisplayed) {
+    if (typeof(Storage) !== 'undefined') {
+      if (localStorage.gamesok) {
+        if ( (Number(localStorage.gamesok) >= 75) && (((Number(localStorage.gamesok) % 75) == 2) || ((Number(localStorage.gamesok) % 75) == 3) || ((Number(localStorage.gamesok) % 75) == 4)) ) {
+          document.getElementById("donateButton").style.display = 'block'; // make donation button visible
         }
       }
     }
@@ -1446,8 +1460,9 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverDbg = 6;
 
   if (randomCodesHintToBeDisplayed) {
-    setTimeout("displayRandomCodesHint();", 888);
+    setTimeout("displayRandomCodesHintIfNeeded();", 888);
   }
+  setTimeout("displayDonateButtonIfNeeded();", 888);
 
 }
 
@@ -1908,6 +1923,7 @@ function draw_graphic_bis() {
           document.getElementById("playRandomCodeButton").value = "\u266C";
           document.getElementById("revealSecretColorButton").value = "?";
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
+          document.getElementById("donateButton").value = "\uD83C\uDF81";
           document.getElementById("my_table").style.width = "100%";
           document.getElementById("my_table").style.left = "0%";
           document.getElementById("my_table").style.height = "100%";
@@ -1923,8 +1939,8 @@ function draw_graphic_bis() {
           }
 
           try { // (try/catch because optional pictures)
-            document.getElementById("img_1").style.display='none';
-            document.getElementById("img_2").style.display='none';
+            document.getElementById("img_1").style.display = 'none';
+            document.getElementById("img_2").style.display = 'none';
           }
           catch (err) {}
 
@@ -1944,6 +1960,7 @@ function draw_graphic_bis() {
           document.getElementById("playRandomCodeButton").value = playRandomCodeButtonIniName;
           document.getElementById("revealSecretColorButton").value = revealSecretColorButtonIniName;
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
+          document.getElementById("donateButton").value = donateButtonIniName;
           document.getElementById("my_table").style.width = tableIniWidth;
           document.getElementById("my_table").style.left = tableIniLeft;
           document.getElementById("my_table").style.height = tableIniHeight;
@@ -1954,8 +1971,8 @@ function draw_graphic_bis() {
           document.getElementById("my_canvas").style.height = myCanvasIniHeight;
 
           try { // (try/catch because optional pictures)
-            document.getElementById("img_1").style.display='inline';
-            document.getElementById("img_2").style.display='inline';
+            document.getElementById("img_1").style.display = 'inline';
+            document.getElementById("img_2").style.display = 'inline';
           }
           catch (err) {}
 

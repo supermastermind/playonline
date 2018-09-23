@@ -290,6 +290,7 @@
           <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
           <input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show possible codes at each stage of the game (when game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
+          <input id='donateButton' class='button' style='display:none;' type='button' value='&#x1f381; Make a gift?' title='Contribute to the Super Master Mind project through a gift of your choice to the site author!' onfocus='this.blur()' onclick='donateButtonClick()'>
         </td>
         <td style='width:0.4%;margin:0;padding:0;'></td>
         <td style='width:93%;margin:0;padding:0;vertical-align:middle;align:right;text-align:left;'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
@@ -330,7 +331,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_IF";
+      let html_compatibility_game_version = "Ver_IG";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -519,7 +520,8 @@
               modal_mode = -1;
               return true; // close the modal
             }
-
+            
+            // else:
             modal_mode = -1;
             return true; // close the modal
             // return false; // nothing happens
@@ -1636,6 +1638,29 @@
 
       } // store_player_info
 
+      // Donations
+      let donateButtonToBeDisplayed = true;
+      function donateButtonClick() {
+        if (modal_mode == -1) {
+          modal_mode = 4;
+          // set modal content
+          modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+                           + "<h2>&#x1f381; Make a gift?</h2>"
+                           + "<h3>If you like this online game, you can contribute to the Super Master Mind project through a gift of your choice to the site author! ... it will be much appreciated!</h3>"
+                           + "<h3>You can also contribute by just writing some comments: feel free to share what you think of this game!</h3>"
+                           + "<h3><a class='leetchi-widget-btn' href='https://www.leetchi.com/c/super-master-mind-project'><img src='https://asset.leetchi.com/Content/Quenette/img/culture/en/view/wizard/embed-btn.png?v=a533f52c06fb47768b299e48674993e4'></a></h3>"
+                           + "<h3>For any other comments or ideas about this online game, the \"optimal Super Master Mind strategy\" or other things to share (for example why you like this game or how you discovered it...)\
+                              <table style='border:0;margin:0;padding:0;'><tr>\
+                                <td style='border:0;margin:0;padding:0;color:black'><a href='mailto:supermastermindonline@gmail.com' onfocus='this.blur()'><img src='img/email.png' style='margin:4px'></a></td>\
+                                <td style='border:0;margin:0;padding:0;color:black'><a href='mailto:supermastermindonline@gmail.com' onfocus='this.blur()'>Just send me an email</a></td>\
+                             </tr></table></h3>"
+                           + "</div>");
+          // open modal
+          modal.open();
+        }
+        donateButtonToBeDisplayed = false;
+      }
+      
       // ***********************
       // Handle page access info
       // ***********************
