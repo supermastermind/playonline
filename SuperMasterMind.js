@@ -906,7 +906,7 @@ function displayDonateButtonIfNeeded() {
   if (donateButtonToBeDisplayed) {
     if (typeof(Storage) !== 'undefined') {
       if (localStorage.gamesok) {
-        if ( (Number(localStorage.gamesok) >= 50) && (((Number(localStorage.gamesok) % 50) == 2) || ((Number(localStorage.gamesok) % 50) == 3) || ((Number(localStorage.gamesok) % 50) == 4)) ) {
+        if ( (Number(localStorage.gamesok) >= 60) && (((Number(localStorage.gamesok) % 60) == 2) || ((Number(localStorage.gamesok) % 60) == 3) || ((Number(localStorage.gamesok) % 60) == 4)) ) {
           document.getElementById("donateButton").style.display = 'block'; // make donation button visible
         }
       }
