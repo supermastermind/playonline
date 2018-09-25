@@ -114,7 +114,6 @@ let resetCurrentCodeButtonIniName = document.getElementById("resetCurrentCodeBut
 let playRandomCodeButtonIniName = document.getElementById("playRandomCodeButton").value;
 let revealSecretColorButtonIniName = document.getElementById("revealSecretColorButton").value;
 let showPossibleCodesButtonIniName = document.getElementById("showPossibleCodesButton").value;
-let donateButtonIniName = document.getElementById("donateButton").value;
 let showPossibleCodesButtonCompressedName = "\u2606";
 let showPossibleCodesButtonBackToGameName = "Back to game";
 let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
@@ -901,17 +900,6 @@ function displayRandomCodesHintIfNeeded() {
   }
 }
 
-function displayDonateButtonIfNeeded() {
-  document.getElementById("donateButton").style.display = 'none'; // make donation button not visible
-  if (typeof(Storage) !== 'undefined') {
-    if (localStorage.gamesok) {
-      if ( (Number(localStorage.gamesok) >= 75) && (((Number(localStorage.gamesok) % 75) == 2) || ((Number(localStorage.gamesok) % 75) == 3) || ((Number(localStorage.gamesok) % 75) == 4)) ) {
-        document.getElementById("donateButton").style.display = 'block'; // make donation button visible
-      }
-    }
-  }
-}
-
 function revealSecretColorButtonClick() {
   if ( (!document.getElementById("revealSecretColorButton").disabled)
        && gameOnGoing()
@@ -1460,7 +1448,6 @@ function resetGameAttributes(nbColumnsSelected) {
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 888);
   }
-  setTimeout("displayDonateButtonIfNeeded();", 999);
 
 }
 
@@ -1921,7 +1908,6 @@ function draw_graphic_bis() {
           document.getElementById("playRandomCodeButton").value = "\u266C";
           document.getElementById("revealSecretColorButton").value = "?";
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
-          document.getElementById("donateButton").value = "\uD83C\uDF81";
           document.getElementById("my_table").style.width = "100%";
           document.getElementById("my_table").style.left = "0%";
           document.getElementById("my_table").style.height = "100%";
@@ -1958,7 +1944,6 @@ function draw_graphic_bis() {
           document.getElementById("playRandomCodeButton").value = playRandomCodeButtonIniName;
           document.getElementById("revealSecretColorButton").value = revealSecretColorButtonIniName;
           document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
-          document.getElementById("donateButton").value = donateButtonIniName;
           document.getElementById("my_table").style.width = tableIniWidth;
           document.getElementById("my_table").style.left = tableIniLeft;
           document.getElementById("my_table").style.height = tableIniHeight;
