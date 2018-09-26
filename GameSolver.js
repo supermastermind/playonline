@@ -1722,7 +1722,6 @@ try {
 
   }
   // XXX Further optimizations:
-  // - 0)  XXX Optimization when sum reaches best_sum with basic reordering applied to assess best codes first
   // - 1a) XXX Still undefined errors from time to time?
   //      => check nb codes filled + nb stats filled + other new debug info fields => always a long time without thread messages!? Most likely to occur on 7 columns games? (due to higher memory usage / too long processing times on old HWs?)
   //      => send first message only once I_AM_ALIVE was received?
@@ -2097,6 +2096,8 @@ try {
       } // compute_sum
 
       // Max possible value of sum = 24 bits (10.000.000 for 7 columns case) + 20 bits (for value 999999 so that < 1/10000 precision) = 44 bits << 52 mantissa bits of double type
+      // To simplify, no optimization is done to exit the previous loop when "sum >= best_sum" (after some reordering of the code), recursively or not. The gains were indeed assessed 
+      // to be low (due to the fact that best marks are assessed first, which is another optimization).
       if (sum < best_sum) {
         best_sum = sum;
       }
