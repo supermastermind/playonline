@@ -100,7 +100,8 @@ let at_least_one_useless_code_played = false;
 let gameSolver = undefined;
 let gameSolverDbg = -1; // (debug value)
 let gameSolverConfigDbg = null; // (debug value)
-let isWorkerAlive = false; // (debug value)
+let isWorkerAlive = -2; // (debug value)
+let workerCreationTime = -1; // (debug value)
 
 // GUI variables
 // *************
@@ -245,7 +246,7 @@ let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
 // *************************************************************************
 
 function getExtraDebugInfo() {
-  return "(debug:" + gameSolverDbg + ", currentattempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", nbstatsfilled:" + nbOfStatsFilled_Perfs +  ", gameduration:" + ((startTime > 0) ? ((new Date()).getTime() - startTime) : "NA") + "ms, " + "workeralive: " + isWorkerAlive + ", currentcode:" + currentCode + ")";
+  return "(debug:" + gameSolverDbg + ", currentattempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", nbstatsfilled:" + nbOfStatsFilled_Perfs +  ", gameduration:" + ((startTime > 0) ? ((new Date()).getTime() - startTime) : "NA") + "ms, " + "workeralive: " + isWorkerAlive + ", timesinceworkercreation: " + ((isWorkerAlive >= 0) ? (new Date()).getTime() - workerCreationTime : "NA") + ", currentcode:" + currentCode + ")";
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
@@ -636,9 +637,9 @@ function onGameSolverMsg(e) {
     // Check that worker is alive
     // **************************
 
-    if (!isWorkerAlive) { // first message received from worker
+    if (isWorkerAlive == 0) { // first message received from worker
       if (data.rsp_type == 'I_AM_ALIVE') {
-        isWorkerAlive = true;
+        isWorkerAlive = 1;
       }
       else {
         displayGUIError("gameSolver msg message error: invalid worker initialization (" + data.rsp_type + ")", new Error().stack);
@@ -1274,6 +1275,7 @@ function resetGameAttributes(nbColumnsSelected) {
   // Clear gameSolver worker if necessary
   gameSolverDbg = 0;
   if (gameSolver !== undefined) {
+    isWorkerAlive = -1;
     gameSolverDbg = 1;
     gameSolver.terminate(); gameSolverDbg = 2;
     gameSolver = undefined;
@@ -1419,6 +1421,8 @@ function resetGameAttributes(nbColumnsSelected) {
   updateGameSizes();
 
   // Create a new worker for gameSolver
+  isWorkerAlive = 0;
+  workerCreationTime = (new Date()).getTime();
   gameSolver = new Worker("Game" + "Solver.js"); gameSolverDbg = 3;
   // gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
   gameSolver.onerror = onGameSolverError; gameSolverDbg = 4;
@@ -1441,7 +1445,6 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   let gameSolverInitMsgContents = {'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
-  isWorkerAlive = false;
   gameSolver.postMessage(gameSolverInitMsgContents);
   gameSolverDbg = 6;
 
