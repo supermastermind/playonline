@@ -2096,8 +2096,8 @@ try {
       } // compute_sum
 
       // Max possible value of sum = 24 bits (10.000.000 for 7 columns case) + 20 bits (for value 999999 so that < 1/10000 precision) = 44 bits << 52 mantissa bits of double type
-      // To simplify, no optimization is done to exit the previous loop when "sum >= best_sum" (after some reordering of the codes), recursively or not. The gains were indeed assessed 
-      // to be low (for example due to the fact that best marks are assessed first, which is another optimization). Such an optimization would moreover not be applied to first depth.
+      // To simplify, no optimization is done to exit the previous loop when "sum >= best_sum" (after some reordering of the codes and/or marks), recursively or not. The gains 
+      // were indeed assessed to be low. Such an optimization would moreover not be applied to the first depth, as it is targeted to evaluate all possible codes.
       if (sum < best_sum) {
         best_sum = sum;
       }
