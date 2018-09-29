@@ -1722,14 +1722,14 @@ try {
 
   }
   // XXX Further optimizations:
-  // - 1a) XXX Still undefined errors from time to time?
+  // - 1) XXX Still undefined errors from time to time?
   //      => check nb codes filled + nb stats filled + other new debug info fields => always a long time without thread messages!? Most likely to occur on 7 columns games? (due to higher memory usage / too long processing times on old HWs?)
   //      => send first message only once I_AM_ALIVE was received?
   //      => thread code in same .js file is possible!
   //      => test successions of 5 to 10 7-column games (failures always after >= 5 successive games?)
+  //      => modal issue? in SetContent()? => catch exceptions more globally in game.html or in the API itself
   //      => see .JPG identified for extra error checks? Worker.onerrorXXX (upper case)? in this file? (which should capture all errors)
   //      => only ONE worker creation (with possible reinit) instead of n workers (failures always after >= 5 successive games?)
-  // - 1b) Check that numbers of permutations are not underestimated / wrong on some games
   // - 2) XXX Make a 4 columns test for all random codes => test final numbers
   // - 3) XXX First code assessed in evaluatePerformances() for 4 columns games
   // - 4) XXX Simulate 1st codes (several days) - Update optimal strategy web page
@@ -2096,7 +2096,7 @@ try {
       } // compute_sum
 
       // Max possible value of sum = 24 bits (10.000.000 for 7 columns case) + 20 bits (for value 999999 so that < 1/10000 precision) = 44 bits << 52 mantissa bits of double type
-      // To simplify, no optimization is done to exit the previous loop when "sum >= best_sum" (after some reordering of the codes and/or marks), recursively or not. The gains 
+      // To simplify, no optimization is done to exit the previous loop when "sum >= best_sum" (after some reordering of the codes and/or marks), recursively or not. The gains
       // were indeed assessed to be low. Such an optimization would moreover not be applied to the first depth, as it is targeted to evaluate all possible codes.
       if (sum < best_sum) {
         best_sum = sum;
@@ -2637,6 +2637,9 @@ try {
 
         // 2) Update possible permutations
         // *******************************
+
+        // Note: to simplify, more complex algorithms are not used to update possible permutations. For instance: games {[1 1 2] [1 3 4]}, {[1 1 2] [3 4 3]}
+        //       and {[1 2 3] [1 1 1]} lead to numbers of possible permutations which are underestimated.
 
         if (currentAttemptNumber >= 2) {
           if (current_permutations_table_size[currentGameSize-1] <= 0) {
