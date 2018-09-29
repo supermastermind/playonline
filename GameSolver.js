@@ -1490,7 +1490,7 @@ try {
       else {
         global_perm_idx = current_permutations_table[current_game_size][perm_idx];
       }
-      // console.log("permutation:" + all_permutations[global_perm_idx]); XXX console.logs to clean everywhere
+      // console.log("permutation:" + all_permutations[global_perm_idx]);
 
       // **********************************************************************
       // If possible, compute bijection between:
@@ -2762,23 +2762,6 @@ try {
 
             // Compute performances
             // ********************
-
-            // XXX TEST TMP - BEGIN
-            /* let test_code_1 = codeHandler.setAllColors(1, 2, 3, 4, 5, 6, 7);
-            let test_code_2 = codeHandler.setAllColors(1, 3, 2, 1, 1, 1, 1);
-            let test_code_3 = codeHandler.setAllColors(1, 1, 1, 1, 1, 1, 1);
-            let test_code_4 = codeHandler.setAllColors(1, 4, 4, 1, 1, 1, 1);
-            let test_code_5 = codeHandler.setAllColors(2, 2, 2, 1, 1, 1, 1);
-            let test_array = new Array(nbOfCodesForSystematicEvaluation);
-            test_array[0] = test_code_1;
-            test_array[1] = test_code_2;
-            test_array[2] = test_code_3;
-            test_array[3] = test_code_4;
-            previousNbOfPossibleCodes = 3;
-            let res = evaluatePerformances(-1, test_array, previousNbOfPossibleCodes, test_code_5);
-            console.log("RES = " + res);
-            return; */
-            // XXX TEMP TEST - END
 
             let code_played_global_performance = PerformanceNA;
             let index = (currentAttemptNumber%2);
