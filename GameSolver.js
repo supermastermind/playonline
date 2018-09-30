@@ -1730,11 +1730,10 @@ try {
   //      => modal issue? in SetContent()? => catch exceptions more globally in game.html or in the API itself
   //      => see .JPG identified for extra error checks? Worker.onerrorXXX (upper case)? in this file? (which should capture all errors)
   //      => only ONE worker creation (with possible reinit) instead of n workers (failures always after >= 5 successive games?)
-  // - 2) XXX Make a 4 columns test for all random codes => test final numbers
-  // - 3) XXX First code assessed in evaluatePerformances() for 4 columns games
-  // - 4) XXX Simulate 1st codes (several days) - Update optimal strategy web page
-  // - 5) XXX First code assessed in evaluatePerformances() for 5 columns games: 5a) why is is so long? 5b) assessment
-  // - 6) XXX 2nd codes assessed: 1 first loop + a 2nd loop on all impossible codes / equivalent games with marks also tested
+  // - 2) XXX First code assessed in evaluatePerformances() for 4 columns games
+  // - 3) XXX Simulate 1st codes (several days) - Update optimal strategy web page
+  // - 4) XXX First code assessed in evaluatePerformances() for 5 columns games: 5a) why is is so long? 5b) assessment
+  // - 5) XXX 2nd codes assessed: 1 first loop + a 2nd loop on all impossible codes / equivalent games with marks also tested
   // - X) XXX Appli Android
   // - X) XXXs/TBCs/TBDs in all files
   // - X) first access page not update if IP address unknown (useless lines / redundant lines)
