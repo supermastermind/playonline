@@ -19,7 +19,7 @@ console.log("Running SuperMasterMind.js...");
 let version = "v1.6";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
-let nbMinColors = 6;
+let nbMinColors = 5;
 let nbMaxColors = 10;
 let nbMinColumns = 3;
 let nbMaxColumns = 7;
@@ -1224,7 +1224,7 @@ function updateGameSizes() {
                               +tick_width); // OK/NOK
 
   if (!showPossibleCodesMode) {
-    if (nbColumns <= 3) {
+    if (nbColumns <= 4) {
       nb_attempts_not_displayed = 0;
     }
     else {
@@ -1232,10 +1232,7 @@ function updateGameSizes() {
       if (nbMaxAttempts-nb_attempts_not_displayed < nbColors) { // Color selection shall not be wider than game
         nb_attempts_not_displayed = Math.max(0, nbMaxAttempts - nbColors);
       }
-      if (nbColumns == 4) {
-        nb_attempts_not_displayed = Math.min(1, nb_attempts_not_displayed);
-      }
-      else if (nbColumns == 5) {
+      if (nbColumns == 5) {
         nb_attempts_not_displayed = Math.min(3, nb_attempts_not_displayed);
       }
       else if (nbColumns == 6) {
@@ -1292,7 +1289,7 @@ function resetGameAttributes(nbColumnsSelected) {
   nbColumns = nbColumnsSelected;
   switch (nbColumns) {
     case 3:
-      nbColors = Math.max(nbMinColors, nominalGameNbColors - 2);
+      nbColors = Math.max(nbMinColors, nominalGameNbColors - 3);
       nbMaxAttempts = nominalGameNbMaxAttempts - 4;
       document.title = "Very easy";
       break;

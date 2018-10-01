@@ -14,7 +14,7 @@ try {
   // *************************************************************************
 
   let emptyColor = 0; // (0 is also the Java default table init value)
-  let nbMinColors = 6;
+  let nbMinColors = 5;
   let nbMaxColors = 10;
   let nbMinColumns = 3;
   let nbMaxColumns = 7;
