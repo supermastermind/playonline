@@ -1397,7 +1397,7 @@ try {
     return str;
   }
 
-  function print_list_of_codes(list, list_size) {
+  function str_from_list_of_codes(list, list_size) {
     let str = "";
     for (let i = 0; i < list_size; i++) {
       str = str + codeHandler.codeToString(list[i]) + " ";
@@ -1784,7 +1784,7 @@ try {
       current_code = listOfCodes[idx1];
       /* if ((depth <= 1) &&(!compute_sum_ini)) { // Trace useful for debug
         console.log(spaces(depth) + "(depth " + depth + ") " + "CURRENT_CODE:" + codeHandler.codeToString(current_code));
-        console.log(spaces(depth) + "current game: " + print_list_of_codes(currentGame, next_current_game_idx));
+        console.log(spaces(depth) + "current game: " + str_from_list_of_codes(currentGame, next_current_game_idx));
         console.log(spaces(depth) + "perms: " + current_permutations_table_size[next_current_game_idx] + ": "
                     + print_permutation_list(current_permutations_table[next_current_game_idx], current_permutations_table_size[next_current_game_idx]));
       } */
