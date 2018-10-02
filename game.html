@@ -330,7 +330,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_IO";
+      let html_compatibility_game_version = "Ver_IP";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -503,10 +503,14 @@
                   console.log("new firstname: " + localStorage.firstname);
                   document.getElementById('form_firstname_id').value = localStorage.firstname;
                 }
+                else if ((localStorage.gamesok) && (Number(localStorage.gamesok) >= 150)) {
+                  // modal_mode unchanged and form not submitted waiting for proper user input
+                  return false; // do not close the modal
+                }
               }
               setTimeout("submitForm();", 444);
 
-              modal_mode = -1;             
+              modal_mode = -1;
               return true; // close the modal
 
             }
@@ -1448,7 +1452,7 @@
                   if ( (!localStorage.firstname)
                        && (gamesok >= 3) // (coherent with "history_clear_advice")
                        && (attempts >= 4) // (game not too easy)
-                       && ( (gamesok <= 5) || ((gamesok % 2) == 1) || (gamesok >= 100) ) // (do not ask first name too often if not filled)
+                       && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled)
                        && ( (gamesok >= 12) || ((gamesok >= 5) && (score >= 33)) || ((nbcolumns == 4) && (score >= 33)) || ((nbcolumns == 5) && (score >= 44)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
                     if (modal_mode == -1) {
                       try {
