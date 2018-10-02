@@ -359,6 +359,15 @@ try {
       return res;
     }
 
+    compressedCodeToString(code) {
+      let res = "";
+      for (let col = 0; col < this.nbColumns; col++) {
+        let color = this.getColor(code, col+1);
+        res = res + color.toString(16).toUpperCase(); // (hexa number used if >= 10)
+      }
+      return res;
+    }
+    
     createRandomCode() {
       let code = 0;
       for (let col = 0; col < this.nbColumns; col++) {
@@ -1723,9 +1732,7 @@ try {
   }
 
   // XXX Further work to do:
-  // - X) XXX Simulate {5 columns, 8 colors} game with up to 3rd attempt printing for precalculations (even for impossible codes)
-  //                                              + with max nb attempts instrum
-  //      => update optimal strategy web page
+  // - X) XXX Simulate {5 columns, 8 colors} game with up to 3rd attempt printing for precalculations (even for impossible codes) => update optimal strategy web page
   // - X) XXXs/TBCs/TBDs in all files
   // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
   // - X) XXX Appli Android?
