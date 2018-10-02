@@ -1278,7 +1278,7 @@ function resetGameAttributes(nbColumnsSelected) {
     gameSolver = undefined;
   }
 
-  if ((new Date()).getTime() - loadTime >= 8*3600*1000) { // (reload the page from server every 8 hours at next game start: not too short to allow game.html's "last_data_used" benefits, not too long to allow fast application of changes)
+  if ((new Date()).getTime() - loadTime >= 5*3600*1000) { // (reload the page from server every 5 hours at next game start: not too short to allow game.html's "last_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
     loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
     location.reload(true);
   }

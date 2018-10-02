@@ -1721,26 +1721,15 @@ try {
     }
 
   }
-  // XXX Further optimizations:
-  // - 1) XXX Still undefined errors from time to time?
-  //      => check nb codes filled + nb stats filled + other new debug info fields => always a long time without thread messages!? Most likely to occur on 7 columns games? (due to higher memory usage / too long processing times on old HWs?)
-  //      => send first message only once I_AM_ALIVE was received?
-  //      => thread code in same .js file is possible!
-  //      => test successions of 5 to 10 7-column games (failures always after >= 5 successive games?)
-  //      => modal issue? in SetContent()? => catch exceptions more globally in game.html or in the API itself
-  //      => see .JPG identified for extra error checks? Worker.onerrorXXX (upper case)? in this file? (which should capture all errors)
-  //      => only ONE worker creation (with possible reinit) instead of n workers (failures always after >= 5 successive games?)
-  // - 2) XXX First code assessed in evaluatePerformances() for 4 columns games
-  // - 3) XXX Simulate 1st codes (several days) - Update optimal strategy web page
-  // - 4) XXX First code assessed in evaluatePerformances() for 5 columns games: 5a) why is is so long? 5b) assessment
-  // - 5) XXX 2nd codes assessed: 1 first loop + a 2nd loop on all impossible codes / equivalent games with marks also tested
-  // - X) XXX Appli Android
+
+  // XXX Further work to do:
+  // - X) XXX Simulate {5 columns, 8 colors} game with up to 3rd attempt printing for precalculations (even for impossible codes)
+  //                                              + with max nb attempts instrum
+  //      => update optimal strategy web page
   // - X) XXXs/TBCs/TBDs in all files
-  // - X) first access page not update if IP address unknown (useless lines / redundant lines)
-  // - X) 2nd best last5 score also highlighted
-  // - X) recheck versus old SMM Java on some games
-  // - X) XXX check "Code_at_-0.01_perf.docx"
-  // - X) XXX 3rd geoloc backup site + email warning if reached? / or if "counter" field of 1st reached
+  // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
+  // - X) XXX Appli Android?
+  // - X) XXX If still some sporadic GameSolver errors: reloads more often (done), thread code in same .js file is possible, only ONE worker creation (with possible reinit) instead of n workers (risky?)
   // - X) XXX sheet compression to retest
   let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
