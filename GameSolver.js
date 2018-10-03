@@ -64,7 +64,7 @@ try {
   // Performance-related variables
   // *****************************
 
-  let baseOfMaxPerformanceEvaluationTime = 25000; // 25 seconds
+  let baseOfMaxPerformanceEvaluationTime = 30000; // 30 seconds
   let maxPerformanceEvaluationTime = -1;
 
   let baseOfNbOfCodesForSystematicEvaluation = 1300;
@@ -2116,28 +2116,35 @@ try {
             }
 
             // Anticipation of processing abortion
-            if ( (time_elapsed > maxPerformanceEvaluationTime*25/100) && (idxToConsider < Math.round(totalNbToConsider*7/100)) ) {
+            if ( (time_elapsed > maxPerformanceEvaluationTime*20/100) && (idxToConsider < Math.round(totalNbToConsider*5/100)) ) { // (0.25 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.round(totalNbToConsider*10/100)) ) {
+            if ( (time_elapsed > maxPerformanceEvaluationTime*25/100) && (idxToConsider < Math.round(totalNbToConsider*7/100)) ) { // (0.28 ratio)
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
+              listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+              listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+              particularCodeGlobalPerformance = PerformanceNA; // output
+              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
+            }
+            if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.round(totalNbToConsider*10/100)) ) { // (0.33 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #2)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.round(totalNbToConsider*20/100)) ) {
+            if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.round(totalNbToConsider*20/100)) ) { // (0.40 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #3)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.round(totalNbToConsider*30/100)) ) {
+            if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.round(totalNbToConsider*30/100)) ) { // (0.43 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #4)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
@@ -2401,7 +2408,7 @@ try {
             // *                *** TOTAL:  9 marks *** *
             // ******************************************
             nbMaxMarks = 9;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime/3; // (short games)
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*15/30; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
             initialNbClasses = 3; // {111, 112, 123}
             maxDepth = Math.min(11, overallMaxDepth);
@@ -2409,7 +2416,7 @@ try {
             break;
           case 4:
             nbMaxMarks = 14;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*2/3; // (short games)
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*20/30; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
             initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
@@ -2425,7 +2432,7 @@ try {
             break;
           case 6:
             nbMaxMarks = 27;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*59/25;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*60/30;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
@@ -2444,7 +2451,7 @@ try {
             // *                *** TOTAL: 35 marks *** *
             // ******************************************
             nbMaxMarks = 35;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*59/25;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*60/30;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
