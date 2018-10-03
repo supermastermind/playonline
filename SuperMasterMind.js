@@ -1279,7 +1279,7 @@ function resetGameAttributes(nbColumnsSelected) {
   }
 
   if ( ((new Date()).getTime() - loadTime >= 4*3600*1000) // (reload the page from server every 4 hours at next game start: not too short to allow game.html's "last_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
-       || (nbGamesPlayedAndWon >= 10) ) { // (reload to avoid potential (firefox) memory leaks issues, with the same arguments as above)
+       || (nbGamesPlayedAndWon >= 12) ) { // (reload to avoid potential (firefox) memory leaks issues, with the same arguments as above)
     loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
     location.reload(true);
   }
