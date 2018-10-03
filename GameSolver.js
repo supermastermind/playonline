@@ -64,10 +64,10 @@ try {
   // Performance-related variables
   // *****************************
 
-  let baseOfMaxPerformanceEvaluationTime = 25000;
+  let baseOfMaxPerformanceEvaluationTime = 25000; // 25 seconds
   let maxPerformanceEvaluationTime = -1;
 
-  let baseOfNbOfCodesForSystematicEvaluation = 1000;
+  let baseOfNbOfCodesForSystematicEvaluation = 1300;
   let nbOfCodesForSystematicEvaluation = -1;
 
   let initialNbClasses = -1;
@@ -367,7 +367,7 @@ try {
       }
       return res;
     }
-    
+
     createRandomCode() {
       let code = 0;
       for (let col = 0; col < this.nbColumns; col++) {
@@ -1700,15 +1700,6 @@ try {
       // Main processing
       // ***************
 
-      /* Skip evaluation if too many codes and classes
-         => not done because may induce too many delays
-      if ( (nbOfCodesForSystematicEvaluation < initialNbPossibleCodes) // not systematic performance evaluation
-           && (nbCodes > 2*nbOfCodesForSystematicEvaluation/3)
-           && (currentNbClasses > nbOfCodesForSystematicEvaluation/10) ) {
-        console.log("(processing skipped)");
-        return PerformanceUNKNOWN;
-      } */
-
       particularCodeToAssess = particularCode;
       res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
 
@@ -2098,7 +2089,7 @@ try {
       }
 
       // Fill output in case of first call
-      if (depth <= 0) {
+      if (depth <= 1) {
 
         if (first_call) {
 
@@ -2169,7 +2160,7 @@ try {
           } */
 
         }
-        else if (depth == 0) { // first level of recursivity
+        else if ((depth == 0) || (depth == 1)) { // first and second levels of recursivity
           let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
 
           // Processing is aborted when too long
@@ -2179,9 +2170,13 @@ try {
             particularCodeGlobalPerformance = PerformanceNA; // output
             recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN; // (final returned value will be invalid)
           }
+          time_elapsed = undefined;
+        }
+        else {
+          throw new Error("recursiveEvaluatePerformances / internal error");
         }
 
-      }
+      } // (depth <= 1)
 
     }
 
@@ -2426,15 +2421,15 @@ try {
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
-            marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
+            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
             break;
           case 6:
             nbMaxMarks = 27;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*6/5;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*45/25;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
-            marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
+            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
             break;
           case 7:
             // ******************************************
@@ -2449,11 +2444,11 @@ try {
             // *                *** TOTAL: 35 marks *** *
             // ******************************************
             nbMaxMarks = 35;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*6/5;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*45/25;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
-            marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
+            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
             break;
           default:
             throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
