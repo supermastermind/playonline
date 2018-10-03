@@ -2116,7 +2116,7 @@ try {
             }
 
             // Anticipation of processing abortion
-            if ( (time_elapsed > maxPerformanceEvaluationTime*20/100) && (idxToConsider < Math.round(totalNbToConsider*5/100)) ) { // (0.25 ratio)
+            if ( (time_elapsed > maxPerformanceEvaluationTime*20/100) && (idxToConsider < Math.round(totalNbToConsider*4/100)) ) { // (0.20 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
@@ -2124,28 +2124,28 @@ try {
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
             if ( (time_elapsed > maxPerformanceEvaluationTime*25/100) && (idxToConsider < Math.round(totalNbToConsider*7/100)) ) { // (0.28 ratio)
-              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
-              listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
-              listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
-              particularCodeGlobalPerformance = PerformanceNA; // output
-              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
-            }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.round(totalNbToConsider*10/100)) ) { // (0.33 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #2)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.round(totalNbToConsider*20/100)) ) { // (0.40 ratio)
+            if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.round(totalNbToConsider*10/100)) ) { // (0.33 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #3)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.round(totalNbToConsider*30/100)) ) { // (0.43 ratio)
+            if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.round(totalNbToConsider*20/100)) ) { // (0.40 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #4)");
+              listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+              listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+              particularCodeGlobalPerformance = PerformanceNA; // output
+              recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
+            }
+            if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.round(totalNbToConsider*30/100)) ) { // (0.43 ratio)
+              console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #5)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
