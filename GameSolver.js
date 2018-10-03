@@ -1769,7 +1769,7 @@ try {
     for (idx1 = 0; idx1 < nbCodes; idx1++) {
 
       current_code = listOfCodes[idx1];
-      /* if ((depth <= 1) &&(!compute_sum_ini)) { // Trace useful for debug
+      /* if ((depth <= 1) &&(!compute_sum_ini)) { // Specific trace
         console.log(spaces(depth) + "(depth " + depth + ") " + "CURRENT_CODE:" + codeHandler.codeToString(current_code));
         console.log(spaces(depth) + "current game: " + str_from_list_of_codes(currentGame, next_current_game_idx));
         console.log(spaces(depth) + "perms: " + current_permutations_table_size[next_current_game_idx] + ": "
