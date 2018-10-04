@@ -2428,7 +2428,7 @@ try {
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
-            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
+            marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
             break;
           case 6:
             nbMaxMarks = 27;
