@@ -57,7 +57,6 @@ try {
   let message_processing_ongoing = false;
   let IAmAliveMessageSent = false;
 
-  let init_refresh_time = 999;
   let attempt_refresh_time_1 = 222;
   let attempt_refresh_time_2 = 0;
 
@@ -2277,10 +2276,6 @@ try {
   // Handle messages from main thread
   // ********************************
 
-  if (!IAmAliveMessageSent) {
-    self.postMessage({'rsp_type': 'I_AM_ALIVE'}); // first message sent
-    IAmAliveMessageSent = true;
-  }
   self.addEventListener('message', function(e) {
 
     try {
@@ -2305,6 +2300,11 @@ try {
 
       if (data.req_type == 'INIT') {
 
+        if (!IAmAliveMessageSent) {
+          self.postMessage({'rsp_type': 'I_AM_ALIVE'}); // first message sent
+          IAmAliveMessageSent = true;
+        }      
+      
         // *******************
         // Read message fields
         // *******************
@@ -2428,7 +2428,7 @@ try {
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
-            marks_optimization_mask = 0x7FFF; // (do not consume too much memory)
+            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
             break;
           case 6:
             nbMaxMarks = 27;
@@ -2517,8 +2517,6 @@ try {
           maxNbColorsTable[color] = nbColumns;
         }
 
-        let now = new Date().getTime();
-        while(new Date().getTime() < now + init_refresh_time){}
         self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
 
         let nb_possible_codes_listed = fillShortInitialPossibleCodesTable(possibleCodesForPerfEvaluation[1], nbOfCodesForSystematicEvaluation);

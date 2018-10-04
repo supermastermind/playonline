@@ -82,7 +82,6 @@ let nbUnknownPerfs = 0;  // (only valid if game over and all performances filled
 
 let sCode = -1;
 let sCodeRevealed = -1;
-let game_cnt = 0;
 let loadTime = (new Date()).getTime(); // time in milliseconds
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
@@ -97,9 +96,16 @@ let globalErrorCnt = 0;
 let nb_random_codes_played = 0;
 let at_least_one_useless_code_played = false;
 
+let game_cnt = 0;
+
 let gameSolver = undefined;
 let gameSolverDbg = -1; // (debug value)
-let gameSolverConfigDbg = null; // (debug value)
+
+let gameSolverInitMsgContents = null;
+let gameSolverConfigDbg = null;
+let game_id_for_gameSolverConfig = -1;
+let game_id_for_initGameSolver = -1;
+
 let isWorkerAlive = -2; // (debug value)
 let workerCreationTime = -1; // (debug value)
 
@@ -1261,6 +1267,25 @@ function updateGameSizes() {
 
 }
 
+function postInitMessageToGameSolver() {
+  if (game_id_for_gameSolverConfig != game_cnt) { // ignore other threads
+    console.log("postInitMessageToGameSolver() call ignored: " + game_id_for_gameSolverConfig + ", " + game_cnt);
+    return;
+  }
+  if (game_id_for_initGameSolver != -1) { // 'INIT' message was already posted
+    console.log("postInitMessageToGameSolver() call skipped: " + game_id_for_initGameSolver + ", " + game_cnt);
+    return;
+  }
+  if (gameSolverInitMsgContents != null) {
+    gameSolver.postMessage(gameSolverInitMsgContents);
+    gameSolverDbg = 10;
+    game_id_for_initGameSolver = game_cnt;
+  }
+  else {
+    throw new Error("internal postInitMessageToGameSolver() error: gameSolverInitMsgContents == null");
+  }
+}
+
 function resetGameAttributes(nbColumnsSelected) {
 
   let i;
@@ -1268,6 +1293,11 @@ function resetGameAttributes(nbColumnsSelected) {
   let debug_mode = '';
 
   console.clear();
+
+  game_cnt++;
+  if (game_cnt > 1000000) {
+    game_cnt = 1;
+  }
 
   // Clear gameSolver worker if necessary
   gameSolverDbg = 0;
@@ -1277,6 +1307,10 @@ function resetGameAttributes(nbColumnsSelected) {
     gameSolver.terminate(); gameSolverDbg = 2;
     gameSolver = undefined;
   }
+  gameSolverInitMsgContents = null;
+  gameSolverConfigDbg = null;
+  game_id_for_gameSolverConfig = -1;
+  game_id_for_initGameSolver = -1;
 
   if ( ((new Date()).getTime() - loadTime >= 4*3600*1000) // (reload the page from server every 4 hours at next game start: not too short to allow game.html's "last_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
        || (nbGamesPlayedAndWon >= 12) ) { // (reload to avoid potential (firefox) memory leaks issues, with the same arguments as above)
@@ -1402,11 +1436,6 @@ function resetGameAttributes(nbColumnsSelected) {
 
   sCodeRevealed = 0;
 
-  game_cnt++;
-  if (game_cnt > 1000000) {
-    game_cnt = 0;
-  }
-
   newGameEvent = false;
   playerWasHelped = false;
 
@@ -1424,10 +1453,10 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolver = new Worker("Game" + "Solver.js"); gameSolverDbg = 3;
   // gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
   gameSolver.onerror = onGameSolverError; gameSolverDbg = 4;
-  Worker.onmessageerror = onGameSolverMessageError; gameSolverDbg = 4.5;
-  gameSolver.onmessageerror = onGameSolverMessageError; gameSolverDbg = 4.6;
-  // gameSolver.addEventListener('message', onGameSolverMsg, false); gameSolverDbg = 5;
-  gameSolver.onmessage = onGameSolverMsg; gameSolverDbg = 5;
+  Worker.onmessageerror = onGameSolverMessageError; gameSolverDbg = 5;
+  gameSolver.onmessageerror = onGameSolverMessageError; gameSolverDbg = 6;
+  // gameSolver.addEventListener('message', onGameSolverMsg, false); gameSolverDbg = 7;
+  gameSolver.onmessage = onGameSolverMsg; gameSolverDbg = 7;
   // Send a message to the gameSolver worker to initialize it
   if ( (typeof(Storage) !== 'undefined') && (!sessionStorage.first_session_game) ) {
     sessionStorage.first_session_game = 1;
@@ -1441,10 +1470,11 @@ function resetGameAttributes(nbColumnsSelected) {
       debug_mode = localStorage.debug_mode;
     }
   }
-  let gameSolverInitMsgContents = {'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
+
+  gameSolverInitMsgContents = {'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
-  gameSolver.postMessage(gameSolverInitMsgContents);
-  gameSolverDbg = 6;
+  game_id_for_gameSolverConfig = game_cnt;
+  setTimeout("postInitMessageToGameSolver();", 999); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 888);
@@ -2074,13 +2104,28 @@ function draw_graphic_bis() {
         else {
           nbMaxAttemptsForEndOfGame = nbMaxAttempts;
         }
-        if (gameSolver !== undefined) {
-          gameSolverDbg++;
-          gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'currentAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
-          gameSolverDbg++;
+
+        if (game_id_for_gameSolverConfig != game_cnt) { // ignore other threads
+          console.log("next attempt ignored: " + game_id_for_gameSolverConfig + ", " + game_cnt);
         }
         else {
-          throw new Error("undefined gameSolver (" + currentAttemptNumber + ")");
+          if (game_id_for_initGameSolver == -1) { // 'INIT' message was not posted yet
+            console.log("(anticipated 'INIT' message)");
+            postInitMessageToGameSolver();
+          }
+          if (game_id_for_initGameSolver == game_cnt) {
+            if (gameSolver !== undefined) {
+              gameSolverDbg++;
+              gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'currentAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
+              gameSolverDbg++;
+            }
+            else {
+              throw new Error("undefined gameSolver (" + currentAttemptNumber + ")");
+            }
+          }
+          else {
+            throw new Error("invalid game_id_for_initGameSolver value at next attempt: " + game_id_for_initGameSolver);
+          }
         }
 
       }
