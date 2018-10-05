@@ -806,6 +806,21 @@ function onGameSolverMsg(e) {
       writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, best_global_performance_p, code_p, attempt_nb, game_id);
 
     }
+    
+    // ******
+    // Traces
+    // ******
+
+    else if (data.rsp_type == 'TRACE') {
+      
+      if (data.trace_contents == undefined) {
+        displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined", new Error().stack);
+      }
+      let trace_str = data.trace_contents.concat("<br>");
+
+      document.getElementById("traces_id").innerHTML = document.getElementById("traces_id").innerHTML.concat(trace_str);
+      
+    }
 
     // **********
     // Error case
