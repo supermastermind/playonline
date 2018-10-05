@@ -1453,7 +1453,7 @@
                        && (gamesok >= 3) // (coherent with "history_clear_advice")
                        && (attempts >= 4) // (game not too easy)
                        && ( (gamesok <= 5) 
-                            || ((gamesok <= 200) && ((gamesok % 2) == 1)) // (do not ask first name too often if not filled)
+                            || ((gamesok <= 200) && ((gamesok % 2) == 1)) // (do not ask first name too often if not filled / ignore 1 result out of 2 in the range [100, 200])
                             || ((gamesok > 200) && ((gamesok % 4) != 1)) ) // (ignore most results of numerous games without a first name)
                        && ( (gamesok >= 12) || ((gamesok >= 5) && (score >= 33)) || ((nbcolumns == 4) && (score >= 33)) || ((nbcolumns == 5) && (score >= 44)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
                     if (modal_mode == -1) {
