@@ -330,7 +330,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_JA";
+      let html_compatibility_game_version = "Ver_JB";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -664,7 +664,8 @@
       }
 
       function isCorrect(str) {
-        if ( (str.toLowerCase().indexOf('aaa') != -1)
+        if ( (str.toLowerCase().indexOf('sherl') == 0) // (Sherlock)
+             || (str.toLowerCase().indexOf('aaa') != -1)
              || (str.toLowerCase().indexOf('bbb') != -1)
              || (str.toLowerCase().indexOf('ccc') != -1)
              || (str.toLowerCase().indexOf('ddd') != -1)
@@ -1469,7 +1470,7 @@
                         // set modal content
                         modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
                                          + "<h2>You seem to be an experienced player!<br>Please enter your first name, it will be used to store your scores:</h2>"
-                                         + "<h3>Your first name (between 3 and 12 letters, no spaces):</h3><input id='firstname_input' type='text' value='John?' maxlength='12'></input>"
+                                         + "<h3>Your first name (between 3 and 12 letters, no spaces):</h3><input id='firstname_input' type='text' value='Sherlock?' maxlength='12'></input>"
                                          + "<h4>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</h4>"
                                          + "</div>");
                         // open modal
