@@ -1000,13 +1000,6 @@
             localStorage.gamesok = Number(localStorage.gamesok) + 1;
             gamesok = Number(localStorage.gamesok);
 
-            if (localStorage.firstaccessid) { // XXX
-              if (localStorage.firstaccessid.indexOf("HP - PPFJ9") != -1) {
-                localStorage.removeItem('firstname'); // localStorage.firstname
-                submitForm("error detected for 1stAI", true);
-              }
-            }
-            
             if ((gamesok >= 140) && (!localStorage.firstname)) { // No interest for sharing results
               return;
             }
