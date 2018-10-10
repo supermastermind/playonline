@@ -330,7 +330,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_JG";
+      let html_compatibility_game_version = "Ver_JH";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -462,7 +462,7 @@
                     }
                     catch (exc) {}
                   }
-                  alert("If you accept to share your location,\nthis information will be used to store your score\nand you will also see the other players scores and rankings"); // (duplicated line)
+                  alert("If you accept to share your location, your country and city names will be used to store your score\nand you will also see all other players scores & rankings and in which countries and cities they played..."); // (duplicated line)
                   submitForm("warning: invalid place information entered (" + country_debug + ", " + city_debug + ")" + errorStr, true);
                 }
                 attempt_HTML_geolocation(true); // Subject to user acceptance => may complete / correct (in an automated way) above user inputs
@@ -1585,13 +1585,13 @@
                     var manualGeolocAttempt = false;
                     if (typeof(Storage) !== 'undefined') {
                       if (localStorage.gamesok) {
-                        if ( (Number(localStorage.gamesok) >= 4) && ((Number(localStorage.gamesok) % 4) == 0) ) { // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
+                        if ( (Number(localStorage.gamesok) >= 8) && ((Number(localStorage.gamesok) % 8) == 0) ) { // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
                           manualGeolocAttempt = true;
                         }
                       }
                     }
                     if (manualGeolocAttempt) {
-                      alert("If you accept to share your location,\nthis information will be used to store your score\nand you will also see the other players scores and rankings"); // (duplicated line)
+                      alert("If you accept to share your location, your country and city names will be used to store your score\nand you will also see all other players scores & rankings and in which countries and cities they played..."); // (duplicated line)
                     }
                     submitForm(errorStr, true);
                     if (manualGeolocAttempt) {
