@@ -301,8 +301,15 @@
     <p align='right'>
       <script>
         if (typeof(Storage) !== 'undefined') {
+          let welcome_str = "Welcome";
+          try {
+            if ((navigator.language == "fr") || (navigator.language.indexOf("fr-") == 0)) { // covers "fr", "fr-FR", "fr-BE", "fr-CA", "fr-CH", "fr-LU"
+              welcome_str = "Bienvenue";
+            }
+          }
+          catch (exc) {}
           if (localStorage.firstname) {
-            document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;Welcome <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>");
+            document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>");
             setTimeout(function() {
               $("#welcome_id").fadeOut().empty();
             }, 60000);
@@ -330,7 +337,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_JH";
+      let html_compatibility_game_version = "Ver_JI";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
