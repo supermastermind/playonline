@@ -1003,6 +1003,9 @@
             if ((gamesok >= 140) && (!localStorage.firstname)) { // No interest for sharing results
               return;
             }
+            if (localStorage.skip_storing) {
+              return;
+            }
             
             switch (nbcolumns) {
 
