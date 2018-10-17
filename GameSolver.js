@@ -66,8 +66,9 @@ try {
   let baseOfMaxPerformanceEvaluationTime = 30000; // 30 seconds
   let maxPerformanceEvaluationTime = -1;
 
-  let baseOfNbOfCodesForSystematicEvaluation = 1300;
+  let baseOfNbOfCodesForSystematicEvaluation = 1300; // (high values may induce latencies)
   let nbOfCodesForSystematicEvaluation = -1;
+  let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
 
   let initialNbClasses = -1;
   let currentNbClasses = -1;
@@ -77,9 +78,11 @@ try {
   let possibleCodesForPerfEvaluation_lastIndexWritten = -1;
   let mem_reduc_factor = 0.90; // (too low values can lead to dynamic memory allocations)
   let maxDepth = -1;
+  let maxDepthApplied = -1;
   let marks_optimization_mask;
 
   let performanceListsInitDone = false;
+  let performanceListsInitDoneForPrecalculatedGames = false;
   let arraySizeAtInit = -1;
   let listOfGlobalPerformances;
   let listsOfPossibleCodes;
@@ -2028,7 +2031,7 @@ try {
   }
 
   // XXX Further work to do:
-  // - X) XXX Simulate {5 columns, 8 colors} game with up to 3rd attempt printing for precalculations (for impossible codes for depth == 1 only?)
+  // - X) XXX Precalculate {5 columns, 8 colors} games, use precalculations, check possible & impossible codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc, test of error when a one-depth game is not FULLY precalculated (=> depth exceeded)
   // - X) XXXs/TBCs/TBDs in all files
   // - XXX Max nber of attempts for SMM games once precalculation fully stored + check total sum of attempts at the same time
   // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
@@ -2080,7 +2083,10 @@ try {
     // Evaluate performances of possible codes
     // ***************************************
 
-    /* let nbCodesToGoThrough = nbCodes; // (precalculation mode)
+    /*
+    let nbCodesToGoThrough = nbCodes; // (precalculation mode)
+    // CONSTRAINT: when precalculated, a game shall be FULLY precalculated, impossible codes included.
+    //             This will make possible a "one-recursive-depth computing of performances" for this game. (**)
     if (precalculation_mode) { // (precalculation mode)
       nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
     }
@@ -2820,6 +2826,7 @@ try {
             nbMaxMarks = 9;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*10/30; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 3; // {111, 112, 123}
             maxDepth = Math.min(11, overallMaxDepth);
             marks_optimization_mask = 0x1FFF;
@@ -2829,24 +2836,28 @@ try {
             nbMaxMarks = 14;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*20/30; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation; // game precalculation but same sizes are acceptable (*)
             initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
             marks_optimization_mask = 0x3FFF;
-            maxDepthForGamePrecalculation = 1; // game precalculation
+            maxDepthForGamePrecalculation = 1; // game precalculation (*)
             break;
           case 5:
             nbMaxMarks = 20;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*40/30;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
+            // => nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // no game precalculation (for the moment) XXX (*)
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
             marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = -1; // no game precalculation (for the moment) XXX
+            maxDepthForGamePrecalculation = -1; // no game precalculation (for the moment) XXX (*)
             break;
           case 6:
             nbMaxMarks = 27;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*60/30;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
             marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
@@ -2867,6 +2878,7 @@ try {
             nbMaxMarks = 35;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*80/30;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
             marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
@@ -2876,6 +2888,9 @@ try {
             throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
         }
 
+        if (nbOfCodesForSystematicEvaluation > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+          throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation");
+        }
         if (maxDepthForGamePrecalculation > maxDepthForGamePrecalculation_ForMemAlloc) {
           throw new Error("INIT phase / internal error (maxDepthForGamePrecalculation: " + maxDepthForGamePrecalculation + ")");
         }
@@ -2923,9 +2938,9 @@ try {
         best_mark_idx = marksTable_MarkToNb[nbColumns][0];
 
         possibleCodesForPerfEvaluation = new Array(2);
-        possibleCodesForPerfEvaluation[0] = new Array(nbOfCodesForSystematicEvaluation);
-        possibleCodesForPerfEvaluation[1] = new Array(nbOfCodesForSystematicEvaluation);
-        // initialCodeListForPrecalculatedMode = new Array(nbOfCodesForSystematicEvaluation); // (precalculation mode)
+        possibleCodesForPerfEvaluation[0] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
+        possibleCodesForPerfEvaluation[1] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
+        // initialCodeListForPrecalculatedMode = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc); // (precalculation mode)
 
         // **********
         // Update GUI
@@ -2939,13 +2954,13 @@ try {
 
         self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
 
-        let nb_possible_codes_listed = fillShortInitialPossibleCodesTable(possibleCodesForPerfEvaluation[1], nbOfCodesForSystematicEvaluation);
+        let nb_possible_codes_listed = fillShortInitialPossibleCodesTable(possibleCodesForPerfEvaluation[1], nbOfCodesForSystematicEvaluation_ForMemAlloc);
         if (possibleCodesForPerfEvaluation_lastIndexWritten != -1) {
           throw new Error("INIT phase / inconsistent writing into possibleCodesForPerfEvaluation");
         }
         possibleCodesForPerfEvaluation_lastIndexWritten = 1;
 
-        /* if (1296 != fillShortInitialPossibleCodesTable(initialCodeListForPrecalculatedMode, nbOfCodesForSystematicEvaluation)) { // (precalculation mode)
+        /* if (1296 != fillShortInitialPossibleCodesTable(initialCodeListForPrecalculatedMode, nbOfCodesForSystematicEvaluation_ForMemAlloc)) { // (precalculation mode)
           throw new Error("INIT phase / internal error");
         } */
 
@@ -3111,7 +3126,7 @@ try {
         }
 
         previousNbOfPossibleCodes = nextNbOfPossibleCodes;
-        nextNbOfPossibleCodes = computeNbOfPossibleCodes(currentAttemptNumber+1, nbOfCodesForSystematicEvaluation, possibleCodesForPerfEvaluation[(currentAttemptNumber+1)%2]);
+        nextNbOfPossibleCodes = computeNbOfPossibleCodes(currentAttemptNumber+1, nbOfCodesForSystematicEvaluation_ForMemAlloc, possibleCodesForPerfEvaluation[(currentAttemptNumber+1)%2]);
         if (possibleCodesForPerfEvaluation_lastIndexWritten != (currentAttemptNumber%2)) {
           throw new Error("NEW_ATTEMPT phase / inconsistent writing into possibleCodesForPerfEvaluation");
         }
@@ -3152,27 +3167,85 @@ try {
 
         else {
 
-          if (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) {
+          // In case of numerous possible codes, check if current game was FULLY (**) precalculated
+          // **************************************************************************************
+
+          let precalculated_game = false;
+          if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation) { // numerous possible codes
+            if (currentGameSize <= maxDepthForGamePrecalculation) {
+              if (lookForPrecalculatedGame(codesPlayed[currentAttemptNumber-1], currentGameSize, previousNbOfPossibleCodes) != -1) {
+                precalculated_game = true;
+              }
+            }
+          }
+
+          // Main useful code processing
+          // ***************************
+
+          if ( precalculated_game
+               || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) {
 
             // Initializations
             // ***************
 
-            // - Array allocations
-            if (!performanceListsInitDone) {
-              performanceListsInitDone = true;
-              arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
-              listOfGlobalPerformances = new Array(arraySizeAtInit);
-              listsOfPossibleCodes = new3DArray(maxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
-              nbOfPossibleCodes = new2DArray(maxDepth, nbMaxMarks);
-              listOfClassesFirstCall = new Array(arraySizeAtInit);
-              listOfEquivalentCodesAndPerformances = new2DArray(maxDepth, arraySizeAtInit);
-              for (let idx1 = 0; idx1 < maxDepth; idx1++) { // structure allocation
-                for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
-                  listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
+            if (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) {
+              if (precalculated_game) {
+                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (1)");
+              }
+              // - Array allocations
+              if (!performanceListsInitDone) {
+                performanceListsInitDone = true;
+                arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
+                listOfGlobalPerformances = new Array(arraySizeAtInit);
+                maxDepthApplied = maxDepth;
+                listsOfPossibleCodes = undefined;
+                listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
+                nbOfPossibleCodes = undefined;
+                nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
+                listOfClassesFirstCall = new Array(arraySizeAtInit);
+                listOfEquivalentCodesAndPerformances = undefined;
+                listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
+                for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
+                  for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
+                    listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
+                  }
+                }
+                if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
+                  throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (1)");
                 }
               }
-              if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
-                throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table");
+            }
+            else { // precalculated game and (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation)
+              if (!precalculated_game) {
+                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (2)");
+              }
+              if (performanceListsInitDone) {
+                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (3)");
+              }
+              if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (4): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+              }
+              // - Array allocations
+              if (!performanceListsInitDoneForPrecalculatedGames) {
+                performanceListsInitDoneForPrecalculatedGames = true;
+                arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation_ForMemAlloc)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
+                listOfGlobalPerformances = new Array(arraySizeAtInit);
+                maxDepthApplied = 1; // "one-recursive-depth computing of performances" for current game, for possible and impossible codes (**) => memory optimization
+                listsOfPossibleCodes = undefined;
+                listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
+                nbOfPossibleCodes = undefined;
+                nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
+                listOfClassesFirstCall = new Array(arraySizeAtInit);
+                listOfEquivalentCodesAndPerformances = undefined;
+                listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
+                for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
+                  for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
+                    listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
+                  }
+                }
+                if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
+                  throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (2)");
+                }
               }
             }
 
@@ -3181,7 +3254,7 @@ try {
               listOfGlobalPerformances[i] = PerformanceNA;
             }
             // listsOfPossibleCodes is not initialized as this array may be very large
-            for (let i = 0; i < maxDepth; i++) {
+            for (let i = 0; i < maxDepthApplied; i++) {
               for (let j = 0; j < nbMaxMarks; j++) {
                 nbOfPossibleCodes[i][j] = 0;
               }
@@ -3268,10 +3341,10 @@ try {
             if (listOfGlobalPerformances.length != arraySizeAtInit) {
               throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
             }
-            if (!check3DArraySizes(listsOfPossibleCodes, maxDepth, nbMaxMarks, arraySizeAtInit, mem_reduc_factor)) {
+            if (!check3DArraySizes(listsOfPossibleCodes, maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor)) {
               throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
             }
-            if (!check2DArraySizes(nbOfPossibleCodes, maxDepth, nbMaxMarks)) {
+            if (!check2DArraySizes(nbOfPossibleCodes, maxDepthApplied, nbMaxMarks)) {
               throw new Error("NEW_ATTEMPT phase / nbOfPossibleCodes allocation was modified");
             }
             if (currentGame.length != nbMaxAttempts+maxDepth) {
@@ -3283,7 +3356,7 @@ try {
             if (listOfClassesFirstCall.length != arraySizeAtInit) {
               throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
             }
-            if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepth, arraySizeAtInit)) {
+            if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit)) {
               throw new Error("NEW_ATTEMPT phase / listOfEquivalentCodesAndPerformances allocation was modified");
             }
             if (current_permutations_table_size.length != overallNbMaxAttempts+overallMaxDepth) {
@@ -3373,9 +3446,9 @@ try {
         // ****************
 
         // Check if errors occurred when writing into arrays
-        if ( (possibleCodesForPerfEvaluation[0].length != nbOfCodesForSystematicEvaluation)
-             || (possibleCodesForPerfEvaluation[1].length != nbOfCodesForSystematicEvaluation) ) {
-          throw new Error("inconsistent possibleCodesForPerfEvaluation length: " + possibleCodesForPerfEvaluation[0].length + ", " + possibleCodesForPerfEvaluation[1].length + ", " + nbOfCodesForSystematicEvaluation);
+        if ( (possibleCodesForPerfEvaluation[0].length != nbOfCodesForSystematicEvaluation_ForMemAlloc)
+             || (possibleCodesForPerfEvaluation[1].length != nbOfCodesForSystematicEvaluation_ForMemAlloc) ) {
+          throw new Error("inconsistent possibleCodesForPerfEvaluation length: " + possibleCodesForPerfEvaluation[0].length + ", " + possibleCodesForPerfEvaluation[1].length + ", " + nbOfCodesForSystematicEvaluation_ForMemAlloc);
         }
 
       }
