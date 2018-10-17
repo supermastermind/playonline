@@ -137,8 +137,8 @@ let myCanvasIniWidth = document.getElementById("my_canvas").style.width;
 let myCanvasIniHeight = document.getElementById("my_canvas").style.height;
 
 let CompressedDisplayMode = false;
-let CompressedDisplayMode_compressWidth = 677;
-let CompressedDisplayMode_uncompressWidth = 1144;
+let CompressedDisplayMode_compressWidth = 577;
+let CompressedDisplayMode_uncompressWidth = 1044;
 
 // Widths and heights
 // ******************
@@ -806,20 +806,20 @@ function onGameSolverMsg(e) {
       writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, best_global_performance_p, code_p, attempt_nb, game_id);
 
     }
-    
+
     // ******
     // Traces
     // ******
 
     else if (data.rsp_type == 'TRACE') {
-      
+
       if (data.trace_contents == undefined) {
         displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined", new Error().stack);
       }
       let trace_str = data.trace_contents.concat("<br>");
 
       document.getElementById("traces_id").innerHTML = document.getElementById("traces_id").innerHTML.concat(trace_str);
-      
+
     }
 
     // **********
@@ -1438,13 +1438,13 @@ function resetGameAttributes(nbColumnsSelected) {
   nbUnknownPerfs = 0;
 
   sCode = ~(simpleCodeHandler.createRandomCode());
-  /* XXX 
+  /* XXX
   let toto = simpleCodeHandler.createRandomCode(sCodeRevealed);
   toto = simpleCodeHandler.setColor(toto, 4, 1);
   toto = simpleCodeHandler.setColor(toto, 4, 2);
   toto = simpleCodeHandler.setColor(toto, 4, 3);
   toto = simpleCodeHandler.setColor(toto, 4, 4);
-  // toto = simpleCodeHandler.setColor(toto, 4, 5);
+  toto = simpleCodeHandler.setColor(toto, 4, 5);
   // toto = simpleCodeHandler.setColor(toto, 4, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 7);
   sCode = ~(toto); */
@@ -1946,7 +1946,6 @@ function draw_graphic_bis() {
         }
         if (CompressedDisplayMode) {
 
-          document.getElementById("newGameButton").value = "N";
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
             document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);
           }
@@ -1982,7 +1981,6 @@ function draw_graphic_bis() {
         }
         else {
 
-          document.getElementById("newGameButton").value = newGameButtonIniName;
           for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
             document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns];
           }
@@ -3076,12 +3074,25 @@ function draw_graphic_bis() {
       // Enable or disable GUI controls
       // ******************************
 
-      document.getElementById("newGameButton").disabled = (gameWon && !allPerformancesFilled());
-      if (document.getElementById("newGameButton").disabled) {
+      if (gameWon && !allPerformancesFilled()) {
+        document.getElementById("newGameButton").disabled = true;
         document.getElementById("newGameButton").className  = "button disabled";
+        if (CompressedDisplayMode) {
+          document.getElementById("newGameButton").value = "\u231b"; /* hourglass */
+        }
+        else {
+          document.getElementById("newGameButton").value = "PLEASE WAIT \u231b"; /* hourglass */
+        }
       }
       else {
+        document.getElementById("newGameButton").disabled = false;
         document.getElementById("newGameButton").className  = "button";
+        if (CompressedDisplayMode) {
+          document.getElementById("newGameButton").value = "N";
+        }
+        else {
+          document.getElementById("newGameButton").value = newGameButtonIniName;
+        }
       }
 
       if (currentAttemptNumber > 1) {
