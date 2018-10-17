@@ -2041,7 +2041,7 @@ try {
     let next_depth = depth+1;
     let next_current_game_idx = currentGameSize + next_depth;
     let is_depth_precalculated = (next_current_game_idx <= maxDepthForGamePrecalculation);
-    // let precalculation_mode = (is_depth_precalculated && (nbCodes >= 300)); // (precalculation mode)
+    // let precalculation_mode = (is_depth_precalculated && (nbCodes >= 444)); // (precalculation mode)
     let nextListsOfCodes;
     let nextNbsCodes;
     let nbOfEquivalentCodesAndPerformances = 0;
@@ -2469,6 +2469,7 @@ try {
             }
 
             // Anticipation of processing abortion
+            // To simplify, it is assumed here that processing times of all classes are "relatively" close to each other
             if ( (time_elapsed > maxPerformanceEvaluationTime*10/100) && (idxToConsider < Math.floor(totalNbToConsider*2/100)) ) { // (0.20 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)

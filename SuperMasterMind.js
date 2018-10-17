@@ -137,8 +137,8 @@ let myCanvasIniWidth = document.getElementById("my_canvas").style.width;
 let myCanvasIniHeight = document.getElementById("my_canvas").style.height;
 
 let CompressedDisplayMode = false;
-let CompressedDisplayMode_compressWidth = 577;
-let CompressedDisplayMode_uncompressWidth = 1044;
+let CompressedDisplayMode_compressWidth = 477;
+let CompressedDisplayMode_uncompressWidth = 944;
 
 // Widths and heights
 // ******************
