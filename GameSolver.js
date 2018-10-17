@@ -2450,6 +2450,7 @@ try {
 
             if (compute_sum || precalculated_sum) { // a new class has been evaluated
               nb_classes_cnt++;
+              // send_trace_msg("______________________________ END OF CLASS ______________________________"); // (precalculation mode)
             }
 
             let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
