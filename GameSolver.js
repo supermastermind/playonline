@@ -2069,7 +2069,7 @@ try {
     let codeY;
     let nb_classes_cnt = 0;
 
-    /* let str = ""; // (precalculation mode)
+    /* let str; // (precalculation mode)
     if (precalculation_mode) {
       str = next_depth + "|" + compressed_str_from_lists_of_codes_and_markidxs(currentGame, marksIdxs, next_current_game_idx) + "|N:" + nbCodes + "|";
     } */
