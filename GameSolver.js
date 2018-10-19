@@ -2045,7 +2045,10 @@ try {
     let next_depth = depth+1;
     let next_current_game_idx = currentGameSize + next_depth;
     let is_depth_precalculated = (next_current_game_idx <= maxDepthForGamePrecalculation);
-    // let precalculation_mode = (is_depth_precalculated && (nbCodes >= 444)); // (precalculation mode)
+    /* let precalculation_mode = ( is_depth_precalculated // (precalculation mode)
+                                && ( (next_current_game_idx == 0) // all depth = 0 games are precalculated
+                                     || ((next_current_game_idx == 1) && (nbCodes > nbCodesLimitForEquivalentCodesCheck)) // all depth = 1 games are precalculated
+                                     || ((next_current_game_idx == 2) && (nbCodes >= 480) && (nbCodes < 1500) && possibleGame) ) ); */
     let nextListsOfCodes;
     let nextNbsCodes;
     let nbOfEquivalentCodesAndPerformances = 0;
@@ -2097,7 +2100,7 @@ try {
         current_code = listOfCodes[idx1];
       }
       else {
-        current_code = initialCodeListForPrecalculatedMode[idx1]; // (precalculation mode) / add also impossible codes
+        current_code = initialCodeListForPrecalculatedMode[idx1 - nbCodes]; // (precalculation mode) / add also impossible codes
       }
     */
     for (idx1 = 0; idx1 < nbCodes; idx1++) {
