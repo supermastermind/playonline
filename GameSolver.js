@@ -2859,7 +2859,7 @@ try {
             break;
           case 6:
             nbMaxMarks = 27;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*60/30;
+            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*50/30;
             nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
             nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
