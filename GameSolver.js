@@ -2031,7 +2031,7 @@ try {
   }
 
   // XXX Further work to do:
-  // - X) XXX Precalculate {5 columns, 8 colors} games, use precalculations, check possible & impossible codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc, test of error when a one-depth game is not FULLY precalculated (=> depth exceeded)
+  // - X) XXX Precalculate {5 columns, 8 colors} games, use precalculations, check possible & impossible codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc, test of error when a one-depth game (w/ possible or impossible code) is not precalculated for all wished codes (=> depth exceeded)
   // - X) Precalculated table split in several javascript modules to decrease size loaded?
   // - X) XXXs/TBCs/TBDs in all files
   // - XXX Max nber of attempts for SMM games once precalculation fully stored + check total sum of attempts at the same time
@@ -2089,8 +2089,6 @@ try {
 
     /*
     let nbCodesToGoThrough = nbCodes; // (precalculation mode)
-    // CONSTRAINT: when precalculated, a game shall be FULLY precalculated, impossible codes included.
-    //             This will make possible a "one-recursive-depth computing of performances" for this game. (**)
     if (precalculation_mode) { // (precalculation mode)
       nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
     }
@@ -3171,14 +3169,14 @@ try {
 
         else {
 
-          // In case of numerous possible codes, check if current game was FULLY (**) precalculated
-          // **************************************************************************************
+          // In case of numerous possible codes, check if current game and code (whether possible or impossible) were precalculated
+          // **********************************************************************************************************************
 
-          let precalculated_game = false;
+          let precalculated_game_and_code = false;
           if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation) { // numerous possible codes
             if (currentGameSize <= maxDepthForGamePrecalculation) {
               if (lookForPrecalculatedGame(codesPlayed[currentAttemptNumber-1], currentGameSize, previousNbOfPossibleCodes) != -1) {
-                precalculated_game = true;
+                precalculated_game_and_code = true;
               }
             }
           }
@@ -3186,14 +3184,14 @@ try {
           // Main useful code processing
           // ***************************
 
-          if ( precalculated_game
+          if ( precalculated_game_and_code
                || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) {
 
             // Initializations
             // ***************
 
             if (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) {
-              if (precalculated_game) {
+              if (precalculated_game_and_code) {
                 throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (1)");
               }
               // - Array allocations
@@ -3220,7 +3218,7 @@ try {
               }
             }
             else { // precalculated game and (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation)
-              if (!precalculated_game) {
+              if (!precalculated_game_and_code) {
                 throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (2)");
               }
               if (performanceListsInitDone) {
@@ -3234,7 +3232,7 @@ try {
                 performanceListsInitDoneForPrecalculatedGames = true;
                 arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation_ForMemAlloc)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
                 listOfGlobalPerformances = new Array(arraySizeAtInit);
-                maxDepthApplied = 1; // "one-recursive-depth computing of performances" for current game, for possible and impossible codes (**) => memory optimization
+                maxDepthApplied = 1; // "one-recursive-depth computing of performances" for current game and code (whether possible or impossible) => memory optimization
                 listsOfPossibleCodes = undefined;
                 listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
                 nbOfPossibleCodes = undefined;
