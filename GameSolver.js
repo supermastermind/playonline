@@ -2031,7 +2031,7 @@ try {
   }
 
   // XXX Further work to do:
-  // - X) XXX Precalculate {5 columns, 8 colors} games, use precalculations, check possible & impossible codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc, test of error when a one-depth game (w/ possible or impossible code) is not precalculated for all wished codes (=> depth exceeded)
+  // - X) XXX Precalculate {5 columns, 8 colors} games, use precalculations, check possible & impossible & useless & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc, test of error when a one-depth game (w/ possible or impossible code) is not precalculated for all wished codes (=> depth exceeded)
   // - X) Precalculated table split in several javascript modules to decrease size loaded?
   // - X) XXXs/TBCs/TBDs in all files
   // - XXX Max nber of attempts for SMM games once precalculation fully stored + check total sum of attempts at the same time
