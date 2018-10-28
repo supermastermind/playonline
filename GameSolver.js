@@ -3250,7 +3250,7 @@ try {
               }
             }
             else {
-              throw new Error("NEW_ATTEMPT phase / inconsistent evaluation case"); // XXX error case to test
+              throw new Error("NEW_ATTEMPT phase / inconsistent evaluation case"); // XXX above error cases to test
             }
 
             // - Other initializations
