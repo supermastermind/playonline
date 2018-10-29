@@ -120,7 +120,7 @@ try {
   marksIdxsForGamePrecalculation.fill(-1);
 
   let minNbCodesForPrecalculationFromDepth2 = 400;
-  
+
   // ************************************************************************************************************************
   // Table generated for {4 columns, >= 300 possible codes, max depth = 1, possible & impossible codes listed till depth = 1}
   // ************************************************************************************************************************
@@ -1926,9 +1926,11 @@ try {
   let particularCodeGlobalPerformance = PerformanceNA;
   let recursiveEvaluatePerformancesWasAborted = false;
 
+  let areCurrentGameAndCodePrecalculated = false;
+
   // Outputs: listOfGlobalPerformances[]
   //          particularCodeGlobalPerformance in case of impossible code
-  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode) {
+  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode, areCurrentGameAndCodePrecalculated_p) {
 
     let idx;
     let res;
@@ -1942,6 +1944,8 @@ try {
     if (currentAttemptNumber <= 0) {
       throw new Error("evaluatePerformances: invalid currentAttemptNumber: " + currentAttemptNumber);
     }
+
+    areCurrentGameAndCodePrecalculated = areCurrentGameAndCodePrecalculated_p;
 
     if (depth == -1) { // first call
 
@@ -2035,7 +2039,7 @@ try {
   // XXX Further work to do:
   // - X) Regenerate precalculation script from this one for all game to dept 2 + skip twice same code(s) + skip code with impossible 0B0W color
   // - X) Forbid twice same code played + impossible (0B0W) color played
-  // - X) XXX Precalculate {5 columns, 8 colors} games, use precalculations, check possible & impossible & useless & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc, test of error when a one-depth game (w/ possible or impossible code) is not precalculated for all wished codes (=> depth exceeded), proper "sequence in time" of mem allocs for precalculations and then actual computations + error cases (always result precalculated when possible)  
+  // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible & useless & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
   // - X) Precalculated table split in several javascript modules to decrease size loaded?
   // - X) XXXs/TBCs/TBDs in all files
   // - XXX Max nber of attempts for SMM games once precalculation fully stored + check total sum of attempts at the same time
@@ -2048,11 +2052,6 @@ try {
     let first_call = (depth == -1);
     let next_depth = depth+1;
     let next_current_game_idx = currentGameSize + next_depth;
-    let is_depth_precalculated = (next_current_game_idx <= maxDepthForGamePrecalculation);
-    /* let precalculation_mode = ( is_depth_precalculated // (precalculation mode)
-                                && ( (next_current_game_idx == 0) // all depth = 0 games are precalculated
-                                     || ((next_current_game_idx == 1) && (nbCodes > nbCodesLimitForEquivalentCodesCheck)) // all depth = 1 games are precalculated
-                                     || ((next_current_game_idx == 2) && (nbCodes >= 480) && (nbCodes < 1500) && possibleGame) ) ); */
     let nextListsOfCodes;
     let nextNbsCodes;
     let nbOfEquivalentCodesAndPerformances = 0;
@@ -2062,6 +2061,12 @@ try {
     let mark_perf_tmp_idx;
     let compute_sum_ini = (nbCodes <= nbCodesLimitForEquivalentCodesCheck);
     let compute_sum;
+    let precalculated_current_game_and_code = (first_call && areCurrentGameAndCodePrecalculated);
+    /* let precalculation_mode = ( (next_current_game_idx <= maxDepthForGamePrecalculation) // (precalculation mode)
+                                    && (!compute_sum_ini) // leaf optimization
+                                    && ( (next_current_game_idx == 0) // all depth = 0 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
+                                     || (next_current_game_idx == 1) // all depth = 1 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
+                                     || ((next_current_game_idx == 2) && (nbCodes >= minNbCodesForPrecalculationFromDepth2)) ) ); */
     let precalculated_sum;
     // let write_me; // (traces useful for debug)
     // let write_me_for_precalculation; // (precalculation mode)
@@ -2076,6 +2081,7 @@ try {
     /* let str; // (precalculation mode)
     if (precalculation_mode) {
       str = next_depth + "|" + compressed_str_from_lists_of_codes_and_markidxs(currentGame, marksIdxs, next_current_game_idx) + "|N:" + nbCodes + "|";
+      send_trace_msg("-" + str + " is being computed... " + new Date());
     } */
 
     // Initializations
@@ -2134,7 +2140,7 @@ try {
         compute_sum = (sum == 0.0);
 
         precalculated_sum = false;
-        if (is_depth_precalculated && compute_sum /* && (!precalculation_mode) */) { // (precalculation mode)
+        if (precalculated_current_game_and_code && compute_sum /* && (!precalculation_mode) */) { // (precalculation mode)
           sum = lookForPrecalculatedGame(current_code, next_current_game_idx, nbCodes);
           if (sum != -1) { // precalculated sum found
             compute_sum = false;
@@ -2147,7 +2153,8 @@ try {
             }
           }
           else { // no precalculated sum found
-            compute_sum = true;
+            throw new Error("recursiveEvaluatePerformances: cannot find precalculated game and code (possible code): " + codeHandler.codeToString(current_code));
+            // compute_sum = true;
           }
         }
       }
@@ -2460,12 +2467,14 @@ try {
 
           if ((!compute_sum_ini) && (nbCodes > 100)) {
 
+            let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
+
             if (compute_sum || precalculated_sum) { // a new class has been evaluated
               nb_classes_cnt++;
-              // send_trace_msg("______________________________ END OF CLASS ______________________________"); // (precalculation mode)
+              /* if (precalculation_mode) { // (precalculation mode)
+                send_trace_msg("______________________________ END OF CLASS ______________________________ " + time_elapsed + " ms");
+              } */
             }
-
-            let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
 
             let idxToConsider;
             let totalNbToConsider;
@@ -2603,10 +2612,13 @@ try {
       current_code = particularCodeToAssess;
 
       let particular_precalculated_sum = false;
-      if (is_depth_precalculated && (!compute_sum_ini) /* && (!precalculation_mode) */) { // (precalculation mode)
+      if (precalculated_current_game_and_code && (!compute_sum_ini) /* && (!precalculation_mode) */) { // (precalculation mode)
         sum = lookForPrecalculatedGame(current_code, next_current_game_idx, nbCodes);
         if (sum != -1) { // precalculated sum found
           particular_precalculated_sum = true;
+        }
+        else {
+          throw new Error("recursiveEvaluatePerformances: cannot find precalculated game and code (impossible code): " + codeHandler.codeToString(current_code));
         }
       }
 
@@ -3176,23 +3188,23 @@ try {
           // Check if current game and code (whether possible or impossible) were precalculated
           // **********************************************************************************
 
-          let precalculated_game_and_code = false;
+          let precalculated_current_game_and_code = false;
           if (currentGameSize <= maxDepthForGamePrecalculation) { // current game and code may have been precalculated
             if (lookForPrecalculatedGame(codesPlayed[currentAttemptNumber-1], currentGameSize, previousNbOfPossibleCodes) != -1) {
-              precalculated_game_and_code = true;
+              precalculated_current_game_and_code = true;
             }
           }
 
           // Main useful code processing
           // ***************************
 
-          if ( precalculated_game_and_code
+          if ( precalculated_current_game_and_code
                || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) {
 
             // Initializations
             // ***************
 
-            if (precalculated_game_and_code) { // ***** First evaluation phase in a game *****
+            if (precalculated_current_game_and_code) { // ***** First evaluation phase in a game *****
               if (performanceListsInitDone) {
                 throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (1)");
               }
@@ -3223,8 +3235,8 @@ try {
               }
             }
             else if (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) { // ***** Second evaluation phase in a game *****
-              if (precalculated_game_and_code) {
-                throw new Error("NEW_ATTEMPT phase / internal error (precalculated_game_and_code)");
+              if (precalculated_current_game_and_code) {
+                throw new Error("NEW_ATTEMPT phase / internal error (precalculated_current_game_and_code)");
               }
               // - Array allocations
               if (!performanceListsInitDone) {
@@ -3250,7 +3262,7 @@ try {
               }
             }
             else {
-              throw new Error("NEW_ATTEMPT phase / inconsistent evaluation case"); // XXX above error cases to test
+              throw new Error("NEW_ATTEMPT phase / inconsistent performance evaluation case");
             }
 
             // - Other initializations
@@ -3272,7 +3284,7 @@ try {
             if (0 == isAttemptPossibleinGameSolver(currentAttemptNumber)) { // code played is possible
               // Evaluate performances for possibleCodesForPerfEvaluation[currentAttemptNumber%2]:
               let startTime = (new Date()).getTime();
-              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */);
+              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */, precalculated_current_game_and_code);
               if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
                 let code_played_found = false;
                 for (let i = 0; i < previousNbOfPossibleCodes; i++) {
@@ -3287,7 +3299,8 @@ try {
                 }
                 console.log("(perfeval#1: best performance: " + best_global_performance
                             + " / code performance: " + code_played_global_performance
-                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
+                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class")
+                            + (precalculated_current_game_and_code ? " / precalculated" : "") + ")");
               }
               else {
                 console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
@@ -3296,7 +3309,7 @@ try {
             else { // code played is not possible
               // Evaluate performances for possibleCodesForPerfEvaluation[currentAttemptNumber%2]:
               let startTime = (new Date()).getTime();
-              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[currentAttemptNumber-1]);
+              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[currentAttemptNumber-1], precalculated_current_game_and_code);
               if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
                 if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
                   throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: " + particularCodeGlobalPerformance);
@@ -3304,7 +3317,8 @@ try {
                 code_played_global_performance = particularCodeGlobalPerformance;
                 console.log("(perfeval#2: best performance: " + best_global_performance
                             + " / code performance: " + particularCodeGlobalPerformance
-                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
+                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class")
+                            + (precalculated_current_game_and_code ? " / precalculated" : "") + ")");
               }
               else {
                 console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
