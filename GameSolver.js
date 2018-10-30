@@ -49,6 +49,7 @@ try {
   let marksTable_MarkToNb;
   let marksTable_NbToMark;
   let best_mark_idx;
+  let worst_mark_idx;
 
   let possibleCodesAfterNAttempts;
 
@@ -113,6 +114,8 @@ try {
   // *************************************************************************
   // *************************************************************************
 
+  let minNbCodesForPrecalculationFromDepth2 = 400;
+
   let maxDepthForGamePrecalculation = -1;
   let maxDepthForGamePrecalculation_ForMemAlloc = 2;
   let currentGameForGamePrecalculation = new Array(maxDepthForGamePrecalculation_ForMemAlloc);
@@ -120,7 +123,7 @@ try {
   let marksIdxsForGamePrecalculation = new Array(maxDepthForGamePrecalculation_ForMemAlloc);
   marksIdxsForGamePrecalculation.fill(-1);
 
-  let minNbCodesForPrecalculationFromDepth2 = 400;
+  let precalculation_mode_mark = {nbBlacks:0, nbWhites:0};
 
   // ************************************************************************************************************************
   // Table generated for {4 columns, >= 300 possible codes, max depth = 1, possible & impossible codes listed till depth = 1}
@@ -1945,6 +1948,9 @@ try {
     if ((best_mark_idx != marksTable_MarkToNb[nbColumns][0]) || (best_mark_idx >= nbMaxMarks)) {
       throw new Error("evaluatePerformances: invalid best_mark_idx");
     }
+    if ((worst_mark_idx != marksTable_MarkToNb[0][0]) || (worst_mark_idx >= nbMaxMarks)) {
+      throw new Error("evaluatePerformances: invalid worst_mark_idx");
+    }
     if (currentAttemptNumber <= 0) {
       throw new Error("evaluatePerformances: invalid currentAttemptNumber: " + currentAttemptNumber);
     }
@@ -2113,6 +2119,29 @@ try {
       }
       else {
         current_code = initialCodeListForPrecalculatedMode[idx1 - nbCodes]; // (precalculation mode) / add also impossible codes
+
+        // Optimization: skip current code if needed
+        if (!precalculation_mode) {
+          throw new Error("recursiveEvaluatePerformances: precalculation_mode error");
+        }
+        let skip_current_code = false;
+        for (let i = 0; i < next_current_game_idx; i++) {
+          if (current_code == currentGame[i]) {
+            skip_current_code = true; // code replayed so obviously useless
+            break;
+          }
+          if (marksIdxs[i] == worst_mark_idx) { // 0 black + 0 white mark => all colors in this code are obviously impossible
+            codeHandler.fillMark(current_code, currentGame[i], precalculation_mode_mark);
+            if ((precalculation_mode_mark.nbBlacks > 0) || (precalculation_mode_mark.nbWhites > 0)) {
+              skip_current_code = true; // obviously impossible color played
+              break;
+            }
+          }
+        }
+        if (skip_current_code) {
+          continue; // skip current code
+        }
+
       }
     */
     for (idx1 = 0; idx1 < nbCodes; idx1++) {
@@ -2961,6 +2990,7 @@ try {
         }
 
         best_mark_idx = marksTable_MarkToNb[nbColumns][0];
+        worst_mark_idx = marksTable_MarkToNb[0][0];
 
         possibleCodesForPerfEvaluation = new Array(2);
         possibleCodesForPerfEvaluation[0] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
