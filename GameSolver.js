@@ -2077,6 +2077,7 @@ try {
                                 && ( (next_current_game_idx == 0) // all depth = 0 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
                                      || (next_current_game_idx == 1) // all depth = 1 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
                                      || ((next_current_game_idx == 2) && (nbCodes >= minNbCodesForPrecalculationFromDepth2)) ) ); // all depth = 2 games for which there may not be enough CPU capacity / time to calculate performances
+    */
     let precalculated_sum;
     // let write_me; // (traces useful for debug)
     // let write_me_for_precalculation; // (precalculation mode)
