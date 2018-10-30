@@ -91,6 +91,7 @@ try {
   let nbOfClassesFirstCall = -1;
   let listOfEquivalentCodesAndPerformances;
   let marks_already_computed_table = null;
+  let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
 
   let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
   let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
@@ -249,6 +250,9 @@ try {
       let nb_possible_codes = Number(nb_possible_codes_str);
       if (isNaN(nb_possible_codes) || (nb_possible_codes <= 0) || (nb_possible_codes > initialNbPossibleCodes)) {
         throw new Error("lookForPrecalculatedGame: invalid number of possible codes (2): " + nb_possible_codes_str);
+      }
+      if (nb_possible_codes <= nbCodesLimitForEquivalentCodesCheck) {
+        throw new Error("lookForPrecalculatedGame: too low number of possible codes: " + nb_possible_codes_str);
       }
       // console.log(nb_possible_codes);
 
@@ -2046,7 +2050,6 @@ try {
   // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
   // - X) XXX Appli Android?
   // - X) XXX If still some sporadic undefined GameSolver errors, remaining tracks: 1) good solution? thread code in same .js file is possible (only one .js file loaded) - still error in local Chrome execution? / or cumulated with module importation https://stackoverflow.com/questions/950087/how-do-i-include-a-javascript-file-in-another-javascript-file 2) pb when loading the .js worker file? (cf. img - can occur at very first creation as seen!) => unavoidable except by retry (if not alive yet) 3) Wait a bit before sending first message, the time the worker is fully operational?
-  let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
 
     let first_call = (depth == -1);
@@ -2063,10 +2066,11 @@ try {
     let compute_sum;
     let precalculated_current_game_and_code = (first_call && areCurrentGameAndCodePrecalculated);
     /* let precalculation_mode = ( (next_current_game_idx <= maxDepthForGamePrecalculation) // (precalculation mode)
-                                    && (!compute_sum_ini) // leaf optimization
-                                    && ( (next_current_game_idx == 0) // all depth = 0 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
+                                && (!compute_sum_ini) // leaf optimization
+                                // Below rules shall be more and more constraining when depth increases
+                                && ( (next_current_game_idx == 0) // all depth = 0 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
                                      || (next_current_game_idx == 1) // all depth = 1 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
-                                     || ((next_current_game_idx == 2) && (nbCodes >= minNbCodesForPrecalculationFromDepth2)) ) ); */
+                                     || ((next_current_game_idx == 2) && (nbCodes >= minNbCodesForPrecalculationFromDepth2)) ) ); // all depth = 2 games for which there may not be enough CPU capacity / time to calculate performances
     let precalculated_sum;
     // let write_me; // (traces useful for debug)
     // let write_me_for_precalculation; // (precalculation mode)
@@ -2911,6 +2915,9 @@ try {
         }
         if (maxDepthForGamePrecalculation > maxDepthForGamePrecalculation_ForMemAlloc) {
           throw new Error("INIT phase / internal error (maxDepthForGamePrecalculation: " + maxDepthForGamePrecalculation + ")");
+        }
+        if (minNbCodesForPrecalculationFromDepth2 <= nbCodesLimitForEquivalentCodesCheck) {
+          throw new Error("INIT phase / internal error: minNbCodesForPrecalculationFromDepth2");
         }
 
         marksTable_MarkToNb = new Array(nbColumns+1); // nbBlacks in 0..nbColumns
