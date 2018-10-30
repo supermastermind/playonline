@@ -2071,13 +2071,6 @@ try {
     let compute_sum_ini = (nbCodes <= nbCodesLimitForEquivalentCodesCheck);
     let compute_sum;
     let precalculated_current_game_and_code = (first_call && areCurrentGameAndCodePrecalculated);
-    /* let precalculation_mode = ( (next_current_game_idx <= maxDepthForGamePrecalculation) // (precalculation mode)
-                                && (!compute_sum_ini) // leaf optimization
-                                // Below rules shall be more and more constraining when depth increases
-                                && ( (next_current_game_idx == 0) // all depth = 0 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
-                                     || (next_current_game_idx == 1) // all depth = 1 games with more than nbCodesLimitForEquivalentCodesCheck possible codes are precalculated
-                                     || ((next_current_game_idx == 2) && (nbCodes >= minNbCodesForPrecalculationFromDepth2)) ) ); // all depth = 2 games for which there may not be enough CPU capacity / time to calculate performances
-    */
     let precalculated_sum;
     // let write_me; // (traces useful for debug)
     // let write_me_for_precalculation; // (precalculation mode)
@@ -2089,7 +2082,13 @@ try {
     let codeY;
     let nb_classes_cnt = 0;
 
-    /* let str; // (precalculation mode)
+    /*
+    // (precalculation mode)
+    // Note: if some specific rules are applied, they shall be more and more constraining when depth increases
+    let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculationFromDepth2) // only games for which there may not be enough CPU capacity / time to calculate performances online
+                                && (next_current_game_idx <= maxDepthForGamePrecalculation)
+                                && (!compute_sum_ini) ); // not a leaf
+    let str; // (precalculation mode)
     if (precalculation_mode) {
       str = next_depth + "|" + compressed_str_from_lists_of_codes_and_markidxs(currentGame, marksIdxs, next_current_game_idx) + "|N:" + nbCodes + "|";
       send_trace_msg("-" + str + " is being computed... " + new Date());
