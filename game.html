@@ -337,7 +337,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_JQ";
+      let html_compatibility_game_version = "Ver_JQ2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -347,11 +347,12 @@
         if (modeAlreadySelected) {
           return;
         }
-        let keycheck = ((String.fromCharCode(e.keyCode).toLowerCase() == 'l') && e.shiftKey);
-        if (keycheck && (!lastKeyCheck)) {
+        let keycheck1 = (String.fromCharCode(e.keyCode).toLowerCase() == '1');
+        let keycheck2 = ((String.fromCharCode(e.keyCode).toLowerCase() == 'l') && e.shiftKey);
+        if (keycheck1 && (!lastKeyCheck)) {
           lastKeyCheck = true;
         }
-        else if (keycheck && lastKeyCheck) {
+        else if (keycheck2 && lastKeyCheck) {
           var mode = prompt("Which mode do you want to select?", "444");
           if (mode != null) {
             document.getElementById('form_list_id').value = mode.trim();
