@@ -2122,16 +2122,17 @@ try {
       else {
         current_code = initialCodeListForPrecalculatedMode[idx1 - nbCodes]; // (precalculation mode) / add also impossible codes
 
-        // Optimization: skip current code if needed
+        // Precalculation optimization (1/2): skip current code if needed
         if (!precalculation_mode) {
           throw new Error("recursiveEvaluatePerformances: precalculation_mode error");
         }
         let skip_current_code = false;
         for (let i = 0; i < next_current_game_idx; i++) {
-          if (current_code == currentGame[i]) {
-            skip_current_code = true; // code replayed so obviously useless
-            break;
-          }
+          // (replayed codes are addressed more generally below through useless codes)
+          // if (current_code == currentGame[i]) {
+          //  skip_current_code = true; // code replayed
+          //  break;
+          // }          
           if (marksIdxs[i] == worst_mark_idx) { // 0 black + 0 white mark => all colors in this code are obviously impossible
             codeHandler.fillMark(current_code, currentGame[i], precalculation_mode_mark);
             if ((precalculation_mode_mark.nbBlacks > 0) || (precalculation_mode_mark.nbWhites > 0)) {
@@ -2215,6 +2216,8 @@ try {
         // (duplicated code from fillMark() for better performances (1/2) - end)
 
         // Determine all possible marks for current code
+
+        // let useless_current_code = false; // (precalculation mode)
         for (idx2 = 0; idx2 < nbCodes; idx2++) {
           other_code = listOfCodes[idx2];
 
@@ -2328,13 +2331,27 @@ try {
             mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
             nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
             nextNbsCodes[mark_perf_tmp_idx]++;
+            /* if (nextNbsCodes[mark_perf_tmp_idx] == nbCodes) { // (precalculation mode)
+              useless_current_code = true;
+              break;
+            } */
           }
           else {
             nextListsOfCodes[best_mark_idx][nextNbsCodes[best_mark_idx]] = other_code;
             nextNbsCodes[best_mark_idx]++;
+            /* if (nextNbsCodes[best_mark_idx] == nbCodes) { // (precalculation mode)
+              useless_current_code = true;
+              break;
+            } */
           }
 
         }
+
+        /* (precalculation mode)
+        // Precalculation optimization (2/2): skip current code if needed
+        if (useless_current_code) {
+          continue; // skip useless current code
+        } */
 
         // Assess current code
         sum = 0.0;
