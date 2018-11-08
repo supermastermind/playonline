@@ -2132,7 +2132,7 @@ try {
           // if (current_code == currentGame[i]) {
           //  skip_current_code = true; // code replayed
           //  break;
-          // }          
+          // }
           if (marksIdxs[i] == worst_mark_idx) { // 0 black + 0 white mark => all colors in this code are obviously impossible
             codeHandler.fillMark(current_code, currentGame[i], precalculation_mode_mark);
             if ((precalculation_mode_mark.nbBlacks > 0) || (precalculation_mode_mark.nbWhites > 0)) {
@@ -2350,6 +2350,9 @@ try {
         /* (precalculation mode)
         // Precalculation optimization (2/2): skip current code if needed
         if (useless_current_code) {
+          if (idx1 < nbCodes) {
+            throw new Error("recursiveEvaluatePerformances: useless_current_code");
+          }
           continue; // skip useless current code
         } */
 
