@@ -2909,7 +2909,7 @@ try {
             initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
             marks_optimization_mask = 0x3FFF;
-            maxDepthForGamePrecalculation = 10; // game precalculation (*)
+            maxDepthForGamePrecalculation = 3; // game precalculation (*)
             break;
           case 5:
             nbMaxMarks = 20;
