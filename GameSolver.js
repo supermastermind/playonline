@@ -126,7 +126,7 @@ try {
   let precalculation_mode_mark = {nbBlacks:0, nbWhites:0};
 
   // ************************************************************************************************************************
-  // Table generated for {4 columns, >= 300 possible codes, max depth = 1, possible & impossible codes listed till depth = 1}
+  // Table generated for {4 columns, >= 400 possible codes}
   // ************************************************************************************************************************
 
   let precalculated_games_4columns =
