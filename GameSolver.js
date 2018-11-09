@@ -2212,8 +2212,6 @@ try {
         // (duplicated code from fillMark() for better performances (1/2) - end)
 
         // Determine all possible marks for current code
-
-        // let useless_current_code = false; // (precalculation mode)
         for (idx2 = 0; idx2 < nbCodes; idx2++) {
           other_code = listOfCodes[idx2];
 
@@ -2327,38 +2325,28 @@ try {
             mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
             nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
             nextNbsCodes[mark_perf_tmp_idx]++;
-            /* if (nextNbsCodes[mark_perf_tmp_idx] == nbCodes) { // (precalculation mode)
-              useless_current_code = true;
-              break;
-            } */
           }
           else {
             nextListsOfCodes[best_mark_idx][nextNbsCodes[best_mark_idx]] = other_code;
             nextNbsCodes[best_mark_idx]++;
-            /* if (nextNbsCodes[best_mark_idx] == nbCodes) { // (precalculation mode)
-              useless_current_code = true;
-              break;
-            } */
           }
 
         }
 
-        /* (precalculation mode)
-        // Precalculation optimization (2/2): skip current code if needed
-        if (useless_current_code) {
-          if (idx1 < nbCodes) {
-            throw new Error("recursiveEvaluatePerformances: useless_current_code");
-          }
-          continue; // skip useless current code
-        } */
-
         // Assess current code
         sum = 0.0;
         sum_marks = 0;
+        // let useless_current_code = false; // (precalculation mode)
         for (mark_idx = nbMaxMarks-1; mark_idx >= 0; mark_idx--) {
           let nextNbCodes = nextNbsCodes[mark_idx];
           // Go through all sets of possible marks
           if (nextNbCodes > 0) {
+
+            /* if (nextNbCodes == nbCodes) { // (precalculation mode)
+              useless_current_code = true;
+              break;
+            } */
+
             sum_marks += nextNbCodes;
             if (mark_idx == best_mark_idx) {
               // sum = sum + 0.0; // 1.0 * 0.0 = 0.0
@@ -2488,6 +2476,14 @@ try {
             }
           }
         }
+        /* (precalculation mode)
+        // Precalculation optimization (2/2): skip current code if needed
+        if (useless_current_code) {
+          if (idx1 < nbCodes) {
+            throw new Error("recursiveEvaluatePerformances: useless_current_code");
+          }
+          continue; // skip useless current code
+        } */
         if (sum_marks != nbCodes) {
           throw new Error("recursiveEvaluatePerformances: invalid sum_marks value (1) (depth=" + depth + ", sum_marks=" + sum_marks + ", sum_marks=" + sum_marks + ")");
         }
