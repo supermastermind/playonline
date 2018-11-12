@@ -2143,7 +2143,7 @@ try {
         }
         let skip_current_code = false;
         for (let i = 0; i < next_current_game_idx; i++) {
-          // (replayed codes are addressed more generally below through useless codes)
+          // (replayed codes are addressed more generally below through useless codes, as all codes equivalent to replayed codes shall be covered to reach an optimization)
           // if (current_code == currentGame[i]) {
           //  skip_current_code = true; // code replayed
           //  break;
@@ -2650,7 +2650,7 @@ try {
           time_elapsed = undefined;
         }
         else {
-          throw new Error("recursiveEvaluatePerformances / internal error (1)");
+          throw new Error("recursiveEvaluatePerformances: internal error (1)");
         }
 
       } // (depth <= 1)
@@ -2663,7 +2663,7 @@ try {
 
     /* if (precalculation_mode) { // (precalculation mode)
       if (!str.endsWith(",")) {
-        throw new Error("recursiveEvaluatePerformances / internal error (2)");
+        throw new Error("recursiveEvaluatePerformances: internal error (2)");
       }
       str = "\"" + str.substring(0, str.length-1) + ".\" +"; // remove last ','
       // console.log(str);
