@@ -575,6 +575,23 @@ try {
       return sum;
     }
 
+    isVerySimple(code) {
+      this.different_colors.fill(0);
+      for (let col = 0; col < this.nbColumns; col++) {
+        let color = this.getColor(code, col+1);
+        this.different_colors[color]++;
+      }
+      for (let color = 0; color <= this.nbColors; color++) {
+        if (this.different_colors[color] == this.nbColumns) {
+          return true; // "111...1" like codes
+        }
+        else if (this.different_colors[color] == this.nbColumns - 1) {
+          return true; // "122...2" like codes
+        }
+      }
+      return false;
+    }
+    
     codeToString(code) {
       let res = "[ ";
       for (let col = 0; col < this.nbColumns; col++) {
