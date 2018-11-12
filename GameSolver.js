@@ -2489,7 +2489,7 @@ try {
               // 3) Recursive call
               // *****************
 
-              sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
+              sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes); // (Note: possibleGame = ((idx1 < nbCodes) && possibleGame))
               if (sum_marks == nbCodes) break;
 
             }
