@@ -2495,9 +2495,9 @@ try {
             }
           }
         }
-        /* (precalculation mode)
+        /*
         // Precalculation optimization (2/2): skip current code if needed
-        if (useless_current_code) {
+        if (useless_current_code) { // (precalculation mode)
           if (idx1 < nbCodes) {
             throw new Error("recursiveEvaluatePerformances: useless_current_code");
           }
