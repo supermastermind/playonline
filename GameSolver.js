@@ -2085,6 +2085,8 @@ try {
     // Note: if some specific rules are applied, they shall be more and more constraining when depth increases
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                                 && (next_current_game_idx <= maxDepthForGamePrecalculation)
+                                && ( (next_current_game_idx < maxDepthForGamePrecalculation)
+                                     || ((next_current_game_idx == 3) && codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1]) && codeHandler.isVerySimple(currentGame[2])) )
                                 && (!compute_sum_ini) ); // not a leaf
     let str; // (precalculation mode)
     if (precalculation_mode) {
