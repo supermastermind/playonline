@@ -115,8 +115,9 @@ try {
   // *************************************************************************
 
   let minNbCodesForPrecalculation = 400;
+  let nbCodesForPrecalculationThreshold = 900;
 
-  let maxDepthForGamePrecalculation = -1;
+  let maxDepthForGamePrecalculation = -1; // (-1 or 3)
   let maxDepthForGamePrecalculation_ForMemAlloc = 10;
   let currentGameForGamePrecalculation = new Array(maxDepthForGamePrecalculation_ForMemAlloc);
   currentGameForGamePrecalculation.fill(0); /* empty code */
@@ -150,10 +151,10 @@ try {
   let separator3Str = ",";
   let nbCodesPrefixStr = "N:";
   let precalculated_mark = {nbBlacks:0, nbWhites:0};
-  function lookForPrecalculatedGame(code_p, current_game_size, nb_possible_codes_p) {
+  function lookForCodeInPrecalculatedGames(code_p, current_game_size, nb_possible_codes_p) {
 
     if (current_game_size > maxDepthForGamePrecalculation) {
-      throw new Error("lookForPrecalculatedGame: invalid game size: " + current_game_size);
+      throw new Error("lookForCodeInPrecalculatedGames: invalid game size: " + current_game_size);
     }
 
     let precalculated_games;
@@ -165,7 +166,7 @@ try {
         precalculated_games = precalculated_games_5columns;
         break;
       default:
-        throw new Error("lookForPrecalculatedGame: invalid nbColumns value: " + nbColumns);
+        throw new Error("lookForCodeInPrecalculatedGames: invalid nbColumns value: " + nbColumns);
     }
 
     let dot_index = 0;
@@ -180,7 +181,7 @@ try {
       let separator_index1 = line_str.indexOf(separatorStr);
       let depth = Number(line_str.substring(0, separator_index1));
       if ((separator_index1 == -1) || isNaN(depth) || (depth < 0) || (depth > maxDepthForGamePrecalculation)) {
-        throw new Error("lookForPrecalculatedGame: invalid depth: " + depth);
+        throw new Error("lookForCodeInPrecalculatedGames: invalid depth: " + depth);
       }
       if (depth != current_game_size) {
         // End of loop processing
@@ -244,18 +245,18 @@ try {
       let separator_index4 = line_str.indexOf(separatorStr, last_separator_index);
       let nb_possible_codes_str = line_str.substring(last_separator_index, separator_index4);
       if ((separator_index4 == -1) || (nb_possible_codes_str.indexOf(nbCodesPrefixStr) != 0)) {
-        throw new Error("lookForPrecalculatedGame: invalid number of possible codes (1): " + nb_possible_codes_str);
+        throw new Error("lookForCodeInPrecalculatedGames: invalid number of possible codes (1): " + nb_possible_codes_str);
       }
       nb_possible_codes_str = nb_possible_codes_str.substring(nbCodesPrefixStr.length);
       let nb_possible_codes = Number(nb_possible_codes_str);
       if (isNaN(nb_possible_codes) || (nb_possible_codes <= 0) || (nb_possible_codes > initialNbPossibleCodes)) {
-        throw new Error("lookForPrecalculatedGame: invalid number of possible codes (2): " + nb_possible_codes_str);
+        throw new Error("lookForCodeInPrecalculatedGames: invalid number of possible codes (2): " + nb_possible_codes_str);
       }
       if (nb_possible_codes <= nbCodesLimitForEquivalentCodesCheck) {
-        throw new Error("lookForPrecalculatedGame: too low number of possible codes: " + nb_possible_codes_str);
+        throw new Error("lookForCodeInPrecalculatedGames: too low number of possible codes: " + nb_possible_codes_str);
       }
       if (nb_possible_codes != nb_possible_codes_p) {
-        throw new Error("lookForPrecalculatedGame: invalid numbers of possible codes: " + nb_possible_codes + ", " + nb_possible_codes_p);
+        throw new Error("lookForCodeInPrecalculatedGames: invalid numbers of possible codes: " + nb_possible_codes + ", " + nb_possible_codes_p);
       }
       // console.log(nb_possible_codes);
 
@@ -266,7 +267,7 @@ try {
       while (true) {
         let middle_of_code_perf_pair_index = line_str.indexOf(separator2Str, last_end_of_code_perf_pair_index);
         if (middle_of_code_perf_pair_index == -1) {
-          throw new Error("lookForPrecalculatedGame: inconsistent code and perf pair: " + line_str);
+          throw new Error("lookForCodeInPrecalculatedGames: inconsistent code and perf pair: " + line_str);
         }
 
         // Precalculated code
@@ -278,13 +279,13 @@ try {
         if (separator_index5 == -1) {
           separator_index5 = line_str.indexOf(dotStr, middle_of_code_perf_pair_index+1);
           if (separator_index5 != last_line_str_index) {
-            throw new Error("lookForPrecalculatedGame: inconsistent end of line: " + separator_index5 + ", " + last_line_str_index);
+            throw new Error("lookForCodeInPrecalculatedGames: inconsistent end of line: " + separator_index5 + ", " + last_line_str_index);
           }
         }
         let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
         let sum = Number("0x" + sum_str); // (hexa number parsing)
         if (isNaN(sum) || (sum <= 0)) {
-          throw new Error("lookForPrecalculatedGame: invalid sum: " + sum_str);
+          throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
         }
         // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
 
@@ -591,7 +592,7 @@ try {
       }
       return false;
     }
-    
+
     codeToString(code) {
       let res = "[ ";
       for (let col = 0; col < this.nbColumns; col++) {
@@ -2061,6 +2062,7 @@ try {
   }
 
   // XXX Further work to do:
+  // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes => memory alloc to do normally, transition precalc -> memory alloc earlier and not in that direction only!
   // - X) No precalculation for all useless codes (idx1 > nbCodes), not only replayed codes, as ignored anyway + test that it works
   // - X) Regenerate precalculation script from this one for all game to dept 2 + skip twice same code(s) + skip code with impossible 0B0W color
   // - X) Forbid twice same code played + impossible (0B0W) color played in GUI with an alert
@@ -2101,13 +2103,13 @@ try {
     // (precalculation mode)
     // Note: if some specific rules are applied, they shall be more and more constraining when depth increases
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
-                                && (next_current_game_idx <= maxDepthForGamePrecalculation)
-                                && ( (next_current_game_idx < maxDepthForGamePrecalculation)
+                                && (next_current_game_idx <= maxDepthForGamePrecalculation) // (-1 or 3)
+                                && ( (next_current_game_idx < maxDepthForGamePrecalculation) // (-1 or 3)
                                      || ((next_current_game_idx == 3) && codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1]) && codeHandler.isVerySimple(currentGame[2])) )
                                 && (!compute_sum_ini) ); // not a leaf
     let str; // (precalculation mode)
     if (precalculation_mode) {
-      str = next_depth + "|" + compressed_str_from_lists_of_codes_and_markidxs(currentGame, marksIdxs, next_current_game_idx) + "|N:" + nbCodes + "|";
+      str = next_current_game_idx + "|" + compressed_str_from_lists_of_codes_and_markidxs(currentGame, marksIdxs, next_current_game_idx) + "|N:" + nbCodes + "|";
       send_trace_msg("-" + str + " is being computed... " + new Date());
     } */
 
@@ -2127,9 +2129,19 @@ try {
     /*
     let nbCodesToGoThrough = nbCodes; // (precalculation mode)
     if (precalculation_mode) { // (precalculation mode)
-      nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
+      if ((next_current_game_idx >= 2) && (nbCodes < nbCodesForPrecalculationThreshold)) {
+        nbCodesToGoThrough = nbCodes; // only possible codes => at most one impossible code will have its performance assessed dynamically
+      }
+      else {
+        nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
+      }
     }
     for (idx1 = 0; idx1 < nbCodesToGoThrough; idx1++) { // (precalculation mode)
+
+      // Split precalculation if needed
+      // if (first_call && (idx1 != 83)) {
+      //  continue;
+      // }
 
       if (idx1 < nbCodes) {
         current_code = listOfCodes[idx1];
@@ -2192,7 +2204,7 @@ try {
 
         precalculated_sum = false;
         if (precalculated_current_game_and_code && compute_sum /* && (!precalculation_mode) */) { // (precalculation mode)
-          sum = lookForPrecalculatedGame(current_code, next_current_game_idx, nbCodes);
+          sum = lookForCodeInPrecalculatedGames(current_code, next_current_game_idx, nbCodes);
           if (sum != -1) { // precalculated sum found
             compute_sum = false;
             precalculated_sum = true;
@@ -2679,7 +2691,7 @@ try {
 
       let particular_precalculated_sum = false;
       if (precalculated_current_game_and_code && (!compute_sum_ini) /* && (!precalculation_mode) */) { // (precalculation mode)
-        sum = lookForPrecalculatedGame(current_code, next_current_game_idx, nbCodes);
+        sum = lookForCodeInPrecalculatedGames(current_code, next_current_game_idx, nbCodes);
         if (sum != -1) { // precalculated sum found
           particular_precalculated_sum = true;
         }
@@ -2914,7 +2926,7 @@ try {
             initialNbClasses = 3; // {111, 112, 123}
             maxDepth = Math.min(11, overallMaxDepth);
             marks_optimization_mask = 0x1FFF;
-            maxDepthForGamePrecalculation = -1; // no game precalculation needed
+            maxDepthForGamePrecalculation = -1; // no game precalculation needed (-1 or 3)
             break;
           case 4:
             nbMaxMarks = 14;
@@ -2924,7 +2936,7 @@ try {
             initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
             marks_optimization_mask = 0x3FFF;
-            maxDepthForGamePrecalculation = 3; // game precalculation (*)
+            maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
             break;
           case 5:
             nbMaxMarks = 20;
@@ -2935,7 +2947,7 @@ try {
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
             marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = -1; // no game precalculation (for the moment) XXX (*)
+            maxDepthForGamePrecalculation = -1; // no game precalculation (for the moment) XXX (-1 or 3) (*)
             break;
           case 6:
             nbMaxMarks = 27;
@@ -2945,7 +2957,7 @@ try {
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
             marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = -1; // no game precalculation (precalculation would be too long to make)
+            maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
             break;
           case 7:
             // ******************************************
@@ -2966,7 +2978,7 @@ try {
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
             marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = -1; // no game precalculation (precalculation would be too long to make)
+            maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
             break;
           default:
             throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
@@ -2975,7 +2987,8 @@ try {
         if (nbOfCodesForSystematicEvaluation > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
           throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation");
         }
-        if (maxDepthForGamePrecalculation > maxDepthForGamePrecalculation_ForMemAlloc) {
+        if ( (maxDepthForGamePrecalculation > maxDepthForGamePrecalculation_ForMemAlloc)
+             || ((maxDepthForGamePrecalculation != -1) && (maxDepthForGamePrecalculation != 3)) ) { // (-1 or 3)
           throw new Error("INIT phase / internal error (maxDepthForGamePrecalculation: " + maxDepthForGamePrecalculation + ")");
         }
         if (minNbCodesForPrecalculation <= nbCodesLimitForEquivalentCodesCheck) {
@@ -3261,8 +3274,8 @@ try {
           let precalculated_current_game_and_code = false;
           // precalculated_current_game_and_code shall keep being false in precalculation mode => below code to comment if needed (precalculation mode)
           if ( (previousNbOfPossibleCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
-               && (currentGameSize <= maxDepthForGamePrecalculation) ) {
-            if (lookForPrecalculatedGame(codesPlayed[currentAttemptNumber-1], currentGameSize, previousNbOfPossibleCodes) != -1) {
+               && (currentGameSize <= maxDepthForGamePrecalculation) ) { // (-1 or 3)
+            if (lookForCodeInPrecalculatedGames(codesPlayed[currentAttemptNumber-1], currentGameSize, previousNbOfPossibleCodes) != -1) {
               precalculated_current_game_and_code = true;
             }
           }
