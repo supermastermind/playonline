@@ -70,7 +70,7 @@ function write_sidebar() {
       + month_and_year_str +
       "</b><br><br>\
       Version 2.0<br>\
-      optimal strategy assessed during whole Master Mind games (4 columns, 6 colors)<br><br>\
+      optimal strategy assessed for all Master Mind games (4 columns, 6 colors)<br><br>\
       Version 1.5<br>\
       optimal strategy assessed at end of games<br><br>\
       Version 1.2<br>\
