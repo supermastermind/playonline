@@ -66,16 +66,16 @@ function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
-      <b>Current version: 1.8<br>"
+      <b>Current version: 2.0<br>"
       + month_and_year_str +
       "</b><br><br>\
+      Version 2.0<br>\
+      optimal strategy assessed during whole Master Mind games (4 columns, 6 colors)<br><br>\
       Version 1.5<br>\
-      optimal strategy optimizations<br><br>\
-      Version 1.0<br>\
       optimal strategy assessed at end of games<br><br>\
-      Version 0.7<br>\
+      Version 1.2<br>\
       possible codes at each attempt can be displayed<br><br>\
-      Version 0.6<br>\
+      Version 1.0<br>\
       online game scores<br><br>\
       Version 0.5<br>\
       basic gameplay<br>\
