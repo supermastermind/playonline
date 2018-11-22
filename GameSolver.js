@@ -115,7 +115,7 @@ try {
   // *************************************************************************
 
   let minNbCodesForPrecalculation = 400;
-  let nbCodesForPrecalculationThreshold = 900;
+  let nbCodesForPrecalculationThreshold = Math.max(baseOfNbOfCodesForSystematicEvaluation, minNbCodesForPrecalculation); // (shall be in [minNbCodesForPrecalculation, baseOfNbOfCodesForSystematicEvaluation])
 
   let maxDepthForGamePrecalculation = -1; // (-1 or 3)
   let maxDepthForGamePrecalculation_ForMemAlloc = 10;
@@ -2105,12 +2105,14 @@ try {
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                                 && (next_current_game_idx <= maxDepthForGamePrecalculation) // (-1 or 3)
                                 && ( (next_current_game_idx < maxDepthForGamePrecalculation) // (-1 or 3)
-                                     || ((next_current_game_idx == 3) && codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1]) && codeHandler.isVerySimple(currentGame[2])) )
+                                     || ((next_current_game_idx == 3) && codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1]) && codeHandler.isVerySimple(currentGame[2])) /* (***) */ )
                                 && (!compute_sum_ini) ); // not a leaf
     let str; // (precalculation mode)
+    let precalculation_start_time; // (precalculation mode)
     if (precalculation_mode) {
       str = next_current_game_idx + "|" + compressed_str_from_lists_of_codes_and_markidxs(currentGame, marksIdxs, next_current_game_idx) + "|N:" + nbCodes + "|";
       send_trace_msg("-" + str + " is being computed... " + new Date());
+      precalculation_start_time = new Date().getTime();
     } */
 
     // Initializations
@@ -2129,12 +2131,7 @@ try {
     /*
     let nbCodesToGoThrough = nbCodes; // (precalculation mode)
     if (precalculation_mode) { // (precalculation mode)
-      if ((next_current_game_idx >= 2) && (nbCodes < nbCodesForPrecalculationThreshold)) {
-        nbCodesToGoThrough = nbCodes; // only possible codes => at most one impossible code will have its performance assessed dynamically
-      }
-      else {
-        nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
-      }
+      nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
     }
     for (idx1 = 0; idx1 < nbCodesToGoThrough; idx1++) { // (precalculation mode)
 
@@ -2149,7 +2146,7 @@ try {
       else {
         current_code = initialCodeListForPrecalculatedMode[idx1 - nbCodes]; // (precalculation mode) / add also impossible codes
 
-        // Precalculation optimization (1/2): skip current code if needed
+        // Precalculation optimization (1/3): skip current code if needed
         if (!precalculation_mode) {
           throw new Error("recursiveEvaluatePerformances: precalculation_mode error");
         }
@@ -2166,6 +2163,17 @@ try {
               skip_current_code = true; // obviously impossible color played
               break;
             }
+          }
+        }
+        // Precalculation optimization (2/3): skip impossible codes if acceptable
+        if ((next_current_game_idx >= 2) && (nbCodes <= nbCodesForPrecalculationThreshold)) {
+          if (next_current_game_idx == 2) {
+            if (!(codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1]) && codeHandler.isVerySimple(current_code))) /* (***) */ {
+              skip_current_code = true;
+            }
+          }
+          else {
+            skip_current_code = true;
           }
         }
         if (skip_current_code) {
@@ -2508,7 +2516,7 @@ try {
           }
         }
         /*
-        // Precalculation optimization (2/2): skip current code if needed
+        // Precalculation optimization (3/3): skip current code if needed
         if (useless_current_code) { // (precalculation mode)
           if (idx1 < nbCodes) {
             throw new Error("recursiveEvaluatePerformances: useless_current_code");
@@ -2679,7 +2687,13 @@ try {
       }
       str = "\"" + str.substring(0, str.length-1) + ".\" +"; // remove last ','
       // console.log(str);
-      send_trace_msg(str);
+      let precalculation_time = new Date().getTime() - precalculation_start_time;
+      if (precalculation_time >= 3500) { // 3500 = 3.5 seconds on i5 processor or on Linux VB running on i7 processor
+        send_trace_msg(str);
+      }
+      else {
+        send_trace_msg("skipped (" + precalculation_time + "ms)");
+      }
     } */
 
     // Evaluate performance of impossible code if needed
@@ -2941,7 +2955,7 @@ try {
           case 5:
             nbMaxMarks = 20;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*50/30;
-            nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation = Math.min(baseOfNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
             nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             // => nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // no game precalculation (for the moment) XXX (*)
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
@@ -2952,7 +2966,7 @@ try {
           case 6:
             nbMaxMarks = 27;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*65/30;
-            nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation = Math.min(baseOfNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
             nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
@@ -2973,7 +2987,7 @@ try {
             // ******************************************
             nbMaxMarks = 35;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*75/30;
-            nbOfCodesForSystematicEvaluation = Math.min(Math.ceil(baseOfNbOfCodesForSystematicEvaluation*100/100), initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation = Math.min(baseOfNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
             nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
