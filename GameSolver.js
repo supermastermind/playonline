@@ -2063,6 +2063,7 @@ try {
 
   // XXX Further work to do:
   // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes => memory alloc to do normally, transition precalc -> memory alloc earlier and not in that direction only!
+  // - X) No precalculation for all useless codes (idx1 > nbCodes), not only replayed codes, as ignored anyway + test that it works
   // - X) Regenerate precalculation script from this one for all game to dept 2 + skip twice same code(s) + skip code with impossible 0B0W color
   // - X) Forbid twice same code played + impossible (0B0W) color played in GUI with an alert
   // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible & useless & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
