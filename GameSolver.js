@@ -139,7 +139,7 @@ try {
   // Table generated for {5 columns, >= XXX possible codes, max depth = X, possible & impossible codes listed till depth = Y}
   // ************************************************************************************************************************
 
-  let precalculated_games_5columns = "";
+  let precalculated_games_5columns = "0||N:32768|11111:28B03,11112:25A19,11122:24BF0,11123:24501,11223:23ED9,11234:23F55,12345:244BA.";
 
   // ***************************
   // Look for precalculated game
@@ -562,16 +562,14 @@ try {
     }
 
     nbDifferentColors(code) {
+      let sum = 0;
       this.different_colors.fill(0);
       for (let col = 0; col < this.nbColumns; col++) {
         let color = this.getColor(code, col+1);
         if (this.different_colors[color] == 0) {
           this.different_colors[color] = 1;
+          sum = sum + 1;
         }
-      }
-      let sum = 0;
-      for (let color = 0; color <= this.nbColors; color++) {
-        sum = sum + this.different_colors[color];
       }
       return sum;
     }
@@ -1713,6 +1711,8 @@ try {
 
   let code_colors = new Array(nbMaxColumns);
   let other_code_colors = new Array(nbMaxColumns);
+  let different_colors_1 = new Array(nbMaxColors+1);
+  let different_colors_2 = new Array(nbMaxColors+1);
   let current_game_code_colors = new2DArray(overallNbMaxAttempts+overallMaxDepth, nbMaxColumns); // first dimension shall be >= currentGame size
   let other_game_code_colors = new2DArray(overallNbMaxAttempts+overallMaxDepth, nbMaxColumns); // first dimension shall be >= currentGame size
   let permuted_other_code_colors = new Array(nbMaxColumns);
@@ -1737,6 +1737,7 @@ try {
 
     // 2 codes colors
     if (!assess_current_game_only) {
+
       // (duplicated code from getColor() for better performances - begin)
       code_colors[0] = (code & 0x0000000F);
       code_colors[1] = ((code >> 4) & 0x0000000F);
@@ -1754,6 +1755,42 @@ try {
       other_code_colors[5] = ((other_code >> 20) & 0x0000000F);
       other_code_colors[6] = ((other_code >> 24) & 0x0000000F);
       // (duplicated code from getColor() for better performances - end)
+
+      // Optimization
+      // ************
+
+      // (duplicated code from nbDifferentColors() for better performances - begin)
+      let sum_1 = 0;
+      let sum_2 = 0;
+      different_colors_1.fill(0);
+      different_colors_2.fill(0);
+      for (col = 0; col < nbColumns; col++) {
+        let color_1 = code_colors[col];
+        let color_2 = other_code_colors[col];
+        if (different_colors_1[color_1] == 0) {
+          different_colors_1[color_1] = 1;
+          sum_1 = sum_1 + 1;
+        }
+        if (different_colors_2[color_2] == 0) {
+          different_colors_2[color_2] = 1;
+          sum_2 = sum_2 + 1;
+        }
+      }
+      // (duplicated code from nbDifferentColors() for better performances - end)
+      if (sum_1 == sum_2) {
+        if (current_game_size == 0) {
+          if (sum_1 == nbColumns-1) {
+            return true; // 1 double and N-2 other different colors - at least one bijection exists between the 2 games
+          }
+          if (sum_1 == nbColumns) {
+            return true; // N different colors - at least one bijection exists between the 2 games
+          }
+        }
+      }
+      else {
+        return false; // no bijection exists between the 2 games
+      }
+
     }
 
     // Game(s) colors
@@ -2063,8 +2100,7 @@ try {
 
   // XXX Further work to do:
   // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes => memory alloc to do normally, transition precalc -> memory alloc earlier and not in that direction only!
-  // - X) Test not-precalculated because of useless code
-  // - X) Regenerate precalculation script from this one for all game to dept 2 + skip twice same code(s) + skip code with impossible 0B0W color
+  // - X) "precalculated_current_game_and_code" => "game_precalculated"
   // - X) Forbid twice same code played + impossible (0B0W) color played in GUI with an alert
   // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible & useless & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
   // - X) Precalculated table split in several javascript modules to decrease size loaded?
@@ -2130,10 +2166,10 @@ try {
 
     /*
     let nbCodesToGoThrough = nbCodes; // (precalculation mode)
-    if (precalculation_mode) { // (precalculation mode)        
+    if (precalculation_mode) { // (precalculation mode)
       nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
     }
-     
+
     for (idx1 = 0; idx1 < nbCodesToGoThrough; idx1++) { // (precalculation mode)
 
       // Split precalculation if needed
@@ -2937,7 +2973,7 @@ try {
             nbMaxMarks = 9;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*10/30; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes;
             initialNbClasses = 3; // {111, 112, 123}
             maxDepth = Math.min(11, overallMaxDepth);
             marks_optimization_mask = 0x1FFF;
@@ -2947,7 +2983,7 @@ try {
             nbMaxMarks = 14;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*20/30; // (short games)
             nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation; // game precalculation but same sizes are acceptable (*)
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
             initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
             maxDepth = Math.min(12, overallMaxDepth);
             marks_optimization_mask = 0x3FFF;
@@ -2957,12 +2993,11 @@ try {
             nbMaxMarks = 20;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*50/30;
             nbOfCodesForSystematicEvaluation = Math.min(baseOfNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
-            // => nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // no game precalculation (for the moment) XXX (*)
+            nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
             marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = -1; // no game precalculation (for the moment) XXX (-1 or 3) (*)
+            maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
             break;
           case 6:
             nbMaxMarks = 27;
