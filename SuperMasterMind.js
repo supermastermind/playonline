@@ -3624,7 +3624,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
                   lightGray, backgroundColor, ctx);
   }
 
-  if (ideaFlag && (tick_width > 0)) {
+  if (ideaFlag && (tick_width > 0) && (!globalPerfDisplayIfOptimal)) {
     displayString("\uD83D\uDCA1", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell, tick_width, // idea/bulb
                   darkGray, backgroundColor, ctx);
   }
