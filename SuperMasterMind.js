@@ -1677,7 +1677,7 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globa
     let code = possibleCodesList_p[i];
     let global_perf = globalPerformancesList_p[i];
     if (!simpleCodeHandler.isFullAndValid(code)) {
-      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + code + ") (4)", new Error().stack);
+      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + i + ", " + code + ") (4)", new Error().stack);
       return false;
     }
    if ( ((global_perf <= 0.01) && (global_perf != PerformanceUNKNOWN))
@@ -3065,7 +3065,7 @@ function draw_graphic_bis() {
           }
           ctx.font = stats_font;
           let backgroundColor = backgroundColor_2;
-          displayPerf(relative_perf, y_cell, backgroundColor, global_perf, true, valid_best_global_perf && (currentPossibleCodeShown <= 2), best_global_perf, ctx, (code == codesPlayed[currentPossibleCodeShown-1]));
+          displayPerf(relative_perf, y_cell, backgroundColor, global_perf, true, valid_best_global_perf && (currentPossibleCodeShown <= 1), best_global_perf, ctx, (code == codesPlayed[currentPossibleCodeShown-1]));
 
         }
 
@@ -3513,9 +3513,11 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
 
   let x_cell;
   let cell_width;
+  let extra_x_space = 0;
   if (optimal_width > 0) {
     x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width;
     cell_width = optimal_width;
+    extra_x_space = 0.75*tick_width;
   }
   else { /* (nb of possible codes <-> perf switch) */
     x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2;
@@ -3590,19 +3592,19 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
         starStr = "\u2B50\u2009"; // star
       }
       if ( (!globalPerfDisplayIfOptimal)
-           || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(2).replaceAll(",","."), x_cell, y_cell, cell_width,
+           || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(2).replaceAll(",","."), x_cell-extra_x_space, y_cell, cell_width+2*extra_x_space,
                               lightGray, backgroundColor, ctx, true, 0, true, 0)) ) {
-          if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
+        if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
+                           lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+          if (!displayString("\u2009" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-            if (!displayString("\u2009" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+            if (!displayString("\u2009" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                                lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-              if (!displayString("\u2009" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
-                                 lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-                displayString(starStr + performance.toFixed(0).replaceAll(",",".") /* star0 */, x_cell, y_cell, cell_width,
-                              lightGray, backgroundColor, ctx);
-              }
+              displayString(starStr + performance.toFixed(0).replaceAll(",",".") /* star0 */, x_cell, y_cell, cell_width,
+                            lightGray, backgroundColor, ctx);
             }
           }
+        }
       }
     }
     else { // > 0.00: an illogical code can be better than the optimal logical code(s)
