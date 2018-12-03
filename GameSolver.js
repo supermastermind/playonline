@@ -96,7 +96,7 @@ try {
 
   let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
   let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
-  let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in SuperMasterMind.js)
+  let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare cases - duplicated in SuperMasterMind.js)
   let PerformanceMaxValidValue = +0.90; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in SuperMasterMind.js)
 
   let initialInitDone = false;
@@ -3470,7 +3470,7 @@ try {
                 if ( (global_performance == PerformanceNA) || (global_performance == PerformanceUNKNOWN) || (global_performance <= 0.01) ) {
                   throw new Error("invalid global performance in listOfGlobalPerformances (1): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
                 }
-                if ((best_global_performance - global_performance <= -0.9999) || (best_global_performance - global_performance >= +0.0001) ) {
+                if ( (best_global_performance - global_performance < (PerformanceMinValidValue-1)/2) || (best_global_performance - global_performance >= +0.0001) ) {
                   throw new Error("invalid global performance in listOfGlobalPerformances (2): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
                 }
               }
