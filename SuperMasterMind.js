@@ -335,8 +335,15 @@ function displayGUIError(GUIErrorStr, errStack) {
 
 }
 
-window.onerror = displayGUIError;
-window.onmessageerror = displayGUIError;
+function displayGUIError__windowonerror(GUIErrorStr, errStack) {
+  displayGUIError("window error: " + GUIErrorStr, errStack);
+}
+function displayGUIError__windowonmessageerror(GUIErrorStr, errStack) {
+  displayGUIError("window MESSAGE error: " + GUIErrorStr, errStack);
+}
+
+window.onerror = displayGUIError__windowonerror;
+window.onmessageerror = displayGUIError__windowonmessageerror;
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
