@@ -2101,7 +2101,7 @@ try {
   // XXX Further work to do:
   // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes => memory alloc to do normally, transition precalc -> memory alloc earlier and not in that direction only!
   // - X) "precalculated_current_game_and_code" => "game_precalculated"
-  // - X) Forbid twice same code played + impossible (0B0W) color played in GUI with an alert
+  // - X) LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
   // - X) test strictly positive precalculated perf
   // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible & useless & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
   // - X) Precalculated table split in several javascript modules to decrease size loaded?

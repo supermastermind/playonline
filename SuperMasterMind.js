@@ -56,6 +56,7 @@ let nbOfPossibleCodes;
 let colorsFoundCodes;
 let minNbColorsTables;
 let maxNbColorsTables;
+let obviouslyImpossibleColors;
 let relative_performances_of_codes_played;
 let global_best_performances;
 let relativePerformancesEvaluationDone;
@@ -471,6 +472,12 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
   }
 
   createRandomCode(codeRevealed = 0 /* (empty code) */) {
+    let nbObviouslyImpossibleColors = 0;
+    for (let color = 1; color < this.nbColors+1; color++) {
+      if (obviouslyImpossibleColors[color]) {
+        nbObviouslyImpossibleColors++;
+      }
+    }
     let code = 0;
     for (let col = 0; col < this.nbColumns; col++) {
       let colorRevealed = this.getColor(codeRevealed, col+1);
@@ -479,7 +486,30 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
         code = this.setColor(code, colorRevealed, col+1);
       }
       else {
-        code = this.setColor(code, Math.floor((Math.random() * this.nbColors) + 1), col+1);
+        let color_idx = Math.floor(Math.random() * (this.nbColors - nbObviouslyImpossibleColors) + 1); // in 1 .. nb possible colors
+        let selected_color = -1;
+        let color_cnt = 1;
+        let possiblecolor_cnt = 0;
+        while (true) { // look for the color_idx th possible color
+          if (!obviouslyImpossibleColors[color_cnt]) {
+            possiblecolor_cnt++;
+            if (possiblecolor_cnt == color_idx) {
+              selected_color = color_cnt;
+              break;
+            }
+          }
+          color_cnt++;
+          if (color_cnt > this.nbColors) {
+            throw new Error("SimpleCodeHandler: createRandomCode (1) (" + codeRevealed + ")");
+          }
+        }
+        if (selected_color == -1) {
+          throw new Error("SimpleCodeHandler: createRandomCode (2) (" + codeRevealed + ")");
+        }
+        if ((nbObviouslyImpossibleColors == 0) && (selected_color != color_idx)) {
+          throw new Error("SimpleCodeHandler: createRandomCode (3) (" + codeRevealed + ")");
+        }
+        code = this.setColor(code, selected_color, col+1);
       }
     }
     for (let col = this.nbColumns+1; col <= this.nbMaxColumns; col++) {
@@ -1184,6 +1214,10 @@ function mouseMove(e) {
 
 function playAColor(color, column) {
   if (gameOnGoing()) {
+    if ((color != emptyColor) && obviouslyImpossibleColors[color]) {
+      alert("Color #" + color + " is obviously impossible!");
+      return;
+    }
     currentCode = simpleCodeHandler.setColor(currentCode, color, column);
     draw_graphic(false);
   }
@@ -1409,6 +1443,10 @@ function resetGameAttributes(nbColumnsSelected) {
   for (i = 0; i < nbMaxAttempts; i++) {
     maxNbColorsTables[i] = new Array(nbColors+1);
   }
+  obviouslyImpossibleColors = new Array(nbColors+1);
+  for (i = 0; i < nbColors+1; i++) {
+    obviouslyImpossibleColors[i] = false;
+  }
   relative_performances_of_codes_played = new Array(nbMaxAttempts);
   global_best_performances = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
@@ -1446,7 +1484,7 @@ function resetGameAttributes(nbColumnsSelected) {
 
   sCode = ~(simpleCodeHandler.createRandomCode());
   /* XXX
-  let toto = simpleCodeHandler.createRandomCode(sCodeRevealed);
+  let toto = simpleCodeHandler.createRandomCode();
   toto = simpleCodeHandler.setColor(toto, 4, 1);
   toto = simpleCodeHandler.setColor(toto, 4, 2);
   toto = simpleCodeHandler.setColor(toto, 4, 3);
@@ -1513,10 +1551,11 @@ function checkArraySizes() {
   for (let i = 0; i < nbMaxAttempts; i++) {
     if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected (6)", new Error().stack);}
   }
-  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (7)", new Error().stack);}
+  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (7a)", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (8)", new Error().stack);}
+    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (7b)", new Error().stack);}
   }
+  if (obviouslyImpossibleColors.length > nbColors+1){displayGUIError("array is wider than expected (8)", new Error().stack);}
   if (relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (9)", new Error().stack);}
   if (global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (10)", new Error().stack);}
   if (relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)", new Error().stack);}
@@ -2094,6 +2133,11 @@ function draw_graphic_bis() {
           throw new Error("inconsistent code (" + sCodeConv + ")");
         }
         simpleCodeHandler.fillMark(sCodeConv, currentCode, marks[currentAttemptNumber-1]);
+        if ((marks[currentAttemptNumber-1].nbBlacks == 0) && (marks[currentAttemptNumber-1].nbWhites == 0)) { // worst mark
+          for (let col = 0; col < nbColumns; col++) {
+            obviouslyImpossibleColors[simpleCodeHandler.getColor(currentCode, col+1)] = true;
+          }
+        }
         if (marks[currentAttemptNumber-1].nbBlacks == nbColumns) { // game over (game won)
           stopTime = (new Date()).getTime(); // time in milliseconds
           currentAttemptNumber++;
