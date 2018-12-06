@@ -1215,10 +1215,17 @@ function mouseMove(e) {
 function playAColor(color, column) {
   if (gameOnGoing()) {
     if ((color != emptyColor) && obviouslyImpossibleColors[color]) {
-      alert("Color #" + color + " is obviously impossible!");
+      alert("This color is obviously impossible!");
       return;
     }
-    currentCode = simpleCodeHandler.setColor(currentCode, color, column);
+    let newCurrentCode = simpleCodeHandler.setColor(currentCode, color, column);
+    for (let i = 1; i < currentAttemptNumber; i++) {
+      if (newCurrentCode == codesPlayed[i-1]) {
+        alert("This code was already played!");
+        return;
+      }
+    }
+    currentCode = newCurrentCode;
     draw_graphic(false);
   }
 }
