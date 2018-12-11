@@ -191,7 +191,7 @@
       try {
         eval('"use strict"; class foo {}; let test_let_inst = 1;'); // Interner Explorer does not support classes and old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1)
       } catch (err) {
-        alert("Your browser cannot run this game.\nThis game can be run in the last versions of Chrome, Firefox and Safari (v10 or above): update your browser version if necessary.\nThis game cannot be run in Internet Explorer.");
+        alert("Your browser cannot run this game.\nThis game can be run in the last versions of Chrome, Firefox, Safari and Edge: update your browser version if necessary.");
       }
       if (typeof(Worker) == "undefined") {
         alert("Your browser cannot run this game because it does not support Web workers: update your browser version if necessary.");
