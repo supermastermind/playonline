@@ -1007,26 +1007,17 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
     }
     else {
       nbPossibleCodesShown = Math.max(nbMinPossibleCodesShown, Math.min(nbMaxPossibleCodesShown/2 /* (half display) */, 20 + (nbMaxAttempts+1 - currentAttemptNumber)));
-      let interesting_attempt_idx = 0;
-      let cnt = 0;
-      if (!gameWon) {
-        cnt = 1;
-      }
-      let previous_nb = -1;
-      for (let i = currentAttemptNumber-2; i >= 0; i--) {
-        if ((nbOfPossibleCodes[i] > 1) && (relative_performances_of_codes_played[i] != -1.00) /* not a useless code (simplified test) */) {
-          interesting_attempt_idx = i;
-          cnt++;
-          if (nbOfPossibleCodes[i] >= 3)  {
-            break;
-          }
-          if ((cnt > 1) && (nbOfPossibleCodes[i] != previous_nb)) {
-            break;
-          }
-          previous_nb = nbOfPossibleCodes[i];
-        }
-      }
       if (newPossibleCodeShown == -1) {
+        let interesting_attempt_idx = 0;
+        for (let i = currentAttemptNumber-2; i >= 0; i--) {
+          if ( (nbOfPossibleCodes[i] >= 2)
+               && (relative_performances_of_codes_played[i] != -1.00) /* not a useless code (simplified test) */
+               && ((nbOfPossibleCodes[i] >= 4) || (relative_performances_of_codes_played[i] <= -0.12))
+             ) {
+            interesting_attempt_idx = i;
+            break;
+          }
+        }
         currentPossibleCodeShown = interesting_attempt_idx+1;
       }
       else {
