@@ -64,10 +64,10 @@ try {
   // Performance-related variables
   // *****************************
 
-  let baseOfMaxPerformanceEvaluationTime = 30000; // 30 seconds
+  let baseOfMaxPerformanceEvaluationTime = 30000; // 30 seconds / much higher in (precalculation mode)
   let maxPerformanceEvaluationTime = -1;
 
-  let baseOfNbOfCodesForSystematicEvaluation = 1300; // (high values may induce latencies)
+  let refNbOfCodesForSystematicEvaluation = 1300; // (high values may induce latencies)
   let nbOfCodesForSystematicEvaluation = -1;
   let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
 
@@ -114,8 +114,8 @@ try {
   // *************************************************************************
   // *************************************************************************
 
-  let minNbCodesForPrecalculation = 400;
-  let nbCodesForPrecalculationThreshold = Math.max(baseOfNbOfCodesForSystematicEvaluation, minNbCodesForPrecalculation); // (shall be in [minNbCodesForPrecalculation, baseOfNbOfCodesForSystematicEvaluation])
+  let minNbCodesForPrecalculation = 300;
+  let nbCodesForPrecalculationThreshold = Math.max(refNbOfCodesForSystematicEvaluation, minNbCodesForPrecalculation); // (shall be in [minNbCodesForPrecalculation, refNbOfCodesForSystematicEvaluation])
 
   let maxDepthForGamePrecalculation = -1; // (-1 or 3)
   let maxDepthForGamePrecalculation_ForMemAlloc = 10;
@@ -127,7 +127,7 @@ try {
   let precalculation_mode_mark = {nbBlacks:0, nbWhites:0};
 
   // ************************************************************************************************************************
-  // Table generated for {4 columns, >= 400 possible codes}
+  // Table generated for {4 columns, >= 400 possible codes} XXX to be regenerated for 300 codes
   // ************************************************************************************************************************
 
   let precalculated_games_4columns =
@@ -2077,7 +2077,7 @@ try {
       // ***************
 
       particularCodeToAssess = particularCode;
-      res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes);
+      res = recursiveEvaluatePerformances(depth, listOfCodes, nbCodes /*,  true (precalculation mode) */);
 
       if (recursiveEvaluatePerformancesWasAborted) {
         for (idx = 0; idx < nbCodes; idx++) {
@@ -2099,6 +2099,7 @@ try {
   }
 
   // XXX Further work to do:
+  // - X) Regenerate 4col tables for 300 codes
   // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes => memory alloc to do normally, transition precalc -> memory alloc earlier and not in that direction only!
   // - X) "precalculated_current_game_and_code" => "game_precalculated"
   // - X) LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
@@ -2110,7 +2111,7 @@ try {
   // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
   // - X) XXX Appli Android?
   // - X) XXX If still some sporadic undefined GameSolver errors, remaining tracks: 1) good solution? thread code in same .js file is possible (only one .js file loaded) - still error in local Chrome execution? / or cumulated with module importation https://stackoverflow.com/questions/950087/how-do-i-include-a-javascript-file-in-another-javascript-file 2) pb when loading the .js worker file? (cf. img - can occur at very first creation as seen!) => unavoidable except by retry (if not alive yet) 3) Wait a bit before sending first message, the time the worker is fully operational?
-  function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes) {
+  function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes /*, possibleGame (precalculation mode) */) {
 
     let first_call = (depth == -1);
     let next_depth = depth+1;
@@ -2138,15 +2139,16 @@ try {
 
     /*
     // (precalculation mode)
-    // Note: if some specific rules are applied, they shall be more and more constraining when depth increases
+    // Note: rules shall be more and more constraining when depth increases
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                                 && (next_current_game_idx <= maxDepthForGamePrecalculation) // (-1 or 3)
-                                && ( (next_current_game_idx < maxDepthForGamePrecalculation) // (-1 or 3)
-                                     || ((next_current_game_idx == 3) && codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1]) && codeHandler.isVerySimple(currentGame[2])) ) // (***)
+                                && ( (next_current_game_idx <= 1)
+                                     || ((next_current_game_idx == 2) && (possibleGame || (codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1])) || (nbCodes <= nbCodesForPrecalculationThreshold)))
+                                     || ((next_current_game_idx == 3) && possibleGame && (codeHandler.nbDifferentColors(currentGame[0]) <= 2) && (codeHandler.nbDifferentColors(currentGame[1]) <= 2) && (codeHandler.nbDifferentColors(currentGame[2]) <= 2)) )
                                 && (!compute_sum_ini) ); // not a leaf
     let str; // (precalculation mode)
     let precalculation_start_time; // (precalculation mode)
-    if (precalculation_mode) {
+    if (precalculation_mode) { // (precalculation mode)
       str = next_current_game_idx + "|" + compressed_str_from_lists_of_codes_and_markidxs(currentGame, marksIdxs, next_current_game_idx) + "|N:" + nbCodes + "|";
       send_trace_msg("-" + str + " is being computed... " + new Date());
       precalculation_start_time = new Date().getTime();
@@ -2170,7 +2172,6 @@ try {
     if (precalculation_mode) { // (precalculation mode)
       nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
     }
-
     for (idx1 = 0; idx1 < nbCodesToGoThrough; idx1++) { // (precalculation mode)
 
       // Split precalculation if needed
@@ -2205,19 +2206,11 @@ try {
         }
         // Precalculation optimization (2/3): skip impossible codes if acceptable
         if ((next_current_game_idx >= 2) && (nbCodes <= nbCodesForPrecalculationThreshold)) {
-          if (next_current_game_idx == 2) {
-            if (!(codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1]) && codeHandler.isVerySimple(current_code))) { // (***)
-              skip_current_code = true;
-            }
-          }
-          else {
-            skip_current_code = true;
-          }
+          skip_current_code = true;
         }
         if (skip_current_code) {
           continue; // skip current code
         }
-
       }
     */
     for (idx1 = 0; idx1 < nbCodes; idx1++) {
@@ -2547,7 +2540,7 @@ try {
               // 3) Recursive call
               // *****************
 
-              sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes); // (Note: possibleGame = ((idx1 < nbCodes) && possibleGame))
+              sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes /*, ((idx1 < nbCodes) && possibleGame) (precalculation mode) */); // (Note: possibleGame = ((idx1 < nbCodes) && possibleGame))
               if (sum_marks == nbCodes) break;
 
             }
@@ -2823,7 +2816,7 @@ try {
               // 3) Recursive call
               // *****************
 
-              sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes);
+              sum = sum + nextNbCodes * recursiveEvaluatePerformances(next_depth, nextListsOfCodes[mark_idx], nextNbCodes /*, false (precalculation mode) */);
 
             }
           }
@@ -3000,7 +2993,7 @@ try {
           case 5:
             nbMaxMarks = 20;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*55/30;
-            nbOfCodesForSystematicEvaluation = Math.min(baseOfNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
             nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
             initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
             maxDepth = Math.min(13, overallMaxDepth);
@@ -3010,7 +3003,7 @@ try {
           case 6:
             nbMaxMarks = 27;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*67/30;
-            nbOfCodesForSystematicEvaluation = Math.min(baseOfNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
             nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
             maxDepth = Math.min(14, overallMaxDepth);
@@ -3031,7 +3024,7 @@ try {
             // ******************************************
             nbMaxMarks = 35;
             maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*80/30;
-            nbOfCodesForSystematicEvaluation = Math.min(baseOfNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+            nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
             nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
             initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
             maxDepth = Math.min(15, overallMaxDepth);
