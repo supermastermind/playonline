@@ -1012,7 +1012,7 @@ function showPossibleCodesButtonClick(invertMode = true, newPossibleCodeShown = 
         for (let i = currentAttemptNumber-2; i >= 0; i--) {
           if ( (nbOfPossibleCodes[i] >= 2)
                && (relative_performances_of_codes_played[i] != -1.00) /* not a useless code (simplified test) */
-               && ((nbOfPossibleCodes[i] >= 5) || (relative_performances_of_codes_played[i] <= -0.12))
+               && ((nbOfPossibleCodes[i] >= 5) || (relative_performances_of_codes_played[i] <= PerformanceLOW/2))
              ) {
             interesting_attempt_idx = i;
             break;
