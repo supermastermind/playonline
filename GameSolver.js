@@ -126,20 +126,21 @@ try {
 
   let precalculation_mode_mark = {nbBlacks:0, nbWhites:0};
 
-  // ************************************************************************************************************************
-  // Table generated for {4 columns, >= 400 possible codes} XXX to be regenerated for 300 codes
-  // ************************************************************************************************************************
+  // **************************************************************************************************************
+  // Precalculated table for 4 columns
+  // for minNbCodesForPrecalculation = 300, nbOfCodesForSystematicEvaluation = 1300, precalculation_time >= 3.5 sec
+  // **************************************************************************************************************
 
   let precalculated_games_4columns =
-    "1|1111:1B0W|N:500|1222:654,1223:5C4,1234:5E2,1112:696,1122:642,1123:5F9,2222:6F9,2223:61E,2233:5E5,2234:5D7,2345:60C." +
-    "1|1111:0B0W|N:625|2222:892,2223:78C,2233:753,2234:73B,2345:78C." +
     "0||N:1296|1111:13C7,1112:11C8,1122:1168,1123:110C,1234:115F.";
 
-  // ************************************************************************************************************************
-  // Table generated for {5 columns, >= XXX possible codes, max depth = X, possible & impossible codes listed till depth = Y}
-  // ************************************************************************************************************************
+  // **************************************************************************************************************
+  // Precalculated table for 5 columns
+  // XXX
+  // **************************************************************************************************************
 
-  let precalculated_games_5columns = "0||N:32768|11111:28B03,11112:25A19,11122:24BF0,11123:24501,11223:23ED9,11234:23F55,12345:244BA.";
+  let precalculated_games_5columns =
+    "0||N:32768|11111:28B03,11112:25A19,11122:24BF0,11123:24501,11223:23ED9,11234:23F55,12345:244BA.";
 
   // ***************************
   // Look for precalculated game
@@ -3112,7 +3113,7 @@ try {
         }
         possibleCodesForPerfEvaluation_lastIndexWritten = 1;
 
-        /* if (1296 != fillShortInitialPossibleCodesTable(initialCodeListForPrecalculatedMode, nbOfCodesForSystematicEvaluation_ForMemAlloc)) { // (precalculation mode)
+        /* if (8*8*8*8*8 != fillShortInitialPossibleCodesTable(initialCodeListForPrecalculatedMode, nbOfCodesForSystematicEvaluation_ForMemAlloc)) { // (precalculation mode)
           throw new Error("INIT phase / internal error");
         } */
 
