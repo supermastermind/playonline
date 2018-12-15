@@ -126,18 +126,17 @@ try {
 
   let precalculation_mode_mark = {nbBlacks:0, nbWhites:0};
 
-  // **************************************************************************************************************
+  // ***************************************************************************************************************
   // Precalculated table for 4 columns
-  // for minNbCodesForPrecalculation = 300, nbOfCodesForSystematicEvaluation = 1300, precalculation_time >= 3.5 sec
-  // **************************************************************************************************************
+  // for minNbCodesForPrecalculation = 300, nbCodesForPrecalculationThreshold = 1300, precalculation_time >= 3.5 sec
+  // ***************************************************************************************************************
 
   let precalculated_games_4columns =
     "0||N:1296|1111:13C7,1112:11C8,1122:1168,1123:110C,1234:115F.";
 
-  // **************************************************************************************************************
+  // ***************************************************************************************************************
   // Precalculated table for 5 columns
-  // XXX
-  // **************************************************************************************************************
+  // ***************************************************************************************************************
 
   let precalculated_games_5columns =
     "0||N:32768|11111:28B03,11112:25A19,11122:24BF0,11123:24501,11223:23ED9,11234:23F55,12345:244BA.";
@@ -152,6 +151,10 @@ try {
   let separator3Str = ",";
   let nbCodesPrefixStr = "N:";
   let precalculated_mark = {nbBlacks:0, nbWhites:0};
+  // Returned value:
+  // - > 0 if both game and code were precalculated
+  // - 0 if only game was precalculated
+  // - -1 if nothing was precalculated
   function lookForCodeInPrecalculatedGames(code_p, current_game_size, nb_possible_codes_p) {
 
     if (current_game_size > maxDepthForGamePrecalculation) {
@@ -295,7 +298,7 @@ try {
         // console.log(" versus " + str_from_list_of_codes(currentGame, current_game_size) + " for code " + codeHandler.codeToString(code_p));
         if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, current_game_size, false, -1 /* N.A. */, currentGameForGamePrecalculation)) {
           // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(currentGameForGamePrecalculation, marksIdxsForGamePrecalculation, current_game_size));
-          return sum; // precalculated sum found
+          return sum; // both game and code were precalculated - precalculated sum found
         }
 
         // End of loop processing
@@ -305,11 +308,13 @@ try {
         last_end_of_code_perf_pair_index = separator_index5+1;
       }
 
+      return 0; // only game was precalculated - no precalculated sum found
+
       // End of loop processing
       last_dot_index = dot_index+1;
     } // end while
 
-    return -1; // no precalculated sum found
+    return -1; // nothing was precalculated - no precalculated sum found
 
   }
 
@@ -1986,11 +1991,11 @@ try {
   let particularCodeGlobalPerformance = PerformanceNA;
   let recursiveEvaluatePerformancesWasAborted = false;
 
-  let areCurrentGameAndCodePrecalculated = false;
+  let areCurrentGameOrCodePrecalculated = -1;
 
   // Outputs: listOfGlobalPerformances[]
   //          particularCodeGlobalPerformance in case of impossible code
-  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode, areCurrentGameAndCodePrecalculated_p) {
+  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode, areCurrentGameOrCodePrecalculated_p) {
 
     let idx;
     let res;
@@ -2007,8 +2012,11 @@ try {
     if (currentAttemptNumber <= 0) {
       throw new Error("evaluatePerformances: invalid currentAttemptNumber: " + currentAttemptNumber);
     }
+    if ((nbCodes < 1) || (listOfCodes.length < nbCodes)) {
+      throw new Error("evaluatePerformances: invalid number of codes: " + nbCodes + ", " + listOfCodes.length);
+    }
 
-    areCurrentGameAndCodePrecalculated = areCurrentGameAndCodePrecalculated_p;
+    areCurrentGameOrCodePrecalculated = areCurrentGameOrCodePrecalculated_p;
 
     if (depth == -1) { // first call
 
@@ -2100,14 +2108,13 @@ try {
   }
 
   // XXX Further work to do:
-  // - X) Regenerate 4col tables for 300 codes
-  // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes => memory alloc to do normally, transition precalc -> memory alloc earlier and not in that direction only!
-  // - X) "precalculated_current_game_and_code" => "game_precalculated"
+  // - X) Generate 5col tables + document precalculation assumptions
+  // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes
   // - X) LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
   // - X) test strictly positive precalculated perf
-  // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible & useless & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
+  // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible code (code precalculated or its only game precalculated) & useless (not obviously useless) & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
   // - X) Precalculated table split in several javascript modules to decrease size loaded?
-  // - X) XXXs/TBCs/TBDs in all files
+  // - X) XXXs in all files
   // - XXX Max nber of attempts for SMM games once precalculation fully stored + check total sum of attempts at the same time
   // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
   // - X) XXX Appli Android?
@@ -2126,7 +2133,7 @@ try {
     let mark_perf_tmp_idx;
     let compute_sum_ini = (nbCodes <= nbCodesLimitForEquivalentCodesCheck);
     let compute_sum;
-    let precalculated_current_game_and_code = (first_call && areCurrentGameAndCodePrecalculated);
+    let precalculated_current_game_or_code = (first_call ? areCurrentGameOrCodePrecalculated : -1);
     let precalculated_sum;
     // let write_me; // (traces useful for debug)
     // let write_me_for_precalculation; // (precalculation mode)
@@ -2243,9 +2250,10 @@ try {
         compute_sum = (sum == 0.0);
 
         precalculated_sum = false;
-        if (precalculated_current_game_and_code && compute_sum /* && (!precalculation_mode) */) { // (precalculation mode)
+        if ( (precalculated_current_game_or_code >= 0) // both game and code were precalculated OR only game was precalculated
+             && compute_sum /* && (!precalculation_mode) */ ) { // (precalculation mode)
           sum = lookForCodeInPrecalculatedGames(current_code, next_current_game_idx, nbCodes);
-          if (sum != -1) { // precalculated sum found
+          if (sum > 0) { // precalculated sum found
             compute_sum = false;
             precalculated_sum = true;
 
@@ -2743,9 +2751,10 @@ try {
       current_code = particularCodeToAssess;
 
       let particular_precalculated_sum = false;
-      if (precalculated_current_game_and_code && (!compute_sum_ini) /* && (!precalculation_mode) */) { // (precalculation mode)
+      if ( (precalculated_current_game_or_code > 0) // both game and code were precalculated
+           && (!compute_sum_ini) /* && (!precalculation_mode) */ ) { // (precalculation mode)
         sum = lookForCodeInPrecalculatedGames(current_code, next_current_game_idx, nbCodes);
-        if (sum != -1) { // precalculated sum found
+        if (sum > 0) { // precalculated sum found
           particular_precalculated_sum = true;
         }
         else {
@@ -3323,30 +3332,31 @@ try {
           // Check if current game and code (whether possible or impossible) were precalculated
           // **********************************************************************************
 
-          let precalculated_current_game_and_code = false;
-          // precalculated_current_game_and_code shall keep being false in precalculation mode => below code to comment if needed (precalculation mode)
+          let precalculated_current_game_or_code = -1; // nothing was precalculated
+          // precalculated_current_game_or_code shall keep being -1 in precalculation mode => below code to comment in (precalculation mode)
           if ( (previousNbOfPossibleCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                && (currentGameSize <= maxDepthForGamePrecalculation) ) { // (-1 or 3)
-            if (lookForCodeInPrecalculatedGames(codesPlayed[currentAttemptNumber-1], currentGameSize, previousNbOfPossibleCodes) != -1) {
-              precalculated_current_game_and_code = true;
-            }
+            precalculated_current_game_or_code = lookForCodeInPrecalculatedGames(codesPlayed[currentAttemptNumber-1], currentGameSize, previousNbOfPossibleCodes);
           }
 
           // Main useful code processing
           // ***************************
 
-          if ( precalculated_current_game_and_code
-               || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) {
+          if ( (precalculated_current_game_or_code > 0) // both game and code were precalculated
+               || ((precalculated_current_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
+               || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+
+            if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+              throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+            }
 
             // Initializations
             // ***************
 
-            if (precalculated_current_game_and_code) { // ***** First evaluation phase in a game *****
+            // ***** First evaluation phase in a game *****
+            if (precalculated_current_game_or_code > 0) { // both game and code were precalculated
               if (performanceListsInitDone) {
-                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (1)");
-              }
-              if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation (2): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation");
               }
               // - Array allocations
               if (!performanceListsInitDoneForPrecalculatedGames) {
@@ -3371,9 +3381,11 @@ try {
                 }
               }
             }
-            else if (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) { // ***** Second evaluation phase in a game *****
-              if (precalculated_current_game_and_code) {
-                throw new Error("NEW_ATTEMPT phase / internal error (precalculated_current_game_and_code)");
+            // ***** Second evaluation phase in a game *****
+            else if ( ((precalculated_current_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
+                      || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+              if (precalculated_current_game_or_code > 0) {
+                throw new Error("NEW_ATTEMPT phase / internal error (precalculated_current_game_or_code)");
               }
               // - Array allocations
               if (!performanceListsInitDone) {
@@ -3421,7 +3433,7 @@ try {
             if (0 == isAttemptPossibleinGameSolver(currentAttemptNumber)) { // code played is possible
               // Evaluate performances for possibleCodesForPerfEvaluation[currentAttemptNumber%2]:
               let startTime = (new Date()).getTime();
-              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */, precalculated_current_game_and_code);
+              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */, precalculated_current_game_or_code);
               if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
                 let code_played_found = false;
                 for (let i = 0; i < previousNbOfPossibleCodes; i++) {
@@ -3437,7 +3449,7 @@ try {
                 console.log("(perfeval#1: best performance: " + best_global_performance
                             + " / code performance: " + code_played_global_performance
                             + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class")
-                            + (precalculated_current_game_and_code ? " / precalculated" : "") + ")");
+                            + ((precalculated_current_game_or_code >= 0) ? ((precalculated_current_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
               }
               else {
                 console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
@@ -3446,7 +3458,7 @@ try {
             else { // code played is not possible
               // Evaluate performances for possibleCodesForPerfEvaluation[currentAttemptNumber%2]:
               let startTime = (new Date()).getTime();
-              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[currentAttemptNumber-1], precalculated_current_game_and_code);
+              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[currentAttemptNumber-1], precalculated_current_game_or_code);
               if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
                 if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
                   throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: " + particularCodeGlobalPerformance);
@@ -3455,7 +3467,7 @@ try {
                 console.log("(perfeval#2: best performance: " + best_global_performance
                             + " / code performance: " + particularCodeGlobalPerformance
                             + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class")
-                            + (precalculated_current_game_and_code ? " / precalculated" : "") + ")");
+                            + ((precalculated_current_game_or_code >= 0) ? ((precalculated_current_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
               }
               else {
                 console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + currentNbClasses + ((currentNbClasses > 1) ? " classes" : " class") + ")");
@@ -3577,6 +3589,9 @@ try {
           throw new Error("NEW_ATTEMPT phase / inconsistent numbers of listed codes: " + nbMaxPossibleCodesShown + " > " + nbOfCodesForSystematicEvaluation);
         }
         let nb_codes_shown = Math.min(previousNbOfPossibleCodes, nbMaxPossibleCodesShown);
+        if (nb_codes_shown > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+          throw new Error("NEW_ATTEMPT phase / inconsistent nb_codes_shown or nbOfCodesForSystematicEvaluation_ForMemAlloc value: " + nb_codes_shown + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+        }
         let current_possible_code_list = possibleCodesForPerfEvaluation[currentAttemptNumber%2];
 
         // Particular case of first attempt of Master Mind game
@@ -3588,6 +3603,9 @@ try {
           }
           if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
             throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
+          }
+          if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+            throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (2): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
           }
           // Add simple codes
           possibleCodesShown[0] = codeHandler.uncompressStringToCode("1233");
@@ -3654,6 +3672,9 @@ try {
           }
           if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
             throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
+          }
+          if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+            throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (3): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
           }
           // Add simple codes
           possibleCodesShown[0] = codeHandler.uncompressStringToCode("12233");
