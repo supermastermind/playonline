@@ -1020,7 +1020,7 @@
             gamesok = Number(localStorage.gamesok);
 
             if ((gamesok >= 140) && (!localStorage.firstname)) { // No interest for sharing results
-              if ((gamesok % 200) != 0) {
+              if ((gamesok % 100) != 0) { // all odd numbers => first name will not be asked
                 return;
               }
               if (nbcolumns == 3) {
