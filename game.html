@@ -199,6 +199,7 @@
       var nbGamesPlayedAndWon = 0;
       var nbGamesPlayed = 0;
       var nbCodesPlayed = 0;
+      var nbColorSelections = 0;
       var firstgamegeoloc = "fa";
     </script>
     <script src='lib/jquery-3.2.1.min.js'></script>
@@ -337,7 +338,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_JY";
+      let html_compatibility_game_version = "Ver_JZ";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1725,7 +1726,8 @@
           }
         }
         var debugStr = "firstgeoloc:" + firstgamegeoloc + "/" + navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
-        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true, 111);
+        var nbColorSelectionsStr = ((nbColorSelections == 0) ? "(-)" : "(" + String(nbColorSelections) + ")");
+        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + " " + nbColorSelectionsStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true, 111);
       }
 
       function storeFirstAccess(access_type, timeToWait1, timeToWait2, debug_info) {

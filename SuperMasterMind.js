@@ -1076,6 +1076,7 @@ function mouseClick(e) {
               if ((mouse_y > y_0) && (mouse_y < y_1)) {
                 colorSelected = true;
                 playAColor(color+1, column+1);
+                nbColorSelections++;
                 break;
               }
             }
