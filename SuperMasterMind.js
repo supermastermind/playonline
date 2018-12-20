@@ -2057,7 +2057,6 @@ function draw_graphic_bis() {
 
         let allButtons = document.getElementsByClassName("button");
         let allRadioButtons = document.getElementsByClassName("radio");
-        alert(height);
         if (height < 400) {
           for (let i = 0; i < allButtons.length; i++) {
             allButtons[i].style.fontSize = "10px";
@@ -2098,12 +2097,20 @@ function draw_graphic_bis() {
             allRadioButtons[i].style.fontSize = "28px";
           }
         }
-        else if (height >= 1000) {
+        else if (height >= 1500) {
           for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "24px";
+            allButtons[i].style.fontSize = "25px";
           }
           for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "24px";
+            allRadioButtons[i].style.fontSize = "25px";
+          }
+        }
+        else if (height >= 1000) {
+          for (let i = 0; i < allButtons.length; i++) {
+            allButtons[i].style.fontSize = "23px";
+          }
+          for (let i = 0; i < allRadioButtons.length; i++) {
+            allRadioButtons[i].style.fontSize = "23px";
           }
         }
         else { // [400; 1000[
