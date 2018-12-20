@@ -2058,34 +2058,58 @@ function draw_graphic_bis() {
         let allButtons = document.getElementsByClassName("button");
         let allRadioButtons = document.getElementsByClassName("radio");
         if (height < 400) {
-          for (let i = 0; i < allButtons.length; i ++) {
+          for (let i = 0; i < allButtons.length; i++) {
             allButtons[i].style.fontSize = "10px";
           }
-          for (let i = 0; i < allRadioButtons.length; i ++) {
+          for (let i = 0; i < allRadioButtons.length; i++) {
             allRadioButtons[i].style.fontSize = "10px";
           }
         }
+        else if (height >= 4000) {
+          for (let i = 0; i < allButtons.length; i++) {
+            allButtons[i].style.fontSize = "48px";
+          }
+          for (let i = 0; i < allRadioButtons.length; i++) {
+            allRadioButtons[i].style.fontSize = "48px";
+          }
+        }
+        else if (height >= 3000) {
+          for (let i = 0; i < allButtons.length; i++) {
+            allButtons[i].style.fontSize = "39px";
+          }
+          for (let i = 0; i < allRadioButtons.length; i++) {
+            allRadioButtons[i].style.fontSize = "39px";
+          }
+        }
+        else if (height >= 2500) {
+          for (let i = 0; i < allButtons.length; i++) {
+            allButtons[i].style.fontSize = "33px";
+          }
+          for (let i = 0; i < allRadioButtons.length; i++) {
+            allRadioButtons[i].style.fontSize = "33px";
+          }
+        }
         else if (height >= 1800) {
-          for (let i = 0; i < allButtons.length; i ++) {
+          for (let i = 0; i < allButtons.length; i++) {
             allButtons[i].style.fontSize = "28px";
           }
-          for (let i = 0; i < allRadioButtons.length; i ++) {
+          for (let i = 0; i < allRadioButtons.length; i++) {
             allRadioButtons[i].style.fontSize = "28px";
           }
         }
         else if (height >= 1000) {
-          for (let i = 0; i < allButtons.length; i ++) {
-            allButtons[i].style.fontSize = "23px";
+          for (let i = 0; i < allButtons.length; i++) {
+            allButtons[i].style.fontSize = "24px";
           }
-          for (let i = 0; i < allRadioButtons.length; i ++) {
-            allRadioButtons[i].style.fontSize = "23px";
+          for (let i = 0; i < allRadioButtons.length; i++) {
+            allRadioButtons[i].style.fontSize = "24px";
           }
         }
-        else {
-          for (let i = 0; i < allButtons.length; i ++) {
+        else { // [400; 1000[
+          for (let i = 0; i < allButtons.length; i++) {
             allButtons[i].style.fontSize = "15px";
           }
-          for (let i = 0; i < allRadioButtons.length; i ++) {
+          for (let i = 0; i < allRadioButtons.length; i++) {
             allRadioButtons[i].style.fontSize = "13px";
           }
         }
