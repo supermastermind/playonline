@@ -2057,6 +2057,7 @@ function draw_graphic_bis() {
 
         let allButtons = document.getElementsByClassName("button");
         let allRadioButtons = document.getElementsByClassName("radio");
+        alert(height);
         if (height < 400) {
           for (let i = 0; i < allButtons.length; i++) {
             allButtons[i].style.fontSize = "10px";
