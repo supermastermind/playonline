@@ -2108,6 +2108,7 @@ try {
   }
 
   // XXX Further work to do:
+  // - X) Web page with Nvw/Nvh instead of Npx font sizes
   // - X) Generate 5col tables + document precalculation assumptions
   // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes
   // - X) LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
