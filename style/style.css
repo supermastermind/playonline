@@ -116,7 +116,7 @@ ol li
   color: #FFF;}
 
 #logo h2
-{ font-size: 120%;
+{ font-size: 160%;
   padding: 4px 0 0 0;
   color: #A8AA94;}
 
@@ -141,7 +141,8 @@ ul#menu
   padding: 0;}
 
 ul#menu li
-{ float: left;
+{ font-size: calc(10px + .40vw);
+  float: left;
   padding: 0;
   list-style: none;
   margin: 5px 2px 0 0;}
@@ -174,7 +175,8 @@ ul#menu li a:hover
   border: 15px solid #FFF;} 
 
 .sidebar
-{ float: right;
+{ font-size: calc(10px + .40vw);
+  float: right;
   width: 15%;
   padding: 0 15px 20px 15px;
   background-color: #E0E0E0;} 
