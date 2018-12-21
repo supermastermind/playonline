@@ -133,7 +133,7 @@ ol li
 
 #menubar
 { height: 24px;
-  margin: 0px 0px 0px 75px;} 
+  margin: 0px 0px 0px 30px;} /* top right bottom left */
 
 ul#menu
 { float: left;
@@ -166,9 +166,9 @@ ul#menu li a:hover
 
 #site_content
 { font-size: calc(10px + .40vw);
-  width: 77%;
+  width: 88%;
   overflow: hidden;
-  margin: 75px 75px 0px 75px; /* top right bottom left */
+  margin: 75px 0px 0px 30px; /* top right bottom left */
   padding: 10px 20px 20px 20px;
   background: #F6F6F6;
   border: 15px solid #FFF;} 
