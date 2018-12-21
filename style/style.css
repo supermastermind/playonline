@@ -111,12 +111,13 @@ ol li
 { font: normal 270% "century gothic", arial, sans-serif;}
 
 #logo h1
-{ padding: 24px 0 0 0;
+{ font-size: calc(10px + 2.0vw);
+  padding: 24px 0 0 0;
   margin: 0;
   color: #FFF;}
 
 #logo h2
-{ font-size: calc(10px + .80vw);
+{ font-size: calc(10px + 1.2vw);
   padding: 4px 0 0 0;
   color: #A8AA94;}
 
@@ -133,7 +134,7 @@ ol li
 
 #menubar
 { height: 24px;
-  margin: 0px 0px 0px 30px;} /* top right bottom left */
+  margin: 0px 0px 0px 20px;} /* top right bottom left */
 
 ul#menu
 { float: left;
@@ -148,7 +149,7 @@ ul#menu li
   margin: 5px 2px 0 0;}
 
 ul#menu li a
-{ font-size: calc(10px + .60vw);
+{ font-size: calc(10px + .7vw);
   display: block; 
   float: left;
   padding: 6px 20px 5px 20px;
@@ -168,7 +169,7 @@ ul#menu li a:hover
 { font-size: calc(10px + .40vw);
   width: 88%;
   overflow: hidden;
-  margin: 75px 0px 0px 30px; /* top right bottom left */
+  margin: 75px 0px 0px 20px; /* top right bottom left */
   padding: 10px 20px 20px 20px;
   background: #F6F6F6;
   border: 15px solid #FFF;} 
