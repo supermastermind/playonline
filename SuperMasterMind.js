@@ -2071,7 +2071,7 @@ function draw_graphic_bis() {
             allButtons[i].style.fontSize = "1.8vh"; // proportional to viewport height
           }
           for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "1.77vh"; // proportional to viewport height - 10/(600/100) = 1.67 < 1.77
+            allRadioButtons[i].style.fontSize = "1.67vh"; // proportional to viewport height - 10/(600/100) = 1.67
           }
         }
 
