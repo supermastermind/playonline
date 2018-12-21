@@ -117,7 +117,7 @@ ol li
   color: #FFF;}
 
 #logo h2
-{ font-size: calc(10px + 1.2vw);
+{ font-size: calc(10px + 1.0vw);
   padding: 4px 0 0 0;
   color: #A8AA94;}
 
@@ -149,7 +149,7 @@ ul#menu li
   margin: 5px 2px 0 0;}
 
 ul#menu li a
-{ font-size: calc(10px + .7vw);
+{ font-size: calc(10px + .40vw);
   display: block; 
   float: left;
   padding: 6px 20px 5px 20px;
