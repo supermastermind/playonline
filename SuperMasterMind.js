@@ -245,6 +245,7 @@ let tickChar = "\u2714"; /* (check mark/tick) */
 let crossChar = "\u2716"; /* (cross) */
 
 let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
+let edgeMode = (navigator.userAgent.toUpperCase().search("EDGE/") != -1);
 
 // *************************************************************************
 // *************************************************************************
@@ -2057,7 +2058,7 @@ function draw_graphic_bis() {
 
         let allButtons = document.getElementsByClassName("button");
         let allRadioButtons = document.getElementsByClassName("radio");
-        if (height < 400) {
+        if (height < 600) {
           for (let i = 0; i < allButtons.length; i++) {
             allButtons[i].style.fontSize = "10px";
           }
@@ -2065,68 +2066,12 @@ function draw_graphic_bis() {
             allRadioButtons[i].style.fontSize = "10px";
           }
         }
-        else if (height >= 5000) {
+        else {
           for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "100px";
+            allButtons[i].style.fontSize = "1.8vh"; // proportional to viewport height
           }
           for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "100px";
-          }
-        }
-        else if (height >= 4000) { // 4500
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "79px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "79px";
-          }
-        }
-        else if (height >= 3000) { // 3500
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "62px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "62px";
-          }
-        }
-        else if (height >= 2500) { // 2750
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "49px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "49px";
-          }
-        }
-        else if (height >= 1800) { // 2150
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "39px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "39px";
-          }
-        }
-        else if (height >= 1500) { // 1650
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "30px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "30px";
-          }
-        }
-        else if (height >= 1000) { // 1250
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "23px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "23px";
-          }
-        }
-        else { // [400; 1000[
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "15px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "13px";
+            allRadioButtons[i].style.fontSize = "1.67vh"; // proportional to viewport height - 10/(600/100) = 1.67
           }
         }
 
@@ -3329,10 +3274,15 @@ function displayString(str, x_cell, y_cell, x_cell_width,
   let x_0_next = get_x_pixel(x_min+x_step*(x_cell+x_cell_width));
   let y_0;
   let y_0_next;
+  let y_offset = 1; // (works with Chrome & Firefox)
+  if (edgeMode) {
+    y_offset = 0;
+  }
+  /* previous offsets:
   let y_offset = 0; // (works with Chrome)
   if (firefoxMode) {
     y_offset = 1; // (works with Firefox)
-  }
+  } */
 
   let str_width = ctx.measureText(str).width;
   let str_height = parseInt(ctx.font.match(/\d+/)[0]); // only get numbers => this is the font height
