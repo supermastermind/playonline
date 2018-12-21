@@ -148,7 +148,7 @@ ul#menu li
   margin: 5px 2px 0 0;}
 
 ul#menu li a
-{ font: normal 100% 'trebuchet ms', sans-serif;
+{ font-size: calc(10px + .40vw);
   display: block; 
   float: left; 
   height: 20px;
