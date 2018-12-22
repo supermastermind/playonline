@@ -2108,7 +2108,7 @@ try {
   }
 
   // XXX Further work to do:
-  // - X) Web page with Nvw/Nvh instead of Npx font sizes
+  // - X) Web page with good smartphone display
   // - X) Generate 5col tables + document precalculation assumptions
   // - X) nbCodesForPrecalculationThreshold modif => precalculation may only be valid for possible codes
   // - X) LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
@@ -2116,7 +2116,7 @@ try {
   // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible code (code precalculated or its only game precalculated) & useless (not obviously useless) & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
   // - X) Precalculated table split in several javascript modules to decrease size loaded?
   // - X) XXXs in all files
-  // - XXX Max nber of attempts for SMM games once precalculation fully stored + check total sum of attempts at the same time
+  // - XXX Max nber of attempts for SMM games once precalculation fully stored (=> web page) + new game pictures in web page w/ all perfs evaluated + check total sum of attempts at the same time
   // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
   // - X) XXX Appli Android?
   // - X) XXX If still some sporadic undefined GameSolver errors, remaining tracks: 1) good solution? thread code in same .js file is possible (only one .js file loaded) - still error in local Chrome execution? / or cumulated with module importation https://stackoverflow.com/questions/950087/how-do-i-include-a-javascript-file-in-another-javascript-file 2) pb when loading the .js worker file? (cf. img - can occur at very first creation as seen!) => unavoidable except by retry (if not alive yet) 3) Wait a bit before sending first message, the time the worker is fully operational?

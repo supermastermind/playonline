@@ -1,12 +1,8 @@
-
 function write_menu(selected_idx) {
   var str = "\
     <div id='header'>\
-      <div id='logo'>\
-        <!-- class='logo_colour', allows you to change the colour of the text -->\
         <h1><font color='#F00000'>Play </font><font color='#FF7700'>Super </font><font color='#F7F700'>Master </font><font color='#00D000'>Mind </font><font color='black'>/ </font> <font color='#0000A8'>Code </font><font color='#954400'>breaker </font><font color='#FF7700'>online!</font></h1>\
         <h2><font color='#333333'>Super Master Mind, Mastermind & Code breaker games</font></h2>\
-      </div>\
       <div id='menubar'>\
         <ul id='menu'>\
           <!-- put class='selected' in the li tag for the selected page - to highlight which page you're on -->";
@@ -93,8 +89,8 @@ function write_introduction() {
   document.write("\
     <a href='game.html' onfocus='this.blur()'>\
       <div id='game_images'>");
-  var img_str = "<img src='img/SuperMasterMind_1.png' style='width:auto;height:188px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:188px;border:0;margin:0px'>";
-  if (window.innerWidth >= 1024) {
+  var img_str = "<hr style='height:0.75vh; visibility:hidden;' /><img src='img/SuperMasterMind_1.png' style='width:auto;height:188px;border:0;margin:0px;margin-left:0'><img src='img/SuperMasterMind_2.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:auto;height:188px;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:auto;height:188px;border:0;margin:0px'>";
+  if (window.innerWidth >= 777) {
     img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:auto;height:188px;border:0;margin:0px'>";
   }
   document.write(img_str);
@@ -107,7 +103,7 @@ var optimal_strategy_descr = "The optimal strategy is determined thanks to a <b>
 
 function write_optimal_strategy_details_1() {
   var str = "<div id='strategy_details' onclick=\"document.getElementById('strategy_details').innerHTML='" + optimal_strategy_descr + "In some (rare) cases, playing an impossible code may be better than playing the best possible code(s)! This could be called a &quot;useful mistake&quot;. ";
-  str += "This will thus result in the above number being strictly positive (e.g. <b>+0.10</b>). If you get such a positive number (voluntarily), you are really good!<br><div style=margin-top:5px;><a href=optimal_strategy.html><b>Optimal strategy statistics</b></a></div>';\"><font color=#A4AA04 style=cursor:pointer;><u><b>More details on the optimal strategy...</b></u></font></div><div style='margin-top:5px;'><a href=screenshots.html><b>Game examples & screenshots</b></a></div><br>";
+  str += "This will thus result in the above number being strictly positive (e.g. <b>+0.10</b>). If you get such a positive number (voluntarily), you are really good!<br><div style=margin-top:5px;><a href=optimal_strategy.html><b>Optimal strategy statistics</b></a></div>';\"><font color=#A4AA04 style=cursor:pointer;><u><b>More details on the optimal strategy...</b></u></font></div><div style='margin-top:5px;'><a href=screenshots.html><b>Game examples & screenshots</b></a></div>";
   document.write(str);
 }
 
