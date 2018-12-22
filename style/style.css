@@ -11,10 +11,6 @@ body
   background-image:url('../img/html_background.png');
   background-position: left top;
   color: #000000; }
-
-font {
-  font-family: Trebuchet MS;
-}
   
 img
 { border: 0; }
