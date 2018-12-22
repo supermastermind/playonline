@@ -2238,7 +2238,7 @@ function draw_graphic_bis() {
       small_basic_font = Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       small_bold_font = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       small_italic_font = "italic " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
-      very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.2), min_font_size) + "px " + fontFamily;
+      very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.34), min_font_size) + "px " + fontFamily;
 
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
