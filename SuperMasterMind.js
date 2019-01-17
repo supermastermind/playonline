@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.5";
+let version = "v2.1";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -309,9 +309,9 @@ function displayGUIError(GUIErrorStr, errStack) {
       try {
         errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
         for (let i = 1; i < currentAttemptNumber; i++) {
-          strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
+          strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " (" + nbOfPossibleCodes[i-1] + ") ";
         }
-        strGame = strGame + "scode " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
+        strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
         strGame = strGame.trim();
       }
       catch (game_exc) {
@@ -1691,7 +1691,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
 
       let strGame = "";
       for (let i = 1; i < currentAttemptNumber; i++) {
-        strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " ";
+        strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " (" + nbOfPossibleCodes[i-1] + ") ";
       }
       strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
       strGame = strGame.trim();
