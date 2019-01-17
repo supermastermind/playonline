@@ -2184,7 +2184,6 @@ try {
     for (idx1 = 0; idx1 < nbCodesToGoThrough; idx1++) { // (precalculation mode)
 
       // Split precalculation if needed
-      // Split precalculation if needed
       // 0:  11111
       // 1:  11112
       // 9:  11122
