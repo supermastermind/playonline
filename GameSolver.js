@@ -333,7 +333,7 @@ try {
       }
 
       // End of loop processing
-      last_dot_index = dot_index+1;      
+      last_dot_index = dot_index+1;
       return 0; // only game was precalculated - no precalculated sum found
 
     } // end while
