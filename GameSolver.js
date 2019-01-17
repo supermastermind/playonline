@@ -2184,6 +2184,14 @@ try {
     for (idx1 = 0; idx1 < nbCodesToGoThrough; idx1++) { // (precalculation mode)
 
       // Split precalculation if needed
+      // Split precalculation if needed
+      // 0:  11111
+      // 1:  11112
+      // 9:  11122
+      // 10: 11123
+      // 11: 11223
+      // 83: 11234
+      // 84: 12345      
       // if (first_call && (idx1 != 83)) {
       //  continue;
       // }
