@@ -2152,8 +2152,8 @@ try {
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                                 && (next_current_game_idx <= maxDepthForGamePrecalculation) // (-1 or 3)
                                 && ( (next_current_game_idx <= 1)
-                                     || ((next_current_game_idx == 2) && ((possibleGame && (codeHandler.nbDifferentColors(currentGame[0]) <= 2)) || (codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1])) || (nbCodes <= nbCodesForPrecalculationThreshold)))
-                                     || ((next_current_game_idx == 3) && possibleGame && (codeHandler.nbDifferentColors(currentGame[0]) <= 2) && (codeHandler.nbDifferentColors(currentGame[1]) <= 2) && (codeHandler.nbDifferentColors(currentGame[2]) <= 2)) )
+                                     || ((next_current_game_idx == 2) && ((possibleGame && codeHandler.isVerySimple(currentGame[0])) || (codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1])) || (nbCodes <= nbCodesForPrecalculationThreshold)))
+                                     || ((next_current_game_idx == 3) && possibleGame && codeHandler.isVerySimple(currentGame[0]) && (codeHandler.nbDifferentColors(currentGame[0]) <= 2) && (codeHandler.nbDifferentColors(currentGame[1]) <= 2) && (codeHandler.nbDifferentColors(currentGame[2]) <= 2)) )
                                 && (!compute_sum_ini) ); // not a leaf
     let str; // (precalculation mode)
     let precalculation_start_time; // (precalculation mode)
