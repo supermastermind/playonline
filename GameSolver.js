@@ -332,10 +332,10 @@ try {
         last_end_of_code_perf_pair_index = separator_index5+1;
       }
 
+      // End of loop processing
+      last_dot_index = dot_index+1;      
       return 0; // only game was precalculated - no precalculated sum found
 
-      // End of loop processing
-      last_dot_index = dot_index+1;
     } // end while
 
     return -1; // nothing was precalculated - no precalculated sum found
