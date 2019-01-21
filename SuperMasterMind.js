@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.5";
+let version = "v2.51";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -69,7 +69,7 @@ let PerformanceVERYLOW = -0.50;
 let PerformanceNA = -3.00; // (duplicated in GameSolver.js)
 let PerformanceUNKNOWN = -2.00; // (duplicated in GameSolver.js)
 let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in GameSolver.js)
-let PerformanceMaxValidValue = +0.90; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver.js)
+let PerformanceMaxValidValue = +1.30; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver.js)
 let nbOfStatsFilled_NbPossibleCodes = 0;
 let nbOfStatsFilled_ListsOfPossibleCodes = 0;
 let nbOfStatsFilled_Perfs = 0;
@@ -309,7 +309,8 @@ function displayGUIError(GUIErrorStr, errStack) {
       try {
         errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
         for (let i = 1; i < currentAttemptNumber; i++) {
-          strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " (" + nbOfPossibleCodes[i-1] + ") ";
+          strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " (" + nbOfPossibleCodes[i-1]
+                            + "|" + (Math.round(relative_performances_of_codes_played[i-1] * 100.0) / 100.0).toFixed(2) /* 0.01 precision */ + ") ";
         }
         strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
         strGame = strGame.trim();
@@ -1485,11 +1486,12 @@ function resetGameAttributes(nbColumnsSelected) {
   sCode = ~(simpleCodeHandler.createRandomCode());
   /* XXX
   let toto = simpleCodeHandler.createRandomCode();
-  toto = simpleCodeHandler.setColor(toto, 4, 1);
-  toto = simpleCodeHandler.setColor(toto, 4, 2);
-  toto = simpleCodeHandler.setColor(toto, 4, 3);
-  toto = simpleCodeHandler.setColor(toto, 4, 4);
-  toto = simpleCodeHandler.setColor(toto, 4, 5);
+  toto = simpleCodeHandler.setColor(toto, 1, 1);
+  toto = simpleCodeHandler.setColor(toto, 1, 2);
+  toto = simpleCodeHandler.setColor(toto, 2, 3);
+  toto = simpleCodeHandler.setColor(toto, 2, 4);
+  toto = simpleCodeHandler.setColor(toto, 2, 5);
+  // toto = simpleCodeHandler.setColor(toto, 7, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 7);
   sCode = ~(toto); */
@@ -1691,7 +1693,8 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
 
       let strGame = "";
       for (let i = 1; i < currentAttemptNumber; i++) {
-        strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " (" + nbOfPossibleCodes[i-1] + ") ";
+        strGame = strGame + simpleCodeHandler.markToString(marks[i-1]) + " " + simpleCodeHandler.codeToString(codesPlayed[i-1]) + " (" + nbOfPossibleCodes[i-1]
+                          + "|" + (Math.round(relative_performances_of_codes_played[i-1] * 100.0) / 100.0).toFixed(2) /* 0.01 precision */ + ") ";
       }
       strGame = strGame + "SCODE " + simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
       strGame = strGame.trim();
@@ -2517,7 +2520,6 @@ function draw_graphic_bis() {
         // Display column headers
         // **********************
 
-        // Note: when showPossibleCodesMode is true, this line is used for displayGUIError()
         ctx.font = medium_bold_font;
         if ((!gameOnGoing()) && allPerformancesFilled()) {
           let str1, str1bis, str2;
@@ -2559,10 +2561,8 @@ function draw_graphic_bis() {
           if (res_header1 && (optimal_width > 0)) {
             if (!display2Strings("total" + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                  lightGray, backgroundColor_2, ctx, 0, true)) {
-              if (display2Strings("\u03A3" /* (capital sigma) */ + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
-                                  lightGray, backgroundColor_2, ctx, 0, true)) {
-                res_header2 = true;
-              }
+              res_header2 = display2Strings("\u03A3" /* (capital sigma) */, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
+                                            lightGray, backgroundColor_2, ctx, 0, false); // (always display sum => res_header2 will be true)
             }
             else {
               res_header2 = true;
