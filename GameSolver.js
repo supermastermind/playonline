@@ -2142,14 +2142,14 @@ try {
   // XXX Further work to do:
   // - X) Web page with good smartphone display
   // - X) Generate 5col tables + document precalculation assumptions
-  // - X) XXX Precalculate {5 columns, 8 colors} games, check possible & impossible code (code precalculated or its only game precalculated) & useless (not obviously useless) & "some-useless-color" codes, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
+  // - X) Precalculate {5 columns, 8 colors} games, check possible & impossible code (code precalculated or its only game precalculated) & useless (obviously + not obviously useless) code & "very inefficient" code & "some-useless-color" codes & at precalculated depth 1/2/3, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
   // - X) LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
   // - X) test strictly positive precalculated perf
   // - X) Precalculated table split in several javascript modules to decrease size loaded?
   // - X) XXXs in all files
-  // - XXX Max nber of attempts for SMM games once precalculation fully stored (=> web page) + new game pictures in web page w/ all perfs evaluated + check total sum of attempts at the same time
+  // - X) Max nber of attempts for SMM games once precalculation fully stored (=> web page) + new game pictures in web page w/ all perfs evaluated + check total sum of attempts at the same time
   // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
-  // - X) XXX Appli Android?
+  // - X) Appli Android?
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes /*, possibleGame (precalculation mode) */) {
 
     let first_call = (depth == -1);
@@ -2182,7 +2182,7 @@ try {
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                                 && (next_current_game_idx <= maxDepthForGamePrecalculation) // (-1 or 3)
                                 && ( (next_current_game_idx <= 1)
-                                     || ((next_current_game_idx == 2) && ((possibleGame && (codeHandler.nbDifferentColors(currentGame[0]) <= 2)) || (codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1])) || (nbCodes <= nbCodesForPrecalculationThreshold)))
+                                     || ((next_current_game_idx == 2) && ((possibleGame && (codeHandler.nbDifferentColors(currentGame[0]) <= 2)) || (codeHandler.isVerySimple(currentGame[0]) && codeHandler.isVerySimple(currentGame[1])) || (nbCodes <= nbCodesForPrecalculationThreshold))) // (***)
                                      || ((next_current_game_idx == 3) && possibleGame && (codeHandler.nbDifferentColors(currentGame[0]) <= 2) && (codeHandler.nbDifferentColors(currentGame[1]) <= 2) && (codeHandler.nbDifferentColors(currentGame[2]) <= 2)) )
                                 && (!compute_sum_ini) ); // not a leaf
     let str; // (precalculation mode)
@@ -2231,7 +2231,7 @@ try {
       else {
         current_code = initialCodeListForPrecalculatedMode[idx1 - nbCodes]; // (precalculation mode) / add also impossible codes
 
-        // Precalculation optimization (1/3): skip current code if needed
+        // Precalculation optimization (1/4): skip current code if needed
         if (!precalculation_mode) {
           throw new Error("recursiveEvaluatePerformances: precalculation_mode error");
         }
@@ -2250,8 +2250,8 @@ try {
             }
           }
         }
-        // Precalculation optimization (2/3): skip impossible codes if acceptable
-        if ((next_current_game_idx >= 2) && (nbCodes <= nbCodesForPrecalculationThreshold)) {
+        // Precalculation optimization (2/4): skip impossible current code if acceptable
+        if ((next_current_game_idx >= 2) && (nbCodes <= nbCodesForPrecalculationThreshold)) { // (***)
           skip_current_code = true;
         }
         if (skip_current_code) {
@@ -2453,6 +2453,31 @@ try {
         // Assess current code
         sum = 0.0;
         sum_marks = 0;
+
+        // Precalculation optimization (3/4): skip "very inefficient" current code if acceptable
+        /* if ( (next_current_game_idx == 1)
+             && (!(idx1 < nbCodes)) // (no impact on actual computations)
+             && (!(codeHandler.nbDifferentColors(currentGame[0]) <= 2)) ) { // (***) (precalculation mode)
+          let very_inefficient_current_code = false;
+          for (mark_idx = nbMaxMarks-1; mark_idx >= 0; mark_idx--) {
+            let nextNbCodes = nextNbsCodes[mark_idx];
+            // Go through all sets of possible marks
+            if (nextNbCodes > 0) {
+              // At least one mark with a very high number of remaining possible codes and no further precalculation planned => this code is considered as "very inefficient"
+              if (!(nextNbCodes <= nbCodesForPrecalculationThreshold)) { // (***)
+                very_inefficient_current_code = true;
+                break;
+              }
+            }
+          }
+          if (very_inefficient_current_code) { // (precalculation mode)
+            if (idx1 < nbCodes) {
+              throw new Error("recursiveEvaluatePerformances: very_inefficient_current_code");
+            }
+            continue; // skip "very inefficient" current code
+          }
+        } */
+
         // let useless_current_code = false; // (precalculation mode)
         for (mark_idx = nbMaxMarks-1; mark_idx >= 0; mark_idx--) {
           let nextNbCodes = nextNbsCodes[mark_idx];
@@ -2594,13 +2619,14 @@ try {
           }
         }
         /*
-        // Precalculation optimization (3/3): skip current code if needed
+        // Precalculation optimization (4/4): skip useless current code if acceptable
         if (useless_current_code) { // (precalculation mode)
           if (idx1 < nbCodes) {
             throw new Error("recursiveEvaluatePerformances: useless_current_code");
           }
           continue; // skip useless current code
         } */
+
         if (sum_marks != nbCodes) {
           throw new Error("recursiveEvaluatePerformances: invalid sum_marks value (1) (depth=" + depth + ", sum_marks=" + sum_marks + ", sum_marks=" + sum_marks + ")");
         }
