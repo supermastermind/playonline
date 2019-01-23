@@ -66,7 +66,7 @@ try {
   let baseOfMaxPerformanceEvaluationTime = 30000; // 30 seconds / much higher in (precalculation mode)
   let maxPerformanceEvaluationTime = -1;
 
-  let refNbOfCodesForSystematicEvaluation = 1400; // (high values may induce latencies)
+  let refNbOfCodesForSystematicEvaluation = 1500; // (high values may induce latencies)
   let nbOfCodesForSystematicEvaluation = -1;
   let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
 
@@ -127,7 +127,7 @@ try {
 
   // ***************************************************************************************************************
   // Precalculated table for 4 columns
-  // for minNbCodesForPrecalculation = 300, nbCodesForPrecalculationThreshold = 1400, precalculation_time >= 3.5 sec
+  // for minNbCodesForPrecalculation = 300, nbCodesForPrecalculationThreshold = 1296, precalculation_time >= 3.5 sec
   // ***************************************************************************************************************
 
   let precalculated_games_4columns =
