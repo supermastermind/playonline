@@ -2799,7 +2799,7 @@ try {
       str = "\"" + str.substring(0, str.length-1) + ".\" +"; // remove last ','
       // console.log(str);
       let precalculation_time = new Date().getTime() - precalculation_start_time;
-      if (precalculation_time >= 3500) { // 3500 = 3.5 seconds on i5 processor or on Linux VB running on i7 processor
+      if (precalculation_time >= 2500) { // 2500 = 2.5 seconds on i5 processor or on Linux VB running on i7 processor
         send_trace_msg(str);
       }
       else {
