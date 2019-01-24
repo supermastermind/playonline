@@ -113,7 +113,7 @@ try {
   // *************************************************************************
   // *************************************************************************
 
-  let minNbCodesForPrecalculation = 300;
+  let minNbCodesForPrecalculation = 270;
   let nbCodesForPrecalculationThreshold = Math.max(refNbOfCodesForSystematicEvaluation, minNbCodesForPrecalculation); // (shall be in [minNbCodesForPrecalculation, refNbOfCodesForSystematicEvaluation])
 
   let maxDepthForGamePrecalculation = -1; // (-1 or 3)
@@ -2799,7 +2799,7 @@ try {
       str = "\"" + str.substring(0, str.length-1) + ".\" +"; // remove last ','
       // console.log(str);
       let precalculation_time = new Date().getTime() - precalculation_start_time;
-      if (precalculation_time >= 3000) { // 3000 = 3.0 seconds on i5 processor or on Linux VB running on i7 processor
+      if (precalculation_time >= 2700) { // 2700 = 2.7 seconds on i5 processor or on Linux VB running on i7 processor
         send_trace_msg(str);
       }
       else {
