@@ -87,6 +87,7 @@ let loadTime = (new Date()).getTime(); // time in milliseconds
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
+let nbNewGameEvents = 1;
 let nbNewGameEventsCancelled = 0;
 let playerWasHelped = false;
 
@@ -254,7 +255,16 @@ let edgeMode = (navigator.userAgent.toUpperCase().search("EDGE/") != -1);
 // *************************************************************************
 
 function getExtraDebugInfo() {
-  return "(debug:" + gameSolverDbg + ", currentattempt:" + currentAttemptNumber + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes + ", nbstatsfilled:" + nbOfStatsFilled_Perfs +  ", gameduration:" + ((startTime > 0) ? ((new Date()).getTime() - startTime) : "NA") + "ms, " + "workeralive: " + isWorkerAlive + ", timesinceworkercreation: " + ((isWorkerAlive >= 0) ? (new Date()).getTime() - workerCreationTime : "NA") + ", currentcode:" + currentCode + ")";
+  return "(currentattempt:" + currentAttemptNumber
+         + ", nbcodesfilled:" + nbOfStatsFilled_NbPossibleCodes
+         + ", nbstatsfilled:" + nbOfStatsFilled_Perfs
+         + ", gameduration:" + ((startTime > 0) ? ((new Date()).getTime() - startTime) : "NA") + "ms"
+         + ", workeralive:" + isWorkerAlive + ", timesinceworkercreation: " + ((isWorkerAlive >= 0) ? (new Date()).getTime() - workerCreationTime : "NA")
+         + ", currentcode:" + currentCode
+         + ", nbnewgames:" + nbNewGameEvents
+         + ", nbgamesplayed:" + nbGamesPlayed
+         + ", nbgameswon:" + nbGamesPlayedAndWon
+         + ", debug:" + gameSolverDbg + ")";
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
@@ -919,6 +929,7 @@ function newGameButtonClick(nbColumns) {
       }
 
       newGameEvent = true;
+      nbNewGameEvents++;
       draw_graphic();
 
       // Transition effect 2/2
