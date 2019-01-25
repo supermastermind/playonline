@@ -339,7 +339,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_LC";
+      let html_compatibility_game_version = "Ver_LD";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1488,7 +1488,7 @@
                        && (gamesok >= 3) // (coherent with "history_clear_advice")
                        && (attempts >= 4) // (game not too easy)
                        && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled / ignore 1 result out of 2 + oblige page reload after 100 games if not filled / no more results after 140 games if not filled)
-                       && ( (gamesok >= 12) || ((gamesok >= 5) && (score >= 33)) || ((nbcolumns == 4) && (score >= 33)) || ((nbcolumns == 5) && (score >= 44)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
+                       && ( (gamesok >= 12) || ((gamesok >= 5) && (score >= 44)) || ((nbcolumns == 4) && (score >= 44)) || ((nbcolumns == 5) && (score >= 48)) || ((nbcolumns >= 6) && (score >= 67)) ) ) { // (experienced player)
                     if (modal_mode == -1) {
                       try {
                         modal_mode = 2;
