@@ -1325,21 +1325,27 @@ function updateGameSizes() {
 }
 
 function postInitMessageToGameSolver() {
-  if (game_id_for_gameSolverConfig != game_cnt) { // ignore other threads
-    console.log("postInitMessageToGameSolver() call ignored: " + game_id_for_gameSolverConfig + ", " + game_cnt);
-    return;
+  try {
+    if (game_id_for_gameSolverConfig != game_cnt) { // ignore other threads
+      console.log("postInitMessageToGameSolver() call ignored: " + game_id_for_gameSolverConfig + ", " + game_cnt);
+      return;
+    }
+    if (game_id_for_initGameSolver != -1) { // 'INIT' message was already posted
+      console.log("postInitMessageToGameSolver() call skipped: " + game_id_for_initGameSolver + ", " + game_cnt);
+      return;
+    }
+    if (gameSolverInitMsgContents != null) {
+      gameSolverDbg = 99;
+      gameSolver.postMessage(gameSolverInitMsgContents);
+      gameSolverDbg = 100;
+      game_id_for_initGameSolver = game_cnt;
+    }
+    else {
+      throw new Error("internal postInitMessageToGameSolver() error: gameSolverInitMsgContents == null");
+    }
   }
-  if (game_id_for_initGameSolver != -1) { // 'INIT' message was already posted
-    console.log("postInitMessageToGameSolver() call skipped: " + game_id_for_initGameSolver + ", " + game_cnt);
-    return;
-  }
-  if (gameSolverInitMsgContents != null) {
-    gameSolver.postMessage(gameSolverInitMsgContents);
-    gameSolverDbg = 10;
-    game_id_for_initGameSolver = game_cnt;
-  }
-  else {
-    throw new Error("internal postInitMessageToGameSolver() error: gameSolverInitMsgContents == null");
+  catch (err) {
+    displayGUIError("postInitMessageToGameSolver() error: " + err, err.stack);
   }
 }
 
@@ -1541,6 +1547,7 @@ function resetGameAttributes(nbColumnsSelected) {
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 888);
   }
+  gameSolverDbg = 8;
 
 }
 
