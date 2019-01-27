@@ -87,6 +87,9 @@ let loadTime = (new Date()).getTime(); // time in milliseconds
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
+let nbOnGoingGamesAborted = 0;
+let nbGamesAbortedWithOnGoingWorker = 0;
+let lastGameWasAbortedWithOnGoingWorker = false;
 let nbNewGameEvents = 1;
 let nbNewGameEventsCancelled = 0;
 let playerWasHelped = false;
@@ -264,7 +267,10 @@ function getExtraDebugInfo() {
          + ", nbnewgames:" + nbNewGameEvents
          + ", nbgamesplayed:" + nbGamesPlayed
          + ", nbgameswon:" + nbGamesPlayedAndWon
-         + ", debug:" + gameSolverDbg + ")";
+         + ", nbongoinggamesaborted: " + nbOnGoingGamesAborted
+         + ", nbgamesabortedwithongoingworker:" + nbGamesAbortedWithOnGoingWorker
+         + ", lastgamewasabortedwithongoingworker:" + lastGameWasAbortedWithOnGoingWorker
+         + ", gamesolverdbg:" + gameSolverDbg + ")";
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
@@ -905,6 +911,7 @@ function newGameButtonClick(nbColumns) {
             return; // Cancel or "x" (close) button
           }
         }
+        nbOnGoingGamesAborted++;
 
         // Transition effect 1/2
         try {
@@ -919,6 +926,7 @@ function newGameButtonClick(nbColumns) {
         }
         catch (exc) {
         }
+
       }
 
       // Transition effect 1/2
@@ -926,6 +934,15 @@ function newGameButtonClick(nbColumns) {
         $(".page_transition").fadeIn("fast");
       }
       catch (exc) {
+      }
+
+      // Debug values
+      if (currentAttemptNumber-1 != nbOfStatsFilled_Perfs) {
+        nbGamesAbortedWithOnGoingWorker++;
+        lastGameWasAbortedWithOnGoingWorker = true;
+      }
+      else {
+        lastGameWasAbortedWithOnGoingWorker = false;
       }
 
       newGameEvent = true;
