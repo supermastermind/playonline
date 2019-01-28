@@ -339,7 +339,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_LG";
+      let html_compatibility_game_version = "Ver_LH";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -497,7 +497,7 @@
             }
 
             else if (modal_mode == 2) {
-            
+
               // Get firstname entered
               try {
                 let firstname_entered = document.getElementById("firstname_input").value;
@@ -544,7 +544,7 @@
               modal_mode = -1;
               return true; // close the modal
             }
-            
+
             // else:
             modal_mode = -1;
             return true; // close the modal
@@ -684,6 +684,18 @@
         }
       }
 
+      function nbVowels(str)
+      {
+        var vowel_list = 'aeiouyAEIOUY';
+        var vowel_count = 0;
+        for (var i = 0 ; i < str.length ; i++) {
+          if (vowel_list.indexOf(str[i]) !== -1) {
+            vowel_count++;
+          }
+        }
+        return vowel_count;
+      }
+
       function isCorrect(str) {
         if ( (str.toLowerCase().indexOf('sherlo') != -1) // (Sherlock)
              || (str.toLowerCase().indexOf('aaa') != -1)
@@ -720,11 +732,14 @@
              || (str.toLowerCase().indexOf('nobody') != -1)
              || (str.toLowerCase().indexOf('noone') != -1)
              || (str.toLowerCase().indexOf('dummy') != -1)
-             || (str.toLowerCase().indexOf('empty') != -1) ) {
+             || (str.toLowerCase().indexOf('empty') != -1)
+             || (nbVowels(str) == 0)
+             || (nbVowels(str) == str.length) ) {
           return false;
         }
         return true;
       }
+
       if (typeof(Storage) !== 'undefined') {
         if (localStorage.firstname && (!isCorrect(localStorage.firstname))) {
           localStorage.previousfirstname = localStorage.firstname;
@@ -1033,7 +1048,7 @@
             if (localStorage.skip_storing) {
               return;
             }
-            
+
             switch (nbcolumns) {
 
               case 3:
@@ -1310,7 +1325,7 @@
               if (comma_idx >= 4) {
                 country = country.substring(0, comma_idx).trim();
               }
-              
+
               // Check if geolocation data are valid
               if (geolocation_handler.nb_JSON_queries_posted == 1) {
                 if ((!valid_ipaddress) || (city == '-')) {
@@ -1852,9 +1867,9 @@
     </script>
 
     <p id='traces_id' style='color:#AAAAAA;'></p>
-    
+
     <script src='SuperMasterMind.js'></script>
-   
+
   </body>
 
 </html>
