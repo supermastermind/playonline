@@ -339,7 +339,7 @@
     <!-- Run main Super Master Mind javascript -->
 
     <script>
-      let html_compatibility_game_version = "Ver_LI";
+      let html_compatibility_game_version = "Ver_LJ";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -508,6 +508,9 @@
                   }
                 }
                 else {
+                  if (typeof(Storage) !== 'undefined') {
+                    localStorage.previousfirstname = firstname_entered;
+                  }
                   alert("Invalid first name: " + firstname_entered);
                 }
               }
@@ -1504,7 +1507,8 @@
                        && (attempts >= 4) // (game not too easy)
                        && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled / ignore 1 result out of 2 + oblige page reload after 100 games if not filled / no more results after 140 games if not filled)
                        && ( ((nbcolumns == 4) && (score >= 55)) || ((nbcolumns == 5) && (score >= 60)) || ((nbcolumns == 6) && (score >= 110)) || ((nbcolumns == 7) && (score >= 130))
-                            || ((gamesok >= 7) && (score >= 44)) || (gamesok >= 13) ) ) { // (experienced player)
+                            || ((gamesok >= 7) && (score >= 44))
+                            || ((gamesok >= 13) && (score >= 25)) ) ) { // (experienced player)
                     if (modal_mode == -1) {
                       try {
                         modal_mode = 2;
