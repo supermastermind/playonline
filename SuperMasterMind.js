@@ -1352,10 +1352,14 @@ function updateGameSizes() {
 
 }
 
-function postInitMessageToGameSolver() {
+function postInitMessageToGameSolver(cnt_p) {
   try {
+    if (game_id_for_gameSolverConfig != cnt_p) { // ignore other threads
+      console.log("postInitMessageToGameSolver() call ignored (1): " + game_id_for_gameSolverConfig + ", " + cnt_p);
+      return;
+    }
     if (game_id_for_gameSolverConfig != game_cnt) { // ignore other threads
-      console.log("postInitMessageToGameSolver() call ignored: " + game_id_for_gameSolverConfig + ", " + game_cnt);
+      console.log("postInitMessageToGameSolver() call ignored (2): " + game_id_for_gameSolverConfig + ", " + game_cnt);
       return;
     }
     if (game_id_for_initGameSolver != -1) { // 'INIT' message was already posted
@@ -1576,7 +1580,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverInitMsgContents = {'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
-  setTimeout("postInitMessageToGameSolver();", 1444); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 1444); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 888);
@@ -2203,7 +2207,7 @@ function draw_graphic_bis() {
         else {
           if (game_id_for_initGameSolver == -1) { // 'INIT' message was not posted yet
             console.log("(anticipated 'INIT' message)");
-            postInitMessageToGameSolver();
+            postInitMessageToGameSolver(game_id_for_gameSolverConfig);
           }
           if (game_id_for_initGameSolver == game_cnt) {
             if (gameSolver !== undefined) {
