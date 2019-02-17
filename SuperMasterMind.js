@@ -1393,10 +1393,14 @@ function resetGameAttributes(nbColumnsSelected) {
   // Clear gameSolver worker if necessary
   gameSolverDbg = 0;
   if (gameSolver !== undefined) {
-    isWorkerAlive = -1;
-    gameSolverDbg = 1;
-    gameSolver.terminate(); gameSolverDbg = 2;
-    gameSolver = undefined;
+    if (game_id_for_initGameSolver != -1) { // 'INIT' message was already posted
+      // (code duplicated:)
+      isWorkerAlive = -1;
+      gameSolverDbg = 1;
+      gameSolver.terminate(); gameSolverDbg = 2;
+      gameSolver = undefined;
+    }
+    // else: keep already-created gameSolver worker
   }
   gameSolverInitMsgContents = null;
   gameSolverConfigDbg = null;
@@ -1522,9 +1526,9 @@ function resetGameAttributes(nbColumnsSelected) {
   let toto = simpleCodeHandler.createRandomCode();
   toto = simpleCodeHandler.setColor(toto, 1, 1);
   toto = simpleCodeHandler.setColor(toto, 1, 2);
-  toto = simpleCodeHandler.setColor(toto, 2, 3);
-  toto = simpleCodeHandler.setColor(toto, 2, 4);
-  toto = simpleCodeHandler.setColor(toto, 2, 5);
+  toto = simpleCodeHandler.setColor(toto, 1, 3);
+  toto = simpleCodeHandler.setColor(toto, 1, 4);
+  toto = simpleCodeHandler.setColor(toto, 1, 5);
   // toto = simpleCodeHandler.setColor(toto, 7, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 7);
@@ -1543,10 +1547,12 @@ function resetGameAttributes(nbColumnsSelected) {
 
   updateGameSizes();
 
-  // Create a new worker for gameSolver
-  isWorkerAlive = 0;
-  workerCreationTime = (new Date()).getTime();
-  gameSolver = new Worker("Game" + "Solver.js"); gameSolverDbg = 3;
+  // Create a new worker for gameSolver if needed
+  if (gameSolver == undefined) {
+    isWorkerAlive = 0;
+    workerCreationTime = (new Date()).getTime();
+    gameSolver = new Worker("Game" + "Solver.js"); gameSolverDbg = 3;
+  }
   // gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
   gameSolver.onerror = onGameSolverError; gameSolverDbg = 4;
   Worker.onmessageerror = onGameSolverMessageError; gameSolverDbg = 5;
@@ -1570,7 +1576,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverInitMsgContents = {'req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
-  setTimeout("postInitMessageToGameSolver();", 999); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+  setTimeout("postInitMessageToGameSolver();", 1444); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 888);
@@ -2610,6 +2616,15 @@ function draw_graphic_bis() {
                             lightGray, backgroundColor_2, ctx, true, 0, true, 1);
             }
           }
+
+          if (gameSolver !== undefined) {
+            // (code duplicated:)
+            isWorkerAlive = -1.5;
+            gameSolverDbg = 1.5;
+            gameSolver.terminate(); gameSolverDbg = 2.5;
+            gameSolver = undefined;
+          }
+
         }
         else {
           let res_header1 = false;
