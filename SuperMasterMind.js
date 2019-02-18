@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.51";
+let version = "v2.52";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -2621,7 +2621,8 @@ function draw_graphic_bis() {
             }
           }
 
-          if (gameSolver !== undefined) {
+          if ( (!gameOnGoing()) && allPossibleCodesFilled()
+               && (gameSolver !== undefined) ) {
             // (code duplicated:)
             isWorkerAlive = -1.5;
             gameSolverDbg = 1.5;
