@@ -2682,7 +2682,7 @@ try {
 
             // Anticipation of processing abortion
             // To simplify, it is assumed here that processing times of all classes are "relatively" close to each other
-            if ( (time_elapsed > 3500) && (time_elapsed > maxPerformanceEvaluationTime*7/100) && (idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ) { // (0.179 ratio)
+            if ( (time_elapsed > 3000) && (time_elapsed > maxPerformanceEvaluationTime*7/100) && (idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ) { // (0.179 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #0)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
