@@ -3223,6 +3223,16 @@ try {
           throw new Error("NEW_ATTEMPT phase / invalid mark: " + mark_nbBlacks + "B, " + mark_nbWhites + "W, " + nbColumns);
         }
 
+        if (data.precalculated_games == undefined) {
+          throw new Error("NEW_ATTEMPT phase / precalculated_games is undefined");
+        }
+        if (data.precalculated_games != "") {
+          if ( (nbColumns != 5) || (curAttemptNumber != 1) ) { // precalculated_games is only expected at the first attempt of 5 columns games
+            throw new Error("NEW_ATTEMPT phase / unexpected precalculated_games: " + nbColumns + ", " + curAttemptNumber);
+          }
+          precalculated_games_5columns = precalculated_games_5columns + data.precalculated_games;
+        }
+
         if (data.game_id == undefined) {
           throw new Error("NEW_ATTEMPT phase / game_id is undefined");
         }

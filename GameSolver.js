@@ -228,7 +228,7 @@ this.cur_get_list_idx=0;
 this.cur_get_idx=0;}
 getNextElement(goToNext) {
 if( (this.cur_get_list_idx < this.cur_add_list_idx)
-|| ( (this.cur_get_list_idx==this.cur_add_list_idx)&&(this.cur_get_idx < this.cur_add_idx) ) ) {
+||( (this.cur_get_list_idx==this.cur_add_list_idx)&&(this.cur_get_idx < this.cur_add_idx) ) ) {
 let value=this.internal_lists[this.cur_get_list_idx].list[this.cur_get_idx];
 if(goToNext) {
 if(this.cur_get_idx < this.granularity-1) {
@@ -245,7 +245,7 @@ replaceNextElement(value_ini_p, value_p) {
 if( (value_ini_p==0)||(value_p==0) ) {
 throw new Error("OptimizedArrayList: replaceNextElement: invalid parameter ("+value_ini_p+","+value_p+")");}
 if( (this.cur_get_list_idx < this.cur_add_list_idx)
-|| ( (this.cur_get_list_idx==this.cur_add_list_idx)&&(this.cur_get_idx < this.cur_add_idx) ) ) {
+||( (this.cur_get_list_idx==this.cur_add_list_idx)&&(this.cur_get_idx < this.cur_add_idx) ) ) {
 let value=this.internal_lists[this.cur_get_list_idx].list[this.cur_get_idx];
 if(value!=value_ini_p) {
 throw new Error("OptimizedArrayList: replaceNextElement inconsistency ("+value+","+value_ini_p+")");}
@@ -374,7 +374,7 @@ isValid(code) {
 for (let col=0;col < this.nbColumns;col++) {
 let color=this.getColor(code, col+1);
 if( ((color < 1)||(color > this.nbColors))
-&& (color!=this.emptyColor) ) {
+&&(color!=this.emptyColor) ) {
 return false;}}
 for (let col=this.nbColumns+1;col <=this.nbMaxColumns;col++) {
 let color=this.getColor(code, col);
@@ -385,7 +385,7 @@ isFullAndValid(code) {
 for (let col=0;col < this.nbColumns;col++) {
 let color=this.getColor(code, col+1);
 if( (color < 1)||(color > this.nbColors)
-|| (color==this.emptyColor) ) {
+||(color==this.emptyColor) ) {
 return false;}}
 for (let col=this.nbColumns+1;col <=this.nbMaxColumns;col++) {
 let color=this.getColor(code, col);
@@ -418,8 +418,8 @@ let codeX;
 let codeY;
 let sum_codes=code1+code2;
 let key=( (sum_codes /* (use LSBs) */
-+ (sum_codes >> 9) /* (use MSBs) */
-+ code1 * code2 /* (mix LSBs) */) & marks_optimization_mask );
++(sum_codes >> 9) /* (use MSBs) */
++code1 * code2 /* (mix LSBs) */) & marks_optimization_mask );
 marks_already_computed_table_cell=marks_already_computed_table[key];
 codeX=marks_already_computed_table_cell.code1a;
 codeY=marks_already_computed_table_cell.code2a;
@@ -753,17 +753,17 @@ code_tmp=codeHandler.setAllColors(color1, color2, color3, color4, color5, color6
 codeHandler.fillMark(codesPlayed[0], code_tmp, mark_tmp);
 let mark_tmp_nb_pegs=mark_tmp.nbBlacks+mark_tmp.nbWhites;
 if( (mark_tmp_nb_pegs > mark0_nb_pegs)
-|| (mark_tmp_nb_pegs < mark0_nb_pegs - 1)
-|| (mark_tmp.nbBlacks > marks[0].nbBlacks)
-|| (mark_tmp.nbBlacks < marks[0].nbBlacks - 1) ) {
+||(mark_tmp_nb_pegs < mark0_nb_pegs - 1)
+||(mark_tmp.nbBlacks > marks[0].nbBlacks)
+||(mark_tmp.nbBlacks < marks[0].nbBlacks - 1) ) {
 continue;}
 if(mark1_nb_pegs!=-1) {
 codeHandler.fillMark(codesPlayed[1], code_tmp, mark_tmp);
 let mark_tmp_nb_pegs=mark_tmp.nbBlacks+mark_tmp.nbWhites;
 if( (mark_tmp_nb_pegs > mark1_nb_pegs)
-|| (mark_tmp_nb_pegs < mark1_nb_pegs - 1)
-|| (mark_tmp.nbBlacks > marks[1].nbBlacks)
-|| (mark_tmp.nbBlacks < marks[1].nbBlacks - 1) ) {
+||(mark_tmp_nb_pegs < mark1_nb_pegs - 1)
+||(mark_tmp.nbBlacks > marks[1].nbBlacks)
+||(mark_tmp.nbBlacks < marks[1].nbBlacks - 1) ) {
 continue;}}
 for (let color7=1;color7 <=nbColors;color7++) {
 code_tmp=codeHandler.setAllColors(color1, color2, color3, color4, color5, color6, color7);
@@ -792,9 +792,9 @@ break;
 default:
 throw new Error("computeNbOfPossibleCodes: invalid nbColumns value: "+nbColumns);}
 if( (cnt <=0)||(cnt > initialNbPossibleCodes)
-|| ( (attempt_nb==1)&&(cnt!=initialNbPossibleCodes) )
-|| ( (attempt_nb < N)&&(possibleCodesAfterNAttempts.getNbElements()!=0) )
-|| ( (attempt_nb==N)&&(cnt!=possibleCodesAfterNAttempts.getNbElements()) ) ) {
+||( (attempt_nb==1)&&(cnt!=initialNbPossibleCodes) )
+||( (attempt_nb < N)&&(possibleCodesAfterNAttempts.getNbElements()!=0) )
+||( (attempt_nb==N)&&(cnt!=possibleCodesAfterNAttempts.getNbElements()) ) ) {
 throw new Error("computeNbOfPossibleCodes: invalid cnt values ("+cnt+","+attempt_nb+","+possibleCodesAfterNAttempts.getNbElements()+")");}
 return cnt;}
 else {
@@ -833,8 +833,8 @@ cnt++;}
 else {
 possibleCodesAfterNAttempts.replaceNextElement(code_possible_after_N_attempts, -1);}} while (true);
 if( (cnt <=0)||(cnt > initialNbPossibleCodes)
-|| ( (attempt_nb==1)&&(cnt!=initialNbPossibleCodes) )
-|| (cnt_global!=possibleCodesAfterNAttempts.getNbElements()) ) {
+||( (attempt_nb==1)&&(cnt!=initialNbPossibleCodes) )
+||(cnt_global!=possibleCodesAfterNAttempts.getNbElements()) ) {
 throw new Error("computeNbOfPossibleCodes: invalid cnt/cnt_global values ("+cnt+","+cnt_global+","+possibleCodesAfterNAttempts.getNbElements()+")");}
 return cnt;}}
 function generateAllPermutations() {
@@ -1211,7 +1211,7 @@ listOfClassesFirstCall[nbOfClassesFirstCall]=cur_code;
 nbOfClassesFirstCall++;}}
 curNbClasses=nbOfClassesFirstCall;
 if( (curNbClasses <=0)||(curNbClasses > nbCodes)
-|| ((curGameSize==0)&&(curNbClasses!=initialNbClasses)) ) {
+||((curGameSize==0)&&(curNbClasses!=initialNbClasses)) ) {
 throw new Error("evaluatePerformances: invalid curNbClasses: "+curNbClasses);}
 for (let idx1=0;idx1 < listOfEquivalentCodesAndPerformances.length;idx1++) {
 for (let idx2=0;idx2 < listOfEquivalentCodesAndPerformances[idx1].length;idx2++) {
@@ -1263,11 +1263,6 @@ nextListsOfCodes=listsOfPossibleCodes[next_depth];
 nextNbsCodes=nbOfPossibleCodes[next_depth];
 for (idx1=0;idx1 < nbCodes;idx1++) {
 cur_code=listOfCodes[idx1];
-/* if((depth <=1) &&(!compute_sum_ini)) {
-console.log(spaces(depth)+"(depth "+depth+") "+"CURRENT_CODE:"+codeHandler.codeToString(cur_code));
-console.log(spaces(depth)+"cur game: "+str_from_list_of_codes(curGame, next_cur_game_idx));
-console.log(spaces(depth)+"perms: "+cur_permutations_table_size[next_cur_game_idx]+": "
-+ print_permutation_list(cur_permutations_table[next_cur_game_idx], cur_permutations_table_size[next_cur_game_idx]));} */
 compute_sum=compute_sum_ini;
 if(!compute_sum) {
 sum=0.0;
@@ -1281,7 +1276,7 @@ throw new Error("recursiveEvaluatePerformances: negative sum (1): "+sum);}
 compute_sum=(sum==0.0);
 precalculated_sum=false;
 if( (precalculated_cur_game_or_code >=0)
-&& compute_sum /*&&(!precalculation_mode) */ ) {
+&&compute_sum /*&&(!precalculation_mode) */ ) {
 sum=lookForCodeInPrecalculatedGames(cur_code, next_cur_game_idx, nbCodes);
 if(sum > 0) {
 compute_sum=false;
@@ -1311,8 +1306,8 @@ let code1=cur_code;
 let code2=other_code;
 let sum_codes=code1+code2;
 let key=( (sum_codes /* (use LSBs) */
-+ (sum_codes >> 9) /* (use MSBs) */
-+ code1 * code2 /* (mix LSBs) */) & marks_optimization_mask );
++(sum_codes >> 9) /* (use MSBs) */
++code1 * code2 /* (mix LSBs) */) & marks_optimization_mask );
 marks_already_computed_table_cell=marks_already_computed_table[key];
 codeX=marks_already_computed_table_cell.code1a;
 codeY=marks_already_computed_table_cell.code2a;
@@ -1597,7 +1592,7 @@ if(first_call&&(particularCodeToAssess!=0 /* empty code */)) {
 cur_code=particularCodeToAssess;
 let particular_precalculated_sum=false;
 if( (precalculated_cur_game_or_code > 0)
-&& (!compute_sum_ini) /*&&(!precalculation_mode) */ ) {
+&&(!compute_sum_ini) /*&&(!precalculation_mode) */ ) {
 sum=lookForCodeInPrecalculatedGames(cur_code, next_cur_game_idx, nbCodes);
 if(sum > 0) {
 particular_precalculated_sum=true;}
@@ -1768,7 +1763,7 @@ throw new Error("INIT phase / invalid nbColumns: "+nbColumns);}
 if(nbOfCodesForSystematicEvaluation > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
 throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation");}
 if( (maxDepthForGamePrecalculation > maxDepthForGamePrecalculation_ForMemAlloc)
-|| ((maxDepthForGamePrecalculation!=-1)&&(maxDepthForGamePrecalculation!=3)) ) {
+||((maxDepthForGamePrecalculation!=-1)&&(maxDepthForGamePrecalculation!=3)) ) {
 throw new Error("INIT phase / internal error (maxDepthForGamePrecalculation: "+maxDepthForGamePrecalculation+")");}
 if(minNbCodesForPrecalculation <=nbCodesLimitForEquivalentCodesCheck) {
 throw new Error("INIT phase / internal error: minNbCodesForPrecalculation");}
@@ -1849,6 +1844,12 @@ throw new Error("NEW_ATTEMPT phase / invalid mark_nbWhites: "+mark_nbWhites+", "
 marks[curAttemptNumber-1]={nbBlacks:mark_nbBlacks, nbWhites:mark_nbWhites};
 if(!codeHandler.isMarkValid(marks[curAttemptNumber-1])) {
 throw new Error("NEW_ATTEMPT phase / invalid mark: "+mark_nbBlacks+"B, "+mark_nbWhites+"W, "+nbColumns);}
+if(data.precalculated_games==undefined) {
+throw new Error("NEW_ATTEMPT phase / precalculated_games is undefined");}
+if(data.precalculated_games!="") {
+if( (nbColumns!=5)||(curAttemptNumber!=1) ) {
+throw new Error("NEW_ATTEMPT phase / unexpected precalculated_games: "+nbColumns+", "+curAttemptNumber);}
+precalculated_games_5columns=precalculated_games_5columns+data.precalculated_games;}
 if(data.game_id==undefined) {
 throw new Error("NEW_ATTEMPT phase / game_id is undefined");}
 let attempt_game_id=Number(data.game_id);
@@ -1914,11 +1915,11 @@ relative_perf_evaluation_done=true;}
 else {
 let precalculated_cur_game_or_code=-1;
 if( (previousNbOfPossibleCodes >=minNbCodesForPrecalculation)
-&& (curGameSize <=maxDepthForGamePrecalculation) ) {
+&&(curGameSize <=maxDepthForGamePrecalculation) ) {
 precalculated_cur_game_or_code=lookForCodeInPrecalculatedGames(codesPlayed[curAttemptNumber-1], curGameSize, previousNbOfPossibleCodes);}
 if( (precalculated_cur_game_or_code > 0)
-|| ((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
-|| (previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation) ) {
+||((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
+||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation) ) {
 if(previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
 throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): "+previousNbOfPossibleCodes+", "+ nbOfCodesForSystematicEvaluation_ForMemAlloc);}
 if(precalculated_cur_game_or_code > 0) {
@@ -1942,7 +1943,7 @@ listOfEquivalentCodesAndPerformances[idx1][idx2]={equiv_code:0, equiv_sum:Perfor
 if((marks_already_computed_table==null)||(marks_already_computed_table.length!=marks_optimization_mask+1)) {
 throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (1)");}}}
 else if( ((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
-|| (previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation) ) {
+||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation) ) {
 if(precalculated_cur_game_or_code > 0) {
 throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");}
 if(!performanceListsInitDone) {
@@ -1984,9 +1985,9 @@ break;}}
 if(!code_played_found) {
 throw new Error("NEW_ATTEMPT phase / performance of possible code played was not evaluated ("+codeHandler.codeToString(codesPlayed[curAttemptNumber-1])+", "+curAttemptNumber+")");}
 console.log("(perfeval#1: best performance: "+best_global_performance
-+ " / code performance: "+code_played_global_performance
-+ " / "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")
-+ ((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");}
++" / code performance: "+code_played_global_performance
++" / "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")
++((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");}
 else {
 console.log("(perfeval#1 failed in "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")+")");}}
 else {
@@ -1997,9 +1998,9 @@ if((particularCodeGlobalPerformance==PerformanceNA)||(particularCodeGlobalPerfor
 throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: "+particularCodeGlobalPerformance);}
 code_played_global_performance=particularCodeGlobalPerformance;
 console.log("(perfeval#2: best performance: "+best_global_performance
-+ " / code performance: "+particularCodeGlobalPerformance
-+ " / "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")
-+ ((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");}
++" / code performance: "+particularCodeGlobalPerformance
++" / "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")
++((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");}
 else {
 console.log("(perfeval#2 failed in "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")+")");}}
 if(best_global_performance!=PerformanceUNKNOWN) {
@@ -2044,17 +2045,17 @@ throw new Error("NEW_ATTEMPT phase / code_colors allocation was modified");}
 if(other_code_colors.length!=nbMaxColumns) {
 throw new Error("NEW_ATTEMPT phase / other_code_colors allocation was modified");}
 if( (!check2DArraySizes(cur_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
-|| (cur_game_code_colors.size < curGame.length) ) {
+||(cur_game_code_colors.size < curGame.length) ) {
 throw new Error("NEW_ATTEMPT phase / cur_game_code_colors allocation was modified or is invalid");}
 if( (!check2DArraySizes(other_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
-|| (other_game_code_colors.size < curGame.length) ) {
+||(other_game_code_colors.size < curGame.length) ) {
 throw new Error("NEW_ATTEMPT phase / other_game_code_colors allocation was modified or is invalid");}
 if(permuted_other_code_colors.length!=nbMaxColumns) {
 throw new Error("NEW_ATTEMPT phase / permuted_other_code_colors allocation was modified");}
 if(partial_bijection.length!=nbMaxColors+1) {
 throw new Error("NEW_ATTEMPT phase / partial_bijection allocation was modified");}
 if( (curGameForGamePrecalculation.length!=maxDepthForGamePrecalculation_ForMemAlloc)
-|| (marksIdxsForGamePrecalculation.length!=maxDepthForGamePrecalculation_ForMemAlloc) ) {
+||(marksIdxsForGamePrecalculation.length!=maxDepthForGamePrecalculation_ForMemAlloc) ) {
 throw new Error("NEW_ATTEMPT phase / curGameForGamePrecalculation or marksIdxsForGamePrecalculation allocation was modified");}}
 else {
 best_global_performance=PerformanceUNKNOWN;
@@ -2172,7 +2173,7 @@ throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (5) (index
 globalPerformancesShown[i]=listOfGlobalPerformances[i];}}}
 self.postMessage({'rsp_type': 'LIST_OF_POSSIBLE_CODES', 'possibleCodesList_p': possibleCodesShown.toString(), 'nb_possible_codes_listed': nb_codes_shown, 'globalPerformancesList_p': globalPerformancesShown.toString(), 'attempt_nb': curAttemptNumber, 'game_id': game_id});
 if( (possibleCodesForPerfEvaluation[0].length!=nbOfCodesForSystematicEvaluation_ForMemAlloc)
-|| (possibleCodesForPerfEvaluation[1].length!=nbOfCodesForSystematicEvaluation_ForMemAlloc) ) {
+||(possibleCodesForPerfEvaluation[1].length!=nbOfCodesForSystematicEvaluation_ForMemAlloc) ) {
 throw new Error("inconsistent possibleCodesForPerfEvaluation length: "+possibleCodesForPerfEvaluation[0].length+", "+possibleCodesForPerfEvaluation[1].length+", "+nbOfCodesForSystematicEvaluation_ForMemAlloc);}}
 else {
 throw new Error("unexpected req_type: "+data.req_type);}
