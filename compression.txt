@@ -6,6 +6,8 @@ normal replace "= " by "="
 normal replace " =" by "="
 normal replace " !" by "!"
 normal replace " || " by "||"
+normal replace " && " by "&&"
+normal replace "if (" by "if("
 normal replace "; " by ";"
 normal replace " + " by "+"
 manual deletion of comments:
