@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.52";
+let version = "v2.53";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -2212,7 +2212,7 @@ function draw_graphic_bis() {
           if (game_id_for_initGameSolver == game_cnt) {
             if (gameSolver !== undefined) {
               gameSolverDbg++;
-              gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'currentAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
+              gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'curAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'game_id': game_cnt});
               gameSolverDbg++;
             }
             else {
