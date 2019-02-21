@@ -1,0 +1,16 @@
+regexp replace //(.*) by nothing
+delete trailing spaces
+delete leading spaces
+regexp replace (\n)+ by \n
+normal replace "= " by "="
+normal replace " =" by "="
+normal replace " !" by "!"
+normal replace " || " by "||"
+normal replace "; " by ";"
+normal replace " + " by "+"
+manual deletion of comments:
+- let precalculation_mode=
+- let nbCodesToGoThrough=
+- if ( (next_cur_game_idx==1)
+delete trailing spaces
+delete leading spaces
