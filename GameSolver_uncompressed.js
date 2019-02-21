@@ -119,7 +119,7 @@ try {
   let maxDepthForGamePrecalculation = -1; // (-1 or 3)
   let maxDepthForGamePrecalculation_ForMemAlloc = 10;
   let curGameForGamePrecalculation = new Array(maxDepthForGamePrecalculation_ForMemAlloc);
-  curGameForGamePrecalculation.fill(0); /* empty code */
+  curGameForGamePrecalculation.fill(0); // empty code
   let marksIdxsForGamePrecalculation = new Array(maxDepthForGamePrecalculation_ForMemAlloc);
   marksIdxsForGamePrecalculation.fill(-1);
 
@@ -323,20 +323,20 @@ try {
   // *************************************************************************
   // *************************************************************************
 
-  /* ********************************************************************************************************
-     OptimizedArrayInternalList class (used by OptimizedArrayList)
-     ******************************************************************************************************** */
+  // ********************************************************************************************************
+  // OptimizedArrayInternalList class (used by OptimizedArrayList)
+  // ********************************************************************************************************
   class OptimizedArrayInternalList {
     constructor(granularity_p) {
       this.list = new Array(granularity_p);
     }
   }
 
-  /* **********************************************************************************************************
-     OptimizedArrayList class: "ArrayList" of non-null integers optimized in terms of performances and memory.
-     A classical use case of this class is the handling of a memory buffer whose size is significantly flexible
-     (dynamic memory allocation instead of static allocation).
-     ********************************************************************************************************** */
+  // **********************************************************************************************************
+  // OptimizedArrayList class: "ArrayList" of non-null integers optimized in terms of performances and memory.
+  // A classical use case of this class is the handling of a memory buffer whose size is significantly flexible
+  // (dynamic memory allocation instead of static allocation).
+  // **********************************************************************************************************
   let nb_max_internal_lists = 100; // (100 means a 1% memory allocation flexibility)
   class OptimizedArrayList {
 
@@ -616,7 +616,7 @@ try {
     }
 
     uncompressStringToCode(str) {
-      let code = 0; /* empty code */
+      let code = 0; // empty code
       if (str.length != this.nbColumns) {
         throw new Error("CodeHandler: uncompressStringToCode (1) (" + str + ")");
       }
@@ -1906,9 +1906,9 @@ try {
           if (!bijection_is_possible_for_this_permutation) {
             break;
           }
-          /* if (partial_bijection[source_color] != new_target_color) {
-            console.log(source_color + " -> " + new_target_color);
-          } */
+          // if (partial_bijection[source_color] != new_target_color) {
+          //  console.log(source_color + " -> " + new_target_color);
+          // }
           partial_bijection[source_color] = new_target_color;
         }
 
@@ -1954,9 +1954,9 @@ try {
             if (!bijection_is_possible_for_this_permutation) {
               break;
             }
-            /* if (partial_bijection[source_color] != new_target_color) {
-              console.log(source_color + " -> " + new_target_color);
-            } */
+            // if (partial_bijection[source_color] != new_target_color) {
+            //  console.log(source_color + " -> " + new_target_color);
+            // }
             partial_bijection[source_color] = new_target_color;
           }
         } // end loop on cur game
@@ -1986,7 +1986,7 @@ try {
   let code2_colors = new Array(nbMaxColumns);
   let colors_int = new Array(nbMaxColumns);
 
-  let particularCodeToAssess = 0; /* empty code */
+  let particularCodeToAssess = 0; // empty code
   let particularCodeGlobalPerformance = PerformanceNA;
   let recursiveEvaluatePerformancesWasAborted = false;
 
