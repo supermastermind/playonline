@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.54";
+let version = "v2.55";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -1568,11 +1568,11 @@ function resetGameAttributes(nbColumnsSelected) {
   sCode = ~(simpleCodeHandler.createRandomCode());
   /* XXX
   let toto = simpleCodeHandler.createRandomCode();
-  toto = simpleCodeHandler.setColor(toto, 1, 1);
-  toto = simpleCodeHandler.setColor(toto, 1, 2);
-  toto = simpleCodeHandler.setColor(toto, 1, 3);
-  toto = simpleCodeHandler.setColor(toto, 1, 4);
-  toto = simpleCodeHandler.setColor(toto, 1, 5);
+  toto = simpleCodeHandler.setColor(toto, 4, 1);
+  toto = simpleCodeHandler.setColor(toto, 4, 2);
+  toto = simpleCodeHandler.setColor(toto, 4, 3);
+  toto = simpleCodeHandler.setColor(toto, 4, 4);
+  toto = simpleCodeHandler.setColor(toto, 4, 5);
   // toto = simpleCodeHandler.setColor(toto, 7, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 7);
@@ -2255,6 +2255,9 @@ function draw_graphic_bis() {
               let precalculated_games = "";
               if ((nbColumns == 5) && (currentAttemptNumber == 2)) { // first NEW_ATTEMPT message posted
                 precalculated_games = precalculated_games_5columns_1st_level[marks[currentAttemptNumber-2].nbBlacks][marks[currentAttemptNumber-2].nbWhites];
+                if (precalculated_games == undefined) {
+                  precalculated_games = "";
+                }
               }
               gameSolver.postMessage({'req_type': 'NEW_ATTEMPT', 'curAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'precalculated_games': precalculated_games, 'game_id': game_cnt});
               gameSolverDbg++;

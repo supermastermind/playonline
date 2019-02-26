@@ -62,7 +62,7 @@ function write_sidebar() {
   document.write("\
     <div class='sidebar'>\
       <h1>History</h1>\
-      <b>Current version: 2.54<br>"
+      <b>Current version: 2.55<br>"
       + month_and_year_str +
       "</b><br><br>\
       Version 2.0<br>\
