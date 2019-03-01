@@ -2817,7 +2817,7 @@ function draw_graphic_bis() {
                 break;
               case 4:
                 nb_attempts_for_max_score = 3; // (estimate: ~5% of scores)
-                time_in_seconds_corresponding_to_one_attempt_in_score = 225.0; // (time corresponding to 2 attempts: 7.5 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 150.0; // (time corresponding to 2 attempts: 5 min)
                 multiply_factor = 0.75;
                 break;
               case 5:
@@ -3269,7 +3269,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 720 /* 12 min */ : 1500 /* 25 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || at_least_one_useless_code_played ) ) { /* (number of useless attempts) */
         document.getElementById("revealSecretColorButton").className = (androidMode ? "button fast_blinking" : "button blinking");
@@ -3324,7 +3324,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 720 /* 12 min */ : 1500 /* 25 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
           if (document.getElementById("revealSecretColorButton").className.indexOf('blinking') == -1) {
             document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + (androidMode ? " fast_blinking" : " blinking");
