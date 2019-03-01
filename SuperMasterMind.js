@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.55";
+let version = "v2.56";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -1021,7 +1021,7 @@ function displayRandomCodesHintIfNeeded() {
     if (typeof(Storage) !== 'undefined') {
       if (localStorage.gamesok) {
         if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % 50) == 0) ) {
-          alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first 1, 2 or 3 codes randomly!");
+          alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first codes randomly!");
           randomCodesHintToBeDisplayed = false;
         }
       }
@@ -2812,7 +2812,7 @@ function draw_graphic_bis() {
             switch (nbColumns) {
               case 3:
                 nb_attempts_for_max_score = 3; // (estimate: ~16% of scores, below 3 would not be relevant)
-                time_in_seconds_corresponding_to_one_attempt_in_score = 60.0; // (time corresponding to 2 attempts: 2 min)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 45.0; // (time corresponding to 2 attempts: 1 min 30)
                 multiply_factor = 0.50;
                 break;
               case 4:
@@ -2822,17 +2822,17 @@ function draw_graphic_bis() {
                 break;
               case 5:
                 nb_attempts_for_max_score = 4; // (estimate: ~5% of scores)
-                time_in_seconds_corresponding_to_one_attempt_in_score = 450.0; // (time corresponding to 2 attempts: 15 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 360.0; // (time corresponding to 2 attempts: 12 min) // See (*)
                 multiply_factor = 1.0;
                 break;
               case 6:
                 nb_attempts_for_max_score = 6; // (estimate: ~15% of scores)
-                time_in_seconds_corresponding_to_one_attempt_in_score = 750.0;  // (time corresponding to 2 attempts: 25 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 600.0;  // (time corresponding to 2 attempts: 20 min) // See (*)
                 multiply_factor = 1.5;
                 break;
               case 7:
                 nb_attempts_for_max_score = 7; // (estimate: ~7% of scores)
-                time_in_seconds_corresponding_to_one_attempt_in_score = 1000.0;  // (time corresponding to 2 attempts: 33.3 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 900.0;  // (time corresponding to 2 attempts: 30 min) // See (*)
                 multiply_factor = 2.0;
                 break;
               default:
@@ -3269,7 +3269,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1500 /* 25 min */ : 1800 /* 30 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || at_least_one_useless_code_played ) ) { /* (number of useless attempts) */
         document.getElementById("revealSecretColorButton").className = (androidMode ? "button fast_blinking" : "button blinking");
@@ -3324,7 +3324,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1500 /* 25 min */ : 1800 /* 30 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 1200 /* 20 min */ : 1800 /* 30 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
           if (document.getElementById("revealSecretColorButton").className.indexOf('blinking') == -1) {
             document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + (androidMode ? " fast_blinking" : " blinking");
