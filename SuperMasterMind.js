@@ -2904,31 +2904,40 @@ function draw_graphic_bis() {
                               greenColor, backgroundColor_2, ctx, true, 0, false, 0);
               }
             }
-            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                               greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+            if (allPerformancesFilled()) {
+              if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                  greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                    greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                                   greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+                  if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                     greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                    displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                                     greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+                  }
+                }
+              }
+              let rounded_score = Math.round(score);
+              let ptsStr;
+              if (rounded_score > 1) {
+                ptsStr = "pts"
+              }
+              else {
+                ptsStr = "pt";
+              }
+              if (!displayString("\u2009" /* (thin space) */ + "Score: " + rounded_score + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                                 greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                if (!displayString("\u2009" /* (thin space) */ + rounded_score + "\u2009" /* (thin space) */ + ptsStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                                   greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
+                  displayString(rounded_score + ptsStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                                greenColor, backgroundColor_2, ctx, true, 0, false, 0);
                 }
               }
             }
-            let rounded_score = Math.round(score);
-            let ptsStr;
-            if (rounded_score > 1) {
-              ptsStr = "pts"
-            }
             else {
-              ptsStr = "pt";
-            }
-            if (!displayString("\u2009" /* (thin space) */ + "Score: " + rounded_score + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                               greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              if (!displayString("\u2009" /* (thin space) */ + rounded_score + "\u2009" /* (thin space) */ + ptsStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                                 greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                displayString(rounded_score + ptsStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                              greenColor, backgroundColor_2, ctx, true, 0, false, 0);
+              if (!displayString("\u2009" /* (thin space) */ + "Please wait..." + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                 lightGray, backgroundColor_2, ctx, true, 0, true, 0)) {
+                displayString("\u231b" /* hourglass */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                              lightGray, backgroundColor_2, ctx, true, 0, false, 0);
               }
             }
 
