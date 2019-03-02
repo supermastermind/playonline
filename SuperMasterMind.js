@@ -2827,12 +2827,12 @@ function draw_graphic_bis() {
                 break;
               case 6:
                 nb_attempts_for_max_score = 6; // (estimate: ~15% of scores)
-                time_in_seconds_corresponding_to_one_attempt_in_score = 600.0;  // (time corresponding to 2 attempts: 20 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 540.0; // (time corresponding to 2 attempts: 18 min) // See (*)
                 multiply_factor = 1.5;
                 break;
               case 7:
                 nb_attempts_for_max_score = 7; // (estimate: ~7% of scores)
-                time_in_seconds_corresponding_to_one_attempt_in_score = 900.0;  // (time corresponding to 2 attempts: 30 min) // See (*)
+                time_in_seconds_corresponding_to_one_attempt_in_score = 750.0; // (time corresponding to 2 attempts: 25 min) // See (*)
                 multiply_factor = 2.0;
                 break;
               default:
