@@ -2759,6 +2759,9 @@ function draw_graphic_bis() {
 
         if (!gameOnGoing()) {
 
+          let totalTimeInSeconds = Math.floor((stopTime - startTime)/1000);
+          let timeInMilliSeconds = (stopTime - startTime) % 1000;
+
           let timeInHours = Math.floor(totalTimeInSeconds/3600);
           let timeInSecondsWithinHour = (totalTimeInSeconds - timeInHours*3600); // (range: [0;3599]
           let timeInMinutes = Math.floor(timeInSecondsWithinHour/60);
