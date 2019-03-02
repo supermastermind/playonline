@@ -3278,7 +3278,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 720 /* 12 min */ : 1500 /* 25 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 720 /* 12 min */ : 1200 /* 20 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || at_least_one_useless_code_played ) ) { /* (number of useless attempts) */
         document.getElementById("revealSecretColorButton").className = (androidMode ? "button fast_blinking" : "button blinking");
@@ -3333,7 +3333,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 720 /* 12 min */ : 1500 /* 25 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 720 /* 12 min */ : 1200 /* 20 min */))  // See also (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
           if (document.getElementById("revealSecretColorButton").className.indexOf('blinking') == -1) {
             document.getElementById("revealSecretColorButton").className = document.getElementById("revealSecretColorButton").className + (androidMode ? " fast_blinking" : " blinking");
