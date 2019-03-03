@@ -967,7 +967,7 @@
           rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
           rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>"); // "<s>" -> "<small>"
           rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>"); // "</s>" -> "</small>"
-          rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#999999>$1</font>"); // apply some color changes
+          rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#888888>$1</font>"); // apply some color changes
           console.log("2: " + rsp_rankings_str);
           // Rk: top scores are always displayed, even if current game score is not in them
           if (modal_mode == -1) {
