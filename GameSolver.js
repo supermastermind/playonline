@@ -1730,7 +1730,7 @@ maxDepthForGamePrecalculation=3;
 break;
 case 5:
 nbMaxMarks=20;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*45/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=initialNbPossibleCodes;
 initialNbClasses=7;
@@ -1740,7 +1740,7 @@ maxDepthForGamePrecalculation=3;
 break;
 case 6:
 nbMaxMarks=27;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*55/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*52/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
 initialNbClasses=11;
@@ -1750,7 +1750,7 @@ maxDepthForGamePrecalculation=-1;
 break;
 case 7:
 nbMaxMarks=35;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*65/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*60/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
 initialNbClasses=15;
