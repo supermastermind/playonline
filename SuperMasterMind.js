@@ -2884,13 +2884,13 @@ function draw_graphic_bis() {
               victoryStr3 = "Yes!";
               nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
-                score = Math.max(score / 3.0, min_score);
+                score = Math.max(score / 4.0, min_score);
               }
               else if (nbColorsRevealed == 2) { // 2 colors revealed
-                score = Math.max(score / (3.0*3.0), min_score);
+                score = Math.max(score / (4.0*4.0), min_score);
               }
               else if (nbColorsRevealed > 2) { // > 2 colors revealed
-                score = Math.max(score / (3.0*3.0*3.0), min_score);
+                score = Math.max(score / (4.0*4.0*4.0), min_score);
               }
               else {
                 score = 0.0;
