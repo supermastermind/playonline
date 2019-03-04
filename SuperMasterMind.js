@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.56";
+let version = "v2.57";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -24,7 +24,7 @@ let nbMaxColors = 10;
 let nbMinColumns = 3;
 let nbMaxColumns = 7;
 let overallNbMinAttempts = 4;
-let overallNbMaxAttempts = 15;
+let overallNbMaxAttempts = 16;
 
 let nominalGameNbColumns = 5; // classical Super Master Mind game
 let nominalGameNbColors = 8; // classical Super Master Mind game
@@ -1037,7 +1037,7 @@ function revealSecretColorButtonClick() {
     if (nbEmptyColors <= 1) {
       displayGUIError("too many revealed colors", new Error().stack);
     }
-    else if ((nbColumns-nbEmptyColors+1) < (nbColumns+1)/2) {
+    else if ((nbColumns > 3) && (nbEmptyColors == nbColumns)) {
       playerWasHelped = true;
       let revealedColorIdx = Math.floor(Math.random() * nbEmptyColors);
       sCodeRevealed = simpleCodeHandler.replaceEmptyColor(sCodeRevealed, revealedColorIdx, simpleCodeHandler.convert(sCode));
@@ -1370,7 +1370,7 @@ function updateGameSizes() {
         nb_attempts_not_displayed = Math.min(4, nb_attempts_not_displayed);
       }
       else if (nbColumns == 7) {
-        nb_attempts_not_displayed = Math.min(5, nb_attempts_not_displayed);
+        nb_attempts_not_displayed = Math.min(6, nb_attempts_not_displayed);
       }
     }
     y_step = (y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed // number of attempts displayed
@@ -1484,7 +1484,7 @@ function resetGameAttributes(nbColumnsSelected) {
       break;
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
-      nbMaxAttempts = nominalGameNbMaxAttempts + 3;
+      nbMaxAttempts = nominalGameNbMaxAttempts + 4;
       document.title = "Ultra Master Mind";
       break;
     default:
@@ -2884,16 +2884,10 @@ function draw_graphic_bis() {
               victoryStr3 = "Yes!";
               nbColorsRevealed = (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
               if (nbColorsRevealed == 1) { // 1 color revealed
-                score = Math.max(score / 4.0, min_score);
-              }
-              else if (nbColorsRevealed == 2) { // 2 colors revealed
-                score = Math.max(score / (4.0*4.0), min_score);
-              }
-              else if (nbColorsRevealed > 2) { // > 2 colors revealed
-                score = Math.max(score / (4.0*4.0*4.0), min_score);
+                score = Math.max(score / 4.44, min_score);
               }
               else {
-                score = 0.0;
+                score = min_score;
                 displayGUIError("internal error: nbColorsRevealed = " + nbColorsRevealed, new Error().stack);
               }
             }
@@ -3282,7 +3276,7 @@ function draw_graphic_bis() {
         document.getElementById("playRandomCodeButton").className = "button";
       }
 
-      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed)+1) < (nbColumns+1)/2);
+      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns > 3) && (simpleCodeHandler.nbEmptyColors(sCodeRevealed) == nbColumns));
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
@@ -3358,7 +3352,7 @@ function draw_graphic_bis() {
     }
 
     if ( last_attempt_event
-         && (nbGamesPlayedAndWon == 0)
+         && (nbGamesPlayedAndWon <= 1)
          && (gameOnGoing())
          && !(document.getElementById("revealSecretColorButton").disabled)
          && (sCodeRevealed == 0) ) {
