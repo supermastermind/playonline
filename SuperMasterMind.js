@@ -1037,7 +1037,7 @@ function revealSecretColorButtonClick() {
     if (nbEmptyColors <= 1) {
       displayGUIError("too many revealed colors", new Error().stack);
     }
-    else if ((nbColumns > 3) && (currentAttemptNumber >= 4) && (nbEmptyColors == nbColumns)) {
+    else if ((nbColumns > 3) && (currentAttemptNumber >= 2) && (nbEmptyColors == nbColumns)) {
       playerWasHelped = true;
       let revealedColorIdx = Math.floor(Math.random() * nbEmptyColors);
       sCodeRevealed = simpleCodeHandler.replaceEmptyColor(sCodeRevealed, revealedColorIdx, simpleCodeHandler.convert(sCode));
@@ -3276,7 +3276,7 @@ function draw_graphic_bis() {
         document.getElementById("playRandomCodeButton").className = "button";
       }
 
-      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns > 3) && (currentAttemptNumber >= 4) && (simpleCodeHandler.nbEmptyColors(sCodeRevealed) == nbColumns));
+      document.getElementById("revealSecretColorButton").disabled = !(gameOnGoing() && (nbColumns > 3) && (currentAttemptNumber >= 2) && (simpleCodeHandler.nbEmptyColors(sCodeRevealed) == nbColumns));
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(document.getElementById("revealSecretColorButton").disabled)
            && (sCodeRevealed == 0)
