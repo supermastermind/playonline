@@ -66,10 +66,10 @@ let possibleCodesListsSizes;
 let globalPerformancesList; // (same size as possibleCodesLists)
 let PerformanceLOW = -0.25;
 let PerformanceVERYLOW = -0.50;
-let PerformanceNA = -3.00; // (duplicated in GameSolver code)
-let PerformanceUNKNOWN = -2.00; // (duplicated in GameSolver code)
-let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in GameSolver code)
-let PerformanceMaxValidValue = +1.30; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver code)
+let PerformanceNA = -3.00; // (duplicated in GameSolver script)
+let PerformanceUNKNOWN = -2.00; // (duplicated in GameSolver script)
+let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in GameSolver script)
+let PerformanceMaxValidValue = +1.30; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver script)
 let nbOfStatsFilled_NbPossibleCodes = 0;
 let nbOfStatsFilled_ListsOfPossibleCodes = 0;
 let nbOfStatsFilled_Perfs = 0;
