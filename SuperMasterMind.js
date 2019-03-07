@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.57";
+let version = "v2.58";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -66,10 +66,10 @@ let possibleCodesListsSizes;
 let globalPerformancesList; // (same size as possibleCodesLists)
 let PerformanceLOW = -0.25;
 let PerformanceVERYLOW = -0.50;
-let PerformanceNA = -3.00; // (duplicated in GameSolver.js)
-let PerformanceUNKNOWN = -2.00; // (duplicated in GameSolver.js)
-let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in GameSolver.js)
-let PerformanceMaxValidValue = +1.30; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver.js)
+let PerformanceNA = -3.00; // (duplicated in GameSolver code)
+let PerformanceUNKNOWN = -2.00; // (duplicated in GameSolver code)
+let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in GameSolver code)
+let PerformanceMaxValidValue = +1.30; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver code)
 let nbOfStatsFilled_NbPossibleCodes = 0;
 let nbOfStatsFilled_ListsOfPossibleCodes = 0;
 let nbOfStatsFilled_Perfs = 0;
@@ -332,7 +332,7 @@ function displayGUIError(GUIErrorStr, errStack) {
   // Submit form if very first error
   // *******************************
 
-  let maxGlobalErrors = 5;
+  let maxGlobalErrors = 6;
   if (globalErrorCnt < maxGlobalErrors) {
     try {
       var errorStr = "";
@@ -436,7 +436,7 @@ String.prototype.replaceAll = function(search, replacement) {
 // "Simple" Code handler class
 // *************************************************************************
 
-class SimpleCodeHandler { // NOTE: the code of this class is partially duplicated in GameSolver.js script
+class SimpleCodeHandler { // NOTE: the code of this class is partially duplicated in GameSolver script
 
   constructor(nbColumns_p, nbColors_p, nbMinColumns_p, nbMaxColumns_p, emptyColor_p) {
     if ( (nbColumns_p < Math.max(nbMinColumns_p,3)) || (nbColumns_p > Math.min(nbMaxColumns_p,7)) /* 3 and 7 is hardcoded in some methods of this class for better performances */ ) {
@@ -734,11 +734,22 @@ function onGameSolverMsg(e) {
       return;
     }
 
+    // ***************
+    // Error detection
+    // ***************
+
+    if (data.rsp_type == 'INTERNAL_WORKER_ERROR_DETECTED') {
+      displayGUIError('INTERNAL_WORKER_ERROR_DETECTED: ' + data.error_str);
+    }
+    else if (data.rsp_type == 'INTERNAL_WORKER_MESSAGE_ERROR_DETECTED') {
+      displayGUIError('INTERNAL_WORKER_MESSAGE_ERROR_DETECTED: ' + data.error_str);
+    }
+
     // **************************
     // Check that worker is alive
     // **************************
 
-    if (isWorkerAlive == 0) { // first message received from worker
+    else if (isWorkerAlive == 0) { // first message received from worker
       if (data.rsp_type == 'I_AM_ALIVE') {
         isWorkerAlive = 1;
       }
@@ -1595,7 +1606,8 @@ function resetGameAttributes(nbColumnsSelected) {
   if (gameSolver == undefined) {
     isWorkerAlive = 0;
     workerCreationTime = (new Date()).getTime();
-    gameSolver = new Worker("Game" + "Solver.js"); gameSolverDbg = 3;
+    // gameSolver = new Worker("GameSolver.js"); gameSolverDbg = 3;
+    gameSolver = new Worker(window.URL.createObjectURL(gamesolver_blob)); gameSolverDbg = 3;
   }
   // gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
   gameSolver.onerror = onGameSolverError; gameSolverDbg = 4;
