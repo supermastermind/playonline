@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.65";
+let version = "v2.67";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -450,18 +450,6 @@ function onGameSolverError(e) {
 function onGameSolverMessageError(e) {
   displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
 }
-
-// *************************************************************************
-// *************************************************************************
-// New methods
-// *************************************************************************
-// *************************************************************************
-
-// String.replaceAll() method definition
-String.prototype.replaceAll = function(search, replacement) {
-  let target = this;
-  return target.replace(new RegExp(search, 'g'), replacement);
-};
 
 // *************************************************************************
 // *************************************************************************
@@ -1644,6 +1632,9 @@ function resetGameAttributes(nbColumnsSelected) {
     isWorkerAlive = 0;
     workerCreationTime = (new Date()).getTime();
     // gameSolver = new Worker("GameSolver.js"); gameSolverDbg = 3;
+    if (gamesolver_blob == null) {
+      displayGUIError("GameSolver script has not been loaded successfully: " + gamesolver_blob_error, new Error().stack);
+    }
     gameSolver = new Worker(window.URL.createObjectURL(gamesolver_blob)); gameSolverDbg = 3;
   }
   // gameSolver.addEventListener('error', onGameSolverError, false); gameSolverDbg = 4;
@@ -3497,7 +3488,6 @@ function displayString(str, x_cell, y_cell, x_cell_width,
       ctx.textBaseline = "middle"; // vertical alignment
       ctx.fillText(str, (x_0 + x_0_next)/2, (y_0 + y_0_next)/2 + y_offset);
       x_0_for_drawBubble = Math.max((x_0 + x_0_next)/2 - str_width/2, 0);
-      // subPixelText(ctx, str, (x_0 + x_0_next)/2, y_0, 25);
     }
     else if (justify == 2) { // right
       ctx.fillStyle = foregroundColor;
@@ -3847,112 +3837,6 @@ function fullObjToString(obj) {
   catch (exc) {
     return "?";
   }
-}
-
-// *************************************************************************
-// Correct blurry text display which is inhertent to default canvas
-// Code shared at https://jsfiddle.net/Ghislain999/2dw0bw6h/
-// *************************************************************************
-
-let subPixelText = function(ctx,text,x,y,fontHeight){
-  let width = ctx.measureText(text).width + 12; // add some extra pixels
-  let hOffset = Math.floor(fontHeight);
-  let c = document.createElement("canvas");
-  c.width  = width * 3; // scaling by 3
-  c.height = fontHeight;
-  c.ctx    = c.getContext("2d");
-  c.ctx.font = ctx.font;
-  c.ctx.globalAlpha = ctx.globalAlpha;
-  c.ctx.fillStyle = ctx.fillStyle;
-  c.ctx.fontAlign = "left";
-  c.ctx.setTransform(3,0,0,1,0,0); // scaling by 3
-  c.ctx.imageSmoothingEnabled = false;
-  // c.ctx.mozImageSmoothingEnabled = false; // (obsolete)
-  c.ctx.webkitImageSmoothingEnabled = false;
-  c.ctx.msImageSmoothingEnabled = false;
-  c.ctx.oImageSmoothingEnabled = false;
-  // copy existing pixels to new canvas
-  c.ctx.drawImage(ctx.canvas,x,y-hOffset,width,fontHeight,0,0,width,fontHeight);
-  c.ctx.fillText(text,0,hOffset-3 /* (hardcoded to -3 for letters like 'p', 'g', ..., could be improved) */);    // draw the text 3 time the width
-  // convert to sub pixels
-  c.ctx.putImageData(subPixelBitmap(c.ctx.getImageData(0,0,width*3,fontHeight)), 0, 0);
-  ctx.drawImage(c,0,0,width-1,fontHeight,x,y-hOffset,width-1,fontHeight);
-}
-
-let subPixelBitmap = function(imgData){
-  let spR,spG,spB; // sub pixels
-  let id,id1; // pixel indexes
-  let w = imgData.width;
-  let h = imgData.height;
-  let d = imgData.data;
-  let x,y;
-  let ww = w*4;
-  let ww4 = ww+4;
-  for(y = 0; y < h; y+=1){ // (go through all y pixels)
-    for(x = 0; x < w-2; x+=3){ // (go through all groups of 3 x pixels)
-      let id = y*ww+x*4; // (4 consecutive values: id->red, id+1->green, id+2->blue, id+3->alpha)
-      let output_id = y*ww+Math.floor(x/3)*4;
-      spR = Math.round((d[id + 0] + d[id + 4] + d[id + 8])/3);
-      spG = Math.round((d[id + 1] + d[id + 5] + d[id + 9])/3);
-      spB = Math.round((d[id + 2] + d[id + 6] + d[id + 10])/3);
-      // console.log(d[id+0], d[id+1], d[id+2] + '|' + d[id+5], d[id+6], d[id+7] + '|' + d[id+9], d[id+10], d[id+11]);
-      d[output_id] = spR;
-      d[output_id+1] = spG;
-      d[output_id+2] = spB;
-      d[output_id+3] = 255; // alpha is always set to 255
-    }
-  }
-  return imgData;
-}
-
-let subPixelBitmap2D = function(imgData){
-  let spR,spG,spB; // sub pixels
-  let id,id1; // pixel indexes
-  let w = imgData.width;
-  let h = imgData.height;
-  let d = imgData.data;
-  let x,y;
-  let ww = w*4;
-  for(y = 0; y < h-2; y+=3){ // (go through all y pixels)
-    for(x = 0; x < w-2; x+=3){ // (go through all groups of 3 x pixels)
-      let id = y*ww+x*4; // (4 consecutive values: id->red, id+1->green, id+2->blue, id+3->alpha)
-      let output_id = Math.floor(y/3)*ww+Math.floor(x/3)*4;
-      spR = Math.round((d[id + 0] + d[id + 4] + d[id + 8] + d[id + ww + 0] + d[id + ww + 4] + d[id + ww + 8] + d[id + 2*ww + 0] + d[id + 2*ww + 4] + d[id + 2*ww + 8])/9);
-      spG = Math.round((d[id + 1] + d[id + 5] + d[id + 9] + d[id + ww + 1] + d[id + ww + 5] + d[id + ww + 9] + d[id + 2*ww + 1] + d[id + 2*ww + 5] + d[id + 2*ww + 9])/9);
-      spB = Math.round((d[id + 2] + d[id + 6] + d[id + 10] + d[id + ww + 2] + d[id + ww + 6] + d[id + ww + 10] + d[id + 2*ww + 2] + d[id + 2*ww + 6] + d[id + 2*ww + 10])/9);
-      d[output_id] = spR;
-      d[output_id+1] = spG;
-      d[output_id+2] = spB;
-      d[output_id+3] = 255; // alpha is always set to 255
-    }
-  }
-  return imgData;
-}
-
-let subPixelText2D = function(ctx,text,x,y,fontHeight){
-  let width = ctx.measureText(text).width + 12; // add some extra pixels
-  let hOffset = Math.floor(fontHeight);
-
-  let c = document.createElement("canvas");
-  c.width  = width * 3; // scaling by 3
-  c.height = fontHeight * 3; // scaling by 3
-  c.ctx    = c.getContext("2d");
-  c.ctx.font = ctx.font;
-  c.ctx.globalAlpha = ctx.globalAlpha;
-  c.ctx.fillStyle = ctx.fillStyle;
-  c.ctx.fontAlign = "left";
-  c.ctx.setTransform(3,0,0,3,0,0); // scaling by 3
-  c.ctx.imageSmoothingEnabled = false;
-  // c.ctx.mozImageSmoothingEnabled = false; // (obsolete)
-  c.ctx.webkitImageSmoothingEnabled = false;
-  c.ctx.msImageSmoothingEnabled = false;
-  c.ctx.oImageSmoothingEnabled = false;
-  // copy existing pixels to new canvas
-  c.ctx.drawImage(ctx.canvas,x,y-hOffset,width,fontHeight,0,0,width,fontHeight);
-  c.ctx.fillText(text,0,hOffset-3 /* (hardcoded to -3 for letters like 'p', 'g', ..., could be improved) */); // draw the text 3 time the width
-  // convert to sub pixels
-  c.ctx.putImageData(subPixelBitmap2D(c.ctx.getImageData(0,0,width*3,fontHeight*3)), 0, 0);
-  ctx.drawImage(c,0,0,width-1,fontHeight,x,y-hOffset,width-1,fontHeight);
 }
 
 // *************************************************************************

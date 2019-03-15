@@ -7,7 +7,13 @@ normal replace " || " by "||"
 normal replace " && " by "&&"
 normal replace "if (" by "if("
 normal replace "; " by ";"
+normal replace ", " by ","
 normal replace " + " by "+"
+normal replace " {" by "{"
+normal replace " <" by "<"
+normal replace "< " by "<"
+normal replace " >" by ">"
+normal replace "> " by ">"
 
 regexp replace //(.*) by nothing
 delete trailing spaces
@@ -19,5 +25,5 @@ extended replace "\n}" by "}"
 manual deletion of comments:
 - let precalculation_mode=
 - let nbCodesToGoThrough=
-- if((depth <=1) &&(!compute_sum_ini)) {
+- if((depth<=1)&&(!compute_sum_ini)){
 - if( (next_cur_game_idx==1)
