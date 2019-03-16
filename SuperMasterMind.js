@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.67";
+let version = "v2.68";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -2595,7 +2595,7 @@ function draw_graphic_bis() {
           backgroundColor = highlightColor;
         }
 
-        if ((optimal_width > 0) || (i == currentAttemptNumber) || (!performancesDisplayed[i-1]) /* (nb of possible codes <-> perf switch) */) {
+        if ((optimal_width > 0) || (i == currentAttemptNumber) || ((i == nbOfStatsFilled_NbPossibleCodes) && (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1)) || (!performancesDisplayed[i-1]) /* (nb of possible codes <-> perf switch) */) {
           let statsColor;
           if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
             statsColor = darkGray;
