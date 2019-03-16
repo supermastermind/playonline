@@ -222,7 +222,7 @@
       $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
         try {
           if (gameOnGoing() && (currentAttemptNumber > 1)) {
-            return "Do you really want to abort and lose current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
+            return "Do you really want to abort current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
           }
         }
         catch (exc) {
@@ -267,8 +267,9 @@
     </div>
 
     <div class="game_aborted" style='display:none;'>
-      Current game was lost because you aborted it<br>
+      Current game was aborted!<br>
       Score: 0<br>
+      You shall win 5 consecutive games to get your "last5" score<br>computed and compared to other players<br>
       <img src="img/loading.gif" style='height:12%;'><br>
       Starting a new game...
     </div>
@@ -339,7 +340,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MF";
+      let html_compatibility_game_version = "Ver_MG";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
