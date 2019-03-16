@@ -2196,10 +2196,10 @@ function draw_graphic_bis() {
         }
         else {
           for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "1.8vh"; // proportional to viewport height
+            allButtons[i].style.fontSize = "2.0vh"; // proportional to viewport height
           }
           for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "1.8vh"; // proportional to viewport height - 10/(600/100) = 1.67
+            allRadioButtons[i].style.fontSize = "2.0vh"; // proportional to viewport height - 10/(600/100) = 1.67
           }
         }
 
