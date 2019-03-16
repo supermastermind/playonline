@@ -43,7 +43,7 @@
         background-color: white;
         border: 2px solid purple;
         color: black;
-        padding: 7px 8px 7px 8px; /* top right bottom left */
+        padding: 7px 7px 7px 7px; /* top right bottom left */
         text-align: center;
         text-decoration: none;
         // font-size: 15px;
@@ -282,11 +282,11 @@
         <td style='width:6.2%;margin:0;padding:0;vertical-align:middle;text-align:center;'>
           <input id='newGameButton' class='button' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()'>
           <form action=''>
-            <label class='radio' title='Very easy'><input id='columnslabel_3b' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(3)'><span id='columnslabel_3' class='radio' style='vertical-align:middle;'> 3 columns<br></span></label>
-            <label class='radio' title='Master Mind'><input id='columnslabel_4b' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(4)'><span id='columnslabel_4' class='radio' style='vertical-align:middle;'> 4 columns<br></span></label>
-            <label class='radio' title='Super Master Mind'><input id='columnslabel_5b' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(5)'><span id='columnslabel_5' class='radio' style='vertical-align:middle;'> 5 columns<br></span></label>
-            <label class='radio' title='Advanced Master Mind'><input id='columnslabel_6b' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(6)'><span id='columnslabel_6' class='radio' style='vertical-align:middle;'> 6 columns<br></span></label>
-            <label class='radio' title='Ultra Master Mind'><input id='columnslabel_7b' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(7)'><span id='columnslabel_7' class='radio' style='vertical-align:middle;'> 7 columns<br></span></label>
+            <label class='radio' title='Very easy'><input id='columnslabel_3b' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;margin-left:0;' onclick='newGameButtonClick(3)'><span id='columnslabel_3' class='radio' style='vertical-align:middle;'> 3 columns<br></span></label>
+            <label class='radio' title='Master Mind'><input id='columnslabel_4b' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;margin-left:0;' onclick='newGameButtonClick(4)'><span id='columnslabel_4' class='radio' style='vertical-align:middle;'> 4 columns<br></span></label>
+            <label class='radio' title='Super Master Mind'><input id='columnslabel_5b' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;margin-left:0;' onclick='newGameButtonClick(5)'><span id='columnslabel_5' class='radio' style='vertical-align:middle;'> 5 columns<br></span></label>
+            <label class='radio' title='Advanced Master Mind'><input id='columnslabel_6b' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;margin-left:0;' onclick='newGameButtonClick(6)'><span id='columnslabel_6' class='radio' style='vertical-align:middle;'> 6 columns<br></span></label>
+            <label class='radio' title='Ultra Master Mind'><input id='columnslabel_7b' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;margin-left:0;' onclick='newGameButtonClick(7)'><span id='columnslabel_7' class='radio' style='vertical-align:middle;'> 7 columns<br></span></label>
           </form>
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
@@ -340,7 +340,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MG";
+      let html_compatibility_game_version = "Ver_MH";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -369,7 +369,7 @@
       };
       // Set AJAX timeout to X seconds (this will set all AJAX requests the program makes, even via $.getJSON, to have a timeout of X seconds)
       $.ajaxSetup({
-        timeout: 35000 // 35 seconds
+        timeout: 40000 // 40 seconds
       });
     </script>
 
@@ -897,7 +897,7 @@
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
       // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
       //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
-      function submitForm(formStr = "", skipErrorDisplay = false, retryTime = 3333) {
+      function submitForm(formStr = "", skipErrorDisplay = false) {
 
         let my_form_url = document.getElementById("my_form").action + '?';
         if (formStr == "") { // Nominal case
@@ -931,23 +931,20 @@
           url: my_form_url,
           method: "GET",
           dataType: "jsonp",
-          timeout: 35000 // 35 seconds
+          timeout: 40000 // 40 seconds
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
 
           try {
             if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
               console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-              // Keep some time between the 2 form submissions
-              let now = new Date().getTime();
-              while(new Date().getTime() < now + retryTime){}; // (interface is frozen during this short time)
 
               jQuery.ajax({
                 crossDomain: true,
                 url: my_form_url,
                 method: "GET",
                 dataType: "jsonp",
-                timeout: 45000 // 45 seconds
+                timeout: 40000 // 40 seconds
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 try {
@@ -1588,13 +1585,8 @@
               }
               errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
               console.log(errorStr);
-              // submitForm(errorStr, true); => skipped as this may be part of a frequent use case (*)
+              // submitForm(errorStr, true); => skipped as this may be part of a frequent use case
               geolocation_handler.first_geolocation_errorStr = errorStr;
-
-              // Keep some time between the 2 potential calls to submitForm() -> no longer applicable (*)
-              // This may also allow to make the 2nd getJSON in different mobile network conditions
-              let now = new Date().getTime();
-              while(new Date().getTime() < now + 111){}; // (interface is frozen during this short time)
 
               // Another geolocation server is used
               geolocation_handler.nb_JSON_queries_posted++;
@@ -1775,7 +1767,7 @@
         }
         var debugStr = "firstgeoloc:" + firstgamegeoloc + "/" + navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
         var nbColorSelectionsStr = ((nbColorSelections == 0) ? "(-)" : "(" + String(nbColorSelections) + ")");
-        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + " " + nbColorSelectionsStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true, 111);
+        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + " " + nbColorSelectionsStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true);
       }
 
       function storeFirstAccess(access_type, timeToWait1, timeToWait2, debug_info) {
