@@ -339,7 +339,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_ME";
+      let html_compatibility_game_version = "Ver_MF";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -368,7 +368,7 @@
       };
       // Set AJAX timeout to X seconds (this will set all AJAX requests the program makes, even via $.getJSON, to have a timeout of X seconds)
       $.ajaxSetup({
-        timeout: 45*1000 // 45 seconds
+        timeout: 35000 // 35 seconds
       });
     </script>
 
@@ -929,12 +929,13 @@
           crossDomain: true,
           url: my_form_url,
           method: "GET",
-          dataType: "jsonp"
+          dataType: "jsonp",
+          timeout: 35000 // 35 seconds
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
 
           try {
-            if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
+            if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
               console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
               // Keep some time between the 2 form submissions
               let now = new Date().getTime();
@@ -944,13 +945,14 @@
                 crossDomain: true,
                 url: my_form_url,
                 method: "GET",
-                dataType: "jsonp"
+                dataType: "jsonp",
+                timeout: 45000 // 45 seconds
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 try {
-                  if (jqxhr.status == 404) { // Corresponds to the error "Loading failed for the <script> with source https://..."
+                  if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
                     console.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-                  } // else: systematic parse error is ignored
+                  } // else: systematic parse error (with 200 status) is ignored
                   if ((formStr == "") && (!skipErrorDisplay)) {
                     alert("Oops... a network error occurred, game scores could not be displayed");
                   }
@@ -959,7 +961,7 @@
                   console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                 }
               });
-            } // else: systematic parse error is ignored
+            } // else: systematic parse error (with 200 status) is ignored
           }
           catch (exc) {
             console.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
@@ -1900,7 +1902,8 @@
         jQuery.ajax({
           url: "SuperMasterMind.js",
           dataType: "script",
-          mimeType: "application/javascript"
+          mimeType: "application/javascript",
+          timeout: 0 // infinite (no timeout)
         })
         .always(function() {
           console.log("(on scripts load)");
@@ -1913,7 +1916,8 @@
       jQuery.ajax({
         url: "GameSolver.js",
         dataType: "script",
-        mimeType: "application/javascript"
+        mimeType: "application/javascript",
+        timeout: 0 // infinite (no timeout)
       })
       .done(function(data) { // Success case
         // console.log(data); // data contains GameSolver script contents
