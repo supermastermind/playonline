@@ -991,14 +991,14 @@ function newGameButtonClick(nbColumns) {
 
         // Transition effect 1/2
         try {
-          $(".game_aborted").fadeIn(4000);
+          $(".game_aborted").fadeIn(5000);
         }
         catch (exc) {
         }
 
         // Transition effect 2/2
         try {
-          $(".game_aborted").fadeOut(4000);
+          $(".game_aborted").fadeOut(5000);
         }
         catch (exc) {
         }
@@ -1161,8 +1161,8 @@ function mouseClick(e) {
 
   if (gameOnGoing()) {
 
-    event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
-    event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+    event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
+    event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
     event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors));
     event_y_max = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 
@@ -1172,8 +1172,8 @@ function mouseClick(e) {
       try {
         for (let column = 0; column < nbColumns; column++) {
           let x_0, y_0, x_1, y_1;
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+column*2));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+(column+1)*2));
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
           if ((mouse_x > x_0) && (mouse_x < x_1)) {
             let colorSelected = false;
             for (let color = 0; color < nbColors; color++) {
@@ -1235,7 +1235,7 @@ function mouseClick(e) {
       if (showPossibleCodesMode) {
         disableMouseMoveEffects = false;
         let x_0_half_display = get_x_pixel(x_min);
-        let x_1_half_display = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+        let x_1_half_display = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
         let y_0_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75/* (margin) */))
         let y_1_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2/* (margin) */));
         if ( (mouse_x > x_0_half_display) && (mouse_x < x_1_half_display)
@@ -1272,7 +1272,7 @@ function mouseMove(e) {
     let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
 
     event_x_min = get_x_pixel(x_min);
-    event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
+    event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
     event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
     event_y_max = get_y_pixel(y_min+y_step*0);
 
@@ -1384,7 +1384,7 @@ function updateGameSizes() {
   }
 
   x_step = (x_max - x_min) / (attempt_nb_width // attempt number
-                              +(90*(nbColumns+1))/100 // mark
+                              +(70*(nbColumns+1))/100 // mark
                               +nbColumns*2 // code
                               +nb_possible_codes_width // number of possible codes
                               +optimal_width // optimal
@@ -2196,10 +2196,10 @@ function draw_graphic_bis() {
         }
         else {
           for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "2.0vh"; // proportional to viewport height
+            allButtons[i].style.fontSize = "2.25vh"; // proportional to viewport height
           }
           for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "2.0vh"; // proportional to viewport height - 10/(600/100) = 1.67
+            allRadioButtons[i].style.fontSize = "2.25vh"; // proportional to viewport height - 10/(600/100) = 1.67
           }
         }
 
@@ -2392,9 +2392,9 @@ function draw_graphic_bis() {
       // Draw main game table
       // ********************
 
-      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
-      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
       y_1 = get_y_pixel(y_min);
       ctx.fillStyle = backgroundColor_3;
       ctx.fillRect(x_0, y_0, x_1-x_0, y_1-y_0);
@@ -2417,7 +2417,7 @@ function draw_graphic_bis() {
             if (attempt+1 <= currentAttemptNumber-1) { // a mark will be displayed at this place
               continue;
             }
-            str_width = (90*(nbColumns+1))/100;
+            str_width = (70*(nbColumns+1))/100;
           }
           else {
             str_width = attempt_nb_width;
@@ -2475,28 +2475,28 @@ function draw_graphic_bis() {
       drawLine(ctx, x_0, y_0, x_1, y_1);
 
       for (let col = 0; col <= nbColumns; col++) {
-        x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+        x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
         y_0 = get_y_pixel(y_min);
-        x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+        x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
         y_1 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
         drawLine(ctx, x_0, y_0, x_1, y_1);
       }
 
-      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
+      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
       y_0 = get_y_pixel(y_min);
-      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
+      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
       y_1 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       drawLine(ctx, x_0, y_0, x_1, y_1);
 
-      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width));
+      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width));
       y_0 = get_y_pixel(y_min);
-      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width));
+      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width));
       y_1 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       drawLine(ctx, x_0, y_0, x_1, y_1);
 
-      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
+      x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
       y_0 = get_y_pixel(y_min);
-      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
+      x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
       y_1 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       drawLine(ctx, x_0, y_0, x_1, y_1);
 
@@ -2523,7 +2523,8 @@ function draw_graphic_bis() {
       let nbMaxHintsDisplayed = 2;
 
       for (let i = 0; i < nbMaxAttempts; i++) {
-        performancesDisplayed[i] = false;
+        // performancesDisplayed[i] = false; -> mechanism disabled -> always set to true
+        performancesDisplayed[i] = true;
       }
 
       for (let i = 1 ; i <= nbOfStatsFilled_Perfs; i++) {
@@ -2553,24 +2554,29 @@ function draw_graphic_bis() {
 
       if (optimal_width > 0) { // (the below x_cell values are only valid for (optimal_width > 0), as in displayPerf())
         if (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1) {
-          displayString(clockStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
                         lightGray, backgroundColor_2, ctx);
         }
         else if (!gameOnGoing() && (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs)) {
-          displayString(clockStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
                         lightGray, backgroundColor_2, ctx);
         }
         if (gameOnGoing() && (currentAttemptNumber == 1) && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
-          displayString(clockStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
         }
       }
       else {
-        if ( gameOnGoing()
-             && ( (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes + 1 /* (+1 to simplify) */)
-                  || ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes == 0)) )
-             && (nbOfStatsFilled_NbPossibleCodes < nbMaxAttempts) ) {
-          displayString(clockStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_NbPossibleCodes+1-1, nb_possible_codes_width,
+        if (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1) {
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_Perfs+1-1, nb_possible_codes_width,
+                        lightGray, backgroundColor_2, ctx);
+        }
+        else if (!gameOnGoing() && (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs)) {
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_Perfs+1-1, nb_possible_codes_width,
+                        lightGray, backgroundColor_2, ctx);
+        }
+        if (gameOnGoing() && (currentAttemptNumber == 1) && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
         }
       }
@@ -2589,9 +2595,9 @@ function draw_graphic_bis() {
           else {
             statsColor = lightGray;
           }
-          if (!displayString("\u2009" /* (thin space) */ + nbOfPossibleCodes[i-1] + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+          if (!displayString("\u2009" /* (thin space) */ + nbOfPossibleCodes[i-1] + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
                              statsColor, backgroundColor, ctx, true, 0, true, 0)) {
-            displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
+            displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
                                        statsColor, backgroundColor, ctx);
           }
         }
@@ -2614,7 +2620,7 @@ function draw_graphic_bis() {
                && ((relative_performances_of_codes_played[i-1] > -0.9999) || (relative_performances_of_codes_played[i-1] == PerformanceUNKNOWN) || (relative_performances_of_codes_played[i-1] == PerformanceNA)) // not a useless code (simplified test)
                && (nbColumns >= nominalGameNbColumns) ) { // not easy games
             ctx.font = stats_font;
-            displayString("\u2234" /* tick hidden */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+            displayString("\u2234" /* tick hidden */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                           lightGray, backgroundColor, ctx);
             ctx.font = basic_bold_font;
           }
@@ -2622,20 +2628,20 @@ function draw_graphic_bis() {
             if (relative_performances_of_codes_played[i-1] == -1.00) { // useless code (simplified test)
               displayGUIError("useless code inconsistency: " + relative_performances_of_codes_played[i-1], new Error().stack);
             }
-            displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+            displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                           greenColor, backgroundColor, ctx);
           }
           else { // code is not possible
             if (i <= 2) {
-              displayString(crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+              displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                             redColor, backgroundColor, ctx);
             }
             else {
-              if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+              if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                                  redColor, backgroundColor, ctx, true, 0, true, 0)) {
-                if (!displayString(isPossible, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                if (!displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                                    redColor, backgroundColor, ctx, true, 0, true, 0)) {
-                  displayString(crossChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                  displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                                 redColor, backgroundColor, ctx);
                 }
               }
@@ -2653,7 +2659,7 @@ function draw_graphic_bis() {
 
         if ((!CompressedDisplayMode) && (optimal_width > 0) && (tick_width > 0)) {
           ctx.font = very_small_italic_font;
-          displayString(version, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors, 5,
+          displayString(version, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors, 5,
                         lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
         }
 
@@ -2682,11 +2688,11 @@ function draw_graphic_bis() {
           }
           let res_header1 = false;
           let res_header2 = false;
-          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, 0, true)) {
-            if (!displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+            if (!displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
-              if (displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+              if (displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                 lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
                 res_header1 = true;
               }
@@ -2699,9 +2705,9 @@ function draw_graphic_bis() {
             res_header1 = true;
           }
           if (res_header1 && (optimal_width > 0)) {
-            if (!display2Strings("total" + str1, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
+            if (!display2Strings("total" + str1, str1bis + str2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                  lightGray, backgroundColor_2, ctx, 0, true)) {
-              res_header2 = display2Strings("\u03A3" /* (capital sigma) */, str1bis + str2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
+              res_header2 = display2Strings("\u03A3" /* (capital sigma) */, str1bis + str2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                             lightGray, backgroundColor_2, ctx, 0, false); // (always display sum => res_header2 will be true)
             }
             else {
@@ -2709,9 +2715,9 @@ function draw_graphic_bis() {
             }
           }
           if (res_header1 && (res_header2 || (optimal_width <= 0)) && (tick_width > 0)) {
-            if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
+            if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
-              displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
+              displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                             lightGray, backgroundColor_2, ctx, true, 0, true, 1);
             }
           }
@@ -2729,11 +2735,11 @@ function draw_graphic_bis() {
         else {
           let res_header1 = false;
           let res_header2 = false;
-          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, 0, true)) {
-            if (!displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+            if (!displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
-              if (displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+              if (displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                 lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
                 res_header1 = true;
               }
@@ -2746,9 +2752,9 @@ function draw_graphic_bis() {
             res_header1 = true;
           }
           if (res_header1 && (optimal_width > 0)) {
-            if (!display2Strings("0: optimal", "-1: useless", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
+            if (!display2Strings("0: optimal", "-1: useless", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                  lightGray, backgroundColor_2, ctx, 0, true)) {
-              if (displayString("perf", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
+              if (displayString("perf", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
                                 lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
                 res_header2 = true;
               }
@@ -2758,9 +2764,9 @@ function draw_graphic_bis() {
             }
           }
           if (res_header1 && (res_header2 || (optimal_width <= 0)) && (tick_width > 0)) {
-            if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
+            if (!displayString("\u2009" /* (thin space) */ + tickChar + "\u2009" /* (thin space) */ + "/" + "\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
-              displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
+              displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
                             lightGray, backgroundColor_2, ctx, true, 0, true, 1);
             }
           }
@@ -2772,27 +2778,27 @@ function draw_graphic_bis() {
         ctx.fillStyle = darkGray;
         if (scode_height > 0) {
           for (let col = 0; col <= nbColumns; col++) {
-            x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+            x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
             y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
-            x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+            x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
             y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height));
             drawLine(ctx, x_0, y_0, x_1, y_1);
           }
 
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
           drawLine(ctx, x_0, y_0, x_1+1, y_1);
 
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height));
           drawLine(ctx, x_0, y_0, x_1, y_1);
 
           ctx.font = basic_bold_font;
-          displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+          displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                         darkGray, backgroundColor_2, ctx, true, 2, true, 0);
           if (gameOnGoing()) {
             displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
@@ -2938,22 +2944,22 @@ function draw_graphic_bis() {
             }
 
             // (code duplicated:)
-            if (!displayString(victoryStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+            if (!displayString(victoryStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                                greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              if (!displayString(victoryStr2, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+              if (!displayString(victoryStr2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                                  greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                displayString(victoryStr3, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+                displayString(victoryStr3, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                               greenColor, backgroundColor_2, ctx, true, 0, false, 0);
               }
             }
             if (allPerformancesFilled()) {
-              if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+              if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                  greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                    greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                  if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                      greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                    displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                    displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                                      greenColor, backgroundColor_2, ctx, true, 0, false, 0);
                   }
                 }
@@ -2966,19 +2972,19 @@ function draw_graphic_bis() {
               else {
                 ptsStr = "pt";
               }
-              if (!displayString("\u2009" /* (thin space) */ + "Score: " + rounded_score + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+              if (!displayString("\u2009" /* (thin space) */ + "Score: " + rounded_score + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                                  greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                if (!displayString("\u2009" /* (thin space) */ + rounded_score + "\u2009" /* (thin space) */ + ptsStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                if (!displayString("\u2009" /* (thin space) */ + rounded_score + "\u2009" /* (thin space) */ + ptsStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                                    greenColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  displayString(rounded_score + ptsStr, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                  displayString(rounded_score + ptsStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                                 greenColor, backgroundColor_2, ctx, true, 0, false, 0);
                 }
               }
             }
             else {
-              if (!displayString("\u2009" /* (thin space) */ + "Please wait..." + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+              if (!displayString("\u2009" /* (thin space) */ + "Please wait..." + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                  lightGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                displayString("\u231b" /* hourglass */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                displayString("\u231b" /* hourglass */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                               lightGray, backgroundColor_2, ctx, true, 0, false, 0);
               }
             }
@@ -2988,25 +2994,25 @@ function draw_graphic_bis() {
 
             score = 0.0;
             // (code duplicated:)
-            if (!displayString("\u2009You lost!\u2009", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+            if (!displayString("\u2009You lost!\u2009", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                                redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString("No!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+              displayString("No!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                             redColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
-            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+            if (!displayString("\u2009" /* (thin space) */ + "Time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+              if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                  redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                    redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                  displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                                    redColor, backgroundColor_2, ctx, true, 0, false, 0);
                 }
               }
             }
-            if (!displayString("\u2009Score: 0\u2009" /* (thin space) */, attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+            if (!displayString("\u2009Score: 0\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                                redColor, backgroundColor_2, ctx, true, 0, true, 0)) {
-              displayString("0\u2009pt", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+              displayString("0\u2009pt", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
                             redColor, backgroundColor_2, ctx, true, 0, false, 0);
             }
           }
@@ -3026,17 +3032,17 @@ function draw_graphic_bis() {
           ctx.fillStyle = backgroundColor_2;
         }
         for (let color = 0; color <= nbColors; color++) {
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color));
           drawLine(ctx, x_0, y_0, x_1+1, y_1);
         }
 
         for (let col = 0; col <= nbColumns; col++) {
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors));
           drawLine(ctx, x_0, y_0, x_1, y_1);
         }
@@ -3055,13 +3061,13 @@ function draw_graphic_bis() {
           ctx.font = medium2_bold_font;
           if ((nbGamesPlayedAndWon == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
             let x_delta = 0.75;
-            if (!displayString("Select colors here!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
+            if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-              if (!displayString("Select colors!", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
+              if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                  darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-                if (!displayString("Select colors!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-2.22*x_delta,
+                if (!displayString("Select colors!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
-                  displayString("Select me!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(90*(nbColumns+1))/100-2.22*x_delta,
+                  displayString("Select me!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                 }
               }
@@ -3092,25 +3098,25 @@ function draw_graphic_bis() {
 
           ctx.font = basic_bold_font;
           if (nbOfCodes == 1) {
-            res = displayString("1 possible code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+            res = displayString("1 possible code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                 darkGray, backgroundColor_2, ctx, true, 0, true, 0);
             if (!res) {
-              res = displayString("1\u2009code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+              res = displayString("1\u2009code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                   darkGray, backgroundColor_2, ctx, true, 0, true, 0);
               if (!res) {
-                res = displayString("1", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                res = displayString("1", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                     darkGray, backgroundColor_2, ctx, true, 0, true, 0);
               }
             }
           }
           else {
-            res = displayString(nbOfCodes + " possible codes ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+            res = displayString(nbOfCodes + " possible codes ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                 darkGray, backgroundColor_2, ctx, true, 0, true, 0);
             if (!res) {
-              res = displayString(nbOfCodes + "\u2009codes ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+              res = displayString(nbOfCodes + "\u2009codes ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                   darkGray, backgroundColor_2, ctx, true, 0, true, 0);
               if (!res) {
-                res = displayString(String(nbOfCodes), 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(90*(nbColumns+1))/100,
+                res = displayString(String(nbOfCodes), 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                     darkGray, backgroundColor_2, ctx, true, 0, true, 0);
               }
             }
@@ -3130,7 +3136,7 @@ function draw_graphic_bis() {
               currentPossibleCodeShownStr = currentPossibleCodeShown + "th";
           }
           if (res) {
-            displayString("at " + currentPossibleCodeShownStr + " attempt  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2, attempt_nb_width+(90*(nbColumns+1))/100,
+            displayString("at " + currentPossibleCodeShownStr + " attempt  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2, attempt_nb_width+(70*(nbColumns+1))/100,
                           darkGray, backgroundColor_2, ctx, true, 0, true, 0);
             if (nbOfCodesListed < nbOfCodes) {
               ctx.font = basic_bold_font;
@@ -3142,26 +3148,26 @@ function draw_graphic_bis() {
                 offset_str = "\u25b2";
               }
               if (nbOfCodes-nbOfCodesListed == 1) {
-                if (!displayString("+ 1 other code\u2009" + offset_str + " ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                if (!displayString("+ 1 other code\u2009" + offset_str + " ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                    darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  if (!displayString("+\u2009" + "1" + "\u2009code\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                  if (!displayString("+\u2009" + "1" + "\u2009code\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                      darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                    if (!displayString("+\u2009" + "1" + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                    if (!displayString("+\u2009" + "1" + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                        darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                      displayString("+\u2009" + "1", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                      displayString("+\u2009" + "1", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                     darkGray, backgroundColor_2, ctx, true, 0, true, 0);
                     }
                   }
                 }
               }
               else {
-                if(!displayString("+ " + (nbOfCodes-nbOfCodesListed) + " other codes\u2009" + offset_str + " ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                if(!displayString("+ " + (nbOfCodes-nbOfCodesListed) + " other codes\u2009" + offset_str + " ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                   darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                  if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009codes\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                  if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009codes\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                      darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                    if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                    if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                        darkGray, backgroundColor_2, ctx, true, 0, true, 0)) {
-                      displayString("+\u2009" + (nbOfCodes-nbOfCodesListed), 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(90*(nbColumns+1))/100,
+                      displayString("+\u2009" + (nbOfCodes-nbOfCodesListed), 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                     darkGray, backgroundColor_2, ctx, true, 0, true, 0);
                     }
                   }
@@ -3171,7 +3177,7 @@ function draw_graphic_bis() {
               // Display hint to see other codes
               if ((!atLeastOneAttemptSelection) && (!CompressedDisplayMode) && (transition_height >= 1)) {
                 ctx.font = small_bold_font;
-                displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(90*(nbColumns+1))/100,
+                displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(70*(nbColumns+1))/100,
                               "#4B0082" /* purple */, backgroundColor_2, ctx, true, 0, true, 0);
               }
             }
@@ -3188,7 +3194,7 @@ function draw_graphic_bis() {
         ctx.font = basic_bold_font;
         for (let col = 0; col < nbColumns; col++) {
           if (simpleCodeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1) != emptyColor) {
-            displayString(tickChar, attempt_nb_width+(90*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown, 2,
+            displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown, 2,
                           greenColor, backgroundColor_2, ctx, true, 0, true, 1, true /* (ignoreRanges) */);
           }
         }
@@ -3198,7 +3204,7 @@ function draw_graphic_bis() {
         for (let color = 1; color <= nbColors; color++) {
           if (minNbColorsTables[currentPossibleCodeShown-1][color] > 0) { // always present color
             for (let i = 0; i < minNbColorsTables[currentPossibleCodeShown-1][color]; i++) {
-              displayColor(color, attempt_nb_width+(90*(nbColumns+1))/100-3, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, true);
+              displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100-3, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, true);
               colors_cnt++;
             }
           }
@@ -3208,7 +3214,7 @@ function draw_graphic_bis() {
         }
         for (let color = 1; color <= nbColors; color++) {
           if (maxNbColorsTables[currentPossibleCodeShown-1][color] == 0) { // impossible color
-            displayColor(color, attempt_nb_width+(90*(nbColumns+1))/100-3, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, false);
+            displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100-3, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, false);
             colors_cnt++;
           }
         }
@@ -3218,17 +3224,17 @@ function draw_graphic_bis() {
 
         ctx.fillStyle = darkGray;
         for (let codeidx = 0; codeidx <= nbPossibleCodesShown; codeidx++) {
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
           drawLine(ctx, x_0, y_0, x_1+1, y_1);
         }
 
         for (let col = 0; col <= nbColumns; col++) {
-          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+          x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
-          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100+col*2));
+          x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown));
           drawLine(ctx, x_0, y_0, x_1, y_1);
         }
@@ -3580,7 +3586,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
 function displayCode(code, y_cell, ctx, secretCodeCase = false) {
   for (let col = 0; col < nbColumns; col++) {
     let color = simpleCodeHandler.getColor(code, col+1);
-    displayColor(color, attempt_nb_width+(90*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true);
+    displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true);
   }
 }
 
@@ -3588,7 +3594,7 @@ function displayCode(code, y_cell, ctx, secretCodeCase = false) {
 function displayMark(mark, y_cell, backgroundColor, ctx) {
 
   let x_0 = get_x_pixel(x_min+x_step*attempt_nb_width);
-  let x_0_next = get_x_pixel(x_min+x_step*(attempt_nb_width+(90*(nbColumns+1))/100));
+  let x_0_next = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
   let circle_width = (2.0*(x_0_next - x_0 - 2)) / (3.0 * nbColumns + 1);
   let circle_width_applied = Math.floor(circle_width);
   if ((circle_width_applied % 2) == 1) circle_width_applied++; // makes marks larger and even values avoid Java displaying issues when drawOval is run
@@ -3707,12 +3713,12 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
   let cell_width;
   let extra_x_space = 0;
   if (optimal_width > 0) {
-    x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width;
+    x_cell = attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width;
     cell_width = optimal_width;
     extra_x_space = 0.75*tick_width;
   }
   else { /* (nb of possible codes <-> perf switch) */
-    x_cell = attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2;
+    x_cell = attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2;
     cell_width = nb_possible_codes_width;
   }
 
@@ -3739,13 +3745,13 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
       if (perf != -1.00) { // "-1.00" is set explicitly for "classical" useless codes, thus "!=" being valid here (simplified test)
         color = "#4B0082"; // purple to highlight those very particular cases
       }
-      if (!displayString("  useless" + isPossible_str + "  ", x_cell, y_cell, cell_width,
+      if (!displayString(" useless" + isPossible_str + " ", x_cell, y_cell, cell_width,
                          color, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString(" " + performance.toFixed(2).replaceAll(",",".") + isPossible_str + " ", x_cell, y_cell, cell_width,
+        if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + isPossible_str + "\u2009", x_cell, y_cell, cell_width,
                            color, backgroundColor, ctx, true, 0, true, 0)) {
-          if (!displayString(performance.toFixed(1).replaceAll(",",".") + isPossible_str, x_cell, y_cell, cell_width,
+          if (!displayString("\u2009" + performance.toFixed(1).replaceAll(",",".") + isPossible_str + "\u2009", x_cell, y_cell, cell_width,
                              color, backgroundColor, ctx, true, 0, true, 0)) {
-            if (!displayString("  useless  ", x_cell, y_cell, cell_width,
+            if (!displayString(" useless ", x_cell, y_cell, cell_width,
                                color, backgroundColor, ctx, true, 0, true, 0)) {
               if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                                  color, backgroundColor, ctx, true, 0, true, 0)) {
@@ -3805,8 +3811,11 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
       }
       if (!displayString("\u2009" + "+" + performance.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
-        displayString("+" + performance.toFixed(1).replaceAll(",",".") + "!", x_cell, y_cell, cell_width,
-                      greenColor, backgroundColor, ctx);
+        if (!displayString("\u2009" + "+" + performance.toFixed(1).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
+                           greenColor, backgroundColor, ctx, true, 0, true, 0)) {
+          displayString("+" + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
+                        greenColor, backgroundColor, ctx);
+        }
       }
     }
   }
@@ -3817,7 +3826,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
   }
 
   if (ideaFlag && (tick_width > 0) && (!globalPerfDisplayIfOptimal)) {
-    displayString("\uD83D\uDCA1", attempt_nb_width+(90*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell, tick_width, // idea/bulb
+    displayString("\uD83D\uDCA1", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell, tick_width, // idea/bulb
                   darkGray, backgroundColor, ctx);
   }
 
