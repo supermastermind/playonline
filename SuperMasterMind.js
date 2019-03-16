@@ -991,14 +991,14 @@ function newGameButtonClick(nbColumns) {
 
         // Transition effect 1/2
         try {
-          $(".game_aborted").fadeIn(5000);
+          $(".game_aborted").fadeIn(5555);
         }
         catch (exc) {
         }
 
         // Transition effect 2/2
         try {
-          $(".game_aborted").fadeOut(5000);
+          $(".game_aborted").fadeOut(5555);
         }
         catch (exc) {
         }
@@ -2561,9 +2561,13 @@ function draw_graphic_bis() {
           displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
                         lightGray, backgroundColor_2, ctx);
         }
-        if (gameOnGoing() && (currentAttemptNumber == 1) && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
-          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
+        else if (gameOnGoing() && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_NbPossibleCodes+1-1, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
+          if (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs) {
+            displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
+                          lightGray, backgroundColor_2, ctx);
+          }
         }
       }
       else {
@@ -2575,9 +2579,13 @@ function draw_graphic_bis() {
           displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_Perfs+1-1, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
         }
-        if (gameOnGoing() && (currentAttemptNumber == 1) && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
-          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, 0, nb_possible_codes_width,
+        else if (gameOnGoing() && (currentAttemptNumber > nbOfStatsFilled_NbPossibleCodes)) {
+          displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_NbPossibleCodes+1-1, nb_possible_codes_width,
                         lightGray, backgroundColor_2, ctx);
+          if (nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs) {
+            displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_Perfs+1-1, nb_possible_codes_width,
+                          lightGray, backgroundColor_2, ctx);
+          }
         }
       }
 
