@@ -991,14 +991,14 @@ function newGameButtonClick(nbColumns) {
 
         // Transition effect 1/2
         try {
-          $(".game_aborted").fadeIn(3500);
+          $(".game_aborted").fadeIn(4000);
         }
         catch (exc) {
         }
 
         // Transition effect 2/2
         try {
-          $(".game_aborted").fadeOut(3500);
+          $(".game_aborted").fadeOut(4000);
         }
         catch (exc) {
         }
