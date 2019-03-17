@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.68";
+let version = "v2.69";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -991,14 +991,14 @@ function newGameButtonClick(nbColumns) {
 
         // Transition effect 1/2
         try {
-          $(".game_aborted").fadeIn(5555);
+          $(".game_aborted").fadeIn(4444);
         }
         catch (exc) {
         }
 
         // Transition effect 2/2
         try {
-          $(".game_aborted").fadeOut(5555);
+          $(".game_aborted").fadeOut(7777);
         }
         catch (exc) {
         }
@@ -3212,7 +3212,7 @@ function draw_graphic_bis() {
         for (let color = 1; color <= nbColors; color++) {
           if (minNbColorsTables[currentPossibleCodeShown-1][color] > 0) { // always present color
             for (let i = 0; i < minNbColorsTables[currentPossibleCodeShown-1][color]; i++) {
-              displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100-3, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, true);
+              displayColor(color, Math.max(attempt_nb_width+(70*(nbColumns+1))/100-3,0), nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, true);
               colors_cnt++;
             }
           }
@@ -3222,7 +3222,7 @@ function draw_graphic_bis() {
         }
         for (let color = 1; color <= nbColors; color++) {
           if (maxNbColorsTables[currentPossibleCodeShown-1][color] == 0) { // impossible color
-            displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100-3, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, false);
+            displayColor(color, Math.max(attempt_nb_width+(70*(nbColumns+1))/100-3,0), nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, false);
             colors_cnt++;
           }
         }
