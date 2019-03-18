@@ -2908,7 +2908,7 @@ try {
       let data = e.data;
 
       if (data.req_type == undefined) {
-        throw new Error("req_type is undefined");
+        throw new Error("req_type is undefined: " + JSON.stringify(data));
       }
 
       // **************

@@ -1654,7 +1654,7 @@ if(e.data==undefined){
 throw new Error("data is undefined");}
 let data=e.data;
 if(data.req_type==undefined){
-throw new Error("req_type is undefined");}
+throw new Error("req_type is undefined: "+JSON.stringify(data));}
 if(data.req_type=='INIT'){
 if(!IAmAliveMessageSent){
 self.postMessage({'rsp_type': 'I_AM_ALIVE'});

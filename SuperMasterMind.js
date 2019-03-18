@@ -1443,13 +1443,16 @@ function postInitMessageToGameSolver(cnt_p) {
       return;
     }
     if (gameSolverInitMsgContents != null) {
+      if (gameSolverInitMsgContents.req_type == undefined) {
+        throw new Error("internal error: gameSolverInitMsgContents.req_type == undefined");
+      }
       gameSolverDbg = 99;
       gameSolver.postMessage(gameSolverInitMsgContents);
       gameSolverDbg = 100;
       game_id_for_initGameSolver = game_cnt;
     }
     else {
-      throw new Error("internal postInitMessageToGameSolver() error: gameSolverInitMsgContents == null");
+      throw new Error("internal error: gameSolverInitMsgContents == null");
     }
   }
   catch (err) {
