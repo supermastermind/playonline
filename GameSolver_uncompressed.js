@@ -2902,6 +2902,9 @@ try {
       }
       message_processing_ongoing = true;
 
+      if (e == undefined) {
+        throw new Error("e is undefined");
+      }
       if (e.data == undefined) {
         throw new Error("data is undefined");
       }

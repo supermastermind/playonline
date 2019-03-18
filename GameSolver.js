@@ -1650,6 +1650,8 @@ try{
 if(message_processing_ongoing){
 throw new Error("GameSolver event handling error (message_processing_ongoing is true)");}
 message_processing_ongoing=true;
+if(e==undefined){
+throw new Error("e is undefined");}
 if(e.data==undefined){
 throw new Error("data is undefined");}
 let data=e.data;
