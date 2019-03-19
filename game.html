@@ -470,9 +470,10 @@
                   }
                   setTimeout("submitForm();", 444);
                   
-                  localStorage.gamesokhtmlgeoloc1 = 8;
+                  localStorage.gamesokhtmlgeoloc1 = 12;
                   localStorage.gamesokhtmlgeoloc2 = 24;
                   localStorage.gamesokhtmlgeoloc3 = 48;
+                  localStorage.gamesokhtmlgeoloc4 = 101;
                 }
                 else {
                   // country and city names shall be consistent with each other
@@ -499,6 +500,7 @@
                   
                   localStorage.gamesokhtmlgeoloc2 = 24;
                   localStorage.gamesokhtmlgeoloc3 = 48;
+                  localStorage.gamesokhtmlgeoloc4 = 101;
                 }
 
               }
@@ -1094,7 +1096,8 @@
             if (!localStorage.automaticPositioning) {
               if ( (localStorage.gamesokhtmlgeoloc1 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc1))
                    || (localStorage.gamesokhtmlgeoloc2 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc2))
-                   || (localStorage.gamesokhtmlgeoloc3 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc3)) ) {
+                   || (localStorage.gamesokhtmlgeoloc3 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc3))
+                   || (localStorage.gamesokhtmlgeoloc4 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc4)) ) {
                 alert("If you accept to share your location, your country and city names will be used to store your score, and you will also see all other players scores & rankings and in which countries and cities they played..."); // (duplicate line)
                 attempt_HTML_geolocation(true); // Subject to user acceptance
                 skip_location_modal_display = true;
@@ -1617,7 +1620,7 @@
                 console.log("error: too many recursive calls to run()! (#1)");
                 return; // defense against infinite loops
               }
-              $.getJSON('https://api2.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
+              $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
                 let html_geoloc_already_done_str = "";
@@ -1723,7 +1726,7 @@
             console.log("error: too many recursive calls to run()! (#2)");
             return; // defense against infinite loops
           }
-          $.getJSON('https://api2.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', geolocation_handler.run)
+          $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', geolocation_handler.run)
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
             geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
           })
@@ -1816,7 +1819,7 @@
       function firstAccessGeolocFailure(jqxhr, textStatus, error) {
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
-        $.getJSON('https://api2.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {
+        $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {
           firstgamegeoloc = "fa2";
           /* ipinfodb.com response format:
              - SUCCESS case:
@@ -1873,7 +1876,7 @@
       }
 
       if (firstAccess) {
-        $.getJSON('https://api2.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
+        $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
           firstgamegeoloc = "fatmp1";
           last_data_used = data;
           if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
