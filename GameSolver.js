@@ -86,10 +86,6 @@ let precalculated_games_4columns=
 "0||N:1296|1111:13C7,1112:11C8,1122:1168,1123:110C,1234:115F.";
 let precalculated_games_5columns=
 "0||N:32768|11111:28B03,11112:25A19,11122:24BF0,11123:24501,11223:23ED9,11234:23F55,12345:244BA.";
-self.onerror=function (e){
-self.postMessage({'rsp_type': 'INTERNAL_WORKER_ERROR_DETECTED','error_str': e+","+e.data+","+e.message+" ("+e.filename+":"+e.lineno+")"});};
-self.onmessageerror=function (e){
-self.postMessage({'rsp_type': 'INTERNAL_WORKER_MESSAGE_ERROR_DETECTED','error_str': e+","+e.data+","+e.message+" ("+e.filename+":"+e.lineno+")"});};
 let dotStr=".";
 let separatorStr="|";
 let separator2Str=":";

@@ -136,17 +136,6 @@ try {
   let precalculated_games_5columns =
     "0||N:32768|11111:28B03,11112:25A19,11122:24BF0,11123:24501,11223:23ED9,11234:23F55,12345:244BA.";
 
-  // **************
-  // Error handling
-  // **************
-
-  self.onerror = function (e) {
-    self.postMessage({'rsp_type': 'INTERNAL_WORKER_ERROR_DETECTED', 'error_str': e + ", " + e.data + ", " + e.message + " (" + e.filename + ":" + e.lineno + ")"}); // (attempt to include all potential fields)
-  };
-  self.onmessageerror = function (e) {
-    self.postMessage({'rsp_type': 'INTERNAL_WORKER_MESSAGE_ERROR_DETECTED', 'error_str': e + ", " + e.data + ", " + e.message + " (" + e.filename + ":" + e.lineno + ")"}); // (attempt to include all potential fields)
-  };
-
   // ***************************
   // Look for precalculated game
   // ***************************

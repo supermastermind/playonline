@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.69b";
+let version = "v2.6A";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -765,9 +765,6 @@ function onGameSolverMsg(e) {
 
     if (data.rsp_type == 'INTERNAL_WORKER_ERROR_DETECTED') {
       displayGUIError('INTERNAL_WORKER_ERROR_DETECTED: ' + data.error_str);
-    }
-    else if (data.rsp_type == 'INTERNAL_WORKER_MESSAGE_ERROR_DETECTED') {
-      displayGUIError('INTERNAL_WORKER_MESSAGE_ERROR_DETECTED: ' + data.error_str);
     }
 
     // **************************
