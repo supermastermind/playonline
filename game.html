@@ -257,7 +257,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="draw_graphic();" onunload="/* See (***) */ console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
+  <body onresize="eval('draw_graphic();');" onunload="/* See (***) */ console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
 
     <div class="game_loading">
       <img src="img/loading.gif" style='height:12%;'><br>
@@ -347,7 +347,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MM5";
+      let html_compatibility_game_version = "Ver_MM6";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1689,6 +1689,9 @@
                     }
                     if (manualGeolocAttempt) {
                       alert("If you accept to share your location, your country and city names will be used to store your score, and you will also see all other players scores & rankings and in which countries and cities they played..."); // (duplicate line)
+                    }
+                    else {
+                      alert("Oops... your score could not be stored!\n(geolocation failure)");
                     }
                     submitForm(errorStr, true);
                     if (manualGeolocAttempt) {
