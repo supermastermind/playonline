@@ -977,7 +977,7 @@ function newGameButtonClick(nbColumns) {
 
       let someGamesWereWon = false;
       if (typeof(Storage) !== 'undefined') {
-        if (Number(localStorage.gamesok) >= 5) {
+        if (Number(localStorage.gamesok) >= 12) {
           someGamesWereWon = true;
         }
       }
