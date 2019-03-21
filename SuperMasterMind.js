@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.6B";
+let version = "v2.7";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -1163,11 +1163,50 @@ function mouseClick(e) {
   let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
   let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
 
+  // *************
+  // Display rules
+  // *************
+
+  if ( (!showPossibleCodesMode)
+       && (mouse_x > get_x_pixel(x_min))
+       && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
+       && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
+       && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))) ) {
+    let game_rules_str =
+          "<h3>Game rules</h3>\
+          The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>\
+          The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>\
+          At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>\
+          <ul style='list-style-type:disc;padding: 0 0 0 4vw;'>\
+          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>black peg</b> indicates the existence of a correct color placed in a correct position,</li>\
+          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>white peg</b> indicates the existence of a correct color placed in a wrong position.</li>\
+          </ul>\
+          Once this feedback has been provided, another attempt is made. The game ends when the secret code is found, which means the player gets N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br><br>\
+          <h3>Useful links</h3>\
+          <b><a href='index.html'>&#x2302; Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
+          <b><a href='index.html#game_rules'>&#x2302; Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
+          <b><a href='screenshots.html'>&#x2302; Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
+          <b><a href='optimal_strategy.html'>&#x2302; Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>\
+          <b><a href='contact_info.html'>&#x2302; Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br>";
+    try {
+      modal_mode = 4;
+      // set modal content
+      modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+                       + game_rules_str
+                       + "</div>");
+      // open modal
+      modal.open();
+    }
+    catch (exc) {
+      throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
+    }
+  }
+
   // ***************
   // Color selection
   // ***************
 
-  if (gameOnGoing()) {
+  else if (gameOnGoing()) {
 
     event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
     event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
@@ -2389,7 +2428,7 @@ function draw_graphic_bis() {
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium2_bold_font = "bold " + Math.min(Math.max(Math.floor(font_size/1.5)+2, min_font_size), font_size) + "px " + fontFamily;
-      medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
+      medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/2.0), min_font_size) + "px " + fontFamily;
       if (!showPossibleCodesMode) {
         // (related to medium_bold_font)
         stats_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
@@ -2673,12 +2712,30 @@ function draw_graphic_bis() {
       let HintsThreshold = 5;
       if (!showPossibleCodesMode) {
 
+        // Display rules
+        // *************
+
+        ctx.font = medium_bold_italic_font;
+        if (nbGamesPlayedAndWon <= 1) {
+          if (!displayString("\u2B50\u2009Game rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                             darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
+            if (!displayString("\u2B50\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                               darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
+              if (!displayString("\u2B50Rules\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                                 darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
+                displayString("Rules\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                              darkGray, backgroundColor_2, ctx, true, 1, true, 0);
+              }
+            }
+          }
+        }
+
         // Display game version
         // ********************
 
         if ((!CompressedDisplayMode) && (optimal_width > 0) && (tick_width > 0)) {
           ctx.font = very_small_italic_font;
-          displayString(version, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors, 5,
+          displayString(version, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-0.07, 5,
                         lightGray, backgroundColor_2, ctx, true, 2, true, 1, true /* (ignoreRanges) */);
         }
 
@@ -3078,8 +3135,8 @@ function draw_graphic_bis() {
 
         try {
           ctx.font = medium2_bold_font;
-          if ((nbGamesPlayedAndWon == 0) && gameOnGoing() && (currentAttemptNumber <= 3)) {
-            let x_delta = 0.75;
+          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 3) || (nbColorSelections < nbColumns)) ) {
+            let x_delta = 0.77;
             if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
