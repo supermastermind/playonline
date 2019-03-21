@@ -1173,7 +1173,7 @@ function mouseClick(e) {
        && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
        && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))) ) {
     let game_rules_str =
-          "<font color=black size=2vw><h3>Game rules</h3>\
+          "<font color=black><h3>Game rules</h3>\
           The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>\
           The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>\
           At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>\
@@ -3136,14 +3136,14 @@ function draw_graphic_bis() {
         try {
           ctx.font = medium2_bold_font;
           if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 3) || (nbColorSelections < nbColumns)) ) {
-            let x_delta = 0.77;
+            let x_delta = 0.80;
             if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                  darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-                if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
+                if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
-                  displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
+                  displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                 }
               }
