@@ -975,29 +975,40 @@ function newGameButtonClick(nbColumns) {
     if ( (nbColumns == 0) // ("NEW GAME" button event)
          || (currentAttemptNumber <= 1) ) { // (radio buttons events)
 
+      let someGamesWereWon = false;
+      if (typeof(Storage) !== 'undefined') {
+        if (Number(localStorage.gamesok) >= 5) {
+          someGamesWereWon = true;
+        }
+      }
+
       if (gameOnGoing() && (currentAttemptNumber > 1)) {
 
-        if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
-          var rsp = confirm("Do you really want to abort current game?"); // (code duplicated)
-          if (!rsp) {
-            nbNewGameEventsCancelled++;
-            return; // Cancel or "x" (close) button
+        if (someGamesWereWon) {
+          if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
+            var rsp = confirm("Do you really want to abort current game?"); // (code duplicated)
+            if (!rsp) {
+              nbNewGameEventsCancelled++;
+              return; // Cancel or "x" (close) button
+            }
           }
         }
         nbOnGoingGamesAborted++;
 
-        // Transition effect 1/2
-        try {
-          $(".game_aborted").fadeIn(4444);
-        }
-        catch (exc) {
-        }
+        if (someGamesWereWon) {
+          // Transition effect 1/2
+          try {
+            $(".game_aborted").fadeIn(4444);
+          }
+          catch (exc) {
+          }
 
-        // Transition effect 2/2
-        try {
-          $(".game_aborted").fadeOut(7777);
-        }
-        catch (exc) {
+          // Transition effect 2/2
+          try {
+            $(".game_aborted").fadeOut(7777);
+          }
+          catch (exc) {
+          }
         }
 
       }
@@ -3073,9 +3084,9 @@ function draw_graphic_bis() {
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                  darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-                if (!displayString("Select colors!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
+                if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
-                  displayString("Select me!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
+                  displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.22*x_delta,
                                 darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                 }
               }
