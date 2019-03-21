@@ -1005,7 +1005,7 @@ function newGameButtonClick(nbColumns) {
 
           // Transition effect 2/2
           try {
-            $(".game_aborted").fadeOut(7777);
+            $(".game_aborted").fadeOut(5555);
           }
           catch (exc) {
           }
