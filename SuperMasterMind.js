@@ -1167,7 +1167,7 @@ function mouseClick(e) {
   // Display rules
   // *************
 
-  if ( (!showPossibleCodesMode)
+  if ( (!showPossibleCodesMode) && (nbGamesPlayedAndWon == 0)
        && (mouse_x > get_x_pixel(x_min))
        && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
        && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
@@ -2716,7 +2716,7 @@ function draw_graphic_bis() {
         // *************
 
         ctx.font = medium_bold_italic_font;
-        if (nbGamesPlayedAndWon <= 1) {
+        if (nbGamesPlayedAndWon == 0) {
           if (!displayString("\u2B50\u2009Game rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
             if (!displayString("\u2B50\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
