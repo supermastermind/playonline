@@ -1684,7 +1684,7 @@
                     var inferred_data = {'ip':inferred_ip_address};
                     geolocation_handler.run(inferred_data);
                   }
-                  else { // No form is submitted in this retry failure case
+                  else { // No form is submitted in this retry failure case (no IP address)
                     var manualGeolocAttempt = false;
                     if (typeof(Storage) !== 'undefined') {
                       if (localStorage.gamesok) {
