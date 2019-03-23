@@ -1173,7 +1173,7 @@ function mouseClick(e) {
        && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
        && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))) ) {
     let game_rules_str =
-          "<font color=black size='2.25vh'><h2>Game rules</h2>\
+          "<center><table style='width:75%;'><tr><td><font color=black size='2.25vh'><h2>Game rules</h2>\
           The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>\
           The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>\
           At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>\
@@ -1187,7 +1187,7 @@ function mouseClick(e) {
           <b><a href='index.html#game_rules'>&#x2302; Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='screenshots.html'>&#x2302; Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='optimal_strategy.html'>&#x2302; Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>\
-          <b><a href='contact_info.html'>&#x2302; Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font>";
+          <b><a href='contact_info.html'>&#x2302; Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font></td></tr></table></center>";
     try {
       modal_mode = 4;
       // set modal content
