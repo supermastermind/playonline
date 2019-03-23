@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.7";
+let version = "v2.71";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -93,6 +93,7 @@ let lastGameWasAbortedWithOnGoingWorker = false;
 let nbNewGameEvents = 1;
 let nbNewGameEventsCancelled = 0;
 let playerWasHelped = false;
+let dsCode = false;
 
 let gameErrorStr = "";
 let gameErrorCnt = 0;
@@ -970,6 +971,35 @@ function onGameSolverMsg(e) {
 // Event-related functions
 // ***********************
 
+function newGameButtonClick_delayed() {
+  // Transition effect 1/2
+  try {
+    $(".page_transition").fadeIn("fast");
+  }
+  catch (exc) {
+  }
+
+  // Debug values
+  if (currentAttemptNumber-1 != nbOfStatsFilled_Perfs) {
+    nbGamesAbortedWithOnGoingWorker++;
+    lastGameWasAbortedWithOnGoingWorker = true;
+  }
+  else {
+    lastGameWasAbortedWithOnGoingWorker = false;
+  }
+
+  newGameEvent = true;
+  nbNewGameEvents++;
+  draw_graphic();
+
+  // Transition effect 2/2
+  try {
+    $(".page_transition").fadeOut("fast");
+  }
+  catch (exc) {
+  }
+}
+
 function newGameButtonClick(nbColumns) {
   if (!document.getElementById("newGameButton").disabled) {
     if ( (nbColumns == 0) // ("NEW GAME" button event)
@@ -977,7 +1007,7 @@ function newGameButtonClick(nbColumns) {
 
       let someGamesWereWon = false;
       if (typeof(Storage) !== 'undefined') {
-        if (Number(localStorage.gamesok) >= 25) {
+        if (Number(localStorage.gamesok) >= 20) {
           someGamesWereWon = true;
         }
       }
@@ -995,49 +1025,33 @@ function newGameButtonClick(nbColumns) {
         }
         nbOnGoingGamesAborted++;
 
+        let reset_duration = 2555;
         if (someGamesWereWon) {
-          // Transition effect 1/2
-          try {
-            $(".game_aborted").fadeIn(4444);
-          }
-          catch (exc) {
-          }
-
-          // Transition effect 2/2
-          try {
-            $(".game_aborted").fadeOut(4444);
-          }
-          catch (exc) {
-          }
+          reset_duration = 4444;
+        }
+        // Transition effect 1/2
+        try {
+          $(".game_aborted").fadeIn(reset_duration);
+        }
+        catch (exc) {
         }
 
-      }
+        // Transition effect 2/2
+        try {
+          $(".game_aborted").fadeOut(reset_duration);
+        }
+        catch (exc) {
+        }
 
-      // Transition effect 1/2
-      try {
-        $(".page_transition").fadeIn("fast");
-      }
-      catch (exc) {
-      }
+        setTimeout("newGameButtonClick_delayed();", 2*reset_duration);
+        dsCode = true;
+        main_graph_update_needed = true;
+        updateGameSizes();        
+        draw_graphic();
 
-      // Debug values
-      if (currentAttemptNumber-1 != nbOfStatsFilled_Perfs) {
-        nbGamesAbortedWithOnGoingWorker++;
-        lastGameWasAbortedWithOnGoingWorker = true;
       }
       else {
-        lastGameWasAbortedWithOnGoingWorker = false;
-      }
-
-      newGameEvent = true;
-      nbNewGameEvents++;
-      draw_graphic();
-
-      // Transition effect 2/2
-      try {
-        $(".page_transition").fadeOut("fast");
-      }
-      catch (exc) {
+        newGameButtonClick_delayed();
       }
 
     }
@@ -1167,7 +1181,10 @@ function mouseClick(e) {
   // Display rules
   // *************
 
-  if ( (!showPossibleCodesMode) && (nbGamesPlayedAndWon == 0)
+  if (dsCode) {
+    displayGUIError("dsCode error", new Error().stack);
+  }
+  else if ( (!showPossibleCodesMode) && (nbGamesPlayedAndWon == 0)
        && (mouse_x > get_x_pixel(x_min))
        && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
        && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
@@ -1421,7 +1438,7 @@ function updateGameSizes() {
     optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.25:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
-    if (!gameOnGoing()) {
+    if (!gameOnGoing() || dsCode) {
       transition_height = 0.4;
       scode_height = 1;
     }
@@ -1669,6 +1686,7 @@ function resetGameAttributes(nbColumnsSelected) {
 
   newGameEvent = false;
   playerWasHelped = false;
+  dsCode = false;
 
   gameErrorStr = "";
   gameErrorCnt = 0;
@@ -2878,7 +2896,12 @@ function draw_graphic_bis() {
           displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                         darkGray, backgroundColor_2, ctx, true, 2, true, 0);
           if (gameOnGoing()) {
-            displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
+            if (!dsCode) {
+              displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
+            }
+            else {
+              displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
+            }
           }
           else { // game over
             displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
