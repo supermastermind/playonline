@@ -1007,7 +1007,7 @@ function newGameButtonClick(nbColumns) {
 
       let someGamesWereWon = false;
       if (typeof(Storage) !== 'undefined') {
-        if (Number(localStorage.gamesok) >= 20) {
+        if (Number(localStorage.gamesok) >= 22) {
           someGamesWereWon = true;
         }
       }
@@ -1029,6 +1029,8 @@ function newGameButtonClick(nbColumns) {
         if (someGamesWereWon) {
           reset_duration = 4444;
         }
+        setTimeout("newGameButtonClick_delayed();", 2*reset_duration);
+
         // Transition effect 1/2
         try {
           $(".game_aborted").fadeIn(reset_duration);
@@ -1043,10 +1045,9 @@ function newGameButtonClick(nbColumns) {
         catch (exc) {
         }
 
-        setTimeout("newGameButtonClick_delayed();", 2*reset_duration);
         dsCode = true;
         main_graph_update_needed = true;
-        updateGameSizes();        
+        updateGameSizes();
         draw_graphic();
 
       }
