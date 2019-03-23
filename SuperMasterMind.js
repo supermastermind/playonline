@@ -1181,7 +1181,8 @@ function mouseClick(e) {
           <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>black peg</b> indicates the existence of a correct color placed in a correct position,</li>\
           <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>white peg</b> indicates the existence of a correct color placed in a wrong position.</li>\
           </ul>\
-          Once this feedback has been provided, another attempt is made. The game ends when the secret code is found, which means the player gets N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br><br>\
+          Once this feedback has been provided, another attempt is made.<br>\
+          The game ends when the secret code is found, which means the player gets N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br><br>\
           <h2>For more info</h2>\
           <b><a href='index.html'>&#x2302; Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='index.html#game_rules'>&#x2302; Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
