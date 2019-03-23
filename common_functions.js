@@ -1,7 +1,7 @@
 function write_menu(selected_idx) {
   var str = "\
     <div id='header'>\
-        <h1><font color='#F00000'>Play </font><font color='#FF7700'>Super </font><font color='#F7F700'>Master </font><font color='#00D000'>Mind </font><font color='black'>/ </font> <font color='#0000A8'>Code </font><font color='#954400'>breaker </font><font color='#FF7700'>online!</font></h1>\
+        <h1><b><font color='#F00000'>Play </font><font color='#FF7700'>Super </font><font color='#F7F700'>Master </font><font color='#00D000'>Mind </font><font color='black'>/ </font> <font color='#0000A8'>Code </font><font color='#954400'>breaker </font><font color='#FF7700'>online!</font></b></h1>\
         <h2><font color='#333333'>Super Master Mind, Mastermind & Code breaker games</font></h2>\
       <div id='menubar'>\
         <ul id='menu'>\
