@@ -2329,7 +2329,7 @@ function draw_graphic_bis() {
             nbGamesPlayed++;
           }
           else {
-            last_but_one_attempt_event = (currentAttemptNumber + 1 == nbMaxAttempts) /* (last but one attempt) */
+            last_but_one_attempt_event = (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
             currentCode = sCodeRevealed;
           }
         }
@@ -2507,8 +2507,7 @@ function draw_graphic_bis() {
               displayString(attempt_nb_str_to_display, 0, attempt, str_width,
                             redColor, backgroundColor, ctx, true, 0, true, 0);
             }
-            else if ( (attempt+2 == nbMaxAttempts)
-                      || ((attempt+3 == nbMaxAttempts) && (nbColumns >= 6)) ) {
+            else if (attempt+2 == nbMaxAttempts) { /* (last but one attempt) */
               displayString(attempt_nb_str_to_display, 0, attempt, str_width,
                             orangeColor, backgroundColor, ctx, true, 0, true, 0);
             }
@@ -3408,7 +3407,7 @@ function draw_graphic_bis() {
         document.getElementById("columnslabel_7").className = "radio";
       }
 
-      document.getElementById("playRandomCodeButton").disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts - ((nbColumns >= 6) ? 2 : 1)));
+      document.getElementById("playRandomCodeButton").disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts-1) /* (from last but one attempt) */);
       if (document.getElementById("playRandomCodeButton").disabled) {
         document.getElementById("playRandomCodeButton").className = "button disabled";
       }
