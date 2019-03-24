@@ -24,7 +24,7 @@ let nbMaxColors = 10;
 let nbMinColumns = 3;
 let nbMaxColumns = 7;
 let overallNbMinAttempts = 4;
-let overallNbMaxAttempts = 16;
+let overallNbMaxAttempts = 15;
 
 let nominalGameNbColumns = 5; // classical Super Master Mind game
 let nominalGameNbColors = 8; // classical Super Master Mind game
@@ -1582,7 +1582,7 @@ function resetGameAttributes(nbColumnsSelected) {
       break;
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
-      nbMaxAttempts = nominalGameNbMaxAttempts + 4;
+      nbMaxAttempts = nominalGameNbMaxAttempts + 3;
       document.title = "Ultra Master Mind";
       break;
     default:
