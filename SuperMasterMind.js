@@ -1081,6 +1081,15 @@ function displayRandomCodesHintIfNeeded() {
   }
 }
 
+function displayRevealSecretColorHintIfNeeded() {
+  if (!CompressedDisplayMode) {
+    alert("Need some help?\nClick on the \"" + document.getElementById("revealSecretColorButton").value + "\" button!");
+  }
+  else {
+    alert("Need some help?\nClick on the \"" + document.getElementById("revealSecretColorButton").value + "\" button to reveal a secret color!");
+  }
+}
+
 function revealSecretColorButtonClick() {
   if ( (!document.getElementById("revealSecretColorButton").disabled)
        && gameOnGoing()
@@ -3495,12 +3504,7 @@ function draw_graphic_bis() {
          && (gameOnGoing())
          && !(document.getElementById("revealSecretColorButton").disabled)
          && (sCodeRevealed == 0) ) {
-      if (!CompressedDisplayMode) {
-        alert("Need some help?\nClick on the \"" + document.getElementById("revealSecretColorButton").value + "\" button!");
-      }
-      else {
-        alert("Need some help?\nClick on the \"" + document.getElementById("revealSecretColorButton").value + "\" button to reveal a secret color!");
-      }
+      setTimeout("displayRevealSecretColorHintIfNeeded();", 44);
     }
 
   }
