@@ -198,6 +198,7 @@
         alert("Your browser cannot run this game because it does not support Web workers: update your browser version if necessary.");
       }
       var nbGamesPlayedAndWon = 0;
+      var someGamesWereWon = false;
       var nbGamesPlayed = 0;
       var nbCodesPlayed = 0;
       var nbColorSelections = 0;
@@ -271,7 +272,8 @@
       Current game was aborted!
       <script>
         if (typeof(Storage) !== 'undefined') {
-          if (localStorage.firstname) {
+          if (localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 30)) {
+            someGamesWereWon = true;
             document.write("<hr style='height:0.75vh; visibility:hidden;' />You shall win 5 consecutive games<br>to get your \"last5\" score<br>computed and compared to other players'");
           }
         }
@@ -347,7 +349,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MP";
+      let html_compatibility_game_version = "Ver_MQ";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;

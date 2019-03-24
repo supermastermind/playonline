@@ -1000,21 +1000,14 @@ function newGameButtonClick_delayed() {
   }
 }
 
-function newGameButtonClick(nbColumns) {
+function newGameButtonClick(nbColumns_p) {
   if (!document.getElementById("newGameButton").disabled) {
-    if ( (nbColumns == 0) // ("NEW GAME" button event)
+    if ( (nbColumns_p == 0) // ("NEW GAME" button event)
          || (currentAttemptNumber <= 1) ) { // (radio buttons events)
-
-      let someGamesWereWon = false;
-      if (typeof(Storage) !== 'undefined') {
-        if (Number(localStorage.gamesok) >= 25) {
-          someGamesWereWon = true;
-        }
-      }
 
       if (gameOnGoing() && (currentAttemptNumber > 1)) {
 
-        if (someGamesWereWon) {
+        if (someGamesWereWon && (nbColumns >= 5)) {
           if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
             var rsp = confirm("Do you really want to abort current game?"); // (code duplicated)
             if (!rsp) {
@@ -1026,7 +1019,7 @@ function newGameButtonClick(nbColumns) {
         nbOnGoingGamesAborted++;
 
         let reset_duration = 2555;
-        if (someGamesWereWon) {
+        if (someGamesWereWon && (nbColumns >= 5)) {
           reset_duration = 4444;
         }
         setTimeout("newGameButtonClick_delayed();", 2*reset_duration);
@@ -1185,7 +1178,7 @@ function mouseClick(e) {
   if (dsCode) {
     displayGUIError("dsCode error", new Error().stack);
   }
-  else if ( (!showPossibleCodesMode) && (nbGamesPlayedAndWon == 0)
+  else if ( (!showPossibleCodesMode) && (nbGamesPlayedAndWon == 0) // (condition duplicated)
        && (mouse_x > get_x_pixel(x_min))
        && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
        && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
@@ -2736,7 +2729,7 @@ function draw_graphic_bis() {
         // *************
 
         ctx.font = medium_bold_italic_font;
-        if (nbGamesPlayedAndWon == 0) {
+        if (nbGamesPlayedAndWon == 0) { // (condition duplicated)
           if (!displayString("\u2B50\u2009Game rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
             if (!displayString("\u2B50\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
