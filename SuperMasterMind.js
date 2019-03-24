@@ -2112,7 +2112,7 @@ function draw_graphic_bis() {
 
   let nbColorsRevealed = 0;
 
-  let last_attempt_event = false;
+  let last_but_one_attempt_event = false;
 
   try {
 
@@ -2329,7 +2329,7 @@ function draw_graphic_bis() {
             nbGamesPlayed++;
           }
           else {
-            last_attempt_event = (currentAttemptNumber == nbMaxAttempts) /* (last attempt) */
+            last_but_one_attempt_event = (currentAttemptNumber + 1 == nbMaxAttempts) /* (last but one attempt) */
             currentCode = sCodeRevealed;
           }
         }
@@ -3491,7 +3491,7 @@ function draw_graphic_bis() {
       document.getElementById("resetCurrentCodeButton").className = "button";
     }
 
-    if ( last_attempt_event
+    if ( last_but_one_attempt_event
          && (nbGamesPlayedAndWon <= 1)
          && (gameOnGoing())
          && !(document.getElementById("revealSecretColorButton").disabled)
