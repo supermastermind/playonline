@@ -114,6 +114,7 @@ let game_id_for_initGameSolver = -1;
 
 let isWorkerAlive = -2; // (debug value)
 let workerCreationTime = -1; // (debug value)
+let workerTerminationTime = -1; // (debug value)
 
 // GUI variables
 // *************
@@ -353,6 +354,7 @@ function getExtraDebugInfo() {
          + ", nbstatsfilled:" + nbOfStatsFilled_Perfs
          + ", gameduration:" + ((startTime > 0) ? ((new Date()).getTime() - startTime) : "NA") + "ms"
          + ", workeralive:" + isWorkerAlive + ", timesinceworkercreation: " + ((isWorkerAlive >= 0) ? (new Date()).getTime() - workerCreationTime : "NA")
+         + ", timesincelastworkerterminate: " + ((workerTerminationTime != -1) ? (new Date()).getTime() - workerTerminationTime : "NA")
          + ", currentcode:" + currentCode
          + ", nbnewgames:" + nbNewGameEvents
          + ", nbgamesplayed:" + nbGamesPlayed
@@ -1560,6 +1562,7 @@ function resetGameAttributes(nbColumnsSelected) {
       // (code duplicated:)
       isWorkerAlive = -1;
       gameSolverDbg = 1;
+      workerTerminationTime = (new Date()).getTime();
       gameSolver.terminate(); gameSolverDbg = 2;
       gameSolver = undefined;
     }
@@ -2836,6 +2839,7 @@ function draw_graphic_bis() {
             // (code duplicated:)
             isWorkerAlive = -1.5;
             gameSolverDbg = 1.5;
+            workerTerminationTime = (new Date()).getTime();
             gameSolver.terminate(); gameSolverDbg = 2.5;
             gameSolver = undefined;
           }
