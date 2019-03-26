@@ -787,11 +787,11 @@ function onGameSolverMsg(e) {
     // **************************
 
     else if (isWorkerAlive == 0) { // first message received from worker
-      if (data.rsp_type == 'I_AM_ALIVE') {
+      if ((data.rsp_type == 'I_AM_ALIVE') && (Number(data.game_id) == game_cnt)) {
         isWorkerAlive = 1;
       }
       else {
-        displayGUIError("gameSolver msg message error: invalid worker initialization (" + data.rsp_type + ")", new Error().stack);
+        displayGUIError("gameSolver msg message error: invalid worker initialization (" + data.rsp_type + ", " + data.game_id + ", " + game_cnt + ")", new Error().stack);
         return;
       }
     }
@@ -956,6 +956,9 @@ function onGameSolverMsg(e) {
 
     else if (data.rsp_type == 'TRACE') {
 
+      if ((data.game_id == undefined) || (Number(data.game_id) != game_cnt)) { // unexpected game_id
+        displayGUIError("TRACE / unexpected game_id: " + data.game_id + ", " + game_cnt, new Error().stack);
+      }
       if (data.trace_contents == undefined) {
         displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined", new Error().stack);
       }

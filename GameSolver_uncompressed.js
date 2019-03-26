@@ -1,8 +1,6 @@
 
 "use strict";
 
-let abort_worker_process = false;
-
 try {
 
   // *************************************************************************
@@ -1707,7 +1705,7 @@ try {
   }
 
   function send_trace_msg(trace_str) {
-    self.postMessage({'rsp_type': 'TRACE', 'trace_contents': trace_str});
+    self.postMessage({'rsp_type': 'TRACE', 'trace_contents': trace_str, 'game_id': game_id});
   }
 
   let code_colors = new Array(nbMaxColumns);
@@ -2104,7 +2102,7 @@ try {
 
   // XXX Further work to do:
   // - X) Compress all javascripts
-  // - X) Generate 5col tables + document precalculation assumptions 
+  // - X) Generate 5col tables + document precalculation assumptions
   //      check possible & impossible code (code precalculated or its only game precalculated) & useless (obviously + not obviously useless) code & "very inefficient" code & "some-useless-color" codes & at precalculated depth 1/2/3, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
   //      check total sum of attempts at the same time + web page update
   //      LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
@@ -2879,10 +2877,6 @@ try {
 
   self.onmessage = function(e) {
 
-    if (abort_worker_process) { // Avoid cumulative errors
-      return;
-    }
-
     try {
 
       if (message_processing_ongoing) {
@@ -2906,12 +2900,7 @@ try {
       // Initialization
       // **************
 
-      if (data.req_type == 'INIT') {
-
-        if (!IAmAliveMessageSent) {
-          self.postMessage({'rsp_type': 'I_AM_ALIVE'}); // first message sent
-          IAmAliveMessageSent = true;
-        }
+      else if (data.req_type == 'INIT') {
 
         // *******************
         // Read message fields
@@ -2919,6 +2908,20 @@ try {
 
         if (init_done) {
           throw new Error("INIT phase / double initialization");
+        }
+
+        if (data.game_id == undefined) {
+          throw new Error("INIT phase / game_id is undefined");
+        }
+        game_id = Number(data.game_id);
+        if ( isNaN(game_id) || (game_id < 0) ) {
+          throw new Error("INIT phase / invalid game_id: " + game_id);
+        }
+
+        // Post I_AM_ALIVE message
+        if (!IAmAliveMessageSent) {
+          self.postMessage({'rsp_type': 'I_AM_ALIVE', 'game_id': game_id}); // first message sent
+          IAmAliveMessageSent = true;
         }
 
         if (data.nbColumns == undefined) {
@@ -2962,14 +2965,6 @@ try {
           throw new Error("INIT phase / first_session_game is undefined");
         }
         let first_session_game = data.first_session_game;
-
-        if (data.game_id == undefined) {
-          throw new Error("INIT phase / game_id is undefined");
-        }
-        game_id = Number(data.game_id);
-        if ( isNaN(game_id) || (game_id < 0) ) {
-          throw new Error("INIT phase / invalid game_id: " + game_id);
-        }
 
         if (data.debug_mode == undefined) {
           throw new Error("INIT phase / debug_mode is undefined");
@@ -3818,18 +3813,17 @@ try {
         throw new Error("unexpected req_type: " + data.req_type);
       }
 
-      message_processing_ongoing = false;
-
     }
     catch (exc) {
-      abort_worker_process = true;
+      message_processing_ongoing = false;
       throw new Error("gameSolver internal error (message): " + exc + ": " + exc.stack);
     }
+
+    message_processing_ongoing = false;
 
   };
 
 }
 catch (exc) {
-  abort_worker_process = true;
   throw new Error("gameSolver internal error (global): " + exc + ": " + exc.stack);
 }

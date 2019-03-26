@@ -1,5 +1,4 @@
 "use strict";
-let abort_worker_process=false;
 try{
 let emptyColor=0;
 let nbMinColors=5;
@@ -1017,7 +1016,7 @@ str=str+codeHandler.compressCodeToString(code_list[i])+":"+codeHandler.markToStr
 str=str+codeHandler.compressCodeToString(code_list[list_size-1])+":"+codeHandler.markToString(marksTable_NbToMark[mark_idx_list[list_size-1]]);
 return str;}}
 function send_trace_msg(trace_str){
-self.postMessage({'rsp_type': 'TRACE','trace_contents': trace_str});}
+self.postMessage({'rsp_type': 'TRACE','trace_contents': trace_str,'game_id': game_id});}
 let code_colors=new Array(nbMaxColumns);
 let other_code_colors=new Array(nbMaxColumns);
 let different_colors_1=new Array(nbMaxColors+1);
@@ -1640,8 +1639,6 @@ throw new Error("recursiveEvaluatePerformances: invalid sum_marks value (2) (dep
 particularCodeGlobalPerformance=1.0+sum / nbCodes;}
 return 1.0+best_sum / nbCodes;}
 self.onmessage=function(e){
-if(abort_worker_process){
-return;}
 try{
 if(message_processing_ongoing){
 throw new Error("GameSolver event handling error (message_processing_ongoing is true)");}
@@ -1653,12 +1650,17 @@ throw new Error("data is undefined");}
 let data=e.data;
 if(data.req_type==undefined){
 throw new Error("req_type is undefined: "+JSON.stringify(data));}
-if(data.req_type=='INIT'){
-if(!IAmAliveMessageSent){
-self.postMessage({'rsp_type': 'I_AM_ALIVE'});
-IAmAliveMessageSent=true;}
+else if(data.req_type=='INIT'){
 if(init_done){
 throw new Error("INIT phase / double initialization");}
+if(data.game_id==undefined){
+throw new Error("INIT phase / game_id is undefined");}
+game_id=Number(data.game_id);
+if( isNaN(game_id)||(game_id<0) ){
+throw new Error("INIT phase / invalid game_id: "+game_id);}
+if(!IAmAliveMessageSent){
+self.postMessage({'rsp_type': 'I_AM_ALIVE','game_id': game_id});
+IAmAliveMessageSent=true;}
 if(data.nbColumns==undefined){
 throw new Error("INIT phase / nbColumns is undefined");}
 nbColumns=Number(data.nbColumns);
@@ -1686,11 +1688,6 @@ globalPerformancesShown[i]=PerformanceNA;}
 if(data.first_session_game==undefined){
 throw new Error("INIT phase / first_session_game is undefined");}
 let first_session_game=data.first_session_game;
-if(data.game_id==undefined){
-throw new Error("INIT phase / game_id is undefined");}
-game_id=Number(data.game_id);
-if( isNaN(game_id)||(game_id<0) ){
-throw new Error("INIT phase / invalid game_id: "+game_id);}
 if(data.debug_mode==undefined){
 throw new Error("INIT phase / debug_mode is undefined");}
 if(data.debug_mode!=""){
@@ -2178,11 +2175,10 @@ if( (possibleCodesForPerfEvaluation[0].length!=nbOfCodesForSystematicEvaluation_
 ||(possibleCodesForPerfEvaluation[1].length!=nbOfCodesForSystematicEvaluation_ForMemAlloc) ){
 throw new Error("inconsistent possibleCodesForPerfEvaluation length: "+possibleCodesForPerfEvaluation[0].length+","+possibleCodesForPerfEvaluation[1].length+","+nbOfCodesForSystematicEvaluation_ForMemAlloc);}}
 else{
-throw new Error("unexpected req_type: "+data.req_type);}
-message_processing_ongoing=false;}
+throw new Error("unexpected req_type: "+data.req_type);}}
 catch (exc){
-abort_worker_process=true;
-throw new Error("gameSolver internal error (message): "+exc+": "+exc.stack);}};}
+message_processing_ongoing=false;
+throw new Error("gameSolver internal error (message): "+exc+": "+exc.stack);}
+message_processing_ongoing=false;};}
 catch (exc){
-abort_worker_process=true;
 throw new Error("gameSolver internal error (global): "+exc+": "+exc.stack);}
