@@ -1115,7 +1115,7 @@
             gamesok = Number(localStorage.gamesok);
 
             if ((gamesok >= 140) && (!localStorage.firstname)) { // No interest for sharing results
-              if ((gamesok % 100) != 0) { // all odd numbers => first name will not be asked
+              if ((gamesok % 100) != 1) { // first name will no longer be asked / this condition will let pass some odd gamesok values very rarely
                 return;
               }
               if (nbcolumns == 3) {
@@ -1708,7 +1708,12 @@
                     for (var i = 0; i < localStorage.cityname.length; i++) {
                       sum = sum + localStorage.cityname.charCodeAt(i);
                     }
-                    var inferred_ip_address = "2." + String(sum % 12) + "." + String(sum % 44) + "." + String(sum % 256);
+                    /* if (localStorage.firstaccessid) { => commented because not "location-related"
+                      for (var i = 0; i < localStorage.firstaccessid.length; i++) {
+                        sum = sum + localStorage.firstaccessid.charCodeAt(i);
+                      }                      
+                    } */
+                    var inferred_ip_address = "2." + String(Math.floor(sum / 9) % 999) + "." + String(Math.floor(sum / 99) % 999) + "." + String(sum % 999);
                     console.log("use inferred IP address: " + inferred_ip_address);
                     var inferred_data = {'ip':inferred_ip_address};
                     geolocation_handler.run(inferred_data);
