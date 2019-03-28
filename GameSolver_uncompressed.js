@@ -2100,17 +2100,6 @@ try {
 
   }
 
-  // XXX Further work to do:
-  // - X) Compress all javascripts
-  // - X) Generate 5col tables + document precalculation assumptions
-  //      check possible & impossible code (code precalculated or its only game precalculated) & useless (obviously + not obviously useless) code & "very inefficient" code & "some-useless-color" codes & at precalculated depth 1/2/3, check RAM due to nbOfCodesForSystematicEvaluation_ForMemAlloc
-  //      check total sum of attempts at the same time + web page update
-  //      LONG PROCESSING TIME - 37 sec for 365 possibles codes on i5 processor.png
-  // -    test strictly positive precalculated perf
-  // - X) XXXs in all files
-  // - X) New game pictures in web page w/ all perfs evaluated
-  // - X) Complete forum? -> https://codegolf.stackexchange.com/questions/31926/mastermind-strategy
-  // - X) Appli Android?
   function recursiveEvaluatePerformances(depth, listOfCodes, nbCodes /*, possibleGame (precalculation mode) */) {
 
     let first_call = (depth == -1);
