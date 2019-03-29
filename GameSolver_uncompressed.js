@@ -2881,15 +2881,15 @@ try {
       }
       let data = e.data;
 
-      if (data.req_type == undefined) {
-        // throw new Error("req_type is undefined: " + JSON.stringify(data));
+      if (data.smm_req_type == undefined) {
+        // throw new Error("smm_req_type is undefined: " + JSON.stringify(data));
       }
 
       // **************
       // Initialization
       // **************
 
-      else if (data.req_type == 'INIT') {
+      else if (data.smm_req_type == 'INIT') {
 
         // *******************
         // Read message fields
@@ -3152,7 +3152,7 @@ try {
       // New attempt
       // ***********
 
-      else if (init_done && (data.req_type == 'NEW_ATTEMPT')) {
+      else if (init_done && (data.smm_req_type == 'NEW_ATTEMPT')) {
 
         // *******************
         // Read message fields
@@ -3799,7 +3799,7 @@ try {
       // **********
 
       else {
-        throw new Error("unexpected req_type: " + data.req_type);
+        throw new Error("unexpected smm_req_type: " + data.smm_req_type);
       }
 
     }

@@ -1648,8 +1648,8 @@ throw new Error("e is undefined");}
 if(e.data==undefined){
 throw new Error("data is undefined");}
 let data=e.data;
-if(data.req_type==undefined){}
-else if(data.req_type=='INIT'){
+if(data.smm_req_type==undefined){}
+else if(data.smm_req_type=='INIT'){
 if(init_done){
 throw new Error("INIT phase / double initialization");}
 if(data.game_id==undefined){
@@ -1809,7 +1809,7 @@ possibleCodesForPerfEvaluation_lastIndexWritten=1;
 /* if(8*8*8*8*8!=fillShortInitialPossibleCodesTable(initialCodeListForPrecalculatedMode,nbOfCodesForSystematicEvaluation_ForMemAlloc)){
 throw new Error("INIT phase / internal error");} */
 init_done=true;}
-else if(init_done&&(data.req_type=='NEW_ATTEMPT')){
+else if(init_done&&(data.smm_req_type=='NEW_ATTEMPT')){
 if(data.curAttemptNumber==undefined){
 throw new Error("NEW_ATTEMPT phase / curAttemptNumber is undefined");}
 let curAttemptNumber_tmp=Number(data.curAttemptNumber);
@@ -2174,7 +2174,7 @@ if( (possibleCodesForPerfEvaluation[0].length!=nbOfCodesForSystematicEvaluation_
 ||(possibleCodesForPerfEvaluation[1].length!=nbOfCodesForSystematicEvaluation_ForMemAlloc) ){
 throw new Error("inconsistent possibleCodesForPerfEvaluation length: "+possibleCodesForPerfEvaluation[0].length+","+possibleCodesForPerfEvaluation[1].length+","+nbOfCodesForSystematicEvaluation_ForMemAlloc);}}
 else{
-throw new Error("unexpected req_type: "+data.req_type);}}
+throw new Error("unexpected smm_req_type: "+data.smm_req_type);}}
 catch (exc){
 message_processing_ongoing=false;
 throw new Error("gameSolver internal error (message): "+exc+": "+exc.stack);}
