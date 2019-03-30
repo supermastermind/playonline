@@ -1397,7 +1397,7 @@ function mouseMove(e) {
 
 function playAColor(color, column) {
   if (gameOnGoing()) {
-    if ((color != emptyColor) && obviouslyImpossibleColors[color]) {
+    if ((color != emptyColor) && obviouslyImpossibleColors[color] && (nbColumns >= 5)) {
       alert("This color is obviously impossible!");
       return;
     }
