@@ -1691,17 +1691,17 @@ function resetGameAttributes(nbColumnsSelected) {
   nbUnknownPerfs = 0;
 
   sCode = ~(simpleCodeHandler.createRandomCode());
-  /* XXX */
+  /* XXX
   let toto = simpleCodeHandler.createRandomCode();
-  toto = simpleCodeHandler.setColor(toto, 1, 1);
-  toto = simpleCodeHandler.setColor(toto, 2, 2);
-  toto = simpleCodeHandler.setColor(toto, 3, 3);
-  toto = simpleCodeHandler.setColor(toto, 6, 4);
-  // toto = simpleCodeHandler.setColor(toto, 4, 5);
+  toto = simpleCodeHandler.setColor(toto, 4, 1);
+  toto = simpleCodeHandler.setColor(toto, 4, 2);
+  toto = simpleCodeHandler.setColor(toto, 4, 3);
+  toto = simpleCodeHandler.setColor(toto, 4, 4);
+  toto = simpleCodeHandler.setColor(toto, 4, 5);
   // toto = simpleCodeHandler.setColor(toto, 7, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 6);
   // toto = simpleCodeHandler.setColor(toto, 4, 7);
-  sCode = ~(toto);
+  sCode = ~(toto); */
 
   sCodeRevealed = 0;
 
