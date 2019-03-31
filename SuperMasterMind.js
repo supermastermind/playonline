@@ -186,7 +186,7 @@ let greenColor = "#008200"; // Green
 let orangeColor = "#FF7700"; // Orange
 let redColor = "#F00000"; // Red
 let backgroundColorTable =
-    [
+  [
     "#0000A8",   // Blue
     greenColor,  // Green
     redColor,    // Red
@@ -197,19 +197,20 @@ let backgroundColorTable =
     "#EAEA00",   // Yellow
     "#C900A1",   // Purple
     "#2DB7E5"    // Cyan
-    ];
+  ];
 let foregroundColorTable =
-    [ "white",
-      "white",
-      "white",
-      "white",
-      "white",
-      "white",
-      "black",
-      "black",
-      "white",
-      "white"
-    ];
+  [
+    "#FFFFFF",   // White
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#000000",   // Black
+    "#000000",
+    "#FFFFFF",
+    "#FFFFFF"
+  ];
 
 let backgroundColor_2 = document.getElementById("my_table").style.backgroundColor; // (may be modified later on)
 let backgroundColor_3 = "#D0D0D0"; // (may be modified later on)
@@ -2918,7 +2919,7 @@ function draw_graphic_bis() {
                         darkGray, backgroundColor_2, ctx, true, 2, true, 0);
           if (gameOnGoing()) {
             if (!dsCode) {
-              displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true);
+              displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true, false);
             }
             else {
               displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
@@ -3173,7 +3174,7 @@ function draw_graphic_bis() {
           for (let col = 0; col < nbColumns; col++) {
             color_selection_code = simpleCodeHandler.setColor(color_selection_code, color+1, col+1);
           }
-          displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx);
+          displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, true);
         }
 
         ctx.fillStyle = darkGray;
@@ -3661,18 +3662,88 @@ function display2Strings(str1, str2, x_cell, y_cell, x_cell_width,
   return res;
 }
 
-function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMode) {
+function averageColor(color1_p, color2_p, color1Coef) {
+
+  let color1 = color1_p.toLowerCase().trim();
+  let color2 = color2_p.toLowerCase().trim();
+  let r1;
+  let g1;
+  let b1;
+  let r2;
+  let g2;
+  let b2;
+
+  if ((color1Coef < 0.0) || (color1Coef > 1.0)) {
+    displayGUIError("error in averageColor (1): " + color1 + ", " + color2 + ", " + color1Coef, new Error().stack);
+    return color1_p;
+  }
+
+  // Get color1's rgb values
+  if ((color1.indexOf("#") == 0) && (color1.length == 7)) { // "#FFFFFF" color format
+    r1 = Number("0x" + color1.substring(1,3)); // (hexa number parsing)
+    g1 = Number("0x" + color1.substring(3,5));
+    b1 = Number("0x" + color1.substring(5,7));
+  }
+  else if (color1.indexOf("rgb") == 0) { // "rgb(255, 255, 255)" color format
+    let rgb = color1.match(/\d+/g);
+    r1 = rgb[0];
+    g1 = rgb[1];
+    b1 = rgb[2];
+  }
+  else {
+    displayGUIError("error in averageColor (2): " + color1 + ", " + color2 + ", " + color1Coef, new Error().stack);
+    return color1_p;
+  }
+
+  // Get color2's rgb values
+  if ((color2.indexOf("#") == 0) && (color2.length == 7)) { // "#FFFFFF" color format
+    r2 = Number("0x" + color2.substring(1,3)); // (hexa number parsing)
+    g2 = Number("0x" + color2.substring(3,5));
+    b2 = Number("0x" + color2.substring(5,7));
+  }
+  else if (color2.indexOf("rgb") == 0) { // "rgb(255, 255, 255)" color format
+    let rgb = color2.match(/\d+/g);
+    r2 = rgb[0];
+    g2 = rgb[1];
+    b2 = rgb[2];
+  }
+  else {
+    displayGUIError("error in averageColor (3): " + color1 + ", " + color2 + ", " + color1Coef, new Error().stack);
+    return color1_p;
+  }
+
+  // Compute color average
+  let newr = Math.round(r1*color1Coef + r2*(1-color1Coef));
+  let newg = Math.round(g1*color1Coef + g2*(1-color1Coef));
+  let newb = Math.round(b1*color1Coef + b2*(1-color1Coef));
+  if ( isNaN(newr) || (newr < 0) || (newr > 255)
+       || isNaN(newg) || (newg < 0) || (newg > 255)
+       || isNaN(newb) || (newb < 0) || (newb > 255) ) {
+    displayGUIError("error in averageColor (4): " + color1 + ", " + color2 + ", " + color1Coef + " / " + newr + ", " + newg + ", " + newb, new Error().stack);
+    return color1_p;
+  }
+  return "rgb(" + newr + "," + newg + "," + newb + ")";
+
+}
+
+function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMode, disabledColor = false) {
   if (color != emptyColor) {
+    let foregroundColor = foregroundColorTable[color-1];
+    let backgroundColor = backgroundColorTable[color-1];
+    if (disabledColor) {
+      foregroundColor = averageColor(foregroundColor, backgroundColor_2, 0.25);
+      backgroundColor = averageColor(backgroundColor, backgroundColor_2, 0.25);
+    }
     if (color < 10) {
       displayString(color, x_cell, y_cell, 2,
-                    foregroundColorTable[color-1], backgroundColorTable[color-1], ctx, displayColorMode, 0, false, 0);
+                    foregroundColor, backgroundColor, ctx, displayColorMode, 0, false, 0);
     }
     else {
       let res = displayString(color, x_cell, y_cell, 2,
-                              foregroundColorTable[color-1], backgroundColorTable[color-1], ctx, displayColorMode, 0, true, 0);
+                              foregroundColor, backgroundColor, ctx, displayColorMode, 0, true, 0);
       if (!res) {
         displayString(color-10, x_cell, y_cell, 2,
-                      foregroundColorTable[color-1], backgroundColorTable[color-1], ctx, displayColorMode, 0, false, 0);
+                      foregroundColor, backgroundColor, ctx, displayColorMode, 0, false, 0);
       }
     }
   }
@@ -3699,10 +3770,10 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
   }
 }
 
-function displayCode(code, y_cell, ctx, secretCodeCase = false) {
+function displayCode(code, y_cell, ctx, secretCodeCase = false, checkDisabledColors = false) {
   for (let col = 0; col < nbColumns; col++) {
     let color = simpleCodeHandler.getColor(code, col+1);
-    displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true);
+    displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ?  obviouslyImpossibleColors[color] : false));
   }
 }
 
