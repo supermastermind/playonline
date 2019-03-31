@@ -12,7 +12,7 @@ body
   background-position: left top;
   color: #000000; }
 
-table
+table tr td
 {
   font-family: Trebuchet MS;
   font-size: calc(10px + .40vw); }
