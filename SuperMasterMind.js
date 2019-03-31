@@ -1216,8 +1216,8 @@ function mouseClick(e) {
           The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>\
           At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>\
           <ul style='list-style-type:disc;padding: 0 0 0 4vw;'>\
-          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>black peg</b> indicates the existence of a correct color placed in a correct position,</li>\
-          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>white peg</b> indicates the existence of a correct color placed in a wrong position.</li>\
+          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>black peg</b> &#x26ab; indicates the existence of a correct color placed in a correct position,</li>\
+          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>white peg</b> &#x26aa; indicates the existence of a correct color placed in a wrong position.</li>\
           </ul>\
           Once this feedback has been provided, another attempt is made.<br>\
           The game ends when the secret code is found, which means the player gets N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br><br>\
