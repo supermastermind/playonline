@@ -11,6 +11,11 @@ body
   background-image:url('../img/html_background.png');
   background-position: left top;
   color: #000000; }
+
+table
+{
+  font-family: Trebuchet MS;
+  font-size: calc(10px + .40vw); }
   
 img
 { border: 0; }
