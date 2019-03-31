@@ -1211,7 +1211,7 @@ function mouseClick(e) {
        && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
        && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))) ) {
     let game_rules_str =
-          "<center><table style='width:75%;'><tr><td><font color=black size='2.25vh'><h2>Game rules</h2>\
+          "<center><table style='width:70%;'><tr><td><font color=black size='2.25vh'><h2>Game rules</h2>\
           The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>\
           The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>\
           At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>\
