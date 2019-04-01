@@ -202,6 +202,7 @@
       var nbGamesPlayed = 0;
       var nbCodesPlayed = 0;
       var nbColorSelections = 0;
+      var gameRulesDisplayed = false;
       if (typeof(Storage) == 'undefined') {
         alert("Your browser cannot run this game because it cannot store local data");
       }      
@@ -354,7 +355,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MY";
+      let html_compatibility_game_version = "Ver_MZ";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1845,7 +1846,8 @@
         }
         var debugStr = "firstgeoloc:" + localStorage.firstgamegeoloc + "/" + navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
         var nbColorSelectionsStr = ((nbColorSelections == 0) ? "(-)" : "(" + String(nbColorSelections) + ")");
-        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + " " + nbColorSelectionsStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true);
+        var gameRulesDisplayedStr = (gameRulesDisplayed ? "(r)" : "");
+        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + (((nbCodesPlayed==0)?"-":String(nbCodesPlayed))+gameRulesDisplayedStr) + " " + nbColorSelectionsStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true);
       }
 
       function storeFirstAccess(access_type, timeToWait1, timeToWait2, debug_info) {
