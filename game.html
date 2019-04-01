@@ -1847,7 +1847,7 @@
         var debugStr = "firstgeoloc:" + localStorage.firstgamegeoloc + "/" + navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
         var nbColorSelectionsStr = ((nbColorSelections == 0) ? "(-)" : "(" + String(nbColorSelections) + ")");
         var gameRulesDisplayedStr = (gameRulesDisplayed ? "(r)" : "");
-        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + (((nbCodesPlayed==0)?"-":String(nbCodesPlayed))+gameRulesDisplayedStr) + " " + nbColorSelectionsStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true);
+        submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + " " + nbColorSelectionsStr + " " + gameRulesDisplayedStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true);
       }
 
       function storeFirstAccess(access_type, timeToWait1, timeToWait2, debug_info) {
