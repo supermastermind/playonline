@@ -2302,7 +2302,7 @@ function draw_graphic_bis() {
 
       }
 
-    } while (resize_detected && (resize_cnt <= 44)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+    } while (resize_detected && (resize_cnt <= 12 /* 44 */)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
@@ -3418,6 +3418,11 @@ function draw_graphic_bis() {
         document.getElementById("columnslabel_5b").disabled = true;
         document.getElementById("columnslabel_6b").disabled = true;
         document.getElementById("columnslabel_7b").disabled = true;
+        document.getElementById("columnslabel_3b").className = "radio disabled";
+        document.getElementById("columnslabel_4b").className = "radio disabled";
+        document.getElementById("columnslabel_5b").className = "radio disabled";
+        document.getElementById("columnslabel_6b").className = "radio disabled";
+        document.getElementById("columnslabel_7b").className = "radio disabled";        
         document.getElementById("columnslabel_3").className = "radio disabled";
         document.getElementById("columnslabel_4").className = "radio disabled";
         document.getElementById("columnslabel_5").className = "radio disabled";
@@ -3430,6 +3435,11 @@ function draw_graphic_bis() {
         document.getElementById("columnslabel_5b").disabled = false;
         document.getElementById("columnslabel_6b").disabled = false;
         document.getElementById("columnslabel_7b").disabled = false;
+        document.getElementById("columnslabel_3b").className = "radio";
+        document.getElementById("columnslabel_4b").className = "radio";
+        document.getElementById("columnslabel_5b").className = "radio";
+        document.getElementById("columnslabel_6b").className = "radio";
+        document.getElementById("columnslabel_7b").className = "radio";                
         document.getElementById("columnslabel_3").className = "radio";
         document.getElementById("columnslabel_4").className = "radio";
         document.getElementById("columnslabel_5").className = "radio";
