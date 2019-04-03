@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.73";
+let version = "v2.74";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
