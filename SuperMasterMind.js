@@ -1399,8 +1399,10 @@ function mouseMove(e) {
 
 function playAColor(color, column) {
   if (gameOnGoing()) {
-    if ((color != emptyColor) && obviouslyImpossibleColors[color] && (nbColumns >= 5)) {
-      alert("This color is obviously impossible!");
+    if ((color != emptyColor) && obviouslyImpossibleColors[color]) {
+      if (nbColumns >= 5) {
+        alert("This color is obviously impossible!");
+      }
       return;
     }
     let newCurrentCode = simpleCodeHandler.setColor(currentCode, color, column);
@@ -3175,7 +3177,7 @@ function draw_graphic_bis() {
           for (let col = 0; col < nbColumns; col++) {
             color_selection_code = simpleCodeHandler.setColor(color_selection_code, color+1, col+1);
           }
-          displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, true);
+          displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing());
         }
 
         ctx.fillStyle = darkGray;
