@@ -1392,13 +1392,19 @@
               }
 
               // Manual conversions
-              if (localStorage.firstname && (localStorage.firstname.indexOf("Ghi") == 0) && (region == "Illinois") && (city == "Naperville")) {
+              if (localStorage.firstname && (localStorage.firstname.indexOf("Ghislain") == 0) && (region == "Illinois") && (city == "Naperville")) {
                 country = "France";
                 region = "Île-de-France";
                 city = "Paris";
                 geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
-              else if (localStorage.firstname && (localStorage.firstname.indexOf("Ghi") == 0) && (region == "California") && (city == "San Jose")) {
+              else if (localStorage.firstname && (localStorage.firstname.indexOf("Ghislain") == 0) && (region == "California") && (city == "San Jose")) {
+                country = "France";
+                region = "Île-de-France";
+                city = "Paris";
+                geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
+              }
+              else if (localStorage.firstname && (localStorage.firstname.indexOf("Ghislain") == 0) && (region == "Bayern") && (city == "Munich")) {
                 country = "France";
                 region = "Île-de-France";
                 city = "Paris";
