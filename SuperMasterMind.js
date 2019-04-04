@@ -235,7 +235,7 @@ let very_small_italic_font = defaultFont;
 let medium_basic_font = defaultFont;
 let medium_bold_font = defaultFont;
 let medium2_bold_font = defaultFont;
-let medium_bold_italic_font = defaultFont;
+let medium3_bold_font = defaultFont;
 let stats_font = defaultFont;
 let error_font = defaultFont;
 let font_size = min_font_size;
@@ -1210,18 +1210,16 @@ function mouseClick(e) {
        && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
        && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
        && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))) ) {
+
+    let allColorsStr = "";
+    for (let color_idx = 0; color_idx < nominalGameNbColors; color_idx++) {
+      allColorsStr = allColorsStr + "<span style='color:" + foregroundColorTable[color_idx] + ";background-color:" + backgroundColorTable[color_idx] + "'>" + (color_idx+1) + "</span>";
+    }
+
     let game_rules_str =
-          "<center><table style='width:70%;'><tr><td><font color=black size='2.25vh'><h2>Game rules</h2>\
-          The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>\
-          The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>\
-          At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>\
-          <ul style='list-style-type:disc;padding: 0 0 0 4vw;'>\
-          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>black peg</b> &#x26ab; indicates the existence of a correct color placed in a correct position,</li>\
-          <li style='margin:0 0 0 0;padding: 0 0 0 0;'>a <b>white peg</b> &#x26aa; indicates the existence of a correct color placed in a wrong position.</li>\
-          </ul>\
-          Once this feedback has been provided, another attempt is made.<br>\
-          The game ends when the secret code is found, which means the player gets N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br><br>\
-          <h2>For more info</h2>\
+          "<center><table style='width:70%;'><tr><td><font color=black size='2.25vh'>\
+          The goal of the game is to find out a <b>secret code composed of N colors <big>" + allColorsStr + "</big></b> chosen randomly.<br>\
+          <img src='img/SuperMasterMind_rules.png' style='width:100%;'><br>\
           <b><a href='index.html'>&#x2302; Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='index.html#game_rules'>&#x2302; Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='screenshots.html'>&#x2302; Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
@@ -2472,7 +2470,7 @@ function draw_graphic_bis() {
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
       medium2_bold_font = "bold " + Math.min(Math.max(Math.floor(font_size/1.5)+2, min_font_size), font_size) + "px " + fontFamily;
-      medium_bold_italic_font = "bold italic " + Math.max(Math.floor(font_size/2.0), min_font_size) + "px " + fontFamily;
+      medium3_bold_font = "bold " + Math.max(Math.floor(font_size/2.0), min_font_size) + "px " + fontFamily;
       if (!showPossibleCodesMode) {
         // (related to medium_bold_font)
         stats_font = "bold " + Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
@@ -2758,15 +2756,15 @@ function draw_graphic_bis() {
         // Display rules
         // *************
 
-        ctx.font = medium_bold_italic_font;
-        if (nbGamesPlayedAndWon == 0) { // (condition duplicated)
-          if (!displayString("\u2B50\u2009Game rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+        ctx.font = medium3_bold_font;
+        if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated)
+          if (!displayString("\u2B50\u2009Need help?   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
-            if (!displayString("\u2B50\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+            if (!displayString("\u2B50\u2009Help   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
-              if (!displayString("\u2B50Rules\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+              if (!displayString("\u2B50Help\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                  darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
-                displayString("Rules\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                displayString("Help\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                               darkGray, backgroundColor_2, ctx, true, 1, true, 0);
               }
             }
@@ -3424,7 +3422,7 @@ function draw_graphic_bis() {
         document.getElementById("columnslabel_4b").className = "radio disabled";
         document.getElementById("columnslabel_5b").className = "radio disabled";
         document.getElementById("columnslabel_6b").className = "radio disabled";
-        document.getElementById("columnslabel_7b").className = "radio disabled";        
+        document.getElementById("columnslabel_7b").className = "radio disabled";
         document.getElementById("columnslabel_3").className = "radio disabled";
         document.getElementById("columnslabel_4").className = "radio disabled";
         document.getElementById("columnslabel_5").className = "radio disabled";
@@ -3441,7 +3439,7 @@ function draw_graphic_bis() {
         document.getElementById("columnslabel_4b").className = "radio";
         document.getElementById("columnslabel_5b").className = "radio";
         document.getElementById("columnslabel_6b").className = "radio";
-        document.getElementById("columnslabel_7b").className = "radio";                
+        document.getElementById("columnslabel_7b").className = "radio";
         document.getElementById("columnslabel_3").className = "radio";
         document.getElementById("columnslabel_4").className = "radio";
         document.getElementById("columnslabel_5").className = "radio";
