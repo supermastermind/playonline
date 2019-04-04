@@ -1218,7 +1218,7 @@ function mouseClick(e) {
 
     let game_rules_str =
           "<center><table style='width:70%;'><tr><td><font color=black size='2.25vh'>\
-          The goal of the game is to find out a <b>secret code composed of N colors <big>" + allColorsStr + "</big></b> chosen randomly.<br>\
+          The goal of the game is to find out a <b>secret code composed of 5 colors chosen randomly among <big>" + allColorsStr + "</big>:</b><br>\
           <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0.7vh'><br>\
           <b><a href='index.html'>&#x2302; Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='index.html#game_rules'>&#x2302; Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
