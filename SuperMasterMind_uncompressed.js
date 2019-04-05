@@ -1025,7 +1025,7 @@ function newGameButtonClick(nbColumns_p) {
 
       if (gameOnGoing() && (currentAttemptNumber > 1)) {
 
-        if (someGamesWereWon && (nbColumns >= 5)) {
+        if (someGamesWereWon && (nbColumns >= 5)) { // (condition duplicated)
           if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
             var rsp = confirm("Do you really want to abort current game?"); // (code duplicated)
             if (!rsp) {

@@ -229,7 +229,9 @@
       $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
         try {
           if (gameOnGoing() && (currentAttemptNumber > 1)) {
-            return "Do you really want to abort current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
+            if (someGamesWereWon && (nbColumns >= 5)) { // (condition duplicated)
+              return "Do you really want to abort current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
+            }
           }
         }
         catch (exc) {
