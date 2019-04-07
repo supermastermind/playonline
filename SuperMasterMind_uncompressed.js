@@ -1216,10 +1216,14 @@ function mouseClick(e) {
       allColorsStr = allColorsStr + "<span style='color:" + foregroundColorTable[color_idx] + ";background-color:" + backgroundColorTable[color_idx] + "'>" + (color_idx+1) + "</span>";
     }
 
+    let widthStr = "65%";
+    if (window.innerWidth < 1.0*window.innerHeight) {
+      widthStr = "100%";
+    }
     let game_rules_str =
           "<center><table style='width:100%;'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
           <b>The goal of the game is to find out a secret code composed of " + nominalGameNbColumns + " colors chosen randomly among&nbsp;<big>" + allColorsStr + "</big>:</b><br>\
-          <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0.7vh'><br><br>\
+          <img src='img/SuperMasterMind_rules.png' style='width:" + widthStr + ";margin-top:0.7vh'><br><br>\
           <b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='index.html#game_rules'>&#x2302;&nbsp;Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
           <b><a href='screenshots.html'>&#x2302;&nbsp;Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
