@@ -780,14 +780,14 @@ let allColorsStr="";
 for (let color_idx=0;color_idx<nominalGameNbColors;color_idx++){
 allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";}
 let game_rules_str=
-"<center><table style='width:70%;'><tr><td><font color=black size='2.25vh'>\
+"<center><table style='width:100%;'><tr><td style='text-align:center;'><font color=black size='2.25vh'>\
 <b>The goal of the game is to find out a secret code composed of "+nominalGameNbColumns+" colors chosen randomly among&nbsp;<big>"+allColorsStr+"</big>:</b><br>\
-<img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0.7vh'><br>\
-<b><a href='index.html'>&#x2302;Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='index.html#game_rules'>&#x2302;Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='screenshots.html'>&#x2302;Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='optimal_strategy.html'>&#x2302;Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='contact_info.html'>&#x2302;Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font></td></tr></table></center>";
+<img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0.7vh'><br><br>\
+<b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
+<b><a href='index.html#game_rules'>&#x2302;&nbsp;Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
+<b><a href='screenshots.html'>&#x2302;&nbsp;Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
+<b><a href='optimal_strategy.html'>&#x2302;&nbsp;Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>\
+<b><a href='contact_info.html'>&#x2302;&nbsp;Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font></td></tr></table></center>";
 try{
 gameRulesDisplayed=true;
 modal_mode=4;
