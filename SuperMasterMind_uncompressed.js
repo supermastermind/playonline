@@ -1220,6 +1220,9 @@ function mouseClick(e) {
     if (window.innerWidth < 1.0*window.innerHeight) {
       widthStr = "100%";
     }
+    else if (window.innerWidth>1.5*window.innerHeight) {
+      widthStr = "55%";
+    }
     let game_rules_str =
           "<center><table style='width:100%;'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
           <b>The goal of the game is to find out a secret code composed of " + nominalGameNbColumns + " colors chosen randomly among&nbsp;<big>" + allColorsStr + "</big>:</b><br>\
