@@ -2765,7 +2765,7 @@ function draw_graphic_bis() {
 
         ctx.font = medium3_bold_font;
         if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated)
-          if (!displayString("\u2B50\u2009Need help?   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+          if (!displayString("\u2B50\u2009Help\u2009/\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
             if (!displayString("\u2B50\u2009Help   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
