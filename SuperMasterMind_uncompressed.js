@@ -48,6 +48,7 @@ let disableMouseMoveEffects = false;
 let atLeastOneAttemptSelection = false;
 let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let lastidxBeforeMouseMove = -1;
+let nbValidMouseClicks = 0;
 let nbInvalidMouseClicks = 0;
 
 let currentCode = -1;
@@ -1212,7 +1213,8 @@ function mouseClick(e) {
                   && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
                   && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
                   && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-                 || (nbInvalidMouseClicks == 1) ) ) { // (display rules on 2 invalid mouse clicks)
+                 || ((nbValidMouseClicks == 1) && !localStorage.gamesok) // (systematically display rules if no games were ever won)
+                 || ((nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) { // (display rules on 2 invalid mouse clicks) (condition duplicated)
 
     let allColorsStr = "";
     for (let color_idx = 0; color_idx < nominalGameNbColors; color_idx++) {
@@ -1248,7 +1250,13 @@ function mouseClick(e) {
     catch (exc) {
       throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
     }
-    nbInvalidMouseClicks++;
+    if (nbValidMouseClicks == 1) {
+      nbValidMouseClicks = 2; // (trick)
+    }
+    else {
+      nbValidMouseClicks = 2; // (trick)
+      nbInvalidMouseClicks = 2; // (trick)
+    }
 
   }
 
@@ -1293,6 +1301,7 @@ function mouseClick(e) {
       catch (exc) {
         displayGUIError("mouseReleased: " + exc, exc.stack);
       }
+      nbValidMouseClicks++;
 
     }
     else {
@@ -2772,7 +2781,7 @@ function draw_graphic_bis() {
         // *************
 
         ctx.font = medium3_bold_font;
-        if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated)
+        if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) {
           if (!displayString("\u2B50\u2009Help\u2009/\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
             if (!displayString("\u2B50\u2009Help   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,

@@ -26,6 +26,7 @@ let disableMouseMoveEffects=false;
 let atLeastOneAttemptSelection=false;
 let currentPossibleCodeShownBeforeMouseMove=-1;
 let lastidxBeforeMouseMove=-1;
+let nbValidMouseClicks = 0;
 let nbInvalidMouseClicks = 0;
 let currentCode=-1;
 let codesPlayed;
@@ -766,6 +767,7 @@ try{
 $(".page_transition").fadeOut("fast");}
 catch (exc){}}}}
 function mouseClick(e) {
+console.log("start: " + nbValidMouseClicks + ", " + nbInvalidMouseClicks);
 let event_x_min, event_x_max, event_y_min, event_y_max;
 let rect = canvas.getBoundingClientRect();
 let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
@@ -778,7 +780,8 @@ else if ( (!showPossibleCodesMode) && (nbGamesPlayedAndWon == 0) // (condition d
 && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
 && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
 && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-|| (nbInvalidMouseClicks == 1) ) ) { // (display rules on 2 invalid mouse clicks)
+|| ((nbValidMouseClicks == 1) && !localStorage.gamesok)
+|| ((nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) {
 let allColorsStr = "";
 for (let color_idx = 0; color_idx < nominalGameNbColors; color_idx++) {
 allColorsStr = allColorsStr + "<span style='color:" + foregroundColorTable[color_idx] + ";background-color:" + backgroundColorTable[color_idx] + "'>" + (color_idx+1) + "</span>";
@@ -802,17 +805,21 @@ let game_rules_str =
 try {
 gameRulesDisplayed = true;
 modal_mode = 4;
-// set modal content
 modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
 + game_rules_str
 + "</div>");
-// open modal
 modal.open();
 }
 catch (exc) {
 throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
 }
-nbInvalidMouseClicks++;
+if (nbValidMouseClicks == 1) {
+nbValidMouseClicks = 2; // (trick)
+}
+else {
+nbValidMouseClicks = 2; // (trick)
+nbInvalidMouseClicks = 2; // (trick)
+}
 }
 else if (gameOnGoing()) {
 event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
@@ -835,22 +842,27 @@ if ((mouse_y > y_0) && (mouse_y < y_1)) {
 colorSelected = true;
 playAColor(color+1, column+1);
 nbColorSelections++;
-break;}}
+break;
+}
+}
 if (!colorSelected) {
-playAColor(emptyColor, column+1);}
-break;}}}
+playAColor(emptyColor, column+1);
+}
+break;
+}
+}
+}
 catch (exc) {
 displayGUIError("mouseReleased: " + exc, exc.stack);
-}}
+}
+nbValidMouseClicks++;
+}
 else {
 nbInvalidMouseClicks++;
-}}
-// *****************
-// Attempt selection
-// *****************
+}
 
+}
 else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
-
 if (!showPossibleCodesMode) {
 event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed));
 }
@@ -858,7 +870,6 @@ else {
 event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 }
 event_y_max = get_y_pixel(y_min+y_step*0);
-
 if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (below code duplicated)
 lastidxBeforeMouseMove = -1;
 for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
@@ -899,9 +910,8 @@ else {
 lastidxBeforeMouseMove = -1;
 }
 }
-
 }
-
+console.log("stop: " + nbValidMouseClicks + ", " + nbInvalidMouseClicks);
 }
 function mouseMove(e){
 if(!showPossibleCodesMode){
