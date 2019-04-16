@@ -1214,7 +1214,7 @@ function mouseClick(e) {
                   && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
                   && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
                  || ((nbValidMouseClicks == 1) && !localStorage.gamesok) // (systematically display rules if no games were ever won)
-                 || ((nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) { // (display rules on 2 invalid mouse clicks) (condition duplicated)
+                 || ((nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
 
     let allColorsStr = "";
     for (let color_idx = 0; color_idx < nominalGameNbColors; color_idx++) {

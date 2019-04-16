@@ -767,7 +767,6 @@ try{
 $(".page_transition").fadeOut("fast");}
 catch (exc){}}}}
 function mouseClick(e) {
-console.log("start: " + nbValidMouseClicks + ", " + nbInvalidMouseClicks);
 let event_x_min, event_x_max, event_y_min, event_y_max;
 let rect = canvas.getBoundingClientRect();
 let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
@@ -911,7 +910,6 @@ lastidxBeforeMouseMove = -1;
 }
 }
 }
-console.log("stop: " + nbValidMouseClicks + ", " + nbInvalidMouseClicks);
 }
 function mouseMove(e){
 if(!showPossibleCodesMode){
