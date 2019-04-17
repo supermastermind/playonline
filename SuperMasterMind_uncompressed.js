@@ -1208,12 +1208,12 @@ function mouseClick(e) {
   // Display rules
   // *************
 
-  else if ( (!showPossibleCodesMode) && (nbGamesPlayedAndWon == 0) // (condition duplicated)
+  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5))) // (condition duplicated)
             && ( ((mouse_x > get_x_pixel(x_min))
                   && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
                   && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
                   && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-                 || ((nbValidMouseClicks == 1) && !localStorage.gamesok) // (systematically display rules if no games were ever won)
+                 || ((nbValidMouseClicks == 1) && !localStorage.gamesok) // (display rules if no games were ever won)
                  || ((nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
 
     let allColorsStr = "";
@@ -2781,7 +2781,7 @@ function draw_graphic_bis() {
         // *************
 
         ctx.font = medium3_bold_font;
-        if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) {
+        if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated for mouse click management)
           if (!displayString("\u2B50\u2009Help\u2009/\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, true, 1, true, 0)) {
             if (!displayString("\u2B50\u2009Help   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
