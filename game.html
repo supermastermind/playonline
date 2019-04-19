@@ -1303,7 +1303,7 @@
                    && ((String(last_data_used.latitude).indexOf('.') != -1) || (String(last_data_used.longitude).indexOf('.') != -1)) // (redundant lines)
                    && ((typeof last_data_used.country_name != 'undefined') && (last_data_used.country_name != null) && (last_data_used.country_name.length >= 3)) // (redundant lines)
                    && ((typeof last_data_used.city != 'undefined') && (last_data_used.city != null) && (last_data_used.city.length >= 3)) // (redundant lines)
-                   && ((typeof last_data_used.ip != 'undefined') && (last_data_used.ip != null) (String(last_data_used.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
+                   && ((typeof last_data_used.ip != 'undefined') && (last_data_used.ip != null) && (String(last_data_used.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
                 last_data_used_is_valid = true;
               }
               let successcase__this_data_is_used;
