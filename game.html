@@ -356,7 +356,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NB";
+      let html_compatibility_game_version = "Ver_NC";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1035,44 +1035,49 @@
 
       var playerid_prefix = "ID/";
       function handle_rsp_delayed(e) {
-        if ( (e !== undefined)
-             && (typeof e.parameter !== 'undefined')
-             && (typeof e.parameter.playerid !== 'undefined')
-             && (typeof e.rsp_cd == 'undefined')
-             && (typeof e.parameter.rankings !== 'undefined') && (e.parameter.rankings.length > 10) ) {
-          var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
-          console.log("1: " + rsp_rankings_str);
-          rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
-          rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>"
-          rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
-          rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>"); // "<s>" -> "<small>"
-          rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>"); // "</s>" -> "</small>"
-          rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>"); // apply some color changes
-          console.log("2: " + rsp_rankings_str);
-          // Rk: top scores are always displayed, even if current game score is not in them
-          try {
-            modal_mode = 3;
-            // set modal content
-            modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-                             + rsp_rankings_str
-                             + "</div>");
-            // open modal
-            modal.open();
-          }
-          catch (exc) {
-            throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
-          }
-        }
-        else {
-          if (e == undefined) {
-            console.log('rsp_cd: ?');
-          }
-          else if (typeof e.rsp_cd !== 'undefined') {
-            console.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
+        try {
+          if ( (e !== undefined)
+               && (typeof e.parameter !== 'undefined')
+               && (typeof e.parameter.playerid !== 'undefined')
+               && (typeof e.rsp_cd == 'undefined')
+               && (typeof e.parameter.rankings !== 'undefined') && (e.parameter.rankings.length > 10) ) {
+            var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
+            console.log("1: " + rsp_rankings_str);
+            rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
+            rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>"
+            rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
+            rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>"); // "<s>" -> "<small>"
+            rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>"); // "</s>" -> "</small>"
+            rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>"); // apply some color changes
+            console.log("2: " + rsp_rankings_str);
+            // Rk: top scores are always displayed, even if current game score is not in them
+            try {
+              modal_mode = 3;
+              // set modal content
+              modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+                               + rsp_rankings_str
+                               + "</div>");
+              // open modal
+              modal.open();
+            }
+            catch (exc) {
+              throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
+            }
           }
           else {
-            console.log('rsp_cd: ?');
+            if (e == undefined) {
+              console.log('rsp_cd: ?');
+            }
+            else if (typeof e.rsp_cd !== 'undefined') {
+              console.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
+            }
+            else {
+              console.log('rsp_cd: ?');
+            }
           }
+        }
+        catch (exc) {
+          throw new Error("handle_rsp_delayed error: " + exc + ": " + exc.stack);
         }
       }
       function handle_rsp(e) {
@@ -1272,15 +1277,16 @@
               // **************************************************
 
               let this_data_is_valid = false;
-              if ( (typeof data_p.latitude != 'undefined') && (typeof data_p.longitude != 'undefined') // (redundant lines)
+              if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != null) // (redundant lines)
+                   && (typeof data_p.longitude != 'undefined') && (data_p.longitude != null) // (redundant lines)
                    && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1)) // (redundant lines)
-                   && ((typeof data_p.country_name != 'undefined') && (data_p.country_name.length >= 3)) // (redundant lines)
-                   && ((typeof data_p.city != 'undefined') && (data_p.city.length >= 3)) // (redundant lines)
-                   && ((typeof data_p.ip != 'undefined') && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
+                   && ((typeof data_p.country_name != 'undefined') && (data_p.country_name != null) && (data_p.country_name.length >= 3)) // (redundant lines)
+                   && ((typeof data_p.city != 'undefined') && (data_p.city != null) && (data_p.city.length >= 3)) // (redundant lines)
+                   && ((typeof data_p.ip != 'undefined') && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
                 this_data_is_valid = true;
                 if (typeof(Storage) !== 'undefined') { // Better than manual positioning (and will be updated if necessary)
                   localStorage.countryname = String(data_p.country_name).trim();
-                  if ((typeof data_p.region != 'undefined') && (data_p.region.length >= 2)) { // (redundant lines)
+                  if ((typeof data_p.region != 'undefined') && (data_p.region != null) && (data_p.region.length >= 2)) { // (redundant lines)
                     localStorage.regionname = String(data_p.region).trim();
                   }
                   else {
@@ -1292,11 +1298,12 @@
               }
               let last_data_used_is_valid = false;
               if ( (last_data_used != null)
-                   && (typeof last_data_used.latitude != 'undefined') && (typeof last_data_used.longitude != 'undefined') // (redundant lines)
+                   && (typeof last_data_used.latitude != 'undefined') && (last_data_used.latitude != null) // (redundant lines)
+                   && (typeof last_data_used.longitude != 'undefined') && (last_data_used.longitude != null) // (redundant lines)
                    && ((String(last_data_used.latitude).indexOf('.') != -1) || (String(last_data_used.longitude).indexOf('.') != -1)) // (redundant lines)
-                   && ((typeof last_data_used.country_name != 'undefined') && (last_data_used.country_name.length >= 3)) // (redundant lines)
-                   && ((typeof last_data_used.city != 'undefined') && (last_data_used.city.length >= 3)) // (redundant lines)
-                   && ((typeof last_data_used.ip != 'undefined') && (String(last_data_used.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
+                   && ((typeof last_data_used.country_name != 'undefined') && (last_data_used.country_name != null) && (last_data_used.country_name.length >= 3)) // (redundant lines)
+                   && ((typeof last_data_used.city != 'undefined') && (last_data_used.city != null) && (last_data_used.city.length >= 3)) // (redundant lines)
+                   && ((typeof last_data_used.ip != 'undefined') && (last_data_used.ip != null) (String(last_data_used.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
                 last_data_used_is_valid = true;
               }
               let successcase__this_data_is_used;
@@ -1322,36 +1329,37 @@
               let latitude = '-';
               let longitude = '-';
               let ipaddress = '-'; // (ipaddress may stay equal to this default value if not valid)
-              if ( (typeof data.latitude != 'undefined') && (typeof data.longitude != 'undefined') // (redundant lines)
+              if ( (typeof data.latitude != 'undefined') && (data.latitude != null) // (redundant lines)
+                   && (typeof data.longitude != 'undefined') && (data.longitude != null) // (redundant lines)
                    && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
 
-                if ((typeof data.country_name != 'undefined') && (String(data.country_name).trim().length >= 3)) { // (redundant lines)
+                if ((typeof data.country_name != 'undefined') && (data.country_name != null) && (String(data.country_name).trim().length >= 3)) { // (redundant lines)
                   country = String(data.country_name).trim();
                 }
                 else {
                   console.log('invalid country name in response');
                 }
-                if ((typeof data.region != 'undefined') && (String(data.region).trim().length >= 2)) {
+                if ((typeof data.region != 'undefined') && (data.region != null) && (String(data.region).trim().length >= 2)) {
                   region = String(data.region).trim();
                 }
                 else {
                   console.log('invalid region name in response');
                 }
-                if ((typeof data.postal != 'undefined') && (String(data.postal).trim().length >= 2)) {
+                if ((typeof data.postal != 'undefined') && (data.postal != null) && (String(data.postal).trim().length >= 2)) {
                   zip = String(data.postal).trim();
                 }
                 else {
                   console.log('invalid zip code in response');
                 }
-                if ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) { // (redundant lines)
+                if ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 3)) { // (redundant lines)
                   city = String(data.city).trim();
                   geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag;
                 }
                 else {
                   console.log('invalid city name in response');
                 }
-                if ((typeof data.time_zone != 'undefined') && (String(data.time_zone).trim().length >= 2)) {
-                  if ((typeof data.time_zone.name != 'undefined') && (String(data.time_zone.name).trim().length >= 2)) {
+                if ((typeof data.time_zone != 'undefined') && (data.time_zone != null) && (String(data.time_zone).trim().length >= 2)) {
+                  if ((typeof data.time_zone.name != 'undefined') && (data.time_zone.name != null) && (String(data.time_zone.name).trim().length >= 2)) {
                     timezone = String(data.time_zone.name).trim();
                   }
                   else {
@@ -1361,13 +1369,13 @@
                 else {
                   console.log('invalid time zone in response');
                 }
-                if (typeof data.latitude != 'undefined') {
+                if ((typeof data.latitude != 'undefined') && (data.latitude != null)) { // (redundant lines)
                   latitude = String(data.latitude).trim();
                 }
                 else {
                   console.log('invalid latitude response');
                 }
-                if (typeof data.longitude != 'undefined') {
+                if ((typeof data.longitude != 'undefined') && (data.longitude != null)) { // (redundant lines)
                   longitude = String(data.longitude).trim();
                 }
                 else {
@@ -1377,7 +1385,7 @@
               }
 
               let valid_ipaddress = false;
-              if ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) { // (redundant lines)
+              if ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) { // (redundant lines)
                 ipaddress = String(data.ip).trim();
                 valid_ipaddress = true;
               }
@@ -1435,13 +1443,13 @@
                   let retry_error_str = "";
                   if (!valid_ipaddress) {
                     retry_error_str += "invalid IP address ";
-                    if (typeof data.ip != 'undefined') {
+                    if ((typeof data.ip != 'undefined') && (data.ip != null)) {
                       retry_error_str += String(data.ip).trim() + " ";
                     }
                   }
                   if (city == '-') {
                     retry_error_str += "invalid city ";
-                    if (typeof data.city != 'undefined') {
+                    if ((typeof data.city != 'undefined') && (data.city != null)) {
                       retry_error_str += String(data.city).trim();
                     }
                   }
@@ -1597,7 +1605,7 @@
                     form_to_be_submitted = false; // form to be submitted when modal is closed
                   }
                   catch (exc) {
-                    throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
+                    throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
                   }
                 }
                 else {
@@ -1621,7 +1629,7 @@
                       form_to_be_submitted = false; // form to be submitted when modal is closed
                     }
                     catch (exc) {
-                      throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
+                      throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
                     }
                   }
                 }
@@ -1830,19 +1838,19 @@
           timeStr = "";
         }
         var countryNameStr = "-";
-        if ((data != null) && (typeof data.country_name != 'undefined')) {
+        if ((data != null) && (typeof data.country_name != 'undefined') && (data.country_name != null)) {
           countryNameStr = String(data.country_name).trim();
         }
         var regionNameStr = "-";
-        if ((data != null) && (typeof data.region != 'undefined')) {
+        if ((data != null) && (typeof data.region != 'undefined') && (data.region != null)) {
           regionNameStr = String(data.region).trim();
         }
         var cityNameStr = "-";
-        if ((data != null) && (typeof data.city != 'undefined')) {
+        if ((data != null) && (typeof data.city != 'undefined') && (data.city != null)) {
           cityNameStr = String(data.city).trim();
         }
         var ipAddressStr = "-";
-        if ((data != null) && (typeof data.ip != 'undefined')) {
+        if ((data != null) && (typeof data.ip != 'undefined') && (data.ip != null)) {
           ipAddressStr = String(data.ip).trim();
         }
         var firstAccessIdStr = "-";
@@ -1937,8 +1945,8 @@
         $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
           localStorage.firstgamegeoloc = "fatmp1";
           last_data_used = data;
-          if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
-               && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+          if ( ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
+               && ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
             localStorage.firstgamegeoloc = "fa1";
             storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
           }
