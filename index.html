@@ -156,19 +156,19 @@
             timeStr = "";
           }
           var countryNameStr = "-";
-          if ((data != null) && (typeof data.country_name != 'undefined')) {
+          if ((data != null) && (typeof data.country_name != 'undefined') && (data.country_name != null)) {
             countryNameStr = String(data.country_name).trim();
           }
           var regionNameStr = "-";
-          if ((data != null) && (typeof data.region != 'undefined')) {
+          if ((data != null) && (typeof data.region != 'undefined') && (data.region != null)) {
             regionNameStr = String(data.region).trim();
           }
           var cityNameStr = "-";
-          if ((data != null) && (typeof data.city != 'undefined')) {
+          if ((data != null) && (typeof data.city != 'undefined') && (data.city != null)) {
             cityNameStr = String(data.city).trim();
           }
           var ipAddressStr = "-";
-          if ((data != null) && (typeof data.ip != 'undefined')) {
+          if ((data != null) && (typeof data.ip != 'undefined') && (data.ip != null)) {
             ipAddressStr = String(data.ip).trim();
           }
           var firstAccessIdStr = "-";
@@ -272,8 +272,8 @@
           $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
             firstaccessgeoloc = "fatmp1";
             last_data_used = data;
-            if ( ((typeof data.ip != 'undefined') && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
-                 && ((typeof data.city != 'undefined') && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+            if ( ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
+                 && ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
               firstaccessgeoloc = "fa1";
               storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
             }
