@@ -442,7 +442,7 @@
               try {
                 let city_entered = document.getElementById("city_input").value;
                 city_entered = city_entered.trim();
-                if ( (city_entered.length >= 3) && (city_entered.length <= 20) && (/^[A-zÀ-ÿ '-]+$/.test(city_entered)) /* (only letters) */ && isCorrect(city_entered) ) {
+                if ( (city_entered.length >= 3) && (city_entered.length <= 20) && (/^[A-Za-zÀ-ÿ '-]+$/.test(city_entered)) /* (only letters) */ && isCorrect(city_entered) ) {
                   if (typeof(Storage) !== 'undefined') {
                     localStorage.cityname = capitalizeFirstLetters(city_entered);
                   }
