@@ -530,7 +530,7 @@
               try {
                 let firstname_entered = document.getElementById("firstname_input").value;
                 firstname_entered = firstname_entered.trim();
-                if ( (firstname_entered.length >= 3) && (firstname_entered.length <= 12) && (/^[A-zÀ-ÿ'-]+$/.test(firstname_entered)) /* (only letters) */ && isCorrect(firstname_entered) ) {
+                if ( (firstname_entered.length >= 3) && (firstname_entered.length <= 12) && (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)) /* (only letters) */ && isCorrect(firstname_entered) ) {
                   if (typeof(Storage) !== 'undefined') {
                     localStorage.firstname = capitalizeFirstLetters(firstname_entered);
                   }
