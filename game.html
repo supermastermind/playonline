@@ -356,7 +356,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_ND";
+      let html_compatibility_game_version = "Ver_ND2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -638,10 +638,6 @@
         let target = this;
         return target.replace(new RegExp(search, 'g'), replacement);
       };
-
-      function sleep(ms) { // To be called like "await sleep(1000);"
-        return new Promise(resolve => setTimeout(resolve, ms));
-      }
 
       function capitalizeFirstLetters(str) {
         if (str.length == 0) {
