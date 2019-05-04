@@ -1239,7 +1239,7 @@ function mouseClick(e) {
           <b><a href='contact_info.html'>&#x2302;&nbsp;Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font></td></tr></table></center>";
     try {
       gameRulesDisplayed = true;
-      modal_mode = 4;
+      modal_mode = 3;
       // set modal content
       modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
                        + game_rules_str
@@ -1602,7 +1602,7 @@ function resetGameAttributes(nbColumnsSelected) {
   game_id_for_gameSolverConfig = -1;
   game_id_for_initGameSolver = -1;
 
-  if ( ((new Date()).getTime() - loadTime >= 4*3600*1000) // (reload the page from server every 4 hours at next game start: not too short to allow game.html's "last_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
+  if ( ((new Date()).getTime() - loadTime >= 4*3600*1000) // (reload the page from server every 4 hours at next game start: not too short to allow game.html's "last_location_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
        || (nbGamesPlayedAndWon >= 12) ) { // (reload to avoid potential (firefox) memory leaks issues, with the same arguments as above - can also solve modal display issues)
     loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
     location.reload(true);

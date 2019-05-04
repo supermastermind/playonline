@@ -144,7 +144,7 @@
         function dummy_handle_rsp(e) {
         }
 
-        var last_data_used = null;
+        var last_location_data_used = null;
         var initial_time = new Date().getTime();
         function submitHomePageAccessForm(data, access_type, debug_info) {
           var final_time = new Date().getTime();
@@ -198,8 +198,8 @@
             // Keep some time between the 2 potential calls to submitHomePageAccessForm()
             let now = new Date().getTime();
             while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)
-            if (last_data_used != null) {
-              submitHomePageAccessForm(last_data_used, access_type, debug_info);
+            if (last_location_data_used != null) {
+              submitHomePageAccessForm(last_location_data_used, access_type, debug_info);
             }
             else {
               submitHomePageAccessForm(null, access_type, debug_info);
@@ -246,15 +246,15 @@
             // latitude -> latitude
             // longitude -> longitude
             // countryName -> country_name
-            converted_data = converted_data.replace("countryName", "country_name");
+            converted_data = converted_data.replace("\"countryName\":", "\"country_name\":");
             // regionName -> region
-            converted_data = converted_data.replace("regionName", "region");
+            converted_data = converted_data.replace("\"regionName\":", "\"region\":");
             // cityName -> city
-            converted_data = converted_data.replace("cityName", "city");
+            converted_data = converted_data.replace("\"cityName\":", "\"city\":");
             // ipAddress -> ip
-            converted_data = converted_data.replace("ipAddress", "ip");
+            converted_data = converted_data.replace("\"ipAddress\":", "\"ip\":");
 
-            last_data_used = JSON.parse(converted_data);
+            last_location_data_used = JSON.parse(converted_data);
             storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
           })
           .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -271,9 +271,9 @@
         if (firstHomePageAccess) {
           $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
             firstaccessgeoloc = "fatmp1";
-            last_data_used = data;
+            last_location_data_used = data;
             if ( ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
-                 && ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+                 && ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 2)) ) { // (redundant lines)
               firstaccessgeoloc = "fa1";
               storeFirstHomePageAccess('home', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
             }

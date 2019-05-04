@@ -260,6 +260,13 @@
           localStorage.firstaccessid = firstaccessid;
         }
       }
+
+      let nbLocationURLs = 3;
+      let locationURLs = new Array(nbLocationURLs);
+      locationURLs[0] = 'https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
+      locationURLs[1] = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
+      locationURLs[2] = 'https://ipinfo.io/json/?token=ca832119df7bb5';
+
     </script>
 
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
@@ -356,7 +363,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_ND3";
+      let html_compatibility_game_version = "Ver_NE";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -415,117 +422,6 @@
             console.log('(modal beforeClose)');
             if (modal_mode == 1) {
 
-              let place_error = false;
-              let country_debug = "NA";
-              let city_debug = "NA";
-
-              // Get selected country name
-              try {
-                let elt = document.getElementById("country_selection");
-                if ( (elt.selectedIndex != -1) && (elt.selectedIndex > 0) /* (skip very first option) */) {
-                  if (typeof(Storage) !== 'undefined') {
-                    localStorage.countryname = elt.options[elt.selectedIndex].text;
-                  }
-                  country_debug = elt.options[elt.selectedIndex].text;
-                }
-                else {
-                  alert("No country was selected!\nYou shall select a country in order to store your game scores...");
-                  place_error = true;
-                  country_debug = "no country was selected";
-                }
-              }
-              catch (exc) {
-                console.log("error encountered at country name selection: " + exc);
-              }
-
-              // Get city name entered
-              try {
-                let city_entered = document.getElementById("city_input").value;
-                city_entered = city_entered.trim();
-                if ( (city_entered.length >= 3) && (city_entered.length <= 20) && (/^[A-Za-zÀ-ÿ '-]+$/.test(city_entered)) /* (only letters) */ && isCorrect(city_entered) ) {
-                  if (typeof(Storage) !== 'undefined') {
-                    localStorage.cityname = capitalizeFirstLetters(city_entered);
-                  }
-                }
-                else {
-                  if (!place_error) {
-                    alert("Invalid city name: " + city_entered + "\nYou shall enter a valid city name in order to store your game scores...");
-                    place_error = true;
-                  }
-                }
-                city_debug = city_entered;
-              }
-              catch (exc) {
-                console.log("error encountered at city name selection: " + exc);
-              }
-
-              if (typeof(Storage) !== 'undefined') {
-
-                localStorage.removeItem('automaticPositioning'); // localStorage.automaticPositioning
-
-                if (localStorage.countryname && localStorage.cityname && (!place_error)) {
-                  console.log("new countryname: " + localStorage.countryname);
-                  document.getElementById('form_country_id').value = localStorage.countryname;
-                  var region = getRegion(localStorage.countryname, localStorage.cityname);
-                  console.log("new region: " + region);
-                  document.getElementById('form_region_id').value = region;
-                  console.log("new city: " + localStorage.cityname);
-                  document.getElementById('form_city_id').value = localStorage.cityname;
-                  if (localStorage.automaticPositioning) {
-                    document.getElementById('form_geoloc_id').value = localStorage.firstgamegeoloc + '-' + '~i';
-                  }
-                  else {
-                    document.getElementById('form_geoloc_id').value = localStorage.firstgamegeoloc + '-' + '~~i';
-                  }
-                  setTimeout("submitForm();", 444);
-
-                  localStorage.gamesokhtmlgeoloc1 = 12;
-                  localStorage.gamesokhtmlgeoloc2 = 24;
-                  localStorage.gamesokhtmlgeoloc3 = 48;
-                  localStorage.gamesokhtmlgeoloc4 = 72;
-                  localStorage.gamesokhtmlgeoloc5 = 101;
-                  localStorage.gamesokhtmlgeoloc6 = 151;
-                }
-                else {
-                  // country and city names shall be consistent with each other
-                  localStorage.removeItem('countryname'); // localStorage.countryname
-                  localStorage.removeItem('cityname'); // localStorage.cityname
-
-                  let errorStr = "";
-                  if (typeof(Storage) !== 'undefined') {
-                    if (localStorage.firstaccessid) {
-                      errorStr = " for first access id " + localStorage.firstaccessid;
-                    }
-                    if (localStorage.gamesok) {
-                      errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
-                    }
-                    if (localStorage.html_geoloc_already_done) {
-                      errorStr = errorStr + " with HTML geolocation status " + localStorage.html_geoloc_already_done;
-                    }
-                    try {
-                      errorStr = errorStr + " for IP address " + document.getElementById('form_ipaddress_id').value;
-                    }
-                    catch (exc) {}
-                  }
-                  submitForm("warning: invalid place information entered (" + country_debug + ", " + city_debug + ")" + errorStr, true);
-
-                  localStorage.gamesokhtmlgeoloc2 = 24;
-                  localStorage.gamesokhtmlgeoloc3 = 48;
-                  localStorage.gamesokhtmlgeoloc4 = 72;
-                  localStorage.gamesokhtmlgeoloc5 = 101;
-                  localStorage.gamesokhtmlgeoloc6 = 151;
-                }
-
-              }
-
-              modal_mode = -1;
-              return true; // close the modal
-              // return false; // nothing happens
-
-            }
-
-            else if (modal_mode == 2) {
-
               // Get firstname entered
               try {
                 let firstname_entered = document.getElementById("firstname_input").value;
@@ -567,7 +463,7 @@
 
             }
 
-            else if (modal_mode == 3) {
+            else if (modal_mode == 2) {
 
               setTimeout("showPossibleCodesButtonClick(false, -1, true);", 444);
               // (same effect: setTimeout("document.getElementById('showPossibleCodesButton').click();", 444);)
@@ -576,7 +472,7 @@
               return true; // close the modal
             }
 
-            // else (modal_mode >= 4)
+            // else (modal_mode >= 3)
             modal_mode = -1;
             return true; // close the modal
             // return false; // nothing happens
@@ -719,7 +615,7 @@
 
       function nbVowels(str)
       {
-        var vowel_list = 'aeiouyAEIOUY';
+        var vowel_list = 'aeiouyAEIOUY'; // (accentuated vowels are not considered here)
         var vowel_count = 0;
         for (var i = 0 ; i < str.length ; i++) {
           if (vowel_list.indexOf(str[i]) !== -1) {
@@ -735,6 +631,9 @@
       };
 
       function getCountryName(countryCode) {
+        if ((typeof countryCode == 'undefined') || (countryCode == null)) {
+          return '-';
+        }
         let prop = countryCode.toUpperCase();
         if (isoCountries.hasOwnProperty(prop)) {
           return isoCountries[prop];
@@ -788,11 +687,16 @@
              || (str.toLowerCase().indexOf('fuck') != -1)
              || (str.toLowerCase().endsWith("bite"))
              || (str.toLowerCase().indexOf('noname') != -1)
+             || (str.toLowerCase().indexOf('unknown') != -1)
              || (str.toLowerCase().indexOf('myname') != -1)
              || (str.toLowerCase().indexOf('nobody') != -1)
              || (str.toLowerCase().indexOf('noone') != -1)
              || (str.toLowerCase().indexOf('dummy') != -1)
              || (str.toLowerCase().indexOf('empty') != -1)
+             || (str.toLowerCase().indexOf('-') == 0)
+             || (str.toLowerCase().lastIndexOf('-') == str.length - 1)
+             || (str.toLowerCase().indexOf('--') != -1)
+             || (str.toLowerCase().indexOf('_') != -1)
              || (nbVowels(str) == 0)
              || (nbVowels(str) == str.length) ) {
           return false;
@@ -804,112 +708,6 @@
         if (localStorage.firstname && (!isCorrect(localStorage.firstname))) {
           localStorage.previousfirstname = localStorage.firstname;
           localStorage.removeItem('firstname'); // localStorage.firstname
-        }
-      }
-
-      function getRegion(country, city) {
-        // Manual region setting
-        if ((country == "France") && (city == "Paris")) { // Particular case #1
-          return 'Île-de-France';
-        }
-        else if ((country == "Germany") && (city == "Dortmund")) { // Particular case #2
-          return 'Nordrhein-Westfalen';
-        }
-        else {
-          return '-';
-        }
-      }
-
-      function HTML_geolocation_success(position) {
-        let latitude = position.coords.latitude;
-        let longitude = position.coords.longitude;
-        console.log("HTML geolocation:");
-        console.log(" latitude: " + latitude);
-        console.log(" longitude: " + longitude);
-        let GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + '%2C' + longitude + '&language=en&key=AIzaSyBhO3CSP-LxypDUjC-MYa_b8iPfJ9qJBko';
-        $.getJSON(GEOCODING)
-        .done(function(location) {
-          try {
-            if (location.status.toUpperCase() == "OK") {
-              let country = String(location.results[0].address_components[5].long_name).trim();
-              let region = String(location.results[0].address_components[4].long_name).trim();
-              let city = String(location.results[0].address_components[2].long_name).trim();
-              console.log(location);
-              console.log(" country: " + country);
-              console.log(" region: " + region);
-              console.log(" city: " + city);
-              console.log(" address: " + location.results[0].formatted_address);
-              if ((country.length >= 3) && (city.length >= 3)) { // (redundant lines)
-                localStorage.countryname = country;
-                if (region.length >= 2) { // (redundant lines)
-                  localStorage.regionname = region;
-                }
-                else {
-                  localStorage.regionname = '-';
-                }
-                localStorage.cityname = city;
-                localStorage.automaticPositioning = true;
-                localStorage.html_geoloc_already_done = "ok";
-              }
-              else {
-                console.log("HTML geolocation error: invalid location values");
-                localStorage.html_geoloc_already_done = "nok-1";
-              }
-            }
-            else {
-              console.log("HTML geolocation error: status: " + location.status);
-              localStorage.html_geoloc_already_done = "nok-2/" + location.status;
-            }
-          }
-          catch (exc) {
-            console.log("HTML geolocation error: " + exc);
-            localStorage.html_geoloc_already_done = "nok-3/" + exc;
-          }
-        })
-        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-          console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-          localStorage.html_geoloc_already_done = "nok-4";
-        });
-      }
-      function HTML_geolocation_error(error) {
-        let error_str = "?";
-        switch(error.code) {
-          case error.PERMISSION_DENIED:
-            if (!localStorage.html_geoloc_denied) {
-              localStorage.html_geoloc_denied = 0;
-            }
-            localStorage.html_geoloc_denied = Number(localStorage.html_geoloc_denied) + 1;
-            error_str = "user denied the request for geolocation/" + localStorage.html_geoloc_denied + "x";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            error_str = "location information is unavailable";
-            break;
-          case error.TIMEOUT:
-            error_str = "the request to get user location timed out";
-            break;
-          case error.UNKNOWN_ERROR:
-            error_str = "an unknown error occurred";
-            break;
-        }
-        console.log("HTML geolocation error: " + error_str);
-        localStorage.html_geoloc_already_done = "nok-5/" + error_str;
-      }
-      let attempt_HTML_geolocation_already_done = false;
-      function attempt_HTML_geolocation(forced_mode) {
-        if ((!forced_mode) && attempt_HTML_geolocation_already_done) {
-          console.log("attempt_HTML_geolocation: skipped");
-          return;
-        }
-        attempt_HTML_geolocation_already_done = true;
-        if (typeof(Storage) !== 'undefined') {
-          if (navigator.geolocation) {
-            // Subject to user acceptance
-            navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error);
-          }
-          else {
-            console.log("HTML geolocation error: geolocation is not supported by the browser");
-            localStorage.html_geoloc_already_done = "nok-6";
-          }
         }
       }
 
@@ -1054,7 +852,7 @@
             console.log("2: " + rsp_rankings_str);
             // Rk: top scores are always displayed, even if current game score is not in them
             try {
-              modal_mode = 3;
+              modal_mode = 2;
               // set modal content
               modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
                                + rsp_rankings_str
@@ -1105,7 +903,9 @@
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
       }
 
-      var last_data_used = null;
+      var last_location_data_used = null;
+      var id_of_last_location_data_used = -1;
+
       var last_game_cnt = -1;
       async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help, gamestr) { // asynchronous function
 
@@ -1119,7 +919,6 @@
 
           let gamesok = -1;
           let deltagames = -1;
-          let skip_location_modal_display = false;
           if (typeof(Storage) !== 'undefined') {
 
             if (!localStorage.gamesok) {
@@ -1128,7 +927,7 @@
             localStorage.gamesok = Number(localStorage.gamesok) + 1;
             gamesok = Number(localStorage.gamesok);
 
-            if ((gamesok >= 140) && (!localStorage.firstname)) { // No interest for sharing results
+            if ((gamesok >= 150) && (!localStorage.firstname)) { // No interest for sharing results
               if ((gamesok % 100) != 1) { // first name will no longer be asked / this condition will let pass some odd gamesok values very rarely
                 return;
               }
@@ -1138,19 +937,6 @@
             }
             if (localStorage.skip_storing) {
               return;
-            }
-
-            if (!localStorage.automaticPositioning) {
-              if ( (localStorage.gamesokhtmlgeoloc1 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc1))
-                   || (localStorage.gamesokhtmlgeoloc2 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc2))
-                   || (localStorage.gamesokhtmlgeoloc3 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc3))
-                   || (localStorage.gamesokhtmlgeoloc4 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc4))
-                   || (localStorage.gamesokhtmlgeoloc5 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc5))
-                   || (localStorage.gamesokhtmlgeoloc6 && (localStorage.gamesok == localStorage.gamesokhtmlgeoloc6)) ) {
-                alert("If you accept to share your location, your country and city names will be used to store your score, and you will also see all other players scores & rankings and in which countries and cities they played..."); // (duplicate line)
-                attempt_HTML_geolocation(true); // Subject to user acceptance
-                skip_location_modal_display = true;
-              }
             }
 
             switch (nbcolumns) {
@@ -1217,190 +1003,171 @@
 
           var geolocation_handler = {
 
-            run_retry: function (data_p) {
-              /* ipinfodb.com response format:
-                 - SUCCESS case:
-                  statusCode	"OK"
-                  statusMessage	""
-                  ipAddress	"94.239.111.222"
-                  countryCode	"FR"
-                  countryName	"France"
-                  regionName	"Ile-de-France"
-                  cityName	"Paris"
-                  zipCode	"75000"
-                  latitude	"48.8534"
-                  longitude	"2.3488"
-                  timeZone	"+01:00"
-                - FAILURE case:
-                  statusCode	"ERROR"
-                  statusMessage	"Invalid IP Address."
-                  ipAddress	"994.239.111.222"
-                  countryCode	""
-                  countryName	""
-                  regionName	""
-                  cityName	""
-                  zipCode	""
-                  latitude	"0"
-                  longitude	"0"
-                  timeZone	""
-              */
-              let converted_data = JSON.stringify(data_p);
-
-              console.log("(geolocation retry data conversion for " + converted_data + ")");
-
-              if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {
-                console.log("geolocation error in run_retry(): " + data_p.statusCode + " " + data_p.statusMessage);
-              }
-
-              // latitude -> latitude
-              // longitude -> longitude
-              // countryName -> country_name
-              converted_data = converted_data.replace("countryName", "country_name");
-              // regionName -> region
-              converted_data = converted_data.replace("regionName", "region");
-              // zipCode -> postal
-              converted_data = converted_data.replace("zipCode", "postal");
-              // cityName -> city
-              converted_data = converted_data.replace("cityName", "city");
-              // timeZone -> time_zone
-              converted_data = converted_data.replace("timeZone", "time_zone");
-              // ipAddress -> ip
-              converted_data = converted_data.replace("ipAddress", "ip");
-
-              geolocation_handler.run(JSON.parse(converted_data), true);
-            },
-
             nb_JSON_queries_posted: 0,
-            first_geolocation_errorStr: "-",
 
-            run: function (data_p) {
-
-              // Check that the response contains valid information
-              // **************************************************
-
-              let this_data_is_valid = false;
-              if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != null) // (redundant lines)
-                   && (typeof data_p.longitude != 'undefined') && (data_p.longitude != null) // (redundant lines)
-                   && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1)) // (redundant lines)
-                   && ((typeof data_p.country_name != 'undefined') && (data_p.country_name != null) && (data_p.country_name.length >= 3)) // (redundant lines)
-                   && ((typeof data_p.city != 'undefined') && (data_p.city != null) && (data_p.city.length >= 3)) // (redundant lines)
-                   && ((typeof data_p.ip != 'undefined') && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
-                this_data_is_valid = true;
-                if (typeof(Storage) !== 'undefined') { // Better than manual positioning (and will be updated if necessary)
-                  localStorage.countryname = String(data_p.country_name).trim();
-                  if ((typeof data_p.region != 'undefined') && (data_p.region != null) && (data_p.region.length >= 2)) { // (redundant lines)
-                    localStorage.regionname = String(data_p.region).trim();
-                  }
-                  else {
-                    localStorage.regionname = '-';
-                  }
-                  localStorage.cityname = String(data_p.city).trim();
-                  localStorage.automaticPositioning = true;
-                }
-              }
-              let last_data_used_is_valid = false;
-              if ( (last_data_used != null)
-                   && (typeof last_data_used.latitude != 'undefined') && (last_data_used.latitude != null) // (redundant lines)
-                   && (typeof last_data_used.longitude != 'undefined') && (last_data_used.longitude != null) // (redundant lines)
-                   && ((String(last_data_used.latitude).indexOf('.') != -1) || (String(last_data_used.longitude).indexOf('.') != -1)) // (redundant lines)
-                   && ((typeof last_data_used.country_name != 'undefined') && (last_data_used.country_name != null) && (last_data_used.country_name.length >= 3)) // (redundant lines)
-                   && ((typeof last_data_used.city != 'undefined') && (last_data_used.city != null) && (last_data_used.city.length >= 3)) // (redundant lines)
-                   && ((typeof last_data_used.ip != 'undefined') && (last_data_used.ip != null) && (String(last_data_used.ip).trim().length >= 7 /* 0.0.0.0 */)) ) { // (redundant lines)
-                last_data_used_is_valid = true;
-              }
-              let successcase__this_data_is_used;
-              let data;
-              let last_data_tag = "";
-              if (this_data_is_valid || (!last_data_used_is_valid)) {
-                data = data_p;
-              }
-              else { // Reuse last valid geolocation data
-                data = last_data_used;
-                last_data_tag = "r";
-              }
-              successcase__this_data_is_used = (data != last_data_used); // (data_p and last_data_used may be equal pointers)
-              console.log("(geolocation: this_data:" + this_data_is_valid + ", last_data_used:" + last_data_used_is_valid + ", this_data_is_used: " + successcase__this_data_is_used + ")");
-              last_data_used = data;
-
-              let country = '-';
-              let region = '-';
-              let zip = '-';
-              let city = '-'; // (city may stay equal to this default value if not valid)
-              let geoloc = '-';  // (geoloc may stay equal to this default value if not valid)
-              let timezone = '-';
-              let latitude = '-';
-              let longitude = '-';
-              let ipaddress = '-'; // (ipaddress may stay equal to this default value if not valid)
-              if ( (typeof data.latitude != 'undefined') && (data.latitude != null) // (redundant lines)
-                   && (typeof data.longitude != 'undefined') && (data.longitude != null) // (redundant lines)
-                   && ((String(data.latitude).indexOf('.') != -1) || (String(data.longitude).indexOf('.') != -1)) ) {
-
-                if ((typeof data.country_name != 'undefined') && (data.country_name != null) && (String(data.country_name).trim().length >= 3)) { // (redundant lines)
-                  country = String(data.country_name).trim();
-                }
-                else {
-                  console.log('invalid country name in response');
-                }
-                if ((typeof data.region != 'undefined') && (data.region != null) && (String(data.region).trim().length >= 2)) {
-                  region = String(data.region).trim();
-                }
-                else {
-                  console.log('invalid region name in response');
-                }
-                if ((typeof data.postal != 'undefined') && (data.postal != null) && (String(data.postal).trim().length >= 2)) {
-                  zip = String(data.postal).trim();
-                }
-                else {
-                  console.log('invalid zip code in response');
-                }
-                if ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 3)) { // (redundant lines)
-                  city = String(data.city).trim();
-                  geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag;
-                }
-                else {
-                  console.log('invalid city name in response');
-                }
-                if ((typeof data.time_zone != 'undefined') && (data.time_zone != null) && (String(data.time_zone).trim().length >= 2)) {
-                  if ((typeof data.time_zone.name != 'undefined') && (data.time_zone.name != null) && (String(data.time_zone.name).trim().length >= 2)) {
-                    timezone = String(data.time_zone.name).trim();
-                  }
-                  else {
-                    timezone = String(data.time_zone).trim();
-                  }
-                }
-                else {
-                  console.log('invalid time zone in response');
-                }
-                if ((typeof data.latitude != 'undefined') && (data.latitude != null)) { // (redundant lines)
-                  latitude = String(data.latitude).trim();
-                }
-                else {
-                  console.log('invalid latitude response');
-                }
-                if ((typeof data.longitude != 'undefined') && (data.longitude != null)) { // (redundant lines)
-                  longitude = String(data.longitude).trim();
-                }
-                else {
-                  console.log('invalid longitude in response');
-                }
-
-              }
-
-              let valid_ipaddress = false;
-              if ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) { // (redundant lines)
-                ipaddress = String(data.ip).trim();
-                valid_ipaddress = true;
+            reformatLocationValue: function(x) {
+              if ((typeof x == 'undefined') || (x == null)) {
+                return '-';
               }
               else {
-                console.log('invalid ip address in response');
+                return String(x).trim();
               }
+            },
+
+            isLocationDataValid: function(data_p) {
+              if ((typeof data_p == 'undefined') || (data_p == null)) {
+                return false;
+              }
+              if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != null)
+                   && (typeof data_p.longitude != 'undefined') && (data_p.longitude != null)
+                   && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1))
+                   && ((typeof data_p.country_name != 'undefined') && (data_p.country_name != null) && (data_p.country_name.length >= 3))
+                   && ((typeof data_p.city != 'undefined') && (data_p.city != null) && (data_p.city.length >= 2)) // (redundant lines)
+                   && ((typeof data_p.ip != 'undefined') && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) {
+                return true;
+              }
+              return false;
+            },
+
+            convertLocationData: function(data_p, locationId) {
+
+              if (locationId == 1) {
+                return data_p;
+              }
+              else if (locationId == 2) {
+                /* ipinfodb.com response format:
+                   - SUCCESS case:
+                    statusCode	"OK"
+                    statusMessage	""
+                    ipAddress	"94.239.111.222"
+                    countryCode	"FR"
+                    countryName	"France"
+                    regionName	"Ile-de-France"
+                    cityName	"Paris"
+                    zipCode	"75000"
+                    latitude	"48.8534"
+                    longitude	"2.3488"
+                    timeZone	"+01:00"
+                  - FAILURE case:
+                    statusCode	"ERROR"
+                    statusMessage	"Invalid IP Address."
+                    ipAddress	"994.239.111.222"
+                    countryCode	""
+                    countryName	""
+                    regionName	""
+                    cityName	""
+                    zipCode	""
+                    latitude	"0"
+                    longitude	"0"
+                    timeZone	""
+                */
+
+                let converted_data = JSON.stringify(data_p);
+                if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {
+                  console.log("geolocation error in convertLocationData: " + locationId + ", " + data_p.statusCode + ", " + data_p.statusMessage);
+                }
+
+                // latitude -> latitude
+                // longitude -> longitude
+                // countryName -> country_name
+                converted_data = converted_data.replace("\"countryName\":", "\"country_name\":");
+                // regionName -> region
+                converted_data = converted_data.replace("\"regionName\":", "\"region\":");
+                // zipCode -> postal
+                converted_data = converted_data.replace("\"zipCode\":", "\"postal\":");
+                // cityName -> city
+                converted_data = converted_data.replace("\"cityName\":", "\"city\":");
+                // timeZone -> time_zone
+                converted_data = converted_data.replace("\"timeZone\":", "\"time_zone\":");
+                // ipAddress -> ip
+                converted_data = converted_data.replace("\"ipAddress\":", "\"ip\":");
+
+                return JSON.parse(converted_data);
+              }
+              else if (locationId == 3) {
+                /* ipinfo.io response format:
+                   - SUCCESS case:
+                    ip	"444.444.444.444"
+                    city	"xxx"
+                    region	"xxx"
+                    country	"US" as a country code
+                    loc	"44.0000,44.0000"
+                    org	"xxx"
+                */
+
+                let data = JSON.parse(JSON.stringify(data_p)); // clone data_p into data (using JSON conversion and back)
+
+                try {
+                  // convert country code to country name
+                  data.country = getCountryName(data.country);
+                  // loc -> latitude
+                  // loc -> longitude
+                  let commma_idx = data.loc.indexOf(',');
+                  if (commma_idx == -1) {
+                    throw new Error("(commma_idx == -1)");
+                  }
+                  data.latitude = data.loc.substring(0,commma_idx);
+                  data.longitude = data.loc.substring(commma_idx+1);
+                }
+                catch (e) {
+                  console.log("geolocation error in convertLocationData: " + locationId + ", " + e);
+                }
+
+                let converted_data = JSON.stringify(data);
+
+                // latitude -> latitude
+                // longitude -> longitude
+                // country -> country_name
+                converted_data = converted_data.replace("\"country\":", "\"country_name\":");
+                // region -> region
+                // city -> city
+                // ip -> ip
+
+                return JSON.parse(converted_data);
+              }
+              else {
+                throw new Error("convertLocationData: unexpected locationId value: " + locationId);
+              }
+
+            },
+
+            setFormInfoWithValidLocationData: function(data_p, locationId, extraLocationInfo) {        
+
+              // Get location data
+              // *****************
+
+              if (!geolocation_handler.isLocationDataValid(data_p)) {
+                throw new Error("setFormInfoWithValidLocationData: invalid location data: " + JSON.stringify(data_p) + ", " + locationId + ", " + extraLocationInfo);
+              }
+
+              let latitude = geolocation_handler.reformatLocationValue(data_p.latitude);
+              let longitude = geolocation_handler.reformatLocationValue(data_p.longitude);
+              let country = geolocation_handler.reformatLocationValue(data_p.country_name);
+              let region = geolocation_handler.reformatLocationValue(data_p.region);
+              let city = geolocation_handler.reformatLocationValue(data_p.city);
+              let ipaddress = geolocation_handler.reformatLocationValue(data_p.ip);
+              let zip = '-';
+              if ((typeof data_p.postal != 'undefined') && (data_p.postal != null) && (String(data_p.postal).trim().length >= 2)) {
+                zip = String(data_p.postal).trim();
+              }
+              let timezone = '-';
+              if ((typeof data_p.time_zone != 'undefined') && (data_p.time_zone != null) && (String(data_p.time_zone).trim().length >= 2)) {
+                if ((typeof data_p.time_zone.name != 'undefined') && (data_p.time_zone.name != null) && (String(data_p.time_zone.name).trim().length >= 2)) {
+                  timezone = String(data_p.time_zone.name).trim();
+                }
+                else {
+                  timezone = String(data_p.time_zone).trim();
+                }
+              }
+
+              // Manual updates
+              // **************
 
               // Manual geolocation table corrections for particular IP addresses
               if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 15) ) { // 176.130.42.* IPv4 addresses
                 country = "France";
                 region = "Alsace";
                 city = "Munster";
-                geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
 
               // Manual conversions
@@ -1408,19 +1175,16 @@
                 country = "France";
                 region = "Île-de-France";
                 city = "Paris";
-                geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
               else if (localStorage.playerid && (localStorage.playerid.indexOf("0G5V") == 0) && (region == "California") && (city == "San Jose")) {
                 country = "France";
                 region = "Île-de-France";
                 city = "Paris";
-                geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
               else if (localStorage.playerid && (localStorage.playerid.indexOf("0G5V") == 0) && (region == "Bayern") && (city == "Munich")) {
                 country = "France";
                 region = "Île-de-France";
                 city = "Paris";
-                geoloc = 'ok' + String(geolocation_handler.nb_JSON_queries_posted) + last_data_tag + "+";
               }
               if (country == "Lao People's Democratic Republic") {
                 country = "Laos";
@@ -1439,48 +1203,8 @@
                 country = country.substring(0, comma_idx).trim();
               }
 
-              // Check if geolocation data are valid
-              if (geolocation_handler.nb_JSON_queries_posted == 1) {
-                if ((!valid_ipaddress) || (city == '-')) {
-                  let retry_error_str = "";
-                  if (!valid_ipaddress) {
-                    retry_error_str += "invalid IP address ";
-                    if ((typeof data.ip != 'undefined') && (data.ip != null)) {
-                      retry_error_str += String(data.ip).trim() + " ";
-                    }
-                  }
-                  if (city == '-') {
-                    retry_error_str += "invalid city ";
-                    if ((typeof data.city != 'undefined') && (data.city != null)) {
-                      retry_error_str += String(data.city).trim();
-                    }
-                  }
-                  // => exit the function and retry
-                  return geolocation_handler.geolocation_retry("", "manual geolocation retry due to invalid geolocation data", retry_error_str.trim());
-                }
-              }
-
-              if (typeof(Storage) !== 'undefined') {
-                if ( (country == '-') || (city == '-') ) { // Fill a consistent set of {country, region, city} values
-                  if (localStorage.countryname && localStorage.cityname) {
-                    country = localStorage.countryname;
-                    if (localStorage.automaticPositioning && localStorage.regionname) {
-                      region = localStorage.regionname;
-                    }
-                    else {
-                      region = getRegion(localStorage.countryname, localStorage.cityname);
-                    }
-                    city = localStorage.cityname;
-                    if (localStorage.automaticPositioning) {
-                      geoloc = '~' + String(geolocation_handler.nb_JSON_queries_posted);
-                    }
-                    else {
-                      geoloc = '~~' + String(geolocation_handler.nb_JSON_queries_posted);
-                    }
-                  }
-                }
-                geoloc = localStorage.firstgamegeoloc + '-' + geoloc;
-              }
+              // Set location form fields
+              // ************************
 
               console.log(country);
               document.getElementById('form_country_id').value = country;
@@ -1490,8 +1214,8 @@
               document.getElementById('form_zip_id').value = zip;
               console.log(city);
               document.getElementById('form_city_id').value = city;
-              console.log(geoloc);
-              document.getElementById('form_geoloc_id').value = geoloc;
+              console.log((locationId + " " + extraLocationInfo).trim());
+              document.getElementById('form_geoloc_id').value = (locationId + " " + extraLocationInfo).trim();
               console.log(timezone);
               document.getElementById('form_timezone_id').value = timezone;
               console.log(latitude);
@@ -1501,25 +1225,33 @@
               console.log(ipaddress);
               document.getElementById('form_ipaddress_id').value = ipaddress;
 
+              // Store location data for future usage
+              // ************************************
+
+              last_location_data_used = data_p; // (store complete structure)
+              id_of_last_location_data_used = locationId;
+
+              localStorage.latitude = latitude; // (local storage of most useful location information)
+              localStorage.longitude = longitude;
+              localStorage.countryname = country;
+              localStorage.region = region;
+              localStorage.city = city;
+              localStorage.ip = ipaddress;
+              localStorage.location_id = locationId;
+
               // Other fields
               // ************
 
               let playerid;
               let firstname = "-"; // (firstname may stay equal to this default value if not defined)
-              if (typeof(Storage) !== 'undefined') {
-                if (localStorage.firstname) {
-                  firstname = localStorage.firstname;
-                }
-                if (!localStorage.playerid) {
-                  let id = makeid() + ' - ' + new Date();
-                  localStorage.playerid = id;
-                }
-                playerid = playerid_prefix + localStorage.playerid;
+              if (localStorage.firstname) {
+                firstname = localStorage.firstname;
               }
-              else {
-                console.log("Error: your browser does not support web storage...");
-                playerid = playerid_prefix + "Default";
+              if (!localStorage.playerid) {
+                let id = makeid() + ' - ' + new Date();
+                localStorage.playerid = id;
               }
+              playerid = playerid_prefix + localStorage.playerid;
 
               console.log(playerid);
               document.getElementById('form_playerid_id').value = playerid;
@@ -1561,6 +1293,11 @@
                   }
                 }
                 extra_debug_info = extra_debug_info + "/Game:" + gamestr;
+                if (typeof(Storage) !== 'undefined') {
+                  if (localStorage.html_geoloc_status) {
+                    extra_debug_info = extra_debug_info + "/html_geoloc_status:" + localStorage.html_geoloc_status;
+                  }
+                }
                 extra_debug_info = extra_debug_info + "/Cookies:" + navigator.cookieEnabled;
                 extra_debug_info = extra_debug_info + "/Java:" + navigator.javaEnabled();
                 var pluginsLength = navigator.plugins.length; // (Note: plugin listing is no longer allowed in Firefox for security reasons => length will be less than the actual value)
@@ -1590,17 +1327,20 @@
 
               var form_to_be_submitted = true;
               if (typeof(Storage) !== 'undefined') {
-                if ( (!skip_location_modal_display)
-                     && ( ((city == '-') && (!localStorage.cityname))
-                          || ((country == '-') && (!localStorage.countryname)) ) ) {
-                  try  {
+                if ( (!localStorage.firstname)
+                     && (gamesok >= 4) // (coherent with "history_clear_advice")
+                     && (attempts >= 4) // (game not too easy)
+                     && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled / ignore 1 result out of 2 + oblige page reload after 100 games if not filled / no more results after 140 games if not filled)
+                     && ( ((nbcolumns == 4) && (score >= 55)) || ((nbcolumns == 5) && (score >= 60)) || ((nbcolumns == 6) && (score >= 110)) || ((nbcolumns == 7) && (score >= 130))
+                          || ((gamesok >= 7) && (score >= 44))
+                          || ((gamesok >= 13) && (score >= 25)) ) ) { // (experienced player)
+                  try {
                     modal_mode = 1;
                     // set modal content
                     modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-                                     + "<h2>Storing your scores...<br>Please enter your country and city names, they will be used to store your scores:</h2>"
-                                     + "<h3>Your country:</h3><select id='country_selection'><option value=\"-\">Select your country...</option>" + getHTMLListOfCountries() + "</select>"
-                                     + "<h3>Your city (between 3 and 20 characters):</h3><input id='city_input' type='text' value='Paris?' maxlength='20'></input>"
-                                     + "<h4>Close this dialog to skip this step</h4>"
+                                     + "<h2>You seem to be an experienced player!<br>Please enter your first name, it will be used to store your scores:</h2>"
+                                     + "<h3>Your first name (between 3 and 12 letters, no spaces):</h3><input id='firstname_input' type='text' value='Sherlock?' maxlength='12'></input>"
+                                     + "<h4>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</h4>"
                                      + "</div>");
                     // open modal
                     modal.open();
@@ -1610,34 +1350,7 @@
                     throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
                   }
                 }
-                else {
-                  if ( (!localStorage.firstname)
-                       && (gamesok >= 4) // (coherent with "history_clear_advice")
-                       && (attempts >= 4) // (game not too easy)
-                       && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled / ignore 1 result out of 2 + oblige page reload after 100 games if not filled / no more results after 140 games if not filled)
-                       && ( ((nbcolumns == 4) && (score >= 55)) || ((nbcolumns == 5) && (score >= 60)) || ((nbcolumns == 6) && (score >= 110)) || ((nbcolumns == 7) && (score >= 130))
-                            || ((gamesok >= 7) && (score >= 44))
-                            || ((gamesok >= 13) && (score >= 25)) ) ) { // (experienced player)
-                    try {
-                      modal_mode = 2;
-                      // set modal content
-                      modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-                                       + "<h2>You seem to be an experienced player!<br>Please enter your first name, it will be used to store your scores:</h2>"
-                                       + "<h3>Your first name (between 3 and 12 letters, no spaces):</h3><input id='firstname_input' type='text' value='Sherlock?' maxlength='12'></input>"
-                                       + "<h4>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</h4>"
-                                       + "</div>");
-                      // open modal
-                      modal.open();
-                      form_to_be_submitted = false; // form to be submitted when modal is closed
-                    }
-                    catch (exc) {
-                      throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
-                    }
-                  }
-                }
               }
-
-              console.log("(run completed)");
 
               if (form_to_be_submitted) {
                 submitForm();
@@ -1646,90 +1359,84 @@
                 console.log("(form submission skipped)");
               }
 
-            }, // run
+            }, // setFormInfoWithValidLocationData
 
-            geolocation_retry: function (jqxhr, textStatus, error) {
-              var errorStr = ("geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+            setFormInfoByOtherMeans: function() {
+
+              // Regularly attempt HTML geolocation
+              // **********************************
+
               if (typeof(Storage) !== 'undefined') {
-                if (localStorage.firstname) {
-                  errorStr = errorStr + " for " + localStorage.firstname;
-                }
-                if (localStorage.firstaccessid) {
-                  errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
-                }
-                if (localStorage.countryname) {
-                  errorStr = errorStr + " in " + localStorage.countryname;
-                }
-                if (localStorage.cityname) {
-                  errorStr = errorStr + " in " + localStorage.cityname;
-                }
-                if (localStorage.gamesok) {
-                  errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+                if (localStorage.gamesok && (Number(localStorage.gamesok) >= 5) && ((Number(localStorage.gamesok) % 5) == 0)) { // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
+                  if ((!localStorage.html_geoloc_status) || (localStorage.html_geoloc_status.indexOf('ok') != 0)) {
+                    alert("If you accept to share your location, your country and city names will be used to store your future scores");
+                  }
+                  geolocation_handler.attempt_HTML_geolocation(); // Subject to user acceptance
                 }
               }
-              errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr;
-              console.log(errorStr);
-              // submitForm(errorStr, true); => skipped as this may be part of a frequent use case
-              geolocation_handler.first_geolocation_errorStr = errorStr;
+              // To simplify, this geolocation will be taken into account at next calls if accepted by the user (localStorage.xxx values will be updated)
 
-              // Another geolocation server is used
-              geolocation_handler.nb_JSON_queries_posted++;
-              if (geolocation_handler.nb_JSON_queries_posted > 2) {
-                console.log("error: too many recursive calls to run()! (#1)");
-                return; // defense against infinite loops
+              // Use previously stored location data if any
+              // ******************************************
+
+              if (localStorage.latitude && localStorage.longitude && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id) {
+                let stored_location_data = { latitude: localStorage.latitude,
+                                             longitude: localStorage.longitude,
+                                             country_name: localStorage.countryname,
+                                             region: localStorage.region,
+                                             city: localStorage.city,
+                                             ip: localStorage.ip };
+                if (!geolocation_handler.isLocationDataValid(stored_location_data)) {
+                  throw new Error("setFormInfoByOtherMeans: invalid stored location data: " + JSON.stringify(stored_location_data));
+                }
+                geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "ST");
               }
-              $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', geolocation_handler.run_retry)
-              .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-                var errorStr = ("geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-                let html_geoloc_already_done_str = "";
-                if (typeof(Storage) !== 'undefined') {
-                  if (localStorage.firstname) {
-                    errorStr = errorStr + " for " + localStorage.firstname;
-                  }
-                  if (localStorage.firstaccessid) {
-                    errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
-                  }
-                  if (localStorage.countryname) {
-                    errorStr = errorStr + " in " + localStorage.countryname;
-                  }
-                  if (localStorage.cityname) {
-                    errorStr = errorStr + " in " + localStorage.cityname;
-                  }
-                  if (localStorage.gamesok) {
-                    errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
-                  }
-                  if (localStorage.html_geoloc_already_done) {
-                    html_geoloc_already_done_str = "|HTML geolocation status:" + localStorage.html_geoloc_already_done;
-                  }
+              else {
+                alert("Oops... your score could not be stored properly!\n(geolocation failure)");
+                let dummy_location_data = { latitude: '0.0',
+                                            longitude: '0.0',
+                                            country_name: 'unknown',
+                                            region: 'unknown',
+                                            city: 'unknown',
+                                            ip: '0.0.0.0' };
+                if (!geolocation_handler.isLocationDataValid(dummy_location_data)) {
+                  throw new Error("setFormInfoByOtherMeans: invalid dummy location data: " + JSON.stringify(dummy_location_data));
                 }
-                errorStr = errorStr + " |nbcolumns:" + nbcolumns + "|score:" + score + "|attempts:" + attempts + "|time:" + timestr + "|last_data_used_not_null:" + (last_data_used != null) + "|first_geolocation_error:" + geolocation_handler.first_geolocation_errorStr + html_geoloc_already_done_str + "|html_compatibility_game_version:" + html_compatibility_game_version;
-                console.log(errorStr);
+                geolocation_handler.setFormInfoWithValidLocationData(dummy_location_data, 0, "DU");
+              }
 
-                // Reuse last (valid or not) geolocation data if any
-                if (last_data_used != null) {
-                  geolocation_handler.nb_JSON_queries_posted++;
-                  console.log("reuse last (valid or not) geolocation data");
-                  geolocation_handler.run(last_data_used);
-                }
-                else {
-                  var fixed_ip_address = geolocation_handler.getIpAddressForIdentifiedUser();
-                  if (fixed_ip_address != "") { // Identified user
-                    geolocation_handler.nb_JSON_queries_posted++;
-                    console.log("use fixed IP address: " + fixed_ip_address);
-                    var fixed_data = {'ip':fixed_ip_address};
-                    geolocation_handler.run(fixed_data);
-                  }
-                  else if ( (typeof(Storage) !== 'undefined')
-                            && localStorage.automaticPositioning && localStorage.countryname && localStorage.regionname && localStorage.cityname ) { // Relevant location
-                    geolocation_handler.nb_JSON_queries_posted++;
+            }, // setFormInfoByOtherMeans
+
+            HTML_geolocation_success: function(position) {
+              let latitude = position.coords.latitude;
+              let longitude = position.coords.longitude;
+              console.log("HTML geolocation:");
+              console.log(" latitude: " + latitude);
+              console.log(" longitude: " + longitude);
+              let GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + '%2C' + longitude + '&language=en&key=AIzaSyBhO3CSP-LxypDUjC-MYa_b8iPfJ9qJBko';
+              $.getJSON(GEOCODING)
+              .done(function(location) {
+                try {
+                  if (location.status.toUpperCase() == "OK") {
+                    let country = String(location.results[0].address_components[5].long_name).trim();
+                    let region = String(location.results[0].address_components[4].long_name).trim();
+                    let city = String(location.results[0].address_components[2].long_name).trim();
+                    console.log(location);
+                    console.log(" country: " + country);
+                    console.log(" region: " + region);
+                    console.log(" city: " + city);
+                    console.log(" address: " + location.results[0].formatted_address);
+
+                    // country + region + city + firstname are used below to identify unique players
                     var sum = 0;
-                    // regionname + cityname + firstname are used below to identify unique players
-                    // => one unique "geolocation retry failure" player is supported per triplet (region, city, firstname)
-                    for (var i = 0; i < localStorage.regionname.length; i++) {
-                      sum = sum + localStorage.regionname.charCodeAt(i);
+                    for (var i = 0; i < country.length; i++) {
+                      sum = sum + country.charCodeAt(i);
                     }
-                    for (var i = 0; i < localStorage.cityname.length; i++) {
-                      sum = sum + localStorage.cityname.charCodeAt(i);
+                    for (var i = 0; i < region.length; i++) {
+                      sum = sum + region.charCodeAt(i);
+                    }
+                    for (var i = 0; i < city.length; i++) {
+                      sum = sum + city.charCodeAt(i);
                     }
                     var sum2 = 0;
                     if (localStorage.firstname) {
@@ -1737,69 +1444,139 @@
                         sum2 = sum2 + localStorage.firstname.charCodeAt(i);
                       }
                     }
-                    var inferred_ip_address = "2." + String(sum2 % 999) + "." + String(Math.floor(sum / 99) % 999) + "." + String(sum % 999);
-                    console.log("use inferred IP address: " + inferred_ip_address);
-                    var inferred_data = {'ip':inferred_ip_address};
-                    geolocation_handler.run(inferred_data);
-                  }
-                  else { // No form is submitted in this retry failure case (no IP address)
-                    var manualGeolocAttempt = false;
-                    if (typeof(Storage) !== 'undefined') {
-                      if (localStorage.gamesok) {
-                        if ( (Number(localStorage.gamesok) >= 8) && ((Number(localStorage.gamesok) % 8) == 0) ) { // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
-                          manualGeolocAttempt = true;
-                        }
-                      }
-                    }
-                    if (manualGeolocAttempt) {
-                      alert("If you accept to share your location, your country and city names will be used to store your score, and you will also see all other players scores & rankings and in which countries and cities they played..."); // (duplicate line)
+                    var inferred_ip_address = "0." + String(sum2 % 999) + "." + String(Math.floor(sum / 99) % 999) + "." + String(sum % 999);
+
+                    let tmp_location_data = { latitude: geolocation_handler.reformatLocationValue(latitude),
+                                              longitude: geolocation_handler.reformatLocationValue(longitude),
+                                              country_name: geolocation_handler.reformatLocationValue(country),
+                                              region: geolocation_handler.reformatLocationValue(region),
+                                              city: geolocation_handler.reformatLocationValue(city),
+                                              ip: inferred_ip_address };
+                    if (geolocation_handler.isLocationDataValid(tmp_location_data)) {
+                      localStorage.latitude = geolocation_handler.reformatLocationValue(latitude);
+                      localStorage.longitude = geolocation_handler.reformatLocationValue(longitude);
+                      localStorage.countryname = geolocation_handler.reformatLocationValue(country);
+                      localStorage.region = geolocation_handler.reformatLocationValue(region);
+                      localStorage.city = geolocation_handler.reformatLocationValue(city);
+                      localStorage.ip = inferred_ip_address;
+                      localStorage.location_id = nbLocationURLs + 10;
+                      localStorage.html_geoloc_status = "ok";
                     }
                     else {
-                      alert("Oops... your score could not be stored!\n(geolocation failure)");
+                      console.log("HTML geolocation error: invalid location values");
+                      localStorage.html_geoloc_status = "ok-invalid";
                     }
-                    submitForm(errorStr, true);
-                    if (manualGeolocAttempt) {
-                      attempt_HTML_geolocation(true); // Subject to user acceptance
-                    }
+                  }
+                  else {
+                    console.log("HTML geolocation error: status: " + location.status);
+                    localStorage.html_geoloc_status = "nok-2/" + location.status;
+                  }
+                }
+                catch (exc) {
+                  console.log("HTML geolocation error: " + exc);
+                  localStorage.html_geoloc_status = "nok-3/" + exc;
+                }
+              })
+              .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+                console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                localStorage.html_geoloc_status = "nok-4";
+              });
+            }, // HTML_geolocation_success
+
+            HTML_geolocation_error: function(error) {
+              let error_str = "?";
+              switch(error.code) {
+                case error.PERMISSION_DENIED:
+                  if (!localStorage.html_geoloc_denied) {
+                    localStorage.html_geoloc_denied = 0;
+                  }
+                  localStorage.html_geoloc_denied = Number(localStorage.html_geoloc_denied) + 1;
+                  error_str = "user denied the request for geolocation/" + localStorage.html_geoloc_denied + "x";
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  error_str = "location information is unavailable";
+                  break;
+                case error.TIMEOUT:
+                  error_str = "the request to get user location timed out";
+                  break;
+                case error.UNKNOWN_ERROR:
+                  error_str = "an unknown error occurred";
+                  break;
+              }
+              console.log("HTML geolocation error: " + error_str);
+              localStorage.html_geoloc_status = "nok-5/" + error_str;
+            }, // HTML_geolocation_error
+
+            attempt_HTML_geolocation: function() {
+              if (typeof(Storage) !== 'undefined') {
+                localStorage.html_geoloc_status = "run";
+                if (navigator.geolocation) {
+                  // Subject to user acceptance
+                  navigator.geolocation.getCurrentPosition(geolocation_handler.HTML_geolocation_success, geolocation_handler.HTML_geolocation_error);
+                }
+                else {
+                  console.log("HTML geolocation error: geolocation is not supported by the browser");
+                  localStorage.html_geoloc_status = "nok-6";
+                }
+              }
+            },
+
+            setFormInfo: function() {
+
+              // Use last valid location data if any
+              // ***********************************
+
+              if ((id_of_last_location_data_used > 0) && geolocation_handler.isLocationDataValid(last_location_data_used)) {
+                geolocation_handler.setFormInfoWithValidLocationData(last_location_data_used, id_of_last_location_data_used, "LA");
+                return;
+              }
+
+              // Fetch location data from distant sites
+              // **************************************
+
+              if (geolocation_handler.nb_JSON_queries_posted >= nbLocationURLs) {
+                throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: " + geolocation_handler.nb_JSON_queries_posted + ", " + nbLocationURLs);
+              }
+              let locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
+
+              geolocation_handler.nb_JSON_queries_posted++;
+              let current_nb_JSON_queries_posted = geolocation_handler.nb_JSON_queries_posted;
+              $.getJSON(locationURL)
+              .done(function(data) { // Success case
+                let converted_data = geolocation_handler.convertLocationData(data, current_nb_JSON_queries_posted);
+                if (geolocation_handler.isLocationDataValid(converted_data)) {
+                  geolocation_handler.setFormInfoWithValidLocationData(converted_data, current_nb_JSON_queries_posted, "");
+                }
+                else {
+                  var errorStr = "invalid geolocation #" + current_nb_JSON_queries_posted + ": " + JSON.stringify(data);
+                  console.log(errorStr);                
+                  if (current_nb_JSON_queries_posted < nbLocationURLs) {
+                    geolocation_handler.setFormInfo(); // (recursive call)
+                  }
+                  else {
+                    geolocation_handler.setFormInfoByOtherMeans();
                   }
                 }
               })
-              .always(function() {
-                console.log("(getJSON completed #2)");
-              });
-            }, // geolocation_retry
-
-            getIpAddressForIdentifiedUser: function () { // "Reliable" users having played for a certain time, whose location is unknown and who did not want to share it
-              if (typeof(Storage) !== 'undefined') {
-                if (localStorage.firstaccessid) {
-                  if (localStorage.firstaccessid.indexOf("FA - 0KQI0 - Fri Jan 12 2018") != -1) {
-                    return "1.1.1.1"; // (unique fixed IP address)
-                  }
-                  /* else if (localStorage.firstaccessid.indexOf("FA - 8Q0RU - Wed Feb 07") != -1) {
-                    return "1.1.1.2"; // (unique fixed IP address)
-                  } */
-                  // Note: "2.2.2.x" IP addresses shall not be used here, as used for another case
+              .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+                var errorStr = ("geolocation failure #" + current_nb_JSON_queries_posted + ": " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+                console.log(errorStr);
+                if (current_nb_JSON_queries_posted < nbLocationURLs) {
+                  geolocation_handler.setFormInfo(); // (recursive call)
                 }
-                return "";
-              }
-              return "";
-            },
+                else {
+                  geolocation_handler.setFormInfoByOtherMeans();
+                }
+              })
+              .always(function() {
+                console.log("(getJSON completed #" + current_nb_JSON_queries_posted + ")");
+              });
 
+            } // setFormInfo
 
           } // geolocation_handler
 
-          geolocation_handler.nb_JSON_queries_posted++;
-          if (geolocation_handler.nb_JSON_queries_posted > 2) {
-            console.log("error: too many recursive calls to run()! (#2)");
-            return; // defense against infinite loops
-          }
-          $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', geolocation_handler.run)
-          .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-            geolocation_handler.geolocation_retry(jqxhr, textStatus, error);
-          })
-          .always(function() {
-            console.log("(getJSON completed #1)");
-          });
+          geolocation_handler.setFormInfo();
 
           console.log("(store player info exit)");
 
@@ -1872,8 +1649,8 @@
           // Keep some time between the 2 potential calls to submitAccessForm()
           let now = new Date().getTime();
           while(new Date().getTime() < now + timeToWait1){}; // (interface is frozen during this short time)
-          if (last_data_used != null) {
-            submitAccessForm(last_data_used, access_type, debug_info);
+          if ((id_of_last_location_data_used > 0) && (last_location_data_used != null)) {
+            submitAccessForm(last_location_data_used, access_type, debug_info);
           }
           else {
             submitAccessForm(null, access_type, debug_info);
@@ -1887,7 +1664,7 @@
       function firstAccessGeolocFailure(jqxhr, textStatus, error) {
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
-        $.getJSON('https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json', function(data_p) {
+        $.getJSON(locationURLs[1], function(data_p) {
           localStorage.firstgamegeoloc = "fa2";
           /* ipinfodb.com response format:
              - SUCCESS case:
@@ -1920,15 +1697,16 @@
           // latitude -> latitude
           // longitude -> longitude
           // countryName -> country_name
-          converted_data = converted_data.replace("countryName", "country_name");
+          converted_data = converted_data.replace("\"countryName\":", "\"country_name\":");
           // regionName -> region
-          converted_data = converted_data.replace("regionName", "region");
+          converted_data = converted_data.replace("\"regionName\":", "\"region\":");
           // cityName -> city
-          converted_data = converted_data.replace("cityName", "city");
+          converted_data = converted_data.replace("\"cityName\":", "\"city\":");
           // ipAddress -> ip
-          converted_data = converted_data.replace("ipAddress", "ip");
+          converted_data = converted_data.replace("\"ipAddress\":", "\"ip\":");
 
-          last_data_used = JSON.parse(converted_data);
+          last_location_data_used = JSON.parse(converted_data);
+          id_of_last_location_data_used = 2;
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -1936,7 +1714,6 @@
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
-          // setTimeout("attempt_HTML_geolocation(false)", 25000); // Subject to user acceptance => not done because may prevent all future requests in case of initial rejection
         })
         .always(function() {
           console.log("(getJSON completed #i2)");
@@ -1944,11 +1721,12 @@
       }
 
       if (firstAccess) {
-        $.getJSON('https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2', function(data) {
+        $.getJSON(locationURLs[0], function(data) {
           localStorage.firstgamegeoloc = "fatmp1";
-          last_data_used = data;
+          last_location_data_used = data;
+          id_of_last_location_data_used = 1;
           if ( ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
-               && ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 3)) ) { // (redundant lines)
+               && ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 2)) ) { // (redundant lines)
             localStorage.firstgamegeoloc = "fa1";
             storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
           }

@@ -803,7 +803,7 @@ let game_rules_str =
 <b><a href='contact_info.html'>&#x2302;&nbsp;Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font></td></tr></table></center>";
 try {
 gameRulesDisplayed = true;
-modal_mode = 4;
+modal_mode = 3;
 modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
 + game_rules_str
 + "</div>");
