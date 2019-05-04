@@ -1369,7 +1369,7 @@
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.gamesok && (Number(localStorage.gamesok) >= 5) && ((Number(localStorage.gamesok) % 5) == 0)) { // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
                   if ((!localStorage.html_geoloc_status) || (localStorage.html_geoloc_status.indexOf('ok') != 0)) {
-                    alert("If you accept to share your location, your country and city names will be used to store your future scores");
+                    alert("If you accept to share your location, your country and city names will be used to store your future scores (location sharing is part of your browser settings)");
                   }
                   geolocation_handler.attempt_HTML_geolocation(); // Subject to user acceptance
                 }
