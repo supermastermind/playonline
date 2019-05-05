@@ -926,6 +926,9 @@
               localStorage.gamesok = 0;
             }
             localStorage.gamesok = Number(localStorage.gamesok) + 1;
+            if ((localStorage.gamesok == 100) || (localStorage.gamesok == 250) || (localStorage.gamesok == 500) || (localStorage.gamesok == 1500) || ((localStorage.gamesok % 1000) == 0)) {
+              alert("It's your " + localStorage.gamesok + "th game!");
+            }
             gamesok = Number(localStorage.gamesok);
 
             if ((gamesok >= 150) && (!localStorage.firstname)) { // No interest for sharing results
