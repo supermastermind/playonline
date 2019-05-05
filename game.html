@@ -363,7 +363,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NG";
+      let html_compatibility_game_version = "Ver_NH";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -827,10 +827,44 @@
       window.onmessageerror = tmp_game_onerror;
       // Promise rejection handling
       window.onunhandledrejection = function(evt) {
-        submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): " + evt + " / " + evt.reason + " / " + evt.promise + " in " + navigator.userAgent, true);
+        var evt_str = "-";
+        try {
+          evt_str = JSON.stringify(evt).substring(0, 101).trim();
+        }
+        catch (exc) {}
+        var evt_promise_str = "-";
+        try {
+          evt_promise_str = JSON.stringify(evt.promise).substring(0, 101).trim();
+        }
+        catch (exc) {}        
+        var extra_debug_info = "-";
+        if (localStorage.firstname) {
+          extra_debug_info = localStorage.firstname;
+        }
+        else if (localStorage.playerid) {
+          extra_debug_info = localStorage.playerid;
+        }
+        submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " for " + extra_debug_info + " in " + navigator.userAgent, true);
       };
       window.onrejectionhandled = function(evt) {
-        submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): " + evt + " / " + evt.reason + " / " + evt.promise + " in " + navigator.userAgent, true);
+        var evt_str = "-";
+        try {
+          evt_str = JSON.stringify(evt).substring(0, 101).trim();
+        }
+        catch (exc) {}
+        var evt_promise_str = "-";
+        try {
+          evt_promise_str = JSON.stringify(evt.promise).substring(0, 101).trim();
+        }
+        catch (exc) {}        
+        var extra_debug_info = "-";
+        if (localStorage.firstname) {
+          extra_debug_info = localStorage.firstname;
+        }
+        else if (localStorage.playerid) {
+          extra_debug_info = localStorage.playerid;
+        }
+        submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " for " + extra_debug_info + " in " + navigator.userAgent, true);
       };
 
       var playerid_prefix = "ID/";
@@ -908,7 +942,7 @@
       var html_geoloc_next_gamesok = -1;
 
       var last_game_cnt = -1;
-      async function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help, gamestr) { // asynchronous function
+      function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help, gamestr) {
 
         try {
 
