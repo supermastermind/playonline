@@ -1064,7 +1064,7 @@ gameSolverInitMsgContents=null;
 gameSolverConfigDbg=null;
 game_id_for_gameSolverConfig=-1;
 game_id_for_initGameSolver=-1;
-if( ((new Date()).getTime() - loadTime>=4*3600*1000)
+if( ((new Date()).getTime() - loadTime>=8*3600*1000)
 ||(nbGamesPlayedAndWon>=12) ){
 loadTime=(new Date()).getTime();
 location.reload(true);}
