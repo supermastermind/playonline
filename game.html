@@ -926,7 +926,7 @@
               localStorage.gamesok = 0;
             }
             localStorage.gamesok = Number(localStorage.gamesok) + 1;
-            if ((localStorage.gamesok == 100) || (localStorage.gamesok == 250) || (localStorage.gamesok == 500) || (localStorage.gamesok == 1500) || ((localStorage.gamesok % 1000) == 0)) {
+            if ( ((localStorage.gamesok <= 1000) && ((localStorage.gamesok % 100) == 0)) || ((localStorage.gamesok % 500) == 0) ) {
               alert("It's your " + localStorage.gamesok + "th game!");
             }
             gamesok = Number(localStorage.gamesok);
