@@ -364,7 +364,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NJ";
+      let html_compatibility_game_version = "Ver_NJ2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -846,7 +846,11 @@
         else if (localStorage.playerid) {
           extra_debug_info = localStorage.playerid;
         }
-        submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + debug_game_state + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        try {
+          extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + ", currentAttemptNumber=" + currentAttemptNumber + ", gameWon=" + gameWon;
+        }
+        catch (exc) {}
+        submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + " for " + extra_debug_info + " in " + navigator.userAgent, true);
       };
       window.onrejectionhandled = function(evt) {
         var evt_str = "-";
@@ -866,7 +870,11 @@
         else if (localStorage.playerid) {
           extra_debug_info = localStorage.playerid;
         }
-        submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + debug_game_state + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        try {
+          extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + ", currentAttemptNumber=" + currentAttemptNumber + ", gameWon=" + gameWon;
+        }
+        catch (exc) {}        
+        submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + " for " + extra_debug_info + " in " + navigator.userAgent, true);
       };
 
       var playerid_prefix = "ID/";
