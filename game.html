@@ -202,6 +202,7 @@
       var nbCodesPlayed = 0;
       var nbColorSelections = 0;
       var gameRulesDisplayed = false;
+      var debug_game_state = -1;
       if (typeof(Storage) == 'undefined') {
         alert("Your browser cannot run this game because it cannot store local data");
       }
@@ -363,7 +364,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NI";
+      let html_compatibility_game_version = "Ver_NJ";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -774,6 +775,7 @@
         // console.log(my_form_url);
         // Submit form
         console.log("(jQuery.ajax get/jsonp" + ((formStr == "") ? "" : " for a specific case") + ")");
+        debug_game_state = 50;
         jQuery.ajax({
           crossDomain: true,
           url: my_form_url,
@@ -782,7 +784,7 @@
           timeout: 40000 // 40 seconds
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-
+          debug_game_state = 51;
           try {
             if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
               console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
@@ -812,7 +814,7 @@
           catch (exc) {
             console.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           }
-
+          debug_game_state = 52;
         });
 
         // document.getElementById('my_form').submit();
@@ -844,7 +846,7 @@
         else if (localStorage.playerid) {
           extra_debug_info = localStorage.playerid;
         }
-        submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + debug_game_state + " for " + extra_debug_info + " in " + navigator.userAgent, true);
       };
       window.onrejectionhandled = function(evt) {
         var evt_str = "-";
@@ -864,11 +866,12 @@
         else if (localStorage.playerid) {
           extra_debug_info = localStorage.playerid;
         }
-        submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + debug_game_state + " for " + extra_debug_info + " in " + navigator.userAgent, true);
       };
 
       var playerid_prefix = "ID/";
       function handle_rsp_delayed(e) {
+        debug_game_state = 80;
         try {
           if ( (e !== undefined)
                && (typeof e.parameter !== 'undefined')
@@ -913,6 +916,7 @@
         catch (exc) {
           throw new Error("handle_rsp_delayed error: " + exc + ": " + exc.stack);
         }
+        debug_game_state = 81;
       }
       function handle_rsp(e) {
         console.log("(handle_rsp)");
@@ -943,7 +947,7 @@
 
       var last_game_cnt = -1;
       function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help, gamestr) {
-
+        debug_game_state = 100;
         try {
 
           if (game_cnt == last_game_cnt) { // At most one storage per game
@@ -1454,8 +1458,10 @@
               console.log(" latitude: " + latitude);
               console.log(" longitude: " + longitude);
               let GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + '%2C' + longitude + '&language=en&key=AIzaSyBhO3CSP-LxypDUjC-MYa_b8iPfJ9qJBko';
+              debug_game_state = 10;
               $.getJSON(GEOCODING)
               .done(function(location) {
+                debug_game_state = 11;
                 try {
                   if (location.status.toUpperCase() == "OK") {
                     let country = String(location.results[0].address_components[5].long_name).trim();
@@ -1520,10 +1526,13 @@
                   console.log("HTML geolocation error: " + exc);
                   localStorage.html_geoloc_status = "nok-3/" + exc;
                 }
+                debug_game_state = 12;
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+                debug_game_state = 13;
                 console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                 localStorage.html_geoloc_status = "nok-4";
+                debug_game_state = 14;
               });
             }, // HTML_geolocation_success
 
@@ -1585,8 +1594,10 @@
 
               geolocation_handler.nb_JSON_queries_posted++;
               let current_nb_JSON_queries_posted = geolocation_handler.nb_JSON_queries_posted;
+              debug_game_state = 20;
               $.getJSON(locationURL)
               .done(function(data) { // Success case
+                debug_game_state = 21;
                 let converted_data = geolocation_handler.convertLocationData(data, current_nb_JSON_queries_posted);
                 if (geolocation_handler.isLocationDataValid(converted_data)) {
                   geolocation_handler.setFormInfoWithValidLocationData(converted_data, current_nb_JSON_queries_posted, "");
@@ -1601,8 +1612,10 @@
                     geolocation_handler.setFormInfoByOtherMeans();
                   }
                 }
+                debug_game_state = 22;
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+                debug_game_state = 23;
                 var errorStr = ("geolocation failure #" + current_nb_JSON_queries_posted + ": " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
                 console.log(errorStr);
                 if (current_nb_JSON_queries_posted < nbLocationURLs) {
@@ -1611,9 +1624,12 @@
                 else {
                   geolocation_handler.setFormInfoByOtherMeans();
                 }
+                debug_game_state = 24;
               })
               .always(function() {
+                debug_game_state = 25;
                 console.log("(getJSON completed #" + current_nb_JSON_queries_posted + ")");
+                debug_game_state = 26;
               });
 
             } // setFormInfo
@@ -1623,9 +1639,10 @@
           geolocation_handler.setFormInfo();
 
           console.log("(store player info exit)");
-
+          debug_game_state = 101;
         }
         catch (exc) {
+          debug_game_state = 102;
           console.log("internal error while storing scores: " + exc);
           if (nb_errors_submitted == 0) {
             // alert("Oops... an internal error occurred: " + exc);
@@ -1642,6 +1659,7 @@
             submitForm("internal error while storing scores" + errorStr + ": " + exc, true);
             nb_errors_submitted++;
           }
+          debug_game_state = 103;
         }
 
       } // store_player_info
@@ -1708,7 +1726,9 @@
       function firstAccessGeolocFailure(jqxhr, textStatus, error) {
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
+        debug_game_state = 30;
         $.getJSON(locationURLs[1], function(data_p) {
+          debug_game_state = 31;
           localStorage.firstgamegeoloc = "fa2";
           /* ipinfodb.com response format:
              - SUCCESS case:
@@ -1752,20 +1772,27 @@
           last_location_data_used = JSON.parse(converted_data);
           id_of_last_location_data_used = 2;
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
+          debug_game_state = 32;
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          debug_game_state = 33;
           localStorage.firstgamegeoloc = "faerr2";
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
+          debug_game_state = 34;
         })
         .always(function() {
+          debug_game_state = 35;
           console.log("(getJSON completed #i2)");
+          debug_game_state = 36;
         });
       }
 
       if (firstAccess) {
+        debug_game_state = 40;
         $.getJSON(locationURLs[0], function(data) {
+          debug_game_state = 41;
           localStorage.firstgamegeoloc = "fatmp1";
           last_location_data_used = data;
           id_of_last_location_data_used = 1;
@@ -1778,13 +1805,18 @@
             localStorage.firstgamegeoloc = "faerr1a";
             return firstAccessGeolocFailure("", "manual first access geolocation retry due to invalid geolocation data", "");
           }
+          debug_game_state = 42;
         }) // to simplify, failure cases are not handled in a more complex way
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          debug_game_state = 43;
           localStorage.firstgamegeoloc = "faerr1b";
           firstAccessGeolocFailure(jqxhr, textStatus, error);
+          debug_game_state = 44;
         })
         .always(function() {
+          debug_game_state = 45;
           console.log("(getJSON completed #i1)");
+          debug_game_state = 46;
         });
 
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",        44);
@@ -1811,6 +1843,7 @@
       // *********************************************
 
       function loadSuperMasterMindScript() {
+        debug_game_state = 60;
         jQuery.ajax({
           url: "SuperMasterMind.js",
           dataType: "script",
@@ -1818,18 +1851,23 @@
           timeout: 0 // infinite (no timeout)
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          debug_game_state = 61;
           var errorStr = ("SuperMasterMind script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
           alert("Oops... a network error occurred!\nPlease try to reload this page...\n\n" + "(" + errorStr + ")");
+          debug_game_state = 62;
         })
         .always(function() {
+          debug_game_state = 63;
           console.log("(on scripts load)");
           $(".game_loading").fadeOut("slow"); // game_loading div fades out
+          debug_game_state = 64;
         });
       }
 
       let gamesolver_blob = null;
       let gamesolver_blob_error = "NA";
+      debug_game_state = 70;
       jQuery.ajax({
         url: "GameSolver.js",
         dataType: "script",
@@ -1837,12 +1875,15 @@
         timeout: 0 // infinite (no timeout)
       })
       .done(function(data) { // Success case
+        debug_game_state = 71;
         // console.log(data); // data contains GameSolver script contents
         gamesolver_blob = new Blob([data], {type: "application/javascript"});
         // Super Master Mind script is only loaded once GameSolver script has been loaded successfully
         setTimeout("loadSuperMasterMindScript();", 44);
+        debug_game_state = 72;
       })
       .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+        debug_game_state = 73;
         var errorStr = ("GameSolver script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
         gamesolver_blob_error = errorStr;
@@ -1850,6 +1891,7 @@
         // setTimeout("loadSuperMasterMindScript();", 44);
         alert("Oops... a network error occurred!\nPlease try to reload this page...\n\n" + "(" + errorStr + ")");
         $(".game_loading").fadeOut("slow"); // game_loading div fades out
+        debug_game_state = 74;
       });
 
     </script>
