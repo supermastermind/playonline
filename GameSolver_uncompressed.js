@@ -493,7 +493,7 @@ try {
       this.code2_colors = new Array(this.nbMaxColumns);
       this.colors_int = new Array(this.nbMaxColumns);
 
-      this.different_colors = new Array(this.nbColors+1)
+      this.different_colors = new Array(this.nbColors+1);
     }
 
     getNbColumns() {
@@ -866,7 +866,6 @@ try {
   function isAttemptPossibleinGameSolver(attempt_nb) { // (returns 0 if the attempt_nb th code is possible, returns the first attempt number with which there is a contradiction otherwise)
     if ( (attempt_nb <= 0) || (attempt_nb > curAttemptNumber) ) {
       throw new Error("isAttemptPossibleinGameSolver: invalid attempt_nb " + attempt_nb + ", " + curAttemptNumber);
-      return 1;
     }
     let mark_tmp = {nbBlacks:0, nbWhites:0};
     for (let i = 1; i <= attempt_nb-1; i++) { // go through all codes previously played
@@ -1794,7 +1793,7 @@ try {
 
     // Game(s) colors
     for (cur_game_depth = 0; cur_game_depth < cur_game_size; cur_game_depth++) {
-      cur_game_code = curGame[cur_game_depth]
+      cur_game_code = curGame[cur_game_depth];
       cur_game_code_colors_set = cur_game_code_colors[cur_game_depth]; // [nbMaxColumns] array
 
       // (duplicated code from getColor() for better performances - begin)
@@ -1809,7 +1808,7 @@ try {
     }
     if (otherGame != null) {
       for (cur_game_depth = 0; cur_game_depth < cur_game_size; cur_game_depth++) {
-        other_game_code = otherGame[cur_game_depth]
+        other_game_code = otherGame[cur_game_depth];
         other_game_code_colors_set = other_game_code_colors[cur_game_depth]; // another game is used - [nbMaxColumns] array
 
         // (duplicated code from getColor() for better performances - begin)
@@ -2979,7 +2978,7 @@ try {
           marks[i] = {nbBlacks:0, nbWhites:0};
         }
 
-        codeHandler = new CodeHandler(nbColumns, nbColors, nbMinColumns, nbMaxColumns, emptyColor)
+        codeHandler = new CodeHandler(nbColumns, nbColors, nbMinColumns, nbMaxColumns, emptyColor);
 
         initialNbPossibleCodes = Math.round(Math.pow(nbColors,nbColumns));
         previousNbOfPossibleCodes = initialNbPossibleCodes;

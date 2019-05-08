@@ -269,7 +269,7 @@ this.emptyColor=emptyColor_p;
 this.code1_colors=new Array(this.nbMaxColumns);
 this.code2_colors=new Array(this.nbMaxColumns);
 this.colors_int=new Array(this.nbMaxColumns);
-this.different_colors=new Array(this.nbColors+1)}
+this.different_colors=new Array(this.nbColors+1);}
 getNbColumns(){
 return this.nbColumns;}
 getColor(code,column){
@@ -518,7 +518,7 @@ throw new Error("CodeHandler: stringToMark (4) ("+str+")");}}}
 function isAttemptPossibleinGameSolver(attempt_nb){
 if( (attempt_nb<=0)||(attempt_nb>curAttemptNumber) ){
 throw new Error("isAttemptPossibleinGameSolver: invalid attempt_nb "+attempt_nb+","+curAttemptNumber);
-return 1;}
+}
 let mark_tmp={nbBlacks:0,nbWhites:0};
 for (let i=1;i<=attempt_nb-1;i++){
 codeHandler.fillMark(codesPlayed[attempt_nb-1],codesPlayed[i-1],mark_tmp);
@@ -1075,7 +1075,7 @@ return true;}}}
 else{
 return false;}}
 for (cur_game_depth=0;cur_game_depth<cur_game_size;cur_game_depth++){
-cur_game_code=curGame[cur_game_depth]
+cur_game_code=curGame[cur_game_depth];
 cur_game_code_colors_set=cur_game_code_colors[cur_game_depth];
 cur_game_code_colors_set[0]=(cur_game_code & 0x0000000F);
 cur_game_code_colors_set[1]=((cur_game_code>>4) & 0x0000000F);
@@ -1086,7 +1086,7 @@ cur_game_code_colors_set[5]=((cur_game_code>>20) & 0x0000000F);
 cur_game_code_colors_set[6]=((cur_game_code>>24) & 0x0000000F);}
 if(otherGame!=null){
 for (cur_game_depth=0;cur_game_depth<cur_game_size;cur_game_depth++){
-other_game_code=otherGame[cur_game_depth]
+other_game_code=otherGame[cur_game_depth];
 other_game_code_colors_set=other_game_code_colors[cur_game_depth];
 other_game_code_colors_set[0]=(other_game_code & 0x0000000F);
 other_game_code_colors_set[1]=((other_game_code>>4) & 0x0000000F);
@@ -1698,7 +1698,7 @@ codesPlayed[i]=0;}
 marks=new Array(nbMaxAttempts);
 for (let i=0;i<nbMaxAttempts;i++){
 marks[i]={nbBlacks:0,nbWhites:0};}
-codeHandler=new CodeHandler(nbColumns,nbColors,nbMinColumns,nbMaxColumns,emptyColor)
+codeHandler=new CodeHandler(nbColumns,nbColors,nbMinColumns,nbMaxColumns,emptyColor);
 initialNbPossibleCodes=Math.round(Math.pow(nbColors,nbColumns));
 previousNbOfPossibleCodes=initialNbPossibleCodes;
 nextNbOfPossibleCodes=initialNbPossibleCodes;
