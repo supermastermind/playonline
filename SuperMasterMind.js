@@ -1048,7 +1048,7 @@ function resetGameAttributes(nbColumnsSelected){
 let i;
 let first_session_game;
 let debug_mode='';
-console.clear();
+//console.clear();
 game_cnt++;
 if(game_cnt>1000000){
 game_cnt=1;}
