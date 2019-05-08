@@ -389,7 +389,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NJ5";
+      let html_compatibility_game_version = "Ver_NJ6";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -657,7 +657,7 @@
       };
 
       function getCountryName(countryCode) {
-        if ((typeof countryCode == 'undefined') || (countryCode == null)) {
+        if ((typeof countryCode == 'undefined') || (countryCode == undefined) || (countryCode == null)) {
           return '-';
         }
         let prop = countryCode.toUpperCase();
@@ -921,8 +921,8 @@
       function handle_rsp_delayed(e) {
         debug_game_state = 80;
         try {
-          if ( (typeof e !== 'undefined')
-               && (typeof e.parameter !== 'undefined')
+          if ( (e !== undefined) && (e != null)
+               && (typeof e.parameter !== 'undefined') && (e.parameter != undefined) && (e.parameter != null)
                && (typeof e.parameter.playerid !== 'undefined')
                && (typeof e.rsp_cd == 'undefined')
                && (typeof e.parameter.rankings !== 'undefined') && (e.parameter.rankings.length > 10) ) {
@@ -950,7 +950,7 @@
             }
           }
           else {
-            if (typeof e == 'undefined') {
+            if ((e == undefined) || (e == null)) {
               console.log('rsp_cd: ?');
             }
             else if (typeof e.rsp_cd !== 'undefined') {
@@ -1096,7 +1096,7 @@
             nb_JSON_queries_posted: 0,
 
             reformatLocationValue: function(x) {
-              if ((typeof x == 'undefined') || (x == null)) {
+              if ((typeof x == 'undefined') || (x == undefined) || (x == null)) {
                 return '-';
               }
               else {
@@ -1105,15 +1105,15 @@
             },
 
             isLocationDataValid: function(data_p) {
-              if ((typeof data_p == 'undefined') || (data_p == null)) {
+              if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) {
                 return false;
               }
-              if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != null)
-                   && (typeof data_p.longitude != 'undefined') && (data_p.longitude != null)
+              if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != undefined) && (data_p.latitude != null)
+                   && (typeof data_p.longitude != 'undefined') && (data_p.longitude != undefined)  && (data_p.longitude != null)
                    && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1))
-                   && ((typeof data_p.country_name != 'undefined') && (data_p.country_name != null) && (data_p.country_name.length >= 3))
-                   && ((typeof data_p.city != 'undefined') && (data_p.city != null) && (data_p.city.length >= 2)) // (redundant lines)
-                   && ((typeof data_p.ip != 'undefined') && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) {
+                   && ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 3))
+                   && ((typeof data_p.city != 'undefined') && (data_p.city != undefined) && (data_p.city != null) && (data_p.city.length >= 2)) // (redundant lines)
+                   && ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) {
                 return true;
               }
               return false;
@@ -1237,12 +1237,12 @@
               let city = geolocation_handler.reformatLocationValue(data_p.city);
               let ipaddress = geolocation_handler.reformatLocationValue(data_p.ip);
               let zip = '-';
-              if ((typeof data_p.postal != 'undefined') && (data_p.postal != null) && (String(data_p.postal).trim().length >= 2)) {
+              if ((typeof data_p.postal != 'undefined') && (data_p.postal != undefined) && (data_p.postal != null) && (String(data_p.postal).trim().length >= 2)) {
                 zip = String(data_p.postal).trim();
               }
               let timezone = '-';
-              if ((typeof data_p.time_zone != 'undefined') && (data_p.time_zone != null) && (String(data_p.time_zone).trim().length >= 2)) {
-                if ((typeof data_p.time_zone.name != 'undefined') && (data_p.time_zone.name != null) && (String(data_p.time_zone.name).trim().length >= 2)) {
+              if ((typeof data_p.time_zone != 'undefined') && (data_p.time_zone != undefined) && (data_p.time_zone != null) && (String(data_p.time_zone).trim().length >= 2)) {
+                if ((typeof data_p.time_zone.name != 'undefined') && (data_p.time_zone.name != undefined) && (data_p.time_zone.name != null) && (String(data_p.time_zone.name).trim().length >= 2)) {
                   timezone = String(data_p.time_zone.name).trim();
                 }
                 else {
