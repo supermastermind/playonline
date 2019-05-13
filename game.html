@@ -389,7 +389,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NJ7";
+      let html_compatibility_game_version = "Ver_NJ8";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1377,15 +1377,13 @@
 
               var extra_debug_info = "";
               try {
-                if (typeof(Storage) !== 'undefined') {
-                  if (localStorage.previousfirstname) {
-                    extra_debug_info = extra_debug_info + "/PreviousFirstName:" + localStorage.previousfirstname;
-                  }
-                }
                 extra_debug_info = extra_debug_info + "/Game:" + gamestr;
                 if (typeof(Storage) !== 'undefined') {
                   if (localStorage.html_geoloc_status) {
                     extra_debug_info = extra_debug_info + "/html_geoloc_status:" + localStorage.html_geoloc_status;
+                  }
+                  if (localStorage.previousfirstname) {
+                    extra_debug_info = extra_debug_info + "/PreviousFirstName:" + localStorage.previousfirstname;
                   }
                 }
                 extra_debug_info = extra_debug_info + "/Cookies:" + navigator.cookieEnabled;
