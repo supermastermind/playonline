@@ -1093,7 +1093,7 @@ function displayRandomCodesHintIfNeeded() {
     if (typeof(Storage) !== 'undefined') {
       if (localStorage.gamesok) {
         if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % 50) == 0) ) {
-          alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first codes randomly!");
+          alert("A little fun?!\nClick on the \"" + document.getElementById("playRandomCodeButton").value + "\" button to play your first few codes randomly!");
           randomCodesHintToBeDisplayed = false;
         }
       }
