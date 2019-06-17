@@ -62,7 +62,7 @@ let marks_already_computed_table=null;
 let nbCodesLimitForEquivalentCodesCheck=40;
 let PerformanceNA=-3.00;
 let PerformanceUNKNOWN=-2.00;
-let PerformanceMinValidValue=-1.30;
+let PerformanceMinValidValue=-1.50;
 let PerformanceMaxValidValue=+1.30;
 let initialInitDone=false;
 let curGame;

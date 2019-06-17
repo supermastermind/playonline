@@ -89,7 +89,7 @@ try {
 
   let PerformanceNA = -3.00; // (duplicated in SuperMasterMind.js)
   let PerformanceUNKNOWN = -2.00; // (duplicated in SuperMasterMind.js)
-  let PerformanceMinValidValue = -1.30; // (a valid relative performance can be < -1.00 in some extremely rare cases - duplicated in SuperMasterMind.js)
+  let PerformanceMinValidValue = -1.50; // (a valid relative performance can be < -1.00 in some extremely rare cases - duplicated in SuperMasterMind.js / Value observed: -1.35 for 5-colmuns game {1B4W 12345; 1B4W 51234; 45123} (SCODE: 25314))
   let PerformanceMaxValidValue = +1.30; // (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in SuperMasterMind.js) / Some values observed: +0.94 for 5-colmuns game {4B0W 11223; 11456}, +1.04 for 6-colmuns game {5B0W 112234; 112567}
 
   let initialInitDone = false;

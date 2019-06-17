@@ -389,7 +389,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NJ8";
+      let html_compatibility_game_version = "Ver_NK";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -890,7 +890,10 @@
           extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + ", currentAttemptNumber=" + currentAttemptNumber + ", gameWon=" + gameWon;
         }
         catch (exc) {}
-        submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        let skip_undefined_errors = ((evt == undefined) || ((evt.reason == undefined) && (evt.promise == undefined)));
+        if (!skip_undefined_errors) {
+          submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        }
       };
       window.onrejectionhandled = function(evt) {
         var evt_str = "-";
@@ -913,8 +916,11 @@
         try {
           extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + ", currentAttemptNumber=" + currentAttemptNumber + ", gameWon=" + gameWon;
         }
-        catch (exc) {}        
-        submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        catch (exc) {}
+        let skip_undefined_errors = ((evt == undefined) || ((evt.reason == undefined) && (evt.promise == undefined)));
+        if (!skip_undefined_errors) {
+          submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+        }
       };
 
       var playerid_prefix = "ID/";
@@ -1894,7 +1900,7 @@
           url: "SuperMasterMind.js",
           dataType: "script",
           mimeType: "application/javascript",
-          timeout: 180000 // 3 minutes
+          timeout: 1800000 // 30 minutes (very high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           debug_game_state = 61;
@@ -1918,7 +1924,7 @@
         url: "GameSolver.js",
         dataType: "script",
         mimeType: "application/javascript",
-        timeout: 180000 // 3 minutes
+        timeout: 1800000 // 30 minutes (very high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
       })
       .done(function(data) { // Success case
         debug_game_state = 71;
