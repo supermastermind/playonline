@@ -54,6 +54,10 @@ try {
   let message_processing_ongoing = false;
   let IAmAliveMessageSent = false;
 
+  let buffer_incoming_messages = false;
+  let nb_incoming_messages_buffered = 0;
+  let incoming_messages_table = new Array(3*overallMaxDepth);
+
   // Performance-related variables
   // *****************************
 
@@ -2863,8 +2867,932 @@ try {
   // Handle messages from main thread
   // ********************************
 
-  self.onmessage = function(e) {
+  function handleMessage(data) {
 
+    if (data.smm_req_type == undefined) {
+      // throw new Error("smm_req_type is undefined: " + JSON.stringify(data));
+    }
+
+    // **************
+    // Initialization
+    // **************
+
+    else if (data.smm_req_type == 'INIT') {
+
+      // *******************
+      // Read message fields
+      // *******************
+
+      if (init_done) {
+        throw new Error("INIT phase / double initialization");
+      }
+
+      if (data.game_id == undefined) {
+        throw new Error("INIT phase / game_id is undefined");
+      }
+      game_id = Number(data.game_id);
+      if ( isNaN(game_id) || (game_id < 0) ) {
+        throw new Error("INIT phase / invalid game_id: " + game_id);
+      }
+
+      // Post I_AM_ALIVE message
+      if (!IAmAliveMessageSent) {
+        self.postMessage({'rsp_type': 'I_AM_ALIVE', 'game_id': game_id}); // first message sent
+        IAmAliveMessageSent = true;
+      }
+
+      if (data.nbColumns == undefined) {
+        throw new Error("INIT phase / nbColumns is undefined");
+      }
+      nbColumns = Number(data.nbColumns);
+      if ( isNaN(nbColumns) || (nbColumns < nbMinColumns) || (nbColumns > nbMaxColumns) ) {
+        throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
+      }
+
+      if (data.nbColors == undefined) {
+        throw new Error("INIT phase / nbColors is undefined");
+      }
+      nbColors = Number(data.nbColors);
+      if ( isNaN(nbColors) || (nbColors < nbMinColors) || (nbColors > nbMaxColors) ) {
+        throw new Error("INIT phase / invalid nbColors: " + nbColors);
+      }
+
+      if (data.nbMaxAttempts == undefined) {
+        throw new Error("INIT phase / nbMaxAttempts is undefined");
+      }
+      nbMaxAttempts = Number(data.nbMaxAttempts);
+      if ( isNaN(nbMaxAttempts) || (nbMaxAttempts < overallNbMinAttempts) || (nbMaxAttempts > overallNbMaxAttempts) ) {
+        throw new Error("INIT phase / invalid nbMaxAttempts: " + nbMaxAttempts);
+      }
+
+      if (data.nbMaxPossibleCodesShown == undefined) {
+        throw new Error("INIT phase / nbMaxPossibleCodesShown is undefined");
+      }
+      nbMaxPossibleCodesShown = Number(data.nbMaxPossibleCodesShown);
+      if ( isNaN(nbMaxPossibleCodesShown) || (nbMaxPossibleCodesShown < 5) || (nbMaxPossibleCodesShown > 100) ) {
+        throw new Error("INIT phase / invalid nbMaxPossibleCodesShown: " + nbMaxPossibleCodesShown);
+      }
+      possibleCodesShown = new Array(nbMaxPossibleCodesShown);
+      globalPerformancesShown = new Array(nbMaxPossibleCodesShown);
+      for (let i = 0; i < nbMaxPossibleCodesShown; i++) {
+        globalPerformancesShown[i] = PerformanceNA;
+      }
+
+      if (data.first_session_game == undefined) {
+        throw new Error("INIT phase / first_session_game is undefined");
+      }
+      let first_session_game = data.first_session_game;
+
+      if (data.debug_mode == undefined) {
+        throw new Error("INIT phase / debug_mode is undefined");
+      }
+      if (data.debug_mode != "") {
+        if (data.debug_mode == "dbg") {
+          for (let i = 0; i == i; i++) {
+            // if (i % 2 == 0) {console.log(" ");} else {console.log("  ")};
+          }
+        }
+      }
+
+      // ********************
+      // Initialize variables
+      // ********************
+
+      codesPlayed = new Array(nbMaxAttempts);
+      for (let i = 0; i < nbMaxAttempts; i++) {
+        codesPlayed[i] = 0;
+      }
+      marks = new Array(nbMaxAttempts);
+      for (let i = 0; i < nbMaxAttempts; i++) {
+        marks[i] = {nbBlacks:0, nbWhites:0};
+      }
+
+      codeHandler = new CodeHandler(nbColumns, nbColors, nbMinColumns, nbMaxColumns, emptyColor);
+
+      initialNbPossibleCodes = Math.round(Math.pow(nbColors,nbColumns));
+      previousNbOfPossibleCodes = initialNbPossibleCodes;
+      nextNbOfPossibleCodes = initialNbPossibleCodes;
+
+      minNbColorsTable = new Array(nbColors+1);
+      maxNbColorsTable = new Array(nbColors+1);
+      nbColorsTableForMinMaxNbColors = new Array(nbColors+1);
+
+      switch (nbColumns) {
+        case 3:
+          // ******************************************
+          // * Maximum number of marks for 3 columns: *
+          // * 0 black  => 0..3 whites => 4 marks     *
+          // * 1 black  => 0..2 whites => 3 marks     *
+          // * 2 blacks => 0 white     => 1 mark      *
+          // * 3 blacks => 0 white     => 1 mark      *
+          // *                *** TOTAL:  9 marks *** *
+          // ******************************************
+          nbMaxMarks = 9;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*10/30; // (short games)
+          nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
+          nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes;
+          initialNbClasses = 3; // {111, 112, 123}
+          maxDepth = Math.min(11, overallMaxDepth);
+          marks_optimization_mask = 0x1FFF;
+          maxDepthForGamePrecalculation = -1; // no game precalculation needed (-1 or 3)
+          break;
+        case 4:
+          nbMaxMarks = 14;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*20/30; // (short games)
+          nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
+          nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
+          initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
+          maxDepth = Math.min(12, overallMaxDepth);
+          marks_optimization_mask = 0x3FFF;
+          maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
+          break;
+        case 5:
+          nbMaxMarks = 20;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*44/30;
+          nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
+          nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
+          initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
+          maxDepth = Math.min(13, overallMaxDepth);
+          marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
+          maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
+          break;
+        case 6:
+          nbMaxMarks = 27;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*52/30;
+          nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+          nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
+          initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
+          maxDepth = Math.min(14, overallMaxDepth);
+          marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
+          maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
+          break;
+        case 7:
+          // ******************************************
+          // * Maximum number of marks for 7 columns: *
+          // * 0 black  => 0..7 whites => 8 marks     *
+          // * 1 black  => 0..6 whites => 7 marks     *
+          // * 2 blacks => 0..5 whites => 6 marks     *
+          // * ...                                    *
+          // * 5 blacks => 0..2 whites => 3 marks     *
+          // * 6 blacks => 0 white     => 1 mark      *
+          // * 7 blacks => 0 white     => 1 mark      *
+          // *                *** TOTAL: 35 marks *** *
+          // ******************************************
+          nbMaxMarks = 35;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*60/30;
+          nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+          nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
+          initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
+          maxDepth = Math.min(15, overallMaxDepth);
+          marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
+          maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
+          break;
+        default:
+          throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
+      }
+
+      if (nbOfCodesForSystematicEvaluation > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+        throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation");
+      }
+      if ( (maxDepthForGamePrecalculation > maxDepthForGamePrecalculation_ForMemAlloc)
+           || ((maxDepthForGamePrecalculation != -1) && (maxDepthForGamePrecalculation != 3)) ) { // (-1 or 3)
+        throw new Error("INIT phase / internal error (maxDepthForGamePrecalculation: " + maxDepthForGamePrecalculation + ")");
+      }
+      if (minNbCodesForPrecalculation <= nbCodesLimitForEquivalentCodesCheck) {
+        throw new Error("INIT phase / internal error: minNbCodesForPrecalculation");
+      }
+
+      marksTable_MarkToNb = new Array(nbColumns+1); // nbBlacks in 0..nbColumns
+      for (let i = 0; i <= nbColumns; i++) { // nbBlacks
+        marksTable_MarkToNb[i] = new Array(nbColumns+1); // nbWhites in 0..nbColumns
+        for (let j = 0; j <= nbColumns; j++) { // nbWhites
+          marksTable_MarkToNb[i][j] = -1; // N.A.
+        }
+      }
+      marksTable_NbToMark = new Array(nbMaxMarks); // mark indexes in 0..nbMaxMarks-1
+      for (let i = 0; i < nbMaxMarks; i++) { // mark indexes
+        marksTable_NbToMark[i] = {nbBlacks:-1, nbWhites:-1}; // N.A.
+      }
+      let mark_cnt = 0;
+      for (let i = 0; i <= nbColumns; i++) { // nbBlacks
+        for (let j = 0; j <= nbColumns; j++) { // nbWhites
+          let mark_tmp = {nbBlacks:i, nbWhites:j};
+          if (codeHandler.isMarkValid(mark_tmp)) { // go through all valid marks
+            if (mark_cnt >= nbMaxMarks) {
+              throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (1)");
+            }
+            marksTable_NbToMark[mark_cnt] = mark_tmp;
+            marksTable_MarkToNb[i][j] = mark_cnt;
+            mark_cnt++;
+          }
+        }
+      }
+      if (mark_cnt != nbMaxMarks) {
+        throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (2)");
+      }
+      if (marksTable_NbToMark.length != nbMaxMarks) {
+        throw new Error("INIT phase / internal error (marksTable_NbToMark length: " + marksTable_NbToMark.length + ")");
+      }
+      if (marksTable_MarkToNb.length != nbColumns+1) {
+        throw new Error("INIT phase / internal error (marksTable_MarkToNb length: " + marksTable_MarkToNb.length + ") (1)");
+      }
+      for (let i = 0; i <= nbColumns; i++) { // nbBlacks
+        if (marksTable_MarkToNb[i].length != nbColumns+1) {
+          throw new Error("INIT phase / internal error (marksTable_MarkToNb length: " + marksTable_MarkToNb.length + ") (2)");
+        }
+      }
+
+      best_mark_idx = marksTable_MarkToNb[nbColumns][0];
+      worst_mark_idx = marksTable_MarkToNb[0][0];
+
+      possibleCodesForPerfEvaluation = new Array(2);
+      possibleCodesForPerfEvaluation[0] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
+      possibleCodesForPerfEvaluation[1] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
+      // initialCodeListForPrecalculatedMode = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc); // (precalculation mode)
+
+      // **********
+      // Update GUI
+      // **********
+
+      colorsFoundCode = codeHandler.setAllColorsIdentical(emptyColor); // value at game start
+      for (let color = 1; color <= nbColors; color++) { // values at game start
+        minNbColorsTable[color] = 0;
+        maxNbColorsTable[color] = nbColumns;
+      }
+
+      self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
+
+      let nb_possible_codes_listed = fillShortInitialPossibleCodesTable(possibleCodesForPerfEvaluation[1], nbOfCodesForSystematicEvaluation_ForMemAlloc);
+      if (possibleCodesForPerfEvaluation_lastIndexWritten != -1) {
+        throw new Error("INIT phase / inconsistent writing into possibleCodesForPerfEvaluation");
+      }
+      possibleCodesForPerfEvaluation_lastIndexWritten = 1;
+
+      /* if (8*8*8*8*8 != fillShortInitialPossibleCodesTable(initialCodeListForPrecalculatedMode, nbOfCodesForSystematicEvaluation_ForMemAlloc)) { // (precalculation mode)
+        throw new Error("INIT phase / internal error");
+      } */
+
+      init_done = true;
+
+    }
+
+    // ***********
+    // New attempt
+    // ***********
+
+    else if (init_done && (data.smm_req_type == 'NEW_ATTEMPT')) {
+
+      // *******************
+      // Read message fields
+      // *******************
+
+      if (data.curAttemptNumber == undefined) {
+        throw new Error("NEW_ATTEMPT phase / curAttemptNumber is undefined");
+      }
+      let curAttemptNumber_tmp = Number(data.curAttemptNumber);
+      if ( isNaN(curAttemptNumber_tmp) || (curAttemptNumber_tmp < 0) || (curAttemptNumber_tmp > nbMaxAttempts) ) {
+        throw new Error("NEW_ATTEMPT phase / invalid curAttemptNumber: " + curAttemptNumber_tmp);
+      }
+      if (curAttemptNumber_tmp != curAttemptNumber+1) { // attempt numbers shall be consecutive
+        throw new Error("NEW_ATTEMPT phase / non consecutive curAttemptNumber values: " + curAttemptNumber + ", " + curAttemptNumber_tmp);
+      }
+      curAttemptNumber = curAttemptNumber_tmp;
+
+      if (data.nbMaxAttemptsForEndOfGame == undefined) {
+        throw new Error("NEW_ATTEMPT phase / nbMaxAttemptsForEndOfGame is undefined");
+      }
+      nbMaxAttemptsForEndOfGame = Number(data.nbMaxAttemptsForEndOfGame);
+      if ( isNaN(nbMaxAttemptsForEndOfGame) || (nbMaxAttemptsForEndOfGame < 0) || (nbMaxAttemptsForEndOfGame > nbMaxAttempts) || (nbMaxAttemptsForEndOfGame < curAttemptNumber) ) {
+        throw new Error("NEW_ATTEMPT phase / invalid nbMaxAttemptsForEndOfGame: " + nbMaxAttemptsForEndOfGame + ", " + curAttemptNumber);
+      }
+
+      if (data.code == undefined) {
+        throw new Error("NEW_ATTEMPT phase / code is undefined");
+      }
+      codesPlayed[curAttemptNumber-1] = Number(data.code);
+      if ( isNaN(codesPlayed[curAttemptNumber-1]) || !codeHandler.isFullAndValid(codesPlayed[curAttemptNumber-1]) ) {
+        throw new Error("NEW_ATTEMPT phase / invalid code: " + codesPlayed[curAttemptNumber-1]);
+      }
+
+      if (data.mark_nbBlacks == undefined) {
+        throw new Error("NEW_ATTEMPT phase / mark_nbBlacks is undefined");
+      }
+      let mark_nbBlacks = Number(data.mark_nbBlacks);
+      if ( isNaN(mark_nbBlacks) || (mark_nbBlacks < 0) || (mark_nbBlacks > nbColumns) ) {
+        throw new Error("NEW_ATTEMPT phase / invalid mark_nbBlacks: " + mark_nbBlacks + ", " + nbColumns);
+      }
+      let gameWon = (mark_nbBlacks == nbColumns);
+      if (data.mark_nbWhites == undefined) {
+        throw new Error("NEW_ATTEMPT phase / mark_nbWhites is undefined");
+      }
+      let mark_nbWhites = Number(data.mark_nbWhites);
+      if ( isNaN(mark_nbWhites) || (mark_nbWhites < 0) || (mark_nbWhites > nbColumns) ) {
+        throw new Error("NEW_ATTEMPT phase / invalid mark_nbWhites: " + mark_nbWhites + ", " + nbColumns);
+      }
+      marks[curAttemptNumber-1] = {nbBlacks:mark_nbBlacks, nbWhites:mark_nbWhites};
+      if (!codeHandler.isMarkValid(marks[curAttemptNumber-1])) {
+        throw new Error("NEW_ATTEMPT phase / invalid mark: " + mark_nbBlacks + "B, " + mark_nbWhites + "W, " + nbColumns);
+      }
+
+      if (data.precalculated_games == undefined) {
+        throw new Error("NEW_ATTEMPT phase / precalculated_games is undefined");
+      }
+      if (data.precalculated_games != "") {
+        if ( (nbColumns != 5) || (curAttemptNumber != 1) ) { // precalculated_games is only expected at the first attempt of 5 columns games
+          throw new Error("NEW_ATTEMPT phase / unexpected precalculated_games: " + nbColumns + ", " + curAttemptNumber);
+        }
+        precalculated_games_5columns = precalculated_games_5columns + data.precalculated_games;
+      }
+
+      if (data.game_id == undefined) {
+        throw new Error("NEW_ATTEMPT phase / game_id is undefined");
+      }
+      let attempt_game_id = Number(data.game_id);
+      if ( isNaN(attempt_game_id) || (attempt_game_id < 0) || (attempt_game_id != game_id) ) {
+        throw new Error("NEW_ATTEMPT phase / invalid game_id: " + attempt_game_id + " (" + game_id + ")");
+      }
+
+      // ***************
+      // Initializations
+      // ***************
+
+      // 1) Update cur game
+      // **********************
+
+      if (!initialInitDone) {
+        initialInitDone = true;
+        curGame = new Array(nbMaxAttempts+maxDepth);
+        curGame.fill(0); /* empty code */
+        marksIdxs = new Array(nbMaxAttempts+maxDepth);
+        marksIdxs.fill(-1);
+        generateAllPermutations();
+      }
+
+      if (curAttemptNumber >= 2) {
+        // Notes on "future-based" criteria:
+        // - to simplify, useless codes (likely to be played near game end) are not excluded from cur game.
+        // - to simplify, codes with a 0 black + 0 white mark (likely to be played at game beginning, whose performances are targeted
+        //   to be precalculated) are not excluded from cur game. More generally, the fact that impossible colors are interchangeable
+        //   is not exploited (as mostly covered by 0 black + 0 white mark cases at game beginning / as difficult to take into account
+        //   recursively at small cost / as bijections would have to be calculated in some specific way(s) for those cases).
+        // - handling a "dynamic dictionary of games" containing sets of (k to k+n, k >= 5) possible remaining codes and their associated
+        //   performance was assessed and does not allow to reach any gain for long evaluations (too low percentage of repetitive games).
+        curGame[curAttemptNumber-2] = codesPlayed[curAttemptNumber-2];
+        marksIdxs[curAttemptNumber-2] = marksTable_MarkToNb[marks[curAttemptNumber-2].nbBlacks][marks[curAttemptNumber-2].nbWhites];
+      }
+      curGameSize = curAttemptNumber-1; // (equal to 0 at first attempt)
+
+      // Check cur game (useful for subsequent equivalent codes processing - duplicated code)
+      if (curGameSize != curAttemptNumber-1) {
+        throw new Error("NEW_ATTEMPT phase / invalid curGameSize");
+      }
+      for (let idx = 0; idx < curGameSize; idx++) {
+        if ( (curGame[idx] != codesPlayed[idx]) || (!codeHandler.isFullAndValid(curGame[idx])) ) {
+          throw new Error("NEW_ATTEMPT phase / invalid cur game (" + idx + ")");
+        }
+        if ( (!codeHandler.marksEqual(marksTable_NbToMark[marksIdxs[idx]], marks[idx])) || (!codeHandler.isMarkValid(marksTable_NbToMark[marksIdxs[idx]])) )  {
+          throw new Error("NEW_ATTEMPT phase /  invalid cur marks (" + idx + ")");
+        }
+      }
+
+      // 2) Update possible permutations
+      // *******************************
+
+      // Note: to simplify, more complex algorithms are not used to update possible permutations. For instance: games {[1 1 2] [1 3 4]}, {[1 1 2] [3 4 3]}
+      //       and {[1 2 3] [1 1 1]} lead to numbers of possible permutations which are underestimated.
+
+      if (curAttemptNumber >= 2) {
+        if (cur_permutations_table_size[curGameSize-1] <= 0) {
+          throw new Error("NEW_ATTEMPT phase / invalid cur_permutations_table_size value: " + cur_permutations_table_size[curGameSize-1]);
+        }
+        let new_perm_cnt = 0;
+        for (let perm_idx = 0; perm_idx < cur_permutations_table_size[curGameSize-1]; perm_idx++) {
+          if (areCodesEquivalent(0, 0, curGameSize, true /* assess cur game only */, cur_permutations_table[curGameSize-1][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for cur game
+            if ((cur_permutations_table[curGameSize-1][perm_idx] < 0) || (cur_permutations_table[curGameSize-1][perm_idx] >= all_permutations_table_size[nbColumns])) {
+              throw new Error("NEW_ATTEMPT phase / invalid permutation index: " + perm_idx);
+            }
+            cur_permutations_table[curGameSize][new_perm_cnt] = cur_permutations_table[curGameSize-1][perm_idx];
+            new_perm_cnt++;
+          }
+        }
+        if (new_perm_cnt <= 0) { // identity shall always be valid
+          throw new Error("NEW_ATTEMPT phase / invalid new_perm_cnt value: " + new_perm_cnt);
+        }
+        cur_permutations_table_size[curGameSize] = new_perm_cnt;
+      }
+
+      // **************************************************
+      // A.1) Compute number and list of new possible codes
+      // **************************************************
+
+      console.log(String(curAttemptNumber) + ": " + codeHandler.markToString(marks[curAttemptNumber-1]) + " " + codeHandler.codeToString(codesPlayed[curAttemptNumber-1]));
+
+      if (marks_already_computed_table == null) {
+        marks_already_computed_table = new Array(marks_optimization_mask+1);
+        for (let i = 0; i < marks_already_computed_table.length; i++) {
+          marks_already_computed_table[i] = { code1a:0, code2a:0, nbBlacksa:-1, nbWhitesa:-1,
+                                              code1b:0, code2b:0, nbBlacksb:-1, nbWhitesb:-1,
+                                              code1c:0, code2c:0, nbBlacksc:-1, nbWhitesc:-1,
+                                              write_index:0};
+        }
+      }
+
+      if (curAttemptNumber == 1) { // first attempt
+        possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
+      }
+
+      previousNbOfPossibleCodes = nextNbOfPossibleCodes;
+      nextNbOfPossibleCodes = computeNbOfPossibleCodes(curAttemptNumber+1, nbOfCodesForSystematicEvaluation_ForMemAlloc, possibleCodesForPerfEvaluation[(curAttemptNumber+1)%2]);
+      if (possibleCodesForPerfEvaluation_lastIndexWritten != (curAttemptNumber%2)) {
+        throw new Error("NEW_ATTEMPT phase / inconsistent writing into possibleCodesForPerfEvaluation");
+      }
+      possibleCodesForPerfEvaluation_lastIndexWritten = (curAttemptNumber+1)%2;
+      if (nextNbOfPossibleCodes > previousNbOfPossibleCodes) {
+        throw new Error("NEW_ATTEMPT phase / inconsistent numbers of possible codes: " + nextNbOfPossibleCodes + " > " + previousNbOfPossibleCodes);
+      }
+
+      // ***************
+      // A.2) Update GUI
+      // ***************
+
+      if (curAttemptNumber+1 <= nbMaxAttemptsForEndOfGame) { // not last game attempt
+        self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': nextNbOfPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': (curAttemptNumber+1), 'game_id': game_id});
+      }
+
+      // ***************************************
+      // B.1) Compute performance of code played
+      // ***************************************
+
+      let best_global_performance = PerformanceNA;
+      let code_played_relative_perf = PerformanceNA;
+      let relative_perf_evaluation_done = false;
+
+      // a) Useless code
+      // ***************
+
+      if ((nextNbOfPossibleCodes == previousNbOfPossibleCodes) && (!gameWon)) {
+        // To simplify, for an useless code, performances will be computed at next useful code
+        best_global_performance = PerformanceUNKNOWN;
+        code_played_relative_perf = -1.00;
+        relative_perf_evaluation_done = true;
+      }
+
+      // b) Useful code
+      // **************
+
+      else {
+
+        // Check if cur game and code (whether possible or impossible) were precalculated
+        // **********************************************************************************
+
+        let precalculated_cur_game_or_code = -1; // nothing was precalculated
+        // precalculated_cur_game_or_code shall keep being -1 in precalculation mode => below code to comment in (precalculation mode)
+        if ( (previousNbOfPossibleCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
+             && (curGameSize <= maxDepthForGamePrecalculation) ) { // (-1 or 3)
+          precalculated_cur_game_or_code = lookForCodeInPrecalculatedGames(codesPlayed[curAttemptNumber-1], curGameSize, previousNbOfPossibleCodes);
+        }
+
+        // Main useful code processing
+        // ***************************
+
+        if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
+             || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
+             || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+
+          if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+            throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+          }
+
+          // Initializations
+          // ***************
+
+          // ***** First evaluation phase in a game *****
+          if (precalculated_cur_game_or_code > 0) { // both game and code were precalculated
+            if (performanceListsInitDone) {
+              throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation");
+            }
+            // - Array allocations
+            if (!performanceListsInitDoneForPrecalculatedGames) {
+              performanceListsInitDoneForPrecalculatedGames = true;
+              arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation_ForMemAlloc)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
+              listOfGlobalPerformances = new Array(arraySizeAtInit);
+              maxDepthApplied = 1; // "one-recursive-depth computing of performances" for cur game and code (whether possible or impossible) => memory optimization
+              listsOfPossibleCodes = undefined;
+              listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
+              nbOfPossibleCodes = undefined;
+              nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
+              listOfClassesFirstCall = new Array(arraySizeAtInit);
+              listOfEquivalentCodesAndPerformances = undefined;
+              listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
+              for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
+                for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
+                  listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
+                }
+              }
+              if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
+                throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (1)");
+              }
+            }
+          }
+          // ***** Second evaluation phase in a game *****
+          else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
+                    || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+            if (precalculated_cur_game_or_code > 0) {
+              throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
+            }
+            // - Array allocations
+            if (!performanceListsInitDone) {
+              performanceListsInitDone = true;
+              arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
+              listOfGlobalPerformances = new Array(arraySizeAtInit);
+              maxDepthApplied = maxDepth;
+              listsOfPossibleCodes = undefined;
+              listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
+              nbOfPossibleCodes = undefined;
+              nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
+              listOfClassesFirstCall = new Array(arraySizeAtInit);
+              listOfEquivalentCodesAndPerformances = undefined;
+              listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
+              for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
+                for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
+                  listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
+                }
+              }
+              if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
+                throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (2)");
+              }
+            }
+          }
+          else {
+            throw new Error("NEW_ATTEMPT phase / inconsistent performance evaluation case");
+          }
+
+          // - Other initializations
+          for (let i = 0; i < arraySizeAtInit; i++) {
+            listOfGlobalPerformances[i] = PerformanceNA;
+          }
+          // listsOfPossibleCodes is not initialized as this array may be very large
+          for (let i = 0; i < maxDepthApplied; i++) {
+            for (let j = 0; j < nbMaxMarks; j++) {
+              nbOfPossibleCodes[i][j] = 0;
+            }
+          }
+
+          // Compute performances
+          // ********************
+
+          let code_played_global_performance = PerformanceNA;
+          let index = (curAttemptNumber%2);
+          if (0 == isAttemptPossibleinGameSolver(curAttemptNumber)) { // code played is possible
+            // Evaluate performances for possibleCodesForPerfEvaluation[curAttemptNumber%2]:
+            let startTime = (new Date()).getTime();
+            best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */, precalculated_cur_game_or_code);
+            if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
+              let code_played_found = false;
+              for (let i = 0; i < previousNbOfPossibleCodes; i++) {
+                if ( (possibleCodesForPerfEvaluation[index][i] == codesPlayed[curAttemptNumber-1]) && (listOfGlobalPerformances[i] != PerformanceNA) ) {
+                  code_played_global_performance = listOfGlobalPerformances[i];
+                  code_played_found = true;
+                  break;
+                }
+              }
+              if (!code_played_found) { // error to test
+                throw new Error("NEW_ATTEMPT phase / performance of possible code played was not evaluated (" + codeHandler.codeToString(codesPlayed[curAttemptNumber-1]) + ", " + curAttemptNumber + ")");
+              }
+              console.log("(perfeval#1: best performance: " + best_global_performance
+                          + " / code performance: " + code_played_global_performance
+                          + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class")
+                          + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
+            }
+            else {
+              console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class") + ")");
+            }
+          }
+          else { // code played is not possible
+            // Evaluate performances for possibleCodesForPerfEvaluation[curAttemptNumber%2]:
+            let startTime = (new Date()).getTime();
+            best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[curAttemptNumber-1], precalculated_cur_game_or_code);
+            if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
+              if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
+                throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: " + particularCodeGlobalPerformance);
+              }
+              code_played_global_performance = particularCodeGlobalPerformance;
+              console.log("(perfeval#2: best performance: " + best_global_performance
+                          + " / code performance: " + particularCodeGlobalPerformance
+                          + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class")
+                          + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
+            }
+            else {
+              console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class") + ")");
+            }
+          }
+
+          if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
+            if ((best_global_performance == PerformanceNA) || (best_global_performance <= 0.01)) {
+              throw new Error("NEW_ATTEMPT phase / invalid best_global_performance: " + best_global_performance);
+            }
+            for (let i = 0; i < previousNbOfPossibleCodes; i++) {
+              let global_performance = listOfGlobalPerformances[i];
+              if ( (global_performance == PerformanceNA) || (global_performance == PerformanceUNKNOWN) || (global_performance <= 0.01) ) {
+                throw new Error("invalid global performance in listOfGlobalPerformances (1): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
+              }
+              if ( (best_global_performance - global_performance < (PerformanceMinValidValue-1)/2) || (best_global_performance - global_performance >= +0.0001) ) {
+                throw new Error("invalid global performance in listOfGlobalPerformances (2): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
+              }
+            }
+            if ((code_played_global_performance == PerformanceNA) || (code_played_global_performance == PerformanceUNKNOWN) || (code_played_global_performance <= 0.01)) {
+              throw new Error("NEW_ATTEMPT phase / invalid code_played_global_performance: " + code_played_global_performance);
+            }
+            code_played_relative_perf = best_global_performance - code_played_global_performance;
+            if ( (code_played_relative_perf < PerformanceMinValidValue) || (code_played_relative_perf > PerformanceMaxValidValue) ) {
+              throw new Error("NEW_ATTEMPT phase / invalid relative performance: " + code_played_relative_perf + ", " + best_global_performance + ", " + code_played_global_performance);
+            }
+            relative_perf_evaluation_done = true;
+          }
+          else { // performance evaluation failed
+            best_global_performance = PerformanceUNKNOWN;
+            code_played_relative_perf = PerformanceUNKNOWN;
+            relative_perf_evaluation_done = false;
+          }
+
+          // Post-processing checks
+          // **********************
+
+          if (listOfGlobalPerformances.length != arraySizeAtInit) {
+            throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
+          }
+          if (!check3DArraySizes(listsOfPossibleCodes, maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor)) {
+            throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
+          }
+          if (!check2DArraySizes(nbOfPossibleCodes, maxDepthApplied, nbMaxMarks)) {
+            throw new Error("NEW_ATTEMPT phase / nbOfPossibleCodes allocation was modified");
+          }
+          if (curGame.length != nbMaxAttempts+maxDepth) {
+            throw new Error("NEW_ATTEMPT phase / curGame allocation was modified");
+          }
+          if (marksIdxs.length != nbMaxAttempts+maxDepth) {
+            throw new Error("NEW_ATTEMPT phase / marksIdxs allocation was modified");
+          }
+          if (listOfClassesFirstCall.length != arraySizeAtInit) {
+            throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
+          }
+          if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit)) {
+            throw new Error("NEW_ATTEMPT phase / listOfEquivalentCodesAndPerformances allocation was modified");
+          }
+          if (cur_permutations_table_size.length != overallNbMaxAttempts+overallMaxDepth) {
+            throw new Error("NEW_ATTEMPT phase / cur_permutations_table_size allocation was modified");
+          }
+          if (!check2DArraySizes(cur_permutations_table, overallNbMaxAttempts+overallMaxDepth, cur_permutations_table_size[0])) {
+            throw new Error("NEW_ATTEMPT phase / cur_permutations_table allocation was modified");
+          }
+
+          if (code_colors.length != nbMaxColumns) {
+            throw new Error("NEW_ATTEMPT phase / code_colors allocation was modified");
+          }
+          if (other_code_colors.length != nbMaxColumns) {
+            throw new Error("NEW_ATTEMPT phase / other_code_colors allocation was modified");
+          }
+          if ( (!check2DArraySizes(cur_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
+               || (cur_game_code_colors.size < curGame.length) ) { // first dimension shall be >= curGame size
+            throw new Error("NEW_ATTEMPT phase / cur_game_code_colors allocation was modified or is invalid");
+          }
+          if ( (!check2DArraySizes(other_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
+               || (other_game_code_colors.size < curGame.length) ) { // first dimension shall be >= curGame size
+            throw new Error("NEW_ATTEMPT phase / other_game_code_colors allocation was modified or is invalid");
+          }
+          if (permuted_other_code_colors.length != nbMaxColumns) {
+            throw new Error("NEW_ATTEMPT phase / permuted_other_code_colors allocation was modified");
+          }
+          if (partial_bijection.length != nbMaxColors+1) {
+            throw new Error("NEW_ATTEMPT phase / partial_bijection allocation was modified");
+          }
+          if ( (curGameForGamePrecalculation.length != maxDepthForGamePrecalculation_ForMemAlloc)
+               || (marksIdxsForGamePrecalculation.length != maxDepthForGamePrecalculation_ForMemAlloc) ) {
+            throw new Error("NEW_ATTEMPT phase / curGameForGamePrecalculation or marksIdxsForGamePrecalculation allocation was modified");
+          }
+
+        }
+        else {
+          best_global_performance = PerformanceUNKNOWN;
+          code_played_relative_perf = PerformanceUNKNOWN;
+          relative_perf_evaluation_done = false;
+        }
+
+      }
+
+      if (best_global_performance == PerformanceNA) {
+        throw new Error("NEW_ATTEMPT phase / best_global_performance is NA");
+      }
+      if (code_played_relative_perf == PerformanceNA) {
+        throw new Error("NEW_ATTEMPT phase / code_played_relative_perf is NA");
+      }
+
+      // ***************
+      // B.2) Update GUI
+      // ***************
+
+      self.postMessage({'rsp_type': 'CODE_PLAYED_PERFORMANCE', 'relative_perf_p': code_played_relative_perf, 'best_global_performance_p': best_global_performance, 'relative_perf_evaluation_done_p': relative_perf_evaluation_done, 'code_p': codesPlayed[curAttemptNumber-1], 'attempt_nb': curAttemptNumber, 'game_id': game_id});
+
+      // ************************************************
+      // C.1) Organize performances of all possible codes
+      // ************************************************
+
+      if (nbMaxPossibleCodesShown > nbOfCodesForSystematicEvaluation) {
+        throw new Error("NEW_ATTEMPT phase / inconsistent numbers of listed codes: " + nbMaxPossibleCodesShown + " > " + nbOfCodesForSystematicEvaluation);
+      }
+      let nb_codes_shown = Math.min(previousNbOfPossibleCodes, nbMaxPossibleCodesShown);
+      if (nb_codes_shown > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+        throw new Error("NEW_ATTEMPT phase / inconsistent nb_codes_shown or nbOfCodesForSystematicEvaluation_ForMemAlloc value: " + nb_codes_shown + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+      }
+      let cur_possible_code_list = possibleCodesForPerfEvaluation[curAttemptNumber%2];
+
+      // Particular case of first attempt of Master Mind game
+      // ****************************************************
+
+      if ((curAttemptNumber == 1) && (nbColumns == 4)) { // first attempt
+        if (nb_codes_shown <= 5) { // (initialNbClasses)
+          throw new Error("NEW_ATTEMPT phase / internal error (nb_codes_shown)");
+        }
+        if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
+          throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
+        }
+        if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+          throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (2): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+        }
+        // Add simple codes
+        possibleCodesShown[0] = codeHandler.uncompressStringToCode("1233");
+        possibleCodesShown[1] = codeHandler.uncompressStringToCode("1234");
+        possibleCodesShown[2] = codeHandler.uncompressStringToCode("1122");
+        possibleCodesShown[3] = codeHandler.uncompressStringToCode("1222");
+        possibleCodesShown[4] = codeHandler.uncompressStringToCode("1111");
+        for (let i = 0; i < 5; i++) {
+          if (best_global_performance == PerformanceUNKNOWN) {
+            globalPerformancesShown[i] = PerformanceUNKNOWN;
+          }
+          else {
+            let simple_code_found = false;
+            for (let j = 0; j < previousNbOfPossibleCodes; j++) {
+              if (possibleCodesShown[i] == cur_possible_code_list[j]) {
+                if ((listOfGlobalPerformances[j] == PerformanceNA) || (listOfGlobalPerformances[j] == PerformanceUNKNOWN) || (listOfGlobalPerformances[j] <= 0.01)) {
+                  throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (1) (index " + i + ")");
+                }
+                globalPerformancesShown[i] = listOfGlobalPerformances[j];
+                simple_code_found = true;
+                break;
+              }
+            }
+            if (!simple_code_found) {
+              throw new Error("NEW_ATTEMPT phase / internal error (simple_code_found)");
+            }
+          }
+        }
+        // Add other codes
+        let cnt = 5;
+        for (let i = 0; i < previousNbOfPossibleCodes; i++) {
+          let simple_code_already_present = false;
+          for (let j = 0; j < 5; j++) {
+            if (cur_possible_code_list[i] == possibleCodesShown[j]) {
+              simple_code_already_present = true;
+              break;
+            }
+          }
+          if (!simple_code_already_present) {
+            possibleCodesShown[cnt] = cur_possible_code_list[i];
+            if (best_global_performance == PerformanceUNKNOWN) {
+              globalPerformancesShown[cnt] = PerformanceUNKNOWN;
+            }
+            else {
+              if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
+                throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (2) (index " + i + ")");
+              }
+              globalPerformancesShown[cnt] = listOfGlobalPerformances[i];
+            }
+            cnt++;
+            if (cnt == nb_codes_shown) {
+              break;
+            }
+          }
+        }
+      }
+
+      // Particular case of first attempt of Super Master Mind game
+      // **********************************************************
+
+      else if ((curAttemptNumber == 1) && (nbColumns == 5)) { // first attempt
+        if (nb_codes_shown <= 7) { // (initialNbClasses)
+          throw new Error("NEW_ATTEMPT phase / internal error (nb_codes_shown)");
+        }
+        if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
+          throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
+        }
+        if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+          throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (3): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+        }
+        // Add simple codes
+        possibleCodesShown[0] = codeHandler.uncompressStringToCode("12233");
+        possibleCodesShown[1] = codeHandler.uncompressStringToCode("12344");
+        possibleCodesShown[2] = codeHandler.uncompressStringToCode("12345");
+        possibleCodesShown[3] = codeHandler.uncompressStringToCode("12333");
+        possibleCodesShown[4] = codeHandler.uncompressStringToCode("11222");
+        possibleCodesShown[5] = codeHandler.uncompressStringToCode("12222");
+        possibleCodesShown[6] = codeHandler.uncompressStringToCode("11111");
+        for (let i = 0; i < 7; i++) {
+          if (best_global_performance == PerformanceUNKNOWN) {
+            globalPerformancesShown[i] = PerformanceUNKNOWN;
+          }
+          else {
+            let simple_code_found = false;
+            for (let j = 0; j < previousNbOfPossibleCodes; j++) {
+              if (possibleCodesShown[i] == cur_possible_code_list[j]) {
+                if ((listOfGlobalPerformances[j] == PerformanceNA) || (listOfGlobalPerformances[j] == PerformanceUNKNOWN) || (listOfGlobalPerformances[j] <= 0.01)) {
+                  throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (3) (index " + i + ")");
+                }
+                globalPerformancesShown[i] = listOfGlobalPerformances[j];
+                simple_code_found = true;
+                break;
+              }
+            }
+            if (!simple_code_found) {
+              throw new Error("NEW_ATTEMPT phase / internal error (simple_code_found)");
+            }
+          }
+        }
+        // Add other codes
+        let cnt = 7;
+        for (let i = 0; i < previousNbOfPossibleCodes; i++) {
+          let simple_code_already_present = false;
+          for (let j = 0; j < 7; j++) {
+            if (cur_possible_code_list[i] == possibleCodesShown[j]) {
+              simple_code_already_present = true;
+              break;
+            }
+          }
+          if (!simple_code_already_present) {
+            possibleCodesShown[cnt] = cur_possible_code_list[i];
+            if (best_global_performance == PerformanceUNKNOWN) {
+              globalPerformancesShown[cnt] = PerformanceUNKNOWN;
+            }
+            else {
+              if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
+                throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (4) (index " + i + ")");
+              }
+              globalPerformancesShown[cnt] = listOfGlobalPerformances[i];
+            }
+            cnt++;
+            if (cnt == nb_codes_shown) {
+              break;
+            }
+          }
+        }
+      }
+
+      // General case
+      // ************
+
+      else {
+        for (let i = 0; i < nb_codes_shown; i++) {
+          possibleCodesShown[i] = cur_possible_code_list[i];
+          if (best_global_performance == PerformanceUNKNOWN) {
+            globalPerformancesShown[i] = PerformanceUNKNOWN;
+          }
+          else {
+            if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
+              throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (5) (index " + i + ")");
+            }
+            globalPerformancesShown[i] = listOfGlobalPerformances[i];
+          }
+        }
+      }
+
+      // ***************
+      // C.2) Update GUI
+      // ***************
+
+      self.postMessage({'rsp_type': 'LIST_OF_POSSIBLE_CODES', 'possibleCodesList_p': possibleCodesShown.toString(), 'nb_possible_codes_listed': nb_codes_shown, 'globalPerformancesList_p': globalPerformancesShown.toString(), 'attempt_nb': curAttemptNumber, 'game_id': game_id});
+
+      // ****************
+      // Defensive checks
+      // ****************
+
+      // Check if errors occurred when writing into arrays
+      if ( (possibleCodesForPerfEvaluation[0].length != nbOfCodesForSystematicEvaluation_ForMemAlloc)
+           || (possibleCodesForPerfEvaluation[1].length != nbOfCodesForSystematicEvaluation_ForMemAlloc) ) {
+        throw new Error("inconsistent possibleCodesForPerfEvaluation length: " + possibleCodesForPerfEvaluation[0].length + ", " + possibleCodesForPerfEvaluation[1].length + ", " + nbOfCodesForSystematicEvaluation_ForMemAlloc);
+      }
+
+    }
+
+    // **********
+    // Error case
+    // **********
+
+    else {
+      throw new Error("unexpected smm_req_type value: " + data.smm_req_type);
+    }
+
+  }
+
+  self.onmessage = function(e) {
     try {
 
       if (message_processing_ongoing) {
@@ -2880,925 +3808,44 @@ try {
       }
       let data = e.data;
 
-      if (data.smm_req_type == undefined) {
-        // throw new Error("smm_req_type is undefined: " + JSON.stringify(data));
+      if ( (buffer_incoming_messages && (nb_incoming_messages_buffered <= 0))
+           || ((!buffer_incoming_messages) && (nb_incoming_messages_buffered > 0)) ) {
+        throw new Error("inconsistent buffer_incoming_messages and nb_incoming_messages_buffered values: " + buffer_incoming_messages + ", " + nb_incoming_messages_buffered);
       }
 
-      // **************
-      // Initialization
-      // **************
-
-      else if (data.smm_req_type == 'INIT') {
-
-        // *******************
-        // Read message fields
-        // *******************
-
-        if (init_done) {
-          throw new Error("INIT phase / double initialization");
-        }
-
-        if (data.game_id == undefined) {
-          throw new Error("INIT phase / game_id is undefined");
-        }
-        game_id = Number(data.game_id);
-        if ( isNaN(game_id) || (game_id < 0) ) {
-          throw new Error("INIT phase / invalid game_id: " + game_id);
-        }
-
-        // Post I_AM_ALIVE message
-        if (!IAmAliveMessageSent) {
-          self.postMessage({'rsp_type': 'I_AM_ALIVE', 'game_id': game_id}); // first message sent
-          IAmAliveMessageSent = true;
-        }
-
-        if (data.nbColumns == undefined) {
-          throw new Error("INIT phase / nbColumns is undefined");
-        }
-        nbColumns = Number(data.nbColumns);
-        if ( isNaN(nbColumns) || (nbColumns < nbMinColumns) || (nbColumns > nbMaxColumns) ) {
-          throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
-        }
-
-        if (data.nbColors == undefined) {
-          throw new Error("INIT phase / nbColors is undefined");
-        }
-        nbColors = Number(data.nbColors);
-        if ( isNaN(nbColors) || (nbColors < nbMinColors) || (nbColors > nbMaxColors) ) {
-          throw new Error("INIT phase / invalid nbColors: " + nbColors);
-        }
-
-        if (data.nbMaxAttempts == undefined) {
-          throw new Error("INIT phase / nbMaxAttempts is undefined");
-        }
-        nbMaxAttempts = Number(data.nbMaxAttempts);
-        if ( isNaN(nbMaxAttempts) || (nbMaxAttempts < overallNbMinAttempts) || (nbMaxAttempts > overallNbMaxAttempts) ) {
-          throw new Error("INIT phase / invalid nbMaxAttempts: " + nbMaxAttempts);
-        }
-
-        if (data.nbMaxPossibleCodesShown == undefined) {
-          throw new Error("INIT phase / nbMaxPossibleCodesShown is undefined");
-        }
-        nbMaxPossibleCodesShown = Number(data.nbMaxPossibleCodesShown);
-        if ( isNaN(nbMaxPossibleCodesShown) || (nbMaxPossibleCodesShown < 5) || (nbMaxPossibleCodesShown > 100) ) {
-          throw new Error("INIT phase / invalid nbMaxPossibleCodesShown: " + nbMaxPossibleCodesShown);
-        }
-        possibleCodesShown = new Array(nbMaxPossibleCodesShown);
-        globalPerformancesShown = new Array(nbMaxPossibleCodesShown);
-        for (let i = 0; i < nbMaxPossibleCodesShown; i++) {
-          globalPerformancesShown[i] = PerformanceNA;
-        }
-
-        if (data.first_session_game == undefined) {
-          throw new Error("INIT phase / first_session_game is undefined");
-        }
-        let first_session_game = data.first_session_game;
-
-        if (data.debug_mode == undefined) {
-          throw new Error("INIT phase / debug_mode is undefined");
-        }
-        if (data.debug_mode != "") {
-          if (data.debug_mode == "dbg") {
-            for (let i = 0; i == i; i++) {
-              // if (i % 2 == 0) {console.log(" ");} else {console.log("  ")};
-            }
-          }
-        }
-
-        // ********************
-        // Initialize variables
-        // ********************
-
-        codesPlayed = new Array(nbMaxAttempts);
-        for (let i = 0; i < nbMaxAttempts; i++) {
-          codesPlayed[i] = 0;
-        }
-        marks = new Array(nbMaxAttempts);
-        for (let i = 0; i < nbMaxAttempts; i++) {
-          marks[i] = {nbBlacks:0, nbWhites:0};
-        }
-
-        codeHandler = new CodeHandler(nbColumns, nbColors, nbMinColumns, nbMaxColumns, emptyColor);
-
-        initialNbPossibleCodes = Math.round(Math.pow(nbColors,nbColumns));
-        previousNbOfPossibleCodes = initialNbPossibleCodes;
-        nextNbOfPossibleCodes = initialNbPossibleCodes;
-
-        minNbColorsTable = new Array(nbColors+1);
-        maxNbColorsTable = new Array(nbColors+1);
-        nbColorsTableForMinMaxNbColors = new Array(nbColors+1);
-
-        switch (nbColumns) {
-          case 3:
-            // ******************************************
-            // * Maximum number of marks for 3 columns: *
-            // * 0 black  => 0..3 whites => 4 marks     *
-            // * 1 black  => 0..2 whites => 3 marks     *
-            // * 2 blacks => 0 white     => 1 mark      *
-            // * 3 blacks => 0 white     => 1 mark      *
-            // *                *** TOTAL:  9 marks *** *
-            // ******************************************
-            nbMaxMarks = 9;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*10/30; // (short games)
-            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes;
-            initialNbClasses = 3; // {111, 112, 123}
-            maxDepth = Math.min(11, overallMaxDepth);
-            marks_optimization_mask = 0x1FFF;
-            maxDepthForGamePrecalculation = -1; // no game precalculation needed (-1 or 3)
-            break;
-          case 4:
-            nbMaxMarks = 14;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*20/30; // (short games)
-            nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
-            initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
-            maxDepth = Math.min(12, overallMaxDepth);
-            marks_optimization_mask = 0x3FFF;
-            maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
-            break;
-          case 5:
-            nbMaxMarks = 20;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*44/30;
-            nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
-            initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
-            maxDepth = Math.min(13, overallMaxDepth);
-            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
-            break;
-          case 6:
-            nbMaxMarks = 27;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*52/30;
-            nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
-            initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
-            maxDepth = Math.min(14, overallMaxDepth);
-            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
-            break;
-          case 7:
-            // ******************************************
-            // * Maximum number of marks for 7 columns: *
-            // * 0 black  => 0..7 whites => 8 marks     *
-            // * 1 black  => 0..6 whites => 7 marks     *
-            // * 2 blacks => 0..5 whites => 6 marks     *
-            // * ...                                    *
-            // * 5 blacks => 0..2 whites => 3 marks     *
-            // * 6 blacks => 0 white     => 1 mark      *
-            // * 7 blacks => 0 white     => 1 mark      *
-            // *                *** TOTAL: 35 marks *** *
-            // ******************************************
-            nbMaxMarks = 35;
-            maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*60/30;
-            nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
-            nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
-            initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
-            maxDepth = Math.min(15, overallMaxDepth);
-            marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
-            maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
-            break;
-          default:
-            throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
-        }
-
-        if (nbOfCodesForSystematicEvaluation > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-          throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation");
-        }
-        if ( (maxDepthForGamePrecalculation > maxDepthForGamePrecalculation_ForMemAlloc)
-             || ((maxDepthForGamePrecalculation != -1) && (maxDepthForGamePrecalculation != 3)) ) { // (-1 or 3)
-          throw new Error("INIT phase / internal error (maxDepthForGamePrecalculation: " + maxDepthForGamePrecalculation + ")");
-        }
-        if (minNbCodesForPrecalculation <= nbCodesLimitForEquivalentCodesCheck) {
-          throw new Error("INIT phase / internal error: minNbCodesForPrecalculation");
-        }
-
-        marksTable_MarkToNb = new Array(nbColumns+1); // nbBlacks in 0..nbColumns
-        for (let i = 0; i <= nbColumns; i++) { // nbBlacks
-          marksTable_MarkToNb[i] = new Array(nbColumns+1); // nbWhites in 0..nbColumns
-          for (let j = 0; j <= nbColumns; j++) { // nbWhites
-            marksTable_MarkToNb[i][j] = -1; // N.A.
-          }
-        }
-        marksTable_NbToMark = new Array(nbMaxMarks); // mark indexes in 0..nbMaxMarks-1
-        for (let i = 0; i < nbMaxMarks; i++) { // mark indexes
-          marksTable_NbToMark[i] = {nbBlacks:-1, nbWhites:-1}; // N.A.
-        }
-        let mark_cnt = 0;
-        for (let i = 0; i <= nbColumns; i++) { // nbBlacks
-          for (let j = 0; j <= nbColumns; j++) { // nbWhites
-            let mark_tmp = {nbBlacks:i, nbWhites:j};
-            if (codeHandler.isMarkValid(mark_tmp)) { // go through all valid marks
-              if (mark_cnt >= nbMaxMarks) {
-                throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (1)");
-              }
-              marksTable_NbToMark[mark_cnt] = mark_tmp;
-              marksTable_MarkToNb[i][j] = mark_cnt;
-              mark_cnt++;
-            }
-          }
-        }
-        if (mark_cnt != nbMaxMarks) {
-          throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (2)");
-        }
-        if (marksTable_NbToMark.length != nbMaxMarks) {
-          throw new Error("INIT phase / internal error (marksTable_NbToMark length: " + marksTable_NbToMark.length + ")");
-        }
-        if (marksTable_MarkToNb.length != nbColumns+1) {
-          throw new Error("INIT phase / internal error (marksTable_MarkToNb length: " + marksTable_MarkToNb.length + ") (1)");
-        }
-        for (let i = 0; i <= nbColumns; i++) { // nbBlacks
-          if (marksTable_MarkToNb[i].length != nbColumns+1) {
-            throw new Error("INIT phase / internal error (marksTable_MarkToNb length: " + marksTable_MarkToNb.length + ") (2)");
-          }
-        }
-
-        best_mark_idx = marksTable_MarkToNb[nbColumns][0];
-        worst_mark_idx = marksTable_MarkToNb[0][0];
-
-        possibleCodesForPerfEvaluation = new Array(2);
-        possibleCodesForPerfEvaluation[0] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
-        possibleCodesForPerfEvaluation[1] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
-        // initialCodeListForPrecalculatedMode = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc); // (precalculation mode)
-
-        // **********
-        // Update GUI
-        // **********
-
-        colorsFoundCode = codeHandler.setAllColorsIdentical(emptyColor); // value at game start
-        for (let color = 1; color <= nbColors; color++) { // values at game start
-          minNbColorsTable[color] = 0;
-          maxNbColorsTable[color] = nbColumns;
-        }
-
-        self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': initialNbPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': 1, 'game_id': game_id});
-
-        let nb_possible_codes_listed = fillShortInitialPossibleCodesTable(possibleCodesForPerfEvaluation[1], nbOfCodesForSystematicEvaluation_ForMemAlloc);
-        if (possibleCodesForPerfEvaluation_lastIndexWritten != -1) {
-          throw new Error("INIT phase / inconsistent writing into possibleCodesForPerfEvaluation");
-        }
-        possibleCodesForPerfEvaluation_lastIndexWritten = 1;
-
-        /* if (8*8*8*8*8 != fillShortInitialPossibleCodesTable(initialCodeListForPrecalculatedMode, nbOfCodesForSystematicEvaluation_ForMemAlloc)) { // (precalculation mode)
-          throw new Error("INIT phase / internal error");
-        } */
-
-        init_done = true;
-
+      let stop_message_buffering = false;
+      if (data.buffer_messages == 'yes') {
+        buffer_incoming_messages = true;
       }
-
-      // ***********
-      // New attempt
-      // ***********
-
-      else if (init_done && (data.smm_req_type == 'NEW_ATTEMPT')) {
-
-        // *******************
-        // Read message fields
-        // *******************
-
-        if (data.curAttemptNumber == undefined) {
-          throw new Error("NEW_ATTEMPT phase / curAttemptNumber is undefined");
+      else if (data.buffer_messages == 'no') {
+        if (buffer_incoming_messages) {
+          stop_message_buffering = true;
         }
-        let curAttemptNumber_tmp = Number(data.curAttemptNumber);
-        if ( isNaN(curAttemptNumber_tmp) || (curAttemptNumber_tmp < 0) || (curAttemptNumber_tmp > nbMaxAttempts) ) {
-          throw new Error("NEW_ATTEMPT phase / invalid curAttemptNumber: " + curAttemptNumber_tmp);
-        }
-        if (curAttemptNumber_tmp != curAttemptNumber+1) { // attempt numbers shall be consecutive
-          throw new Error("NEW_ATTEMPT phase / non consecutive curAttemptNumber values: " + curAttemptNumber + ", " + curAttemptNumber_tmp);
-        }
-        curAttemptNumber = curAttemptNumber_tmp;
-
-        if (data.nbMaxAttemptsForEndOfGame == undefined) {
-          throw new Error("NEW_ATTEMPT phase / nbMaxAttemptsForEndOfGame is undefined");
-        }
-        nbMaxAttemptsForEndOfGame = Number(data.nbMaxAttemptsForEndOfGame);
-        if ( isNaN(nbMaxAttemptsForEndOfGame) || (nbMaxAttemptsForEndOfGame < 0) || (nbMaxAttemptsForEndOfGame > nbMaxAttempts) || (nbMaxAttemptsForEndOfGame < curAttemptNumber) ) {
-          throw new Error("NEW_ATTEMPT phase / invalid nbMaxAttemptsForEndOfGame: " + nbMaxAttemptsForEndOfGame + ", " + curAttemptNumber);
-        }
-
-        if (data.code == undefined) {
-          throw new Error("NEW_ATTEMPT phase / code is undefined");
-        }
-        codesPlayed[curAttemptNumber-1] = Number(data.code);
-        if ( isNaN(codesPlayed[curAttemptNumber-1]) || !codeHandler.isFullAndValid(codesPlayed[curAttemptNumber-1]) ) {
-          throw new Error("NEW_ATTEMPT phase / invalid code: " + codesPlayed[curAttemptNumber-1]);
-        }
-
-        if (data.mark_nbBlacks == undefined) {
-          throw new Error("NEW_ATTEMPT phase / mark_nbBlacks is undefined");
-        }
-        let mark_nbBlacks = Number(data.mark_nbBlacks);
-        if ( isNaN(mark_nbBlacks) || (mark_nbBlacks < 0) || (mark_nbBlacks > nbColumns) ) {
-          throw new Error("NEW_ATTEMPT phase / invalid mark_nbBlacks: " + mark_nbBlacks + ", " + nbColumns);
-        }
-        let gameWon = (mark_nbBlacks == nbColumns);
-        if (data.mark_nbWhites == undefined) {
-          throw new Error("NEW_ATTEMPT phase / mark_nbWhites is undefined");
-        }
-        let mark_nbWhites = Number(data.mark_nbWhites);
-        if ( isNaN(mark_nbWhites) || (mark_nbWhites < 0) || (mark_nbWhites > nbColumns) ) {
-          throw new Error("NEW_ATTEMPT phase / invalid mark_nbWhites: " + mark_nbWhites + ", " + nbColumns);
-        }
-        marks[curAttemptNumber-1] = {nbBlacks:mark_nbBlacks, nbWhites:mark_nbWhites};
-        if (!codeHandler.isMarkValid(marks[curAttemptNumber-1])) {
-          throw new Error("NEW_ATTEMPT phase / invalid mark: " + mark_nbBlacks + "B, " + mark_nbWhites + "W, " + nbColumns);
-        }
-
-        if (data.precalculated_games == undefined) {
-          throw new Error("NEW_ATTEMPT phase / precalculated_games is undefined");
-        }
-        if (data.precalculated_games != "") {
-          if ( (nbColumns != 5) || (curAttemptNumber != 1) ) { // precalculated_games is only expected at the first attempt of 5 columns games
-            throw new Error("NEW_ATTEMPT phase / unexpected precalculated_games: " + nbColumns + ", " + curAttemptNumber);
-          }
-          precalculated_games_5columns = precalculated_games_5columns + data.precalculated_games;
-        }
-
-        if (data.game_id == undefined) {
-          throw new Error("NEW_ATTEMPT phase / game_id is undefined");
-        }
-        let attempt_game_id = Number(data.game_id);
-        if ( isNaN(attempt_game_id) || (attempt_game_id < 0) || (attempt_game_id != game_id) ) {
-          throw new Error("NEW_ATTEMPT phase / invalid game_id: " + attempt_game_id + " (" + game_id + ")");
-        }
-
-        // ***************
-        // Initializations
-        // ***************
-
-        // 1) Update cur game
-        // **********************
-
-        if (!initialInitDone) {
-          initialInitDone = true;
-          curGame = new Array(nbMaxAttempts+maxDepth);
-          curGame.fill(0); /* empty code */
-          marksIdxs = new Array(nbMaxAttempts+maxDepth);
-          marksIdxs.fill(-1);
-          generateAllPermutations();
-        }
-
-        if (curAttemptNumber >= 2) {
-          // Notes on "future-based" criteria:
-          // - to simplify, useless codes (likely to be played near game end) are not excluded from cur game.
-          // - to simplify, codes with a 0 black + 0 white mark (likely to be played at game beginning, whose performances are targeted
-          //   to be precalculated) are not excluded from cur game. More generally, the fact that impossible colors are interchangeable
-          //   is not exploited (as mostly covered by 0 black + 0 white mark cases at game beginning / as difficult to take into account
-          //   recursively at small cost / as bijections would have to be calculated in some specific way(s) for those cases).
-          // - handling a "dynamic dictionary of games" containing sets of (k to k+n, k >= 5) possible remaining codes and their associated
-          //   performance was assessed and does not allow to reach any gain for long evaluations (too low percentage of repetitive games).
-          curGame[curAttemptNumber-2] = codesPlayed[curAttemptNumber-2];
-          marksIdxs[curAttemptNumber-2] = marksTable_MarkToNb[marks[curAttemptNumber-2].nbBlacks][marks[curAttemptNumber-2].nbWhites];
-        }
-        curGameSize = curAttemptNumber-1; // (equal to 0 at first attempt)
-
-        // Check cur game (useful for subsequent equivalent codes processing - duplicated code)
-        if (curGameSize != curAttemptNumber-1) {
-          throw new Error("NEW_ATTEMPT phase / invalid curGameSize");
-        }
-        for (let idx = 0; idx < curGameSize; idx++) {
-          if ( (curGame[idx] != codesPlayed[idx]) || (!codeHandler.isFullAndValid(curGame[idx])) ) {
-            throw new Error("NEW_ATTEMPT phase / invalid cur game (" + idx + ")");
-          }
-          if ( (!codeHandler.marksEqual(marksTable_NbToMark[marksIdxs[idx]], marks[idx])) || (!codeHandler.isMarkValid(marksTable_NbToMark[marksIdxs[idx]])) )  {
-            throw new Error("NEW_ATTEMPT phase /  invalid cur marks (" + idx + ")");
-          }
-        }
-
-        // 2) Update possible permutations
-        // *******************************
-
-        // Note: to simplify, more complex algorithms are not used to update possible permutations. For instance: games {[1 1 2] [1 3 4]}, {[1 1 2] [3 4 3]}
-        //       and {[1 2 3] [1 1 1]} lead to numbers of possible permutations which are underestimated.
-
-        if (curAttemptNumber >= 2) {
-          if (cur_permutations_table_size[curGameSize-1] <= 0) {
-            throw new Error("NEW_ATTEMPT phase / invalid cur_permutations_table_size value: " + cur_permutations_table_size[curGameSize-1]);
-          }
-          let new_perm_cnt = 0;
-          for (let perm_idx = 0; perm_idx < cur_permutations_table_size[curGameSize-1]; perm_idx++) {
-            if (areCodesEquivalent(0, 0, curGameSize, true /* assess cur game only */, cur_permutations_table[curGameSize-1][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for cur game
-              if ((cur_permutations_table[curGameSize-1][perm_idx] < 0) || (cur_permutations_table[curGameSize-1][perm_idx] >= all_permutations_table_size[nbColumns])) {
-                throw new Error("NEW_ATTEMPT phase / invalid permutation index: " + perm_idx);
-              }
-              cur_permutations_table[curGameSize][new_perm_cnt] = cur_permutations_table[curGameSize-1][perm_idx];
-              new_perm_cnt++;
-            }
-          }
-          if (new_perm_cnt <= 0) { // identity shall always be valid
-            throw new Error("NEW_ATTEMPT phase / invalid new_perm_cnt value: " + new_perm_cnt);
-          }
-          cur_permutations_table_size[curGameSize] = new_perm_cnt;
-        }
-
-        // **************************************************
-        // A.1) Compute number and list of new possible codes
-        // **************************************************
-
-        console.log(String(curAttemptNumber) + ": " + codeHandler.markToString(marks[curAttemptNumber-1]) + " " + codeHandler.codeToString(codesPlayed[curAttemptNumber-1]));
-
-        if (marks_already_computed_table == null) {
-          marks_already_computed_table = new Array(marks_optimization_mask+1);
-          for (let i = 0; i < marks_already_computed_table.length; i++) {
-            marks_already_computed_table[i] = { code1a:0, code2a:0, nbBlacksa:-1, nbWhitesa:-1,
-                                                code1b:0, code2b:0, nbBlacksb:-1, nbWhitesb:-1,
-                                                code1c:0, code2c:0, nbBlacksc:-1, nbWhitesc:-1,
-                                                write_index:0};
-          }
-        }
-
-        if (curAttemptNumber == 1) { // first attempt
-          possibleCodesAfterNAttempts = new OptimizedArrayList(Math.max(1 + Math.floor(initialNbPossibleCodes/nb_max_internal_lists), 5*nb_max_internal_lists));
-        }
-
-        previousNbOfPossibleCodes = nextNbOfPossibleCodes;
-        nextNbOfPossibleCodes = computeNbOfPossibleCodes(curAttemptNumber+1, nbOfCodesForSystematicEvaluation_ForMemAlloc, possibleCodesForPerfEvaluation[(curAttemptNumber+1)%2]);
-        if (possibleCodesForPerfEvaluation_lastIndexWritten != (curAttemptNumber%2)) {
-          throw new Error("NEW_ATTEMPT phase / inconsistent writing into possibleCodesForPerfEvaluation");
-        }
-        possibleCodesForPerfEvaluation_lastIndexWritten = (curAttemptNumber+1)%2;
-        if (nextNbOfPossibleCodes > previousNbOfPossibleCodes) {
-          throw new Error("NEW_ATTEMPT phase / inconsistent numbers of possible codes: " + nextNbOfPossibleCodes + " > " + previousNbOfPossibleCodes);
-        }
-
-        // ***************
-        // A.2) Update GUI
-        // ***************
-
-        if (curAttemptNumber+1 <= nbMaxAttemptsForEndOfGame) { // not last game attempt
-          self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': nextNbOfPossibleCodes, 'colorsFoundCode_p': colorsFoundCode, 'minNbColorsTable_p': minNbColorsTable.toString(), 'maxNbColorsTable_p': maxNbColorsTable.toString(), 'attempt_nb': (curAttemptNumber+1), 'game_id': game_id});
-        }
-
-        // ***************************************
-        // B.1) Compute performance of code played
-        // ***************************************
-
-        let best_global_performance = PerformanceNA;
-        let code_played_relative_perf = PerformanceNA;
-        let relative_perf_evaluation_done = false;
-
-        // a) Useless code
-        // ***************
-
-        if ((nextNbOfPossibleCodes == previousNbOfPossibleCodes) && (!gameWon)) {
-          // To simplify, for an useless code, performances will be computed at next useful code
-          best_global_performance = PerformanceUNKNOWN;
-          code_played_relative_perf = -1.00;
-          relative_perf_evaluation_done = true;
-        }
-
-        // b) Useful code
-        // **************
-
-        else {
-
-          // Check if cur game and code (whether possible or impossible) were precalculated
-          // **********************************************************************************
-
-          let precalculated_cur_game_or_code = -1; // nothing was precalculated
-          // precalculated_cur_game_or_code shall keep being -1 in precalculation mode => below code to comment in (precalculation mode)
-          if ( (previousNbOfPossibleCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
-               && (curGameSize <= maxDepthForGamePrecalculation) ) { // (-1 or 3)
-            precalculated_cur_game_or_code = lookForCodeInPrecalculatedGames(codesPlayed[curAttemptNumber-1], curGameSize, previousNbOfPossibleCodes);
-          }
-
-          // Main useful code processing
-          // ***************************
-
-          if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
-               || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-               || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
-
-            if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-              throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
-            }
-
-            // Initializations
-            // ***************
-
-            // ***** First evaluation phase in a game *****
-            if (precalculated_cur_game_or_code > 0) { // both game and code were precalculated
-              if (performanceListsInitDone) {
-                throw new Error("NEW_ATTEMPT phase / inconsistent game precalculation");
-              }
-              // - Array allocations
-              if (!performanceListsInitDoneForPrecalculatedGames) {
-                performanceListsInitDoneForPrecalculatedGames = true;
-                arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation_ForMemAlloc)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
-                listOfGlobalPerformances = new Array(arraySizeAtInit);
-                maxDepthApplied = 1; // "one-recursive-depth computing of performances" for cur game and code (whether possible or impossible) => memory optimization
-                listsOfPossibleCodes = undefined;
-                listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
-                nbOfPossibleCodes = undefined;
-                nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
-                listOfClassesFirstCall = new Array(arraySizeAtInit);
-                listOfEquivalentCodesAndPerformances = undefined;
-                listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
-                for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
-                  for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
-                    listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
-                  }
-                }
-                if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
-                  throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (1)");
-                }
-              }
-            }
-            // ***** Second evaluation phase in a game *****
-            else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-                      || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
-              if (precalculated_cur_game_or_code > 0) {
-                throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
-              }
-              // - Array allocations
-              if (!performanceListsInitDone) {
-                performanceListsInitDone = true;
-                arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
-                listOfGlobalPerformances = new Array(arraySizeAtInit);
-                maxDepthApplied = maxDepth;
-                listsOfPossibleCodes = undefined;
-                listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
-                nbOfPossibleCodes = undefined;
-                nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
-                listOfClassesFirstCall = new Array(arraySizeAtInit);
-                listOfEquivalentCodesAndPerformances = undefined;
-                listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
-                for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
-                  for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
-                    listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
-                  }
-                }
-                if ((marks_already_computed_table == null) || (marks_already_computed_table.length != marks_optimization_mask+1)) {
-                  throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (2)");
-                }
-              }
-            }
-            else {
-              throw new Error("NEW_ATTEMPT phase / inconsistent performance evaluation case");
-            }
-
-            // - Other initializations
-            for (let i = 0; i < arraySizeAtInit; i++) {
-              listOfGlobalPerformances[i] = PerformanceNA;
-            }
-            // listsOfPossibleCodes is not initialized as this array may be very large
-            for (let i = 0; i < maxDepthApplied; i++) {
-              for (let j = 0; j < nbMaxMarks; j++) {
-                nbOfPossibleCodes[i][j] = 0;
-              }
-            }
-
-            // Compute performances
-            // ********************
-
-            let code_played_global_performance = PerformanceNA;
-            let index = (curAttemptNumber%2);
-            if (0 == isAttemptPossibleinGameSolver(curAttemptNumber)) { // code played is possible
-              // Evaluate performances for possibleCodesForPerfEvaluation[curAttemptNumber%2]:
-              let startTime = (new Date()).getTime();
-              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */, precalculated_cur_game_or_code);
-              if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
-                let code_played_found = false;
-                for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-                  if ( (possibleCodesForPerfEvaluation[index][i] == codesPlayed[curAttemptNumber-1]) && (listOfGlobalPerformances[i] != PerformanceNA) ) {
-                    code_played_global_performance = listOfGlobalPerformances[i];
-                    code_played_found = true;
-                    break;
-                  }
-                }
-                if (!code_played_found) { // error to test
-                  throw new Error("NEW_ATTEMPT phase / performance of possible code played was not evaluated (" + codeHandler.codeToString(codesPlayed[curAttemptNumber-1]) + ", " + curAttemptNumber + ")");
-                }
-                console.log("(perfeval#1: best performance: " + best_global_performance
-                            + " / code performance: " + code_played_global_performance
-                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class")
-                            + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
-              }
-              else {
-                console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class") + ")");
-              }
-            }
-            else { // code played is not possible
-              // Evaluate performances for possibleCodesForPerfEvaluation[curAttemptNumber%2]:
-              let startTime = (new Date()).getTime();
-              best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[curAttemptNumber-1], precalculated_cur_game_or_code);
-              if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
-                if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
-                  throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: " + particularCodeGlobalPerformance);
-                }
-                code_played_global_performance = particularCodeGlobalPerformance;
-                console.log("(perfeval#2: best performance: " + best_global_performance
-                            + " / code performance: " + particularCodeGlobalPerformance
-                            + " / " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class")
-                            + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
-              }
-              else {
-                console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class") + ")");
-              }
-            }
-
-            if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
-              if ((best_global_performance == PerformanceNA) || (best_global_performance <= 0.01)) {
-                throw new Error("NEW_ATTEMPT phase / invalid best_global_performance: " + best_global_performance);
-              }
-              for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-                let global_performance = listOfGlobalPerformances[i];
-                if ( (global_performance == PerformanceNA) || (global_performance == PerformanceUNKNOWN) || (global_performance <= 0.01) ) {
-                  throw new Error("invalid global performance in listOfGlobalPerformances (1): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
-                }
-                if ( (best_global_performance - global_performance < (PerformanceMinValidValue-1)/2) || (best_global_performance - global_performance >= +0.0001) ) {
-                  throw new Error("invalid global performance in listOfGlobalPerformances (2): " + global_performance + ", " + best_global_performance + ", " + previousNbOfPossibleCodes + ", " + i);
-                }
-              }
-              if ((code_played_global_performance == PerformanceNA) || (code_played_global_performance == PerformanceUNKNOWN) || (code_played_global_performance <= 0.01)) {
-                throw new Error("NEW_ATTEMPT phase / invalid code_played_global_performance: " + code_played_global_performance);
-              }
-              code_played_relative_perf = best_global_performance - code_played_global_performance;
-              if ( (code_played_relative_perf < PerformanceMinValidValue) || (code_played_relative_perf > PerformanceMaxValidValue) ) {
-                throw new Error("NEW_ATTEMPT phase / invalid relative performance: " + code_played_relative_perf + ", " + best_global_performance + ", " + code_played_global_performance);
-              }
-              relative_perf_evaluation_done = true;
-            }
-            else { // performance evaluation failed
-              best_global_performance = PerformanceUNKNOWN;
-              code_played_relative_perf = PerformanceUNKNOWN;
-              relative_perf_evaluation_done = false;
-            }
-
-            // Post-processing checks
-            // **********************
-
-            if (listOfGlobalPerformances.length != arraySizeAtInit) {
-              throw new Error("NEW_ATTEMPT phase / listOfGlobalPerformances allocation was modified");
-            }
-            if (!check3DArraySizes(listsOfPossibleCodes, maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor)) {
-              throw new Error("NEW_ATTEMPT phase / listsOfPossibleCodes allocation was modified");
-            }
-            if (!check2DArraySizes(nbOfPossibleCodes, maxDepthApplied, nbMaxMarks)) {
-              throw new Error("NEW_ATTEMPT phase / nbOfPossibleCodes allocation was modified");
-            }
-            if (curGame.length != nbMaxAttempts+maxDepth) {
-              throw new Error("NEW_ATTEMPT phase / curGame allocation was modified");
-            }
-            if (marksIdxs.length != nbMaxAttempts+maxDepth) {
-              throw new Error("NEW_ATTEMPT phase / marksIdxs allocation was modified");
-            }
-            if (listOfClassesFirstCall.length != arraySizeAtInit) {
-              throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
-            }
-            if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit)) {
-              throw new Error("NEW_ATTEMPT phase / listOfEquivalentCodesAndPerformances allocation was modified");
-            }
-            if (cur_permutations_table_size.length != overallNbMaxAttempts+overallMaxDepth) {
-              throw new Error("NEW_ATTEMPT phase / cur_permutations_table_size allocation was modified");
-            }
-            if (!check2DArraySizes(cur_permutations_table, overallNbMaxAttempts+overallMaxDepth, cur_permutations_table_size[0])) {
-              throw new Error("NEW_ATTEMPT phase / cur_permutations_table allocation was modified");
-            }
-
-            if (code_colors.length != nbMaxColumns) {
-              throw new Error("NEW_ATTEMPT phase / code_colors allocation was modified");
-            }
-            if (other_code_colors.length != nbMaxColumns) {
-              throw new Error("NEW_ATTEMPT phase / other_code_colors allocation was modified");
-            }
-            if ( (!check2DArraySizes(cur_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
-                 || (cur_game_code_colors.size < curGame.length) ) { // first dimension shall be >= curGame size
-              throw new Error("NEW_ATTEMPT phase / cur_game_code_colors allocation was modified or is invalid");
-            }
-            if ( (!check2DArraySizes(other_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
-                 || (other_game_code_colors.size < curGame.length) ) { // first dimension shall be >= curGame size
-              throw new Error("NEW_ATTEMPT phase / other_game_code_colors allocation was modified or is invalid");
-            }
-            if (permuted_other_code_colors.length != nbMaxColumns) {
-              throw new Error("NEW_ATTEMPT phase / permuted_other_code_colors allocation was modified");
-            }
-            if (partial_bijection.length != nbMaxColors+1) {
-              throw new Error("NEW_ATTEMPT phase / partial_bijection allocation was modified");
-            }
-            if ( (curGameForGamePrecalculation.length != maxDepthForGamePrecalculation_ForMemAlloc)
-                 || (marksIdxsForGamePrecalculation.length != maxDepthForGamePrecalculation_ForMemAlloc) ) {
-              throw new Error("NEW_ATTEMPT phase / curGameForGamePrecalculation or marksIdxsForGamePrecalculation allocation was modified");
-            }
-
-          }
-          else {
-            best_global_performance = PerformanceUNKNOWN;
-            code_played_relative_perf = PerformanceUNKNOWN;
-            relative_perf_evaluation_done = false;
-          }
-
-        }
-
-        if (best_global_performance == PerformanceNA) {
-          throw new Error("NEW_ATTEMPT phase / best_global_performance is NA");
-        }
-        if (code_played_relative_perf == PerformanceNA) {
-          throw new Error("NEW_ATTEMPT phase / code_played_relative_perf is NA");
-        }
-
-        // ***************
-        // B.2) Update GUI
-        // ***************
-
-        self.postMessage({'rsp_type': 'CODE_PLAYED_PERFORMANCE', 'relative_perf_p': code_played_relative_perf, 'best_global_performance_p': best_global_performance, 'relative_perf_evaluation_done_p': relative_perf_evaluation_done, 'code_p': codesPlayed[curAttemptNumber-1], 'attempt_nb': curAttemptNumber, 'game_id': game_id});
-
-        // ************************************************
-        // C.1) Organize performances of all possible codes
-        // ************************************************
-
-        if (nbMaxPossibleCodesShown > nbOfCodesForSystematicEvaluation) {
-          throw new Error("NEW_ATTEMPT phase / inconsistent numbers of listed codes: " + nbMaxPossibleCodesShown + " > " + nbOfCodesForSystematicEvaluation);
-        }
-        let nb_codes_shown = Math.min(previousNbOfPossibleCodes, nbMaxPossibleCodesShown);
-        if (nb_codes_shown > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-          throw new Error("NEW_ATTEMPT phase / inconsistent nb_codes_shown or nbOfCodesForSystematicEvaluation_ForMemAlloc value: " + nb_codes_shown + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
-        }
-        let cur_possible_code_list = possibleCodesForPerfEvaluation[curAttemptNumber%2];
-
-        // Particular case of first attempt of Master Mind game
-        // ****************************************************
-
-        if ((curAttemptNumber == 1) && (nbColumns == 4)) { // first attempt
-          if (nb_codes_shown <= 5) { // (initialNbClasses)
-            throw new Error("NEW_ATTEMPT phase / internal error (nb_codes_shown)");
-          }
-          if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
-            throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
-          }
-          if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-            throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (2): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
-          }
-          // Add simple codes
-          possibleCodesShown[0] = codeHandler.uncompressStringToCode("1233");
-          possibleCodesShown[1] = codeHandler.uncompressStringToCode("1234");
-          possibleCodesShown[2] = codeHandler.uncompressStringToCode("1122");
-          possibleCodesShown[3] = codeHandler.uncompressStringToCode("1222");
-          possibleCodesShown[4] = codeHandler.uncompressStringToCode("1111");
-          for (let i = 0; i < 5; i++) {
-            if (best_global_performance == PerformanceUNKNOWN) {
-              globalPerformancesShown[i] = PerformanceUNKNOWN;
-            }
-            else {
-              let simple_code_found = false;
-              for (let j = 0; j < previousNbOfPossibleCodes; j++) {
-                if (possibleCodesShown[i] == cur_possible_code_list[j]) {
-                  if ((listOfGlobalPerformances[j] == PerformanceNA) || (listOfGlobalPerformances[j] == PerformanceUNKNOWN) || (listOfGlobalPerformances[j] <= 0.01)) {
-                    throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (1) (index " + i + ")");
-                  }
-                  globalPerformancesShown[i] = listOfGlobalPerformances[j];
-                  simple_code_found = true;
-                  break;
-                }
-              }
-              if (!simple_code_found) {
-                throw new Error("NEW_ATTEMPT phase / internal error (simple_code_found)");
-              }
-            }
-          }
-          // Add other codes
-          let cnt = 5;
-          for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-            let simple_code_already_present = false;
-            for (let j = 0; j < 5; j++) {
-              if (cur_possible_code_list[i] == possibleCodesShown[j]) {
-                simple_code_already_present = true;
-                break;
-              }
-            }
-            if (!simple_code_already_present) {
-              possibleCodesShown[cnt] = cur_possible_code_list[i];
-              if (best_global_performance == PerformanceUNKNOWN) {
-                globalPerformancesShown[cnt] = PerformanceUNKNOWN;
-              }
-              else {
-                if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
-                  throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (2) (index " + i + ")");
-                }
-                globalPerformancesShown[cnt] = listOfGlobalPerformances[i];
-              }
-              cnt++;
-              if (cnt == nb_codes_shown) {
-                break;
-              }
-            }
-          }
-        }
-
-        // Particular case of first attempt of Super Master Mind game
-        // **********************************************************
-
-        else if ((curAttemptNumber == 1) && (nbColumns == 5)) { // first attempt
-          if (nb_codes_shown <= 7) { // (initialNbClasses)
-            throw new Error("NEW_ATTEMPT phase / internal error (nb_codes_shown)");
-          }
-          if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
-            throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
-          }
-          if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-            throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (3): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
-          }
-          // Add simple codes
-          possibleCodesShown[0] = codeHandler.uncompressStringToCode("12233");
-          possibleCodesShown[1] = codeHandler.uncompressStringToCode("12344");
-          possibleCodesShown[2] = codeHandler.uncompressStringToCode("12345");
-          possibleCodesShown[3] = codeHandler.uncompressStringToCode("12333");
-          possibleCodesShown[4] = codeHandler.uncompressStringToCode("11222");
-          possibleCodesShown[5] = codeHandler.uncompressStringToCode("12222");
-          possibleCodesShown[6] = codeHandler.uncompressStringToCode("11111");
-          for (let i = 0; i < 7; i++) {
-            if (best_global_performance == PerformanceUNKNOWN) {
-              globalPerformancesShown[i] = PerformanceUNKNOWN;
-            }
-            else {
-              let simple_code_found = false;
-              for (let j = 0; j < previousNbOfPossibleCodes; j++) {
-                if (possibleCodesShown[i] == cur_possible_code_list[j]) {
-                  if ((listOfGlobalPerformances[j] == PerformanceNA) || (listOfGlobalPerformances[j] == PerformanceUNKNOWN) || (listOfGlobalPerformances[j] <= 0.01)) {
-                    throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (3) (index " + i + ")");
-                  }
-                  globalPerformancesShown[i] = listOfGlobalPerformances[j];
-                  simple_code_found = true;
-                  break;
-                }
-              }
-              if (!simple_code_found) {
-                throw new Error("NEW_ATTEMPT phase / internal error (simple_code_found)");
-              }
-            }
-          }
-          // Add other codes
-          let cnt = 7;
-          for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-            let simple_code_already_present = false;
-            for (let j = 0; j < 7; j++) {
-              if (cur_possible_code_list[i] == possibleCodesShown[j]) {
-                simple_code_already_present = true;
-                break;
-              }
-            }
-            if (!simple_code_already_present) {
-              possibleCodesShown[cnt] = cur_possible_code_list[i];
-              if (best_global_performance == PerformanceUNKNOWN) {
-                globalPerformancesShown[cnt] = PerformanceUNKNOWN;
-              }
-              else {
-                if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
-                  throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (4) (index " + i + ")");
-                }
-                globalPerformancesShown[cnt] = listOfGlobalPerformances[i];
-              }
-              cnt++;
-              if (cnt == nb_codes_shown) {
-                break;
-              }
-            }
-          }
-        }
-
-        // General case
-        // ************
-
-        else {
-          for (let i = 0; i < nb_codes_shown; i++) {
-            possibleCodesShown[i] = cur_possible_code_list[i];
-            if (best_global_performance == PerformanceUNKNOWN) {
-              globalPerformancesShown[i] = PerformanceUNKNOWN;
-            }
-            else {
-              if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
-                throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (5) (index " + i + ")");
-              }
-              globalPerformancesShown[i] = listOfGlobalPerformances[i];
-            }
-          }
-        }
-
-        // ***************
-        // C.2) Update GUI
-        // ***************
-
-        self.postMessage({'rsp_type': 'LIST_OF_POSSIBLE_CODES', 'possibleCodesList_p': possibleCodesShown.toString(), 'nb_possible_codes_listed': nb_codes_shown, 'globalPerformancesList_p': globalPerformancesShown.toString(), 'attempt_nb': curAttemptNumber, 'game_id': game_id});
-
-        // ****************
-        // Defensive checks
-        // ****************
-
-        // Check if errors occurred when writing into arrays
-        if ( (possibleCodesForPerfEvaluation[0].length != nbOfCodesForSystematicEvaluation_ForMemAlloc)
-             || (possibleCodesForPerfEvaluation[1].length != nbOfCodesForSystematicEvaluation_ForMemAlloc) ) {
-          throw new Error("inconsistent possibleCodesForPerfEvaluation length: " + possibleCodesForPerfEvaluation[0].length + ", " + possibleCodesForPerfEvaluation[1].length + ", " + nbOfCodesForSystematicEvaluation_ForMemAlloc);
-        }
-
+        buffer_incoming_messages = false;
       }
-
-      // **********
-      // Error case
-      // **********
-
       else {
-        throw new Error("unexpected smm_req_type: " + data.smm_req_type);
+        throw new Error("unexpected buffer_messages value: " + data.buffer_messages);
+      }
+
+      if (buffer_incoming_messages) {
+        if (nb_incoming_messages_buffered >= incoming_messages_table.length) {
+          throw new Error("GameSolver event handling error (too many buffered incoming messages)");
+        }
+        incoming_messages_table[nb_incoming_messages_buffered] = JSON.parse(JSON.stringify(data)); // clone/duplicate data into incoming_messages_table[x] (using JSON conversion and back)
+        nb_incoming_messages_buffered++;
+      }
+      else {
+        if (stop_message_buffering) {
+          if (nb_incoming_messages_buffered <= 0) {
+            throw new Error("inconsistent stop_message_buffering flag");
+          }
+          for (let i = 0; i < nb_incoming_messages_buffered; i++) {
+            handleMessage(incoming_messages_table[i]);
+            incoming_messages_table[i] = undefined;
+          }
+          nb_incoming_messages_buffered = 0; // all buffered incoming messages were handled
+        }
+        handleMessage(data); // handle current incoming message
       }
 
     }
@@ -3806,9 +3853,7 @@ try {
       message_processing_ongoing = false;
       throw new Error("gameSolver internal error (message): " + exc + ": " + exc.stack);
     }
-
     message_processing_ongoing = false;
-
   };
 
 }

@@ -36,6 +36,9 @@ let curAttemptNumber=0;
 let nbMaxAttemptsForEndOfGame=-1;
 let message_processing_ongoing=false;
 let IAmAliveMessageSent=false;
+let buffer_incoming_messages=false;
+let nb_incoming_messages_buffered=0;
+let incoming_messages_table=new Array(3*overallMaxDepth);
 let baseOfMaxPerformanceEvaluationTime=30000;
 let maxPerformanceEvaluationTime=-1;
 let refNbOfCodesForSystematicEvaluation=1500;
@@ -517,8 +520,7 @@ if(!codeHandler.isMarkValid(mark)){
 throw new Error("CodeHandler: stringToMark (4) ("+str+")");}}}
 function isAttemptPossibleinGameSolver(attempt_nb){
 if( (attempt_nb<=0)||(attempt_nb>curAttemptNumber) ){
-throw new Error("isAttemptPossibleinGameSolver: invalid attempt_nb "+attempt_nb+","+curAttemptNumber);
-}
+throw new Error("isAttemptPossibleinGameSolver: invalid attempt_nb "+attempt_nb+","+curAttemptNumber);}
 let mark_tmp={nbBlacks:0,nbWhites:0};
 for (let i=1;i<=attempt_nb-1;i++){
 codeHandler.fillMark(codesPlayed[attempt_nb-1],codesPlayed[i-1],mark_tmp);
@@ -1638,16 +1640,7 @@ if(sum_marks!=nbCodes){
 throw new Error("recursiveEvaluatePerformances: invalid sum_marks value (2) (depth="+depth+",sum_marks="+sum_marks+",sum_marks="+sum_marks+")");}}
 particularCodeGlobalPerformance=1.0+sum / nbCodes;}
 return 1.0+best_sum / nbCodes;}
-self.onmessage=function(e){
-try{
-if(message_processing_ongoing){
-throw new Error("GameSolver event handling error (message_processing_ongoing is true)");}
-message_processing_ongoing=true;
-if(e==undefined){
-throw new Error("e is undefined");}
-if(e.data==undefined){
-throw new Error("data is undefined");}
-let data=e.data;
+function handleMessage(data){
 if(data.smm_req_type==undefined){}
 else if(data.smm_req_type=='INIT'){
 if(init_done){
@@ -2174,7 +2167,43 @@ if( (possibleCodesForPerfEvaluation[0].length!=nbOfCodesForSystematicEvaluation_
 ||(possibleCodesForPerfEvaluation[1].length!=nbOfCodesForSystematicEvaluation_ForMemAlloc) ){
 throw new Error("inconsistent possibleCodesForPerfEvaluation length: "+possibleCodesForPerfEvaluation[0].length+","+possibleCodesForPerfEvaluation[1].length+","+nbOfCodesForSystematicEvaluation_ForMemAlloc);}}
 else{
-throw new Error("unexpected smm_req_type: "+data.smm_req_type);}}
+throw new Error("unexpected smm_req_type value: "+data.smm_req_type);}}
+self.onmessage=function(e){
+try{
+if(message_processing_ongoing){
+throw new Error("GameSolver event handling error (message_processing_ongoing is true)");}
+message_processing_ongoing=true;
+if(e==undefined){
+throw new Error("e is undefined");}
+if(e.data==undefined){
+throw new Error("data is undefined");}
+let data=e.data;
+if( (buffer_incoming_messages&&(nb_incoming_messages_buffered<=0))
+||((!buffer_incoming_messages)&&(nb_incoming_messages_buffered>0)) ){
+throw new Error("inconsistent buffer_incoming_messages and nb_incoming_messages_buffered values: "+buffer_incoming_messages+","+nb_incoming_messages_buffered);}
+let stop_message_buffering=false;
+if(data.buffer_messages=='yes'){
+buffer_incoming_messages=true;}
+else if(data.buffer_messages=='no'){
+if(buffer_incoming_messages){
+stop_message_buffering=true;}
+buffer_incoming_messages=false;}
+else{
+throw new Error("unexpected buffer_messages value: "+data.buffer_messages);}
+if(buffer_incoming_messages){
+if(nb_incoming_messages_buffered>=incoming_messages_table.length){
+throw new Error("GameSolver event handling error (too many buffered incoming messages)");}
+incoming_messages_table[nb_incoming_messages_buffered]=JSON.parse(JSON.stringify(data));
+nb_incoming_messages_buffered++;}
+else{
+if(stop_message_buffering){
+if(nb_incoming_messages_buffered<=0){
+throw new Error("inconsistent stop_message_buffering flag");}
+for (let i=0;i<nb_incoming_messages_buffered;i++){
+handleMessage(incoming_messages_table[i]);
+incoming_messages_table[i]=undefined;}
+nb_incoming_messages_buffered=0;}
+handleMessage(data);}}
 catch (exc){
 message_processing_ongoing=false;
 throw new Error("gameSolver internal error (message): "+exc+": "+exc.stack);}
