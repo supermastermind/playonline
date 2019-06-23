@@ -1642,6 +1642,7 @@ particularCodeGlobalPerformance=1.0+sum / nbCodes;}
 return 1.0+best_sum / nbCodes;}
 function handleMessage(data){
 if(data.smm_req_type==undefined){}
+else if(data.smm_req_type=='NO_ACTION'){}
 else if(data.smm_req_type=='INIT'){
 if(init_done){
 throw new Error("INIT phase / double initialization");}

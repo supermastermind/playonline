@@ -2869,10 +2869,12 @@ try {
 
   function handleMessage(data) {
 
-    if (data.smm_req_type == undefined) {
+    if (data.smm_req_type == undefined) { // (unexpected message - was observed in pratice)
       // throw new Error("smm_req_type is undefined: " + JSON.stringify(data));
     }
-
+    else if (data.smm_req_type == 'NO_ACTION') { // (incoming message buffering change)
+    }
+    
     // **************
     // Initialization
     // **************
