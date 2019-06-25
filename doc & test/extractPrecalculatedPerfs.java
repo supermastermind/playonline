@@ -2,7 +2,7 @@ import java.lang.*;
 import java.io.*;
 import java.util.regex.*;
 
-// The goal of this program is to split all precalculated performances into plenty of small files that will be quick to load
+// The goal of this program is to store all precalculated performances into plenty of small files that will be quick to load
 
 /* Notes about final outputs:
 23175 lines with " +"
