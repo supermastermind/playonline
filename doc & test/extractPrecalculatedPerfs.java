@@ -2,11 +2,13 @@ import java.lang.*;
 import java.io.*;
 import java.util.regex.*;
 
-/*
+// The goal of this program is to split all precalculated performances into plenty of small files that will be quick to load
+
+/* Notes about final outputs:
 23175 lines with " +"
 - number of lines with "1|...": 68
 - number of lines with "0|...": 2
-=> 23105 lines written in total [SUCCESS! (23105 out of 88522 lines)] [checkable with "ff B"]
+= 23105 lines written in total [SUCCESS! (23105 out of 88522 lines)] [checkable with "ff B"]
 */
 
 public class extractPrecalculatedPerfs {
