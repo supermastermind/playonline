@@ -6,7 +6,7 @@ import java.util.regex.*;
 23175 lines with " +"
 - number of lines with "1|...": 68
 - number of lines with "0|...": 2
-=> 23105 lines written in total [SUCCESS! (23105 out of 88522 lines)]
+=> 23105 lines written in total [SUCCESS! (23105 out of 88522 lines)] [checkable with "ff B"]
 */
 
 public class extractPrecalculatedPerfs {
@@ -19,10 +19,10 @@ public class extractPrecalculatedPerfs {
 
   private static String[] file_table =
     {
-      "4 of 5 Precalculated perfs in range 270..1500 and 2.7 seconds for 11234 first code.txt",
       "1 of 5 Precalculated perfs in range 300..1300 and 3.5 seconds for 11111, 11112 and 11122 first codes.txt",
       "2 of 5 Precalculated perfs in range 270..1500 and 2.7 seconds for 11123 first code.txt",
       "3 of 5 Precalculated perfs in range 270..1500 and 2.7 seconds for 11223 first code.txt",
+      "4 of 5 Precalculated perfs in range 270..1500 and 2.7 seconds for 11234 first code.txt",
       "5 of 5 Precalculated perfs in range 270..1500 and 2.7 seconds for 12345 first code.txt"
     };
 
