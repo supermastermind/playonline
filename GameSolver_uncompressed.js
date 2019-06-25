@@ -2874,7 +2874,7 @@ try {
     }
     else if (data.smm_req_type == 'NO_ACTION') { // (incoming message buffering change)
     }
-    
+
     // **************
     // Initialization
     // **************
@@ -3815,39 +3815,41 @@ try {
         throw new Error("inconsistent buffer_incoming_messages and nb_incoming_messages_buffered values: " + buffer_incoming_messages + ", " + nb_incoming_messages_buffered);
       }
 
-      let stop_message_buffering = false;
-      if (data.buffer_messages == 'yes') {
-        buffer_incoming_messages = true;
-      }
-      else if (data.buffer_messages == 'no') {
-        if (buffer_incoming_messages) {
-          stop_message_buffering = true;
+      if (data.buffer_messages != undefined) { // (unexpected message - was observed in practice)
+        let stop_message_buffering = false;
+        if (data.buffer_messages == 'yes') {
+          buffer_incoming_messages = true;
         }
-        buffer_incoming_messages = false;
-      }
-      else {
-        throw new Error("unexpected buffer_messages value: " + data.buffer_messages);
-      }
+        else if (data.buffer_messages == 'no') {
+          if (buffer_incoming_messages) {
+            stop_message_buffering = true;
+          }
+          buffer_incoming_messages = false;
+        }
+        else {
+          throw new Error("unexpected buffer_messages value: " + data.buffer_messages);
+        }
 
-      if (buffer_incoming_messages) {
-        if (nb_incoming_messages_buffered >= incoming_messages_table.length) {
-          throw new Error("GameSolver event handling error (too many buffered incoming messages)");
-        }
-        incoming_messages_table[nb_incoming_messages_buffered] = JSON.parse(JSON.stringify(data)); // clone/duplicate data into incoming_messages_table[x] (using JSON conversion and back)
-        nb_incoming_messages_buffered++;
-      }
-      else {
-        if (stop_message_buffering) {
-          if (nb_incoming_messages_buffered <= 0) {
-            throw new Error("inconsistent stop_message_buffering flag");
+        if (buffer_incoming_messages) {
+          if (nb_incoming_messages_buffered >= incoming_messages_table.length) {
+            throw new Error("GameSolver event handling error (too many buffered incoming messages)");
           }
-          for (let i = 0; i < nb_incoming_messages_buffered; i++) {
-            handleMessage(incoming_messages_table[i]);
-            incoming_messages_table[i] = undefined;
-          }
-          nb_incoming_messages_buffered = 0; // all buffered incoming messages were handled
+          incoming_messages_table[nb_incoming_messages_buffered] = JSON.parse(JSON.stringify(data)); // clone/duplicate data into incoming_messages_table[x] (using JSON conversion and back)
+          nb_incoming_messages_buffered++;
         }
-        handleMessage(data); // handle current incoming message
+        else {
+          if (stop_message_buffering) {
+            if (nb_incoming_messages_buffered <= 0) {
+              throw new Error("inconsistent stop_message_buffering flag");
+            }
+            for (let i = 0; i < nb_incoming_messages_buffered; i++) {
+              handleMessage(incoming_messages_table[i]);
+              incoming_messages_table[i] = undefined;
+            }
+            nb_incoming_messages_buffered = 0; // all buffered incoming messages were handled
+          }
+          handleMessage(data); // handle current incoming message
+        }
       }
 
     }

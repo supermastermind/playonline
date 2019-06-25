@@ -2182,6 +2182,7 @@ let data=e.data;
 if( (buffer_incoming_messages&&(nb_incoming_messages_buffered<=0))
 ||((!buffer_incoming_messages)&&(nb_incoming_messages_buffered>0)) ){
 throw new Error("inconsistent buffer_incoming_messages and nb_incoming_messages_buffered values: "+buffer_incoming_messages+","+nb_incoming_messages_buffered);}
+if (data.buffer_messages!=undefined){
 let stop_message_buffering=false;
 if(data.buffer_messages=='yes'){
 buffer_incoming_messages=true;}
@@ -2204,7 +2205,7 @@ for (let i=0;i<nb_incoming_messages_buffered;i++){
 handleMessage(incoming_messages_table[i]);
 incoming_messages_table[i]=undefined;}
 nb_incoming_messages_buffered=0;}
-handleMessage(data);}}
+handleMessage(data);}}}
 catch (exc){
 message_processing_ongoing=false;
 throw new Error("gameSolver internal error (message): "+exc+": "+exc.stack);}
