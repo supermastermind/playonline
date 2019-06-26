@@ -1773,7 +1773,7 @@ function resetGameAttributes(nbColumnsSelected) {
     }
   }
 
-  gameSolverInitMsgContents = {'buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
+  gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
   setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 2500); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
@@ -2415,7 +2415,7 @@ function draw_graphic_bis() {
                   precalculated_games = "";
                 }
               }
-              gameSolver.postMessage({'buffer_messages': 'no', 'smm_req_type': 'NEW_ATTEMPT', 'curAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'precalculated_games': precalculated_games, 'game_id': game_cnt});
+              gameSolver.postMessage({'smm_buffer_messages': 'no', 'smm_req_type': 'NEW_ATTEMPT', 'curAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'precalculated_games': precalculated_games, 'game_id': game_cnt});
               gameSolverDbg++;
             }
             else {

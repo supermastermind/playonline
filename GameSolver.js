@@ -2182,16 +2182,16 @@ let data=e.data;
 if( (buffer_incoming_messages&&(nb_incoming_messages_buffered<=0))
 ||((!buffer_incoming_messages)&&(nb_incoming_messages_buffered>0)) ){
 throw new Error("inconsistent buffer_incoming_messages and nb_incoming_messages_buffered values: "+buffer_incoming_messages+","+nb_incoming_messages_buffered);}
-if (data.buffer_messages!=undefined){
+if (data.smm_buffer_messages!=undefined){
 let stop_message_buffering=false;
-if(data.buffer_messages=='yes'){
+if(data.smm_buffer_messages=='yes'){
 buffer_incoming_messages=true;}
-else if(data.buffer_messages=='no'){
+else if(data.smm_buffer_messages=='no'){
 if(buffer_incoming_messages){
 stop_message_buffering=true;}
 buffer_incoming_messages=false;}
 else{
-throw new Error("unexpected buffer_messages value: "+data.buffer_messages);}
+throw new Error("unexpected smm_buffer_messages value: "+data.smm_buffer_messages);}
 if(buffer_incoming_messages){
 if(nb_incoming_messages_buffered>=incoming_messages_table.length){
 throw new Error("GameSolver event handling error (too many buffered incoming messages)");}
