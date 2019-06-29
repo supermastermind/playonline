@@ -9,12 +9,12 @@
     <meta name="description" content="Play Super Master Mind / Code breaker online, assisted by a calculator which knows the optimal strategy!">
     <meta name="keywords" content="super master mind, code breaker, game, online, optimal strategy, javascript">
 
-    <!-- Remote console at http://console.re/supermastermind displaying console text (provided all calls to "console.re.log(xxx)" are replaced by "console.re.log(xxx)")
+    <!-- Remote console at http://console.re/supermastermind displaying console text (provided all calls to "console.log(xxx)" are replaced by "console.re.log(xxx)")
          and console errors (provided the .js scripts to be debugged are copied/pasted directly into this HTML file between <script>...</script> tags,
          otherwise error details, among which error line numbers, will be lost):
-    -->
       <script src="https://console.re/connector.js" data-channel="supermastermind" id="consolerescript"></script>
       <script>console.re.log('remote log enabled!');</script>
+    -->
 
     <style>
       /* *** Main styles *** */
@@ -239,17 +239,17 @@
       // Animation during page loading:
       // 1) when document is ready
       $(document).ready(function () {
-        console.re.log("(ready)");
+        console.log("(ready)");
         // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").hide(); // hide the mainxxx div
       });
       // 2) when all elements of the page are completely loaded
       $(window).on('load', function() {
-        console.re.log("(on load)");
+        console.log("(on load)");
         // $(".game_loading").fadeOut("slow"); // game_loading div fades out -> postponed after all scripts have been loaded
         // Less beautiful + can put some problems with Chrome while drawing canvas: $(".mainxxx").fadeIn("slow"); // mainxxx div fades in
       });
       // 2') Defense timeout to allow interactions with the page
-      // setTimeout("console.re.log('(on load timeout)');$('.game_loading').fadeOut('slow');", 5000); // game_loading div fades out -> not applied
+      // setTimeout("console.log('(on load timeout)');$('.game_loading').fadeOut('slow');", 5000); // game_loading div fades out -> not applied
 
       $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
         try {
@@ -261,7 +261,7 @@
           }
         }
         catch (exc) {
-          console.re.log("error encountered at game abortion: " + exc);
+          console.log("error encountered at game abortion: " + exc);
           return; // (no confirmation asked)
         }
       });
@@ -298,7 +298,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="eval('try{draw_graphic();}catch(e){}');" onunload="/* See (***) */ debug_on_unload = 2;console.re.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
+  <body onresize="eval('try{draw_graphic();}catch(e){}');" onunload="/* See (***) */ debug_on_unload = 2;console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
 
     <div class="game_loading">
       <img src="img/loading.gif" style='height:12%;'><br>
@@ -438,14 +438,14 @@
           closeLabel: "Close",
           cssClass: ['custom-class-1', 'custom-class-2'],
           onOpen: function() {
-            console.re.log('(modal onOpen)');
+            console.log('(modal onOpen)');
           },
           onClose: function() {
-            console.re.log('(modal onClose)');
+            console.log('(modal onClose)');
           },
           beforeClose: function() {
 
-            console.re.log('(modal beforeClose)');
+            console.log('(modal beforeClose)');
             if (modal_mode == 1) {
 
               // Get firstname entered
@@ -465,7 +465,7 @@
                 }
               }
               catch (exc) {
-                console.re.log("error encountered at first name selection: " + exc);
+                console.log("error encountered at first name selection: " + exc);
               }
 
               if (typeof(Storage) !== 'undefined') {
@@ -474,7 +474,7 @@
                 }
                 localStorage.firstnameAsked = Number(localStorage.firstnameAsked) + 1;
                 if (localStorage.firstname) {
-                  console.re.log("new firstname: " + localStorage.firstname);
+                  console.log("new firstname: " + localStorage.firstname);
                   document.getElementById('form_firstname_id').value = localStorage.firstname;
                 }
                 else if ((localStorage.gamesok) && (Number(localStorage.gamesok) >= 100)) {
@@ -774,13 +774,13 @@
       function submitForm(formStr = "", skipErrorDisplay = false) {
 
         if (globalErrorStatus > 0) { // skip form submission when a basic global error occurred
-          console.re.log("(form submission skipped)");
+          console.log("(form submission skipped)");
           return;
         }
 
         let my_form_url = document.getElementById("my_form").action + '?';
         if (formStr == "") { // Nominal case
-          // console.re.log(JSON.stringify($("#my_form").serializeArray()));
+          // console.log(JSON.stringify($("#my_form").serializeArray()));
           let elements = document.getElementById("my_form").elements;
           for (let i = 0, element; element = elements[i++];) {
             my_form_url = my_form_url + element.name + '=' + element.value + '&';
@@ -802,9 +802,9 @@
         // my_form_url = my_form_url.replaceAll("<","_");
         // my_form_url = my_form_url.replaceAll(">","_"); // (symmetrical replace applied)
 
-        // console.re.log(my_form_url);
+        // console.log(my_form_url);
         // Submit form
-        console.re.log("(jQuery.ajax get/jsonp" + ((formStr == "") ? "" : " for a specific case") + ")");
+        console.log("(jQuery.ajax get/jsonp" + ((formStr == "") ? "" : " for a specific case") + ")");
         debug_game_state = 50;
         jQuery.ajax({
           crossDomain: true,
@@ -817,7 +817,7 @@
           debug_game_state = 51;
           try {
             if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
-              console.re.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+              console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
 
               jQuery.ajax({
                 crossDomain: true,
@@ -829,20 +829,20 @@
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 try {
                   if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
-                    console.re.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                    console.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                   } // else: systematic parse error (with 200 status) is ignored
                   if ((formStr == "") && (!skipErrorDisplay)) {
                     alert("Oops... a network error occurred!");
                   }
                 }
                 catch (exc) {
-                  console.re.log(("script submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                  console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                 }
               });
             } // else: systematic parse error (with 200 status) is ignored
           }
           catch (exc) {
-            console.re.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+            console.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           }
           debug_game_state = 52;
         });
@@ -933,14 +933,14 @@
                && (typeof e.rsp_cd == 'undefined')
                && (typeof e.parameter.rankings !== 'undefined') && (e.parameter.rankings.length > 10) ) {
             var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
-            console.re.log("1: " + rsp_rankings_str);
+            console.log("1: " + rsp_rankings_str);
             rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
             rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>"
             rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
             rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>"); // "<s>" -> "<small>"
             rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>"); // "</s>" -> "</small>"
             rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>"); // apply some color changes
-            console.re.log("2: " + rsp_rankings_str);
+            console.log("2: " + rsp_rankings_str);
             // Rk: top scores are always displayed, even if current game score is not in them
             try {
               modal_mode = 2;
@@ -957,13 +957,13 @@
           }
           else {
             if ((e == undefined) || (e == null)) {
-              console.re.log('rsp_cd: ?');
+              console.log('rsp_cd: ?');
             }
             else if (typeof e.rsp_cd !== 'undefined') {
-              console.re.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
+              console.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
             }
             else {
-              console.re.log('rsp_cd: ?');
+              console.log('rsp_cd: ?');
             }
           }
         }
@@ -973,7 +973,7 @@
         debug_game_state = 81;
       }
       function handle_rsp(e) {
-        console.re.log("(handle_rsp)");
+        console.log("(handle_rsp)");
 
         var score_display_time = 4444; // (see blinking time)
         if (mobileMode) {
@@ -991,7 +991,7 @@
         else {
           time_to_wait = 44; // (no time to wait, form submission was long enough)
         }
-        console.re.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
+        console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
       }
 
@@ -1090,7 +1090,7 @@
                 break;
 
               default:
-                console.re.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
+                console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
                 return;
 
             }
@@ -1160,7 +1160,7 @@
 
                 let converted_data = JSON.stringify(data_p);
                 if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {
-                  console.re.log("geolocation error in convertLocationData: " + locationId + ", " + data_p.statusCode + ", " + data_p.statusMessage);
+                  console.log("geolocation error in convertLocationData: " + locationId + ", " + data_p.statusCode + ", " + data_p.statusMessage);
                 }
 
                 // latitude -> latitude
@@ -1206,7 +1206,7 @@
                   data.longitude = data.loc.substring(commma_idx+1);
                 }
                 catch (e) {
-                  console.re.log("geolocation error in convertLocationData: " + locationId + ", " + e);
+                  console.log("geolocation error in convertLocationData: " + locationId + ", " + e);
                 }
 
                 let converted_data = JSON.stringify(data);
@@ -1302,23 +1302,23 @@
               // Set location form fields
               // ************************
 
-              console.re.log(country);
+              console.log(country);
               document.getElementById('form_country_id').value = country;
-              console.re.log(region);
+              console.log(region);
               document.getElementById('form_region_id').value = region;
-              console.re.log(zip);
+              console.log(zip);
               document.getElementById('form_zip_id').value = zip;
-              console.re.log(city);
+              console.log(city);
               document.getElementById('form_city_id').value = city;
-              console.re.log((locationId + " " + extraLocationInfo).trim());
+              console.log((locationId + " " + extraLocationInfo).trim());
               document.getElementById('form_geoloc_id').value = (locationId + " " + extraLocationInfo).trim();
-              console.re.log(timezone);
+              console.log(timezone);
               document.getElementById('form_timezone_id').value = timezone;
-              console.re.log(latitude);
+              console.log(latitude);
               document.getElementById('form_latitude_id').value = latitude;
-              console.re.log(longitude);
+              console.log(longitude);
               document.getElementById('form_longitude_id').value = longitude;
-              console.re.log(ipaddress);
+              console.log(ipaddress);
               document.getElementById('form_ipaddress_id').value = ipaddress;
 
               // Store location data for future usage
@@ -1349,34 +1349,34 @@
               }
               playerid = playerid_prefix + localStorage.playerid;
 
-              console.re.log(playerid);
+              console.log(playerid);
               document.getElementById('form_playerid_id').value = playerid;
-              console.re.log(firstname);
+              console.log(firstname);
               document.getElementById('form_firstname_id').value = firstname;
-              console.re.log(nbcolumns);
+              console.log(nbcolumns);
               document.getElementById('form_nbcolumns_id').value = nbcolumns;
-              console.re.log(score);
+              console.log(score);
               document.getElementById('form_score_id').value = score;
-              console.re.log(attempts);
+              console.log(attempts);
               document.getElementById('form_attempts_id').value = attempts;
-              console.re.log(timestr);
+              console.log(timestr);
               document.getElementById('form_time_id').value = timestr;
-              console.re.log(perfs);
+              console.log(perfs);
               document.getElementById('form_perfs_id').value = perfs;
-              console.re.log(nbuknperfs);
+              console.log(nbuknperfs);
               document.getElementById('form_nbuknperfs_id').value = nbuknperfs;
-              console.re.log(help);
+              console.log(help);
               document.getElementById('form_help_id').value = help;
-              console.re.log(gamesok);
+              console.log(gamesok);
               document.getElementById('form_gamesok_id').value = gamesok;
-              console.re.log(deltagames);
+              console.log(deltagames);
               document.getElementById('form_deltagames_id').value = deltagames;
 
-              console.re.log(navigator.platform);
+              console.log(navigator.platform);
               document.getElementById('form_platform_id').value = navigator.platform;
-              console.re.log(navigator.language);
+              console.log(navigator.language);
               document.getElementById('form_browserlanguage_id').value = navigator.language;
-              console.re.log(navigator.userAgent);
+              console.log(navigator.userAgent);
               document.getElementById('form_useragent_id').value = navigator.userAgent;
               document.getElementById('form_href_id').value = decodeURI(location.href);
               document.getElementById('form_formsubmitdate_id').value = new Date();
@@ -1450,7 +1450,7 @@
                 submitForm();
               }
               else {
-                console.re.log("(form submission skipped)");
+                console.log("(form submission skipped)");
               }
 
             }, // setFormInfoWithValidLocationData
@@ -1506,9 +1506,9 @@
             HTML_geolocation_success: function(position) {
               let latitude = position.coords.latitude;
               let longitude = position.coords.longitude;
-              console.re.log("HTML geolocation:");
-              console.re.log(" latitude: " + latitude);
-              console.re.log(" longitude: " + longitude);
+              console.log("HTML geolocation:");
+              console.log(" latitude: " + latitude);
+              console.log(" longitude: " + longitude);
               let GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + '%2C' + longitude + '&language=en&key=AIzaSyBhO3CSP-LxypDUjC-MYa_b8iPfJ9qJBko';
               debug_game_state = 10;
               $.getJSON(GEOCODING)
@@ -1519,11 +1519,11 @@
                     let country = String(location.results[0].address_components[5].long_name).trim();
                     let region = String(location.results[0].address_components[4].long_name).trim();
                     let city = String(location.results[0].address_components[2].long_name).trim();
-                    console.re.log(location);
-                    console.re.log(" country: " + country);
-                    console.re.log(" region: " + region);
-                    console.re.log(" city: " + city);
-                    console.re.log(" address: " + location.results[0].formatted_address);
+                    console.log(location);
+                    console.log(" country: " + country);
+                    console.log(" region: " + region);
+                    console.log(" city: " + city);
+                    console.log(" address: " + location.results[0].formatted_address);
 
                     // country + region + city + firstname are used below to identify unique players
                     var sum = 0;
@@ -1565,24 +1565,24 @@
                       localStorage.html_geoloc_status = "ok";
                     }
                     else {
-                      console.re.log("HTML geolocation error: invalid location values");
+                      console.log("HTML geolocation error: invalid location values");
                       localStorage.html_geoloc_status = "ok-invalid";
                     }
                   }
                   else {
-                    console.re.log("HTML geolocation error: status: " + location.status);
+                    console.log("HTML geolocation error: status: " + location.status);
                     localStorage.html_geoloc_status = "nok-2/" + location.status;
                   }
                 }
                 catch (exc) {
-                  console.re.log("HTML geolocation error: " + exc);
+                  console.log("HTML geolocation error: " + exc);
                   localStorage.html_geoloc_status = "nok-3/" + exc;
                 }
                 debug_game_state = 12;
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 debug_game_state = 13;
-                console.re.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                 localStorage.html_geoloc_status = "nok-4";
                 debug_game_state = 14;
               });
@@ -1608,7 +1608,7 @@
                   error_str = "an unknown error occurred";
                   break;
               }
-              console.re.log("HTML geolocation error: " + error_str);
+              console.log("HTML geolocation error: " + error_str);
               localStorage.html_geoloc_status = "nok-5/" + error_str;
             }, // HTML_geolocation_error
 
@@ -1620,7 +1620,7 @@
                   navigator.geolocation.getCurrentPosition(geolocation_handler.HTML_geolocation_success, geolocation_handler.HTML_geolocation_error);
                 }
                 else {
-                  console.re.log("HTML geolocation error: geolocation is not supported by the browser");
+                  console.log("HTML geolocation error: geolocation is not supported by the browser");
                   localStorage.html_geoloc_status = "nok-6";
                 }
               }
@@ -1656,7 +1656,7 @@
                 }
                 else {
                   var errorStr = "invalid geolocation #" + current_nb_JSON_queries_posted + ": " + JSON.stringify(data);
-                  console.re.log(errorStr);                
+                  console.log(errorStr);                
                   if (current_nb_JSON_queries_posted < nbLocationURLs) {
                     geolocation_handler.setFormInfo(); // (recursive call)
                   }
@@ -1669,7 +1669,7 @@
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 debug_game_state = 23;
                 var errorStr = ("geolocation failure #" + current_nb_JSON_queries_posted + ": " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-                console.re.log(errorStr);
+                console.log(errorStr);
                 if (current_nb_JSON_queries_posted < nbLocationURLs) {
                   geolocation_handler.setFormInfo(); // (recursive call)
                 }
@@ -1680,7 +1680,7 @@
               })
               .always(function() {
                 debug_game_state = 25;
-                console.re.log("(getJSON completed #" + current_nb_JSON_queries_posted + ")");
+                console.log("(getJSON completed #" + current_nb_JSON_queries_posted + ")");
                 debug_game_state = 26;
               });
 
@@ -1690,12 +1690,12 @@
 
           geolocation_handler.setFormInfo();
 
-          console.re.log("(store player info exit)");
+          console.log("(store player info exit)");
           debug_game_state = 101;
         }
         catch (exc) {
           debug_game_state = 102;
-          console.re.log("internal error while storing scores: " + exc);
+          console.log("internal error while storing scores: " + exc);
           if (nb_errors_submitted == 0) {
             // alert("Oops... an internal error occurred: " + exc);
             var errorStr = "";
@@ -1777,7 +1777,7 @@
 
       function firstAccessGeolocFailure(jqxhr, textStatus, error) {
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-        console.re.log(errorStr);
+        console.log(errorStr);
         debug_game_state = 30;
         $.getJSON(locationURLs[1], function(data_p) {
           debug_game_state = 31;
@@ -1830,13 +1830,13 @@
           debug_game_state = 33;
           localStorage.firstgamegeoloc = "faerr2";
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-          console.re.log(errorStr);
+          console.log(errorStr);
           storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
           debug_game_state = 34;
         })
         .always(function() {
           debug_game_state = 35;
-          console.re.log("(getJSON completed #i2)");
+          console.log("(getJSON completed #i2)");
           debug_game_state = 36;
         });
       }
@@ -1867,7 +1867,7 @@
         })
         .always(function() {
           debug_game_state = 45;
-          console.re.log("(getJSON completed #i1)");
+          console.log("(getJSON completed #i1)");
           debug_game_state = 46;
         });
 
@@ -1905,13 +1905,13 @@
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           debug_game_state = 61;
           var errorStr = ("SuperMasterMind script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-          console.re.log(errorStr);
+          console.log(errorStr);
           alert("Oops... a network error occurred!\nPlease try to reload this page...\n\n" + "(" + errorStr + ")");
           debug_game_state = 62;
         })
         .always(function() {
           debug_game_state = 63;
-          console.re.log("(on scripts load)");
+          console.log("(on scripts load)");
           $(".game_loading").fadeOut("slow"); // game_loading div fades out
           debug_game_state = 64;
         });
@@ -1928,7 +1928,7 @@
       })
       .done(function(data) { // Success case
         debug_game_state = 71;
-        // console.re.log(data); // data contains GameSolver script contents
+        // console.log(data); // data contains GameSolver script contents
         gamesolver_blob = new Blob([data], {type: "application/javascript"});
         // Super Master Mind script is only loaded once GameSolver script has been loaded successfully
         setTimeout("loadSuperMasterMindScript();", 44);
@@ -1937,7 +1937,7 @@
       .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
         debug_game_state = 73;
         var errorStr = ("GameSolver script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
-        console.re.log(errorStr);
+        console.log(errorStr);
         gamesolver_blob_error = errorStr;
         // Super Master Mind script is loaded and will raise an error because GameSolver script has not been loaded successfully
         // setTimeout("loadSuperMasterMindScript();", 44);
