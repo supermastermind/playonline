@@ -389,7 +389,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NM2";
+      let html_compatibility_game_version = "Ver_NO";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -811,6 +811,7 @@
           url: my_form_url,
           method: "GET",
           dataType: "jsonp",
+          cache: false,
           timeout: 40000 // 40 seconds
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -824,6 +825,7 @@
                 url: my_form_url,
                 method: "GET",
                 dataType: "jsonp",
+                cache: false,
                 timeout: 40000 // 40 seconds
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -1900,6 +1902,7 @@
           url: "SuperMasterMind.js",
           dataType: "script",
           mimeType: "application/javascript",
+          cache: false,
           timeout: 1800000 // 30 minutes (very high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -1924,6 +1927,7 @@
         url: "GameSolver.js",
         dataType: "script",
         mimeType: "application/javascript",
+        cache: false,
         timeout: 1800000 // 30 minutes (very high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
       })
       .done(function(data) { // Success case
