@@ -188,6 +188,17 @@
     </style>
 
     <script>
+      var userAgentStr = "";
+      try {
+        var androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
+        if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
+          userAgentStr = "Android appli (" + androidAppliInfoStr + ") ";
+        }
+        userAgentStr = userAgentStr + navigator.userAgent;
+      } catch (err) {
+        userAgentStr = "??? " + navigator.userAgent;
+      }
+    
       var globalErrorStatus = 0;
       try {
         eval('"use strict"; class foo {}; let test_let_inst = 1;'); // Interner Explorer does not support classes and old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1)
@@ -203,6 +214,7 @@
         globalErrorStatus = 2;
         throw new Error(workerErrorMsg);
       }
+           
       var nbGamesPlayedAndWon = 0;
       var someGamesWereWon = false;
       var nbGamesPlayed = 0;
@@ -552,6 +564,9 @@
       rankings: <input id='form_rankings_id' name='rankings' type='text' value='-'><br>
 
     </form>
+    
+    <form  style='display:none;' id='my_all_scripts_loaded_form' target='my_frame' action='https://ALL_SCRIPTS_LOADED'>
+    </form>
 
     <script>
   
@@ -811,7 +826,6 @@
           url: my_form_url,
           method: "GET",
           dataType: "jsonp",
-          cache: false,
           timeout: 40000 // 40 seconds
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -825,7 +839,6 @@
                 url: my_form_url,
                 method: "GET",
                 dataType: "jsonp",
-                cache: false,
                 timeout: 40000 // 40 seconds
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -865,7 +878,7 @@
 
       // Temporary error handling (from this point in this file to simplify / will be overwritten later)
       function tmp_game_onerror(errorStr, errStack) {
-        submitForm("***** GAME ERROR ***** (" + html_compatibility_game_version + "): " + errorStr + " / " + errStack + " in " + navigator.userAgent, true);
+        submitForm("***** GAME ERROR ***** (" + html_compatibility_game_version + "): " + errorStr + " / " + errStack + " in " + userAgentStr, true);
       }
       window.onerror = tmp_game_onerror;
       window.onmessageerror = tmp_game_onerror;
@@ -894,7 +907,7 @@
         catch (exc) {}
         let skip_undefined_errors = ((evt == undefined) || ((evt.reason == undefined) && (evt.promise == undefined)));
         if (!skip_undefined_errors) {
-          submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+          submitForm("***** GAME UNHANDLEDREJECTION ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + userAgentStr, true);
         }
       };
       window.onrejectionhandled = function(evt) {
@@ -921,7 +934,7 @@
         catch (exc) {}
         let skip_undefined_errors = ((evt == undefined) || ((evt.reason == undefined) && (evt.promise == undefined)));
         if (!skip_undefined_errors) {
-          submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + navigator.userAgent, true);
+          submitForm("***** GAME REJECTIONHANDLED ERROR ***** (" + html_compatibility_game_version + "): event: " + evt + ", " + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + ", " + evt_promise_str + " / debug: " + nbGamesPlayed + ", " + nbGamesPlayedAndWon + ", " + debug_game_state + ", " + debug_on_unload + " for " + extra_debug_info + " in " + userAgentStr, true);
         }
       };
 
@@ -1378,8 +1391,8 @@
               document.getElementById('form_platform_id').value = navigator.platform;
               console.log(navigator.language);
               document.getElementById('form_browserlanguage_id').value = navigator.language;
-              console.log(navigator.userAgent);
-              document.getElementById('form_useragent_id').value = navigator.userAgent;
+              console.log(userAgentStr);
+              document.getElementById('form_useragent_id').value = userAgentStr;
               document.getElementById('form_href_id').value = decodeURI(location.href);
               document.getElementById('form_formsubmitdate_id').value = new Date();
 
@@ -1709,7 +1722,7 @@
                 errorStr = errorStr + " for first access id " + localStorage.firstaccessid;
               }
             }
-            errorStr = errorStr + " on " + navigator.platform + " / " + navigator.userAgent + " / " + decodeURI(location.href);
+            errorStr = errorStr + " on " + navigator.platform + " / " + userAgentStr + " / " + decodeURI(location.href);
             submitForm("internal error while storing scores" + errorStr + ": " + exc, true);
             nb_errors_submitted++;
           }
@@ -1754,7 +1767,7 @@
             firstAccessIdStr = localStorage.firstaccessid;
           }
         }
-        var debugStr = "firstgeoloc:" + localStorage.firstgamegeoloc + "/" + navigator.userAgent + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
+        var debugStr = "firstgeoloc:" + localStorage.firstgamegeoloc + "/" + userAgentStr + "/initial: " + initial_time + "/final: " + final_time + "/debug_info:" + debug_info;
         var nbColorSelectionsStr = ((nbColorSelections == 0) ? "(-)" : "(" + String(nbColorSelections) + ")");
         var gameRulesDisplayedStr = (gameRulesDisplayed ? "(r)" : "");
         submitForm('-&' + 'page=' + access_type + '&' + 'timeonpage=' + timeStr + '&' + 'country=' + countryNameStr + '&region=' + regionNameStr + '&city=' + cityNameStr + '&nbgameswon=' + ((nbGamesPlayedAndWon==0)?"-":String(nbGamesPlayedAndWon)) + '&nbgames=' + ((nbGamesPlayed==0)?"-":String(nbGamesPlayed)) + '&nbcodes=' + ((nbCodesPlayed==0)?"-":String(nbCodesPlayed)) + " " + nbColorSelectionsStr + " " + gameRulesDisplayedStr + '&ipaddress=' + ipAddressStr + '&firstaccessid=' + firstAccessIdStr + '&debug=' + debugStr, true);
@@ -1902,7 +1915,6 @@
           url: "SuperMasterMind.js",
           dataType: "script",
           mimeType: "application/javascript",
-          cache: false,
           timeout: 1800000 // 30 minutes (very high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -1917,6 +1929,8 @@
           console.log("(on scripts load)");
           $(".game_loading").fadeOut("slow"); // game_loading div fades out
           debug_game_state = 64;
+          $("#my_all_scripts_loaded_form").submit(); // (dummy form submission for android appli's web view)
+          debug_game_state = 65;
         });
       }
 
@@ -1927,7 +1941,6 @@
         url: "GameSolver.js",
         dataType: "script",
         mimeType: "application/javascript",
-        cache: false,
         timeout: 1800000 // 30 minutes (very high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
       })
       .done(function(data) { // Success case
