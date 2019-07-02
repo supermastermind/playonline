@@ -913,7 +913,7 @@ lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;}}}}
 function playAColor(color,column){
 if(gameOnGoing()){
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
-if(nbColumns<=5){
+if((nbColumns<=4)||((nbColumns==5)&&(currentAttemptNumber<=5))){  
 return;}}
 let newCurrentCode=simpleCodeHandler.setColor(currentCode,color,column);
 for (let i=1;i<currentAttemptNumber;i++){
@@ -1829,13 +1829,13 @@ let HintsThreshold=5;
 if(!showPossibleCodesMode){
 ctx.font=medium3_bold_font;
 if( (nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok)<=5)) ){
-if(!displayString("\u2B50\u2009Help\u2009/\u2009Rules   ",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
+if(!displayString("\u2009\u2B50\u2009Help\u2009/\u2009Rules   ",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray,backgroundColor_2,ctx,true,1,true,0)){
-if(!displayString("\u2B50\u2009Help   ",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
+if(!displayString("\u2009\u2B50\u2009Help   ",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray,backgroundColor_2,ctx,true,1,true,0)){
-if(!displayString("\u2B50Help\u2009",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
+if(!displayString("\u2009\u2B50Help\u2009",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray,backgroundColor_2,ctx,true,1,true,0)){
-displayString("Help\u2009",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
+displayString("\u2009Help\u2009",0,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1,attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray,backgroundColor_2,ctx,true,1,true,0);}}}}
 if((!CompressedDisplayMode)&&(optimal_width>0)&&(tick_width>0)){
 ctx.font=very_small_italic_font;
