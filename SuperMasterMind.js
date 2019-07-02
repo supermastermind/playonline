@@ -26,8 +26,8 @@ let disableMouseMoveEffects=false;
 let atLeastOneAttemptSelection=false;
 let currentPossibleCodeShownBeforeMouseMove=-1;
 let lastidxBeforeMouseMove=-1;
-let nbValidMouseClicks = 0;
-let nbInvalidMouseClicks = 0;
+let nbValidMouseClicks=0;
+let nbInvalidMouseClicks=0;
 let currentCode=-1;
 let codesPlayed;
 let marks;
@@ -766,151 +766,118 @@ if(invertMode||showModeForced){
 try{
 $(".page_transition").fadeOut("fast");}
 catch (exc){}}}}
-function mouseClick(e) {
-let event_x_min, event_x_max, event_y_min, event_y_max;
-let rect = canvas.getBoundingClientRect();
-let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
-let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
-if (dsCode) {
-displayGUIError("dsCode error", new Error().stack);
-}
-else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)))
-&& ( ((mouse_x > get_x_pixel(x_min))
-&& (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
-&& (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
-&& (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-|| ((nbValidMouseClicks == 1) && !localStorage.gamesok)
-|| ((nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) {
-let allColorsStr = "";
-for (let color_idx = 0; color_idx < nominalGameNbColors; color_idx++) {
-allColorsStr = allColorsStr + "<span style='color:" + foregroundColorTable[color_idx] + ";background-color:" + backgroundColorTable[color_idx] + "'>" + (color_idx+1) + "</span>";
-}
-let widthStr = "65%";
-if (window.innerWidth < 1.0*window.innerHeight) {
-widthStr = "100%";
-}
-else if (window.innerWidth>1.5*window.innerHeight) {
-widthStr = "55%";
-}
-let game_rules_str =
+function mouseClick(e){
+let event_x_min,event_x_max,event_y_min,event_y_max;
+let rect=canvas.getBoundingClientRect();
+let mouse_x=e.clientX - rect.left - 2.0 /* (correction) */;
+let mouse_y=e.clientY - rect.top - 2.0 /* (correction) */;
+if(dsCode){
+displayGUIError("dsCode error",new Error().stack);}
+else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok)<=5)))
+&&( ((mouse_x>get_x_pixel(x_min))
+&&(mouse_x<get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
+&&(mouse_y>get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
+&&(mouse_y<get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
+||((nbValidMouseClicks==1) &&!localStorage.gamesok)
+||((nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
+let allColorsStr="";
+for (let color_idx=0;color_idx<nominalGameNbColors;color_idx++){
+allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";}
+let widthStr="65%";
+if(window.innerWidth<1.0*window.innerHeight){
+widthStr="100%";}
+else if(window.innerWidth>1.5*window.innerHeight){
+widthStr="55%";}
+let game_rules_str=
 "<center><table style='width:100%;'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
-<b>The goal of the game is to find out a secret code composed of " + nominalGameNbColumns + " colors chosen randomly among&nbsp;<big>" + allColorsStr + "</big>:</b><br>\
-<img src='img/SuperMasterMind_rules.png' style='width:" + widthStr + ";margin-top:0.7vh'><br><br>\
+<b>The goal of the game is to find out a secret code composed of "+nominalGameNbColumns+" colors chosen randomly among&nbsp;<big>"+allColorsStr+"</big>:</b><br>\
+<img src='img/SuperMasterMind_rules.png' style='width:"+widthStr+";margin-top:0.7vh'><br><br>\
 <b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
 <b><a href='index.html#game_rules'>&#x2302;&nbsp;Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
 <b><a href='screenshots.html'>&#x2302;&nbsp;Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
 <b><a href='optimal_strategy.html'>&#x2302;&nbsp;Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>\
 <b><a href='contact_info.html'>&#x2302;&nbsp;Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font></td></tr></table></center>";
-try {
-gameRulesDisplayed = true;
-modal_mode = 3;
-modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-+ game_rules_str
-+ "</div>");
-modal.open();
-}
-catch (exc) {
-throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
-}
-if (nbValidMouseClicks == 1) {
-nbValidMouseClicks = 2; // (trick)
-}
-else {
-nbValidMouseClicks = 2; // (trick)
-nbInvalidMouseClicks = 2; // (trick)
-}
-}
-else if (gameOnGoing()) {
-event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
-event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
-event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors));
-event_y_max = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
-if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
-&& (mouse_y > event_y_min) && (mouse_y < event_y_max) ) {
-try {
-for (let column = 0; column < nbColumns; column++) {
-let x_0, y_0, x_1, y_1;
-x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
-x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
-if ((mouse_x > x_0) && (mouse_x < x_1)) {
-let colorSelected = false;
-for (let color = 0; color < nbColors; color++) {
-y_0 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+(color+1)));
-y_1 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+color));
-if ((mouse_y > y_0) && (mouse_y < y_1)) {
-colorSelected = true;
-playAColor(color+1, column+1);
+try{
+gameRulesDisplayed=true;
+modal_mode=3;
+modal.setContent("<div style='-webkit-touch-callout: none;/* iOS Safari */ -webkit-user-select: none;/* Safari */ -khtml-user-select: none;/* Konqueror HTML */ -moz-user-select: none;/* Firefox */ -ms-user-select: none;/* Internet Explorer/Edge */ user-select: none;/* Non-prefixed version,currently supported by Chrome and Opera */'>"
++game_rules_str
++"</div>");
+modal.open();}
+catch (exc){
+throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);}
+if(nbValidMouseClicks==1){
+nbValidMouseClicks=2;}
+else{
+nbValidMouseClicks=2;
+nbInvalidMouseClicks=2;}}
+else if(gameOnGoing()){
+event_x_min=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
+event_x_max=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
+event_y_min=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors));
+event_y_max=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
+if( (mouse_x>event_x_min)&&(mouse_x<event_x_max)
+&&(mouse_y>event_y_min)&&(mouse_y<event_y_max) ){
+try{
+for (let column=0;column<nbColumns;column++){
+let x_0,y_0,x_1,y_1;
+x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
+x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
+if((mouse_x>x_0)&&(mouse_x<x_1)){
+let colorSelected=false;
+for (let color=0;color<nbColors;color++){
+y_0=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+(color+1)));
+y_1=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+color));
+if((mouse_y>y_0)&&(mouse_y<y_1)){
+colorSelected=true;
+playAColor(color+1,column+1);
 nbColorSelections++;
-break;
-}
-}
-if (!colorSelected) {
-playAColor(emptyColor, column+1);
-}
-break;
-}
-}
-}
-catch (exc) {
-displayGUIError("mouseReleased: " + exc, exc.stack);
-}
-nbValidMouseClicks++;
-}
-else {
-nbInvalidMouseClicks++;
-}
-
-}
-else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
-if (!showPossibleCodesMode) {
-event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed));
-}
-else {
-event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
-}
-event_y_max = get_y_pixel(y_min+y_step*0);
-if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (below code duplicated)
-lastidxBeforeMouseMove = -1;
-for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
-let y_0 = get_y_pixel(y_min+y_step*(idx+1));
-let y_1 = get_y_pixel(y_min+y_step*(idx));
-if ((mouse_y > y_0) && (mouse_y < y_1)) {
-showPossibleCodesOffsetMode = false;
-disableMouseMoveEffects = true;
-if (showPossibleCodesMode) {
-atLeastOneAttemptSelection = true;
-}
-showPossibleCodesButtonClick(!showPossibleCodesMode, idx+1);
-break;
-}
-}
-}
-else {
-if (showPossibleCodesMode) {
-disableMouseMoveEffects = false;
-let x_0_half_display = get_x_pixel(x_min);
-let x_1_half_display = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
-let y_0_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75/* (margin) */))
-let y_1_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2/* (margin) */));
-if ( (mouse_x > x_0_half_display) && (mouse_x < x_1_half_display)
-&& (mouse_y > y_0_half_display) && (mouse_y < y_1_half_display) ) { // (half display - always tested to simplify)
-atLeastOneAttemptSelection = true;
-showPossibleCodesOffsetMode = !showPossibleCodesOffsetMode;
-main_graph_update_needed = true;
-draw_graphic(false);
-}
-else { // (other zones)
-showPossibleCodesOffsetMode = false;
-lastidxBeforeMouseMove = -1;
-showPossibleCodesButtonClick();
-}
-}
-else {
-lastidxBeforeMouseMove = -1;
-}
-}
-}
-}
+break;}}
+if(!colorSelected){
+playAColor(emptyColor,column+1);}
+break;}}}
+catch (exc){
+displayGUIError("mouseReleased: "+exc,exc.stack);}
+nbValidMouseClicks++;}
+else{
+nbInvalidMouseClicks++;}}
+else if((!gameOnGoing())&&allPossibleCodesFilled()){
+if(!showPossibleCodesMode){
+event_y_min=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed));}
+else{
+event_y_min=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));}
+event_y_max=get_y_pixel(y_min+y_step*0);
+if( (mouse_y>event_y_min)&&(mouse_y<event_y_max) ){
+lastidxBeforeMouseMove=-1;
+for (let idx=0;idx<currentAttemptNumber-1;idx++){
+let y_0=get_y_pixel(y_min+y_step*(idx+1));
+let y_1=get_y_pixel(y_min+y_step*(idx));
+if((mouse_y>y_0)&&(mouse_y<y_1)){
+showPossibleCodesOffsetMode=false;
+disableMouseMoveEffects=true;
+if(showPossibleCodesMode){
+atLeastOneAttemptSelection=true;}
+showPossibleCodesButtonClick(!showPossibleCodesMode,idx+1);
+break;}}}
+else{
+if(showPossibleCodesMode){
+disableMouseMoveEffects=false;
+let x_0_half_display=get_x_pixel(x_min);
+let x_1_half_display=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
+let y_0_half_display=get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75/* (margin) */))
+let y_1_half_display=get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2/* (margin) */));
+if( (mouse_x>x_0_half_display)&&(mouse_x<x_1_half_display)
+&&(mouse_y>y_0_half_display)&&(mouse_y<y_1_half_display) ){
+atLeastOneAttemptSelection=true;
+showPossibleCodesOffsetMode=!showPossibleCodesOffsetMode;
+main_graph_update_needed=true;
+draw_graphic(false);}
+else{
+showPossibleCodesOffsetMode=false;
+lastidxBeforeMouseMove=-1;
+showPossibleCodesButtonClick();}}
+else{
+lastidxBeforeMouseMove=-1;}}}}
 function mouseMove(e){
 if(!showPossibleCodesMode){
 return;}
@@ -946,11 +913,8 @@ lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;}}}}
 function playAColor(color,column){
 if(gameOnGoing()){
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
-if(nbColumns==5){
-alert("This color is obviously impossible!");}
-if (nbColumns<=5){
-return;
-}}
+if(nbColumns<=5){
+return;}}
 let newCurrentCode=simpleCodeHandler.setColor(currentCode,color,column);
 for (let i=1;i<currentAttemptNumber;i++){
 if(newCurrentCode==codesPlayed[i-1]){
@@ -1166,7 +1130,7 @@ toto=simpleCodeHandler.setColor(toto,4,2);
 toto=simpleCodeHandler.setColor(toto,4,3);
 toto=simpleCodeHandler.setColor(toto,4,4);
 toto=simpleCodeHandler.setColor(toto,4,5);
-sCode=~(toto); */
+sCode=~(toto);*/
 sCodeRevealed=0;
 newGameEvent=false;
 playerWasHelped=false;
@@ -1767,7 +1731,7 @@ y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 drawLine(ctx,x_0,y_0,x_1,y_1);
 ctx.font=basic_bold_font;
 for (let i=1;i<currentAttemptNumber;i++){
-displayCode(codesPlayed[i-1],i-1,ctx);
+displayCode(codesPlayed[i-1],i-1,ctx,false,true);
 let backgroundColor=backgroundColor_2;
 if(i==currentPossibleCodeShown){
 backgroundColor=highlightColor;}
@@ -2373,7 +2337,7 @@ checkArraySizes();
 main_graph_update_needed=false;}
 if(gameOnGoing()){
 ctx.font=basic_bold_font;
-displayCode(currentCode,currentAttemptNumber-1,ctx);
+displayCode(currentCode,currentAttemptNumber-1,ctx,false,true);
 if( gameOnGoing()&&(currentAttemptNumber>1)
 &&!(document.getElementById("revealSecretColorButton").disabled)
 &&(sCodeRevealed==0)

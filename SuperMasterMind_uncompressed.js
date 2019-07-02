@@ -1422,10 +1422,7 @@ function mouseMove(e) {
 function playAColor(color, column) {
   if (gameOnGoing()) {
     if ((color != emptyColor) && obviouslyImpossibleColors[color]) {
-      if (nbColumns == 5) {
-        alert("This color is obviously impossible!");
-      }
-      if (nbColumns <= 5) {
+      if (nbColumns <= 5) { // (covers "not too complex" games and precalculated games)
         return;
       }
     }
@@ -2623,7 +2620,7 @@ function draw_graphic_bis() {
       ctx.font = basic_bold_font;
       for (let i = 1; i < currentAttemptNumber; i++) {
 
-        displayCode(codesPlayed[i-1], i-1, ctx);
+        displayCode(codesPlayed[i-1], i-1, ctx, false, true);
 
         let backgroundColor = backgroundColor_2;
         if (i == currentPossibleCodeShown) {
@@ -3534,7 +3531,7 @@ function draw_graphic_bis() {
     // Display current code
     if (gameOnGoing()) { // playing phase
       ctx.font = basic_bold_font;
-      displayCode(currentCode, currentAttemptNumber-1, ctx);
+      displayCode(currentCode, currentAttemptNumber-1, ctx, false, true);
 
       // Useful to trigger button blinking due to time only
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
