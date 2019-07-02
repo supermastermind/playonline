@@ -913,7 +913,7 @@ lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;}}}}
 function playAColor(color,column){
 if(gameOnGoing()){
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
-if((nbColumns<=4)||((nbColumns==5)&&(currentAttemptNumber<=5))){  
+if((nbColumns<=4)||((nbColumns==5)&&(currentAttemptNumber<=4))||(currentAttemptNumber==nbMaxAttempts)){  
 return;}}
 let newCurrentCode=simpleCodeHandler.setColor(currentCode,color,column);
 for (let i=1;i<currentAttemptNumber;i++){
