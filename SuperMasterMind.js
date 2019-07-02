@@ -946,9 +946,11 @@ lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;}}}}
 function playAColor(color,column){
 if(gameOnGoing()){
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
-if(nbColumns>=5){
+if(nbColumns==5){
 alert("This color is obviously impossible!");}
-return;}
+if (nbColumns<=5){
+return;
+}}
 let newCurrentCode=simpleCodeHandler.setColor(currentCode,color,column);
 for (let i=1;i<currentAttemptNumber;i++){
 if(newCurrentCode==codesPlayed[i-1]){
