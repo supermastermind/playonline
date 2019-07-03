@@ -3345,7 +3345,7 @@ try {
       else {
 
         // Check if cur game and code (whether possible or impossible) were precalculated
-        // **********************************************************************************
+        // ******************************************************************************
 
         let precalculated_cur_game_or_code = -1; // nothing was precalculated
         // precalculated_cur_game_or_code shall keep being -1 in precalculation mode => below code to comment in (precalculation mode)
