@@ -787,11 +787,11 @@ let game_rules_str=
 "<center><table style='width:"+tableWidthStr+";'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
 <b>The goal of the game is to find out a secret code composed of "+nominalGameNbColumns+" colors chosen randomly among&nbsp;<big>"+allColorsStr+"</big>:</b><br>\
 <img src='img/SuperMasterMind_rules.png' style='width:"+imgWidthStr+";margin-top:0.7vh'><br><br>\
-<b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='index.html#game_rules'>&#x2302;&nbsp;Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='screenshots.html'>&#x2302;&nbsp;Game examples</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='optimal_strategy.html'>&#x2302;&nbsp;Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>\
-<b><a href='contact_info.html'>&#x2302;&nbsp;Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br></font></td></tr></table></center>";
+<b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;\
+<b><a href='index.html#game_rules'>&#x2302;&nbsp;Game rules</a></b><br>\
+<b><a href='screenshots.html'>&#x2302;&nbsp;Game examples</a></b><br>\
+<b><a href='optimal_strategy.html'>&#x2302;&nbsp;Optimal strategy</a></b><br>\
+<b><a href='contact_info.html'>&#x2302;&nbsp;Contact info</a></b><br><br></font></td></tr></table></center>";
 try{
 gameRulesDisplayed=true;
 modal_mode=3;
@@ -1523,13 +1523,22 @@ canvas.width=width;/* (necessary as canvas may have been expanded to fill its co
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
 updateAttributesWidthAndHeightValues(width,height);}} while (resize_detected&&(resize_cnt<=15));
-tableWidthStr="70%";
-imgWidthStr="65%";
-if(window.innerWidth<1.0*window.innerHeight){
-imgWidthStr="100%";
-tableWidthStr="100%";}
-else if(window.innerWidth>1.5*window.innerHeight){
-imgWidthStr="55%";}
+if (window.innerWidth < 1.0*window.innerHeight) {
+tableWidthStr = "100%";
+imgWidthStr = "100%";
+}
+else if (window.innerWidth > 1.5*window.innerHeight) {
+tableWidthStr = "35%";
+imgWidthStr = "100%"; // (~35% for 67% window ratio)
+}
+else if (window.innerWidth > 1.2*window.innerHeight) {
+tableWidthStr = "44%";
+imgWidthStr = "100%"; // (~44% for 83% window ratio)
+}
+else { // (window ratio factor between 1.0 and 1.2)
+tableWidthStr = "53%";
+imgWidthStr = "100%"; // (~53% for 100% window ratio)
+}
 let nbColumnsSelected=getNbColumnsSelected();
 if( (nbColumnsSelected<0)||(nbColumnsSelected>nbMaxColumns) ){
 displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected,new Error().stack);
