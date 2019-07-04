@@ -187,20 +187,7 @@
 
     </style>
 
-    <script>
-      var userAgentStr = "";
-      var android_appli = false;
-      try {
-        var androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
-        if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
-          userAgentStr = "Android appli (" + androidAppliInfoStr + ") ";
-          android_appli = true;
-        }
-        userAgentStr = userAgentStr + navigator.userAgent;
-      } catch (err) {
-        userAgentStr = "??? " + navigator.userAgent;
-      }
-    
+    <script>   
       var globalErrorStatus = 0;
       try {
         eval('"use strict"; class foo {}; let test_let_inst = 1;'); // Interner Explorer does not support classes and old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1)
@@ -216,6 +203,21 @@
         globalErrorStatus = 2;
         throw new Error(workerErrorMsg);
       }
+      
+      var userAgentStr = "";
+      var android_appli = false;
+      try {
+        var androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
+        if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
+          userAgentStr = "Android appli (" + androidAppliInfoStr + ") ";
+          android_appli = true;
+        }
+        userAgentStr = userAgentStr + navigator.userAgent;
+      } catch (err) {
+        userAgentStr = "??? " + navigator.userAgent;
+      }
+      var tableWidthStr = "72%";   
+      var imgWidthStr = "65%";
            
       var nbGamesPlayedAndWon = 0;
       var someGamesWereWon = false;
@@ -403,7 +405,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NS";
+      let html_compatibility_game_version = "Ver_NT";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -951,6 +953,7 @@
                && (typeof e.parameter.rankings !== 'undefined') && (e.parameter.rankings.length > 10) ) {
             var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
             console.log("1: " + rsp_rankings_str);
+            rsp_rankings_str = rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:" + tableWidthStr);
             rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
             rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>"
             rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
