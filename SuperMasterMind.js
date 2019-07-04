@@ -1,6 +1,6 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
-let version="v2.75";
+let version="v2.76";
 let emptyColor=0;
 let nbMinColors=5;
 let nbMaxColors=10;
@@ -783,13 +783,15 @@ else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.game
 let allColorsStr="";
 for (let color_idx=0;color_idx<nominalGameNbColors;color_idx++){
 allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";}
+let tableWidthStr="72%";
 let widthStr="65%";
 if(window.innerWidth<1.0*window.innerHeight){
-widthStr="100%";}
+widthStr="100%";
+tableWidthStr="100%";}
 else if(window.innerWidth>1.5*window.innerHeight){
 widthStr="55%";}
 let game_rules_str=
-"<center><table style='width:100%;'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
+"<center><table style='width:"+tableWidthStr+";'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
 <b>The goal of the game is to find out a secret code composed of "+nominalGameNbColumns+" colors chosen randomly among&nbsp;<big>"+allColorsStr+"</big>:</b><br>\
 <img src='img/SuperMasterMind_rules.png' style='width:"+widthStr+";margin-top:0.7vh'><br><br>\
 <b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;&nbsp;<br>\
@@ -913,7 +915,7 @@ lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;}}}}
 function playAColor(color,column){
 if(gameOnGoing()){
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
-if((nbColumns<=5)||(currentAttemptNumber==nbMaxAttempts)){  
+if( (nbColumns<=5)||(currentAttemptNumber==nbMaxAttempts) ){
 return;}}
 let newCurrentCode=simpleCodeHandler.setColor(currentCode,color,column);
 for (let i=1;i<currentAttemptNumber;i++){
@@ -1447,14 +1449,15 @@ updateGameSizes();}
 mobileMode=false;
 androidMode=false;
 if( (/Mobi/i.test(navigator.userAgent))||(/Android/i.test(navigator.userAgent))
-||(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) ){
+||(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent))
+||android_appli ){
 if(!CompressedDisplayMode){
 CompressedDisplayMode=true;
 updateGameSizes();}
 mobileMode=true;
 backgroundColor_2="#FFFFFF";
 backgroundColor_3="#EEEEEE";
-if(/Android/i.test(navigator.userAgent)){
+if(/Android/i.test(navigator.userAgent)||android_appli){
 androidMode=true;}}
 if(mobileMode&&androidMode){
 tickChar="\u2713";/* (check mark/tick) */
@@ -2128,15 +2131,12 @@ if(!displayString("Select colors!",attempt_nb_width+(70*(nbColumns+1))/100+nbCol
 darkGray,backgroundColor_2,ctx,true,1,true,0,false,true,true /* bottom-right bubble */)){
 if(!displayString("Select me!",x_delta*0.90,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */)){
-if(mobileMode) {
-displayString("Tap!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
-}
+if(mobileMode){
+displayString("Tap!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
+darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */);}
 else{
-displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);                    
-}
-}}}}}
+displayString("Click!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
+darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */);}}}}}}
 catch (err_help){}}
 else{
 let nbOfCodes=nbOfPossibleCodes[currentPossibleCodeShown-1];
