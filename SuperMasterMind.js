@@ -1523,7 +1523,7 @@ canvas.width=width;/* (necessary as canvas may have been expanded to fill its co
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
 updateAttributesWidthAndHeightValues(width,height);}} while (resize_detected&&(resize_cnt<=15));
-tableWidthStr="72%";
+tableWidthStr="70%";
 imgWidthStr="65%";
 if(window.innerWidth<1.0*window.innerHeight){
 imgWidthStr="100%";

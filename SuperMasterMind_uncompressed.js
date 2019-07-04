@@ -2322,7 +2322,7 @@ function draw_graphic_bis() {
     } while (resize_detected && (resize_cnt <= 15)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     // Set adaptative widths
-    tableWidthStr = "72%";
+    tableWidthStr = "70%";
     imgWidthStr = "65%";
     if (window.innerWidth < 1.0*window.innerHeight) {
       imgWidthStr = "100%";
