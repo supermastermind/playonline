@@ -100,7 +100,7 @@
 }
 
 .tingle-modal-box__content {
-  padding: 0.75rem 0.5rem; /* (padding around contents) */
+  padding: 1.25rem 0.5rem; /* (padding around contents) */
 }
 
 
@@ -205,7 +205,7 @@
 /* responsive
 -------------------------------------------------------------- */
 
-@media (max-width : 55540px) { /* (very high value => the below set of definitions is always applied) */
+@media (max-width : 555540px) { /* (very high value => the below set of definitions is always applied) */
   .tingle-modal-box {
     width: 100%;
     border-radius: 0;
