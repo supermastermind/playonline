@@ -187,7 +187,7 @@
 
     </style>
 
-    <script>   
+    <script>
       var globalErrorStatus = 0;
       try {
         eval('"use strict"; class foo {}; let test_let_inst = 1;'); // Interner Explorer does not support classes and old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1)
@@ -203,7 +203,7 @@
         globalErrorStatus = 2;
         throw new Error(workerErrorMsg);
       }
-      
+
       var userAgentStr = "";
       var android_appli = false;
       try {
@@ -216,9 +216,9 @@
       } catch (err) {
         userAgentStr = "??? " + navigator.userAgent;
       }
-      var tableWidthStr = "44%";   
+      var tableWidthStr = "44%";
       var imgWidthStr = "100%";
-           
+
       var nbGamesPlayedAndWon = 0;
       var someGamesWereWon = false;
       var nbGamesPlayed = 0;
@@ -245,7 +245,7 @@
         globalErrorStatus = 3;
         throw new Error(storageErrorMsg);
       }
-      
+
       if (!localStorage.firstgamegeoloc) { // Keep existing value if it exists
         localStorage.firstgamegeoloc = "fa";
       }
@@ -405,7 +405,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NT2";
+      let html_compatibility_game_version = "Ver_NT3";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -568,12 +568,12 @@
       rankings: <input id='form_rankings_id' name='rankings' type='text' value='-'><br>
 
     </form>
-    
+
     <form  style='display:none;' id='my_all_scripts_loaded_form' target='my_frame' action='https://ALL_SCRIPTS_LOADED'>
     </form>
 
     <script>
-  
+
       // String.replaceAll() method definition
       String.prototype.replaceAll = function(search, replacement) {
         let target = this;
@@ -878,7 +878,7 @@
         catch (exc) {
           return -1;
         }
-      }      
+      }
 
       // Temporary error handling (from this point in this file to simplify / will be overwritten later)
       function tmp_game_onerror(errorStr, errStack) {
@@ -897,7 +897,7 @@
         try {
           evt_promise_str = JSON.stringify(evt.promise).substring(0, 101).trim();
         }
-        catch (exc) {}        
+        catch (exc) {}
         var extra_debug_info = "-";
         if (localStorage.firstname) {
           extra_debug_info = localStorage.firstname;
@@ -924,7 +924,7 @@
         try {
           evt_promise_str = JSON.stringify(evt.promise).substring(0, 101).trim();
         }
-        catch (exc) {}        
+        catch (exc) {}
         var extra_debug_info = "-";
         if (localStorage.firstname) {
           extra_debug_info = localStorage.firstname;
@@ -954,6 +954,12 @@
             var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
             console.log("1: " + rsp_rankings_str);
             rsp_rankings_str = rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:" + tableWidthStr);
+            if (tableWidthStr == "100%") {
+              rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:1.6vw");
+            }
+            else {
+              rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:1.6vh");
+            }
             rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
             rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>"
             rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
@@ -1247,7 +1253,7 @@
 
             },
 
-            setFormInfoWithValidLocationData: function(data_p, locationId, extraLocationInfo) {        
+            setFormInfoWithValidLocationData: function(data_p, locationId, extraLocationInfo) {
 
               // Get location data
               // *****************
@@ -1574,7 +1580,7 @@
                       // Reinit last_location_data_used to have it consistent with below localStorage.xxx values
                       last_location_data_used = null;
                       id_of_last_location_data_used = -1;
-                    
+
                       localStorage.latitude = geolocation_handler.reformatLocationValue(latitude);
                       localStorage.longitude = geolocation_handler.reformatLocationValue(longitude);
                       localStorage.countryname = geolocation_handler.reformatLocationValue(country);
@@ -1676,7 +1682,7 @@
                 }
                 else {
                   var errorStr = "invalid geolocation #" + current_nb_JSON_queries_posted + ": " + JSON.stringify(data);
-                  console.log(errorStr);                
+                  console.log(errorStr);
                   if (current_nb_JSON_queries_posted < nbLocationURLs) {
                     geolocation_handler.setFormInfo(); // (recursive call)
                   }
