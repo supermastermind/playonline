@@ -1734,7 +1734,7 @@ y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 drawLine(ctx,x_0,y_0,x_1,y_1);
 ctx.font=basic_bold_font;
 for (let i=1;i<currentAttemptNumber;i++){
-displayCode(codesPlayed[i-1],i-1,ctx,false,true);
+displayCode(codesPlayed[i-1],i-1,ctx,false,gameOnGoing());
 let backgroundColor=backgroundColor_2;
 if(i==currentPossibleCodeShown){
 backgroundColor=highlightColor;}

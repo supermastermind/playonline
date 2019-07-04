@@ -1594,7 +1594,7 @@ function resetGameAttributes(nbColumnsSelected) {
   game_id_for_gameSolverConfig = -1;
   game_id_for_initGameSolver = -1;
 
-  if ( ((new Date()).getTime() - loadTime >= 8*3600*1000) // (reload the page from server every 4 hours at next game start: not too short to allow game.html's "last_location_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
+  if ( ((new Date()).getTime() - loadTime >= 8*3600*1000) // (reload the page from server every 8 hours at next game start: not too short to allow game.html's "last_location_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
        || (nbGamesPlayedAndWon >= 12) ) { // (reload to avoid potential (firefox) memory leaks issues, with the same arguments as above - can also solve modal display issues)
     loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
     location.reload(true);
@@ -2625,7 +2625,7 @@ function draw_graphic_bis() {
       ctx.font = basic_bold_font;
       for (let i = 1; i < currentAttemptNumber; i++) {
 
-        displayCode(codesPlayed[i-1], i-1, ctx, false, true);
+        displayCode(codesPlayed[i-1], i-1, ctx, false, gameOnGoing());
 
         let backgroundColor = backgroundColor_2;
         if (i == currentPossibleCodeShown) {
