@@ -1527,26 +1527,31 @@ if (window.innerWidth < 0.80*window.innerHeight) {
 rulesTableWidthStr = "100%";
 scoresTableWidthStr = "98%";
 scoresFontSizeStr = "1.4vh";
+abbreviateScores = true;
 }
 else if (window.innerWidth < 1.0*window.innerHeight) {
 rulesTableWidthStr = "88%";
 scoresTableWidthStr = "98%";
 scoresFontSizeStr = "1.4vh";
+abbreviateScores = true;
 }
 else if (window.innerWidth > 1.5*window.innerHeight) {
 rulesTableWidthStr = "35%"; // (~35% for 67% window ratio)
 scoresTableWidthStr = "80%";
 scoresFontSizeStr = "1.4vh";
+abbreviateScores = false;
 }
 else if (window.innerWidth > 1.2*window.innerHeight) {
 rulesTableWidthStr = "44%"; // (~44% for 83% window ratio)
 scoresTableWidthStr = "90%";
 scoresFontSizeStr = "1.4vh";
+abbreviateScores = false;
 }
 else { // (window ratio factor between 1.0 and 1.2)
 rulesTableWidthStr = "53%"; // (~53% for 100% window ratio)
 scoresTableWidthStr = "98%";
 scoresFontSizeStr = "1.4vh";
+abbreviateScores = true;
 }
 let nbColumnsSelected=getNbColumnsSelected();
 if( (nbColumnsSelected<0)||(nbColumnsSelected>nbMaxColumns) ){

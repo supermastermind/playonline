@@ -219,6 +219,7 @@
       var rulesTableWidthStr = "44%";
       var scoresTableWidthStr = "100%";
       var scoresFontSizeStr = "1.6vw";
+      var abbreviateScores = true;
 
       var nbGamesPlayedAndWon = 0;
       var someGamesWereWon = false;
@@ -406,7 +407,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NT6";
+      let html_compatibility_game_version = "Ver_NT7";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -804,6 +805,9 @@
           let elements = document.getElementById("my_form").elements;
           for (let i = 0, element; element = elements[i++];) {
             my_form_url = my_form_url + element.name + '=' + element.value + '&';
+          }
+          if (abbreviateScores) {
+            my_form_url = my_form_url + 'compressrsp=' + abbreviateScores + '&';
           }
         }
         else { // Specific case
