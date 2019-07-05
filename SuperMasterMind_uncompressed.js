@@ -1222,9 +1222,9 @@ function mouseClick(e) {
     }
 
     let game_rules_str =
-      "<center><table style='width:" + tableWidthStr + ";'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
+      "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font color=black size='2.25vh'>\
       <b>The goal of the game is to find out a secret code composed of " + nominalGameNbColumns + " colors chosen randomly among&nbsp;<big>" + allColorsStr + "</big>:</b><br>\
-      <img src='img/SuperMasterMind_rules.png' style='width:" + imgWidthStr + ";margin-top:0.7vh'><br><br>\
+      <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0.7vh'><br><br>\
       <b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;\
       <b><a href='index.html#game_rules'>&#x2302;&nbsp;Game rules</a></b><br>\
       <b><a href='screenshots.html'>&#x2302;&nbsp;Game examples</a></b><br>\
@@ -2322,21 +2322,30 @@ function draw_graphic_bis() {
     } while (resize_detected && (resize_cnt <= 15)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     // Set adaptative widths
-    if (window.innerWidth < 1.0*window.innerHeight) {
-      tableWidthStr = "100%";
-      imgWidthStr = "100%";
+    if (window.innerWidth < 0.80*window.innerHeight) {
+      rulesTableWidthStr = "100%";
+      scoresTableWidthStr = "100%";
+      scoresFontSizeStr = "1.6vw";
+    }
+    else if (window.innerWidth < 1.0*window.innerHeight) {
+      rulesTableWidthStr = "88%";
+      scoresTableWidthStr = "100%";
+      scoresFontSizeStr = "1.6vw";
     }
     else if (window.innerWidth > 1.5*window.innerHeight) {
-      tableWidthStr = "35%";
-      imgWidthStr = "100%"; // (~35% for 67% window ratio)
+      rulesTableWidthStr = "35%"; // (~35% for 67% window ratio)
+      scoresTableWidthStr = "80%";
+      scoresFontSizeStr = "1.6vh";
     }
     else if (window.innerWidth > 1.2*window.innerHeight) {
-      tableWidthStr = "44%";
-      imgWidthStr = "100%"; // (~44% for 83% window ratio)
+      rulesTableWidthStr = "44%"; // (~44% for 83% window ratio)
+      scoresTableWidthStr = "90%";
+      scoresFontSizeStr = "1.6vh";
     }
     else { // (window ratio factor between 1.0 and 1.2)
-      tableWidthStr = "53%";
-      imgWidthStr = "100%"; // (~53% for 100% window ratio)
+      rulesTableWidthStr = "53%"; // (~53% for 100% window ratio)
+      scoresTableWidthStr = "100%";
+      scoresFontSizeStr = "1.6vw";
     }
 
     let nbColumnsSelected = getNbColumnsSelected();
