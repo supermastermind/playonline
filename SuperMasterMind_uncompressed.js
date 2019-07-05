@@ -2324,12 +2324,12 @@ function draw_graphic_bis() {
     // Set adaptative widths
     if (window.innerWidth < 0.80*window.innerHeight) {
       rulesTableWidthStr = "100%";
-      scoresTableWidthStr = "100%";
+      scoresTableWidthStr = "98%";
       scoresFontSizeStr = "1.4vh";
     }
     else if (window.innerWidth < 1.0*window.innerHeight) {
       rulesTableWidthStr = "88%";
-      scoresTableWidthStr = "100%";
+      scoresTableWidthStr = "98%";
       scoresFontSizeStr = "1.4vh";
     }
     else if (window.innerWidth > 1.5*window.innerHeight) {
@@ -2344,7 +2344,7 @@ function draw_graphic_bis() {
     }
     else { // (window ratio factor between 1.0 and 1.2)
       rulesTableWidthStr = "53%"; // (~53% for 100% window ratio)
-      scoresTableWidthStr = "100%";
+      scoresTableWidthStr = "98%";
       scoresFontSizeStr = "1.4vh";
     }
 
