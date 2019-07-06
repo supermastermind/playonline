@@ -243,7 +243,7 @@
     background-color: #2c3e50;
     box-shadow: none;
     color: #fff;
-    line-height: 55px;
+    line-height: 13.5vh; /* (=height*20/13) yy*/
   }
 
   .tingle-modal__closeLabel {
