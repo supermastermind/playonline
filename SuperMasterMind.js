@@ -1537,7 +1537,7 @@ abbreviateScores = true;
 }
 else if (window.innerWidth > 1.5*window.innerHeight) {
 rulesTableWidthStr = "35%"; // (~35% for 67% window ratio)
-scoresTableWidthStr = "80%";
+scoresTableWidthStr = "75%";
 scoresFontSizeStr = "1.4vh";
 abbreviateScores = false;
 }
