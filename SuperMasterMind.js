@@ -1537,13 +1537,13 @@ abbreviateScores = true;
 }
 else if (window.innerWidth > 1.5*window.innerHeight) {
 rulesTableWidthStr = "35%"; // (~35% for 67% window ratio)
-scoresTableWidthStr = "75%";
+scoresTableWidthStr = "70%";
 scoresFontSizeStr = "1.4vh";
 abbreviateScores = false;
 }
 else if (window.innerWidth > 1.2*window.innerHeight) {
 rulesTableWidthStr = "44%"; // (~44% for 83% window ratio)
-scoresTableWidthStr = "90%";
+scoresTableWidthStr = "85%";
 scoresFontSizeStr = "1.4vh";
 abbreviateScores = false;
 }
