@@ -470,7 +470,7 @@
               try {
                 let firstname_entered = document.getElementById("firstname_input").value;
                 firstname_entered = firstname_entered.trim();
-                if ( (firstname_entered.length >= 3) && (firstname_entered.length <= 12) && (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)) /* (only letters) */ && isCorrect(firstname_entered) ) {
+                if ( (firstname_entered.length >= 3) && (firstname_entered.length <= 11) && (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)) /* (only letters) */ && isCorrect(firstname_entered) ) {
                   if (typeof(Storage) !== 'undefined') {
                     localStorage.firstname = capitalizeFirstLetters(firstname_entered);
                   }
@@ -1462,8 +1462,8 @@
                     modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
                                      + "<hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'><font style='font-size:2.2vh;line-height:2.6vh;'><b>You seem to be an experienced player!<br>"
                                      + "Please enter your first name, it will be used to store your scores:</b></font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + "<font style='font-size:2.1vh'>Your first name (between 3 and 12 letters, no spaces):</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + "<input id='firstname_input' type='text' value='Sherlock?' maxlength='12' style='font-size:2.2vh'></input><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
+                                     + "<font style='font-size:2.1vh'>Your first name (between 3 and 11 letters, no spaces):</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
+                                     + "<input id='firstname_input' type='text' value='Sherlock?' maxlength='11' style='font-size:2.2vh'></input><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
                                      + "<font style='font-size:2.1vh'>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
                                      + "</div>");
                     // open modal
