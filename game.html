@@ -407,7 +407,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NT17";
+      let html_compatibility_game_version = "Ver_NT18";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -959,7 +959,7 @@
             var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
             console.log("1: " + rsp_rankings_str);
             rsp_rankings_str = rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:" + scoresTableWidthStr);
-            rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:2.7vh");
+            rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:2.7vh;line-height:4.1vh;");
             rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:" + scoresFontSizeStr);
             rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
             rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>"
