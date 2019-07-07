@@ -407,7 +407,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NT15";
+      let html_compatibility_game_version = "Ver_NT16";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1460,11 +1460,11 @@
                     modal_mode = 1;
                     // set modal content
                     modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-                                     + "<hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'><font style='font-size:3.1vh'><b>You seem to be an experienced player!<br>"
+                                     + "<hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'><font style='font-size:2.7vh;line-height:3.1vh;'><b>You seem to be an experienced player!<br>"
                                      + "Please enter your first name, it will be used to store your scores:</b></font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + "<font style='font-size:2.5vh'>Your first name (between 3 and 12 letters, no spaces):</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + "<input id='firstname_input' type='text' value='Sherlock?' maxlength='12' style='font-size:2.6vh'></input><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + "<font style='font-size:2.2vh'>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</font>"
+                                     + "<font style='font-size:2.2vh'>Your first name (between 3 and 12 letters, no spaces):</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
+                                     + "<input id='firstname_input' type='text' value='Sherlock?' maxlength='12' style='font-size:2.2vh;color:#FF00FF'></input><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
+                                     + "<font style='font-size:1.9vh'>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited...<br>Close this dialog to skip this step</font>"
                                      + "</div>");
                     // open modal
                     modal.open();
