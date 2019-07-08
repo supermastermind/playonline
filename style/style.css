@@ -59,21 +59,21 @@ ul li
   text-align: center; }
 
 #header h1
-{ font-size: 1.5rem;
+{ font-size: 1.35rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
   margin-top:1.0vh; }
 
 #header h2
-{ font-size: 1.2rem;
+{ font-size: 1.1rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
   margin-top:1.0vh; }
   
 #menubar
-{ margin: 0 0 0 1.5vw; } /* top right bottom left */
+{ margin: 0 0 0 1.5%; } /* top right bottom left */
 
 ul#menu
 { font-size: 1.1rem; }
@@ -103,9 +103,9 @@ ul#menu li a:hover
 { color: #FF00FF; }
 
 #site_content
-{ width: 88%;
+{ width: 95%;
   overflow: hidden; /* (specifies whether to clip content or to add scrollbars when the content of an element is too big to fit in a specified area) */
-  margin: 0 0 0 1.5vw; /* top right bottom left */
+  margin: 0 0 0 1.5%; /* top right bottom left */
   padding: 1vh 1vw 2vh 1vw; /* top right bottom left */
   background: #F6F6F6;
   border: 0; } 
@@ -117,10 +117,10 @@ ul#menu li a:hover
   
 .sidebar
 { float: right;
-  width: 20%;
+  width: 22%;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   background-color: #E0E0E0; 
-  font-size: 0.85rem; } 
+  font-size: 0.8rem; } 
 
 .sidebar ul
 { list-style-position: outside; }
@@ -128,10 +128,10 @@ ul#menu li a:hover
 .sidebar li
 { list-style: none; 
   padding: 0; 
-  font-size: 0.85rem; }  
+  font-size: 0.8rem; }  
 
 .sidebar ul li a
-{ font-size: 0.85rem; }  
+{ font-size: 0.8rem; }  
 
 .sidebar li a, .sidebar li a:hover
 { padding: 0 0 0 25px;
