@@ -7,7 +7,7 @@ html
 
 body
 { font-family: Trebuchet MS;
-  font-size: calc(10px + .40vw);
+  font-size: 1rem;
   background-image:url('../img/html_background.png');
   background-position: left top;
   color: #000000; }
@@ -15,23 +15,23 @@ body
 table tr td
 {
   font-family: Trebuchet MS;
-  font-size: calc(10px + .40vw); }
+  font-size: 1rem; }
   
 img
 { border: 0; }
 
 h1, h2, h3, h4, h5, h6 
-{ margin-bottom:2.0vh;
-  margin-top:2.0vh;
+{ margin-bottom:1.5vh;
+  margin-top:2.25vh;
   padding:0;
   color: #000000; 
   font-weight: bold; }
 
 h1
-{ font-size: 165% }
+{ font-size: 140% }
   
 h2
-{ font-size: 165% }
+{ font-size: 140% }
 
 h3
 { font-size: 140% }
@@ -46,7 +46,7 @@ ul
 
 ul li
 { list-style-type: disc;
-  margin: 0.75vh 0.75vh 0.75vh 2vw; /* top right bottom left */
+  margin: 0.5vh 0 0.5vh 2vw; /* top right bottom left */
   padding: 0 0 0 0; }
 
 #header
@@ -54,14 +54,14 @@ ul li
   text-align: center; }
 
 #header h1
-{ font-size: calc(10px + 1.75vh);
+{ font-size: 1.5rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
   margin-top:1.0vh; }
 
 #header h2
-{ font-size: calc(10px + .84vh);
+{ font-size: 1.2rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
@@ -71,10 +71,10 @@ ul li
 { margin: 0 0 0 1.5vw; } /* top right bottom left */
 
 ul#menu
-{ font-size: calc(10px + .84vh); }
+{ font-size: 1.1rem; }
 
 ul#menu li
-{ font-size: calc(10px + .84vh);
+{ font-size: 1.1rem;
   float: left;
   padding: 0;
   list-style: none;
@@ -82,7 +82,7 @@ ul#menu li
 
 ul#menu li a
 { 
-  font-size: calc(10px + .84vh);
+  font-size: 1.1rem;
   float: left;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   text-align: center;
@@ -152,7 +152,7 @@ ul#menu li a:hover
   left: 0;
   background: rgba(0, 0, 0, 0.6);
   z-index:11111;
-  font-size: 2.0vh;
+  font-size: 1.2rem;
   text-align: center;
   padding-top: 25.0vh;
   color: #fff;
