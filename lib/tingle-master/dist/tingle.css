@@ -215,7 +215,7 @@
     top: 8.8vh; /* (shall be equal to (*)) */
     display: block;
     width: 100%;
-    line-height: normal; /* related to 2x(**) */
+    line-height: normal;
   }
 
   .tingle-modal--noClose {
