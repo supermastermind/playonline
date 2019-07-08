@@ -73,7 +73,7 @@ ul li
   margin-top:1.0vh; }
   
 #menubar
-{ margin: 0 0 0 1.5%; } /* top right bottom left */
+{ margin: 0 0 0 1%; } /* top right bottom left */
 
 ul#menu
 { font-size: 1.1rem; }
@@ -103,9 +103,9 @@ ul#menu li a:hover
 { color: #FF00FF; }
 
 #site_content
-{ width: 95%;
+{ width: 97%;
   overflow: hidden; /* (specifies whether to clip content or to add scrollbars when the content of an element is too big to fit in a specified area) */
-  margin: 0 0 0 1.5%; /* top right bottom left */
+  margin: 0 0 0 1%; /* top right bottom left */
   padding: 1vh 1vw 2vh 1vw; /* top right bottom left */
   background: #F6F6F6;
   border: 0; } 
@@ -117,7 +117,7 @@ ul#menu li a:hover
   
 .sidebar
 { float: right;
-  width: 22%;
+  width: 25%;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   background-color: #E0E0E0; 
   font-size: 0.8rem; } 
