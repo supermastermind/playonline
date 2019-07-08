@@ -74,7 +74,7 @@ function write_sidebar() {
       Version 1.0<br>\
       online game scores<br><br>\
       Version 0.5<br>\
-      basic gameplay<br>\
+      basic gameplay\
       <br>\
       <h1>Interesting links</h1>\
       <ul>\
