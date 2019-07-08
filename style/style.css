@@ -118,7 +118,7 @@ ul#menu li a:hover
   
 .sidebar
 { float: right;
-  width: 15%;
+  width: 20%;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   background-color: #E0E0E0; 
   font-size: 0.85rem; } 
