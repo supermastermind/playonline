@@ -61,7 +61,7 @@ function write_sidebar() {
 
   document.write("\
     <div class='sidebar'>\
-      <font style='font-size:80%'>\
+      <font style='font-size:85%'>\
       <h1>History</h1>\
       <b>Current version: 2.76<br>"
       + month_and_year_str +
