@@ -39,7 +39,8 @@ h3
 a
 { outline: none;
   text-decoration: underline;
-  color: #A4AA04; }
+  color: #A4AA04;
+  font-size: 1rem; }
 
 ul
 { list-style-position: outside; }
