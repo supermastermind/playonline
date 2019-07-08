@@ -61,7 +61,6 @@ function write_sidebar() {
 
   document.write("\
     <div class='sidebar'>\
-      <font style='font-size:85%'>\
       <h1>History</h1>\
       <b>Current version: 2.76<br>"
       + month_and_year_str +
@@ -83,7 +82,7 @@ function write_sidebar() {
         <li style='margin-left:0;'><a href='https://en.wikipedia.org/wiki/Mastermind_(board_game)'>Mastermind on wikipedia</a></li>\
         <li style='margin-left:0;'><a href='http://mathworld.wolfram.com/Mastermind.html'>Mastermind strategies</a></li>\
       </ul>\
-    </font></div>");
+    </div>");
 }
 
 function write_introduction() {
