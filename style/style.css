@@ -79,7 +79,7 @@ ul li
   margin-top:1.0vh; }
 
 #header h2
-{ font-size: 1.0rem;
+{ font-size: 1.15rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
@@ -89,10 +89,10 @@ ul li
 { margin: 0 0 0 1%; } /* top right bottom left */
 
 ul#menu
-{ font-size: 1.1rem; }
+{ font-size: 1.05rem; }
 
 ul#menu li
-{ font-size: 1.1rem;
+{ font-size: 1.05rem;
   float: left;
   padding: 0;
   list-style: none;
@@ -100,7 +100,7 @@ ul#menu li
 
 ul#menu li a
 { 
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   float: left;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   text-align: center;
