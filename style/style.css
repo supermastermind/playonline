@@ -1,7 +1,20 @@
 html /* (see viewport meta tags for smartphones in the textual html pages) */ 
 { height: 100%;
-  font-size: 0.25vh; }
+  font-size: 1.0vh; }
+ 
+@media (max-height : 1200px) {
+  html
+  { height: 100%;
+    font-size: 2.0vh; }
+}  
 
+@media (max-height : 1200px) {
+  html
+  { height: 100%;
+    font-size: 2vh; }
+}  
+  
+  
 @media (max-height : 1400px) {
   html
   { height: 100%;
