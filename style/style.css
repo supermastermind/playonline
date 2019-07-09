@@ -1,14 +1,20 @@
 html /* (see viewport meta tags for smartphones in the textual html pages) */ 
 { height: 100%;
-  font-size: 11px; }
+  font-size: 11px; } /* e.g. ok (relatively big font) for 360 */
 
-@media (min-width : 1250px) {
+@media (min-width : 600px) {
   html
   { height: 100%;
-    font-size: 13px; }
+    font-size: 12px; }
+}  
+ 
+@media (min-width : 1000px) {
+  html
+  { height: 100%;
+    font-size: 14px; }
 }  
   
-@media (min-width : 1500px) {
+@media (min-width : 1400px) { /* e.g. ok for 1536 or 1680 */
   html
   { height: 100%;
     font-size: 16px; }
