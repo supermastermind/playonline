@@ -122,7 +122,7 @@ ul#menu li.selected a, ul#menu li.selected a:hover
   font-size: 115% }
 
 ul#menu li a:hover
-{ color: #FF00FF; }
+{ /* color: #FF00FF; */ }
 
 #site_content
 { width: 97%;
