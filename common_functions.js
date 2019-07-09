@@ -89,9 +89,9 @@ function write_introduction() {
   document.write("\
     <a href='game.html' onfocus='this.blur()'>\
       <div id='game_images'>");
-  var img_str = "<hr style='height:0.75vh; visibility:hidden;' /><img src='img/SuperMasterMind_1.png' style='width:5.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_2.png' style='width:5.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:5.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:5.5rem;border:0;margin:0px'>";
+  var img_str = "<hr style='height:0.75vh; visibility:hidden;' /><img src='img/SuperMasterMind_1.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_2.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:4.5rem;border:0;margin:0px'>";
   if (window.innerWidth >= 777) {
-    img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:5.5rem;border:0;margin:0px'>";
+    img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:4.5rem;border:0;margin:0px'>";
   }
   document.write(img_str);
   document.write("\
