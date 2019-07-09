@@ -1,6 +1,18 @@
-html
-{ height: 100%; 
-  font-size: 16px;}
+html /* (see viewport meta tags for smartphones in the textual html pages) */ 
+{ height: 100%;
+  font-size: 1.0vh; }
+
+@media (max-height : 2000px) {
+  html
+  { height: 100%;
+    font-size: 1.5vh; }
+}  
+
+@media (max-height : 1200px) {
+  html
+  { height: 100%;
+    font-size: 2vh; }
+}
 
 *
 { margin: 0;
@@ -60,14 +72,14 @@ ul li
   text-align: center; }
 
 #header h1
-{ font-size: 1.6rem;
+{ font-size: 1.5rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
   margin-top:1.0vh; }
 
 #header h2
-{ font-size: 1.3rem;
+{ font-size: 1.2rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
