@@ -1,11 +1,11 @@
 html /* (see viewport meta tags for smartphones in the textual html pages) */ 
 { height: 100%;
-  font-size: 1.0vh; }
+  font-size: 14px; }
  
 @media (max-height : 1200px) {
   html
   { height: 100%;
-    font-size: 2.0vh; }
+    font-size: 16px; }
 }
 
 *
@@ -127,7 +127,7 @@ ul#menu li a:hover
   width: 25%;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   background-color: #E0E0E0; 
-  font-size: 0.85rem; } 
+  font-size: 0.8rem; } 
 
 .sidebar ul
 { list-style-position: outside; }
@@ -135,10 +135,10 @@ ul#menu li a:hover
 .sidebar li
 { list-style: none; 
   padding: 0; 
-  font-size: 0.85rem; }  
+  font-size: 0.8rem; }  
 
 .sidebar ul li a
-{ font-size: 0.85rem; }  
+{ font-size: 0.8rem; }  
 
 .sidebar li a, .sidebar li a:hover
 { padding: 0 0 0 25px;
