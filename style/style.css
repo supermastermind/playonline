@@ -45,13 +45,13 @@ h1, h2, h3, h4, h5, h6
   font-weight: bold; }
 
 h1
-{ font-size: 140% }
+{ font-size: 130% }
   
 h2
-{ font-size: 140% }
+{ font-size: 130% }
 
 h3
-{ font-size: 140% }
+{ font-size: 130% }
 
 a
 { outline: none;
@@ -64,7 +64,7 @@ ul
 
 ul li
 { list-style-type: disc;
-  margin: 0.5vh 0 0.5vh 2vw; /* top right bottom left */
+  margin: 0.5vh 0 0.5vh 2.5vw; /* top right bottom left */
   padding: 0 0 0 0; }
 
 #header
