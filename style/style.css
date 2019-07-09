@@ -1,7 +1,13 @@
 html /* (see viewport meta tags for smartphones in the textual html pages) */ 
 { height: 100%;
-  font-size: 14px; }
+  font-size: 12px; }
 
+@media (min-width : 1300px) {
+  html
+  { height: 100%;
+    font-size: 16px; }
+}  
+  
 *
 { margin: 0;
   padding: 0; }
@@ -60,14 +66,14 @@ ul li
   text-align: center; }
 
 #header h1
-{ font-size: 1.5rem;
+{ font-size: 1.4rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
   margin-top:1.0vh; }
 
 #header h2
-{ font-size: 1.2rem;
+{ font-size: 1.0rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:1.0vh;
