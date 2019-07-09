@@ -5,7 +5,7 @@ html /* (see viewport meta tags for smartphones in the textual html pages) */
 @media (min-width : 1250px) {
   html
   { height: 100%;
-    font-size: 12px; }
+    font-size: 13px; }
 }  
   
 @media (min-width : 1500px) {
