@@ -2,7 +2,7 @@ function write_menu(selected_idx) {
   var str = "\
     <div id='header'>\
         <h1><b><font color='#F00000'>Play </font><font color='#FF7700'>Super </font><font color='#C0C000'>Master </font><font color='#00D000'>Mind </font><font color='#0000A8'>online!</font></b></h1>\
-        <h2><b><font color='#333333'>Super Master Mind, Mastermind & Code breaker games</font></b></h2>\
+        <h2><b><font color='#333333'>Mastermind & Code breaker games</font></b></h2>\
       <div id='menubar'>\
         <ul id='menu'>\
           <!-- put class='selected' in the li tag for the selected page - to highlight which page you're on -->";
