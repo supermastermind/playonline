@@ -26,7 +26,7 @@
         padding: 0%;
         /* border: thin solid white; */
         color: #777777;
-        font-size: 0.75rem;
+        font-size: calc(7px + .34vw);
         background: black;
       }
       #my_canvas {
@@ -132,7 +132,7 @@
         left: 0;
         background: rgba(0, 0, 0, 0.6);
         z-index:11111;
-        font-size: 1.2rem;
+        font-size: 2.0vh;
         text-align: center;
         padding-top: 25.0vh;
         color: #fff;
@@ -153,7 +153,7 @@
         left: 0;
         background: rgba(0, 0, 0, 0.6);
         z-index:11111;
-        font-size: 1.2rem;
+        font-size: 2.0vh;
         text-align: center;
         padding-top: 25.0vh;
         color: #fff;
@@ -174,7 +174,7 @@
         left: 0;
         background: rgba(0, 0, 0, 0.6);
         z-index:11111;
-        font-size: 1.2rem;
+        font-size: 2.0vh;
         text-align: center;
         padding-top: 25.0vh;
         color: #fff;
@@ -321,7 +321,7 @@
   <body onresize="eval('try{draw_graphic();}catch(e){}');" onunload="/* See (***) */ debug_on_unload = 2;console.log('exit...');storeFirstAccess('game', 777, 777 /* (a too low value here will not work) */, 'debug-out');">
 
     <div class="game_loading">
-      <img src="img/loading.gif" style='width:5.5rem'><br>
+      <img src="img/loading.gif" style='height:12%;'><br> <!-- (not rem unit as no viewport!) -->
       Loading...
     </div>
 
@@ -339,7 +339,7 @@
         }
       </script>
       <br>
-      <img src="img/loading.gif" style='width:5.5rem'><br>
+      <img src="img/loading.gif" style='height:12%;'><br>  <!-- (not rem unit as no viewport!) -->
       Starting a new game...
     </div>
 
@@ -409,7 +409,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NU5";
+      let html_compatibility_game_version = "Ver_NU6";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1465,12 +1465,12 @@
                     modal_mode = 1;
                     // set modal content
                     modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-                                     + "<hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'><font style='font-size:1rem;'><b>You seem to be an experienced player!<br>"
+                                     + "<hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'><font style='font-size:calc(18px + .34vw);'><b>You seem to be an experienced player!<br>"
                                      + "Please enter your first name, it will be used to store your scores</b></font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + "<font style='font-size:0.8rem'>Your first name (between 3 and 11 letters, no spaces):</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + "<input id='firstname_input' type='text' value='Sherlock?' maxlength='11' style='font-size:0.9rem'></input><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                                     + (android_appli ? "" : "<font style='font-size:0.8rem'>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited</font><br>")
-                                     + "<font style='font-size:0.8rem'>Close this dialog to skip this step</font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
+                                     + "<font style='font-size:calc(15px + .34vw)'>Your first name (between 3 and 11 letters, no spaces):</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
+                                     + "<input id='firstname_input' type='text' value='Sherlock?' maxlength='11' style='font-size:calc(18px + .34vw)'></input><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
+                                     + (android_appli ? "" : "<font style='font-size:calc(15px + .34vw)'>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited</font><br>")
+                                     + "<font style='font-size:calc(15px + .34vw)'>Close this dialog to skip this step</font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
                                      + "</div>");
                     // open modal
                     modal.open();
