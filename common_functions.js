@@ -2,7 +2,7 @@ function write_menu(selected_idx) {
   var str = "\
     <div id='header'>\
         <h1><b><font color='#F00000'>Play </font><font color='#FF7700'>Super </font><font color='#F7F700'>Master </font><font color='#00D000'>Mind </font><font color='black'>/ </font> <font color='#0000A8'>Code </font><font color='#954400'>breaker </font><font color='#FF7700'>online!</font></b></h1>\
-        <h2><font color='#333333'>Super Master Mind, Mastermind & Code breaker gamesss</font></h2>\
+        <h2><b><font color='#333333'>Super Master Mind, Mastermind & Code breaker games</font></b></h2>\
       <div id='menubar'>\
         <ul id='menu'>\
           <!-- put class='selected' in the li tag for the selected page - to highlight which page you're on -->";
@@ -89,7 +89,10 @@ function write_introduction() {
   document.write("\
     <a href='game.html' onfocus='this.blur()'>\
       <div id='game_images'>");
-  var img_str = "<hr style='height:0.75vh; visibility:hidden;' /><img src='img/SuperMasterMind_1.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_2.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_4.png' style='width:4.5rem;border:0;margin:0px'>";
+  var img_str = "<hr style='height:0.75vh; visibility:hidden;' /><img src='img/SuperMasterMind_1.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_2.png' style='width:4.5rem;border:0;margin:0px'><img src='img/SuperMasterMind_3.png' style='width:4.5rem;border:0;margin:0px'>";
+  if (window.innerWidth >= 555) {
+    img_str = img_str + "<img src='img/SuperMasterMind_4.png' style='width:4.5rem;border:0;margin:0px'>";
+  }
   if (window.innerWidth >= 777) {
     img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:4.5rem;border:0;margin:0px'>";
   }
