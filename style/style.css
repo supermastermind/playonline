@@ -95,28 +95,31 @@ ul li
 { margin: 0 0 0 1%; } /* top right bottom left */
 
 ul#menu
-{ font-size: 1.05rem; }
+{ font-size: 1.0rem;
+  font-weight: bold; }
 
 ul#menu li
-{ font-size: 1.05rem;
+{ font-size: 1.0rem;
   float: left;
   padding: 0;
   list-style: none;
-  margin: 0; }
+  margin: 0; 
+  font-weight: bold; }
 
 ul#menu li a
 { 
-  font-size: 1.05rem;
+  font-size: 1.0rem;
   float: left;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   text-align: center;
   color: #000;
   text-decoration: none;
-  background: #E0E0E0; } 
+  font-weight: bold; } 
 
 ul#menu li.selected a, ul#menu li.selected a:hover
 { background: #F6F6F6;
-  color: #0000A8; }
+  color: #0000A8; 
+  font-size: 115% }
 
 ul#menu li a:hover
 { color: #FF00FF; }
@@ -138,7 +141,7 @@ ul#menu li a:hover
 { float: right;
   width: 25%;
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
-  background-color: #E0E0E0; 
+  background-color: #F0F0F0; 
   font-size: 0.85rem; } 
 
 .sidebar ul
