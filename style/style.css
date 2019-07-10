@@ -44,8 +44,8 @@ img
 { border: 0; }
 
 h1, h2, h3, h4, h5, h6 
-{ margin-bottom:1.00vh;
-  margin-top:1.5vh;
+{ margin-bottom:0.7rem;
+  margin-top:1.0rem;
   padding:0;
   color: #000000; 
   font-weight: bold; }
@@ -70,7 +70,7 @@ ul
 
 ul li
 { list-style-type: disc;
-  margin: 0.5vh 0 0.5vh 2.5vw; /* top right bottom left */
+  margin: 0.25rem 0 0.25rem 1.5rem; /* top right bottom left */
   padding: 0 0 0 0; }
 
 #header
@@ -81,15 +81,15 @@ ul li
 { font-size: 1.4rem;
   font-weight: normal;
   text-decoration: none; 
-  margin-bottom:1.0vh;
-  margin-top:1.0vh; }
+  margin-bottom:0.7rem;
+  margin-top:1.0rem; }
 
 #header h2
 { font-size: 1.15rem;
   font-weight: normal;
   text-decoration: none; 
-  margin-bottom:1.0vh;
-  margin-top:1.0vh; }
+  margin-bottom:0.7rem;
+  margin-top:1.0rem; }
   
 #menubar
 { margin: 0 0 0 1%; } /* top right bottom left */
@@ -110,7 +110,7 @@ ul#menu li a
 { 
   font-size: 1.0rem;
   float: left;
-  padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem; /* top right bottom left */
   text-align: center;
   color: #000;
   text-decoration: none;
