@@ -250,14 +250,14 @@
   .tingle-modal__closeLabel {
     display: inline-block;
     vertical-align: middle;
-    font-size: 3.5vh; /* 1.5rem; */
+    font-size: 3.5vh; /* (not rem unit as viewport is not always used!) */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   }
 
   .tingle-modal__closeIcon {
     display: inline-block;
-    margin-right: .5rem;
+    margin-right: .4rem;
     vertical-align: middle;
-    font-size: 8.5vh; /* 4rem; = 1.5rem (see above) * 2.67 */
+    font-size: 8.5vh; /* (not rem unit as viewport is not always used!) */
   }
 }
