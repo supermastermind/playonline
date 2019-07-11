@@ -92,9 +92,9 @@
           The goal of the game is to find out a <b>secret code composed of N colors</b> chosen randomly.<br>
           The player makes successive attempts and has to find out the secret code before the maximum number of attempts is exceeded.<br>
           At each attempt, the program will provide feedback by displaying from zero to N pegs next to the code played:<br>
-          <ul style='list-style-type:disc;margin:0'>
-          <li>a <b>black peg</b> &#x26ab; indicates the existence of a correct color placed in a correct position,</li>
-          <li>a <b>white peg</b> &#x26aa; indicates the existence of a correct color placed in a wrong position.</li>
+          <ul style='margin:0'>
+          <li style='list-style-type:disc'>a <b>black peg</b> &#x26ab; indicates the existence of a correct color placed in a correct position,</li>
+          <li style='list-style-type:disc'>a <b>white peg</b> &#x26aa; indicates the existence of a correct color placed in a wrong position.</li>
           </ul>
           Once this feedback has been provided, another attempt is made.<br>
           The game ends when the secret code is found, which means the player gets N black pegs, or when the maximum number of attempts is exceeded, in which case the game is lost.<br>
@@ -112,10 +112,10 @@
           The calculator also compares what you played to what the <b>"optimal mathematical strategy"</b> would have played. For each code played,
           it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
           to this same average number when your code is played, and then displays the difference next to your code. For example:<br>
-          <ul>
-          <li><b>+0.00</b> means that what you played was optimal (no difference between your code and the optimal code(s)),</li>
-          <li><b>-1.00</b> means that what you played was totally useless (1 attempt was lost, thus -1),</li>
-          <li><b>-0.50</b> means that what you played was not optimal: you lost <sup>1</sup>&frasl;<sub>2</sub> attempt on average
+          <ul style='margin:0'>
+          <li style='list-style-type:disc'><b>+0.00</b> means that what you played was optimal (no difference between your code and the optimal code(s)),</li>
+          <li style='list-style-type:disc'><b>-1.00</b> means that what you played was totally useless (1 attempt was lost, thus -1),</li>
+          <li style='list-style-type:disc'><b>-0.50</b> means that what you played was not optimal: you lost <sup>1</sup>&frasl;<sub>2</sub> attempt on average
           to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches
           secret codes in 4 attempts on average, your code (followed by an optimal strategy) will reach them in 4.5 attempts on average.
           Of course, if you are lucky (or intuitive &#x1f603;), this inefficient code may be the secret code, in which case you will win the game instantly!
