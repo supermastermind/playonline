@@ -784,7 +784,7 @@ let allColorsStr="";
 for (let color_idx=0;color_idx<nominalGameNbColors;color_idx++){
 allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";}
 let game_rules_str=
-"<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:calc(10px + .34vw);color:black'>\
+"<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
 <b>The goal of the game is to find out a secret code composed of "+nominalGameNbColumns+" colors chosen randomly among&nbsp;<big>"+allColorsStr+"</big>:</b><br>\
 <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0.5vh'><br><br>\
 <b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;\
