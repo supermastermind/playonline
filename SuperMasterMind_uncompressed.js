@@ -2482,7 +2482,7 @@ function draw_graphic_bis() {
       let font_width_1char = ctx.measureText("X").width;
       let font_width_2char = ctx.measureText(tickChar).width;
       let font_height = font_size;
-      while ((font_height <= Math.min(y_cell_delta-4,y_cell_delta*80.0/100.0) /* (margin + char height imprecision) */) && (font_size <= max_font_size) && (font_width_1char <= x_cell_delta-3) && (font_width_2char <= x_cell_delta*1.04)) {
+      while ((font_height <= Math.min(y_cell_delta-4,y_cell_delta*80.0/100.0) /* (margin + char height imprecision) */) && (font_size <= max_font_size) && (font_width_1char <= x_cell_delta-3) && (font_width_2char <= x_cell_delta*1.05)) {
         last_valid_font_size = font_size;
         font_size = font_size + 1;
         font_tmp = "bold " + font_size + "px " + fontFamily;
