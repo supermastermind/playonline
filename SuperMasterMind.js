@@ -1633,14 +1633,14 @@ font_size=min_font_size;
 let last_valid_font_size=font_size;
 let font_tmp="bold "+font_size+"px "+fontFamily;
 ctx.font=font_tmp;
-let font_width_1char=ctx.measureText("X").width;
+let font_width_1char=ctx.measureText(tickChar).width;
 let font_height=font_size;
 while ((font_height<=Math.min(y_cell_delta-4,y_cell_delta*80.0/100.0) /* (margin+char height imprecision) */)&&(font_size<=max_font_size)&&(font_width_1char<=x_cell_delta-3)){
 last_valid_font_size=font_size;
 font_size=font_size+1;
 font_tmp="bold "+font_size+"px "+fontFamily;
 ctx.font=font_tmp;
-font_width_1char=ctx.measureText("X").width;
+font_width_1char=ctx.measureText(tickChar).width;
 font_height=font_size;}
 font_size=last_valid_font_size;
 star_font_size=min_font_size;
