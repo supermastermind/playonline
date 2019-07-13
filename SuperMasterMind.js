@@ -1523,36 +1523,31 @@ canvas.width=width;/* (necessary as canvas may have been expanded to fill its co
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
 updateAttributesWidthAndHeightValues(width,height);}} while (resize_detected&&(resize_cnt<=15));
-if (window.innerWidth < 0.80*window.innerHeight) {
-rulesTableWidthStr = "100%";
-scoresTableWidthStr = "100%";
-scoresFontSizeStr = "1.4vh";
-abbreviateScores = true;
-}
-else if (window.innerWidth < 1.0*window.innerHeight) {
-rulesTableWidthStr = "88%";
-scoresTableWidthStr = "100%";
-scoresFontSizeStr = "1.4vh";
-abbreviateScores = true;
-}
-else if (window.innerWidth > 1.7*window.innerHeight) {
-rulesTableWidthStr = "35%"; // (~35% for 67% window ratio)
-scoresTableWidthStr = "70%";
-scoresFontSizeStr = "1.4vh";
-abbreviateScores = false;
-}
-else if (window.innerWidth > 1.3*window.innerHeight) {
-rulesTableWidthStr = "44%"; // (~44% for 83% window ratio)
-scoresTableWidthStr = "95%";
-scoresFontSizeStr = "1.4vh";
-abbreviateScores = false;
-}
-else { // (window ratio factor between 1.0 and 1.2)
-rulesTableWidthStr = "53%"; // (~53% for 100% window ratio)
-scoresTableWidthStr = "100%";
-scoresFontSizeStr = "1.4vh";
-abbreviateScores = true;
-}
+if(window.innerWidth<0.80*window.innerHeight){
+rulesTableWidthStr="100%";
+scoresTableWidthStr="100%";
+scoresFontSizeStr="1.4vh";
+abbreviateScores=true;}
+else if(window.innerWidth<1.0*window.innerHeight){
+rulesTableWidthStr="88%";
+scoresTableWidthStr="100%";
+scoresFontSizeStr="1.4vh";
+abbreviateScores=true;}
+else if(window.innerWidth>1.7*window.innerHeight){
+rulesTableWidthStr="35%";
+scoresTableWidthStr="70%";
+scoresFontSizeStr="1.4vh";
+abbreviateScores=false;}
+else if(window.innerWidth>1.3*window.innerHeight){
+rulesTableWidthStr="44%";
+scoresTableWidthStr="95%";
+scoresFontSizeStr="1.4vh";
+abbreviateScores=false;}
+else{
+rulesTableWidthStr="53%";
+scoresTableWidthStr="100%";
+scoresFontSizeStr="1.4vh";
+abbreviateScores=true;}
 let nbColumnsSelected=getNbColumnsSelected();
 if( (nbColumnsSelected<0)||(nbColumnsSelected>nbMaxColumns) ){
 displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected,new Error().stack);
@@ -1838,19 +1833,25 @@ ctx.font=basic_bold_font;}
 else if(0==isPossible){
 if(relative_performances_of_codes_played[i-1]==-1.00){
 displayGUIError("useless code inconsistency: "+relative_performances_of_codes_played[i-1],new Error().stack);}
-displayString(tickChar,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
-greenColor,backgroundColor,ctx);}
+if(!displayString(tickChar,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
+greenColor,backgroundColor,ctx,true,0,true,0)){
+displayString("Y",attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
+greenColor,backgroundColor,ctx,true,0,true,0);}}
 else{
 if(i<=2){
-displayString(crossChar,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
-redColor,backgroundColor,ctx);}
+if(!displayString(crossChar,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
+redColor,backgroundColor,ctx,true,0,true,0)){
+displayString("N",attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
+redColor,backgroundColor,ctx,true,0,true,0);}}
 else{
 if(!displayString("\u2009" /* (thin space) */+crossChar+"\u2009" /* (thin space) */+isPossible+"\u2009" /* (thin space) */,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
 redColor,backgroundColor,ctx,true,0,true,0)){
 if(!displayString(isPossible,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
 redColor,backgroundColor,ctx,true,0,true,0)){
-displayString(crossChar,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
-redColor,backgroundColor,ctx);}}}}}}
+if(!displayString(crossChar,attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
+redColor,backgroundColor,ctx,true,0,true,0)){
+displayString("N",attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width,i-1,tick_width,
+redColor,backgroundColor,ctx,true,0,true,0);}}}}}}}
 let HintsThreshold=5;
 if(!showPossibleCodesMode){
 ctx.font=medium3_bold_font;

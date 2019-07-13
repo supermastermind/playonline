@@ -1029,7 +1029,7 @@ function newGameButtonClick(nbColumns_p) {
 
         if (someGamesWereWon && (nbColumns >= 5)) { // (condition duplicated)
           if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
-            var rsp = confirm("Do you really want to abort current game?"); // (code duplicated)
+            var rsp = confirm("Do you really want to abort current game?");
             if (!rsp) {
               nbNewGameEventsCancelled++;
               return; // Cancel or "x" (close) button
@@ -2776,21 +2776,30 @@ function draw_graphic_bis() {
             if (relative_performances_of_codes_played[i-1] == -1.00) { // useless code (simplified test)
               displayGUIError("useless code inconsistency: " + relative_performances_of_codes_played[i-1], new Error().stack);
             }
-            displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                          greenColor, backgroundColor, ctx);
+            if (!displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                               greenColor, backgroundColor, ctx, true, 0, true, 0)) {
+              displayString("Y", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                           greenColor, backgroundColor, ctx, true, 0, true, 0); // (may be thinner than tickChar)
+            }
           }
           else { // code is not possible
             if (i <= 2) {
-              displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                            redColor, backgroundColor, ctx);
+              if (!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                 redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                              redColor, backgroundColor, ctx, true, 0, true, 0); // (may be thinner than crossChar)
+              }
             }
             else {
               if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                                  redColor, backgroundColor, ctx, true, 0, true, 0)) {
                 if (!displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                                    redColor, backgroundColor, ctx, true, 0, true, 0)) {
-                  displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                                redColor, backgroundColor, ctx);
+                  if (!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                     redColor, backgroundColor, ctx, true, 0, true, 0)) {
+                    displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                  redColor, backgroundColor, ctx, true, 0, true, 0); // (may be thinner than crossChar)
+                  }
                 }
               }
             }
