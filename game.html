@@ -212,13 +212,6 @@
         var androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
         if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
           userAgentStr = "Android appli (" + androidAppliInfoStr + ") ";
-          var rsp = confirm("Do you really want to do something?"); // XXX
-          if (!rsp) {
-            alert("no");
-          }
-          else {
-            alert("yes");
-          }
           android_appli = true;
         }
         userAgentStr = userAgentStr + navigator.userAgent;
@@ -339,8 +332,7 @@
       Current game was aborted!
       <script>
         if (typeof(Storage) !== 'undefined') {
-          //if (localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 30)) { // XXX
-          if (true) { // XXX
+          if (localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 30)) {
             someGamesWereWon = true;
             document.write("<hr style='height:0.75vh; visibility:hidden;' />You shall win 5 consecutive games<br>to get your \"last5\" score<br>computed and compared to other players'");
           }
@@ -417,7 +409,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NV6";
+      let html_compatibility_game_version = "Ver_NV7";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
