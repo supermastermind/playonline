@@ -1617,6 +1617,7 @@
                   console.log("HTML geolocation error: " + exc);
                   localStorage.html_geoloc_status = "nok-3/" + exc;
                 }
+                if (android_appli) {alert("final status: " + localStorage.html_geoloc_status);} // XXX
                 debug_game_state = 12;
               })
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
