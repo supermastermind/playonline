@@ -1628,7 +1628,6 @@
             }, // HTML_geolocation_success
 
             HTML_geolocation_error: function(error) {
-              if (android_appli) {alert("error");} // XXX
               let error_str = "?";
               switch(error.code) {
                 case error.PERMISSION_DENIED:
@@ -1650,6 +1649,7 @@
               }
               console.log("HTML geolocation error: " + error_str);
               localStorage.html_geoloc_status = "nok-5/" + error_str;
+              if (android_appli) {alert("error: " + error_str);} // XXX
             }, // HTML_geolocation_error
 
             attempt_HTML_geolocation: function() {
