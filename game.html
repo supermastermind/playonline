@@ -339,7 +339,8 @@
       Current game was aborted!
       <script>
         if (typeof(Storage) !== 'undefined') {
-          if (localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 30)) {
+          //if (localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 30)) { // XXX
+          if (true) { // XXX
             someGamesWereWon = true;
             document.write("<hr style='height:0.75vh; visibility:hidden;' />You shall win 5 consecutive games<br>to get your \"last5\" score<br>computed and compared to other players'");
           }
