@@ -225,7 +225,7 @@ let highlightColor = "#FFFF00"; // Yellow
 
 let fontFamily = "Verdana";
 let defaultFont = "10px " + fontFamily;
-let min_font_size = 6; // (font size below 6 may not be easily readable in canvas)
+let min_font_size = 7; // (font size below 7 may not be easily readable in canvas)
 let max_font_size = 222;
 let basic_font = defaultFont;
 let basic_bold_font = defaultFont;
@@ -2506,7 +2506,7 @@ function draw_graphic_bis() {
         star_font_height = star_font_size;
       }
       star_font_size = Math.min(last_valid_star_font_size, font_size);
-      if (android_appli) {alert(font_size);} // XXX 
+
       basic_font = font_size + "px " + fontFamily;
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
       basic_bold_italic_font = "bold italic " + font_size + "px " + fontFamily;
