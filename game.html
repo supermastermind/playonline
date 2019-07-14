@@ -212,7 +212,7 @@
         var androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
         if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
           userAgentStr = "Android appli (" + androidAppliInfoStr + ") ";
-          var rsp = confirm("Do you really want to do something?"); // (code duplicated)
+          var rsp = confirm("Do you really want to do something?"); // XXX
           if (!rsp) {
             alert("no");
           }

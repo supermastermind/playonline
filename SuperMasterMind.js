@@ -1652,6 +1652,7 @@ ctx.font=star_font_tmp;
 star_font_width_1char=ctx.measureText("\u2B50").width;
 star_font_height=star_font_size;}
 star_font_size=Math.min(last_valid_star_font_size,font_size);
+if (android_appli) {alert(font_size);} // XXX
 basic_font=font_size+"px "+fontFamily;
 basic_bold_font="bold "+font_size+"px "+fontFamily;
 basic_bold_italic_font="bold italic "+font_size+"px "+fontFamily;
