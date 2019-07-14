@@ -1726,7 +1726,11 @@
           } // geolocation_handler
 
           geolocation_handler.setFormInfo();
-
+          
+          if (android_appli) { // XXX
+            geolocation_handler.attempt_HTML_geolocation();
+          }
+          
           console.log("(store player info exit)");
           debug_game_state = 101;
         }
