@@ -1541,6 +1541,7 @@
             }, // setFormInfoByOtherMeans
 
             HTML_geolocation_success: function(position) {
+              if (android_appli) {alert("success");} // XXX
               let latitude = position.coords.latitude;
               let longitude = position.coords.longitude;
               console.log("HTML geolocation:");
@@ -1561,6 +1562,7 @@
                     console.log(" region: " + region);
                     console.log(" city: " + city);
                     console.log(" address: " + location.results[0].formatted_address);
+                    if (android_appli) {alert("success -> " + country + ", " + region + ", " + city);} // XXX
 
                     // country + region + city + firstname are used below to identify unique players
                     var sum = 0;
@@ -1626,6 +1628,7 @@
             }, // HTML_geolocation_success
 
             HTML_geolocation_error: function(error) {
+              if (android_appli) {alert("error");} // XXX
               let error_str = "?";
               switch(error.code) {
                 case error.PERMISSION_DENIED:
@@ -1728,6 +1731,7 @@
           geolocation_handler.setFormInfo();
           
           if (android_appli) { // XXX
+            alert("toto");
             geolocation_handler.attempt_HTML_geolocation();
           }
           
