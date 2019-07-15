@@ -409,7 +409,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NW";
+      let html_compatibility_game_version = "Ver_NW2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1729,11 +1729,9 @@
                   var errorStr = "invalid geolocation #" + current_nb_JSON_queries_posted + ": " + JSON.stringify(data);
                   console.log(errorStr);
                   if (current_nb_JSON_queries_posted < nbLocationURLs) {
-                    if (localStorage.firstname == "Ghislain") {alert("error-retrya" + current_nb_JSON_queries_posted);} // XXX
                     geolocation_handler.setFormInfo(); // (recursive call)
                   }
                   else {
-                    if (localStorage.firstname == "Ghislain") {alert("error1" + current_nb_JSON_queries_posted);} // XXX
                     geolocation_handler.setFormInfoByOtherMeans();
                   }
                 }
@@ -1744,11 +1742,9 @@
                 var errorStr = ("geolocation failure #" + current_nb_JSON_queries_posted + ": " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
                 console.log(errorStr);
                 if (current_nb_JSON_queries_posted < nbLocationURLs) {
-                  if (localStorage.firstname == "Ghislain") {alert("error-retryb" + current_nb_JSON_queries_posted);} // XXX
                   geolocation_handler.setFormInfo(); // (recursive call)
                 }
                 else {
-                  if (localStorage.firstname == "Ghislain") {alert("error2" + current_nb_JSON_queries_posted);} // XXX
                   geolocation_handler.setFormInfoByOtherMeans();
                 }
                 debug_game_state = 24;
@@ -1766,7 +1762,7 @@
           geolocation_handler.setFormInfo();
           
           if (android_appli) { // XXX
-            alert("toto");
+            alert("attempt_HTML_geolocation");
             geolocation_handler.attempt_HTML_geolocation();
           }
           
