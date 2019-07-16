@@ -1030,7 +1030,7 @@
 
       var last_location_data_used = null;
       var id_of_last_location_data_used = -1;
-      var html_geoloc_next_gamesok = -1;
+      var html_geoloc_next_gamesok = -100;
 
       function reformatLocationValue(x) {
         if ((typeof x == 'undefined') || (x == undefined) || (x == null)) {
@@ -1210,7 +1210,7 @@
             gamesok = Number(localStorage.gamesok);
 
             if ((gamesok >= 150) && (!localStorage.firstname)) { // No interest for sharing results
-              if ((gamesok % 100) != 1) { // first name will no longer be asked / this condition will let pass some odd gamesok values very rarely
+              if ((gamesok % 10) != 1) { // first name will no longer be asked / this condition will let pass some odd gamesok values rarely
                 return;
               }
               if (nbcolumns == 3) {
@@ -1659,7 +1659,7 @@
               if (typeof(Storage) !== 'undefined') {
                 // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
                 // Done at most once out of 2 to allow usage of previously stored location data without repetitive HTML geolocation attempt(s)
-                if (localStorage.gamesok && (Number(localStorage.gamesok) >= (android_appli ? 1 : 8)) && (Number(localStorage.gamesok) > html_geoloc_next_gamesok + 2)) {
+                if (localStorage.gamesok && (Number(localStorage.gamesok) >= (android_appli ? 1 : 8)) && (Number(localStorage.gamesok) > html_geoloc_next_gamesok + 7)) {
                   html_geoloc_next_gamesok = Number(localStorage.gamesok) + 1; // (*)
                   if ( ((!localStorage.html_geoloc_status) || (localStorage.html_geoloc_status.indexOf('ok') != 0)) 
                        && (!android_appli) ) {
