@@ -1594,8 +1594,8 @@ function resetGameAttributes(nbColumnsSelected) {
   game_id_for_gameSolverConfig = -1;
   game_id_for_initGameSolver = -1;
 
-  if ( ((new Date()).getTime() - loadTime >= 8*3600*1000) // (reload the page from server every 8 hours at next game start: not too short to allow game.html's "last_location_data_used" benefits and avoid useless reloads (while offline), not too long to allow fast application of changes)
-       || (nbGamesPlayedAndWon >= 14) ) { // (reload to avoid potential (firefox) memory leaks issues, with the same arguments as above - can also solve modal display issues)
+  if ( ((new Date()).getTime() - loadTime >= 8*3600*1000) // (reload the page from server every 8 hours at next game start: not too short to allow game.html's "last_location_data_used" benefits and avoid useless reloads (e.g. while offline), not too long to allow fast application of changes)
+       || (nbGamesPlayedAndWon >= 25) ) { // (reload to avoid potential (firefox) memory leaks issues, with the same arguments as above - can also solve modal display issues)
     loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
     location.reload(true);
   }
