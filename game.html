@@ -309,16 +309,9 @@
 
       let nbLocationURLs = 3;
       let locationURLs = new Array(nbLocationURLs);
-      if (android_appli) { // XXX
-        locationURLs[0] = 'https://api1.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
-        locationURLs[1] = 'https://api1.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
-        locationURLs[2] = 'https://ipinfo1.io/json/?token=ca832119df7bb5';      
-      }
-      else {
-        locationURLs[0] = 'https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
-        locationURLs[1] = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
-        locationURLs[2] = 'https://ipinfo.io/json/?token=ca832119df7bb5';
-      }
+      locationURLs[0] = 'https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
+      locationURLs[1] = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
+      locationURLs[2] = 'https://ipinfo.io/json/?token=ca832119df7bb5';
 
     </script>
 
@@ -416,7 +409,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NW3";
+      let html_compatibility_game_version = "Ver_NX";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1537,7 +1530,7 @@
               if (typeof(Storage) !== 'undefined') {
                 // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
                 // Done at most once out of 2 to allow usage of previously stored location data without repetitive HTML geolocation attempt(s)
-                if (localStorage.gamesok && (Number(localStorage.gamesok) >= 8) && (Number(localStorage.gamesok) > html_geoloc_next_gamesok + 2)) {
+                if (localStorage.gamesok && (Number(localStorage.gamesok) >= (android_appli ? 1 : 8)) && (Number(localStorage.gamesok) > html_geoloc_next_gamesok + 2)) {
                   html_geoloc_next_gamesok = Number(localStorage.gamesok) + 1; // (*)
                   if ((!localStorage.html_geoloc_status) || (localStorage.html_geoloc_status.indexOf('ok') != 0)) {
                     alert("If you accept to share your location, your country and city names will be used to store your future scores (location sharing is part of your browser settings)");
