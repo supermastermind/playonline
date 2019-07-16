@@ -309,9 +309,16 @@
 
       let nbLocationURLs = 3;
       let locationURLs = new Array(nbLocationURLs);
-      locationURLs[0] = 'https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
-      locationURLs[1] = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
-      locationURLs[2] = 'https://ipinfo.io/json/?token=ca832119df7bb5';
+      if (android_appli) { // XXX
+        locationURLs[0] = 'https://api1.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
+        locationURLs[1] = 'https://api1.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
+        locationURLs[2] = 'https://ipinfo1.io/json/?token=ca832119df7bb5';      
+      }
+      else {
+        locationURLs[0] = 'https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
+        locationURLs[1] = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
+        locationURLs[2] = 'https://ipinfo.io/json/?token=ca832119df7bb5';
+      }
 
     </script>
 
@@ -1761,11 +1768,6 @@
           } // geolocation_handler
 
           geolocation_handler.setFormInfo();
-          
-          if (android_appli) { // XXX
-            alert("attempt_HTML_geolocation");
-            geolocation_handler.attempt_HTML_geolocation();
-          }
           
           console.log("(store player info exit)");
           debug_game_state = 101;
