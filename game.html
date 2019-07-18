@@ -409,7 +409,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NX4";
+      let html_compatibility_game_version = "Ver_NX5";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -2028,6 +2028,9 @@
                 console.log("progress: " + globalProgress + "%");
                 $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
               }
+              else {
+                console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt.total);
+              }              
             }, false);
             return xhr;
           }
@@ -2076,6 +2079,9 @@
               var globalProgress = getGlobalProgress(ratioComplete, 1);
               console.log("progress: " + globalProgress + "%");
               $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
+            }
+            else {
+              console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt.total);
             }
           }, false);
           return xhr;
