@@ -2025,7 +2025,7 @@
                 var ratioComplete = evt.loaded / evt.total;
                 // console.log(ratioComplete);
                 var globalProgress = getGlobalProgress(ratioComplete, 2);
-                $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)") // (not rem unit as no viewport! / duplicated code)
+                $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
               }
             }, false);
             return xhr;
@@ -2072,9 +2072,9 @@
           xhr.addEventListener("progress", function(evt) {
             if (evt.lengthComputable) {
               var ratioComplete = evt.loaded / evt.total;
-              console.log("progress: " + ratioComplete);
               var globalProgress = getGlobalProgress(ratioComplete, 1);
-              $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)") // (not rem unit as no viewport! / duplicated code)
+              console.log("progress: " + globalProgress + "%");
+              $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
             }
           }, false);
           return xhr;
