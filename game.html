@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
   <head>
@@ -2016,14 +2017,14 @@
             xhr.upload.addEventListener("progress", function(evt) {
               if (evt.lengthComputable) {
                 var ratioComplete = evt.loaded / evt.total;
-                // console.log(ratioComplete);
+                console.log(ratioComplete);
               }
             }, false);
             // Download progress
             xhr.addEventListener("progress", function(evt) {
               if (evt.lengthComputable) {
                 var ratioComplete = evt.loaded / evt.total;
-                // console.log(ratioComplete);
+                console.log(ratioComplete);
                 var globalProgress = getGlobalProgress(ratioComplete, 2);
                 $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
               }
