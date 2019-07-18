@@ -350,12 +350,17 @@
         <td style='width:6.2%;margin:0;padding:0;vertical-align:middle;text-align:center;white-space:nowrap'>
           <input id='newGameButton' class='button disabled' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' style='margin-bottom:0.5vh;' disabled>
           <form action=''>
-            <label title='Very easy'><input id='columnslabel_3b' class='radio disabled' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(3)' disabled><span id='columnslabel_3' class='radio disabled' style='vertical-align:middle;'> 3 columns<br></span></label>
-            <label title='Master Mind'><input id='columnslabel_4b' class='radio disabled' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(4)' disabled><span id='columnslabel_4' class='radio disabled' style='vertical-align:middle;'> 4 columns<br></span></label>
-            <label title='Super Master Mind'><input id='columnslabel_5b' class='radio disabled' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(5)' disabled><span id='columnslabel_5' class='radio disabled' style='vertical-align:middle;'> 5 columns<br></span></label>
-            <label title='Advanced Master Mind'><input id='columnslabel_6b' class='radio disabled' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(6)' disabled><span id='columnslabel_6' class='radio disabled' style='vertical-align:middle;'> 6 columns<br></span></label>
-            <label title='Ultra Master Mind'><input id='columnslabel_7b' class='radio disabled' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(7)' disabled><span id='columnslabel_7' class='radio disabled' style='vertical-align:middle;'> 7 columns<br></span></label>
-          </form>
+            <label title='Very easy'><input id='columnslabel_3b' class='radio disabled' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(3)' disabled></label>
+              <label title='Very easy' onclick="$('#columnslabel_3b').prop('checked', true);newGameButtonClick(3);"><span id='columnslabel_3' class='radio disabled' style='vertical-align:middle;'> 3 columns<br></span></label>
+            <label title='Master Mind'><input id='columnslabel_4b' class='radio disabled' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(4)' disabled></label>
+              <label title='Master Mind' onclick="$('#columnslabel_4b').prop('checked', true);newGameButtonClick(4);"><span id='columnslabel_4' class='radio disabled' style='vertical-align:middle;'> 4 columns<br></span></label>
+            <label title='Super Master Mind'><input id='columnslabel_5b' class='radio disabled' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(5)' disabled></label>
+              <label title='Super Master Mind' onclick="$('#columnslabel_5b').prop('checked', true);newGameButtonClick(5);"><span id='columnslabel_5' class='radio disabled' style='vertical-align:middle;'> 5 columns<br></span></label>
+            <label title='Advanced Master Mind'><input id='columnslabel_6b' class='radio disabled' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(6)' disabled></label>
+              <label title='Advanced Master Mind' onclick="$('#columnslabel_6b').prop('checked', true);newGameButtonClick(6);"><span id='columnslabel_6' class='radio disabled' style='vertical-align:middle;'> 6 columns<br></span></label>
+            <label title='Ultra Master Mind'><input id='columnslabel_7b' class='radio disabled' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;margin:1px 1px 0 0;' onclick='newGameButtonClick(7)' disabled></label>
+              <label title='Ultra Master Mind' onclick="$('#columnslabel_7b').prop('checked', true);newGameButtonClick(7);"><span id='columnslabel_7' class='radio disabled' style='vertical-align:middle;'> 7 columns<br></span></label>
+        </form>
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
@@ -408,7 +413,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NX14";
+      let html_compatibility_game_version = "Ver_NY";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
