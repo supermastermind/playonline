@@ -408,7 +408,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NX9";
+      let html_compatibility_game_version = "Ver_NX10";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -2022,7 +2022,7 @@
             }, false);
             // Download progress
             xhr.addEventListener("progress", function(evt) {
-              if (evt.lengthComputable) {
+              if (evt.lengthComputable && (evt.loaded >= 0)) {
                 var ratioComplete = evt.loaded / evt.total;
                 var globalProgress = getGlobalProgress(ratioComplete, 2);
                 console.log("progress: " + globalProgress + "%");
@@ -2077,7 +2077,7 @@
           }, false);
           // Download progress
           xhr.addEventListener("progress", function(evt) {
-            if (evt.lengthComputable) {
+            if (evt.lengthComputable && (evt.loaded >= 0)) {
               var ratioComplete = evt.loaded / evt.total;
               var globalProgress = getGlobalProgress(ratioComplete, 1);
               console.log("progress: " + globalProgress + "%");
