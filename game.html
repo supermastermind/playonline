@@ -408,7 +408,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NX8";
+      let html_compatibility_game_version = "Ver_NX9";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1980,7 +1980,7 @@
 
       function getGlobalProgress(progress, state) {
         if ((progress < 0) || (progress > 1)) { // error case
-          return -1;
+          return 0;
         }
         let loaded_sizes = new Array(3);
         loaded_sizes[0] = 100; // game.html ~ 100KB
@@ -2026,7 +2026,9 @@
                 var ratioComplete = evt.loaded / evt.total;
                 var globalProgress = getGlobalProgress(ratioComplete, 2);
                 console.log("progress: " + globalProgress + "%");
-                $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
+                if (globalProgress > 0) {
+                  $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
+                }
               }
               else {
                 console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt.total);
@@ -2079,7 +2081,9 @@
               var ratioComplete = evt.loaded / evt.total;
               var globalProgress = getGlobalProgress(ratioComplete, 1);
               console.log("progress: " + globalProgress + "%");
-              $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
+              if (globalProgress > 0) {
+                $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
+              }
             }
             else {
               console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt.total);
