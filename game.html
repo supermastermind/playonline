@@ -8,9 +8,9 @@
     <meta name="title" content="Super Master Mind">
     <meta name="description" content="Play Super Master Mind / Code breaker online, assisted by a calculator which knows the optimal strategy!">
     <meta name="keywords" content="super master mind, code breaker, game, online, optimal strategy, javascript">
-    
+
     <!-- no viewport tag in this page as it makes canvas fuzzy! -->
-    
+
     <!-- Remote console at http://console.re/supermastermind displaying console text (provided all calls to "console.log(xxx)" are replaced by "console.re.log(xxx)")
          and console errors (provided the .js scripts to be debugged are copied/pasted directly into this HTML file between <script>...</script> tags,
          otherwise error details, among which error line numbers, will be lost):
@@ -310,8 +310,8 @@
       let nbLocationURLs = 3;
       let locationURLs = new Array(nbLocationURLs);
       locationURLs[0] = 'https://api.ipdata.co/en?api-key=1b31a83f2dc4ead71542c7df3dc4850ce22fed68341a7f3b46ab67b2';
-      locationURLs[1] = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json';
-      locationURLs[2] = 'https://ipinfo.io/json/?token=ca832119df7bb5';
+      locationURLs[1] = 'https://api.ipinfodb.com/v3/ip-city/?key=e61c60ef2fd204e654c2dbe9cd5f4d48c325e6b9ec666a9d76466fab576a9ce6&format=json'; // (specific conversion for this dimension index [1])
+      locationURLs[2] = 'https://ipinfo.io/json/?token=ca832119df7bb5'; // (specific conversion for this dimension index [2])
 
     </script>
 
@@ -1040,7 +1040,7 @@
           return String(x).trim();
         }
       }
-      
+
       function isLocationDataValid(data_p) {
         if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) {
           return false;
@@ -1054,7 +1054,7 @@
           return true;
         }
         return false;
-      }      
+      }
 
       let very_fine_location_data = null;
       function HTML_geolocation_success(position) {
@@ -1184,7 +1184,7 @@
           }
         }
       }
-      
+
       var last_game_cnt = -1;
       function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, help, gamestr) {
         debug_game_state = 100;
@@ -1606,7 +1606,7 @@
                     // // open modal
                     // modal.open();
                     // form_to_be_submitted = false; // form to be submitted when modal is closed
-                    
+
                     // ***** Prompt-based version:
                     let firstname_entered = prompt("Please enter your first name, it will be used to store your future scores (between 3 and 11 letters, no spaces):", "Sherlock?");
                     if (firstname_entered != null) { // (a first name was entered)
@@ -1621,7 +1621,7 @@
                           localStorage.previousfirstname = firstname_entered;
                         }
                         alert("Invalid first name: " + firstname_entered);
-                      }                      
+                      }
                     }
 
                     if (typeof(Storage) !== 'undefined') {
@@ -1634,7 +1634,7 @@
                         document.getElementById('form_firstname_id').value = localStorage.firstname;
                       }
                     }
-                    
+
                   }
                   catch (exc) {
                     throw new Error("first name entry error: " + exc + ": " + exc.stack);
@@ -1661,7 +1661,7 @@
                 // Done at most once out of 2 to allow usage of previously stored location data without repetitive HTML geolocation attempt(s)
                 if (localStorage.gamesok && (Number(localStorage.gamesok) >= (android_appli ? 1 : 8)) && (Number(localStorage.gamesok) > html_geoloc_next_gamesok + 7)) {
                   html_geoloc_next_gamesok = Number(localStorage.gamesok) + 1; // (*)
-                  if ( ((!localStorage.html_geoloc_status) || (localStorage.html_geoloc_status.indexOf('ok') != 0)) 
+                  if ( ((!localStorage.html_geoloc_status) || (localStorage.html_geoloc_status.indexOf('ok') != 0))
                        && (!android_appli) ) {
                     alert("If you accept to share your location, your country and city names will be used to store your future scores (location sharing is part of your browser settings)");
                   }
@@ -1709,7 +1709,7 @@
               if (very_fine_location_data != null) {
                 if (isLocationDataValid(very_fine_location_data)) {
                   geolocation_handler.setFormInfoWithValidLocationData(very_fine_location_data, nbLocationURLs + 11, "VF");
-                  return;                  
+                  return;
                 }
               }
 
@@ -1774,7 +1774,7 @@
           } // geolocation_handler
 
           geolocation_handler.setFormInfo(); // (main call)
-          
+
           console.log("(store player info exit)");
           debug_game_state = 101;
         }
@@ -2035,7 +2035,7 @@
         $(".game_loading").fadeOut("slow"); // game_loading div fades out
         debug_game_state = 74;
       });
-      
+
     </script>
 
     <p id='traces_id' style='color:#AAAAAA;'></p>
