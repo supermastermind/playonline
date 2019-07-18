@@ -1,6 +1,6 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
-let version="v2.76";
+let version="v2.77";
 let emptyColor=0;
 let nbMinColors=5;
 let nbMaxColors=10;
