@@ -1518,9 +1518,9 @@ for (let i=0;i<allRadioButtons.length;i++){
 allRadioButtons[i].style.fontSize="12px";}}
 else{
 for (let i=0;i<allButtons.length;i++){
-allButtons[i].style.fontSize="2.5vh";}
+allButtons[i].style.fontSize=(CompressedDisplayMode?"2.5vh":"2vh");}
 for (let i=0;i<allRadioButtons.length;i++){
-allRadioButtons[i].style.fontSize="2.5vh";}}
+allRadioButtons[i].style.fontSize=(CompressedDisplayMode?"2.5vh":"2vh");}}
 canvas.width=width;/* (necessary as canvas may have been expanded to fill its container) */
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
