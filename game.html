@@ -347,28 +347,28 @@
 
     <table id='my_table' style='background:#E3E3E3;width:75%;height:90%;position:absolute;left:12.5%;top:2%;border:5px ridge white;border-radius:1%;margin:0;padding:0;'>
       <tr style='height:100%;'>
-        <td style='width:0.4%;margin:0;padding:0;'></td>
+        <td style='width:0.1%;margin:0;padding:0;'></td>
         <td style='width:6.2%;margin:0;padding:0;vertical-align:middle;text-align:center;white-space:nowrap'>
           <input id='newGameButton' class='button disabled' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' style='margin-bottom:0.5vh;' disabled>
           <form action=''>
-            <label title='Very easy'>&nbsp;&nbsp;<input id='columnslabel_3b' class='radio disabled' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(3)' disabled></label>
-              <label title='Very easy' onclick="$('#columnslabel_3b').prop('checked', true);newGameButtonClick(3);"><span id='columnslabel_3' class='radio disabled' style='vertical-align:middle;'> 3 columns&nbsp;&nbsp;<br></span></label>
-            <label title='Master Mind'>&nbsp;&nbsp;<input id='columnslabel_4b' class='radio disabled' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(4)' disabled></label>
-              <label title='Master Mind' onclick="$('#columnslabel_4b').prop('checked', true);newGameButtonClick(4);"><span id='columnslabel_4' class='radio disabled' style='vertical-align:middle;'> 4 columns&nbsp;&nbsp;<br></span></label>
-            <label title='Super Master Mind'>&nbsp;&nbsp;<input id='columnslabel_5b' class='radio disabled' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(5)' disabled></label>
-              <label title='Super Master Mind' onclick="$('#columnslabel_5b').prop('checked', true);newGameButtonClick(5);"><span id='columnslabel_5' class='radio disabled' style='vertical-align:middle;'> 5 columns&nbsp;&nbsp;<br></span></label>
-            <label title='Advanced Master Mind'>&nbsp;&nbsp;<input id='columnslabel_6b' class='radio disabled' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(6)' disabled></label>
-              <label title='Advanced Master Mind' onclick="$('#columnslabel_6b').prop('checked', true);newGameButtonClick(6);"><span id='columnslabel_6' class='radio disabled' style='vertical-align:middle;'> 6 columns&nbsp;&nbsp;<br></span></label>
-            <label title='Ultra Master Mind'>&nbsp;&nbsp;<input id='columnslabel_7b' class='radio disabled' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(7)' disabled></label>
-              <label title='Ultra Master Mind' onclick="$('#columnslabel_7b').prop('checked', true);newGameButtonClick(7);"><span id='columnslabel_7' class='radio disabled' style='vertical-align:middle;'> 7 columns&nbsp;&nbsp;<br></span></label>
+            <label title='Very easy'>&nbsp;&nbsp;&nbsp;<input id='columnslabel_3b' class='radio disabled' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(3)' disabled></label>
+              <label title='Very easy' onclick="$('#columnslabel_3b').prop('checked', true);newGameButtonClick(3);"><span id='columnslabel_3' class='radio disabled' style='vertical-align:middle;'> 3 columns&nbsp;<br></span></label>
+            <label title='Master Mind'>&nbsp;&nbsp;&nbsp;<input id='columnslabel_4b' class='radio disabled' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(4)' disabled></label>
+              <label title='Master Mind' onclick="$('#columnslabel_4b').prop('checked', true);newGameButtonClick(4);"><span id='columnslabel_4' class='radio disabled' style='vertical-align:middle;'> 4 columns&nbsp;<br></span></label>
+            <label title='Super Master Mind'>&nbsp;&nbsp;&nbsp;<input id='columnslabel_5b' class='radio disabled' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(5)' disabled></label>
+              <label title='Super Master Mind' onclick="$('#columnslabel_5b').prop('checked', true);newGameButtonClick(5);"><span id='columnslabel_5' class='radio disabled' style='vertical-align:middle;'> 5 columns&nbsp;<br></span></label>
+            <label title='Advanced Master Mind'>&nbsp;&nbsp;&nbsp;<input id='columnslabel_6b' class='radio disabled' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(6)' disabled></label>
+              <label title='Advanced Master Mind' onclick="$('#columnslabel_6b').prop('checked', true);newGameButtonClick(6);"><span id='columnslabel_6' class='radio disabled' style='vertical-align:middle;'> 6 columns&nbsp;<br></span></label>
+            <label title='Ultra Master Mind'>&nbsp;&nbsp;&nbsp;<input id='columnslabel_7b' class='radio disabled' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(7)' disabled></label>
+              <label title='Ultra Master Mind' onclick="$('#columnslabel_7b').prop('checked', true);newGameButtonClick(7);"><span id='columnslabel_7' class='radio disabled' style='vertical-align:middle;'> 7 columns&nbsp;<br></span></label>
         </form>
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
           <input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show possible codes at each stage of the game (when game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
         </td>
-        <td style='width:0.4%;margin:0;padding:0;'></td>
-        <td style='width:93%;margin:0;padding:0;vertical-align:middle;align:right;text-align:left;'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
+        <td style='width:0.1%;margin:0;padding:0;'></td>
+        <td style='width:93.6%;margin:0;padding:0;vertical-align:middle;align:right;text-align:left;'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
       </tr>
     </table>
 
@@ -414,7 +414,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NY2";
+      let html_compatibility_game_version = "Ver_NY3";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
