@@ -1473,11 +1473,11 @@ document.getElementById("my_table").style.height="100%";
 document.getElementById("my_table").style.top="0%";
 document.getElementById("my_table").style.border="none";
 document.getElementById("my_table").style["border-radius"]="0%";
-document.getElementById("my_canvas").style.width=myCanvasIniWidth;
+document.getElementById("my_canvas").style.width="99%";
 if(firefoxMode){
 document.getElementById("my_canvas").style.height="95%";}
 else{
-document.getElementById("my_canvas").style.height="98%";}
+document.getElementById("my_canvas").style.height="99.5%";}
 try{
 document.getElementById("img_1").style.display='none';
 document.getElementById("img_2").style.display='none';}
