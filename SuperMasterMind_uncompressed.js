@@ -1481,7 +1481,7 @@ function updateGameSizes() {
       scode_height = 1;
     }
     else {
-      transition_height = 0.15;
+      transition_height = 0.075;
       scode_height = 0;
     }
   }
@@ -1597,7 +1597,7 @@ function resetGameAttributes(nbColumnsSelected) {
   game_id_for_initGameSolver = -1;
 
   if ( ((new Date()).getTime() - loadTime >= 8*3600*1000) // (reload the page from server every 8 hours at next game start: not too short to allow game.html's "last_location_data_used" + "very_fine_location_data" [w/ popups] benefits and avoid useless reloads (e.g. in mobile NW, while offline, ...), not too long to avoid outdated "last_location_data_used" + "very_fine_location_data" and allow fast application of changes)
-       || (nbGamesPlayedAndWon >= 20) ) { // (same arguments as above + avoid potential (firefox) memory leaks issues + can also solve modal display issues)
+       || (nbGamesPlayedAndWon >= 30) ) { // (same arguments as above + avoid potential (firefox) memory leaks issues + can also solve modal display issues)
     loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
     location.reload(true);
   }
@@ -2261,7 +2261,7 @@ function draw_graphic_bis() {
           left_border_margin_x = 1.0;   // Left border margin for x axis in %
           right_border_margin_x = 1.0;  // Right border margin for x axis in %
           bottom_border_margin_y = 1.5; // Bottom border margin for y axis in %
-          top_border_margin_y = 1.0;    // Top border margin for y axis in %
+          top_border_margin_y = 0.65;    // Top border margin for y axis in %
 
         }
         else {

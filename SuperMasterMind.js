@@ -949,7 +949,7 @@ if(!gameOnGoing()||dsCode){
 transition_height=0.4;
 scode_height=1;}
 else{
-transition_height=0.15;
+transition_height=0.075;
 scode_height=0;}}
 x_step=(x_max - x_min) / (attempt_nb_width
 +(70*(nbColumns+1))/100
@@ -1028,7 +1028,7 @@ gameSolverConfigDbg=null;
 game_id_for_gameSolverConfig=-1;
 game_id_for_initGameSolver=-1;
 if( ((new Date()).getTime() - loadTime>=8*3600*1000)
-||(nbGamesPlayedAndWon>=20) ){
+||(nbGamesPlayedAndWon>=30) ){
 loadTime=(new Date()).getTime();
 location.reload(true);}
 main_graph_update_needed=true;
@@ -1485,7 +1485,7 @@ catch (err){}
 left_border_margin_x=1.0;
 right_border_margin_x=1.0;
 bottom_border_margin_y=1.5;
-top_border_margin_y=1.0;}
+top_border_margin_y=0.65;}
 else{
 for (let i=nbMinColumns;i<=nbMaxColumns;i++){
 document.getElementById("columnslabel_"+i).innerHTML=nbColumnsRadioObjectIniNames[i-nbMinColumns];}
