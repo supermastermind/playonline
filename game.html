@@ -414,7 +414,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NY4";
+      let html_compatibility_game_version = "Ver_NY5";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -582,6 +582,41 @@
     </form>
 
     <script>
+
+      let loaded_sizes = new Array(3);
+      loaded_sizes[0] = 105000; // game.html ~ 105KB
+      loaded_sizes[1] = 105000; // GameSolver.js ~ 105KB (state: 1)
+      loaded_sizes[2] = 305000; // SuperMasterMind.js ~ 305KB  (state: 2)
+      function getGlobalProgress(progress, state) {
+        if ((progress < 0) || (progress > 1)) { // error case
+          return 0;
+        }
+        let sum_loaded_sizes = loaded_sizes[0] + loaded_sizes[1] + loaded_sizes[2];
+
+        if (state == 0) {
+          let percent_min = 0;
+          let percent_max = 100 * loaded_sizes[0] / sum_loaded_sizes;
+          return Math.min(100, Math.round(percent_min + progress * (percent_max - percent_min)));
+        }
+        else if (state == 1) {
+          let percent_min = 100 * loaded_sizes[0] / sum_loaded_sizes;
+          let percent_max = 100 * (loaded_sizes[0]+loaded_sizes[1]) / sum_loaded_sizes;
+          return Math.min(100, Math.round(percent_min + progress * (percent_max - percent_min)));
+        }
+        else if (state == 2) {
+          let percent_min = 100 * (loaded_sizes[0]+loaded_sizes[1]) / sum_loaded_sizes;
+          let percent_max = 100;
+          return Math.min(100, Math.round(percent_min + progress * (percent_max - percent_min)));
+        }
+        else {
+          throw new Error("getGlobalProgress: invalid state: " + progress + ", " + state);
+        }
+      }
+      var globalProgressForHTMLGame1 = getGlobalProgress(0.25 /* (roughly at the 1st fourth of this file) */, 0);
+      console.log("current progress: " + globalProgressForHTMLGame1 + "% (g)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
+      if (globalProgressForHTMLGame1 > 0) {
+        $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)"); // (not rem unit as no viewport! / duplicated code)
+      }
 
       // String.replaceAll() method definition
       String.prototype.replaceAll = function(search, replacement) {
@@ -957,41 +992,11 @@
         }
       };
 
-      let loaded_sizes = new Array(3);
-      loaded_sizes[0] = 105000; // game.html ~ 105KB
-      loaded_sizes[1] = 105000; // GameSolver.js ~ 105KB (state: 1)
-      loaded_sizes[2] = 305000; // SuperMasterMind.js ~ 305KB  (state: 2)
-      function getGlobalProgress(progress, state) {
-        if ((progress < 0) || (progress > 1)) { // error case
-          return 0;
-        }
-        let sum_loaded_sizes = loaded_sizes[0] + loaded_sizes[1] + loaded_sizes[2];
-
-        if (state == 0) {
-          let percent_min = 0;
-          let percent_max = 100 * loaded_sizes[0] / sum_loaded_sizes;
-          return Math.min(100, Math.round(percent_min + progress * (percent_max - percent_min)));
-        }
-        else if (state == 1) {
-          let percent_min = 100 * loaded_sizes[0] / sum_loaded_sizes;
-          let percent_max = 100 * (loaded_sizes[0]+loaded_sizes[1]) / sum_loaded_sizes;
-          return Math.min(100, Math.round(percent_min + progress * (percent_max - percent_min)));
-        }
-        else if (state == 2) {
-          let percent_min = 100 * (loaded_sizes[0]+loaded_sizes[1]) / sum_loaded_sizes;
-          let percent_max = 100;
-          return Math.min(100, Math.round(percent_min + progress * (percent_max - percent_min)));
-        }
-        else {
-          throw new Error("getGlobalProgress: invalid state: " + progress + ", " + state);
-        }
+      var globalProgressForHTMLGame2 = getGlobalProgress(0.5 /* (roughly at the middle of this file) */, 0);
+      console.log("current progress: " + globalProgressForHTMLGame2 + "% (g)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
+      if (globalProgressForHTMLGame2 > 0) {
+        $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame2 + "%)"); // (not rem unit as no viewport! / duplicated code)
       }
-      var globalProgressForHTMLGame = getGlobalProgress(0.5 /* (roughly at the middle of this file) */, 0);
-      console.log("current progress: " + globalProgressForHTMLGame + "% (g)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
-      if (globalProgressForHTMLGame > 0) {
-        $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame + "%)"); // (not rem unit as no viewport! / duplicated code)
-      }
-
 
       var playerid_prefix = "ID/";
       function handle_rsp_delayed(e) {
