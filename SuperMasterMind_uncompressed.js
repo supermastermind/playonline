@@ -2297,7 +2297,7 @@ function draw_graphic_bis() {
 
         let allButtons = document.getElementsByClassName("button");
         let allRadioButtons = document.getElementsByClassName("radio");
-        if (height < 600) {
+        if (height < 500) {
           for (let i = 0; i < allButtons.length; i++) {
             allButtons[i].style.fontSize = "12px";
           }
@@ -2307,10 +2307,10 @@ function draw_graphic_bis() {
         }
         else {
           for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "2.25vh"; // proportional to viewport height
+            allButtons[i].style.fontSize = "2.5vh"; // proportional to viewport height
           }
           for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "2.25vh"; // proportional to viewport height - 10/(600/100) = 1.67
+            allRadioButtons[i].style.fontSize = "2.5vh"; // proportional to viewport height - 10/(600/100) = 1.67
           }
         }
 

@@ -1511,16 +1511,16 @@ bottom_border_margin_y=2.5;
 top_border_margin_y=2.5;}
 let allButtons=document.getElementsByClassName("button");
 let allRadioButtons=document.getElementsByClassName("radio");
-if(height<600){
+if(height<500){
 for (let i=0;i<allButtons.length;i++){
 allButtons[i].style.fontSize="12px";}
 for (let i=0;i<allRadioButtons.length;i++){
 allRadioButtons[i].style.fontSize="12px";}}
 else{
 for (let i=0;i<allButtons.length;i++){
-allButtons[i].style.fontSize="2.25vh";}
+allButtons[i].style.fontSize="2.5vh";}
 for (let i=0;i<allRadioButtons.length;i++){
-allRadioButtons[i].style.fontSize="2.25vh";}}
+allRadioButtons[i].style.fontSize="2.5vh";}}
 canvas.width=width;/* (necessary as canvas may have been expanded to fill its container) */
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
