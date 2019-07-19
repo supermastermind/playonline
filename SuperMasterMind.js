@@ -2158,7 +2158,7 @@ darkGray,backgroundColor_2,ctx,true,1,true,0,false,true,true /* bottom-right bub
 if(!displayString("Select me!",x_delta*0.90,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */)){
 if(mobileMode){
-displayString("Tap!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
+displayString("Tap me!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */);}
 else{
 displayString("Click!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
