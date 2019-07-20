@@ -225,11 +225,11 @@
             if (versionCodeStr == null) {
               versionCodeStr = "?";
             }
-            let playerIdStr = = new URL(decodeURI(location.href)).searchParams.get("player_id");
+            var playerIdStr = new URL(decodeURI(location.href)).searchParams.get("player_id");
             if (playerIdStr != null) {
               if (!localStorage.playerid) {
                 localStorage.playerid = playerIdStr;
-              }              
+              }
             }
           } catch (err_versioning) {}
           userAgentStr = userAgentStr + "vn:" + versionNameStr + " vc:" + versionCodeStr + " ";
