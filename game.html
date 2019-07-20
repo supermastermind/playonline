@@ -328,7 +328,7 @@
           month = '0' + month;
         }
         year = String(date.getYear()-100);
-        return "_" + day + month + year; // (versus "+ddMMyy" in android appli)
+        return "-" + day + month + year; // (versus "_ddMMyy" in android appli)
       }
 
       let firstAccess = false;
