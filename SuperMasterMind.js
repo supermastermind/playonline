@@ -774,6 +774,7 @@ let mouse_y=e.clientY - rect.top - 2.0 /* (correction) */;
 if(dsCode){
 displayGUIError("dsCode error",new Error().stack);}
 else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok)<=5)))
+&&(!android_appli)
 &&( ((mouse_x>get_x_pixel(x_min))
 &&(mouse_x<get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
 &&(mouse_y>get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
