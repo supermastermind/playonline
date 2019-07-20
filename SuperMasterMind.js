@@ -1028,7 +1028,7 @@ gameSolverConfigDbg=null;
 game_id_for_gameSolverConfig=-1;
 game_id_for_initGameSolver=-1;
 if( ((new Date()).getTime() - loadTime>=8*3600*1000)
-||(nbGamesPlayedAndWon>=30) ){
+||(nbGamesPlayedAndWon>=3) ){
 loadTime=(new Date()).getTime();
 location.reload(true);}
 main_graph_update_needed=true;
