@@ -315,6 +315,22 @@
         return text;
       }
 
+      function formatDate(date) {
+        if (date == null) {
+          return "?";
+        }
+        day = String(date.getDate());
+        if (day.length < 2) {
+          day = '0' + day;
+        }
+        month = String(date.getMonth() + 1);
+        if (month.length < 2) {
+          month = '0' + month;
+        }
+        year = String(date.getYear()-100);
+        return "_" + day + month + year; // (versus "+ddMMyy" in android appli)
+      }
+
       let firstAccess = false;
       if (typeof(Storage) !== 'undefined') {
         if (!localStorage.firstgameaccessdone) {
@@ -322,7 +338,7 @@
           firstAccess = true;
         }
         if (!localStorage.firstaccessid) {
-          let firstaccessid = 'GA - ' + makeid() + ' - ' + new Date();
+          let firstaccessid = 'GA - ' + makeid() + formatDate(new Date());
           localStorage.firstaccessid = firstaccessid;
         }
       }
@@ -433,7 +449,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NZ4";
+      let html_compatibility_game_version = "Ver_MA";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1566,7 +1582,7 @@
                 firstname = localStorage.firstname;
               }
               if (!localStorage.playerid) {
-                let id = makeid() + ' - ' + new Date();
+                let id = makeid() + formatDate(new Date());
                 localStorage.playerid = id;
               }
               playerid = playerid_prefix + localStorage.playerid;
