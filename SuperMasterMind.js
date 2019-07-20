@@ -1029,7 +1029,7 @@ gameSolverConfigDbg=null;
 game_id_for_gameSolverConfig=-1;
 game_id_for_initGameSolver=-1;
 if( ((new Date()).getTime() - loadTime>=8*3600*1000)
-||(nbGamesPlayedAndWon>=3) ){
+||(nbGamesPlayedAndWon>=30) ){
 if (android_appli) {
 console.log("webview reload request");
 }
