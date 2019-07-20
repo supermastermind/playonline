@@ -427,7 +427,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NZ2";
+      let html_compatibility_game_version = "Ver_NZ3";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1117,7 +1117,6 @@
 
       let very_fine_location_data = null;
       function HTML_geolocation_success(position) {
-        if (android_appli) {alert("success");} // XXX
         let latitude = position.coords.latitude;
         let longitude = position.coords.longitude;
         console.log("HTML geolocation:");
@@ -1138,7 +1137,6 @@
               console.log(" region: " + region);
               console.log(" city: " + city);
               console.log(" address: " + String(location.results[0].locations[0].street).trim());
-              if (android_appli) {alert("success -> " + country + ", " + region + ", " + city);} // XXX
 
               // country + region + city + firstname are used below to identify unique players
               var sum = 0;
@@ -1193,7 +1191,6 @@
             console.log("HTML geolocation error: " + exc);
             localStorage.html_geoloc_status = "nok-3/" + exc;
           }
-          if (android_appli) {alert("final status: " + localStorage.html_geoloc_status);} // XXX
           debug_game_state = 12;
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -1226,11 +1223,9 @@
         }
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_status = "nok-5/" + error_str;
-        if (android_appli) {alert("error: " + error_str);} // XXX
       } // HTML_geolocation_error
 
       function attempt_HTML_geolocation() {
-        if (android_appli) {alert("attempt_HTML_geolocation");} // XXX
         if (typeof(Storage) !== 'undefined') {
           localStorage.html_geoloc_status = "run";
           if (navigator.geolocation) {
@@ -1645,7 +1640,7 @@
                 if ( (!localStorage.firstname)
                      && (gamesok >= 4) // (coherent with "history_clear_advice")
                      && (attempts >= 4) // (game not too easy)
-                     && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled / ignore 1 result out of 2 + oblige page reload after 100 games if not filled / no more results after 140 games if not filled)
+                     && ( (gamesok <= 5) || ((gamesok % 2) == 1) ) // (do not ask first name too often if not filled / ignore 1 result out of 2)
                      && ( ((nbcolumns == 4) && (score >= 55)) || ((nbcolumns == 5) && (score >= 60)) || ((nbcolumns == 6) && (score >= 110)) || ((nbcolumns == 7) && (score >= 130))
                           || ((gamesok >= 7) && (score >= 44))
                           || ((gamesok >= 13) && (score >= 25)) ) ) { // (experienced player)
@@ -2089,7 +2084,7 @@
           debug_game_state = 61;
           var errorStr = ("SuperMasterMind script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
-          alert("Oops... a network error occurred!\nPlease try to reload this page...\n\n" + "(" + errorStr + ")");
+          alert("Oops... a network error occurred!\nPlease retry...\n\n" + "(" + errorStr + ")");
           debug_game_state = 62;
         })
         .always(function() {
@@ -2100,7 +2095,7 @@
           // $("#my_all_scripts_loaded_form").submit(); // (dummy form submission for android appli's web view)
           debug_game_state = 65;
           if (android_appli) { // ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
-            setTimeout("attempt_HTML_geolocation();", 10000); // Redone at each reload (subject to user acceptance)
+            setTimeout("attempt_HTML_geolocation();", 10000); // Redone at each page/webview reload (subject to user acceptance)
           }
         });
       }
@@ -2174,7 +2169,7 @@
         gamesolver_blob_error = errorStr;
         // Super Master Mind script is loaded and will raise an error because GameSolver script has not been loaded successfully
         // setTimeout("loadSuperMasterMindScript();", 44);
-        alert("Oops... a network error occurred!\nPlease try to reload this page...\n\n" + "(" + errorStr + ")");
+        alert("Oops... a network error occurred!\nPlease retry...\n\n" + "(" + errorStr + ")");
         $(".game_loading").fadeOut("slow"); // game_loading div fades out
         debug_game_state = 74;
       });

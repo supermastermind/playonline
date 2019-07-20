@@ -1029,8 +1029,13 @@ game_id_for_gameSolverConfig=-1;
 game_id_for_initGameSolver=-1;
 if( ((new Date()).getTime() - loadTime>=8*3600*1000)
 ||(nbGamesPlayedAndWon>=3) ){
+if (android_appli) {
+console.log("webview reload request");
+}
+else {
 loadTime=(new Date()).getTime();
-location.reload(true);}
+location.reload(true);
+}}
 main_graph_update_needed=true;
 simpleCodeHandler=null;
 nbColumns=nbColumnsSelected;
