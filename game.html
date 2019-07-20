@@ -209,11 +209,24 @@
 
       var userAgentStr = "";
       var android_appli = false;
+      var versionNameStr = "?";
+      var versionCodeStr = "-1";
       try {
         var androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
         if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
-          userAgentStr = "Android appli (" + androidAppliInfoStr + ") ";
+          userAgentStr = "Android appli sdk:" + androidAppliInfoStr + " ";
           android_appli = true;
+          try {
+            versionNameStr = new URL(decodeURI(location.href)).searchParams.get("version_name");
+            if (versionNameStr == null) {
+              versionNameStr = "?";
+            }
+            versionCodeStr = new URL(decodeURI(location.href)).searchParams.get("version_code");
+            if (versionCodeStr == null) {
+              versionCodeStr = "?";
+            }
+          } catch (err_versioning) {}
+          userAgentStr = userAgentStr + "vn:" + versionNameStr + " vc:" + versionCodeStr + " ";
         }
         userAgentStr = userAgentStr + navigator.userAgent;
       } catch (err) {
@@ -414,7 +427,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NZ";
+      let html_compatibility_game_version = "Ver_NZ2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -612,7 +625,7 @@
           throw new Error("getGlobalProgress: invalid state: " + progress + ", " + state);
         }
       }
-      var globalProgressForHTMLGame1 = getGlobalProgress(0.25 /* (roughly at the 1st fourth of this file) */, 0);
+      var globalProgressForHTMLGame1 = getGlobalProgress(0.25 /* (rough value) */, 0);
       console.log("current progress: " + globalProgressForHTMLGame1 + "% (g)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
       if (globalProgressForHTMLGame1 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)"); // (not rem unit as no viewport! / duplicated code)
@@ -1068,7 +1081,7 @@
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
       }
 
-      var globalProgressForHTMLGame2 = getGlobalProgress(0.5 /* (roughly at the middle of this file) */, 0);
+      var globalProgressForHTMLGame2 = getGlobalProgress(0.5 /* (rough value) */, 0);
       console.log("current progress: " + globalProgressForHTMLGame2 + "% (g)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
       if (globalProgressForHTMLGame2 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame2 + "%)"); // (not rem unit as no viewport! / duplicated code)
@@ -2090,6 +2103,12 @@
             setTimeout("attempt_HTML_geolocation();", 12000); // Redone at each reload (subject to user acceptance)
           }
         });
+      }
+
+      var globalProgressForHTMLGame3 = getGlobalProgress(0.99 /* (rough value) */, 0);
+      console.log("current progress: " + globalProgressForHTMLGame3 + "% (g)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
+      if (globalProgressForHTMLGame3 > 0) {
+        $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame3 + "%)"); // (not rem unit as no viewport! / duplicated code)
       }
 
       let gamesolver_blob = null;
