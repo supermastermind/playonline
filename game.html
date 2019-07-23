@@ -292,17 +292,19 @@
       // setTimeout("console.log('(on load timeout)');$('.game_loading').fadeOut('slow');", 5000); // game_loading div fades out -> not applied
 
       $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
-        try {
-          debug_on_unload = 1;
-          if (gameOnGoing() && (currentAttemptNumber > 1)) {
-            if (someGamesWereWon && (nbColumns >= 5)) { // (condition duplicated)
-              return "Do you really want to abort current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
+        if (!android_appli) {
+          try {
+            debug_on_unload = 1;
+            if (gameOnGoing() && (currentAttemptNumber > 1)) {
+              if (someGamesWereWon && (nbColumns >= 5)) { // (condition duplicated)
+                return "Do you really want to abort current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
+              }
             }
           }
-        }
-        catch (exc) {
-          console.log("error encountered at game abortion: " + exc);
-          return; // (no confirmation asked)
+          catch (exc) {
+            console.log("error encountered at game abortion: " + exc);
+            return; // (no confirmation asked)
+          }
         }
       });
 
