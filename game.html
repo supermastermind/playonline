@@ -451,7 +451,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MA";
+      let html_compatibility_game_version = "Ver_MA2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1143,9 +1143,11 @@
       function HTML_geolocation_success(position) {
         let latitude = position.coords.latitude;
         let longitude = position.coords.longitude;
+        let accuracy = position.coords.accuracy; // (in meters)
         console.log("HTML geolocation:");
         console.log(" latitude: " + latitude);
         console.log(" longitude: " + longitude);
+        console.log(" accuracy: " + accuracy);
         let GEOCODING_API_URL = "https://www.mapquestapi.com/geocoding/v1/reverse?outFormat=json&location=48.8162,2.3139&key=dCKxMASlEZayTGGw5SBfd2bGMSCUuP60";
         debug_game_state = 10;
         $.getJSON(GEOCODING_API_URL)
@@ -1183,10 +1185,12 @@
 
               very_fine_location_data = { latitude: reformatLocationValue(latitude),
                                           longitude: reformatLocationValue(longitude),
+                                          accuracy: accuracy,
                                           country_name: reformatLocationValue(country),
                                           region: reformatLocationValue(region),
                                           city: reformatLocationValue(city),
-                                          ip: inferred_ip_address };
+                                          ip: inferred_ip_address,
+                                          vf_date: new Date() };
               if (isLocationDataValid(very_fine_location_data)) {
                 // Reinit last_location_data_used to have it consistent with below localStorage.xxx values
                 last_location_data_used = null;
@@ -1194,10 +1198,12 @@
 
                 localStorage.latitude = reformatLocationValue(latitude);
                 localStorage.longitude = reformatLocationValue(longitude);
+                localStorage.accuracy = accuracy;
                 localStorage.countryname = reformatLocationValue(country);
                 localStorage.region = reformatLocationValue(region);
                 localStorage.city = reformatLocationValue(city);
                 localStorage.ip = inferred_ip_address;
+                localStorage.vf_date = new Date();
                 localStorage.location_id = nbLocationURLs + 10;
                 localStorage.html_geoloc_status = "ok";
               }
@@ -1249,12 +1255,35 @@
         localStorage.html_geoloc_status = "nok-5/" + error_str;
       } // HTML_geolocation_error
 
+      let my_position = null;
       function attempt_HTML_geolocation() {
         if (typeof(Storage) !== 'undefined') {
           localStorage.html_geoloc_status = "run";
           if (navigator.geolocation) {
             // Subject to user acceptance
-            navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error);
+            // Version 1:
+            // navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error);
+            // Version 2 (support of location updates & more precise than getCurrentPosition() because several iterations are made):
+            let my_geolocation = navigator.geolocation.watchPosition(
+                function (position) { // success callback (called N times)
+                  my_position = {coords: {latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy}};
+                  console.log('HTML geolocation iteration (latitude: ' + position.coords.latitude + ', ' + 'longitude: ' + position.coords.longitude + ', ' + 'accuracy: ' + position.coords.accuracy + ")");
+                },
+                HTML_geolocation_error, // error callback
+                {
+                  maximumAge: 250, // (do not use cache for long)
+                  enableHighAccuracy: true
+                }
+            );
+            setTimeout(function() {
+                navigator.geolocation.clearWatch(my_geolocation); // stop further HTML geolocation iterations (i.e. further calls to watchPosition())
+                console.log("stop HTML geolocation iterations");
+                if (my_position != null) { // (at least one HTML geolocation success during the iterations)
+                  HTML_geolocation_success(my_position); // (use last success's position)
+                }
+              },
+              10000 // stop further HTML geolocation iterations after 10 seconds
+            );
           }
           else {
             console.log("HTML geolocation error: geolocation is not supported by the browser");
@@ -2119,7 +2148,7 @@
           // $("#my_all_scripts_loaded_form").submit(); // (dummy form submission for android appli's web view)
           debug_game_state = 65;
           if (android_appli) { // ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
-            setTimeout("attempt_HTML_geolocation();", 10000); // Redone at each page/webview reload (subject to user acceptance)
+            setTimeout("attempt_HTML_geolocation();", 44); // Redone at each page/webview reload (subject to user acceptance)
           }
         });
       }
