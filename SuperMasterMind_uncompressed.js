@@ -4065,9 +4065,9 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
         if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
           starStr = "\u2B50\u200A"; // star (with hair space)
-          if (!displayString("\u200A" + starStr + performance.toFixed(/*2*/1).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
+          if (!displayString("\u200A\u200A" + starStr + performance.toFixed(/*2*/1).replaceAll(",",".") + "\u200A\u200A", x_cell, y_cell, cell_width,
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-            if (!displayString("\u200A" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
+            if (!displayString("\u200A\u200A" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u200A\u200A", x_cell, y_cell, cell_width,
                                lightGray, backgroundColor, ctx, true, 0, true, 0)) {
               displayString(starStr + performance.toFixed(0).replaceAll(",","."), x_cell, y_cell, cell_width,
                             lightGray, backgroundColor, ctx);
