@@ -1474,7 +1474,7 @@ function updateGameSizes() {
   else {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
-    optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.6:0);
+    optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.9:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
     if (!gameOnGoing() || dsCode) {
