@@ -1474,7 +1474,7 @@ function updateGameSizes() {
   else {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
-    optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.9:0);
+    optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?3.0:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
     if (!gameOnGoing() || dsCode) {
@@ -4017,13 +4017,13 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
       }
       if (!displayString(" useless" + isPossible_str + " ", x_cell, y_cell, cell_width,
                          color, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + performance.toFixed(2).replaceAll(",",".") + isPossible_str + "\u2009", x_cell, y_cell, cell_width,
+        if (!displayString("\u2009" + performance.toFixed(/*2*/1).replaceAll(",",".") + isPossible_str + "\u2009", x_cell, y_cell, cell_width,
                            color, backgroundColor, ctx, true, 0, true, 0)) {
           if (!displayString("\u2009" + performance.toFixed(1).replaceAll(",",".") + isPossible_str + "\u2009", x_cell, y_cell, cell_width,
                              color, backgroundColor, ctx, true, 0, true, 0)) {
             if (!displayString(" useless ", x_cell, y_cell, cell_width,
                                color, backgroundColor, ctx, true, 0, true, 0)) {
-              if (!displayString("\u200A" + performance.toFixed(2).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
+              if (!displayString("\u200A" + performance.toFixed(/*2*/1).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
                                  color, backgroundColor, ctx, true, 0, true, 0)) {
                 displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                               color, backgroundColor, ctx);
@@ -4060,12 +4060,12 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
         starStr = "\u2B50\u2009"; // star
       }
       if ( (!globalPerfDisplayIfOptimal)
-           || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(2).replaceAll(",","."), x_cell-extra_x_space, y_cell, cell_width+2*extra_x_space,
+           || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(/*2*/1).replaceAll(",","."), x_cell-extra_x_space, y_cell, cell_width+2*extra_x_space,
                               lightGray, backgroundColor, ctx, true, 0, true, 0)) ) {
         if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
           starStr = "\u2B50\u200A"; // star (with hair space)
-          if (!displayString("\u200A" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
+          if (!displayString("\u200A" + starStr + performance.toFixed(/*2*/1).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
             if (!displayString("\u200A" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
                                lightGray, backgroundColor, ctx, true, 0, true, 0)) {
