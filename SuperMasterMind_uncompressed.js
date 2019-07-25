@@ -1474,7 +1474,7 @@ function updateGameSizes() {
   else {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
-    optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.5:0);
+    optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?2.6:0);
     tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 
     if (!gameOnGoing() || dsCode) {
@@ -4081,7 +4081,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
       }
       if (!displayString("\u2009" + "+" + performance.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
-        if (!displayString("\u2009" + "+" + performance.toFixed(1).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
+        if (!displayString("\u2009" + "+" + performance.toFixed(2).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
                            greenColor, backgroundColor, ctx, true, 0, true, 0)) {
           displayString("+" + performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
                         greenColor, backgroundColor, ctx);
