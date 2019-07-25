@@ -1038,10 +1038,7 @@ function newGameButtonClick(nbColumns_p) {
         }
         nbOnGoingGamesAborted++;
 
-        let reset_duration = 2555;
-        if (someGamesWereWon && (nbColumns >= 5)) {
-          reset_duration = 4444;
-        }
+        let reset_duration = 4000;
         setTimeout("newGameButtonClick_delayed();", 2*reset_duration);
 
         // Transition effect 1/2
@@ -4056,20 +4053,21 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
     }
     else if (performance == 0.00) { // optimal code (perf with +/-0.005 precision is considered for optimality)
       let starStr = "";
+      let starStr2 = "";
       if (starDisplayIfOptimal) {
         starStr = "\u2B50\u2009"; // star
+        starStr2 = "\u2B50\u200A"; // star (with hair space)
       }
       if ( (!globalPerfDisplayIfOptimal)
-           || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(/*2*/1).replaceAll(",","."), x_cell-extra_x_space, y_cell, cell_width+2*extra_x_space,
+           || (!displayString(starStr + "optimal/" + optimalglobalperformance.toFixed(2).replaceAll(",","."), x_cell-extra_x_space, y_cell, cell_width+2*extra_x_space,
                               lightGray, backgroundColor, ctx, true, 0, true, 0)) ) {
         if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-          starStr = "\u2B50\u200A"; // star (with hair space)
-          if (!displayString("\u200A\u200A" + starStr + performance.toFixed(/*2*/1).replaceAll(",",".") + "\u200A\u200A", x_cell, y_cell, cell_width,
+          if (!displayString("\u200A\u200A" + starStr2 + performance.toFixed(/*2*/1).replaceAll(",",".") + "\u200A\u200A", x_cell, y_cell, cell_width,
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-            if (!displayString("\u200A\u200A" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u200A\u200A", x_cell, y_cell, cell_width,
+            if (!displayString("\u200A\u200A" + starStr2 + performance.toFixed(1).replaceAll(",",".") + "\u200A\u200A", x_cell, y_cell, cell_width,
                                lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-              displayString(starStr + performance.toFixed(0).replaceAll(",","."), x_cell, y_cell, cell_width,
+              displayString(starStr2 + performance.toFixed(0).replaceAll(",","."), x_cell, y_cell, cell_width,
                             lightGray, backgroundColor, ctx);
             }
           }
