@@ -1,9 +1,12 @@
+// ***************************************************
+// ********** Main Super Master Mind script **********
+// ***************************************************
 "use strict";
 console.log("Running SuperMasterMind.js...");
-let version="v2.77";
-let emptyColor=0;
-let nbMinColors=5;
-let nbMaxColors=10;
+// *************************************************************************
+// *************************************************************************
+// Global variables
+let version="v2.77";let emptyColor=0;let nbMinColors=5;let nbMaxColors=10;
 let nbMinColumns=3;
 let nbMaxColumns=7;
 let overallNbMinAttempts=4;
@@ -944,7 +947,7 @@ scode_height=1;}
 else{
 attempt_nb_width=0;
 nb_possible_codes_width=((nbColumns>=7)?4.2:((nbColumns==6)?3.7:3.2));
-optimal_width=(((!gameOnGoing())||showPossibleCodesMode)?2.6:0);
+optimal_width=(((!gameOnGoing())||showPossibleCodesMode)?2.55:0);
 tick_width=(((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
 if(!gameOnGoing()||dsCode){
 transition_height=0.4;
@@ -1010,9 +1013,8 @@ function resetGameAttributes(nbColumnsSelected){
 let i;
 let first_session_game;
 let debug_mode='';
-if (game_cnt>0){
-console.clear();
-}
+if(game_cnt>0){
+console.clear();}
 game_cnt++;
 if(game_cnt>1000000){
 game_cnt=1;}
@@ -1030,13 +1032,11 @@ game_id_for_gameSolverConfig=-1;
 game_id_for_initGameSolver=-1;
 if( ((new Date()).getTime() - loadTime>=8*3600*1000)
 ||(nbGamesPlayedAndWon>=30) ){
-if (android_appli) {
-console.log("webview reload request");
-}
-else {
+if(android_appli){
+console.log("webview reload request");}
+else{
 loadTime=(new Date()).getTime();
-location.reload(true);
-}}
+location.reload(true);}}
 main_graph_update_needed=true;
 simpleCodeHandler=null;
 nbColumns=nbColumnsSelected;
@@ -1164,7 +1164,7 @@ debug_mode=localStorage.debug_mode;}}
 gameSolverInitMsgContents={'smm_buffer_messages': 'no','smm_req_type': 'INIT','nbColumns': nbColumns,'nbColors': nbColors,'nbMaxAttempts': nbMaxAttempts,'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown,'first_session_game': first_session_game,'game_id': game_cnt,'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
-setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");",(android_appli?2700:2500));
+setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");",(android_appli ? 2700 : 2500));
 if(randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();",888);}
 gameSolverDbg=8;}
@@ -1524,9 +1524,9 @@ for (let i=0;i<allRadioButtons.length;i++){
 allRadioButtons[i].style.fontSize="12px";}}
 else{
 for (let i=0;i<allButtons.length;i++){
-allButtons[i].style.fontSize=(CompressedDisplayMode?"2.5vh":"2vh");}
+allButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");}
 for (let i=0;i<allRadioButtons.length;i++){
-allRadioButtons[i].style.fontSize=(CompressedDisplayMode?"2.5vh":"2vh");}}
+allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");}}
 canvas.width=width;/* (necessary as canvas may have been expanded to fill its container) */
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
@@ -2699,22 +2699,22 @@ if(!displayString("\u2009"+performance.toFixed(1).replaceAll(",",".")+isPossible
 color,backgroundColor,ctx,true,0,true,0)){
 if(!displayString(" useless ",x_cell,y_cell,cell_width,
 color,backgroundColor,ctx,true,0,true,0)){
-if(!displayString("\u2009"+performance.toFixed(2).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 color,backgroundColor,ctx,true,0,true,0)){
 displayString(performance.toFixed(1).replaceAll(",","."),x_cell,y_cell,cell_width,
 color,backgroundColor,ctx);}}}}}}
 else if(performance<=PerformanceVERYLOW){
-if(!displayString("\u2009"+performance.toFixed(2).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 redColor,backgroundColor,ctx,true,0,true,0)){
 displayString(performance.toFixed(1).replaceAll(",","."),x_cell,y_cell,cell_width,
 redColor,backgroundColor,ctx);}}
 else if(performance<=PerformanceLOW){
-if(!displayString("\u2009"+performance.toFixed(2).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 orangeColor,backgroundColor,ctx,true,0,true,0)){
 displayString(performance.toFixed(1).replaceAll(",","."),x_cell,y_cell,cell_width,
 orangeColor,backgroundColor,ctx);}}
 else if(performance<0.00){
-if(!displayString("\u2009"+performance.toFixed(2).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
 displayString(performance.toFixed(1).replaceAll(",","."),x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx);}}
@@ -2727,7 +2727,7 @@ if( (!globalPerfDisplayIfOptimal)
 lightGray,backgroundColor,ctx,true,0,true,0)) ){
 if(!displayString(" "+starStr+"optimal ",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
-if(!displayString("\u2009"+starStr+performance.toFixed(2).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+starStr+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
 if(!displayString("\u2009"+starStr+performance.toFixed(1).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
@@ -2738,7 +2738,7 @@ if(performance<=0.00){
 throw new Error("internal error in displayPerf: "+performance);}
 if(!displayString("\u2009"+"+"+performance.toFixed(2).replaceAll(",",".")+"!"+"\u2009",x_cell,y_cell,cell_width,
 greenColor,backgroundColor,ctx,true,0,true,0)){
-if(!displayString("\u2009"+"+"+performance.toFixed(2).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+"+"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 greenColor,backgroundColor,ctx,true,0,true,0)){
 displayString("+"+performance.toFixed(1).replaceAll(",","."),x_cell,y_cell,cell_width,
 greenColor,backgroundColor,ctx);}}}}
