@@ -2290,7 +2290,7 @@ global_perf=globalPerformancesList[currentPossibleCodeShown-1][codeidx+code_list
 relative_perf=best_global_perf - global_perf;}
 ctx.font=stats_font;
 let backgroundColor=backgroundColor_2;
-displayPerf(relative_perf,y_cell,backgroundColor,global_perf,true,valid_best_global_perf&&(currentPossibleCodeShown<=1),best_global_perf,ctx,(code==codesPlayed[currentPossibleCodeShown-1]));}}
+displayPerf(relative_perf,y_cell,backgroundColor,0,true,valid_best_global_perf&&(currentPossibleCodeShown<=1),best_global_perf,ctx,(code==codesPlayed[currentPossibleCodeShown-1]));}}
 if(gameWon &&!allPerformancesFilled()){
 document.getElementById("newGameButton").disabled=true;
 document.getElementById("newGameButton").className ="button disabled";
@@ -2724,16 +2724,17 @@ if( (!globalPerfDisplayIfOptimal)
 lightGray,backgroundColor,ctx,true,0,true,0)) ){
 if(!displayString(" "+starStr+"optimal ",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
+starStr="\u2B50\u200A";
 if(!displayString("\u200A"+starStr+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
-if(!displayString("\u2009"+starStr+performance.toFixed(1).replaceAll(",",".")+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+starStr+performance.toFixed(1).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
-displayString(starStr+performance.toFixed(0).replaceAll(",",".") /* star0 */,x_cell,y_cell,cell_width,
+displayString(starStr+performance.toFixed(0).replaceAll(",","."),x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx);}}}}}
 else{
 if(performance<=0.00){
 throw new Error("internal error in displayPerf: "+performance);}
-if(!displayString("\u2009"+"+"+performance.toFixed(2).replaceAll(",",".")+"!"+"\u2009",x_cell,y_cell,cell_width,
+if(!displayString("\u200A"+"+"+performance.toFixed(2).replaceAll(",",".")+"!"+"\u200A",x_cell,y_cell,cell_width,
 greenColor,backgroundColor,ctx,true,0,true,0)){
 if(!displayString("\u200A"+"+"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 greenColor,backgroundColor,ctx,true,0,true,0)){

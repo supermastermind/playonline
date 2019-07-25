@@ -3454,7 +3454,7 @@ function draw_graphic_bis() {
           }
           ctx.font = stats_font;
           let backgroundColor = backgroundColor_2;
-          displayPerf(relative_perf, y_cell, backgroundColor, global_perf, true, valid_best_global_perf && (currentPossibleCodeShown <= 1), best_global_perf, ctx, (code == codesPlayed[currentPossibleCodeShown-1]));
+          displayPerf(relative_perf, y_cell, backgroundColor, 0, true, valid_best_global_perf && (currentPossibleCodeShown <= 1), best_global_perf, ctx, (code == codesPlayed[currentPossibleCodeShown-1]));
 
         }
 
@@ -4064,11 +4064,12 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
                               lightGray, backgroundColor, ctx, true, 0, true, 0)) ) {
         if (!displayString(" " + starStr + "optimal ", x_cell, y_cell, cell_width,
                            lightGray, backgroundColor, ctx, true, 0, true, 0)) {
+          starStr = "\u2B50\u200A"; // star (with hair space)
           if (!displayString("\u200A" + starStr + performance.toFixed(2).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
                              lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-            if (!displayString("\u2009" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u2009", x_cell, y_cell, cell_width,
+            if (!displayString("\u200A" + starStr + performance.toFixed(1).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
                                lightGray, backgroundColor, ctx, true, 0, true, 0)) {
-              displayString(starStr + performance.toFixed(0).replaceAll(",",".") /* star0 */, x_cell, y_cell, cell_width,
+              displayString(starStr + performance.toFixed(0).replaceAll(",","."), x_cell, y_cell, cell_width,
                             lightGray, backgroundColor, ctx);
             }
           }
@@ -4079,7 +4080,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
       if (performance <= 0.00) {
         throw new Error("internal error in displayPerf: " + performance);
       }
-      if (!displayString("\u2009" + "+" + performance.toFixed(2).replaceAll(",",".") + "!" + "\u2009", x_cell, y_cell, cell_width,
+      if (!displayString("\u200A" + "+" + performance.toFixed(2).replaceAll(",",".") + "!" + "\u200A", x_cell, y_cell, cell_width,
                          greenColor, backgroundColor, ctx, true, 0, true, 0)) {
         if (!displayString("\u200A" + "+" + performance.toFixed(2).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
                            greenColor, backgroundColor, ctx, true, 0, true, 0)) {
