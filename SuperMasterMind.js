@@ -1,12 +1,9 @@
-// ***************************************************
-// ********** Main Super Master Mind script **********
-// ***************************************************
 "use strict";
 console.log("Running SuperMasterMind.js...");
-// *************************************************************************
-// *************************************************************************
-// Global variables
-let version="v2.77";let emptyColor=0;let nbMinColors=5;let nbMaxColors=10;
+let version="v2.77";
+let emptyColor=0;
+let nbMinColors=5;
+let nbMaxColors=10;
 let nbMinColumns=3;
 let nbMaxColumns=7;
 let overallNbMinAttempts=4;
