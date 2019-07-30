@@ -1206,13 +1206,12 @@ function mouseClick(e) {
   // *************
 
   else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5))) // (condition duplicated)
-            && (!android_appli)
             && ( ((mouse_x > get_x_pixel(x_min))
                   && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
                   && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
                   && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-                 || ((nbValidMouseClicks == 1) && !localStorage.gamesok) // (display rules if no games were ever won)
-                 || ((nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
+                 || ((!android_appli) && (nbValidMouseClicks == 1) && !localStorage.gamesok) // (display rules if no games were ever won)
+                 || ((!android_appli) && (nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
 
     let allColorsStr = "";
     for (let color_idx = 0; color_idx < nominalGameNbColors; color_idx++) {
