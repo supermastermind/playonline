@@ -933,6 +933,31 @@ return previousNbColumns;}
 else{
 nbColumnsRadioObject[previousNbColumns-nbMinColumns].checked="checked";
 return previousNbColumns;}}
+
+function show_play_store_app(forcedMode = false) {
+  if ( (androidMode && (!android_appli))
+       || forcedMode ) {
+    let play_store_app_str =
+      "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
+      <br><b>For a better game experience, install the android app now!</b><br>\
+      <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:12vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:12vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
+      For any suggestion for improvement, please use the contact info page. And if you like this app, put some stars in Google Play Store!&nbsp;&#x1F609;<br><br><br>\
+      </font></td></tr></table></center>";
+    try {
+      modal_mode = 4;
+      // set modal content
+      modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+                       + play_store_app_str
+                       + "</div>");
+      // open modal
+      modal.open();
+    }
+    catch (exc) {
+      throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
+    }
+  }
+}
+
 function updateGameSizes(){
 main_graph_update_needed=true;
 if (!CompressedDisplayMode){
@@ -1035,6 +1060,9 @@ console.log("webview reload request");}
 else{
 loadTime=(new Date()).getTime();
 location.reload(true);}}
+if (game_cnt==4){
+show_play_store_app();
+}
 main_graph_update_needed=true;
 simpleCodeHandler=null;
 nbColumns=nbColumnsSelected;
