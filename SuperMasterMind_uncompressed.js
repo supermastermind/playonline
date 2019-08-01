@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.77";
+let version = "v2.78";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -65,6 +65,7 @@ let relativePerformancesEvaluationDone;
 let performancesDisplayed;
 let possibleCodesLists;
 let possibleCodesListsSizes;
+let possibleCodesListsSubdivisions;
 let globalPerformancesList; // (same size as possibleCodesLists)
 let PerformanceLOW = -0.25;
 let PerformanceVERYLOW = -0.50;
@@ -868,7 +869,7 @@ function onGameSolverMsg(e) {
       }
       let possibleCodesList_p = (data.possibleCodesList_p).split(",");
       if ( (possibleCodesList_p.length <= 0) || (possibleCodesList_p.length > nbMaxPossibleCodesShown) ) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + data.possibleCodesList_p + ", length is " + possibleCodesList_p.length, new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + possibleCodesList_p.length + ", " + nbMaxPossibleCodesShown, new Error().stack);
       }
 
       if (data.nb_possible_codes_listed == undefined) {
@@ -877,6 +878,11 @@ function onGameSolverMsg(e) {
       let nb_possible_codes_listed = Number(data.nb_possible_codes_listed);
       if ( isNaN(nb_possible_codes_listed) || (nb_possible_codes_listed <= 0) || (nb_possible_codes_listed > nbMaxPossibleCodesShown) ) {
         displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed, new Error().stack);
+      }
+
+      let possible_codes_subdivision = -1; // N.A.
+      if (data.possible_codes_subdivision !== undefined) {
+        possible_codes_subdivision = Number(data.possible_codes_subdivision);
       }
 
       if (data.globalPerformancesList_p == undefined) {
@@ -903,7 +909,7 @@ function onGameSolverMsg(e) {
         displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
       }
 
-      writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globalPerformancesList_p, attempt_nb, game_id);
+      writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possible_codes_subdivision, globalPerformancesList_p, attempt_nb, game_id);
 
     }
 
@@ -1646,7 +1652,7 @@ function resetGameAttributes(nbColumnsSelected) {
   showPossibleCodesMode = false;
   showPossibleCodesOffsetMode = false;
   nbMinPossibleCodesShown = nbColumns+nbColors+4;
-  nbMaxPossibleCodesShown = 60;
+  nbMaxPossibleCodesShown = 100;
   nbPossibleCodesShown = -1;
   currentPossibleCodeShown = -1;
   disableMouseMoveEffects = false;
@@ -1694,10 +1700,12 @@ function resetGameAttributes(nbColumnsSelected) {
 
   possibleCodesLists = new Array(nbMaxAttempts);
   possibleCodesListsSizes = new Array(nbMaxAttempts);
+  possibleCodesListsSubdivisions = new Array(nbMaxAttempts);
   globalPerformancesList = new Array(nbMaxAttempts); // (same size as possibleCodesLists)
   for (i = 0; i < nbMaxAttempts; i++) {
     possibleCodesLists[i] = new Array(nbMaxPossibleCodesShown);
     possibleCodesListsSizes[i] = 0;
+    possibleCodesListsSubdivisions[i] = -1; // N.A.
     globalPerformancesList[i] = new Array(nbMaxPossibleCodesShown);
   }
 
@@ -1802,9 +1810,10 @@ function checkArraySizes() {
   if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)", new Error().stack);}
   if (globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)", new Error().stack);}
   if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)", new Error().stack);}
+  if (possibleCodesListsSubdivisions.length > nbMaxAttempts){displayGUIError("array is wider than expected (16)", new Error().stack);}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (16)", new Error().stack);}
-    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (17)", new Error().stack);}
+    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (17)", new Error().stack);}
+    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (18)", new Error().stack);}
   }
 }
 
@@ -1944,7 +1953,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
 }
 
 // List of possible codes
-function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globalPerformancesList_p, attempt_nb, game_id) {
+function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possible_codes_subdivision, globalPerformancesList_p, attempt_nb, game_id) {
   if (game_id != game_cnt) { // ignore other threads
     console.log("writePossibleCodes() call ignored: " + game_id + ", " + game_cnt);
     return false;
@@ -1954,6 +1963,7 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globa
         || (attempt_nb > nbOfStatsFilled_NbPossibleCodes) // lists of possible codes shall be filled after numbers of possible codes
         || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
         || (possibleCodesListsSizes[attempt_nb-1] != 0 /* initial value */)
+        || (possibleCodesListsSubdivisions[attempt_nb-1] != -1 /* initial value */)
         || ((nbOfPossibleCodes[attempt_nb-1] <= nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbOfPossibleCodes[attempt_nb-1])) // (cf. above assumption on stats writing)
         || ((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbMaxPossibleCodesShown)) ) { // (cf. above assumption on stats writing)
     displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (3)", new Error().stack);
@@ -1975,6 +1985,7 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, globa
     globalPerformancesList[attempt_nb-1][i] = global_perf; // may be PerformanceUNKNOWN
   }
   possibleCodesListsSizes[attempt_nb-1] = nb_possible_codes_listed;
+  possibleCodesListsSubdivisions[attempt_nb-1] = possible_codes_subdivision;
   nbOfStatsFilled_ListsOfPossibleCodes = attempt_nb;
 
   main_graph_update_needed = true;
@@ -3451,6 +3462,19 @@ function draw_graphic_bis() {
           ctx.font = stats_font;
           let backgroundColor = backgroundColor_2;
           displayPerf(relative_perf, y_cell, backgroundColor, 0, true, valid_best_global_perf && (currentPossibleCodeShown <= 1), best_global_perf, ctx, (code == codesPlayed[currentPossibleCodeShown-1]));
+
+          // Display subdivision
+          if ( (possibleCodesListsSubdivisions[currentPossibleCodeShown-1] != -1)
+               && (possibleCodesListsSubdivisions[currentPossibleCodeShown-1] == codeidx+code_list_offset+1) ) {
+            x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
+            y_0 = get_y_pixel(y_min+y_step*y_cell);
+            x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width));
+            y_1 = get_y_pixel(y_min+y_step*y_cell);
+            let currentColor = ctx.strokeStyle;
+            ctx.strokeStyle = lightGray;
+            drawLineWithPath(ctx, x_0, y_0, x_1+1, y_1);
+            ctx.strokeStyle = currentColor;
+          }
 
         }
 

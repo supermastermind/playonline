@@ -2029,7 +2029,7 @@ try {
         }
       }
 
-      // Determine cur number of classes
+      // Determine current number of classes
       // ***********************************
 
       listOfClassesFirstCall.fill(0);
@@ -3608,26 +3608,46 @@ try {
       }
       let cur_possible_code_list = possibleCodesForPerfEvaluation[curAttemptNumber%2];
 
-      // Particular case of first attempt of Master Mind game
-      // ****************************************************
+      // Known performance case
+      // **********************
 
-      if ((curAttemptNumber == 1) && (nbColumns == 4)) { // first attempt
-        if (nb_codes_shown <= 5) { // (initialNbClasses)
-          throw new Error("NEW_ATTEMPT phase / internal error (nb_codes_shown)");
+      let possibleCodesShownSubdivision = -1; // N.A.
+      if (best_global_performance != PerformanceUNKNOWN) {
+
+        if (curAttemptNumber == 1) { // defensive checks at first attempt
+          if (nb_codes_shown <= initialNbClasses) {
+            throw new Error("NEW_ATTEMPT phase / internal error (nb_codes_shown)");
+          }
+          if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
+            throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
+          }
+          if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
+            throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (2): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+          }
         }
-        if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
-          throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
+
+        // Add code classes
+        let equiv_code_cnt = 0;
+        let equiv_code;
+        while ((equiv_code = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][equiv_code_cnt].equiv_code) != 0) {
+          if (equiv_code_cnt >= nb_codes_shown) {
+            possibleCodesShownSubdivision = -1; // N.A. (subdivision is out of codes shown)
+            break;
+          }
+          else {
+            possibleCodesShown[equiv_code_cnt] = equiv_code;
+            possibleCodesShownSubdivision = equiv_code_cnt+1; // (will be overridden in this loop)
+          }
+          equiv_code_cnt++;
         }
-        if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-          throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (2): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+
+        if (curAttemptNumber == 1) { // defensive check at first attempt
+          if (equiv_code_cnt != initialNbClasses) {
+            throw new Error("NEW_ATTEMPT phase / internal error (equiv_code_cnt)");
+          }
         }
-        // Add simple codes
-        possibleCodesShown[0] = codeHandler.uncompressStringToCode("1233");
-        possibleCodesShown[1] = codeHandler.uncompressStringToCode("1234");
-        possibleCodesShown[2] = codeHandler.uncompressStringToCode("1122");
-        possibleCodesShown[3] = codeHandler.uncompressStringToCode("1222");
-        possibleCodesShown[4] = codeHandler.uncompressStringToCode("1111");
-        for (let i = 0; i < 5; i++) {
+
+        for (let i = 0; i < equiv_code_cnt; i++) {
           if (best_global_performance == PerformanceUNKNOWN) {
             globalPerformancesShown[i] = PerformanceUNKNOWN;
           }
@@ -3648,108 +3668,62 @@ try {
             }
           }
         }
-        // Add other codes
-        let cnt = 5;
-        for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-          let simple_code_already_present = false;
-          for (let j = 0; j < 5; j++) {
-            if (cur_possible_code_list[i] == possibleCodesShown[j]) {
-              simple_code_already_present = true;
-              break;
-            }
-          }
-          if (!simple_code_already_present) {
-            possibleCodesShown[cnt] = cur_possible_code_list[i];
-            if (best_global_performance == PerformanceUNKNOWN) {
-              globalPerformancesShown[cnt] = PerformanceUNKNOWN;
-            }
-            else {
-              if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
-                throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (2) (index " + i + ")");
-              }
-              globalPerformancesShown[cnt] = listOfGlobalPerformances[i];
-            }
-            cnt++;
-            if (cnt == nb_codes_shown) {
-              break;
-            }
-          }
-        }
-      }
 
-      // Particular case of first attempt of Super Master Mind game
-      // **********************************************************
-
-      else if ((curAttemptNumber == 1) && (nbColumns == 5)) { // first attempt
-        if (nb_codes_shown <= 7) { // (initialNbClasses)
-          throw new Error("NEW_ATTEMPT phase / internal error (nb_codes_shown)");
-        }
-        if (previousNbOfPossibleCodes != initialNbPossibleCodes) {
-          throw new Error("NEW_ATTEMPT phase / internal error (previousNbOfPossibleCodes)");
-        }
-        if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
-          throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (3): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
-        }
-        // Add simple codes
-        possibleCodesShown[0] = codeHandler.uncompressStringToCode("12233");
-        possibleCodesShown[1] = codeHandler.uncompressStringToCode("12344");
-        possibleCodesShown[2] = codeHandler.uncompressStringToCode("12345");
-        possibleCodesShown[3] = codeHandler.uncompressStringToCode("12333");
-        possibleCodesShown[4] = codeHandler.uncompressStringToCode("11222");
-        possibleCodesShown[5] = codeHandler.uncompressStringToCode("12222");
-        possibleCodesShown[6] = codeHandler.uncompressStringToCode("11111");
-        for (let i = 0; i < 7; i++) {
-          if (best_global_performance == PerformanceUNKNOWN) {
-            globalPerformancesShown[i] = PerformanceUNKNOWN;
+        // Sort code classes
+        while (true) {
+          let swap_done = false;
+          for (let i = 0; i < equiv_code_cnt-1; i++) {
+            let j = i+1;
+            if (globalPerformancesShown[i] > globalPerformancesShown[j]) {
+              // swap cells (bubble sort)
+              let tmp_code = possibleCodesShown[j];
+              possibleCodesShown[j] = possibleCodesShown[i];
+              possibleCodesShown[i] = tmp_code;
+              let tmp_perf = globalPerformancesShown[j];
+              globalPerformancesShown[j] = globalPerformancesShown[i];
+              globalPerformancesShown[i] = tmp_perf;
+              swap_done = true;
+            }
           }
-          else {
-            let simple_code_found = false;
-            for (let j = 0; j < previousNbOfPossibleCodes; j++) {
-              if (possibleCodesShown[i] == cur_possible_code_list[j]) {
-                if ((listOfGlobalPerformances[j] == PerformanceNA) || (listOfGlobalPerformances[j] == PerformanceUNKNOWN) || (listOfGlobalPerformances[j] <= 0.01)) {
-                  throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (3) (index " + i + ")");
-                }
-                globalPerformancesShown[i] = listOfGlobalPerformances[j];
-                simple_code_found = true;
+          if (!swap_done) {
+            break;
+          }
+        }
+
+        // Add other codes in their natural order
+        if (equiv_code_cnt < nb_codes_shown) {
+          let cnt = equiv_code_cnt;
+          for (let i = 0; i < previousNbOfPossibleCodes; i++) {
+            let simple_code_already_present = false;
+            for (let j = 0; j < equiv_code_cnt; j++) {
+              if (cur_possible_code_list[i] == possibleCodesShown[j]) {
+                simple_code_already_present = true;
                 break;
               }
             }
-            if (!simple_code_found) {
-              throw new Error("NEW_ATTEMPT phase / internal error (simple_code_found)");
-            }
-          }
-        }
-        // Add other codes
-        let cnt = 7;
-        for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-          let simple_code_already_present = false;
-          for (let j = 0; j < 7; j++) {
-            if (cur_possible_code_list[i] == possibleCodesShown[j]) {
-              simple_code_already_present = true;
-              break;
-            }
-          }
-          if (!simple_code_already_present) {
-            possibleCodesShown[cnt] = cur_possible_code_list[i];
-            if (best_global_performance == PerformanceUNKNOWN) {
-              globalPerformancesShown[cnt] = PerformanceUNKNOWN;
-            }
-            else {
-              if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
-                throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (4) (index " + i + ")");
+            if (!simple_code_already_present) {
+              possibleCodesShown[cnt] = cur_possible_code_list[i];
+              if (best_global_performance == PerformanceUNKNOWN) {
+                globalPerformancesShown[cnt] = PerformanceUNKNOWN;
               }
-              globalPerformancesShown[cnt] = listOfGlobalPerformances[i];
-            }
-            cnt++;
-            if (cnt == nb_codes_shown) {
-              break;
+              else {
+                if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
+                  throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (2) (index " + i + ")");
+                }
+                globalPerformancesShown[cnt] = listOfGlobalPerformances[i];
+              }
+              cnt++;
+              if (cnt == nb_codes_shown) {
+                break;
+              }
             }
           }
         }
+
       }
 
-      // General case
-      // ************
+      // Unknown performance case
+      // ************************
 
       else {
         for (let i = 0; i < nb_codes_shown; i++) {
@@ -3759,7 +3733,7 @@ try {
           }
           else {
             if ((listOfGlobalPerformances[i] == PerformanceNA) || (listOfGlobalPerformances[i] == PerformanceUNKNOWN) || (listOfGlobalPerformances[i] <= 0.01)) {
-              throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (5) (index " + i + ")");
+              throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (3) (index " + i + ")");
             }
             globalPerformancesShown[i] = listOfGlobalPerformances[i];
           }
@@ -3770,7 +3744,7 @@ try {
       // C.2) Update GUI
       // ***************
 
-      self.postMessage({'rsp_type': 'LIST_OF_POSSIBLE_CODES', 'possibleCodesList_p': possibleCodesShown.toString(), 'nb_possible_codes_listed': nb_codes_shown, 'globalPerformancesList_p': globalPerformancesShown.toString(), 'attempt_nb': curAttemptNumber, 'game_id': game_id});
+      self.postMessage({'rsp_type': 'LIST_OF_POSSIBLE_CODES', 'possibleCodesList_p': possibleCodesShown.toString(), 'nb_possible_codes_listed': nb_codes_shown, 'possible_codes_subdivision': possibleCodesShownSubdivision, 'globalPerformancesList_p': globalPerformancesShown.toString(), 'attempt_nb': curAttemptNumber, 'game_id': game_id});
 
       // ****************
       // Defensive checks
