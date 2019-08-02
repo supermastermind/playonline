@@ -451,7 +451,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MB7";
+      let html_compatibility_game_version = "Ver_MB8";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -2067,7 +2067,7 @@
         });
 
         // Too close calls can lead to Cross-Origin Read Blocking (CORB) security error in Chrome (https://www.chromestatus.com/feature/5629709824032768) which will block further form submissions
-        setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",        44);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",       2000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-30s')",     30000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-1min')",    60000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-2min')",   120000);
