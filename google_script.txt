@@ -1,0 +1,1315 @@
+// *******************************
+// Handle reception of "get forms"
+// *******************************
+
+function doGet(e) {
+  var startTime = new Date();
+  var params;
+  if ( (e == undefined)
+       || (e.parameter == undefined) ) {
+    Logger.log("doGet error: undefined parameter!");
+    params = JSON.stringify({
+      // "rsp_cd": "doGet error: undefined parameter!"
+      "rsp_cd": "(1)" // (mask error messages as much as possible for safety reasons)
+    });
+    keep_trace_of_error("(1)", e);
+  }
+  else if ( (e.parameter['list'] != undefined) && (e.parameter['list'] == "the wheel of life") /* password */) {
+    var rankingsStr = "";
+    e.parameter['nbcolumns'] = "3";
+    rankingsStr = rankingsStr + record_data_and_compute_rankings(e, true) + "<br>";
+    e.parameter['nbcolumns'] = "4";
+    rankingsStr = rankingsStr + record_data_and_compute_rankings(e, true) + "<br>";
+    e.parameter['nbcolumns'] = "5";
+    rankingsStr = rankingsStr + record_data_and_compute_rankings(e, true) + "<br>";
+    e.parameter['nbcolumns'] = "6";
+    rankingsStr = rankingsStr + record_data_and_compute_rankings(e, true) + "<br>";
+    e.parameter['nbcolumns'] = "7";
+    rankingsStr = rankingsStr + record_data_and_compute_rankings(e, true);
+    e.parameter['rankings'] = rankingsStr;
+
+    params = JSON.stringify(e);
+  }
+  else if ( (e.parameter['page'] != undefined) && ((String(e.parameter['page']) == 'home') || (String(e.parameter['page']) == 'game')) ) {
+    var doc     = SpreadsheetApp.getActiveSpreadsheet(); // (active google sheet)
+    var sheet = doc.getSheetByName('First accesses'); // (tab name)
+    var nextRow = sheet.getLastRow()+1; // get next row
+
+    var currentdate = new Date();
+    var currentpage = String(e.parameter['page']);
+    var currentdatestr = Utilities.formatDate(currentdate, "Europe/Paris", "EEE, d MMM yyyy HH:mm:ss Z");
+    var currentplayeripaddress = String(e.parameter['ipaddress']); // may be '-' (Note: IP address is not immediately known at first page access)
+    var validcurrentplayeripaddress  = (!(currentplayeripaddress.length < 7 /* 7: 0.0.0.0 - duplicated condition */)); // (IP-address-based criterion is useless/erroneous in practice as IP address is not immediately known at first page access)
+    var firstaccessid = String(e.parameter['firstaccessid']);
+    var validfirstaccessid = (firstaccessid.length >= 3);
+    var nbMaxRows = 1000;
+
+    if ( (nextRow <= nbMaxRows) // do not fill the sheet indefinitely
+         && validcurrentplayeripaddress) {
+      var row = [ /* col:1 */ currentdatestr, /* col:2 */ String(e.parameter['page']), /* col:3 */ String(e.parameter['timeonpage']), /* col:4 */ String(e.parameter['country']), /* col:5 */ String(e.parameter['region']), /* col:6 */ String(e.parameter['city']), /* col:7 */ String(e.parameter['nbgameswon']), /* col:8 */ String(e.parameter['nbgames']), /* col:9 */ String(e.parameter['nbcodes']), /* col:10 */ currentplayeripaddress, /* col:11 */ firstaccessid, /* col:12 */ String(e.parameter['debug']) ];
+      var history = Math.min(nbMaxRows, nextRow-2); // history is useful in case several new players have accessed the pages in parallel or in case browser's site data are cleared
+      if (history >= 1) {
+        var previous_rows = sheet.getRange(nextRow-history, 1, history, row.length).getValues();
+        var row_number_to_update = -1;
+        for (var i = 0; i < history; i++) { // go through history
+          var previous_row = previous_rows[history-1-i];
+          if ( (currentpage == String(previous_row[/* col:2 */ 1])) // same page
+               && ( (validfirstaccessid && (firstaccessid == String(previous_row[/* col:11 */ 10]))) // same first access id
+                    || (validcurrentplayeripaddress && (currentplayeripaddress == String(previous_row[/* col:10 */ 9]))) ) ) { // same IP address (exactly) - see also above comments
+            row_number_to_update = nextRow-1-i;
+            break;
+          }
+        }
+        if (row_number_to_update >= 2) {
+          // Overwrite previous row
+          sheet.getRange(row_number_to_update, 1, 1, row.length).setValues([row]); // update google sheet
+        }
+        else {
+          // Write a new row
+          sheet.getRange(nextRow, 1, 1, row.length).setValues([row]); // update google sheet
+        }
+      }
+      else {
+        // Write a new row
+        sheet.getRange(nextRow, 1, 1, row.length).setValues([row]); // update google sheet
+      }
+    }
+
+    params = JSON.stringify({
+      "rsp_cd": "(first access: " + validfirstaccessid + ", " + String(previous_row[/* col:11 */ 10]) + " / " + validcurrentplayeripaddress + ", " + String(previous_row[/* col:10 */ 9]) + ")"
+    });
+
+  }
+  else {
+    // Logger.log("doGet: " + e);
+
+    // Check that the form is valid
+    var valid_form = true;
+    var wrong_list_pwd = false;
+    try {
+      wrong_list_pwd = ((e.parameter['list'] != undefined) && (e.parameter['list'] != '-'));
+      if (    (e.parameter['playerid'] == undefined) || !(typeof e.parameter['playerid'] === 'string') || (e.parameter['playerid'].indexOf('ID/') != 0) // basic defense: 'playerid' parameter shall exist and start with 'ID/'
+           || (e.parameter['firstname'] == undefined) || !(typeof e.parameter['firstname'] === 'string')
+           || (e.parameter['nbcolumns'] == undefined) || !(typeof e.parameter['nbcolumns'] === 'string') || ((e.parameter['nbcolumns'] != "3") && (e.parameter['nbcolumns'] != "4") && (e.parameter['nbcolumns'] != "5") && (e.parameter['nbcolumns'] != "6") && (e.parameter['nbcolumns'] != "7"))
+           || (e.parameter['score'] == undefined) || isNaN(parseFloat(e.parameter['score'])) || !isFinite(e.parameter['score'])
+           || (e.parameter['attempts'] == undefined) || isNaN(parseFloat(e.parameter['attempts'])) || !isFinite(e.parameter['attempts'])
+           || (e.parameter['perfs'] == undefined) || isNaN(parseFloat(e.parameter['perfs'])) || !isFinite(e.parameter['perfs'])
+           || (e.parameter['nbuknperfs'] == undefined) || isNaN(parseFloat(e.parameter['nbuknperfs'])) || !isFinite(e.parameter['nbuknperfs'])
+           || (e.parameter['gamesok'] == undefined) || isNaN(parseFloat(e.parameter['gamesok'])) || !isFinite(e.parameter['gamesok'])
+           || (e.parameter['city'] == undefined) || !(typeof e.parameter['city'] === 'string')
+           || (e.parameter['geoloc'] == undefined) || !(typeof e.parameter['geoloc'] === 'string')
+           || (e.parameter['ipaddress'] == undefined) || !(typeof e.parameter['ipaddress'] === 'string')
+           || (e.parameter['href'] == undefined) || !(typeof e.parameter['href'] === 'string') || (e.parameter['href'].indexOf('https://supermastermind.github.io/playonline') == -1) // basic defense: only form requests from official github page are allowed
+           || (e.parameter['debuginfo'] == undefined) || !(typeof e.parameter['debuginfo'] === 'string') || (e.parameter['debuginfo'].indexOf('P1b') != 0) // basic defense: only form requests from distant sites are allowed, not from local file copies/scripts
+           || (e.parameter['rankings'] == undefined) || !(typeof e.parameter['rankings'] === 'string') || (e.parameter['rankings'] != '-')
+           || (e.parameter['k'] == undefined) || isNaN(parseFloat(e.parameter['k'])) || !isFinite(e.parameter['k'])
+           || wrong_list_pwd  ) {
+        valid_form = false;
+      }
+    }
+    catch (error) {
+      valid_form = false;
+    }
+    if (valid_form) {
+      // Record data & compute rankings
+      var res = record_data_and_compute_rankings(e, false);
+      if (res.length == 0) { // ("" was returned)
+        params = JSON.stringify(e);
+      }
+      else {
+        Logger.log("doGet error: " + res);
+        params = JSON.stringify({
+          // "rsp_cd": "doGet error: " + res
+          "rsp_cd": "(2)" // (mask error messages as much as possible for safety reasons)
+        });
+        keep_trace_of_error("(2): " + res, e);
+      }
+    }
+    else { // ignore any invalid form
+      var wrong_list_pwd_str = "";
+      if (wrong_list_pwd) {
+        wrong_list_pwd_str = " (wrong list password: " + e.parameter['list'] + ")";
+      }
+      Logger.log("doGet error: invalid form!" + wrong_list_pwd_str);
+      params = JSON.stringify({
+        // "rsp_cd": "doGet error: invalid form!" + wrong_list_pwd_str
+        "rsp_cd": "(3)" // (mask error messages as much as possible for safety reasons)
+      });
+      keep_trace_of_error("(3): " + "invalid form!" + wrong_list_pwd_str, e);
+    }
+  }
+
+  var doGetTime = new Date() - startTime;
+  return ContentService
+         .createTextOutput(e.parameter.my_callback_fct + "(" + params + "); console.log('The angels help us in wonderful ways and deeply heal us'); console.log('(gs:" + doGetTime + "ms)');") // (Note: will fail if e is undefined)
+         .setMimeType(ContentService.MimeType.JAVASCRIPT);
+
+  // old version ("Cross Origin" error)
+  // var output = HtmlService.createHtmlOutput(params);
+  // output.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  // return output;
+}
+
+// ********************************
+// Handle reception of "post forms"
+// ********************************
+
+function doPost(e) {
+  Logger.log("doPost error: not supported");
+  keep_trace_of_error("(post)", e);
+  // var output = HtmlService.createHtmlOutput("doPost error: not supported");
+  var output = HtmlService.createHtmlOutput("(4)"); // (mask error messages as much as possible for safety reasons)
+  output.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  return output;
+}
+
+// **********************************************
+// Record data in google sheet & compute rankings
+// **********************************************
+
+function record_data_and_compute_rankings(e, listingMode) {
+  var nextRow = -1;
+  var error_prefix = "error: ";
+  var history_clear_advice = "";
+
+  var tdStr = "["; // "<td style='border:1px solid black;margin:0;padding:2px;text-align:center;font-weight:bold;'>"; => to compress the response, actual <td> syntax shall be applied by the target application
+  var slashTdStr = "]"; // "</td>" => to compress the response, actual </td> syntax shall be applied by the target application
+  var debug_state = -1;
+
+  var doc   = undefined;
+  var sheet = undefined;
+
+  try {
+
+    e.parameter['rankings'] = '?';
+
+    // ******************************
+    // 1) Record data in google sheet
+    // ******************************
+
+    doc     = SpreadsheetApp.getActiveSpreadsheet(); // (active google sheet)
+    sheet   = doc.getSheetByName(e.parameter['nbcolumns'] + ' columns'); // (tab name)
+    nextRow = sheet.getLastRow()+1; // get next row
+
+    if (listingMode && (nextRow <= 2)) {
+      return "<b>(no game for " + e.parameter['nbcolumns'] + " columns)</b>";
+    }
+
+    debug_state = 10;
+    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    debug_state = 20;
+    var nbsheetcolumns = headers.length;
+    // Logger.log("column headers: " + headers);
+    var currentdate = new Date();
+    var currentdatestr = Utilities.formatDate(currentdate, "Europe/Paris", "EEE, d MMM yyyy HH:mm:ss Z");
+
+    if (!listingMode) {
+
+      var row = [ String(nextRow) , currentdatestr ]; // 'row' and 'date' columns
+      var duplicate_rows = false;
+      for (var i = 2; i < headers.length; i++) { // start at 2 to avoid 'row' and 'date' columns
+        if (headers[i] == 'glbscore') { // global score
+          row.push('0'); // (default N.A. value - will be overwritten later if needed)
+        }
+        else if (headers[i] == 'glbperfs') { // global perfs
+          row.push('1.00'); // (default N.A. value - will be overwritten later if needed)
+        }
+        else if (headers[i] == 'st') { // status
+          row.push('ok'); // (current game status is always ok)
+        }
+        else {
+          if (headers[i] == 'gamesok') {
+            if ((e.parameter[headers[i]] == "4") || (e.parameter[headers[i]] == "5")) {
+              history_clear_advice = "<br><font color='#AA0000'>To store your future scores properly (with your name), make sure that your browser does not clear cookies/site data when exited...</font>";
+            }
+          }
+          if (headers[i] == 'k') {
+            debug_state = 30;
+            if (String(e.parameter[headers[i]]) == String(sheet.getRange(nextRow-1, i+1, 1, 1).getValue())) {
+              duplicate_rows = true;
+            }
+            debug_state = 40;
+          }
+          var str = String(e.parameter[headers[i]]);
+          if ((headers[i] == 'firstname') || (headers[i] == 'country') || (headers[i] == 'region') || (headers[i] == 'city')) {
+            if ((str.indexOf(tdStr) != -1) || (str.indexOf(slashTdStr) != -1)) {
+              throw ("unexpected delimitor string detected: " + str);
+            }
+          }
+          row.push(str);
+        }
+      }
+      if (row.length != nbsheetcolumns) {
+        throw ("inconsistent column numbers: " + row.length + ", " + nbsheetcolumns);
+      }
+      if ((nextRow <= 2) || (!duplicate_rows)) {
+        debug_state = 50;
+        sheet.getRange(nextRow, 1, 1, nbsheetcolumns).setValues([row]); // update google sheet
+        debug_state = 60;
+      }
+      else {
+        nextRow = nextRow - 1;
+      }
+
+    } // listingMode
+    else {
+      nextRow = nextRow - 1;
+      history_clear_advice = "";
+    }
+
+    // *******************
+    // 2) Compute rankings
+    // *******************
+
+    // Get 'score' and 'nbcolumns' column indexes
+    var rowIdx = -1;
+    var dateIdx = -1;
+    var playeridIdx = -1;
+    var firstnameIdx = -1;
+    var nbColumnsIdx = -1;
+    var scoreIdx = -1;
+    var glbscoreIdx = -1;
+    var attemptsIdx = -1;
+    var timeIdx = -1;
+    var perfsIdx = -1;
+    var glbperfsIdx = -1;
+    var nbuknperfsIdx = -1;
+    var helpIdx = -1;
+    var deltagamesIdx = -1;
+    var statusIdx = -1;
+    var countryIdx = -1;
+    var regionIdx = -1;
+    var cityIdx = -1;
+    var geolocIdx = -1;
+    var ipaddressIdx = -1;
+    for (var i = 0; i < headers.length; i++) {
+      if (headers[i] == 'row') {
+        rowIdx = i;
+      }
+      else if (headers[i] == 'date') {
+        dateIdx = i;
+      }
+      else if (headers[i] == 'playerid') {
+        playeridIdx = i;
+      }
+      else if (headers[i] == 'firstname') {
+        firstnameIdx = i;
+      }
+      else if (headers[i] == 'nbcolumns') {
+        nbcolumnsIdx = i;
+      }
+      else if (headers[i] == 'score') {
+        scoreIdx = i;
+      }
+      else if (headers[i] == 'glbscore') {
+        glbscoreIdx = i;
+      }
+      else if (headers[i] == 'attempts') {
+        attemptsIdx = i;
+      }
+      else if (headers[i] == 'time') {
+        timeIdx = i;
+      }
+      else if (headers[i] == 'perfs') {
+        perfsIdx = i;
+      }
+      else if (headers[i] == 'glbperfs') {
+        glbperfsIdx = i;
+      }
+      else if (headers[i] == 'nbuknperfs') {
+        nbuknperfsIdx = i;
+      }
+      else if (headers[i] == 'help') {
+        helpIdx = i;
+      }
+      else if (headers[i] == 'deltagames') {
+        deltagamesIdx = i;
+      }
+      else if (headers[i] == 'st') {
+        statusIdx = i;
+      }
+      else if (headers[i] == 'country') {
+        countryIdx = i;
+      }
+      else if (headers[i] == 'region') {
+        regionIdx = i;
+      }
+      else if (headers[i] == 'city') {
+        cityIdx = i;
+      }
+      else if (headers[i] == 'geoloc') {
+        geolocIdx = i;
+      }
+      else if (headers[i] == 'ipaddress') {
+        ipaddressIdx = i;
+      }
+    } // end for
+    if (rowIdx == -1) {
+      throw ("cannot find 'row' column index");
+    }
+    if (dateIdx == -1) {
+      throw ("cannot find 'date' column index");
+    }
+    if ((playeridIdx == -1) || (playeridIdx != 2)) { // (index 2 is used for errors, see error_prefix usage)
+      throw ("cannot find 'playerid' column index or invalid index");
+    }
+    if (firstnameIdx == -1) {
+      throw ("cannot find 'firstname' column index");
+    }
+    if (nbcolumnsIdx == -1) {
+      throw ("cannot find 'nbcolumns' column index");
+    }
+    if (scoreIdx == -1) {
+      throw ("cannot find 'score' column index");
+    }
+    if (glbscoreIdx == -1) {
+      throw ("cannot find 'glbscore' column index");
+    }
+    if (attemptsIdx == -1) {
+      throw ("cannot find 'attempts' column index");
+    }
+    if (timeIdx == -1) {
+      throw ("cannot find 'time' column index");
+    }
+    if (perfsIdx == -1) {
+      throw ("cannot find 'perfs' column index");
+    }
+    if (glbperfsIdx == -1) {
+      throw ("cannot find 'glbperfs' column index");
+    }
+    if (nbuknperfsIdx == -1) {
+      throw ("cannot find 'nbuknperfs' column index");
+    }
+    if (helpIdx == -1) {
+      throw ("cannot find 'help' column index");
+    }
+    if (deltagamesIdx == -1) {
+      throw ("cannot find 'deltagames' column index");
+    }
+    if (statusIdx == -1) { // status
+      throw ("cannot find 'st' column index");
+    }
+    if (countryIdx == -1) {
+      throw ("cannot find 'country' column index");
+    }
+    if (regionIdx == -1) {
+      throw ("cannot find 'region' column index");
+    }
+    if (cityIdx == -1) {
+      throw ("cannot find 'city' column index");
+    }
+    if (geolocIdx == -1) {
+      throw ("cannot find 'geoloc' column index");
+    }
+    if ( (ipaddressIdx == -1)
+         || (ipaddressIdx <= rowIdx) || (ipaddressIdx <= dateIdx) || (ipaddressIdx <= playeridIdx) || (ipaddressIdx <= firstnameIdx)
+         || (ipaddressIdx <= nbcolumnsIdx) || (ipaddressIdx <= scoreIdx) || (ipaddressIdx <= glbscoreIdx) || (ipaddressIdx <= attemptsIdx)
+         || (ipaddressIdx <= timeIdx) || (ipaddressIdx <= perfsIdx) || (ipaddressIdx <= glbperfsIdx)
+         || (ipaddressIdx <= nbuknperfsIdx) || (ipaddressIdx <= helpIdx) || (ipaddressIdx <= deltagamesIdx)
+         || (ipaddressIdx <= statusIdx) || (ipaddressIdx <= countryIdx) || (ipaddressIdx <= regionIdx)
+         || (ipaddressIdx <= cityIdx) || (ipaddressIdx <= geolocIdx) ) { // ('ipaddress' is the last useful column index)
+      throw ("cannot find 'ipaddress' column index or invalid index");
+    }
+
+    var startRow = 2; // start at 2 to avoid headers
+    debug_state = 70;
+    var values = sheet.getRange(startRow, 1, nextRow-startRow+1, nbsheetcolumns).getValues();
+    debug_state = 80;
+
+    if (values[nextRow-startRow][rowIdx] != nextRow) {
+      throw ("invalid rowIdx: " + values[nextRow-startRow][rowIdx] + "!=" + nextRow + " (#1)");
+    }
+    else if ( (nextRow-startRow >= 1) && (values[nextRow-startRow-1][rowIdx] != nextRow-1) ) {
+      throw ("invalid rowIdx: " + values[nextRow-startRow-1][rowIdx] + "!=" + (nextRow-1) + " (#2)");
+    }
+
+    // 2.1) Skip old games
+    // *******************
+
+    var max_nb_months = 2;
+    switch (e.parameter['nbcolumns']) {
+      case '3':
+        max_nb_months = 1;
+        break;
+      case '4':
+        max_nb_months = 1.5;
+        break;
+      case '5':
+        max_nb_months = 2;
+        break;
+      case '6':
+        max_nb_months = 4;
+        break;
+      case '7':
+        max_nb_months = 6;
+        break;
+      default:
+    }
+    var currentdate_days_cnt = currentdate.getFullYear()*366 + currentdate.getMonth()*30.5 + currentdate.getDate();
+    var valuesFiltered = values.filter(function (row) {
+      if (row[statusIdx] == 'ok') { // old statuses are ignored (condition duplicated)
+        var fromDate = new Date(row[dateIdx]);
+        return ( (currentdate_days_cnt - (fromDate.getFullYear()*366 + fromDate.getMonth()*30.5 + fromDate.getDate()) <= max_nb_months*30.5) // old games are ignored
+                 && (row[playeridIdx].indexOf(error_prefix) == -1) ); // errors are ignored
+      }
+      else {
+        return false;
+      }
+    });
+    // Logger.log(valuesFiltered);
+
+    // 2.2) Update oldest game status for current player
+    // *************************************************
+
+    // Sequence targeted for each player: most recent games ... 'ok' (up to 5 times) ... 'old' (n times, n>=0) ... oldest games
+    var nb_max_games_for_rankings = 5;
+    var min_nb_max_games_for_rankings = 2;
+
+    var currentplayerid = e.parameter['playerid'];
+    var firstname = e.parameter['firstname'];
+    var validfirstname = (firstname.length >= 3); // not '-'
+
+    var currentplayeripaddress = String(e.parameter['ipaddress']);
+    if (!listingMode) {
+      if ( ((currentplayeripaddress.indexOf(".") == -1) && (currentplayeripaddress.indexOf(":") == -1)) || (currentplayeripaddress.length < 7 /* 7: 0.0.0.0 - duplicated condition */) ) {
+        trace_debug_info("invalid IP address: " + currentplayeripaddress, e); // IP address is taken into account anyway (process not blocked)
+      }
+    }
+    var currentplayeripaddressRoutingPrefixExtracted = extractRoutingPrefix(currentplayeripaddress); // may be 'xxx/-', taken into account anyway (defensive)
+
+    var currentplayercity = e.parameter['city'];
+    var validcurrentplayercity = (currentplayercity.length >= 2); // not '-'
+    var currentplayergeoloc = String(e.parameter['geoloc']);
+    var iscurrentplayergeolocreliable = (currentplayergeoloc.indexOf('ok') != -1); // (is true is a vast majority of cases, thus allowing to only check the first name below)
+
+    if (!listingMode) {
+
+      // Update [firstname and] status in google sheet & filtered values
+      var nb_max_games_for_rankings_applied = nb_max_games_for_rankings;
+      var cnt = 0;
+      for (var i = valuesFiltered.length-1; i >= 0; i--) { // loop on filtered rows
+        var playerid_condition = (valuesFiltered[i][playeridIdx] == currentplayerid); // *** Same player id *** (condition duplicated)
+        var ipaddress_condition = (extractRoutingPrefix(valuesFiltered[i][ipaddressIdx]) == currentplayeripaddressRoutingPrefixExtracted); // *** Similar IP address *** (condition duplicated)
+        if (playerid_condition || ipaddress_condition) {
+          cnt++;
+          if (valuesFiltered[i][statusIdx] == 'ok') { // status
+            if (cnt > nb_max_games_for_rankings_applied) {
+              var row_nb = valuesFiltered[i][rowIdx];
+              debug_state = 90;
+              sheet.getRange(row_nb, statusIdx+1, 1, 1).setValue('old'); // update status in google sheet
+              debug_state = 100;
+              valuesFiltered[i][statusIdx] = 'old'; // update status in filtered values
+            }
+            else if (playerid_condition && validfirstname && (valuesFiltered[i][firstnameIdx] != firstname)) {
+              var row_nb = valuesFiltered[i][rowIdx];
+              debug_state = 110;
+              sheet.getRange(row_nb, firstnameIdx+1, 1, 1).setValue(firstname); // update 'firstname' in google sheet
+              debug_state = 120;
+              valuesFiltered[i][firstnameIdx] = firstname; // update 'firstname' in filtered values
+            }
+          }
+          else {
+            throw ("invalid status: " + valuesFiltered[i][statusIdx] + " (currentplayerid: " + currentplayerid + ")");
+          }
+          if (cnt > 2*nb_max_games_for_rankings) { // "2*" because 2 conditions
+            break;
+          }
+          if (valuesFiltered[i][deltagamesIdx] > 0) { // some started games were skipped
+            nb_max_games_for_rankings_applied = Math.max(nb_max_games_for_rankings_applied - valuesFiltered[i][deltagamesIdx], min_nb_max_games_for_rankings);
+          }
+        }
+      } // end for
+      if (cnt == 0) {
+        throw ("null cnt for current playerid: " + currentplayerid);
+      }
+
+    } // listingMode
+
+    // 2.3) Sort scores
+    // ****************
+
+    var valuesSorted = valuesFiltered.sort(function(a, b) { // (Rk: both valuesFiltered and valuesSorted variables are sorted)
+      return b[scoreIdx] - a[scoreIdx];
+    });
+    // Logger.log(valuesSorted);
+
+    // 2.4) HTML output
+    // ****************
+
+    var title_str = "Scores";
+    var handleGlbPerfs = false;
+    switch (e.parameter['nbcolumns']) {
+      case '3':
+        title_str = "Very easy game scores";
+        handleGlbPerfs = true;
+        break;
+      case '4':
+        title_str = "Master Mind game scores";
+        handleGlbPerfs = true;
+        break;
+      case '5':
+        title_str = "Super Master Mind game scores";
+        handleGlbPerfs = true;
+        break;
+      case '6':
+        title_str = "Advanced Master Mind game scores";
+        break;
+      case '7':
+        title_str = "Ultra Master Mind game scores";
+        break;
+    }
+
+    var tmpGlbScoreAndPerfsPrefix = "glbsc_";
+    var tmpGlbPerfsSuffix = "_glbpf";
+    var compressRsp = (e.parameter['compressrsp'] != undefined);
+    var mobileMode = (e.parameter['mobilemode'] != undefined);
+    var rankingsStr = "<center><hr style='height:1.4vh;padding:0;margin:0;visibility:hidden;'><font style='color:#000000'><font style='font-size:HEADER_FTZ'><b>" + title_str + "</b><br></font><hr style='height:0.4vh;padding:0;margin:0;visibility:hidden;'>";
+    var maxNbMonthsStr = "";
+    if (max_nb_months == 0.25) {
+      maxNbMonthsStr = "1 week";
+    }
+    else if (max_nb_months == 0.5) {
+      maxNbMonthsStr = "2 weeks";
+    }
+    else if (max_nb_months == 0.75) {
+      maxNbMonthsStr = "3 weeks";
+    }
+    else if (max_nb_months < 1.0) {
+      maxNbMonthsStr = Math.round(max_nb_months*30) + " days";
+    }
+    else if (max_nb_months == 1.5) {
+      maxNbMonthsStr = "6 weeks";
+    }
+    else {
+      maxNbMonthsStr = max_nb_months + " " + ((max_nb_months >= 2) ? "months" : "month");
+    }
+
+    rankingsStr = rankingsStr + "<font style='color:#555555;font-size:FTZ'>The last " + nb_max_games_for_rankings + " games of each player not older than " + maxNbMonthsStr + " are listed" + (mobileMode ? "" : history_clear_advice) + "</font><hr style='height:1.9vh;padding:0;margin:0;visibility:hidden;'>"; // "font-size:FTZ" => actual font size shall be applied by the target application
+    rankingsStr = rankingsStr + "<table style='border:1px solid black;padding:1px;border-collapse:collapse;width:TABLE_WIDTH;'><tr style='background-color:#EEEEEE;font-size:FTZ'>" // "width:TABLE_WIDTH" => actual table width shall be applied by the target application
+                              + tdStr + "&#x2193;" + slashTdStr
+                              + tdStr + (compressRsp ? "pts" : "score") + slashTdStr
+                              + tdStr + "name" + slashTdStr
+                              + tdStr + "country" + slashTdStr
+                              + (compressRsp ? "" : tdStr + "region" + slashTdStr)
+                              + tdStr + "city" + slashTdStr
+                              + tdStr + "&nbsp;#&nbsp;" + slashTdStr
+                              + tdStr + "&#x23F0;" + slashTdStr
+                              + tdStr + "perf" + slashTdStr
+                              + (compressRsp ? "" : tdStr + "info" + slashTdStr)
+                              + tdStr + "last" + nb_max_games_for_rankings + slashTdStr // (**)
+                              + tdStr + "date" + slashTdStr + "</tr>";
+    var rankings_size;
+    var max_rankings_size = 2500; // (*)
+    var max_ranks_listed = 10; // in total, at most: max_ranks_listed + nb_max_games_for_rankings + nb of round ranks + 1 for the last rank + 1 for the max global score
+    if (valuesSorted.length > max_rankings_size) {
+      rankings_size = max_rankings_size;
+    }
+    else {
+      rankings_size = valuesSorted.length;
+    }
+
+    var maxglbscore = 0;
+    var bestglbperfs = -999.0;
+    var maxglbscore_firstname = "_NA_";
+    for (var i = 0; i < rankings_size; i++) {
+
+      if (!(valuesSorted[i][statusIdx] == 'ok')) { // old statuses are ignored (condition duplicated)
+        continue;
+      }
+
+      if (valuesSorted[i][glbscoreIdx] > maxglbscore) {
+        maxglbscore = valuesSorted[i][glbscoreIdx];
+        maxglbscore_firstname = valuesSorted[i][firstnameIdx];
+      }
+
+
+      if ( (valuesSorted[i][glbperfsIdx] != 1.00) // default N.A. value is 1.00
+           && (valuesSorted[i][glbperfsIdx] > bestglbperfs) ) {
+        bestglbperfs = valuesSorted[i][glbperfsIdx];
+      }
+
+    }
+
+    var maxglbscore2 = 0;
+    for (var i = 0; i < rankings_size; i++) {
+
+      if (!(valuesSorted[i][statusIdx] == 'ok')) { // old statuses are ignored (condition duplicated)
+        continue;
+      }
+      if (valuesSorted[i][firstnameIdx] == maxglbscore_firstname) { // to simplify, only first names are used as player differentiator for this step
+        continue;
+      }
+
+      if (valuesSorted[i][glbscoreIdx] > maxglbscore2) {
+        maxglbscore2 = valuesSorted[i][glbscoreIdx]; // max global score for 2nd best player
+      }
+
+    }
+
+    var rank = 0;
+    var glbscore = 0;
+    var glbperfs = 0;
+    var glbattempts = 0;
+    var glbnbuknperfs = 0;
+    var glbscoreandperfs_cnt = 0;
+    var TBCglbscoreandperfsStr = "_aAA";
+
+    var extra_line = false;
+    for (var i = 0; i < rankings_size; i++) {
+
+      if (!(valuesSorted[i][statusIdx] == 'ok')) { // old statuses are ignored (condition duplicated)
+        continue;
+      }
+      rank++;
+
+      var sum_this_score = false;
+      var is_maxglbscore = (valuesSorted[i][glbscoreIdx] == maxglbscore); // (only one line should be matching in practice due to score precision)
+      var is_maxglbscore2 = (valuesSorted[i][glbscoreIdx] == maxglbscore2); // (only one line should be matching in practice due to score precision)
+      var is_bestperfs = (valuesSorted[i][glbperfsIdx] == bestglbperfs); // (only one line should be matching in practice due to global perfs precision)
+      var round_rank = false;
+      if (rankings_size <= 30) {
+        round_rank = ((rank == 11) || (rank == 12) || (rank == 14) || (rank == 16) || (rank == 18) || (rank == 20) || (rank == 22) || (rank == 24) || (rank == 26));
+      }
+      else if (rankings_size <= 45) {
+        round_rank = ((extra_line && (rank == 11)) || (rank == 12) || (rank == 14) || (rank == 16) || (rank == 18) || (rank == 20) || (rank == 25) || (rank == 30) || (rank == 35));
+      }
+      else if (rankings_size <= 60) {
+        round_rank = ((extra_line && (rank == 12)) || (rank == 15) || (rank == 20) || (rank == 25) || (rank == 30) || (rank == 35) || (rank == 40) || (rank == 45) || (rank == 50));
+      }
+      else if (rankings_size <= 80) {
+        round_rank = ((extra_line && (rank == 15)) || (rank == 20) || (rank == 25) || (rank == 30) || (rank == 35) || (rank == 40) || (rank == 50) || (rank == 60) || (rank == 70));
+      }
+      else if (rankings_size <= 100) {
+        round_rank = ((extra_line && (rank == 15)) || (rank == 20) || (rank == 30) || (rank == 40) || (rank == 50) || (rank == 60) || (rank == 70) || (rank == 80) || (rank == 90));
+      }
+      else if (rankings_size <= 140) {
+        round_rank = ((extra_line && (rank == 15)) || (rank == 20) || (rank == 30) || (rank == 40) || (rank == 50) || (rank == 60) || (rank == 80) || (rank == 100) || (rank == 120));
+      }
+      else if (rankings_size <= 180) {
+        round_rank = ((extra_line && (rank == 15)) || (rank == 20) || (rank == 40) || (rank == 60) || (rank == 80) || (rank == 100) || (rank == 120) || (rank == 140) || (rank == 160));
+      }
+      else if (rankings_size <= 250) {
+        round_rank = ((extra_line && (rank == 20)) || (rank == 25) || (rank == 50) || (rank == 75) || (rank == 100) || (rank == 125) || (rank == 150) || (rank == 175) || (rank == 200));
+      }
+      else if (rankings_size <= 350) {
+        round_rank = ((extra_line && (rank == 20)) || (rank == 25) || (rank == 50) || (rank == 75) || (rank == 100) || (rank == 150) || (rank == 200) || (rank == 250) || (rank == 300));
+      }
+      else if (rankings_size <= 450) {
+        round_rank = ((extra_line && (rank == 25)) || (rank == 50) || (rank == 100) || (rank == 150) || (rank == 200) || (rank == 250) || (rank == 300) || (rank == 350) || (rank == 400));
+      }
+      else if (rankings_size <= 600) {
+        round_rank = ((extra_line && (rank == 25)) || (rank == 50) || (rank == 100) || (rank == 150) || (rank == 200) || (rank == 250) || (rank == 300) || (rank == 400) || (rank == 500));
+      }
+      else if (rankings_size <= 700) {
+        round_rank = ((extra_line && (rank == 25)) || (rank == 50) || (rank == 100) || (rank == 150) || (rank == 200) || (rank == 300) || (rank == 400) || (rank == 500) || (rank == 600));
+      }
+      else if (rankings_size <= 800) {
+        round_rank = ((extra_line && (rank == 25)) || (rank == 50) || (rank == 100) || (rank == 200) || (rank == 300) || (rank == 400) || (rank == 500) || (rank == 600) || (rank == 700));
+      }
+      else if (rankings_size <= 900) {
+        round_rank = ((extra_line && (rank == 50)) || (rank == 100) || (rank == 200) || (rank == 300) || (rank == 400) || (rank == 500) || (rank == 600) || (rank == 700) || (rank == 800));
+      }
+      else if (rankings_size <= 1200) {
+        round_rank = ((extra_line && (rank == 50)) || (rank == 100) || (rank == 200) || (rank == 300) || (rank == 400) || (rank == 500) || (rank == 600) || (rank == 800) || (rank == 1000));
+      }
+      else if (rankings_size <= 1400) {
+        round_rank = ((extra_line && (rank == 50)) || (rank == 100) || (rank == 200) || (rank == 300) || (rank == 400) || (rank == 600) || (rank == 800) || (rank == 1000) || (rank == 1200));
+      }
+      else if (rankings_size <= 2000) {
+        round_rank = ((extra_line && (rank == 100)) || (rank == 200) || (rank == 400) || (rank == 600) || (rank == 800) || (rank == 1000) || (rank == 1200) || (rank == 1400) || (rank == 1600) || (rank == 1800));
+      }
+      else { // (*)
+        round_rank = ((extra_line && (rank == 100)) || (rank == 250) || (rank == 500) || (rank == 750) || (rank == 1000) || (rank == 1250) || (rank == 1500) || (rank == 1750) || (rank == 2000) || (rank == 2250) || (rank == 2500) || (rank == 2750) || (rank == 3000));
+      }
+      var add_line = ( (rank <= max_ranks_listed) /* (first ranks) */ || (i == rankings_size-1) /* (last rank, might be skipped in some rare cases) */
+                       || is_maxglbscore /* max global score */ || is_maxglbscore2 /* max global score for 2nd best player */
+                       || is_bestperfs /* best global perfs */
+                       || (rankings_size <= 16) /* (few ranks) */
+                       ||  round_rank );
+      if (!listingMode) {
+        if (valuesSorted[i][rowIdx] == nextRow) { // current game row is highlighted (condition duplicated)
+          rankingsStr = rankingsStr + "<tr style='background-color:#FF00FF;font-size:FTZ'>"; // pink
+          sum_this_score = true; // at least one score will be summed
+          add_line = true;
+          if (rank <= max_ranks_listed) { // (first ranks)
+            extra_line = true;
+          }
+        }
+        else if (valuesSorted[i][playeridIdx] == currentplayerid) { // (condition duplicated)
+          rankingsStr = rankingsStr + "<tr style='background-color:#FFAAFF;font-size:FTZ'>"; // light pink - current player's rows are highlighted slightly
+          sum_this_score = ((validfirstname && (valuesSorted[i][firstnameIdx] == firstname)) ? true : false); // only enable multiple score sums for players having valid first names
+          add_line = true;
+          if (rank <= max_ranks_listed) { // (first ranks)
+            extra_line = true;
+          }
+        }
+        else if (extractRoutingPrefix(valuesSorted[i][ipaddressIdx]) == currentplayeripaddressRoutingPrefixExtracted) { // (condition duplicated)
+          rankingsStr = rankingsStr + "<tr style='background-color:#FFAAFF;font-size:FTZ'>"; // light pink - current player's rows are highlighted slightly
+          sum_this_score = ( ((validfirstname && (valuesSorted[i][firstnameIdx] == firstname)) ? true : false) // only enable multiple score sums for players having valid first names,
+                             || (validfirstname && (valuesSorted[i][ipaddressIdx] == currentplayeripaddress)) );          // or with a defined first name and exactly the same IP addresses
+          add_line = true;
+          if (rank <= max_ranks_listed) { // (first ranks)
+            extra_line = true;
+          }
+        }
+        /* current player's rows are not highlighted in this case to avoid giving cheating hints (e.g. changing one's first name to have more scores listed)
+        else if ( *//* validfirstname && *//* ((!iscurrentplayergeolocreliable) || validcurrentplayercity) // (condition duplicated)
+                  && (valuesSorted[i][firstnameIdx] == firstname) // Note: firstname may be invalid i.e. '-': it is taken into account anyway
+                  && ((!iscurrentplayergeolocreliable) || (valuesSorted[i][cityIdx] == currentplayercity)) ) { // (condition duplicated)
+          rankingsStr = rankingsStr + "<tr style='font-size:FTZ'>";
+          add_line = true;
+          if (rank <= max_ranks_listed) { // (first ranks)
+            extra_line = true;
+          }
+        } */
+        else if (add_line) {
+          rankingsStr = rankingsStr + "<tr style='font-size:FTZ'>";
+        }
+      } // listingMode
+      else {
+        rankingsStr = rankingsStr + "<tr style='font-size:FTZ'>";
+        add_line = true; // add all lines
+      }
+
+      if (add_line) {
+
+        if (sum_this_score) {
+          glbscore += valuesSorted[i][scoreIdx];
+          glbperfs += valuesSorted[i][perfsIdx];
+          glbattempts += valuesSorted[i][attemptsIdx];
+          glbnbuknperfs += valuesSorted[i][nbuknperfsIdx];
+          glbscoreandperfs_cnt++;
+        }
+
+        var infoStr = '&#x2234;';
+        var helped = false;
+        if (valuesSorted[i][helpIdx] != '0x') {
+          helped = (valuesSorted[i][helpIdx].indexOf("x") != -1);
+          if (compressRsp) {
+            if (valuesSorted[i][helpIdx].indexOf("ra") != -1) {
+              infoStr = "&#x266C;";
+            }
+            else {
+              infoStr = "H";
+            }
+          }
+          else {
+            infoStr = String(valuesSorted[i][helpIdx]).replace("1x","help").replace("x","help").replace("ra","&#x266C;");
+          }
+        }
+        var glbScoreAndPerfsStr;
+        if ((!listingMode) && (valuesSorted[i][rowIdx] == nextRow)) { // current game
+          glbScoreAndPerfsStr = TBCglbscoreandperfsStr;
+        }
+        else if (valuesSorted[i][glbscoreIdx] == valuesSorted[i][scoreIdx]) {
+          glbScoreAndPerfsStr = "&#x2234;";
+        }
+        else {
+          glbScoreAndPerfsStr = tmpGlbScoreAndPerfsPrefix + reformat_glbscore_str(valuesSorted[i][glbscoreIdx], e.parameter['nbcolumns']);
+          if (glbScoreAndPerfsStr.indexOf("&#x2234;") == -1) { // valid global score
+            if (handleGlbPerfs && (valuesSorted[i][glbperfsIdx] != 1.00)) { // valid global perfs
+              glbScoreAndPerfsStr += "<s>" + (compressRsp ? "" : "&#x2009;") + "<s>/" + reformat_glbperfs_str(valuesSorted[i][glbperfsIdx]) + tmpGlbPerfsSuffix + "</s></s>"; // "<s>...</s>" -> "<small>...</small>" => to compress the response, actual syntax shall be applied by the target application
+            }
+          }
+        }
+
+        var countryStr = reformat_country_str(reformat_NA_str(valuesSorted[i][countryIdx].trim()));
+        if (compressRsp) {
+          countryStr = countryStr.replace("United States", "US").replace("United Kingdom", "UK").replace("New ", "N-").replace('North ','N-').replace('South ','S-').replace('East ','E-').replace('West ','W-');
+          countryStr = countryStr.substring(0, 9).trim().replace(' ','&#x2009;').replace(' ','&#x2009;').replace(' ','&#x2009;').replace(' ','&#x2009;'); // (breaking thin spaces)
+        }
+        else {
+          countryStr = countryStr.substring(0, 14).trim();
+        }
+        var cityStr = reformat_city_str(reformat_NA_str(valuesSorted[i][cityIdx].trim()));
+        if (compressRsp) {
+          cityStr = cityStr.replace("New ", "N-").replace('North ','N-').replace('South ','S-').replace('East ','E-').replace('West ','W-').replace("Le Kremlin", "Krem");
+          cityStr = cityStr.substring(0, 13).trim().replace(' ','&#x2009;').replace(' ','&#x2009;').replace(' ','&#x2009;').replace(' ','&#x2009;'); // (breaking thin spaces)
+        }
+        else {
+          cityStr = cityStr.substring(0, 19).trim();
+        }
+        rankingsStr = rankingsStr
+                      + tdStr + String(rank) + slashTdStr
+                      + tdStr + Math.round(valuesSorted[i][scoreIdx]) + slashTdStr
+                      + tdStr + reformat_NA_str(valuesSorted[i][firstnameIdx].substring(0,12).trim()) + slashTdStr
+                      + tdStr + countryStr + slashTdStr
+                      + (compressRsp ? "" : tdStr + reformat_region_str(reformat_NA_str(valuesSorted[i][regionIdx].trim()),19).substring(0,19).trim() + slashTdStr)
+                      + tdStr + cityStr + slashTdStr
+                      + tdStr + ((compressRsp && helped) ? ("<i>" + valuesSorted[i][attemptsIdx] + "</i>") : valuesSorted[i][attemptsIdx]) + slashTdStr
+                      + tdStr + (compressRsp ? (helped?"<i>":"") + valuesSorted[i][timeIdx].replace('min','m').replace(' ','&#x202f;').replace(' ','&#x202f;').replace(' ','&#x202f;') + (helped?"</i>":"") : valuesSorted[i][timeIdx]) + slashTdStr // (non-breaking spaces used if compressRsp)
+                      + tdStr + reformat_perfs_str(valuesSorted[i][perfsIdx], valuesSorted[i][nbuknperfsIdx], valuesSorted[i][attemptsIdx], compressRsp) + slashTdStr
+                      + (compressRsp ? "" : tdStr + infoStr + slashTdStr)
+                      + tdStr + glbScoreAndPerfsStr + slashTdStr
+                      + tdStr + (compressRsp ? Utilities.formatDate(new Date(valuesSorted[i][dateIdx]), "Europe/Paris", "d MMM").replace(' ','&#x202f;') : Utilities.formatDate(new Date(valuesSorted[i][dateIdx]), "Europe/Paris", "d MMM yy")) + slashTdStr; // (non-breaking spaces used if compressRsp)
+        rankingsStr = rankingsStr + '</tr>';
+
+      }
+
+    } // end for
+    rankingsStr = rankingsStr + "</table></font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'></center>"
+
+    var currentGlbScoreAndPerfsStr;
+    var reformatedglbperfs = 1.00; // default N.A. value
+    if (glbscoreandperfs_cnt > nb_max_games_for_rankings) {
+      throw ("too high glbscoreandperfs_cnt value: " + glbscoreandperfs_cnt + ", " +  nb_max_games_for_rankings + " for " + currentplayerid);
+    }
+    else if (glbscoreandperfs_cnt < nb_max_games_for_rankings) { // this threshold shall be <= nb_max_games_for_rankings (**)
+      currentGlbScoreAndPerfsStr = "&#x2234;";
+      glbscore = 0; // default N.A. value
+      reformatedglbperfs = 1.00; // default N.A. value
+    }
+    else { // (glbscoreandperfs_cnt == nb_max_games_for_rankings)
+      currentGlbScoreAndPerfsStr = tmpGlbScoreAndPerfsPrefix + reformat_glbscore_str(glbscore, e.parameter['nbcolumns']);
+      if (currentGlbScoreAndPerfsStr.indexOf("&#x2234;") == -1) { // valid global score
+        if ( handleGlbPerfs && (glbattempts - glbnbuknperfs > 0) && (glbnbuknperfs < glbattempts/4) /* (relevant reformating) */) {
+          reformatedglbperfs = Math.round((glbperfs * (glbattempts + glbnbuknperfs) / glbattempts)*100)/100;
+          currentGlbScoreAndPerfsStr += "<s>" + (compressRsp ? "" : "&#x2009;") + "<s>/" + reformat_glbperfs_str(reformatedglbperfs) + tmpGlbPerfsSuffix + "</s></s>"; // "<s>...</s>" -> "<small>...</small>" => to compress the response, actual syntax shall be applied by the target application
+        }
+      }
+    }
+
+    rankingsStr = rankingsStr.replace(TBCglbscoreandperfsStr, currentGlbScoreAndPerfsStr);
+
+    if (!listingMode) {
+      if (glbscoreandperfs_cnt >= nb_max_games_for_rankings) { // keep default values if applicable (**)
+        var valuesFiltered_idx = -1;
+        for (var i = valuesFiltered.length-1; i >= 0; i--) { // loop on filtered rows
+          if (valuesFiltered[i][rowIdx] == nextRow) { // current game
+            valuesFiltered_idx = i;
+            break;
+          }
+        }
+        if (valuesFiltered_idx == -1) {
+          throw ("valuesFiltered_idx == -1");
+        }
+        if (glbscore != 0) { // default N.A. value is 0
+          debug_state = 130;
+          sheet.getRange(nextRow, glbscoreIdx+1, 1, 1).setValue(glbscore); // update 'glbscore' in google sheet
+          debug_state = 140;
+          valuesFiltered[valuesFiltered_idx][glbscoreIdx] = glbscore; // update 'glbscore' in filtered values (useful in case of subsequent sheet compression)
+        }
+        if (reformatedglbperfs != 1.00) { // default N.A. value is 1.00
+          debug_state = 150;
+          sheet.getRange(nextRow, glbperfsIdx+1, 1, 1).setValue(reformatedglbperfs); // update 'glbperfs' in google sheet
+          debug_state = 160;
+          valuesFiltered[valuesFiltered_idx][glbperfsIdx] = reformatedglbperfs; // update 'glbperfs' in filtered values (useful in case of subsequent sheet compression)
+        }
+      }
+    }
+
+    // Reformat global scores
+    var finalmaxglbscore = Math.max(maxglbscore, glbscore);
+    if (finalmaxglbscore > 0) {
+      var finalmaxglbscoreStr = reformat_glbscore_str(finalmaxglbscore, e.parameter['nbcolumns']);
+      while (rankingsStr.indexOf(tmpGlbScoreAndPerfsPrefix + finalmaxglbscoreStr) != -1) {
+        rankingsStr = rankingsStr.replace(tmpGlbScoreAndPerfsPrefix + finalmaxglbscoreStr, "<font color=#AA0000>" + finalmaxglbscoreStr + "</font>");
+      }
+    }
+    while (rankingsStr.indexOf(tmpGlbScoreAndPerfsPrefix) != -1) {
+      rankingsStr = rankingsStr.replace(tmpGlbScoreAndPerfsPrefix, "");
+    }
+
+    // Reformat global perfs
+    var finalbestglbperfs = bestglbperfs;
+    if (reformatedglbperfs != 1.00) { // default N.A. value is 1.00
+      finalbestglbperfs = Math.max(bestglbperfs, reformatedglbperfs);
+    }
+    var finalbestglbperfsStr = reformat_glbperfs_str(finalbestglbperfs);
+    while (rankingsStr.indexOf(finalbestglbperfsStr + tmpGlbPerfsSuffix) != -1) {
+      rankingsStr = rankingsStr.replace(finalbestglbperfsStr + tmpGlbPerfsSuffix, "<font color=#AA0000>" + finalbestglbperfsStr + "</font>");
+    }
+    while (rankingsStr.indexOf(tmpGlbPerfsSuffix) != -1) {
+      rankingsStr = rankingsStr.replace(tmpGlbPerfsSuffix, "");
+    }
+
+    // Logger.log(rankingsStr);
+    if (!listingMode) {
+      e.parameter['rankings'] = rankingsStr;
+    }
+    else {
+      return rankingsStr; // (e.parameter['rankings'] will be updated later on for all columns)
+    }
+
+    // ***************************************
+    // 3) Compress sheet if it gets very large
+    // ***************************************
+
+    if (!listingMode) {
+
+      var lastRow = sheet.getLastRow();
+      if (lastRow-startRow+1 - valuesFiltered.length >= Math.max((lastRow-startRow+1)/20, 9)) { // (check number of old games which can be compressed)
+        try {
+
+          // Sort rows as there were sorted initially
+          var valuesSorted2 = valuesFiltered.sort(function(a, b) {  // (Rk: both valuesFiltered and valuesSorted2 variables are sorted)
+            return a[rowIdx] - b[rowIdx];
+          });
+
+          if ( (valuesFiltered[0].length == nbsheetcolumns) && (valuesFiltered[valuesFiltered.length-1].length == nbsheetcolumns) && (valuesSorted2.length == valuesFiltered.length) ) {
+
+            /* var dest_doc = SpreadsheetApp.getActiveSpreadsheet(); // (active google sheet)
+               sheet.copyTo(dest_doc); // Destination sheet will be named "Copy of xxx" */ // (could make the spread sheet reach its max size)
+
+            for (var i = 0; i < valuesSorted2.length; i++) {
+              valuesSorted2[i][rowIdx] = i+startRow;
+            }
+            debug_state = 170;
+            sheet.getRange(startRow, 1, valuesSorted2.length, nbsheetcolumns).setValues(valuesSorted2); // update google sheet
+            debug_state = 180;
+            sheet.deleteRows(startRow+valuesSorted2.length, lastRow-(startRow+valuesSorted2.length)+1);
+            debug_state = 190;
+            var debug_str = "compression of sheet for " + e.parameter['nbcolumns'] + " columns from " + (lastRow-startRow+1) + " to " + valuesSorted2.length + " rows";
+            Logger.log(debug_str);
+            // trace_debug_info(debug_str, e);
+
+            Utilities.sleep(1111); // (defensive wait)
+
+          }
+          else {
+            var error_str = "compression error #1 (" + valuesFiltered[0].length + "," + valuesFiltered[valuesFiltered.length-1].length + "," + nbsheetcolumns + "," + valuesSorted2.length + "," + valuesFiltered.length + ")";
+            Logger.log(error_str);
+            keep_trace_of_error(error_str, e);
+          }
+
+        }
+        catch (compression_error) {
+          var error_str = "compression error #2: " + compression_error;
+          Logger.log(error_str);
+          keep_trace_of_error(error_str, e);
+        }
+      }
+
+    } // listingMode
+
+  }
+  catch (error) {
+    if (!listingMode) {
+      Logger.log("record_data_and_compute_rankings error: " + error);
+      if (nextRow >= 2) {
+        try {
+          var currentdatestr = Utilities.formatDate(new Date(), "Europe/Paris", "EEE, d MMM yyyy HH:mm:ss Z");
+          var row = [ String(nextRow) , currentdatestr , error_prefix + error /* (playeridIdx column) */ + " - debug_state: " + debug_state];
+
+          if ((doc != undefined) && (sheet != undefined)) {
+            sheet.getRange(nextRow, 1, 1, row.length).setValues([row]); // update google sheet: may override (partially) the values written by the nominal call to setValues()
+
+            // copy sheet contents (which may complete debug info provided by debug_state):
+            var debug_sheet_name = 'Debug (sheet copy)';
+            var debug_sheet = doc.getSheetByName(debug_sheet_name);
+            if (debug_sheet == null) { // Check that debug sheet does not already exist
+              var dest_doc = SpreadsheetApp.getActiveSpreadsheet(); // (active google sheet)
+              sheet.copyTo(dest_doc).setName(debug_sheet_name);
+            }
+          }
+
+          return error + " (sheet updated - debug_state: " + debug_state + ")"; // (error)
+        }
+        catch (error2) {
+          Logger.log("record_data_and_compute_rankings error: " + error2);
+          return error + " / " + error2 + " (sheet not updated #1 - debug_state: " + debug_state + ")"; // (error)
+        }
+      }
+      return error + " (sheet not updated #2 - debug_state: " + debug_state + ")"; // (error)
+    } // listingMode
+    else {
+      return error + " (listing mode)";
+    }
+  }
+
+  return "";  // (success)
+}
+
+// ************************
+// Keep trace of all errors
+// ************************
+
+function keep_trace_of_error(error_p, e) {
+
+  try {
+    var doc     = SpreadsheetApp.getActiveSpreadsheet(); // (active google sheet)
+    var sheet   = doc.getSheetByName('Debug'); // (tab name)
+    var nextRow = sheet.getLastRow()+1; // get next row
+
+    if (nextRow <= 150) { // do not fill the sheet indefinitely
+      var currentdate = new Date();
+      var currentdatestr = Utilities.formatDate(currentdate, "Europe/Paris", "EEE, d MMM yyyy HH:mm:ss Z");
+      var e_str = "?";
+      try {
+        e_str = JSON.stringify(e);
+      }
+      catch (json_error) {
+      }
+      var error_str = "ERROR on " + currentdatestr + ": " + error_p + " -> " + e_str;
+      sheet.getRange(nextRow, 1, 1, 1).setValue(error_str); // update debug google sheet
+    }
+  }
+  catch (error) {
+  }
+
+}
+
+// ****************
+// Trace debug info
+// ****************
+
+function trace_debug_info(str_p, e) {
+
+  try {
+    var doc     = SpreadsheetApp.getActiveSpreadsheet(); // (active google sheet)
+    var sheet   = doc.getSheetByName('Debug'); // (tab name)
+    var nextRow = sheet.getLastRow()+1; // get next row
+
+    if (nextRow <= 150) { // do not fill the sheet indefinitely
+      var currentdate = new Date();
+      var currentdatestr = Utilities.formatDate(currentdate, "Europe/Paris", "EEE, d MMM yyyy HH:mm:ss Z");
+      var e_str = "?";
+      try {
+        e_str = JSON.stringify(e);
+      }
+      catch (json_error) {
+      }
+      var debug_str = "EVENT on " + currentdatestr + ": " + str_p + " -> " + e_str;
+      sheet.getRange(nextRow, 1, 1, 1).setValue(debug_str); // update debug google sheet
+    }
+  }
+  catch (error) {
+  }
+
+}
+
+// *********************************************
+// Extract routing prefix from IPv4/IPv6 address
+// *********************************************
+
+// Note: interesting page on IPv6 geolocation: https://community.infoblox.com/t5/IPv6-CoE-Blog/Geolocation-with-IPv6/ba-p/11752
+function extractRoutingPrefix(ip_address) {
+  var cnt = 0;
+  var current_idx = -1;
+  while ((current_idx = String(ip_address).indexOf(":", current_idx+1)) != -1) { // Assumption: IPv6 addresses always have ":" as separator
+    cnt++;
+    if (cnt == 4) { // IPv6 address
+      return "IPv6/" + ip_address.substring(0, current_idx); // Extract routing prefix of the IPv6 address
+    }
+  }
+  return "IPv4/" +  ip_address; // The full IPv4 address is used for routing
+}
+
+// **************
+// Reformat score
+// **************
+
+function reformat_glbscore_str(glbscore, nbcolumns_param) {
+  var one_attempt_score;
+  switch (nbcolumns_param) {
+    case '3':
+      one_attempt_score = 5.0; // >= 5.0
+      break;
+    case '4':
+      one_attempt_score = 10.0; // >= 7.5 (which is not suited)
+      break;
+    case '5':
+      one_attempt_score = 10.0; // >= 10.0
+      break;
+    case '6':
+      one_attempt_score = 20.0; // >= 15.0 (which is not suited)
+      break;
+    case '7':
+      one_attempt_score = 20.0; // >= 20.0
+      break;
+    default:
+      one_attempt_score = 1.0;
+  }
+
+  var res = Math.round(Math.round(glbscore/one_attempt_score)*one_attempt_score);
+  if (res < 1) { // (covers the 0 case)
+    return "&#x2234;";
+  }
+  return String(res);
+}
+
+// ******************
+// Reformat NA string
+// ******************
+
+function reformat_NA_str(str) {
+  return (((str == "-") || (str.toLowerCase() == "unknown")) ? "&#x2234;" : str);
+}
+
+// ***************************
+// Reformat performance string
+// ***************************
+
+function reformat_perfs_str(perfs, nbuknperfs, attempts, compressrsp) {
+  try {
+    var prefix = "";
+    if (perfs > 0.00) {
+      prefix = "+";
+    }
+    else if (perfs == 0.00) {
+      prefix = "&nbsp;";
+    }
+    if (nbuknperfs < attempts) {
+      if (nbuknperfs <= 0) {
+        return prefix + perfs.toFixed(2);
+      }
+      else {
+        var nb_perfs_known = attempts - nbuknperfs;
+        if (compressrsp) {
+          // return prefix + perfs.toFixed(2) + "<s><s>|" + nb_perfs_known + "</s></s>"; // "<s>...</s>" -> "<small>...</small>" => to compress the response, actual syntax shall be applied by the target application
+          return prefix + perfs.toFixed(2);
+        }
+        else {
+         return prefix + perfs.toFixed(2) + "<s>&#x2009;<s>(" + nb_perfs_known + ")</s></s>"; // "<s>...</s>" -> "<small>...</small>" => to compress the response, actual syntax shall be applied by the target application
+        }
+      }
+    }
+    else {
+      return "&#x2234;";
+    }
+  }
+  catch (perfs_error) {
+    return "&#x2234;";
+  }
+}
+
+// **********************************
+// Reformat global performance string
+// **********************************
+
+function reformat_glbperfs_str(glbperfs) {
+  try {
+    var rounded_glbperfs = Math.round(glbperfs*5)/5; // 0.2 precision
+    var prefix = "";
+    if (rounded_glbperfs > 0.0) {
+      prefix = "+";
+    }
+    else if (rounded_glbperfs == 0.0) {
+      prefix = " ";
+    }
+    if (rounded_glbperfs <= -10.0) {
+      return prefix + rounded_glbperfs.toFixed(0) + "&nbsp;";
+    }
+    else {
+      return prefix + rounded_glbperfs.toFixed(1);
+    }
+  }
+  catch (glbperfs_error) {
+    return "&#x2234;";
+  }
+}
+
+// ***********************
+// Reformat country string
+// ***********************
+
+function reformat_country_str(str) {
+  return str.replace('-',' ').replace('-',' ').replace('-',' ').replace('-',' ');
+}
+
+// **********************
+// Reformat region string
+// **********************
+
+function reformat_region_str(str, nb_max_char) {
+  if (str.length <= nb_max_char-4) {
+    return str.replace('-',' ').replace('-',' ').replace('-',' ').replace('-',' ');
+  }
+  else {
+    return str.replace('-',' ').replace('-',' ').replace('-',' ').replace('-',' ').replace('North ','N-').replace('South ','S-').replace('East ','E-').replace('West ','W-').replace('Lesser ','L-');
+  }
+
+}
+
+// ********************
+// Reformat city string
+// ********************
+
+function reformat_city_str(str) {
+  return str.replace('-',' ').replace('-',' ').replace('-',' ').replace('-',' ');
+}
+
+// **************
+// Test functions
+// **************
+
+function test() {
+ var i;
+ for (i = 0; i < 10; i++) {
+  var key = i + Math.floor(100000*Math.random());
+  var rand = Math.floor(Math.random()*4);
+  var ipaddr = "X";
+  var playerid = "Y";
+  var firstname = "Z"
+  switch (rand) {
+    case 0:
+      ipaddr = "1.1.1.10";
+      playerid = "ID/9XG5R - Mon Dec 25 2017 17:42:04 GMT 0100 (CET)";
+      firstname = "Toto";
+      break;
+    case 1:
+      ipaddr = "1.1.1.100";
+      playerid = "ID/AXG5R - Mon Dec 25 2017 17:42:04 GMT 0100 (CET)";
+      firstname = "Titi";
+      break;
+    case 2:
+      ipaddr = "1.1.1.200";
+      playerid = "ID/BXG5R - Mon Dec 25 2017 17:42:04 GMT 0100 (CET)";
+      firstname = "Tutu";
+      break;
+    case 3:
+      ipaddr = "1.1.1.250";
+      playerid = "ID/CXG5R - Mon Dec 25 2017 17:42:04 GMT 0100 (CET)";
+      firstname = "Tete";
+      break;
+  }
+  var e = {"parameter": "-"};
+  e.parameter = {'country':'France','ipaddress':ipaddr,'firstname':firstname,'city':'Paris','geoloc':'ok','timezone':'Europe/Paris','latitude':'48.8024','useragent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0','gamesok':'171','platform':'Win32',
+                 'score':'47.54','my_callback_fct':'handle_rsp','href':'https://supermastermind.github.io/playonline',
+                 'nbcolumns':'8',
+                 'attempts':'8','longitude':'2.2935','_':'1506545491257','zip':'92320','deltagames':'0','browserlanguage':'fr','formsubmitdate':'Wed Sep 27 2017 22:51:33 GMT 0200','help':'4ra','rankings':'-',
+                 'perfs':'-0.95',
+                 'nbuknperfs':'0',
+                 'debuginfo':'P1b/','callback':'jQuery3210953603875670034_1506545491256','time':'0 sec','region':'Ile-de-France',
+                 'playerid':playerid,
+                 'k':key+49};
+    doGet(e);
+  }
+}
+
+function test2() {
+  Logger.log("1:" + extractRoutingPrefix("2602:252:d47:7820:79a7:3d63:a709:d1df"));
+  Logger.log("2:" + extractRoutingPrefix("2602:252:d47:7820:79a7:3d63:a709:"));
+  Logger.log("3:" + extractRoutingPrefix("2602:252:d47:7820:79a7:3d63:a709"));
+  Logger.log("4:" + extractRoutingPrefix("fe80::6cd6:53f:6c49:912f"));
+  Logger.log("5:" + extractRoutingPrefix("37:171:122:28:"));
+  Logger.log("6:" + extractRoutingPrefix("37:171:122:28"));
+  Logger.log("7:" + extractRoutingPrefix("37:171:122"));
+  Logger.log("8:" + extractRoutingPrefix("37.171.122.28"));
+  Logger.log("9:" + extractRoutingPrefix("0.0.0.0"));
+  Logger.log("10:" + extractRoutingPrefix("-"));
+}
+
+function test_listing() {
+  var e = {"parameter": "-"};
+  e.parameter = {'list':'the wheel of life','country':'France','ipaddress':'94.239.24.130','firstname':'John','city':'Paris','geoloc':'ok','timezone':'Europe/Paris','latitude':'48.8024','useragent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0','gamesok':'4','platform':'Win32','score':'28.444','my_callback_fct':'handle_rsp','href':'https://supermastermind.github.io/playonline','nbcolumns':'3','attempts':'1','longitude':'2.2935','_':'1506545491257','zip':'92320','deltagames':'0','browserlanguage':'fr','formsubmitdate':'Wed Sep 27 2017 22:51:33 GMT 0200','help':'0x','rankings':'-','perfs':'0','nbuknperfs':'1','debuginfo':'P1b/','callback':'jQuery3210953603875670034_1506545491256','time':'0 sec','region':'Ile-de-France','playerid':'ID/MNEMP - Sat Sep 23 2017 00:43:35 GMT 0200', 'k':'111'};
+  doGet(e);
+}
+
+function test_first_access() {
+  var e = {"parameter": "-"};
+  e.parameter = {'page':'game','timeonpage':'444','country':'France','region':'Ile-de-France','city':'Paris','ipaddress':'94.239.24.130','firstaccessid':'FA - EQ3QI - Sat Jan 27 2018 17:06:36 GMT 0100 (Paris, Madrid)', 'my_callback_fct':'handle_rsp'};
+  doGet(e);
+}
+
+function test_first_access2() {
+  var e = {"parameter": "-"};
+  e.parameter = {'page':'game','timeonpage':'444','country':'France','region':'Ile-de-France','city':'Paris','ipaddress':'94.239.24.131','firstaccessid':'FA - FQ3QI - Sat Jan 27 2018 17:06:36 GMT 0100 (Paris, Madrid)', 'my_callback_fct':'handle_rsp'};
+  doGet(e);
+}
+
+function test_first_access3() {
+  var e = {"parameter": "-"};
+  e.parameter = {'page':'game','timeonpage':'444','country':'France','region':'Ile-de-France','city':'Paris','ipaddress':'94.239.24.132','firstaccessid':'FA - GQ3QI - Sat Jan 27 2018 17:06:36 GMT 0100 (Paris, Madrid)', 'my_callback_fct':'handle_rsp'};
+  doGet(e);
+}
