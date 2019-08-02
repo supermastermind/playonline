@@ -451,7 +451,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MB6";
+      let html_compatibility_game_version = "Ver_MB7";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -2018,7 +2018,7 @@
 
           last_location_data_used = JSON.parse(converted_data);
           id_of_last_location_data_used = 2;
-          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
+          // storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok2');
           debug_game_state = 32;
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
@@ -2026,7 +2026,7 @@
           localStorage.firstgamegeoloc = "faerr2";
           var errorStr = ("first access geolocation retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
           console.log(errorStr);
-          storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
+          // storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-fail');
           debug_game_state = 34;
         })
         .always(function() {
@@ -2046,7 +2046,7 @@
           if ( ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)
                && ((typeof data.city != 'undefined') && (data.city != null) && (String(data.city).trim().length >= 2)) ) { // (redundant lines)
             localStorage.firstgamegeoloc = "fa1";
-            storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
+            // storeFirstAccess('game', 444, 444 /* (a too low value here will not work) */, 'debug-ok1');
           }
           else {
             localStorage.firstgamegeoloc = "faerr1a";
@@ -2067,7 +2067,7 @@
         });
 
         // Too close calls can lead to Cross-Origin Read Blocking (CORB) security error in Chrome (https://www.chromestatus.com/feature/5629709824032768) which will block further form submissions
-        setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",      2000);
+        setTimeout("storeFirstAccess('game', 0, 0, 'debug-ini')",        44);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-30s')",     30000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-1min')",    60000);
         setTimeout("storeFirstAccess('game', 0, 0, 'debug-2min')",   120000);
