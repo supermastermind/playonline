@@ -780,8 +780,8 @@ else if((!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.games
 &&(mouse_x< get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
 &&(mouse_y>get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
 &&(mouse_y< get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-||((!android_appli)&&(nbValidMouseClicks==1) &&!localStorage.gamesok)
-||((!android_appli)&&(nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
+||(/*(!android_appli)&&*/(nbValidMouseClicks==1) &&!localStorage.gamesok)
+||(/*(!android_appli)&&*/(nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
 let allColorsStr="";
 for (let color_idx=0;color_idx< nominalGameNbColors;color_idx++){
 allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";}
@@ -2195,7 +2195,7 @@ darkGray,backgroundColor_2,ctx,true,1,true,0,false,true,true /* bottom-right bub
 if (!displayString("Select me!",x_delta*0.90,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */)){
 if (mobileMode){
-displayString("TAP!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
+displayString("Tap!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */);}
 else{
 displayString("Click!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
