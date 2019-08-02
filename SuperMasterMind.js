@@ -1192,7 +1192,7 @@ debug_mode=localStorage.debug_mode;}}
 gameSolverInitMsgContents={'smm_buffer_messages': 'no','smm_req_type': 'INIT','nbColumns': nbColumns,'nbColors': nbColors,'nbMaxAttempts': nbMaxAttempts,'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown,'first_session_game': first_session_game,'game_id': game_cnt,'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
-setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");",(android_appli ? 2700 : 2500));
+setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");",2500);
 if (randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();",888);}
 gameSolverDbg=8;}
@@ -2195,7 +2195,7 @@ darkGray,backgroundColor_2,ctx,true,1,true,0,false,true,true /* bottom-right bub
 if (!displayString("Select me!",x_delta*0.90,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */)){
 if (mobileMode){
-displayString("Tap me!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
+displayString("TAP!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */);}
 else{
 displayString("Click!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
