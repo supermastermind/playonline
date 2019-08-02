@@ -1847,7 +1847,10 @@ if(i==currentPossibleCodeShown){
 backgroundColor=highlightColor;}
 if((optimal_width>0)||(i==currentAttemptNumber)||((i==nbOfStatsFilled_NbPossibleCodes)&&(nbOfStatsFilled_NbPossibleCodes>nbOfStatsFilled_Perfs+1))||(!performancesDisplayed[i-1]) /* (nb of possible codes<->perf switch) */){
 let statsColor;
-if((i==currentAttemptNumber)||(gameWon&&(i==currentAttemptNumber-1))){
+if (currentAttemptNumber == 1) {
+statsColor = backgroundColorTable[0];
+}
+else if((i==currentAttemptNumber)||(gameWon&&(i==currentAttemptNumber-1))){
 statsColor=darkGray;}
 else{
 statsColor=lightGray;}
@@ -2677,7 +2680,7 @@ ctx.beginPath();
 ctx.strokeStyle=foregroundColor;
 ctx.lineWidth=lineWidth;
 ctx.moveTo(x+radius,y);
-ctx.lineTo(x+radius/2,y-10);
+ctx.lineTo(x+radius/2,y-1.0*radius);
 ctx.lineTo(x+radius*2,y);
 ctx.lineTo(r-radius,y);
 ctx.quadraticCurveTo(r,y,r,y+radius);
@@ -2693,7 +2696,7 @@ ctx.beginPath();
 ctx.strokeStyle=foregroundColor;
 ctx.lineWidth=lineWidth;
 ctx.moveTo(r-radius*2,y);
-ctx.lineTo(r-radius/2,y-10);
+ctx.lineTo(r-radius/2,y-1.0*radius);
 ctx.lineTo(r-radius,y);
 ctx.quadraticCurveTo(r,y,r,y+radius);
 ctx.lineTo(r,y+h-radius);
