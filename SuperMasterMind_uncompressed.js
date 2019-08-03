@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v2.78";
+let version = "v2.8";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -1679,7 +1679,7 @@ function resetGameAttributes(nbColumnsSelected) {
   showPossibleCodesMode = false;
   showPossibleCodesOffsetMode = false;
   nbMinPossibleCodesShown = nbColumns+nbColors+4;
-  nbMaxPossibleCodesShown = 100;
+  nbMaxPossibleCodesShown = 64;
   nbPossibleCodesShown = -1;
   currentPossibleCodeShown = -1;
   disableMouseMoveEffects = false;

@@ -3385,9 +3385,9 @@ try {
               nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
               listOfClassesFirstCall = new Array(arraySizeAtInit);
               listOfEquivalentCodesAndPerformances = undefined;
-              listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
+              listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit+1);
               for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
-                for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
+                for (let idx2 = 0; idx2 < arraySizeAtInit+1; idx2++) {
                   listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
                 }
               }
@@ -3414,9 +3414,9 @@ try {
               nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
               listOfClassesFirstCall = new Array(arraySizeAtInit);
               listOfEquivalentCodesAndPerformances = undefined;
-              listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit);
+              listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit+1);
               for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
-                for (let idx2 = 0; idx2 < arraySizeAtInit; idx2++) {
+                for (let idx2 = 0; idx2 < arraySizeAtInit+1; idx2++) {
                   listOfEquivalentCodesAndPerformances[idx1][idx2] = {equiv_code:0, equiv_sum:PerformanceNA};
                 }
               }
@@ -3538,7 +3538,7 @@ try {
           if (listOfClassesFirstCall.length != arraySizeAtInit) {
             throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
           }
-          if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit)) {
+          if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit+1)) {
             throw new Error("NEW_ATTEMPT phase / listOfEquivalentCodesAndPerformances allocation was modified");
           }
           if (cur_permutations_table_size.length != overallNbMaxAttempts+overallMaxDepth) {
@@ -3626,19 +3626,36 @@ try {
           }
         }
 
+        // Total number of code classes
+        let total_equiv_code_cnt = 0;
+        while (listOfEquivalentCodesAndPerformances[0 /* (first depth) */][total_equiv_code_cnt].equiv_code != 0) {
+          total_equiv_code_cnt++;
+        }
+        let equiv_code_ratio = 1.0;
+        if (total_equiv_code_cnt > nb_codes_shown) {
+          equiv_code_ratio = total_equiv_code_cnt / nb_codes_shown; // (> 1.0)
+        }
+        
         // Add code classes
         let equiv_code_cnt = 0;
-        let equiv_code;
-        while ((equiv_code = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][equiv_code_cnt].equiv_code) != 0) {
+        for (let i = 0; i < total_equiv_code_cnt; i++) {
+          let j = Math.floor(i * equiv_code_ratio);
+          if (j >= total_equiv_code_cnt) {
+            throw new Error("NEW_ATTEMPT phase / internal error (total_equiv_code_cnt): " + j + ", " + total_equiv_code_cnt + ", " + nb_codes_shown + ", " + equiv_code_ratio);
+          }
+          let equiv_code = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][j].equiv_code;
+          possibleCodesShown[equiv_code_cnt] = equiv_code;
+          equiv_code_cnt++;
           if (equiv_code_cnt >= nb_codes_shown) {
-            possibleCodesShownSubdivision = -1; // N.A. (subdivision is out of codes shown)
             break;
           }
-          else {
-            possibleCodesShown[equiv_code_cnt] = equiv_code;
-            possibleCodesShownSubdivision = equiv_code_cnt+1; // (will be overridden in this loop)
-          }
-          equiv_code_cnt++;
+        }
+        
+        if (total_equiv_code_cnt > nb_codes_shown) {
+          possibleCodesShownSubdivision = -1; // N.A. (subdivision is out of codes shown)
+        }
+        else {
+          possibleCodesShownSubdivision = equiv_code_cnt;
         }
 
         if (curAttemptNumber == 1) { // defensive check at first attempt

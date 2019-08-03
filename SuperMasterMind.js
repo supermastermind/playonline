@@ -1,6 +1,6 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
-let version="v2.78";
+let version="v2.8";
 let emptyColor=0;
 let nbMinColors=5;
 let nbMaxColors=10;
@@ -1100,7 +1100,7 @@ simpleCodeHandler=new SimpleCodeHandler(nbColumns,nbColors,nbMinColumns,nbMaxCol
 showPossibleCodesMode=false;
 showPossibleCodesOffsetMode=false;
 nbMinPossibleCodesShown=nbColumns+nbColors+4;
-nbMaxPossibleCodesShown=100;
+nbMaxPossibleCodesShown=64;
 nbPossibleCodesShown=-1;
 currentPossibleCodeShown=-1;
 disableMouseMoveEffects=false;
@@ -1161,7 +1161,7 @@ toto=simpleCodeHandler.setColor(toto,4,2);
 toto=simpleCodeHandler.setColor(toto,4,3);
 toto=simpleCodeHandler.setColor(toto,4,4);
 toto=simpleCodeHandler.setColor(toto,4,5);
-sCode=~(toto);*/
+sCode=~(toto); */
 sCodeRevealed=0;
 newGameEvent=false;
 playerWasHelped=false;
