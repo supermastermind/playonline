@@ -3628,30 +3628,46 @@ try {
 
         // Total number of code classes
         let total_equiv_code_cnt = 0;
+        let first_optimal_code_idx = -1;
+        let min_equiv_sum = -1; // N.A.
         while (listOfEquivalentCodesAndPerformances[0 /* (first depth) */][total_equiv_code_cnt].equiv_code != 0) {
+          let equiv_sum = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][total_equiv_code_cnt].equiv_sum;
+          if ( (equiv_sum > 0)
+               && ((min_equiv_sum == -1) || (equiv_sum < min_equiv_sum)) ) {
+            min_equiv_sum = equiv_sum;
+            first_optimal_code_idx = total_equiv_code_cnt;
+          }
           total_equiv_code_cnt++;
         }
-        let equiv_code_ratio = 1.0;
-        if (total_equiv_code_cnt > nb_codes_shown) {
-          equiv_code_ratio = total_equiv_code_cnt / nb_codes_shown; // (> 1.0)
-        }
-        
-        // Add code classes
+
         let equiv_code_cnt = 0;
-        for (let i = 0; i < total_equiv_code_cnt; i++) {
-          let j = Math.floor(i * equiv_code_ratio);
-          if (j >= total_equiv_code_cnt) {
-            throw new Error("NEW_ATTEMPT phase / internal error (total_equiv_code_cnt): " + j + ", " + total_equiv_code_cnt + ", " + nb_codes_shown + ", " + equiv_code_ratio);
+        if (total_equiv_code_cnt > 0) {
+          let equiv_code_ratio = 1.0;
+          if (total_equiv_code_cnt > nb_codes_shown) {
+            equiv_code_ratio = total_equiv_code_cnt / nb_codes_shown; // (> 1.0)
           }
-          let equiv_code = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][j].equiv_code;
-          possibleCodesShown[equiv_code_cnt] = equiv_code;
-          equiv_code_cnt++;
-          if (equiv_code_cnt >= nb_codes_shown) {
-            break;
+
+          // Add code classes
+          if (first_optimal_code_idx != -1) {
+            possibleCodesShown[equiv_code_cnt] = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][first_optimal_code_idx].equiv_code;
+            equiv_code_cnt++;
+          }
+          for (let i = 0; i < total_equiv_code_cnt; i++) {
+            let j = Math.floor(i * equiv_code_ratio);
+            if (j >= total_equiv_code_cnt) {
+              throw new Error("NEW_ATTEMPT phase / internal error (total_equiv_code_cnt): " + j + ", " + total_equiv_code_cnt + ", " + nb_codes_shown + ", " + equiv_code_ratio);
+            }
+            if (j != first_optimal_code_idx) {
+              possibleCodesShown[equiv_code_cnt] = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][j].equiv_code;;
+              equiv_code_cnt++;
+              if (equiv_code_cnt >= nb_codes_shown) {
+                break;
+              }
+            }
           }
         }
-        
-        if (total_equiv_code_cnt > nb_codes_shown) {
+
+        if ((total_equiv_code_cnt > nb_codes_shown) || (total_equiv_code_cnt == 0)) {
           possibleCodesShownSubdivision = -1; // N.A. (subdivision is out of codes shown)
         }
         else {
@@ -3707,9 +3723,9 @@ try {
           }
         }
 
-        // Add other codes in their natural order
+        // Add other codes
+        let cnt = equiv_code_cnt;
         if (equiv_code_cnt < nb_codes_shown) {
-          let cnt = equiv_code_cnt;
           for (let i = 0; i < previousNbOfPossibleCodes; i++) {
             let simple_code_already_present = false;
             for (let j = 0; j < equiv_code_cnt; j++) {
@@ -3733,6 +3749,29 @@ try {
               if (cnt == nb_codes_shown) {
                 break;
               }
+            }
+          }
+        }
+
+        // Sort other codes if there is no code class, keep them in their natural order otherwise
+        if (equiv_code_cnt == 0) {
+          while (true) {
+            let swap_done = false;
+            for (let i = 0; i < cnt-1; i++) {
+              let j = i+1;
+              if (globalPerformancesShown[i] > globalPerformancesShown[j]) {
+                // swap cells (bubble sort)
+                let tmp_code = possibleCodesShown[j];
+                possibleCodesShown[j] = possibleCodesShown[i];
+                possibleCodesShown[i] = tmp_code;
+                let tmp_perf = globalPerformancesShown[j];
+                globalPerformancesShown[j] = globalPerformancesShown[i];
+                globalPerformancesShown[i] = tmp_perf;
+                swap_done = true;
+              }
+            }
+            if (!swap_done) {
+              break;
             }
           }
         }

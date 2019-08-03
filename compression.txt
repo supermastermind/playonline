@@ -22,7 +22,7 @@ regexp replace (\n)+ by \n
 
 extended replace "\n}" by "}"
 
-manual deletion of comments:
+For GameSolver.js: manual deletion of comments:
 - let precalculation_mode=
 - let nbCodesToGoThrough=
 - if((depth<=1)&&(!compute_sum_ini)){
