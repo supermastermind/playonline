@@ -2937,6 +2937,7 @@ try {
       possibleCodesShown = new Array(nbMaxPossibleCodesShown);
       globalPerformancesShown = new Array(nbMaxPossibleCodesShown);
       for (let i = 0; i < nbMaxPossibleCodesShown; i++) {
+        possibleCodesShown[i] = 0; // empty code
         globalPerformancesShown[i] = PerformanceNA;
       }
 
@@ -3685,19 +3686,19 @@ try {
             globalPerformancesShown[i] = PerformanceUNKNOWN;
           }
           else {
-            let simple_code_found = false;
+            let code_found = false;
             for (let j = 0; j < previousNbOfPossibleCodes; j++) {
               if (possibleCodesShown[i] == cur_possible_code_list[j]) {
                 if ((listOfGlobalPerformances[j] == PerformanceNA) || (listOfGlobalPerformances[j] == PerformanceUNKNOWN) || (listOfGlobalPerformances[j] <= 0.01)) {
                   throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (1) (index " + i + ")");
                 }
                 globalPerformancesShown[i] = listOfGlobalPerformances[j];
-                simple_code_found = true;
+                code_found = true;
                 break;
               }
             }
-            if (!simple_code_found) {
-              throw new Error("NEW_ATTEMPT phase / internal error (simple_code_found)");
+            if (!code_found) {
+              throw new Error("NEW_ATTEMPT phase / internal error (code_found)");
             }
           }
         }
@@ -3727,14 +3728,14 @@ try {
         let cnt = equiv_code_cnt;
         if (equiv_code_cnt < nb_codes_shown) {
           for (let i = 0; i < previousNbOfPossibleCodes; i++) {
-            let simple_code_already_present = false;
+            let code_already_present = false;
             for (let j = 0; j < equiv_code_cnt; j++) {
               if (cur_possible_code_list[i] == possibleCodesShown[j]) {
-                simple_code_already_present = true;
+                code_already_present = true;
                 break;
               }
             }
-            if (!simple_code_already_present) {
+            if (!code_already_present) {
               possibleCodesShown[cnt] = cur_possible_code_list[i];
               if (best_global_performance == PerformanceUNKNOWN) {
                 globalPerformancesShown[cnt] = PerformanceUNKNOWN;
@@ -3772,6 +3773,35 @@ try {
             }
             if (!swap_done) {
               break;
+            }
+          }
+        }
+
+        // Defensive checks
+        // ****************
+
+        for (let i = 0; i < nb_codes_shown; i++) {
+          let code = possibleCodesShown[i];
+          let perf = globalPerformancesShown[i];
+          if (!codeHandler.isFullAndValid(code)) {
+            throw new Error("NEW_ATTEMPT phase / internal error: invalid code (" + codeHandler.codeToString(code) + ")");
+          }
+          let code_found = false;
+          for (let j = 0; j < previousNbOfPossibleCodes; j++) {
+            if (cur_possible_code_list[j] == code) {
+              if (listOfGlobalPerformances[j] != perf) {
+                throw new Error("NEW_ATTEMPT phase / internal error: invalid perf (" + codeHandler.codeToString(code) + ")");
+              }
+              code_found = true;
+              break;
+            }
+          }
+          if (!code_found) {
+            throw new Error("NEW_ATTEMPT phase / internal error: code not found (" + codeHandler.codeToString(code) + ")");
+          }
+          for (let j = 0; j < nb_codes_shown; j++) {
+            if ((j != i) && (possibleCodesShown[j] == code)) {
+              throw new Error("NEW_ATTEMPT phase / internal error: code duplicated (" + codeHandler.codeToString(code) + ")");
             }
           }
         }

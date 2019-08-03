@@ -1,6 +1,6 @@
 "use strict";
-try{
-let emptyColor=0;
+try {
+let emptyColor=0;// (0 is also the Java default table init value)
 let nbMinColors=5;
 let nbMaxColors=10;
 let nbMinColumns=3;
@@ -1677,6 +1677,7 @@ throw new Error("INIT phase / invalid nbMaxPossibleCodesShown: "+nbMaxPossibleCo
 possibleCodesShown=new Array(nbMaxPossibleCodesShown);
 globalPerformancesShown=new Array(nbMaxPossibleCodesShown);
 for (let i=0;i<nbMaxPossibleCodesShown;i++){
+possibleCodesShown[i]=0;
 globalPerformancesShown[i]=PerformanceNA;}
 if(data.first_session_game==undefined){
 throw new Error("INIT phase / first_session_game is undefined");}
@@ -2111,16 +2112,16 @@ for (let i=0;i<equiv_code_cnt;i++){
 if(best_global_performance==PerformanceUNKNOWN){
 globalPerformancesShown[i]=PerformanceUNKNOWN;}
 else{
-let simple_code_found=false;
+let code_found=false;
 for (let j=0;j<previousNbOfPossibleCodes;j++){
 if(possibleCodesShown[i]==cur_possible_code_list[j]){
 if((listOfGlobalPerformances[j]==PerformanceNA)||(listOfGlobalPerformances[j]==PerformanceUNKNOWN)||(listOfGlobalPerformances[j]<=0.01)){
 throw new Error("NEW_ATTEMPT phase / invalid listOfGlobalPerformances (1) (index "+i+")");}
 globalPerformancesShown[i]=listOfGlobalPerformances[j];
-simple_code_found=true;
+code_found=true;
 break;}}
-if(!simple_code_found){
-throw new Error("NEW_ATTEMPT phase / internal error (simple_code_found)");}}}
+if(!code_found){
+throw new Error("NEW_ATTEMPT phase / internal error (code_found)");}}}
 while (true){
 let swap_done=false;
 for (let i=0;i<equiv_code_cnt-1;i++){
@@ -2138,12 +2139,12 @@ break;}}
 let cnt=equiv_code_cnt;
 if(equiv_code_cnt<nb_codes_shown){
 for (let i=0;i<previousNbOfPossibleCodes;i++){
-let simple_code_already_present=false;
+let code_already_present=false;
 for (let j=0;j<equiv_code_cnt;j++){
 if(cur_possible_code_list[i]==possibleCodesShown[j]){
-simple_code_already_present=true;
+code_already_present=true;
 break;}}
-if(!simple_code_already_present){
+if(!code_already_present){
 possibleCodesShown[cnt]=cur_possible_code_list[i];
 if(best_global_performance==PerformanceUNKNOWN){
 globalPerformancesShown[cnt]=PerformanceUNKNOWN;}
@@ -2168,7 +2169,24 @@ globalPerformancesShown[j]=globalPerformancesShown[i];
 globalPerformancesShown[i]=tmp_perf;
 swap_done=true;}}
 if(!swap_done){
-break;}}}}
+break;}}}
+for (let i=0;i<nb_codes_shown;i++){
+let code=possibleCodesShown[i];
+let perf=globalPerformancesShown[i];
+if(!codeHandler.isFullAndValid(code)){
+throw new Error("NEW_ATTEMPT phase / internal error: invalid code ("+codeHandler.codeToString(code)+")");}
+let code_found=false;
+for (let j=0;j<previousNbOfPossibleCodes;j++){
+if(cur_possible_code_list[j]==code){
+if(listOfGlobalPerformances[j]!=perf){
+throw new Error("NEW_ATTEMPT phase / internal error: invalid perf ("+codeHandler.codeToString(code)+")");}
+code_found=true;
+break;}}
+if(!code_found){
+throw new Error("NEW_ATTEMPT phase / internal error: code not found ("+codeHandler.codeToString(code)+")");}
+for (let j=0;j<nb_codes_shown;j++){
+if((j!=i)&&(possibleCodesShown[j]==code)){
+throw new Error("NEW_ATTEMPT phase / internal error: code duplicated ("+codeHandler.codeToString(code)+")");}}}}
 else{
 for (let i=0;i<nb_codes_shown;i++){
 possibleCodesShown[i]=cur_possible_code_list[i];
