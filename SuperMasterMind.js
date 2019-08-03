@@ -940,7 +940,7 @@ function show_play_store_app(forcedMode = false) {
     let play_store_app_str =
       "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
       <br><b>For a better game experience, install the android app!</b><br>\
-      <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:12vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:12vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
+      <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
       <small>If you like this app, put some stars in Google Play Store! &#x1F609;<br>For any suggestion for improvement, please see the <a href='contact_info.html'>contact info</a> page.</small><br><br><br>\
       </font></td></tr></table></center>";
     try {
