@@ -1679,7 +1679,7 @@ function resetGameAttributes(nbColumnsSelected) {
   showPossibleCodesMode = false;
   showPossibleCodesOffsetMode = false;
   nbMinPossibleCodesShown = nbColumns+nbColors+4;
-  nbMaxPossibleCodesShown = 64;
+  nbMaxPossibleCodesShown = 70;
   nbPossibleCodesShown = -1;
   currentPossibleCodeShown = -1;
   disableMouseMoveEffects = false;
