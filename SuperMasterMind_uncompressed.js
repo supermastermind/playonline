@@ -1473,7 +1473,7 @@ function show_play_store_app() {
       "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
       <br><b>For " + str1 + ", install the android app" + str2 + "!</b><br>\
       <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
-      <small>If you like this app, put some stars in Google Play Store! &#x1F609;<br>For any suggestion for improvement, please see the <a href='contact_info.html'>contact info</a> page</small><br><br><br>\
+      <small>If you like this app, put some stars in Google Play Store &#x1F609;<br>For any suggestion for improvement, please see the <a href='contact_info.html'>contact info</a> page</small><br><br><br>\
       </font></td></tr></table></center>";
     try {
       modal_mode = 4;
@@ -1821,7 +1821,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
-  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 1900); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 1500); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 888);
