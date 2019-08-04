@@ -194,6 +194,7 @@ let tickChar="\u2714";/* (check mark/tick) */
 let crossChar="\u2716";/* (cross) */
 let firefoxMode=(navigator.userAgent.toUpperCase().search("FIREFOX")!=-1);
 let edgeMode=(navigator.userAgent.toUpperCase().search("EDGE/")!=-1);
+let play_store_app_already_shown=false;
 let precalculated_games_5columns_1st_level=new Array(nbMaxColumns+1);
 for (let i=0;i< nbMaxColumns+1;i++){
 precalculated_games_5columns_1st_level[i]=new Array(nbMaxColumns+1);}
@@ -787,8 +788,8 @@ for (let color_idx=0;color_idx< nominalGameNbColors;color_idx++){
 allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";}
 let game_rules_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
-<b>The goal of the game is to find out a secret code composed of "+nominalGameNbColumns+" colors chosen randomly among&nbsp;<big>"+allColorsStr+"</big>:</b><br>\
-<img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0.5vh'><br><br>\
+<br><b>The goal of the game is to find out a secret code composed of "+nominalGameNbColumns+" colors chosen randomly among&nbsp;<big>"+allColorsStr+"</big>:</b><br>\
+<img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh'><br>\
 <b><a href='index.html'>&#x2302;&nbsp;Main page</a></b>&nbsp;&nbsp;\
 <b><a href='index.html#game_rules'>&#x2302;&nbsp;Game rules</a></b><br>\
 <b><a href='screenshots.html'>&#x2302;&nbsp;Game examples</a></b><br>\
@@ -934,12 +935,21 @@ else{
 nbColumnsRadioObject[previousNbColumns-nbMinColumns].checked="checked";
 return previousNbColumns;}}
 
-function show_play_store_app(forcedMode = false) {
-if( (androidMode && (!android_appli))
-|| forcedMode ) {
+function show_play_store_app() {
+if ( (!play_store_app_already_shown) && (!android_appli) && ((!mobileMode) || androidMode) ) {
+let str1 = "";
+let str2 = "";
+if (mobileMode) {
+str1 = "a better game experience";
+str2 = "";
+}
+else {
+str1 = "another game experience";
+str2 = " on your smartphone";
+}
 let play_store_app_str =
 "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
-<br><b>For a better game experience, install the android app!</b><br>\
+<br><b>For " + str1 + ", install the android app" + str2 + "!</b><br>\
 <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
 <small>If you like this app, put some stars in Google Play Store! &#x1F609;<br>For any suggestion for improvement, please see the <a href='contact_info.html'>contact info</a> page</small><br><br><br>\
 </font></td></tr></table></center>";
@@ -955,6 +965,7 @@ modal.open();
 catch (exc) {
 throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
 }
+play_store_app_already_shown = true;
 }
 }
 
@@ -1060,7 +1071,10 @@ console.log("webview reload request");}
 else{
 loadTime=(new Date()).getTime();
 location.reload(true);}}
-if((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 51 == 0))) {
+if (mobileMode&&androidMode&&((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 51==0))) ){
+show_play_store_app();
+}
+else if(localStorage.gamesok&&((Number(localStorage.gamesok)==51)||(Number(localStorage.gamesok) % 153==0)) ){
 show_play_store_app();
 }
 main_graph_update_needed=true;
@@ -2198,7 +2212,7 @@ darkGray,backgroundColor_2,ctx,true,1,true,0,false,true,true /* bottom-right bub
 if(!displayString("Select me!",x_delta*0.90,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */)){
 if(mobileMode){
-if((nbColumns<=5)&&(currentAttemptNumber == 1)){
+if((nbColumns<=4)&&(currentAttemptNumber == 1)){
 displayString("Tap me!",x_delta*0.80,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 darkGray,backgroundColor_2,ctx,true,2,true,0,false,true,false /* bottom-left bubble */);}}
 else{
