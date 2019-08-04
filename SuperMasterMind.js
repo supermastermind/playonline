@@ -1060,7 +1060,7 @@ console.log("webview reload request");}
 else{
 loadTime=(new Date()).getTime();
 location.reload(true);}}
-if((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 50 == 0))) {
+if((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 51 == 0))) {
 show_play_store_app();
 }
 main_graph_update_needed=true;
