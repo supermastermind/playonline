@@ -1487,6 +1487,10 @@ function show_play_store_app() {
     catch (exc) {
       throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
     }
+    if (!localStorage.androidAppNotifShown) {
+      localStorage.androidAppNotifShown = 0;
+    }
+    localStorage.androidAppNotifShown = Number(localStorage.androidAppNotifShown) + 1;
     play_store_app_already_shown = true;
   }
 }

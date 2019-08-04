@@ -451,7 +451,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MG3";
+      let html_compatibility_game_version = "Ver_MG4";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1677,16 +1677,20 @@
               }
               catch (exc) {}
               var firstNameAskedStr = "0x";
+              var androidAppNotifShownStr = "0x";
               var firstAccessIdStr = "-";
               if (typeof(Storage) !== 'undefined') {
                 if (localStorage.firstnameAsked) {
                   firstNameAskedStr = localStorage.firstnameAsked + "x"; // (past game counter to simplify)
                 }
+                if (localStorage.androidAppNotifShown) {
+                  androidAppNotifShownStr = localStorage.androidAppNotifShown + "x";
+                }                
                 if (localStorage.firstaccessid) {
                   firstAccessIdStr = localStorage.firstaccessid;
                 }
               }
-              document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/FirstNameAsked:' + firstNameAskedStr + '/FirstAccessId:' + firstAccessIdStr + '/NbGamesWon: ' + nbGamesPlayedAndWon + extra_debug_info;
+              document.getElementById('form_debuginfo_id').value = getLocation() + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/FirstNameAsked:' + firstNameAskedStr + '/androidAppNotifShown:' + androidAppNotifShownStr + '/FirstAccessId:' + firstAccessIdStr + '/NbGamesWon: ' + nbGamesPlayedAndWon + extra_debug_info;
 
               document.getElementById('form_rankings_id').value = '-';
               document.getElementById('form_list_id').value = '-';
