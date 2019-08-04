@@ -1457,7 +1457,7 @@ function getNbColumnsSelected() {
   }
 }
 
-function show_play_store_app() {
+function show_play_store_app(specific_str = "") {
   if ( (!play_store_app_already_shown) && (!android_appli) && ((!mobileMode) || androidMode) ) {
     let str1 = "";
     let str2 = "";
@@ -1469,9 +1469,10 @@ function show_play_store_app() {
       str1 = "another game experience";
       str2 = " on your smartphone";
     }
+    let str = ((specific_str == "") ? ("For " + str1 + ", install the android app" + str2 + "!") : specific_str);
     let play_store_app_str =
       "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
-      <br><b>For " + str1 + ", install the android app" + str2 + "!</b><br>\
+      <br><b>" + str + "</b><br>\
       <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
       <small>If you like this app, put some stars in Google Play Store &#x1F609;<br>For any suggestion for improvement, please see the <a href='contact_info.html'>contact info</a> page</small><br><br><br>\
       </font></td></tr></table></center>";
@@ -1653,6 +1654,17 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   else if ( localStorage.gamesok && ((Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) % 153 == 0)) ) {
     show_play_store_app();
+  }
+  else if ( ( (localStorage.playerid.indexOf("GJ73D - Mon") != -1) // Lobonca
+              || (localStorage.playerid.indexOf("EMNKT - Fri") != -1) // Kristen
+              || (localStorage.playerid.indexOf("6WPOS - Mon") != -1) // Sue
+              || (localStorage.playerid.indexOf("OQ7C9 - Mon") != -1) // Jonasolof
+              || (localStorage.playerid.indexOf("GLOPW - Fri") != -1) // Elz
+              || (localStorage.playerid.indexOf("774DI_") != -1) // Angel's servant
+            )
+            && (localStorage.firstname) && (!localStorage.specificMsgAlreadyDisplayedOnce) ) {
+    show_play_store_app("Hello " + localStorage.firstname + "<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site, I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone, maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it, here is the link to the android appli in Google Play Store:");
+    localStorage.specificMsgAlreadyDisplayedOnce = "yes";
   }
 
   main_graph_update_needed = true;
