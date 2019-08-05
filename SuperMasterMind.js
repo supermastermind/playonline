@@ -196,7 +196,7 @@ let firefoxMode=(navigator.userAgent.toUpperCase().search("FIREFOX")!=-1);
 let edgeMode=(navigator.userAgent.toUpperCase().search("EDGE/")!=-1);
 let play_store_app_already_shown=false;
 let precalculated_games_5columns_1st_level=new Array(nbMaxColumns+1);
-for (let i=0;i< nbMaxColumns+1;i++){
+for (let i=0;i<nbMaxColumns+1;i++){
 precalculated_games_5columns_1st_level[i]=new Array(nbMaxColumns+1);}
 precalculated_games_5columns_1st_level[3][0]=
 "1|11112:3B0W|N:438|11133:637,11134:5B9,11222:66D,11232:5C9,11332:61F,11342:5B0,11111:750,11113:6B5,11121:6FF,11122:6BE,11123:659,11131:665,11132:689,11221:699,11223:5C5,11231:647,11233:5F7,11234:587,11331:619,11333:640,11334:59A,11341:598,11343:59B,11345:54C,12221:68C,12222:68C,12223:5D6,12231:5DB,12232:5C4,12233:5B6,12234:55C,12331:60E,12332:5B4,12333:60F,12334:57B,12341:5A6,12342:560,12343:577,12345:53C,13331:656,13332:63A,13333:65C,13334:5B6,13341:5B5,13342:594,13343:5B3,13344:58F,13345:548,13451:569,13452:558,13453:548,13456:531,22221:6CD,22222:6CD,22223:623,22231:60B,22232:60E,22233:5E6,22234:58F,22331:5F1,22332:5E3,22333:5F4,22334:57A,22341:59E,22342:587,22343:57A,22345:54B,23331:652,23332:5FC,23333:658,23334:5BB,23341:5B8,23342:579,23343:5AE,23344:594,23345:55D,23451:586,23452:559,23453:560,23456:550,33331:6A6,33332:689,33333:6AC,33334:5F7,33341:5ED,33342:5D4,33343:5ED,33344:5CA,33345:577,33441:5CF,33442:5B3,33443:5CD,33445:568,33451:585,33452:568,33453:580,33454:569,33456:54D,34561:578,34562:558,34563:562,34567:572." +
@@ -296,7 +296,7 @@ return "(currentattempt:"+currentAttemptNumber
 +",gamesolverdbg:"+gameSolverDbg+")";}
 function displayGUIError(GUIErrorStr,errStack){
 let completedGUIErrorStr=(GUIErrorStr+" "+getExtraDebugInfo()).trim();
-if(gameErrorCnt< 50){
+if(gameErrorCnt<50){
 console.log("***** ERROR ("+version+") *****: "+completedGUIErrorStr+" / "+errStack+"\n");
 console.log("Stack:");
 let stack=new Error().stack;
@@ -304,7 +304,7 @@ console.log(stack);
 console.log("\n");}
 gameErrorCnt++;
 let maxGlobalErrors=6;
-if(globalErrorCnt< maxGlobalErrors){
+if(globalErrorCnt<maxGlobalErrors){
 try{
 var errorStr="";
 if(typeof(Storage)!=='undefined'){
@@ -326,7 +326,7 @@ errorStr=errorStr+" with gameSolver config "+gameSolverConfigDbg;}}
 let strGame="";
 try{
 errorStr=errorStr+" on "+navigator.platform+" / "+navigator.userAgent+" / "+decodeURI(location.href);
-for (let i=1;i< currentAttemptNumber;i++){
+for (let i=1;i<currentAttemptNumber;i++){
 strGame=strGame+simpleCodeHandler.markToString(marks[i-1])+" "+simpleCodeHandler.codeToString(codesPlayed[i-1])+" ("+nbOfPossibleCodes[i-1]
 +"|"+(Math.round(relative_performances_of_codes_played[i-1] * 100.0) / 100.0).toFixed(2) /* 0.01 precision */+") ";}
 strGame=strGame+"SCODE "+simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
@@ -353,9 +353,9 @@ function onGameSolverMessageError(e){
 displayGUIError("gameSolver MESSAGE error: "+e.message+" at line "+e.lineno+" in "+e.filename,new Error().stack);}
 class SimpleCodeHandler{
 constructor(nbColumns_p,nbColors_p,nbMinColumns_p,nbMaxColumns_p,emptyColor_p){
-if((nbColumns_p< Math.max(nbMinColumns_p,3))||(nbColumns_p>Math.min(nbMaxColumns_p,7)) /* 3 and 7 is hardcoded in some methods of this class for better performances */ ){
+if((nbColumns_p<Math.max(nbMinColumns_p,3))||(nbColumns_p>Math.min(nbMaxColumns_p,7)) /* 3 and 7 is hardcoded in some methods of this class for better performances */ ){
 throw new Error("SimpleCodeHandler: invalid nb of columns ("+nbColumns_p+","+nbMinColumns_p+","+nbMaxColumns_p+")");}
-if(nbColors_p< 0){
+if(nbColors_p<0){
 throw new Error("SimpleCodeHandler: invalid nb of colors: ("+nbColors_p+")");}
 this.nbColumns=nbColumns_p;
 this.nbColors=nbColors_p;
@@ -389,46 +389,46 @@ switch (column){
 case 1:
 return ((code & 0xFFFFFFF0) | color);
 case 2:
-return ((code & 0xFFFFFF0F) | (color<< 4));
+return ((code & 0xFFFFFF0F) | (color<<4));
 case 3:
-return ((code & 0xFFFFF0FF) | (color<< 8));
+return ((code & 0xFFFFF0FF) | (color<<8));
 case 4:
-return ((code & 0xFFFF0FFF) | (color<< 12));
+return ((code & 0xFFFF0FFF) | (color<<12));
 case 5:
-return ((code & 0xFFF0FFFF) | (color<< 16));
+return ((code & 0xFFF0FFFF) | (color<<16));
 case 6:
-return ((code & 0xFF0FFFFF) | (color<< 20));
+return ((code & 0xFF0FFFFF) | (color<<20));
 case 7:
-return ((code & 0xF0FFFFFF) | (color<< 24));
+return ((code & 0xF0FFFFFF) | (color<<24));
 default:
 throw new Error("SimpleCodeHandler: setColor ("+column+")");}}
 setAllColors(color1,color2,color3,color4,color5,color6,color7){
 return color1
-| (color2<< 4)
-| (color3<< 8)
-| (color4<< 12)
-| (color5<< 16)
-| (color6<< 20)
-| (color7<< 24);}
+| (color2<<4)
+| (color3<<8)
+| (color4<<12)
+| (color5<<16)
+| (color6<<20)
+| (color7<<24);}
 setAllColorsIdentical(color){
 let res_code=0;
-for (let col=0;col< this.nbColumns;col++){
+for (let col=0;col<this.nbColumns;col++){
 res_code=this.setColor(res_code,color,col+1);}
 return res_code;}
 codeToString(code){
 let res="[ ";
-for (let col=0;col< this.nbColumns;col++){
+for (let col=0;col<this.nbColumns;col++){
 let color=this.getColor(code,col+1);
 res=res+color+" ";}
 res=res+"]";
 return res;}
 createRandomCode(codeRevealed=0 /* (empty code) */){
 let nbObviouslyImpossibleColors=0;
-for (let color=1;color< this.nbColors+1;color++){
+for (let color=1;color<this.nbColors+1;color++){
 if(obviouslyImpossibleColors[color]){
 nbObviouslyImpossibleColors++;}}
 let code=0;
-for (let col=0;col< this.nbColumns;col++){
+for (let col=0;col<this.nbColumns;col++){
 let colorRevealed=this.getColor(codeRevealed,col+1);
 if((colorRevealed>=1)&&(colorRevealed<=this.nbColors)
 &&(colorRevealed!=this.emptyColor) ){
@@ -456,9 +456,9 @@ for (let col=this.nbColumns+1;col<=this.nbMaxColumns;col++){
 code=this.setColor(code,this.emptyColor,col);}
 return code;}
 isValid(code){
-for (let col=0;col< this.nbColumns;col++){
+for (let col=0;col<this.nbColumns;col++){
 let color=this.getColor(code,col+1);
-if(((color< 1)||(color>this.nbColors))
+if(((color<1)||(color>this.nbColors))
 &&(color!=this.emptyColor) ){
 return false;}}
 for (let col=this.nbColumns+1;col<=this.nbMaxColumns;col++){
@@ -467,9 +467,9 @@ if(color!=this.emptyColor){
 return false;}}
 return true;}
 isFullAndValid(code){
-for (let col=0;col< this.nbColumns;col++){
+for (let col=0;col<this.nbColumns;col++){
 let color=this.getColor(code,col+1);
-if((color< 1)||(color>this.nbColors)
+if((color<1)||(color>this.nbColors)
 ||(color==this.emptyColor) ){
 return false;}}
 for (let col=this.nbColumns+1;col<=this.nbMaxColumns;col++){
@@ -479,7 +479,7 @@ return false;}}
 return true;}
 nbEmptyColors(code){
 let cnt=0;
-for (let col=0;col< this.nbColumns;col++){
+for (let col=0;col<this.nbColumns;col++){
 if(this.getColor(code,col+1)==this.emptyColor){
 cnt++;}}
 return cnt;}
@@ -487,7 +487,7 @@ isEmpty(code){
 return (code==0);}
 replaceEmptyColor(code,emptyColorIdx,code2){
 let cnt=0;
-for (let col=0;col< this.nbColumns;col++){
+for (let col=0;col<this.nbColumns;col++){
 if(this.getColor(code,col+1)==this.emptyColor){
 if(cnt==emptyColorIdx){
 return this.setColor(code,this.getColor(code2,col+1),col+1);}
@@ -522,11 +522,11 @@ this.code2_colors[3]=((code2>>12) & 0x0000000F);
 this.code2_colors[4]=((code2>>16) & 0x0000000F);
 this.code2_colors[5]=((code2>>20) & 0x0000000F);
 this.code2_colors[6]=((code2>>24) & 0x0000000F);
-for (col1=0;col1< this.nbColumns;col1++){
+for (col1=0;col1<this.nbColumns;col1++){
 if(this.code1_colors[col1]==this.code2_colors[col1]){
 nbBlacks++;}
 else{
-for (col2=0;col2< this.nbColumns;col2++){
+for (col2=0;col2<this.nbColumns;col2++){
 if((this.code1_colors[col1]==this.code2_colors[col2])&&(this.code1_colors[col2]!=this.code2_colors[col2])&&this.colors_int[col2]){
 this.colors_int[col2]=false;
 nbWhites++;
@@ -560,7 +560,7 @@ else if(data.rsp_type=='NB_POSSIBLE_CODES'){
 if(data.nbOfPossibleCodes_p==undefined){
 displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined",new Error().stack);}
 let nbOfPossibleCodes_p=Number(data.nbOfPossibleCodes_p);
-if(isNaN(nbOfPossibleCodes_p)||(nbOfPossibleCodes_p< 0) ){
+if(isNaN(nbOfPossibleCodes_p)||(nbOfPossibleCodes_p<0) ){
 displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: "+nbOfPossibleCodes_p,new Error().stack);}
 if(data.colorsFoundCode_p==undefined){
 displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined",new Error().stack);}
@@ -585,7 +585,7 @@ displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: "
 if(data.game_id==undefined){
 displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined",new Error().stack);}
 let game_id=Number(data.game_id);
-if(isNaN(game_id)||(game_id< 0) ){
+if(isNaN(game_id)||(game_id<0) ){
 displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: "+game_id,new Error().stack);}
 writeNbOfPossibleCodes(nbOfPossibleCodes_p,colorsFoundCode_p,minNbColorsTable_p,maxNbColorsTable_p,attempt_nb,game_id);}
 else if(data.rsp_type=='LIST_OF_POSSIBLE_CODES'){
@@ -615,7 +615,7 @@ displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_
 if(data.game_id==undefined){
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined",new Error().stack);}
 let game_id=Number(data.game_id);
-if(isNaN(game_id)||(game_id< 0) ){
+if(isNaN(game_id)||(game_id<0) ){
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: "+game_id,new Error().stack);}
 writePossibleCodes(possibleCodesList_p,nb_possible_codes_listed,possible_codes_subdivision,globalPerformancesList_p,attempt_nb,game_id);}
 else if(data.rsp_type=='CODE_PLAYED_PERFORMANCE'){
@@ -639,7 +639,7 @@ displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt
 if(data.game_id==undefined){
 displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined",new Error().stack);}
 let game_id=Number(data.game_id);
-if(isNaN(game_id)||(game_id< 0) ){
+if(isNaN(game_id)||(game_id<0) ){
 displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: "+game_id,new Error().stack);}
 writePerformanceOfCodePlayed(relative_perf_p,relative_perf_evaluation_done_p,best_global_performance_p,code_p,attempt_nb,game_id);}
 else if(data.rsp_type=='TRACE'){
@@ -778,13 +778,13 @@ if(dsCode){
 displayGUIError("dsCode error",new Error().stack);}
 else if((!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok)<=5)))
 &&( ((mouse_x>get_x_pixel(x_min))
-&&(mouse_x< get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
+&&(mouse_x<get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
 &&(mouse_y>get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
-&&(mouse_y< get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
+&&(mouse_y<get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
 ||(/*(!android_appli)&&*/(nbValidMouseClicks==1) &&!localStorage.gamesok)
 ||(/*(!android_appli)&&*/(nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
 let allColorsStr="";
-for (let color_idx=0;color_idx< nominalGameNbColors;color_idx++){
+for (let color_idx=0;color_idx<nominalGameNbColors;color_idx++){
 allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";}
 let game_rules_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
@@ -814,19 +814,19 @@ event_x_min=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 event_x_max=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
 event_y_min=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors));
 event_y_max=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
-if((mouse_x>event_x_min)&&(mouse_x< event_x_max)
-&&(mouse_y>event_y_min)&&(mouse_y< event_y_max) ){
+if((mouse_x>event_x_min)&&(mouse_x<event_x_max)
+&&(mouse_y>event_y_min)&&(mouse_y<event_y_max) ){
 try{
-for (let column=0;column< nbColumns;column++){
+for (let column=0;column<nbColumns;column++){
 let x_0,y_0,x_1,y_1;
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
-if((mouse_x>x_0)&&(mouse_x< x_1)){
+if((mouse_x>x_0)&&(mouse_x<x_1)){
 let colorSelected=false;
-for (let color=0;color< nbColors;color++){
+for (let color=0;color<nbColors;color++){
 y_0=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+(color+1)));
 y_1=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+color));
-if((mouse_y>y_0)&&(mouse_y< y_1)){
+if((mouse_y>y_0)&&(mouse_y<y_1)){
 colorSelected=true;
 playAColor(color+1,column+1);
 nbColorSelections++;
@@ -845,12 +845,12 @@ event_y_min=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed));
 else{
 event_y_min=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));}
 event_y_max=get_y_pixel(y_min+y_step*0);
-if((mouse_y>event_y_min)&&(mouse_y< event_y_max) ){
+if((mouse_y>event_y_min)&&(mouse_y<event_y_max) ){
 lastidxBeforeMouseMove=-1;
-for (let idx=0;idx< currentAttemptNumber-1;idx++){
+for (let idx=0;idx<currentAttemptNumber-1;idx++){
 let y_0=get_y_pixel(y_min+y_step*(idx+1));
 let y_1=get_y_pixel(y_min+y_step*(idx));
-if((mouse_y>y_0)&&(mouse_y< y_1)){
+if((mouse_y>y_0)&&(mouse_y<y_1)){
 showPossibleCodesOffsetMode=false;
 disableMouseMoveEffects=true;
 if(showPossibleCodesMode){
@@ -864,8 +864,8 @@ let x_0_half_display=get_x_pixel(x_min);
 let x_1_half_display=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 let y_0_half_display=get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75/* (margin) */))
 let y_1_half_display=get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2/* (margin) */));
-if((mouse_x>x_0_half_display)&&(mouse_x< x_1_half_display)
-&&(mouse_y>y_0_half_display)&&(mouse_y< y_1_half_display) ){
+if((mouse_x>x_0_half_display)&&(mouse_x<x_1_half_display)
+&&(mouse_y>y_0_half_display)&&(mouse_y<y_1_half_display) ){
 atLeastOneAttemptSelection=true;
 showPossibleCodesOffsetMode=!showPossibleCodesOffsetMode;
 main_graph_update_needed=true;
@@ -888,16 +888,16 @@ event_x_min=get_x_pixel(x_min);
 event_x_max=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
 event_y_min=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 event_y_max=get_y_pixel(y_min+y_step*0);
-if(mouse_y< event_y_min){
+if(mouse_y<event_y_min){
 disableMouseMoveEffects=false;}
 if(disableMouseMoveEffects){
 return;}
-if((mouse_x>event_x_min)&&(mouse_x< event_x_max)
-&&(mouse_y>event_y_min)&&(mouse_y< event_y_max) ){
-for (let idx=0;idx< currentAttemptNumber-1;idx++){
+if((mouse_x>event_x_min)&&(mouse_x<event_x_max)
+&&(mouse_y>event_y_min)&&(mouse_y<event_y_max) ){
+for (let idx=0;idx<currentAttemptNumber-1;idx++){
 let y_0=get_y_pixel(y_min+y_step*(idx+1));
 let y_1=get_y_pixel(y_min+y_step*(idx));
-if((mouse_y>y_0)&&(mouse_y< y_1)){
+if((mouse_y>y_0)&&(mouse_y<y_1)){
 if(lastidxBeforeMouseMove!=idx+1){
 showPossibleCodesOffsetMode=false;
 showPossibleCodesButtonClick(false,idx+1,false,true);
@@ -914,7 +914,7 @@ if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
 if((nbColumns<=5)||(currentAttemptNumber==nbMaxAttempts) ){
 return;}}
 let newCurrentCode=simpleCodeHandler.setColor(currentCode,color,column);
-for (let i=1;i< currentAttemptNumber;i++){
+for (let i=1;i<currentAttemptNumber;i++){
 if(newCurrentCode==codesPlayed[i-1]){
 alert("This code was already played!");
 return;}}
@@ -923,7 +923,7 @@ draw_graphic(false);}}
 let previousNbColumns=-1;
 function getNbColumnsSelected(){
 let nbColumnsRadioObject=document.getElementsByName("nbColumnsSelection");
-for (let i=0;i< nbColumnsRadioObject.length;i++){
+for (let i=0;i<nbColumnsRadioObject.length;i++){
 if(nbColumnsRadioObject[i].checked){
 previousNbColumns=parseInt(nbColumnsRadioObject[i].value);
 return previousNbColumns;}}
@@ -947,12 +947,12 @@ else {
 str1 = "another game experience";
 str2 = " on your smartphone";
 }
-let str = ((specific_str == "") ? ("For " + str1 + ", install the android app" + str2 + "!") : specific_str);
+let str = ((specific_str == "") ? ("For " + str1 + ",&nbsp;install the android app" + str2 + "!") : specific_str);
 let play_store_app_str =
 "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
 <br><b>" + str + "</b><br>\
 <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
-<small>If you like this app, put some stars in Google Play Store &#x1F609;<br>For any suggestion for improvement, please see the <a href='contact_info.html'>contact info</a> page</small><br><br><br>\
+<small>If you like this app,&nbsp;put some stars in Google Play Store &#x1F609;<br>For any suggestion for improvement,&nbsp;please see the&nbsp;<a href='contact_info.html'>contact info</a> page</small><br><br><br>\
 </font></td></tr></table></center>";
 try {
 modal_mode = 4;
@@ -1005,7 +1005,7 @@ if(nbColumns<=4){
 nb_attempts_not_displayed=0;}
 else{
 nb_attempts_not_displayed=Math.max(0,nbMaxAttempts - currentAttemptNumber - 1);
-if(nbMaxAttempts-nb_attempts_not_displayed< nbColors){
+if(nbMaxAttempts-nb_attempts_not_displayed<nbColors){
 nb_attempts_not_displayed=Math.max(0,nbMaxAttempts - nbColors);}
 if(nbColumns==5){
 nb_attempts_not_displayed=Math.min(3,nb_attempts_not_displayed);}
@@ -1091,7 +1091,7 @@ else if ( localStorage.playerid
 || (localStorage.playerid.indexOf("774DI_") != -1) // Angel's servant
 )
 && (localStorage.firstname) && (!localStorage.specificMsgAlreadyDisplayedOnce) ) {
-show_play_store_app("Hello " + localStorage.firstname + "<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site, I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone, maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it, here is the link to the android appli in Google Play Store:");
+show_play_store_app("Hello " + localStorage.firstname + "<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site,&nbsp;I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone,&nbsp;maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it,&nbsp;here is the link to the android appli in Google Play Store:");
 localStorage.specificMsgAlreadyDisplayedOnce = "yes";
 }
 main_graph_update_needed=true;
@@ -1125,7 +1125,7 @@ document.title="Ultra Master Mind";
 break;
 default:
 throw new Error("invalid selection of number of columns: "+nbColumns+" (1)");}
-if((nbMaxAttempts< overallNbMinAttempts)||(nbMaxAttempts>overallNbMaxAttempts) ){
+if((nbMaxAttempts<overallNbMinAttempts)||(nbMaxAttempts>overallNbMaxAttempts) ){
 throw new Error("invalid nbMaxAttempts: "+nbMaxAttempts);}
 simpleCodeHandler=new SimpleCodeHandler(nbColumns,nbColors,nbMinColumns,nbMaxColumns,emptyColor);
 showPossibleCodesMode=false;
@@ -1137,40 +1137,40 @@ currentPossibleCodeShown=-1;
 disableMouseMoveEffects=false;
 currentCode=0;
 codesPlayed=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 codesPlayed[i]=0;}
 marks=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 marks[i]={nbBlacks:0,nbWhites:0};}
 nbOfPossibleCodes=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 nbOfPossibleCodes[i]=0;}
 colorsFoundCodes=new Array(nbMaxAttempts);
 minNbColorsTables=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 minNbColorsTables[i]=new Array(nbColors+1);}
 maxNbColorsTables=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 maxNbColorsTables[i]=new Array(nbColors+1);}
 obviouslyImpossibleColors=new Array(nbColors+1);
-for (i=0;i< nbColors+1;i++){
+for (i=0;i<nbColors+1;i++){
 obviouslyImpossibleColors[i]=false;}
 relative_performances_of_codes_played=new Array(nbMaxAttempts);
 global_best_performances=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 relative_performances_of_codes_played[i]=PerformanceNA;
 global_best_performances[i]=PerformanceNA;}
 relativePerformancesEvaluationDone=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 relativePerformancesEvaluationDone[i]=false;}
 performancesDisplayed=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 performancesDisplayed[i]=false;}
 possibleCodesLists=new Array(nbMaxAttempts);
 possibleCodesListsSizes=new Array(nbMaxAttempts);
 possibleCodesListsSubdivisions=new Array(nbMaxAttempts);
 globalPerformancesList=new Array(nbMaxAttempts);
-for (i=0;i< nbMaxAttempts;i++){
+for (i=0;i<nbMaxAttempts;i++){
 possibleCodesLists[i]=new Array(nbMaxPossibleCodesShown);
 possibleCodesListsSizes[i]=0;
 possibleCodesListsSubdivisions[i]=-1;
@@ -1233,10 +1233,10 @@ if(marks.length>nbMaxAttempts){displayGUIError("array is wider than expected (2)
 if(nbOfPossibleCodes.length>nbMaxAttempts){displayGUIError("array is wider than expected (3)",new Error().stack);}
 if(colorsFoundCodes.length>nbMaxAttempts){displayGUIError("array is wider than expected (4)",new Error().stack);}
 if(minNbColorsTables.length>nbMaxAttempts){displayGUIError("array is wider than expected (5)",new Error().stack);}
-for (let i=0;i< nbMaxAttempts;i++){
+for (let i=0;i<nbMaxAttempts;i++){
 if(minNbColorsTables[i].length>nbColors+1){displayGUIError("array is wider than expected (6)",new Error().stack);}}
 if(maxNbColorsTables.length>nbMaxAttempts){displayGUIError("array is wider than expected (7a)",new Error().stack);}
-for (let i=0;i< nbMaxAttempts;i++){
+for (let i=0;i<nbMaxAttempts;i++){
 if(maxNbColorsTables[i].length>nbColors+1){displayGUIError("array is wider than expected (7b)",new Error().stack);}}
 if(obviouslyImpossibleColors.length>nbColors+1){displayGUIError("array is wider than expected (8)",new Error().stack);}
 if(relative_performances_of_codes_played.length>nbMaxAttempts){displayGUIError("array is wider than expected (9)",new Error().stack);}
@@ -1247,7 +1247,7 @@ if(possibleCodesLists.length>nbMaxAttempts){displayGUIError("array is wider than
 if(globalPerformancesList.length>nbMaxAttempts){displayGUIError("array is wider than expected (14)",new Error().stack);}
 if(possibleCodesListsSizes.length>nbMaxAttempts){displayGUIError("array is wider than expected (15)",new Error().stack);}
 if(possibleCodesListsSubdivisions.length>nbMaxAttempts){displayGUIError("array is wider than expected (16)",new Error().stack);}
-for (let i=0;i< nbMaxAttempts;i++){
+for (let i=0;i<nbMaxAttempts;i++){
 if(possibleCodesLists[i].length>nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (17)",new Error().stack);}
 if(globalPerformancesList[i].length>nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (18)",new Error().stack);}}}
 function gameOnGoing(){
@@ -1287,7 +1287,7 @@ for (let color=1;color<=nbColors;color++){
 minNbColorsTables[attempt_nb-1][color]=minNbColorsTable_p[color];
 maxNbColorsTables[attempt_nb-1][color]=maxNbColorsTable_p[color];
 sum_max +=maxNbColorsTables[attempt_nb-1][color];}
-if(sum_max< nbColumns){
+if(sum_max<nbColumns){
 displayGUIError("invalid stats (sum_max="+sum_max+") (2)",new Error().stack);
 return false;}
 nbOfStatsFilled_NbPossibleCodes=attempt_nb;
@@ -1298,7 +1298,7 @@ function writePerformanceOfCodePlayed(relative_perf_p,relative_perf_evaluation_d
 if(game_id!=game_cnt){
 console.log("writePerformanceOfCodePlayed() call ignored: "+game_id+","+game_cnt);
 return false;}
-if(((relative_perf_p< PerformanceMinValidValue)&&(relative_perf_p!=PerformanceUNKNOWN))||(relative_perf_p>PerformanceMaxValidValue) /* possible range of relative performances */
+if(((relative_perf_p<PerformanceMinValidValue)&&(relative_perf_p!=PerformanceUNKNOWN))||(relative_perf_p>PerformanceMaxValidValue) /* possible range of relative performances */
 ||(relative_perf_p==PerformanceNA)
 ||(relative_perf_evaluation_done_p&&(relative_perf_p==PerformanceUNKNOWN))
 ||(((relative_perf_p<=-1.00)&&(relative_perf_p!=PerformanceUNKNOWN)) /* useless code */&&(!relative_perf_evaluation_done_p))
@@ -1326,12 +1326,12 @@ nbOfStatsFilled_Perfs=attempt_nb;
 main_graph_update_needed=true;
 draw_graphic(false);
 if(gameWon&&allPerformancesFilled()){
-if((timeStr.length==0)||(score< 0.0)){
+if((timeStr.length==0)||(score<0.0)){
 displayGUIError("internal error at store_player_info call: "+timeStr.length+","+score,new Error().stack);}
 else{
 let nbColorsRevealed=(nbColumns-simpleCodeHandler.nbEmptyColors(sCodeRevealed));
 let strGame="";
-for (let i=1;i< currentAttemptNumber;i++){
+for (let i=1;i<currentAttemptNumber;i++){
 strGame=strGame+simpleCodeHandler.markToString(marks[i-1])+" "+simpleCodeHandler.codeToString(codesPlayed[i-1])+" ("+nbOfPossibleCodes[i-1]
 +"|"+(Math.round(relative_performances_of_codes_played[i-1] * 100.0) / 100.0).toFixed(2) /* 0.01 precision */+") ";}
 strGame=strGame+"SCODE "+simpleCodeHandler.codeToString(simpleCodeHandler.convert(sCode));
@@ -1342,7 +1342,7 @@ function writePossibleCodes(possibleCodesList_p,nb_possible_codes_listed,possibl
 if(game_id!=game_cnt){
 console.log("writePossibleCodes() call ignored: "+game_id+","+game_cnt);
 return false;}
-if((nb_possible_codes_listed<=0)||(possibleCodesList_p.length< nb_possible_codes_listed)||(globalPerformancesList_p.length< nb_possible_codes_listed)
+if((nb_possible_codes_listed<=0)||(possibleCodesList_p.length<nb_possible_codes_listed)||(globalPerformancesList_p.length<nb_possible_codes_listed)
 ||(attempt_nb!=nbOfStatsFilled_ListsOfPossibleCodes+1)
 ||(attempt_nb>nbOfStatsFilled_NbPossibleCodes)
 ||(attempt_nb<=0)||(attempt_nb>nbMaxAttempts)
@@ -1352,7 +1352,7 @@ if((nb_possible_codes_listed<=0)||(possibleCodesList_p.length< nb_possible_codes
 ||((nbOfPossibleCodes[attempt_nb-1]>nbMaxPossibleCodesShown)&&(nb_possible_codes_listed!=nbMaxPossibleCodesShown)) ){
 displayGUIError("invalid stats ("+attempt_nb+","+nbOfStatsFilled_NbPossibleCodes+","+nbOfPossibleCodes[attempt_nb-1]+","+nb_possible_codes_listed+") (3)",new Error().stack);
 return false;}
-for (let i=0;i< nb_possible_codes_listed;i++){
+for (let i=0;i<nb_possible_codes_listed;i++){
 let code=possibleCodesList_p[i];
 let global_perf=globalPerformancesList_p[i];
 if(!simpleCodeHandler.isFullAndValid(code)){
@@ -1410,48 +1410,48 @@ height_shift=Math.floor((current_height * top_border_margin_y) / 100.0);
 x_axis_height=0;
 reduced_height=Math.floor((current_height * (100.0 - top_border_margin_y - bottom_border_margin_y)) / 100.0) - x_axis_height;}
 function get_x_pixel(x){
-if((x< x_min - 0.0000001)||(x>x_max+0.0000001) ){
+if((x<x_min - 0.0000001)||(x>x_max+0.0000001) ){
 displayGUIError("out of range x value: "+x,new Error().stack);
-if(x< x_min) x=x_min;
+if(x<x_min) x=x_min;
 if(x>x_max) x=x_max;}
 return Math.round(width_shift+((x - x_min) * reduced_width) / (x_max - x_min));}
 function get_x_coordinate(x_pixel){
 let res;
-if((x_pixel< 0)||(x_pixel>current_width) ){
+if((x_pixel<0)||(x_pixel>current_width) ){
 displayGUIError("out of range x pixel value: "+x_pixel,new Error().stack);
-if(x_pixel< 0) x_pixel=0;
+if(x_pixel<0) x_pixel=0;
 if(x_pixel>current_width) x_pixel=current_width;}
 x_pixel_bis=x_pixel;
-if(x_pixel< width_shift) x_pixel_bis=width_shift;
+if(x_pixel<width_shift) x_pixel_bis=width_shift;
 res=x_min+(((x_pixel_bis - width_shift) * (x_max - x_min)) / reduced_width);
-if(res< x_min) res=x_min;
+if(res<x_min) res=x_min;
 if(res>x_max) res=x_max;
 return res;}
 function get_y_pixel(y,ignoreRanges=false){
-if((!ignoreRanges)&&((y< y_min - 0.0000001)||(y>y_max+0.0000001)) ){
+if((!ignoreRanges)&&((y<y_min - 0.0000001)||(y>y_max+0.0000001)) ){
 displayGUIError("out of range y value: "+y,new Error().stack);
-if(y< y_min) y=y_min;
+if(y<y_min) y=y_min;
 if(y>y_max) y=y_max;}
-/* if(y< y_min+1.0){
+/* if(y<y_min+1.0){
 return height_shift+reduced_height+x_axis_height - Math.ceil(((y - y_min) * x_axis_height) / 1.0);}
 else{ */
 return height_shift+reduced_height - Math.ceil(((y - (y_min+1.0)) * reduced_height) / (y_max - (y_min+1.0)));
 /* } */}
 function get_y_coordinate(y_pixel){
 let res;
-if((y_pixel< 0)||(y_pixel>current_height) ){
+if((y_pixel<0)||(y_pixel>current_height) ){
 displayGUIError("out of range y pixel value: "+y_pixel,new Error().stack);
-if(y_pixel< 0) y_pixel=0;
+if(y_pixel<0) y_pixel=0;
 if(y_pixel>current_height) y_pixel=current_height;}
 if(y_pixel>height_shift+reduced_height+x_axis_height){
 res=y_min;}
-else if(y_pixel< height_shift){
+else if(y_pixel<height_shift){
 res=y_max;}
 /* else if((y_pixel>height_shift+reduced_height)&&(y_pixel<=height_shift+reduced_height+x_axis_height) ){
 res=y_min+(height_shift+reduced_height+x_axis_height - y_pixel) / x_axis_height;} */
 else{
 res=(y_min+1.0)+((height_shift+reduced_height - y_pixel) * (y_max - (y_min+1.0))) / reduced_height;}
-if(res< y_min) res=y_min;
+if(res<y_min) res=y_min;
 if(res>y_max) res=y_max;
 return res;}
 function drawLine(ctx,x_0,y_0,x_1,y_1,linewidth=1){
@@ -1579,26 +1579,26 @@ bottom_border_margin_y=2.5;
 top_border_margin_y=2.5;}
 let allButtons=document.getElementsByClassName("button");
 let allRadioButtons=document.getElementsByClassName("radio");
-if(height< 500){
-for (let i=0;i< allButtons.length;i++){
+if(height<500){
+for (let i=0;i<allButtons.length;i++){
 allButtons[i].style.fontSize="12px";}
-for (let i=0;i< allRadioButtons.length;i++){
+for (let i=0;i<allRadioButtons.length;i++){
 allRadioButtons[i].style.fontSize="12px";}}
 else{
-for (let i=0;i< allButtons.length;i++){
+for (let i=0;i<allButtons.length;i++){
 allButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");}
-for (let i=0;i< allRadioButtons.length;i++){
+for (let i=0;i<allRadioButtons.length;i++){
 allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");}}
 canvas.width=width;/* (necessary as canvas may have been expanded to fill its container) */
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
 updateAttributesWidthAndHeightValues(width,height);}} while (resize_detected&&(resize_cnt<=15));
-if(window.innerWidth< 0.70*window.innerHeight){
+if(window.innerWidth<0.70*window.innerHeight){
 rulesTableWidthStr="100%";
 scoresTableWidthStr="100%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=true;}
-else if(window.innerWidth< 1.0*window.innerHeight){
+else if(window.innerWidth<1.0*window.innerHeight){
 rulesTableWidthStr="70%";
 scoresTableWidthStr="100%";
 scoresFontSizeStr="1.4vh";
@@ -1619,7 +1619,7 @@ scoresTableWidthStr="100%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=true;}
 let nbColumnsSelected=getNbColumnsSelected();
-if((nbColumnsSelected< 0)||(nbColumnsSelected>nbMaxColumns) ){
+if((nbColumnsSelected<0)||(nbColumnsSelected>nbMaxColumns) ){
 displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected,new Error().stack);
 nbColumnsSelected=defaultNbColumns;}
 if(newGameEvent
@@ -1644,7 +1644,7 @@ if(!simpleCodeHandler.isFullAndValid(sCodeConv)){
 throw new Error("inconsistent code ("+sCodeConv+")");}
 simpleCodeHandler.fillMark(sCodeConv,currentCode,marks[currentAttemptNumber-1]);
 if((marks[currentAttemptNumber-1].nbBlacks==0)&&(marks[currentAttemptNumber-1].nbWhites==0)){
-for (let col=0;col< nbColumns;col++){
+for (let col=0;col<nbColumns;col++){
 obviouslyImpossibleColors[simpleCodeHandler.getColor(currentCode,col+1)]=true;}}
 if(marks[currentAttemptNumber-1].nbBlacks==nbColumns){
 stopTime=(new Date()).getTime();
@@ -1753,7 +1753,7 @@ x_1=get_x_pixel(x_max);
 y_1=get_y_pixel(y_min+attempt*y_step);
 ctx.fillStyle=darkGray;
 drawLine(ctx,x_0,y_0,x_1+1,y_1);
-if(attempt< nbMaxAttemptsToDisplay){
+if(attempt<nbMaxAttemptsToDisplay){
 let backgroundColor=backgroundColor_2;
 if(attempt+1==currentPossibleCodeShown){
 backgroundColor=highlightColor;}
@@ -1822,7 +1822,7 @@ x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*
 y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 drawLine(ctx,x_0,y_0,x_1,y_1);
 ctx.font=basic_bold_font;
-for (let i=1;i< currentAttemptNumber;i++){
+for (let i=1;i<currentAttemptNumber;i++){
 displayCode(codesPlayed[i-1],i-1,ctx,false,gameOnGoing());
 let backgroundColor=backgroundColor_2;
 if(i==currentPossibleCodeShown){
@@ -1830,13 +1830,13 @@ backgroundColor=highlightColor;}
 displayMark(marks[i-1],i-1,backgroundColor,ctx);}
 ctx.font=stats_font;
 let nbMaxHintsDisplayed=2;
-for (let i=0;i< nbMaxAttempts;i++){
+for (let i=0;i<nbMaxAttempts;i++){
 performancesDisplayed[i]=true;}
 for (let i=1 ;i<=nbOfStatsFilled_Perfs;i++){
 let backgroundColor=backgroundColor_2;
 if(i==currentPossibleCodeShown){
 backgroundColor=highlightColor;}
-if(i< currentAttemptNumber){
+if(i<currentAttemptNumber){
 displayPerf(relative_performances_of_codes_played[i-1],i-1,backgroundColor,isAttemptPossible(i),showPossibleCodesMode,false,PerformanceNA,ctx);
 if(relativePerformancesEvaluationDone[i-1]
 &&(relative_performances_of_codes_played[i-1]!=PerformanceUNKNOWN)
@@ -1892,7 +1892,7 @@ displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"),
 statsColor,backgroundColor,ctx);}}}
 if(tick_width>0){
 ctx.font=basic_bold_font;
-for (let i=1 ;i< currentAttemptNumber;i++){
+for (let i=1 ;i<currentAttemptNumber;i++){
 let backgroundColor=backgroundColor_2;
 if(i==currentPossibleCodeShown){
 backgroundColor=highlightColor;}
@@ -2058,7 +2058,7 @@ else if(timeInHours>=3){
 timeStr=">"+timeInHours+"h";}
 else if(timeInHours>0){
 if(timeInMinutes>0){
-if(timeInMinutes< 10){
+if(timeInMinutes<10){
 timeStr=timeInHours+"h 0"+timeInMinutes;}
 else{
 timeStr=timeInHours+"h "+timeInMinutes;}}
@@ -2129,7 +2129,7 @@ score=multiply_factor * (score_from_nb_attempts - time_delta_score)+0.499 - time
 else{
 score=multiply_factor * (score_from_nb_attempts - max_time_delta_score
 - (time_delta_score - max_time_delta_score)/1.5)+0.499 - timeInMilliSeconds/10000000;}
-if(score< min_score){
+if(score<min_score){
 score=min_score;/* (score will never be zero in case the game was won) */}
 if(playerWasHelped){
 victoryStr="\u2009You won with help!\u2009";
@@ -2214,14 +2214,14 @@ x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
 y_1=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors));
 drawLine(ctx,x_0,y_0,x_1,y_1);}
 ctx.font=basic_bold_font;
-for (let color=0;color< nbColors;color++){
-for (let col=0;col< nbColumns;col++){
+for (let color=0;color<nbColors;color++){
+for (let col=0;col<nbColumns;col++){
 color_selection_code=simpleCodeHandler.setColor(color_selection_code,color+1,col+1);}
 displayCode(color_selection_code,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color,ctx,false,gameOnGoing());}
 ctx.fillStyle=darkGray;
 try{
 ctx.font=medium2_bold_font;
-if((nbGamesPlayedAndWon==0)&&gameOnGoing()&&((currentAttemptNumber<=3)||(nbColorSelections< nbColumns)) ){
+if((nbGamesPlayedAndWon==0)&&gameOnGoing()&&((currentAttemptNumber<=3)||(nbColorSelections<nbColumns)) ){
 let x_delta=0.80;
 if(!displayString("Select colors here!",attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta,nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
 darkGray,backgroundColor_2,ctx,true,1,true,0,false,true,true /* bottom-right bubble */)){
@@ -2283,7 +2283,7 @@ currentPossibleCodeShownStr=currentPossibleCodeShown+"th";}
 if(res){
 displayString("at "+currentPossibleCodeShownStr+" attempt  ",0,nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2,attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray,backgroundColor_2,ctx,true,0,true,0);
-if(nbOfCodesListed< nbOfCodes){
+if(nbOfCodesListed<nbOfCodes){
 ctx.font=basic_bold_font;
 let offset_str;
 if(!showPossibleCodesOffsetMode){
@@ -2315,7 +2315,7 @@ displayString("\u2009Click to select!\u2009",0,nbMaxAttemptsToDisplay,attempt_nb
 else{
 displayGUIError("invalid currentPossibleCodeShown: "+currentPossibleCodeShown,new Error().stack);}
 ctx.font=basic_bold_font;
-for (let col=0;col< nbColumns;col++){
+for (let col=0;col<nbColumns;col++){
 if(simpleCodeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1],col+1)!=emptyColor){
 displayString(tickChar,attempt_nb_width+(70*(nbColumns+1))/100+col*2,nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown,2,
 greenColor,backgroundColor_2,ctx,true,0,true,1,true /* (ignoreRanges) */);}}
@@ -2323,7 +2323,7 @@ ctx.font=basic_bold_font;
 let colors_cnt=0;
 for (let color=1;color<=nbColors;color++){
 if(minNbColorsTables[currentPossibleCodeShown-1][color]>0){
-for (let i=0;i< minNbColorsTables[currentPossibleCodeShown-1][color];i++){
+for (let i=0;i<minNbColorsTables[currentPossibleCodeShown-1][color];i++){
 displayColor(color,Math.max(attempt_nb_width+(70*(nbColumns+1))/100-3,0),nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt,ctx,false,true);
 colors_cnt++;}}}
 if(colors_cnt>0){
@@ -2347,7 +2347,7 @@ y_1=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+nbPossibl
 drawLine(ctx,x_0,y_0,x_1,y_1);}
 let best_global_perf=global_best_performances[currentPossibleCodeShown-1];
 let valid_best_global_perf=((best_global_perf!=PerformanceUNKNOWN)&&(best_global_perf>0.01));
-for (let codeidx=0;codeidx< nbOfCodesListed;codeidx++){
+for (let codeidx=0;codeidx<nbOfCodesListed;codeidx++){
 let code=possibleCodesLists[currentPossibleCodeShown-1][codeidx+code_list_offset];
 let y_cell=nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1-codeidx;
 ctx.font=basic_bold_font;
@@ -2516,7 +2516,7 @@ if(!displayColorMode){
 let redC=parseInt(backgroundColor.substring(1,3),16);
 let greenC=parseInt(backgroundColor.substring(3,5),16);
 let blueC=parseInt(backgroundColor.substring(5,7),16);
-if(Math.max(Math.max(redC,greenC),blueC)< 50){
+if(Math.max(Math.max(redC,greenC),blueC)<50){
 ctx.strokeStyle="white";}
 else{
 ctx.strokeStyle="black";}
@@ -2581,7 +2581,7 @@ let b1;
 let r2;
 let g2;
 let b2;
-if((color1Coef< 0.0)||(color1Coef>1.0)){
+if((color1Coef<0.0)||(color1Coef>1.0)){
 displayGUIError("error in averageColor (1): "+color1+","+color2+","+color1Coef,new Error().stack);
 return color1_p;}
 if((color1.indexOf("#")==0)&&(color1.length==7)){
@@ -2611,9 +2611,9 @@ return color1_p;}
 let newr=Math.round(r1*color1Coef+r2*(1-color1Coef));
 let newg=Math.round(g1*color1Coef+g2*(1-color1Coef));
 let newb=Math.round(b1*color1Coef+b2*(1-color1Coef));
-if(isNaN(newr)||(newr< 0)||(newr>255)
-||isNaN(newg)||(newg< 0)||(newg>255)
-||isNaN(newb)||(newb< 0)||(newb>255) ){
+if(isNaN(newr)||(newr<0)||(newr>255)
+||isNaN(newg)||(newg<0)||(newg>255)
+||isNaN(newb)||(newb<0)||(newb>255) ){
 displayGUIError("error in averageColor (4): "+color1+","+color2+","+color1Coef+" / "+newr+","+newg+","+newb,new Error().stack);
 return color1_p;}
 return "rgb("+newr+","+newg+","+newb+")";}
@@ -2624,7 +2624,7 @@ let backgroundColor=backgroundColorTable[color-1];
 if(disabledColor){
 foregroundColor=averageColor(foregroundColor,backgroundColor_2,0.25);
 backgroundColor=averageColor(backgroundColor,backgroundColor_2,0.25);}
-if(color< 10){
+if(color<10){
 displayString(color,x_cell,y_cell,2,
 foregroundColor,backgroundColor,ctx,displayColorMode,0,false,0);}
 else{
@@ -2649,7 +2649,7 @@ else{
 displayString("",x_cell,y_cell,2,
 darkGray,backgroundColor_3,ctx,displayColorMode,0,false,0);}}}
 function displayCode(code,y_cell,ctx,secretCodeCase=false,checkDisabledColors=false){
-for (let col=0;col< nbColumns;col++){
+for (let col=0;col<nbColumns;col++){
 let color=simpleCodeHandler.getColor(code,col+1);
 displayColor(color,attempt_nb_width+(70*(nbColumns+1))/100+col*2,y_cell,ctx,secretCodeCase,true,(checkDisabledColors ?  obviouslyImpossibleColors[color] : false));}}
 function displayMark(mark,y_cell,backgroundColor,ctx){
@@ -2663,7 +2663,7 @@ let y_0_next=get_y_pixel(y_min+y_step*(y_cell+1));
 let constant_y_cell_delta=get_y_pixel(y_min) - get_y_pixel(y_min+y_step);
 while (circle_width_applied>Math.floor((55*constant_y_cell_delta)/100)){
 circle_width_applied=circle_width_applied - 2;}
-if(circle_width_applied< 2){
+if(circle_width_applied<2){
 circle_width_applied=2;}
 let space_btw_marks=((x_0_next - x_0 - 2.0) - (nbColumns*(circle_width_applied+1.0))) / (nbColumns+1.0);
 ctx.fillStyle=backgroundColor;
@@ -2679,7 +2679,7 @@ let radius=Math.floor(circle_width_applied/2);
 if(radius<=3){
 circleBorderWidth=0.6;
 whiteBckg="#FFFFFF";}
-for (let i=0;i< mark.nbBlacks;i++){
+for (let i=0;i<mark.nbBlacks;i++){
 x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));
 ctx.beginPath();
 ctx.arc(x_0_pos+x_0_pos_offset+radius,
@@ -2691,7 +2691,7 @@ ctx.fill();
 ctx.lineWidth=circleBorderWidth;
 ctx.strokeStyle="black";
 ctx.stroke();}
-for (let i=mark.nbBlacks;i< mark.nbBlacks+mark.nbWhites;i++){
+for (let i=mark.nbBlacks;i<mark.nbBlacks+mark.nbWhites;i++){
 x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));
 ctx.beginPath();
 ctx.arc(x_0_pos+x_0_pos_offset+radius,
@@ -2790,7 +2790,7 @@ if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x
 orangeColor,backgroundColor,ctx,true,0,true,0)){
 displayString(performance.toFixed(1).replaceAll(",","."),x_cell,y_cell,cell_width,
 orangeColor,backgroundColor,ctx);}}
-else if(performance< 0.00){
+else if(performance<0.00){
 if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A",x_cell,y_cell,cell_width,
 lightGray,backgroundColor,ctx,true,0,true,0)){
 displayString(performance.toFixed(1).replaceAll(",","."),x_cell,y_cell,cell_width,
