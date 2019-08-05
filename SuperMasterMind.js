@@ -1632,6 +1632,7 @@ displayGUIError("inconsistent currentAttemptNumber value: "+currentAttemptNumber
 else{
 if(gameOnGoing()
 &&simpleCodeHandler.isFullAndValid(currentCode) ){
+attempt_HTML_geolocation_if_needed();
 nbCodesPlayed++;
 if(1==currentAttemptNumber){
 startTime=(new Date()).getTime();

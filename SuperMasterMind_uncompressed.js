@@ -2446,6 +2446,8 @@ function draw_graphic_bis() {
       if ( gameOnGoing() // playing phase
            && simpleCodeHandler.isFullAndValid(currentCode) ) { // New code submitted
 
+        attempt_HTML_geolocation_if_needed();
+
         nbCodesPlayed++;
 
         if (1 == currentAttemptNumber) {

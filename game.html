@@ -292,7 +292,7 @@
       // setTimeout("console.log('(on load timeout)');$('.game_loading').fadeOut('slow');", 5000); // game_loading div fades out -> not applied
 
       $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
-        if (!android_appli) {
+        if (!android_appli) { // in case if android_appli, webview reload can be (a bit) delayed
           try {
             debug_on_unload = 1;
             if (gameOnGoing() && (currentAttemptNumber > 1)) {
@@ -451,7 +451,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MG5";
+      let html_compatibility_game_version = "Ver_MG6";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1685,7 +1685,7 @@
                 }
                 if (localStorage.androidAppNotifShown) {
                   androidAppNotifShownStr = localStorage.androidAppNotifShown + "x";
-                }                
+                }
                 if (localStorage.firstaccessid) {
                   firstAccessIdStr = localStorage.firstaccessid;
                 }
@@ -1914,6 +1914,16 @@
         }
 
       } // store_player_info
+
+      var attempt_HTML_geolocation_already_done = false;
+      function attempt_HTML_geolocation_if_needed() {
+        if (!attempt_HTML_geolocation_already_done) {
+          if (android_appli) { // ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
+            setTimeout("attempt_HTML_geolocation();", 1111); // Redone after each page/webview reload at "first user interaction" (subject to user acceptance - "first user interaction" means the user has responded (yes or no) to the ACCESS_FINE_LOCATION request, which then allows him to interact with the game)
+            attempt_HTML_geolocation_already_done = true;
+          }
+        }
+      }
 
       // ***********************
       // Handle page access info
@@ -2144,9 +2154,6 @@
           debug_game_state = 64;
           // $("#my_all_scripts_loaded_form").submit(); // (dummy form submission for android appli's web view)
           debug_game_state = 65;
-          if (android_appli) { // ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
-            setTimeout("attempt_HTML_geolocation();", 44); // Redone at each page/webview reload (subject to user acceptance)
-          }
         });
       }
 
