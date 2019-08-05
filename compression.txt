@@ -1,3 +1,6 @@
+
+DO NOT APPLY "PB" STEPS
+
 extended check that there are no "\r"
 
 normal replace "= " by "="
@@ -7,15 +10,15 @@ normal replace " || " by "||"
 normal replace " && " by "&&"
 normal replace "if (" by "if("
 normal replace "; " by ";"
-normal replace ", " by ","
+normal replace ", " by "," // PB: &nbsp; to be used in strings!
 normal replace " + " by "+"
 normal replace " {" by "{"
-normal replace " <" by "<"
-normal replace "< " by "<"
-normal replace " >" by ">"
-normal replace "> " by ">"
+normal replace " <" by "<" // PB: &nbsp; to be used in strings!
+normal replace "< " by "<" // PB
+normal replace " >" by ">" // PB
+normal replace "> " by ">" // PB: &nbsp; to be used in strings!
 
-regexp replace //(.*) by nothing => PB with HTTPS://!
+regexp replace " //(.*)" by nothing => space allows to exclude HTTPS://!
 delete trailing spaces
 delete leading spaces
 regexp replace (\n)+ by \n
