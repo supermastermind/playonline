@@ -1082,7 +1082,8 @@ show_play_store_app();
 else if(localStorage.gamesok&&((Number(localStorage.gamesok)==51)||(Number(localStorage.gamesok) % 153==0)) ){
 show_play_store_app();
 }
-else if ( ( (localStorage.playerid.indexOf("GJ73D - Mon") != -1) // Lobonca
+else if ( localStorage.playerid
+&& ( (localStorage.playerid.indexOf("GJ73D - Mon") != -1) // Lobonca
 || (localStorage.playerid.indexOf("EMNKT - Fri") != -1) // Kristen
 || (localStorage.playerid.indexOf("6WPOS - Mon") != -1) // Sue
 || (localStorage.playerid.indexOf("OQ7C9 - Mon") != -1) // Jonasolof

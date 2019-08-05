@@ -1655,13 +1655,14 @@ function resetGameAttributes(nbColumnsSelected) {
   else if ( localStorage.gamesok && ((Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) % 153 == 0)) ) {
     show_play_store_app();
   }
-  else if ( ( (localStorage.playerid.indexOf("GJ73D - Mon") != -1) // Lobonca
-              || (localStorage.playerid.indexOf("EMNKT - Fri") != -1) // Kristen
-              || (localStorage.playerid.indexOf("6WPOS - Mon") != -1) // Sue
-              || (localStorage.playerid.indexOf("OQ7C9 - Mon") != -1) // Jonasolof
-              || (localStorage.playerid.indexOf("GLOPW - Fri") != -1) // Elz
-              || (localStorage.playerid.indexOf("774DI_") != -1) // Angel's servant
-            )
+  else if ( localStorage.playerid
+            && ( (localStorage.playerid.indexOf("GJ73D - Mon") != -1) // Lobonca
+                  || (localStorage.playerid.indexOf("EMNKT - Fri") != -1) // Kristen
+                  || (localStorage.playerid.indexOf("6WPOS - Mon") != -1) // Sue
+                  || (localStorage.playerid.indexOf("OQ7C9 - Mon") != -1) // Jonasolof
+                  || (localStorage.playerid.indexOf("GLOPW - Fri") != -1) // Elz
+                  || (localStorage.playerid.indexOf("774DI_") != -1) // Angel's servant
+               )
             && (localStorage.firstname) && (!localStorage.specificMsgAlreadyDisplayedOnce) ) {
     show_play_store_app("Hello " + localStorage.firstname + "<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site, I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone, maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it, here is the link to the android appli in Google Play Store:");
     localStorage.specificMsgAlreadyDisplayedOnce = "yes";
