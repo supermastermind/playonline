@@ -292,7 +292,7 @@
       // setTimeout("console.log('(on load timeout)');$('.game_loading').fadeOut('slow');", 5000); // game_loading div fades out -> not applied
 
       $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
-        if (!android_appli) { // in case if android_appli, webview reload can be (a bit) delayed
+        if (!android_appli) { // in case of android_appli, webview reload can be (a bit) delayed
           try {
             debug_on_unload = 1;
             if (gameOnGoing() && (currentAttemptNumber > 1)) {
@@ -451,7 +451,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MG6";
+      let html_compatibility_game_version = "Ver_MG7";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
