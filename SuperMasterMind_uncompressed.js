@@ -2395,14 +2395,14 @@ function draw_graphic_bis() {
     } while (resize_detected && (resize_cnt <= 15)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     // Set adaptative widths
-    if (window.innerWidth < 0.80*window.innerHeight) {
+    if (window.innerWidth < 0.70*window.innerHeight) {
       rulesTableWidthStr = "100%";
       scoresTableWidthStr = "100%";
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = true;
     }
     else if (window.innerWidth < 1.0*window.innerHeight) {
-      rulesTableWidthStr = "88%";
+      rulesTableWidthStr = "70%";
       scoresTableWidthStr = "100%";
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = true;

@@ -1593,13 +1593,13 @@ canvas.width=width;/* (necessary as canvas may have been expanded to fill its co
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
 ctx.setTransform(1,0,0,1,0,0);
 updateAttributesWidthAndHeightValues(width,height);}} while (resize_detected&&(resize_cnt<=15));
-if(window.innerWidth< 0.80*window.innerHeight){
+if(window.innerWidth< 0.70*window.innerHeight){
 rulesTableWidthStr="100%";
 scoresTableWidthStr="100%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=true;}
 else if(window.innerWidth< 1.0*window.innerHeight){
-rulesTableWidthStr="88%";
+rulesTableWidthStr="70%";
 scoresTableWidthStr="100%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=true;}
