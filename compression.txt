@@ -15,12 +15,12 @@ normal replace "< " by "<"
 normal replace " >" by ">"
 normal replace "> " by ">"
 
-regexp replace //(.*) by nothing
+regexp replace //(.*) by nothing => PB with HTTPS://!
 delete trailing spaces
 delete leading spaces
 regexp replace (\n)+ by \n
 
-extended replace "\n}" by "}"
+extended replace "\n}" by "}" => PB if // comments are left!
 
 For GameSolver.js: manual deletion of comments:
 - let precalculation_mode=
