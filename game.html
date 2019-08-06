@@ -451,7 +451,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MI6";
+      let html_compatibility_game_version = "Ver_MI7";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -911,7 +911,6 @@
         // console.log(my_form_url);
         // Submit form
         console.log("(jQuery.ajax get/jsonp" + ((formStr == "") ? "" : " for a specific case") + ")");
-        debug_game_state = 50;
         jQuery.ajax({
           crossDomain: true,
           url: my_form_url,
@@ -920,7 +919,6 @@
           timeout: 40000 // 40 seconds
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-          debug_game_state = 51;
           try {
             if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
               console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
@@ -950,7 +948,6 @@
           catch (exc) {
             console.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           }
-          debug_game_state = 52;
         });
 
         // document.getElementById('my_form').submit();

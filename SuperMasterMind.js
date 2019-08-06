@@ -322,7 +322,8 @@ return "(currentattempt:"+currentAttemptNumber
 +", nbongoinggamesaborted: "+nbOnGoingGamesAborted
 +", nbgamesabortedwithongoingworker:"+nbGamesAbortedWithOnGoingWorker
 +", lastgamewasabortedwithongoingworker:"+lastGameWasAbortedWithOnGoingWorker
-+", gamesolverdbg:"+gameSolverDbg+")";
++", gamesolverdbg:"+gameSolverDbg
++ ", debug_game_state:"+debug_game_state+")";
 }
 function displayGUIError(GUIErrorStr, errStack){
 let completedGUIErrorStr=(GUIErrorStr+" "+getExtraDebugInfo()).trim();
@@ -748,9 +749,12 @@ if( isNaN(nb_possible_codes_listed)||(nb_possible_codes_listed <=0)||(nb_possibl
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: "+nb_possible_codes_listed, new Error().stack);
 }
 let possible_codes_subdivision=-1;// N.A.
+try {
 if(data.possible_codes_subdivision!==undefined){
 possible_codes_subdivision=Number(data.possible_codes_subdivision);
 }
+}
+catch (tmp_exc) {}
 if(data.globalPerformancesList_p==undefined){
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
 }
@@ -1386,6 +1390,7 @@ loadTime=(new Date()).getTime();// time in milliseconds (this line should be use
 location.reload(true);
 }
 }
+try {
 if( mobileMode&&androidMode&&((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 51==0))) ){
 show_play_store_app();
 }
@@ -1404,6 +1409,8 @@ else if( localStorage.playerid
 show_play_store_app("Hello "+localStorage.firstname+"<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site,&nbsp;I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone,&nbsp;maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it,&nbsp;here is the link to the android appli in Google Play Store:");
 localStorage.specificMsgAlreadyDisplayedOnce="yes";
 }
+}
+catch (tmp_exc) {}
 main_graph_update_needed=true;
 simpleCodeHandler=null;
 nbColumns=nbColumnsSelected;
@@ -1906,6 +1913,7 @@ ctx.globalAlpha=1;
 let resize_detected=false;
 let resize_cnt=0;
 do{
+  x = 1/y
 resize_detected=false;
 let width;
 let height;

@@ -367,7 +367,8 @@ function getExtraDebugInfo() {
          + ", nbongoinggamesaborted: " + nbOnGoingGamesAborted
          + ", nbgamesabortedwithongoingworker:" + nbGamesAbortedWithOnGoingWorker
          + ", lastgamewasabortedwithongoingworker:" + lastGameWasAbortedWithOnGoingWorker
-         + ", gamesolverdbg:" + gameSolverDbg + ")";
+         + ", gamesolverdbg:" + gameSolverDbg 
+         + ", debug_game_state:"+debug_game_state+")";
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
@@ -882,9 +883,12 @@ function onGameSolverMsg(e) {
       }
 
       let possible_codes_subdivision = -1; // N.A.
-      if (data.possible_codes_subdivision !== undefined) {
-        possible_codes_subdivision = Number(data.possible_codes_subdivision);
+      try {
+        if (data.possible_codes_subdivision !== undefined) {
+          possible_codes_subdivision = Number(data.possible_codes_subdivision);
+        }
       }
+      catch (tmp_exc) {}
 
       if (data.globalPerformancesList_p == undefined) {
         displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
@@ -1652,24 +1656,28 @@ function resetGameAttributes(nbColumnsSelected) {
       location.reload(true);
     }
   }
-  if ( mobileMode && androidMode && ((game_cnt == 4) || (localStorage.gamesok && (Number(localStorage.gamesok) % 51 == 0))) ) {
-    show_play_store_app();
+  
+  try {
+    if ( mobileMode && androidMode && ((game_cnt == 4) || (localStorage.gamesok && (Number(localStorage.gamesok) % 51 == 0))) ) {
+      show_play_store_app();
+    }
+    else if ( localStorage.gamesok && ((Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) % 153 == 0)) ) {
+      show_play_store_app();
+    }
+    else if ( localStorage.playerid
+              && ( (localStorage.playerid.indexOf("GJ73D - Mon") != -1) // Lobonca
+                    || (localStorage.playerid.indexOf("EMNKT - Fri") != -1) // Kristen
+                    || (localStorage.playerid.indexOf("6WPOS - Mon") != -1) // Sue
+                    || (localStorage.playerid.indexOf("OQ7C9 - Mon") != -1) // Jonasolof
+                    || (localStorage.playerid.indexOf("GLOPW - Fri") != -1) // Elz
+                    || (localStorage.playerid.indexOf("774DI_") != -1) // Angel's servant
+                 )
+              && (localStorage.firstname) && (!localStorage.specificMsgAlreadyDisplayedOnce) ) {
+      show_play_store_app("Hello " + localStorage.firstname + "<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site,&nbsp;I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone,&nbsp;maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it,&nbsp;here is the link to the android appli in Google Play Store:");
+      localStorage.specificMsgAlreadyDisplayedOnce = "yes";
+    }
   }
-  else if ( localStorage.gamesok && ((Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) % 153 == 0)) ) {
-    show_play_store_app();
-  }
-  else if ( localStorage.playerid
-            && ( (localStorage.playerid.indexOf("GJ73D - Mon") != -1) // Lobonca
-                  || (localStorage.playerid.indexOf("EMNKT - Fri") != -1) // Kristen
-                  || (localStorage.playerid.indexOf("6WPOS - Mon") != -1) // Sue
-                  || (localStorage.playerid.indexOf("OQ7C9 - Mon") != -1) // Jonasolof
-                  || (localStorage.playerid.indexOf("GLOPW - Fri") != -1) // Elz
-                  || (localStorage.playerid.indexOf("774DI_") != -1) // Angel's servant
-               )
-            && (localStorage.firstname) && (!localStorage.specificMsgAlreadyDisplayedOnce) ) {
-    show_play_store_app("Hello " + localStorage.firstname + "<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site,&nbsp;I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone,&nbsp;maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it,&nbsp;here is the link to the android appli in Google Play Store:");
-    localStorage.specificMsgAlreadyDisplayedOnce = "yes";
-  }
+  catch (tmp_exc) {}
 
   main_graph_update_needed = true;
   simpleCodeHandler = null;
