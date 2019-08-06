@@ -1285,6 +1285,9 @@ function mouseClick(e) {
                 colorSelected = true;
                 playAColor(color+1, column+1);
                 nbColorSelections++;
+                
+                attempt_HTML_geolocation_if_needed();
+                
                 break;
               }
             }
