@@ -367,8 +367,8 @@ function getExtraDebugInfo() {
          + ", nbongoinggamesaborted: " + nbOnGoingGamesAborted
          + ", nbgamesabortedwithongoingworker:" + nbGamesAbortedWithOnGoingWorker
          + ", lastgamewasabortedwithongoingworker:" + lastGameWasAbortedWithOnGoingWorker
-         + ", gamesolverdbg:" + gameSolverDbg 
-         + ", debug_game_state:"+debug_game_state+")";
+         + ", gamesolverdbg:" + gameSolverDbg
+         + ", debug_game_state:" + debug_game_state + ")";
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
@@ -1289,9 +1289,9 @@ function mouseClick(e) {
                 colorSelected = true;
                 playAColor(color+1, column+1);
                 nbColorSelections++;
-                
+
                 attempt_HTML_geolocation_if_needed();
-                
+
                 break;
               }
             }
@@ -1656,7 +1656,7 @@ function resetGameAttributes(nbColumnsSelected) {
       location.reload(true);
     }
   }
-  
+
   try {
     if ( mobileMode && androidMode && ((game_cnt == 4) || (localStorage.gamesok && (Number(localStorage.gamesok) % 51 == 0))) ) {
       show_play_store_app();

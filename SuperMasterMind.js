@@ -323,7 +323,7 @@ return "(currentattempt:"+currentAttemptNumber
 +", nbgamesabortedwithongoingworker:"+nbGamesAbortedWithOnGoingWorker
 +", lastgamewasabortedwithongoingworker:"+lastGameWasAbortedWithOnGoingWorker
 +", gamesolverdbg:"+gameSolverDbg
-+ ", debug_game_state:"+debug_game_state+")";
++", debug_game_state:"+debug_game_state+")";
 }
 function displayGUIError(GUIErrorStr, errStack){
 let completedGUIErrorStr=(GUIErrorStr+" "+getExtraDebugInfo()).trim();
@@ -1913,7 +1913,6 @@ ctx.globalAlpha=1;
 let resize_detected=false;
 let resize_cnt=0;
 do{
-  x = 1/y
 resize_detected=false;
 let width;
 let height;
