@@ -368,7 +368,7 @@ function getExtraDebugInfo() {
          + ", nbgamesabortedwithongoingworker:" + nbGamesAbortedWithOnGoingWorker
          + ", lastgamewasabortedwithongoingworker:" + lastGameWasAbortedWithOnGoingWorker
          + ", gamesolverdbg:" + gameSolverDbg
-         + ", debug_game_state:" + debug_game_state + ")";
+         + ", debuggamestate:" + debug_game_state + ")";
 }
 
 function displayGUIError(GUIErrorStr, errStack) {
@@ -453,7 +453,21 @@ function displayGUIError(GUIErrorStr, errStack) {
 }
 
 function displayGUIError__windowonerror(GUIErrorStr, errStack) {
-  displayGUIError("window error: " + GUIErrorStr, errStack);
+  let skip_useless_errors = false;
+  try {
+    // Error observed after game start (timesinceworkercreation ~ 23s) on "Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" useragent, 
+    // but not preventing (at least always?) game play (+ scores stored):
+    // - GUIErrorStr = TypeError: null is not an object (evaluating 'reader.content')
+    // - errStack = https://supermastermind.github.io/playonline/game.html
+    if ( (("" + GUIErrorStr).indexOf("TypeError: null is not an object (evaluating 'reader.content')") != -1) 
+         && (("" + errStack).indexOf("game.html") != -1) ) {
+      skip_useless_errors = true;
+    }
+  }
+  catch (tmp_exc) {}
+  if (!skip_useless_errors) {
+    displayGUIError("window error: " + GUIErrorStr, errStack);
+  }
 }
 function displayGUIError__windowonmessageerror(GUIErrorStr, errStack) {
   displayGUIError("window MESSAGE error: " + GUIErrorStr, errStack);

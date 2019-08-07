@@ -323,7 +323,7 @@ return "(currentattempt:"+currentAttemptNumber
 +", nbgamesabortedwithongoingworker:"+nbGamesAbortedWithOnGoingWorker
 +", lastgamewasabortedwithongoingworker:"+lastGameWasAbortedWithOnGoingWorker
 +", gamesolverdbg:"+gameSolverDbg
-+", debug_game_state:"+debug_game_state+")";
++", debuggamestate:"+debug_game_state+")";
 }
 function displayGUIError(GUIErrorStr, errStack){
 let completedGUIErrorStr=(GUIErrorStr+" "+getExtraDebugInfo()).trim();
@@ -389,8 +389,18 @@ gameErrorStr="***** ERROR ("+version+") *****: "+GUIErrorStr+" / "+errStack+"\n"
 alert(gameErrorStr);
 }
 }
-function displayGUIError__windowonerror(GUIErrorStr, errStack){
-displayGUIError("window error: "+GUIErrorStr, errStack);
+function displayGUIError__windowonerror(GUIErrorStr, errStack) {
+let skip_useless_errors = false;
+try {
+if ( (("" + GUIErrorStr).indexOf("TypeError: null is not an object (evaluating 'reader.content')") != -1) 
+&& (("" + errStack).indexOf("game.html") != -1) ) {
+skip_useless_errors = true;
+}
+}
+catch (tmp_exc) {}
+if (!skip_useless_errors) {
+displayGUIError("window error: " + GUIErrorStr, errStack);
+}
 }
 function displayGUIError__windowonmessageerror(GUIErrorStr, errStack){
 displayGUIError("window MESSAGE error: "+GUIErrorStr, errStack);
