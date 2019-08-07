@@ -689,6 +689,7 @@ return;
 }
 }
 else if(data.rsp_type=='NB_POSSIBLE_CODES'){
+  console.log("NB_POSSIBLE_CODES");
 if(data.nbOfPossibleCodes_p==undefined){
 displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);
 }
@@ -734,6 +735,7 @@ displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: "+ga
 writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
 }
 else if(data.rsp_type=='LIST_OF_POSSIBLE_CODES'){
+    console.log("LIST_OF_POSSIBLE_CODES");
 if(data.possibleCodesList_p==undefined){
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);
 }
@@ -779,6 +781,7 @@ displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id:
 writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possible_codes_subdivision, globalPerformancesList_p, attempt_nb, game_id);
 }
 else if(data.rsp_type=='CODE_PLAYED_PERFORMANCE'){
+  console.log("CODE_PLAYED_PERFORMANCE");
 if(data.relative_perf_p==undefined){
 displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined", new Error().stack);
 }
