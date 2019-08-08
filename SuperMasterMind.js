@@ -1401,10 +1401,10 @@ location.reload(true);
 }
 }
 try {
-if( mobileMode&&androidMode&&((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 51==0))) ){
+if( mobileMode&&androidMode&&((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 21==0))) ){
 show_play_store_app();
 }
-else if( localStorage.gamesok&&((Number(localStorage.gamesok)==51)||(Number(localStorage.gamesok) % 153==0)) ){
+else if( localStorage.gamesok&&((Number(localStorage.gamesok)==42)||(Number(localStorage.gamesok) % 147==0)) ){
 show_play_store_app();
 }
 else if( localStorage.playerid
