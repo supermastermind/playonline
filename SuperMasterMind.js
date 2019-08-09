@@ -88,6 +88,7 @@ let globalErrorCnt=0;
 let nb_random_codes_played=0;
 let at_least_one_useless_code_played=false;
 let game_cnt=0;
+let last_dialog_game_cnt=-10;
 let gameSolver=undefined;
 let gameSolverDbg=-1;// (debug value)
 let gameSolverInitMsgContents=null;
@@ -215,7 +216,7 @@ let tickChar="\u2714";/* (check mark/tick) */
 let crossChar="\u2716";/* (cross) */
 let firefoxMode=(navigator.userAgent.toUpperCase().search("FIREFOX")!=-1);
 let edgeMode=(navigator.userAgent.toUpperCase().search("EDGE/")!=-1);
-let play_store_app_already_shown=false;
+let android_app_url="https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1";
 // Precalculated table for 5 columns
 // *********************************
 let precalculated_games_5columns_1st_level=new Array(nbMaxColumns+1);
@@ -389,17 +390,17 @@ gameErrorStr="***** ERROR ("+version+") *****: "+GUIErrorStr+" / "+errStack+"\n"
 alert(gameErrorStr);
 }
 }
-function displayGUIError__windowonerror(GUIErrorStr, errStack) {
-let skip_useless_errors = false;
-try {
-if ( (("" + GUIErrorStr).indexOf("TypeError: null is not an object (evaluating 'reader.content')") != -1) 
-&& (("" + errStack).indexOf("game.html") != -1) ) {
-skip_useless_errors = true;
+function displayGUIError__windowonerror(GUIErrorStr, errStack){
+let skip_useless_errors=false;
+try{
+if( ((""+GUIErrorStr).indexOf("TypeError: null is not an object (evaluating 'reader.content')")!=-1)
+&&((""+errStack).indexOf("game.html")!=-1) ){
+skip_useless_errors=true;
 }
 }
-catch (tmp_exc) {}
-if (!skip_useless_errors) {
-displayGUIError("window error: " + GUIErrorStr, errStack);
+catch (tmp_exc){}
+if(!skip_useless_errors){
+displayGUIError("window error: "+GUIErrorStr, errStack);
 }
 }
 function displayGUIError__windowonmessageerror(GUIErrorStr, errStack){
@@ -759,12 +760,12 @@ if( isNaN(nb_possible_codes_listed)||(nb_possible_codes_listed <=0)||(nb_possibl
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: "+nb_possible_codes_listed, new Error().stack);
 }
 let possible_codes_subdivision=-1;// N.A.
-try {
+try{
 if(data.possible_codes_subdivision!==undefined){
 possible_codes_subdivision=Number(data.possible_codes_subdivision);
 }
 }
-catch (tmp_exc) {}
+catch (tmp_exc){}
 if(data.globalPerformancesList_p==undefined){
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
 }
@@ -1230,7 +1231,7 @@ return previousNbColumns;
 }
 }
 function show_play_store_app(specific_str=""){
-if( (!play_store_app_already_shown)&&(!android_appli)&&((!mobileMode)||androidMode) ){
+if((!android_appli)&&(game_cnt!=last_dialog_game_cnt+1)){
 let str1="";
 let str2="";
 if(mobileMode){
@@ -1245,7 +1246,7 @@ let str=((specific_str=="") ? ("For "+str1+",&nbsp;install the android app"+str2
 let play_store_app_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
 <br><b>"+str+"</b><br>\
-<a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
+<a href='"+android_app_url+"'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
 <small>If you like this app,&nbsp;put some stars in Google Play Store &#x1F609;<br>For any suggestion for improvement,&nbsp;please see the&nbsp;<a href='contact_info.html'>contact info</a> page</small><br><br><br>\
 </font></td></tr></table></center>";
 try{
@@ -1262,7 +1263,7 @@ if(!localStorage.androidAppNotifShown){
 localStorage.androidAppNotifShown=0;
 }
 localStorage.androidAppNotifShown=Number(localStorage.androidAppNotifShown)+1;
-play_store_app_already_shown=true;
+last_dialog_game_cnt=game_cnt;
 }
 }
 // *****************
@@ -1400,27 +1401,21 @@ loadTime=(new Date()).getTime();// time in milliseconds (this line should be use
 location.reload(true);
 }
 }
-try {
-if( mobileMode&&androidMode&&((game_cnt==4)||(localStorage.gamesok&&(Number(localStorage.gamesok) % 21==0))) ){
+try{
+if( (!android_appli)&&mobileMode&&androidMode
+&&localStorage.androidAppNotifShown&&(Number(localStorage.androidAppNotifShown) >=5)
+&&localStorage.gamesok&&(Number(localStorage.gamesok) >=55) ){
+window.location.replace(android_app_url);// redirect to android app page
+}
+else if( (!android_appli)&&mobileMode&&androidMode
+&&localStorage.gamesok&&(Number(localStorage.gamesok) % 11==0) ){
 show_play_store_app();
 }
-else if( localStorage.gamesok&&((Number(localStorage.gamesok)==42)||(Number(localStorage.gamesok) % 147==0)) ){
+else if( (!android_appli)&&(!mobileMode)&&localStorage.gamesok&&((Number(localStorage.gamesok)==42)||(Number(localStorage.gamesok) % 147==0)) ){
 show_play_store_app();
 }
-else if( localStorage.playerid
-&&( (localStorage.playerid.indexOf("GJ73D - Mon")!=-1)
-||(localStorage.playerid.indexOf("EMNKT - Fri")!=-1)
-||(localStorage.playerid.indexOf("6WPOS - Mon")!=-1)
-||(localStorage.playerid.indexOf("OQ7C9 - Mon")!=-1)
-||(localStorage.playerid.indexOf("GLOPW - Fri")!=-1)
-||(localStorage.playerid.indexOf("774DI_")!=-1)
-)
-&&(localStorage.firstname)&&(!localStorage.specificMsgAlreadyDisplayedOnce) ){
-show_play_store_app("Hello "+localStorage.firstname+"<br><br>You're one of the 5 most experienced players of this site! Thanks very much for your interest in this game &#x1F609;<br><br>As the author of the site,&nbsp;I have recently created an android appli to play Super Master Mind on smartphones. If you have an android smartphone,&nbsp;maybe you could install it and give it a try? And give me feedback on it via the contact info page?<br><br>If you accept / have enough time for it,&nbsp;here is the link to the android appli in Google Play Store:");
-localStorage.specificMsgAlreadyDisplayedOnce="yes";
 }
-}
-catch (tmp_exc) {}
+catch (tmp_exc){}
 main_graph_update_needed=true;
 simpleCodeHandler=null;
 nbColumns=nbColumnsSelected;
@@ -2059,7 +2054,7 @@ scoresFontSizeStr="1.4vh";
 abbreviateScores=true;
 }
 else if(window.innerWidth > 1.7*window.innerHeight){
-rulesTableWidthStr="35%";// (~35% for 67% window ratio)
+rulesTableWidthStr="34%";// (~35% for 67% window ratio)
 scoresTableWidthStr="70%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=false;

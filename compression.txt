@@ -10,20 +10,20 @@ normal replace " || " by "||"
 normal replace " && " by "&&"
 normal replace "if (" by "if("
 normal replace "; " by ";"
-normal replace ", " by "," // PB: &nbsp; to be used in strings!
+  normal replace ", " by "," // PB: &nbsp; to be used in strings!
 normal replace " + " by "+"
 normal replace " {" by "{"
-normal replace " <" by "<" // PB: &nbsp; to be used in strings!
-normal replace "< " by "<" // PB
-normal replace " >" by ">" // PB
-normal replace "> " by ">" // PB: &nbsp; to be used in strings!
+  normal replace " <" by "<" // PB: &nbsp; to be used in strings!
+  normal replace "< " by "<" // PB
+  normal replace " >" by ">" // PB
+  normal replace "> " by ">" // PB: &nbsp; to be used in strings!
 
 regexp replace " //(.*)" by nothing => space allows to exclude HTTPS://!
 delete trailing spaces
 delete leading spaces
 regexp replace (\n)+ by \n
 
-extended replace "\n}" by "}" => PB if // comments are left!
+  extended replace "\n}" by "}" => PB if // comments are left!
 
 For GameSolver.js: manual deletion of comments:
 - let precalculation_mode=
