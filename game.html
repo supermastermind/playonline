@@ -452,7 +452,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_ML";
+      let html_compatibility_game_version = "Ver_ML2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1149,6 +1149,7 @@
         console.log(" accuracy: " + accuracy);
         let GEOCODING_API_URL = "https://www.mapquestapi.com/geocoding/v1/reverse?outFormat=json&location=" + latitude + "," + longitude + "&key=dCKxMASlEZayTGGw5SBfd2bGMSCUuP60";
         debug_game_state = 10;
+        localStorage.html_geoloc_status = "run_bis";
         $.getJSON(GEOCODING_API_URL)
         .done(function(location) {
           debug_game_state = 11;
@@ -1274,7 +1275,8 @@
                 HTML_geolocation_error, // error callback
                 {
                   maximumAge: 250, // (do not use cache for long)
-                  enableHighAccuracy: true
+                  enableHighAccuracy: true,
+                  timeout: 6000 // (see other timeout value below)
                 }
             );
             setTimeout(function() {
@@ -1283,8 +1285,11 @@
                 if (my_position != null) { // (at least one HTML geolocation success during the iterations)
                   HTML_geolocation_success(my_position); // (use last success's position)
                 }
+                else {
+                  localStorage.html_geoloc_status = "nok-nullpos";
+                }
               },
-              5000 // stop further HTML geolocation iterations after 5 seconds
+              6300 // stop further HTML geolocation iterations (see other timeout value above / And on laptops, this timeout value will "limit the useful time" the user has to answer yes/no to "ok to share position?")
             );
           }
           else {

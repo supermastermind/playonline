@@ -1676,14 +1676,14 @@ function resetGameAttributes(nbColumnsSelected) {
   try {
     if ( (!android_appli) && mobileMode && androidMode
          && localStorage.androidAppNotifShown && (Number(localStorage.androidAppNotifShown) >= 5)
-         && localStorage.gamesok && (Number(localStorage.gamesok) >= 55) ) {
+         && localStorage.gamesok && (Number(localStorage.gamesok) > 55) ) {
       window.location.replace(android_app_url); // redirect to android app page
     }
     else if ( (!android_appli) && mobileMode && androidMode
               && localStorage.gamesok && (Number(localStorage.gamesok) % 11 == 0) ) {
       show_play_store_app();
     }
-    else if ( (!android_appli) && (!mobileMode) && localStorage.gamesok && ((Number(localStorage.gamesok) == 42) || (Number(localStorage.gamesok) % 147 == 0)) ) {
+    else if ( (!android_appli) && (!mobileMode) && localStorage.gamesok && ((Number(localStorage.gamesok) == 42) || (Number(localStorage.gamesok) == 101) || (Number(localStorage.gamesok) % 147 == 0)) ) {
       show_play_store_app();
     }
   }
