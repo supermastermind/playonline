@@ -226,10 +226,16 @@
             if (versionCodeStr == null) {
               versionCodeStr = "?";
             }
-            var playerIdStr = new URL(decodeURI(location.href)).searchParams.get("player_id");
+            var playerIdStr = new URL(decodeURI(location.href)).searchParams.get("player_id"); // (kept for backward compatibility)
             if (playerIdStr != null) {
               if (!localStorage.playerid) {
                 localStorage.playerid = playerIdStr;
+              }
+            }
+            var playerIdStr2 = new URL(decodeURI(location.href)).searchParams.get("pi"); // (new version)
+            if (playerIdStr2 != null) {
+              if (!localStorage.playerid) {
+                localStorage.playerid = playerIdStr2;
               }
             }
           } catch (err_versioning) {}
@@ -452,7 +458,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MO";
+      let html_compatibility_game_version = "Ver_MP";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
