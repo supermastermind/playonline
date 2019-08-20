@@ -18,6 +18,10 @@
       <script>console.re.log('remote log enabled!');</script>
     -->
 
+    <script>
+      var pageLoadStartTime = new Date();
+    </script>
+    
     <style>
       /* *** Main styles *** */
       body {
@@ -458,7 +462,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MP";
+      let html_compatibility_game_version = "Ver_MQ";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -974,7 +978,7 @@
 
       // Temporary error handling (from this point in this file to simplify / will be overwritten later)
       function tmp_game_onerror(errorStr, errStack) {
-        submitForm("***** GAME ERROR ***** (" + html_compatibility_game_version + "): " + errorStr + " / " + errStack + " in " + userAgentStr, true);
+        submitForm("***** GAME ERROR ***** (" + html_compatibility_game_version + "): " + errorStr + " / " + errStack + " in " + userAgentStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")", true);
       }
       window.onerror = tmp_game_onerror;
       window.onmessageerror = tmp_game_onerror;
