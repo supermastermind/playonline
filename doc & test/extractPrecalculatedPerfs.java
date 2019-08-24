@@ -28,14 +28,16 @@ public class extractPrecalculatedPerfs {
       "5 of 5 Precalculated perfs in range 270..1500 and 2.7 seconds for 12345 first code.txt"
     };
 
-  private static int table_tmp[][] = new int[2][9];
+  private static int table_tmp[][] = new int[2][9]; // (9 is the highest number standing on one char)
   private static boolean are_there_5_identical_colors[] = new boolean[2];
   private static boolean are_there_4_identical_colors[] = new boolean[2];
   private static boolean is_there_triple[] = new boolean[2];
   private static int nb_doubles[] = new int[2];
   private static int one_double_color[] = new int[2];
   private static String output_str[] = new String[2];
-  private static String determine_smm_output_filename(String code_str_1, String mark_str_1, String code_str_2, String mark_str_2) throws Exception {
+  private static String determine_smm_jscriptname(String code_str_1, String mark_str_1, String code_str_2, String mark_str_2) throws Exception {
+
+  // ***** CODE DUPLICATED IN SuperMasterMind.js ******
 
   // Handle each couple (code, mark)
   // *******************************
@@ -54,14 +56,14 @@ public class extractPrecalculatedPerfs {
         mark_str = mark_str_2;
         break;
       default:
-        throw new Error("internal error in determine_smm_output_filename (code_idx)");
+        throw new Error("determine_smm_jscriptname: internal error (code_idx)");
     }
 
     if (code_str.length() != 5) {
-      throw new Error("invalid code_str: " + code_str);
+      throw new Error("determine_smm_jscriptname: invalid code_str: " + code_str);
     }
     if ((mark_str.length() != 4) || (mark_str.indexOf("B") == -1) || (mark_str.indexOf("W") == -1)) {
-      throw new Error("invalid mark_str: " + mark_str);
+      throw new Error("determine_smm_jscriptname: invalid mark_str: " + mark_str);
     }
 
     for (int color = 0; color < table_tmp[code_idx].length; color++) {
@@ -69,6 +71,9 @@ public class extractPrecalculatedPerfs {
     }
     for (int column = 0; column < 5; column++) {
       int color = code_str.charAt(column) - 48;
+      if ((color < 1) || (color >= 9)) {
+        throw new Error("determine_smm_jscriptname: internal error (out of range color: " + color + ")");
+      }
       table_tmp[code_idx][color]++;
     }
 
@@ -96,6 +101,7 @@ public class extractPrecalculatedPerfs {
       }
     }
 
+    output_str[code_idx] = "";
     if (are_there_5_identical_colors[code_idx]) {
       output_str[code_idx] = "5";
     }
@@ -110,7 +116,7 @@ public class extractPrecalculatedPerfs {
         output_str[code_idx] = "3+2";
       }
       else {
-        throw new Error("internal error: triple with several doubles");
+        throw new Error("determine_smm_jscriptname: internal error: triple with several doubles");
       }
     }
     else {
@@ -124,7 +130,7 @@ public class extractPrecalculatedPerfs {
         output_str[code_idx] = "2+2+1";
       }
       else {
-        throw new Error("internal error: invalid number of doubles");
+        throw new Error("determine_smm_jscriptname: internal error: invalid number of doubles");
       }
     }
     output_str[code_idx] = output_str[code_idx] + "_" + mark_str;
@@ -190,7 +196,7 @@ public class extractPrecalculatedPerfs {
             }
             cnt++;
 
-            String output_filename = "out/" + determine_smm_output_filename(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+            String output_filename = "out/" + determine_smm_jscriptname(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
             File output_file = new File(output_filename);
             boolean write_prefix = false;
             if(!output_file.exists()){
@@ -200,10 +206,10 @@ public class extractPrecalculatedPerfs {
             FileWriter fw = new FileWriter(output_file, true /* (append) */);
             BufferedWriter bw = new BufferedWriter(fw);
             if (write_prefix) {
-              bw.write("let extra_precalculated_str = " + line.replace(" +","") + "\n");
+              bw.write("extra_precalculated_str = " + line.replace(" +","") + "\n");
             }
             else {
-             bw.write("+" + line.replace(" +","") + "\n");
+              bw.write("+" + line.replace(" +","") + "\n");
             }
             bw.close();
           }
