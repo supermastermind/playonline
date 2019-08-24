@@ -462,7 +462,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MR";
+      let html_compatibility_game_version = "Ver_MS";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -922,7 +922,7 @@
 
         // console.log(my_form_url);
         // Submit form
-        console.log("(jQuery.ajax get/jsonp" + ((formStr == "") ? "" : " for a specific case") + ")");
+        console.log("(submit form" + ((formStr == "") ? "" : " for a specific case") + ")");
         jQuery.ajax({
           crossDomain: true,
           url: my_form_url,
@@ -933,7 +933,7 @@
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           try {
             if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
-              console.log(("script submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+              console.log(("form submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
 
               jQuery.ajax({
                 crossDomain: true,
@@ -945,20 +945,20 @@
               .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                 try {
                   if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
-                    console.log(("script submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                    console.log(("form submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                   } // else: systematic parse error (with 200 status) is ignored
                   if ((formStr == "") && (!skipErrorDisplay)) {
                     alert("Oops... a network error occurred!");
                   }
                 }
                 catch (exc) {
-                  console.log(("script submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                  console.log(("form submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                 }
               });
             } // else: systematic parse error (with 200 status) is ignored
           }
           catch (exc) {
-            console.log(("script submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+            console.log(("form submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           }
         });
 

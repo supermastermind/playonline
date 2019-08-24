@@ -28,5 +28,5 @@ regexp replace (\n)+ by \n
 For GameSolver.js: manual deletion of comments:
 - let precalculation_mode=
 - let nbCodesToGoThrough=
-- if((depth<=1)&&(!compute_sum_ini)){
+- if((depth <=1)&&(!compute_sum_ini)){
 - if( (next_cur_game_idx==1)

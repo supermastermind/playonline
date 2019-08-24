@@ -1866,7 +1866,7 @@ try {
       // **********************************************************************
       // If possible, compute bijection between:
       // 1) code and permuted other code (if assess_cur_game_only is false)
-      // 2) cur game and permuted game
+      // 2) current game and permuted game
       // **********************************************************************
 
       bijection_is_possible_for_this_permutation = true;
@@ -1911,7 +1911,7 @@ try {
 
       }
 
-      // 2) Bijection between cur game and permuted game
+      // 2) Bijection between current game and permuted game
       // ***************************************************
 
       if (bijection_is_possible_for_this_permutation) {
@@ -1919,7 +1919,7 @@ try {
         for (cur_game_depth = cur_game_size-1; cur_game_depth >= 0; cur_game_depth--) { // (impacts on permutations are more likely for the last played codes)
           cur_game_code_colors_set = cur_game_code_colors[cur_game_depth]; // [nbMaxColumns] array
           if (otherGame == null) {
-            other_game_code_colors_set = cur_game_code_colors_set; // cur game is used twice - [nbMaxColumns] array
+            other_game_code_colors_set = cur_game_code_colors_set; // currrent game is used twice - [nbMaxColumns] array
           }
           else { // (otherGame != null)
             other_game_code_colors_set = other_game_code_colors[cur_game_depth]; // another game is used - [nbMaxColumns] array
@@ -1956,7 +1956,7 @@ try {
             // }
             partial_bijection[source_color] = new_target_color;
           }
-        } // end loop on cur game
+        } // end loop on currrent game
 
       }
 
@@ -2016,16 +2016,16 @@ try {
 
     if (depth == -1) { // first call
 
-      // Check cur game (useful for subsequent equivalent codes processing - duplicated code)
+      // Check current game (useful for subsequent equivalent codes processing - duplicated code)
       if (curGameSize != curAttemptNumber-1) {
         throw new Error("evaluatePerformances: invalid curGameSize");
       }
       for (idx = 0; idx < curGameSize; idx++) {
         if ( (curGame[idx] != codesPlayed[idx]) || (!codeHandler.isFullAndValid(curGame[idx])) ) {
-          throw new Error("evaluatePerformances: invalid cur game (" + idx + ")");
+          throw new Error("evaluatePerformances: invalid current game (" + idx + ")");
         }
         if ( (!codeHandler.marksEqual(marksTable_NbToMark[marksIdxs[idx]], marks[idx])) || (!codeHandler.isMarkValid(marksTable_NbToMark[marksIdxs[idx]])) )  {
-          throw new Error("evaluatePerformances: invalid cur marks (" + idx + ")");
+          throw new Error("evaluatePerformances: invalid currrent marks (" + idx + ")");
         }
       }
 
@@ -2217,7 +2217,7 @@ try {
 
       /* if ((depth <= 1) && (!compute_sum_ini)) { // Specific trace
         console.log(spaces(depth) + "(depth " + depth + ") " + "CURRENT_CODE:" + codeHandler.codeToString(cur_code));
-        console.log(spaces(depth) + "cur game: " + str_from_list_of_codes(curGame, next_cur_game_idx));
+        console.log(spaces(depth) + "current game: " + str_from_list_of_codes(curGame, next_cur_game_idx));
         console.log(spaces(depth) + "perms: " + cur_permutations_table_size[next_cur_game_idx] + ": "
                     + print_permutation_list(cur_permutations_table[next_cur_game_idx], cur_permutations_table_size[next_cur_game_idx]));
       } */
@@ -2533,7 +2533,7 @@ try {
             }
             else { // (nextNbCodes >= 5). Note: from 5 codes, "leaf algos" would be very long to write & to optimize
 
-              // 1) Update cur game
+              // 1) Update current game
               // **********************
 
               curGame[next_cur_game_idx] = cur_code;
@@ -2545,7 +2545,7 @@ try {
               if (nextNbCodes > nbCodesLimitForEquivalentCodesCheck) { // this computing would be useless otherwise
                 let new_perm_cnt = 0;
                 for (let perm_idx = 0; perm_idx < cur_permutations_table_size[next_cur_game_idx]; perm_idx++) {
-                  if (areCodesEquivalent(0, 0, next_cur_game_idx+1, true /* assess cur game only */, cur_permutations_table[next_cur_game_idx][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for cur game
+                  if (areCodesEquivalent(0, 0, next_cur_game_idx+1, true /* assess current game only */, cur_permutations_table[next_cur_game_idx][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for current game
                     if ((cur_permutations_table[next_cur_game_idx][perm_idx] < 0) || (cur_permutations_table[next_cur_game_idx][perm_idx] >= all_permutations_table_size[nbColumns])) {
                       throw new Error("recursiveEvaluatePerformances: invalid permutation index: " + perm_idx);
                     }
@@ -2811,7 +2811,7 @@ try {
             }
             else {
 
-              // 1) Update cur game
+              // 1) Update current game
               // **********************
 
               curGame[next_cur_game_idx] = cur_code;
@@ -2823,7 +2823,7 @@ try {
               if (nextNbCodes > nbCodesLimitForEquivalentCodesCheck) { // this computing would be useless otherwise
                 let new_perm_cnt = 0;
                 for (let perm_idx = 0; perm_idx < cur_permutations_table_size[next_cur_game_idx]; perm_idx++) {
-                  if (areCodesEquivalent(0, 0, next_cur_game_idx+1, true /* assess cur game only */, cur_permutations_table[next_cur_game_idx][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for cur game
+                  if (areCodesEquivalent(0, 0, next_cur_game_idx+1, true /* assess current game only */, cur_permutations_table[next_cur_game_idx][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for current game
                     if ((cur_permutations_table[next_cur_game_idx][perm_idx] < 0) || (cur_permutations_table[next_cur_game_idx][perm_idx] >= all_permutations_table_size[nbColumns])) {
                       throw new Error("recursiveEvaluatePerformances: invalid permutation index: " + perm_idx);
                     }
@@ -2869,17 +2869,11 @@ try {
 
   function handleMessage(data) {
 
-    if (data.smm_req_type == undefined) { // (unexpected message - was observed in practice)
-      // throw new Error("smm_req_type is undefined: " + JSON.stringify(data));
-    }
-    else if (data.smm_req_type == 'NO_ACTION') { // (incoming message buffering change)
-    }
-
     // **************
     // Initialization
     // **************
 
-    else if (data.smm_req_type == 'INIT') {
+    if (data.smm_req_type == 'INIT') {
 
       // *******************
       // Read message fields
@@ -3201,8 +3195,11 @@ try {
         throw new Error("NEW_ATTEMPT phase / precalculated_games is undefined");
       }
       if (data.precalculated_games != "") {
-        if ( (nbColumns != 5) || (curAttemptNumber != 1) ) { // precalculated_games is only expected at the first attempt of 5 columns games
+        if (nbColumns != 5) { // precalculated_games is only expected for 5 columns games
           throw new Error("NEW_ATTEMPT phase / unexpected precalculated_games: " + nbColumns + ", " + curAttemptNumber);
+        }
+        if (precalculated_games_5columns.length + data.precalculated_games.length > 20000000) { // 20 MB
+          throw new Error("NEW_ATTEMPT phase / too big precalculated_games: " + precalculated_games_5columns.length);
         }
         precalculated_games_5columns = precalculated_games_5columns + data.precalculated_games;
       }
@@ -3219,7 +3216,7 @@ try {
       // Initializations
       // ***************
 
-      // 1) Update cur game
+      // 1) Update current game
       // **********************
 
       if (!initialInitDone) {
@@ -3233,9 +3230,9 @@ try {
 
       if (curAttemptNumber >= 2) {
         // Notes on "future-based" criteria:
-        // - to simplify, useless codes (likely to be played near game end) are not excluded from cur game.
+        // - to simplify, useless codes (likely to be played near game end) are not excluded from current game.
         // - to simplify, codes with a 0 black + 0 white mark (likely to be played at game beginning, whose performances are targeted
-        //   to be precalculated) are not excluded from cur game. More generally, the fact that impossible colors are interchangeable
+        //   to be precalculated) are not excluded from current game. More generally, the fact that impossible colors are interchangeable
         //   is not exploited (as mostly covered by 0 black + 0 white mark cases at game beginning / as difficult to take into account
         //   recursively at small cost / as bijections would have to be calculated in some specific way(s) for those cases).
         // - handling a "dynamic dictionary of games" containing sets of (k to k+n, k >= 5) possible remaining codes and their associated
@@ -3245,16 +3242,16 @@ try {
       }
       curGameSize = curAttemptNumber-1; // (equal to 0 at first attempt)
 
-      // Check cur game (useful for subsequent equivalent codes processing - duplicated code)
+      // Check current game (useful for subsequent equivalent codes processing - duplicated code)
       if (curGameSize != curAttemptNumber-1) {
         throw new Error("NEW_ATTEMPT phase / invalid curGameSize");
       }
       for (let idx = 0; idx < curGameSize; idx++) {
         if ( (curGame[idx] != codesPlayed[idx]) || (!codeHandler.isFullAndValid(curGame[idx])) ) {
-          throw new Error("NEW_ATTEMPT phase / invalid cur game (" + idx + ")");
+          throw new Error("NEW_ATTEMPT phase / invalid current game (" + idx + ")");
         }
         if ( (!codeHandler.marksEqual(marksTable_NbToMark[marksIdxs[idx]], marks[idx])) || (!codeHandler.isMarkValid(marksTable_NbToMark[marksIdxs[idx]])) )  {
-          throw new Error("NEW_ATTEMPT phase /  invalid cur marks (" + idx + ")");
+          throw new Error("NEW_ATTEMPT phase /  invalid current marks (" + idx + ")");
         }
       }
 
@@ -3270,7 +3267,7 @@ try {
         }
         let new_perm_cnt = 0;
         for (let perm_idx = 0; perm_idx < cur_permutations_table_size[curGameSize-1]; perm_idx++) {
-          if (areCodesEquivalent(0, 0, curGameSize, true /* assess cur game only */, cur_permutations_table[curGameSize-1][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for cur game
+          if (areCodesEquivalent(0, 0, curGameSize, true /* assess current game only */, cur_permutations_table[curGameSize-1][perm_idx], null) /* forced permutation */) { // determine which permutations are still valid for current game
             if ((cur_permutations_table[curGameSize-1][perm_idx] < 0) || (cur_permutations_table[curGameSize-1][perm_idx] >= all_permutations_table_size[nbColumns])) {
               throw new Error("NEW_ATTEMPT phase / invalid permutation index: " + perm_idx);
             }
@@ -3345,7 +3342,7 @@ try {
 
       else {
 
-        // Check if cur game and code (whether possible or impossible) were precalculated
+        // Check if current game and code (whether possible or impossible) were precalculated
         // ******************************************************************************
 
         let precalculated_cur_game_or_code = -1; // nothing was precalculated
@@ -3379,7 +3376,7 @@ try {
               performanceListsInitDoneForPrecalculatedGames = true;
               arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation_ForMemAlloc)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
               listOfGlobalPerformances = new Array(arraySizeAtInit);
-              maxDepthApplied = 1; // "one-recursive-depth computing of performances" for cur game and code (whether possible or impossible) => memory optimization
+              maxDepthApplied = 1; // "one-recursive-depth computing of performances" for current game and code (whether possible or impossible) => memory optimization
               listsOfPossibleCodes = undefined;
               listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
               nbOfPossibleCodes = undefined;
@@ -3844,6 +3841,20 @@ try {
 
     }
 
+    // *******************
+    // "No action" message
+    // *******************
+
+    else if (init_done && (data.smm_req_type == 'NO_ACTION')) {
+      if (data.game_id == undefined) {
+        throw new Error("NO_ACTION message / game_id is undefined");
+      }
+      let no_action_game_id = Number(data.game_id);
+      if ( isNaN(no_action_game_id) || (no_action_game_id < 0) || (no_action_game_id != game_id) ) {
+        throw new Error("NO_ACTION message / invalid game_id: " + no_action_game_id + " (" + game_id + ")");
+      }
+    }
+
     // **********
     // Error case
     // **********
@@ -3875,7 +3886,7 @@ try {
         throw new Error("inconsistent buffer_incoming_messages and nb_incoming_messages_buffered values: " + buffer_incoming_messages + ", " + nb_incoming_messages_buffered);
       }
 
-      if (data.smm_buffer_messages != undefined) { // (unexpected message - was observed in practice)
+      if ((data.smm_buffer_messages != undefined) && (data.smm_req_type != undefined)) { // (unexpected message - was observed in practice)
         let stop_message_buffering = false;
         if (data.smm_buffer_messages == 'yes') {
           buffer_incoming_messages = true;
