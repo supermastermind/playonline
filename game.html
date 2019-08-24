@@ -634,7 +634,7 @@
 
       let loaded_sizes = new Array(3);
       loaded_sizes[0] = 108000; // game.html ~ 108KB - NOTE: 108 / (108 + 108 + 324) = 20% = round progress
-      loaded_sizes[1] = 108000; // GameSolver.js ~ 108KB (state: 1) - NOTE: 108 + 108 / (108 + 108 + 324) = 40% = round progress
+      loaded_sizes[1] = 108000; // GameSolver.js ~ 108KB (state: 1) - NOTE: (108 + 108) / (108 + 108 + 324) = 40% = round progress
       loaded_sizes[2] = 324000; // SuperMasterMind.js ~ 324KB  (state: 2)
       function getGlobalProgress(progress, state) {
         if ((progress < 0) || (progress > 1)) { // error case
