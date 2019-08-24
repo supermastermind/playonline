@@ -44,7 +44,7 @@
         if (typeof(Storage) !== 'undefined') {
           if (!localStorage.firsthomepageaccessdone) {
             localStorage.firsthomepageaccessdone = "first home page access done";
-            firstHomePageAccess = true;
+            firstHomePageAccess = false; // (mechanism disabled)
           }
           if (!localStorage.firstaccessid) {
             let firstaccessid = 'HP - ' + makeid() + ' - ' + new Date();
