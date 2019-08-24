@@ -28,7 +28,7 @@ public class extractPrecalculatedPerfs {
       "5 of 5 Precalculated perfs in range 270..1500 and 2.7 seconds for 12345 first code.txt"
     };
 
-  private static int table_tmp[][] = new int[2][9]; // (9 is the highest number standing on one char)
+  private static int table_tmp[][] = new int[2][9]; // (9 as the highest number standing on one char)
   private static boolean are_there_5_identical_colors[] = new boolean[2];
   private static boolean are_there_4_identical_colors[] = new boolean[2];
   private static boolean is_there_triple[] = new boolean[2];
