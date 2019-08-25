@@ -1,3 +1,4 @@
+
 // ***************************************************
 // ********** Main Super Master Mind script **********
 // ***************************************************
@@ -396,7 +397,6 @@ alert(gameErrorStr);
 function displayGUIError__windowonerror(GUIErrorStr, errStack){
 let skip_useless_errors=false;
 try{
-// but not preventing (at least always?) game play (+ scores stored):
 if( ((""+GUIErrorStr).indexOf("TypeError: null is not an object (evaluating 'reader.content')")!=-1)
 &&((""+errStack).indexOf("game.html")!=-1) ){
 skip_useless_errors=true;
@@ -1896,28 +1896,32 @@ suffix=suffix+"_"+nb_double_intersections+"Z";
 }
 return output_str[0]+"_"+output_str[1]+suffix+".js";
 }
-function check_extra_precalculated_str(){
+function get_and_check_extra_precalculated_str(){
+let res="";
 if( (extra_precalculated_str==undefined)
 ||(extra_precalculated_str==null)
 ||(extra_precalculated_str=="") ){
-console.log("(extra_precalculated_str is empty)");
-extra_precalculated_str="";
+console.log("(empty extra_precalculated_str)");
+res="";
 }
 else{
 if(!extra_precalculated_str.endsWith(".")){
 console.log("(invalid extra_precalculated_str)");
-extra_precalculated_str="";
+res="";
 }
 else{
 console.log("(valid extra_precalculated_str)");
+res=extra_precalculated_str;
 }
 }
+extra_precalculated_str="";// (do not send it twice)
+return res;
 }
 function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, mark_str_2){
 let ontheflytimeout=10000;
 if(gamesolver_buffered_msg_status==0){
 gamesolver_buffered_msg_status=1;
-gamesolver_buffered_msg_action_str="try{ if((gamesolver_buffered_msg_status==1)&&(gameSolver!==undefined)&&(game_cnt=="+game_cnt+")){gameSolver.postMessage({'smm_buffer_messages': 'no', 'smm_req_type': 'NO_ACTION', 'game_id': "+game_cnt+"});}} catch(err){} if(game_cnt=="+game_cnt+"){gamesolver_buffered_msg_status=2;}";
+gamesolver_buffered_msg_action_str="if((game_cnt=="+game_cnt+")&&(gamesolver_buffered_msg_status!=2)){try{ let precalculated_games=get_and_check_extra_precalculated_str();if(gameSolver!==undefined){gameSolver.postMessage({'smm_buffer_messages': 'no', 'smm_req_type': 'DEBUFFER', 'precalculated_games': precalculated_games, 'game_id': "+game_cnt+"});}} catch(err){} gamesolver_buffered_msg_status=2;}";
 setTimeout(gamesolver_buffered_msg_action_str, Math.floor(ontheflytimeout*1.1));
 }
 let precalculated_games_jsscriptname=determine_smm_jscriptname(code_str_1, mark_str_1, code_str_2, mark_str_2);
@@ -2338,11 +2342,6 @@ let precalculated_games="";
 if(nbColumns==5){
 if(currentAttemptNumber==2){
 precalculated_games=precalculated_games_5columns_1st_level[marks[currentAttemptNumber-2].nbBlacks][marks[currentAttemptNumber-2].nbWhites];
-}
-else if(extra_precalculated_str!=""){
-check_extra_precalculated_str();
-precalculated_games=extra_precalculated_str;
-extra_precalculated_str="";// (do not send it twice)
 }
 if(precalculated_games==undefined){
 precalculated_games="";

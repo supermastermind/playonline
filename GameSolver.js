@@ -2581,7 +2581,8 @@ console.log("(perfeval#1: best performance: "+best_global_performance
 +((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");
 }
 else{
-console.log("(perfeval#1 failed in "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")+")");
+console.log("(perfeval#1 failed in "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")
++((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");
 }
 }
 else{
@@ -2598,7 +2599,8 @@ console.log("(perfeval#2: best performance: "+best_global_performance
 +((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");
 }
 else{
-console.log("(perfeval#2 failed in "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")+")");
+console.log("(perfeval#2 failed in "+((new Date()).getTime() - startTime)+"ms / "+previousNbOfPossibleCodes+((previousNbOfPossibleCodes > 1) ? " codes" : " code")+" / "+curNbClasses+((curNbClasses > 1) ? " classes" : " class")
++((precalculated_cur_game_or_code >=0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "")+")");
 }
 }
 if(best_global_performance!=PerformanceUNKNOWN){
@@ -2894,14 +2896,7 @@ if( (possibleCodesForPerfEvaluation[0].length!=nbOfCodesForSystematicEvaluation_
 throw new Error("inconsistent possibleCodesForPerfEvaluation length: "+possibleCodesForPerfEvaluation[0].length+", "+possibleCodesForPerfEvaluation[1].length+", "+nbOfCodesForSystematicEvaluation_ForMemAlloc);
 }
 }
-else if(init_done&&(data.smm_req_type=='NO_ACTION')){
-if(data.game_id==undefined){
-throw new Error("NO_ACTION message / game_id is undefined");
-}
-let no_action_game_id=Number(data.game_id);
-if( isNaN(no_action_game_id)||(no_action_game_id < 0)||(no_action_game_id!=game_id) ){
-throw new Error("NO_ACTION message / invalid game_id: "+no_action_game_id+" ("+game_id+")");
-}
+else if(init_done&&(data.smm_req_type=='DEBUFFER')){
 }
 else{
 throw new Error("unexpected smm_req_type value: "+data.smm_req_type);
@@ -2925,6 +2920,33 @@ if( (buffer_incoming_messages&&(nb_incoming_messages_buffered <=0))
 throw new Error("inconsistent buffer_incoming_messages and nb_incoming_messages_buffered values: "+buffer_incoming_messages+", "+nb_incoming_messages_buffered);
 }
 if((data.smm_buffer_messages!=undefined)&&(data.smm_req_type!=undefined)){
+if(data.smm_req_type=='DEBUFFER'){
+if(!init_done){
+throw new Error("DEBUFFER message / init_done");
+}
+if(data.game_id==undefined){
+throw new Error("DEBUFFER message / game_id is undefined");
+}
+let debuffer_game_id=Number(data.game_id);
+if( isNaN(debuffer_game_id)||(debuffer_game_id < 0)||(debuffer_game_id!=game_id) ){
+throw new Error("DEBUFFER message / invalid game_id: "+debuffer_game_id+" ("+game_id+")");
+}
+if(data.smm_buffer_messages!='no'){
+throw new Error("DEBUFFER message / invalid smm_buffer_messages");
+}
+if(data.precalculated_games==undefined){
+throw new Error("DEBUFFER phase / precalculated_games is undefined");
+}
+if(data.precalculated_games!=""){
+if(nbColumns!=5){
+throw new Error("DEBUFFER phase / unexpected precalculated_games: "+nbColumns+", "+curAttemptNumber);
+}
+if(precalculated_games_5columns.length+data.precalculated_games.length > 20000000){
+throw new Error("DEBUFFER phase / too big precalculated_games: "+precalculated_games_5columns.length);
+}
+precalculated_games_5columns=precalculated_games_5columns+data.precalculated_games;
+}
+}
 let stop_message_buffering=false;
 if(data.smm_buffer_messages=='yes'){
 buffer_incoming_messages=true;

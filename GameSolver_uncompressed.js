@@ -1,4 +1,3 @@
-
 "use strict";
 
 try {
@@ -3191,10 +3190,10 @@ try {
         throw new Error("NEW_ATTEMPT phase / invalid mark: " + mark_nbBlacks + "B, " + mark_nbWhites + "W, " + nbColumns);
       }
 
-      if (data.precalculated_games == undefined) {
+      if (data.precalculated_games == undefined) { // (duplicated code)
         throw new Error("NEW_ATTEMPT phase / precalculated_games is undefined");
       }
-      if (data.precalculated_games != "") {
+      if (data.precalculated_games != "") { // (duplicated code - begin)
         if (nbColumns != 5) { // precalculated_games is only expected for 5 columns games
           throw new Error("NEW_ATTEMPT phase / unexpected precalculated_games: " + nbColumns + ", " + curAttemptNumber);
         }
@@ -3202,7 +3201,7 @@ try {
           throw new Error("NEW_ATTEMPT phase / too big precalculated_games: " + precalculated_games_5columns.length);
         }
         precalculated_games_5columns = precalculated_games_5columns + data.precalculated_games;
-      }
+      } // (duplicated code - end)
 
       if (data.game_id == undefined) {
         throw new Error("NEW_ATTEMPT phase / game_id is undefined");
@@ -3465,7 +3464,8 @@ try {
                           + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
             }
             else {
-              console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class") + ")");
+              console.log("(perfeval#1 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class")
+                          + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
             }
           }
           else { // code played is not possible
@@ -3483,7 +3483,8 @@ try {
                           + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
             }
             else {
-              console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class") + ")");
+              console.log("(perfeval#2 failed in " + ((new Date()).getTime() - startTime) + "ms / " + previousNbOfPossibleCodes + ((previousNbOfPossibleCodes > 1) ? " codes" : " code") + " / " + curNbClasses + ((curNbClasses > 1) ? " classes" : " class")
+                          + ((precalculated_cur_game_or_code >= 0) ? ((precalculated_cur_game_or_code > 0) ? " / precalculated" : " / ~precalculated") : "") + ")");
             }
           }
 
@@ -3841,18 +3842,12 @@ try {
 
     }
 
-    // *******************
-    // "No action" message
-    // *******************
+    // ****************
+    // "Debuffer" event
+    // ****************
 
-    else if (init_done && (data.smm_req_type == 'NO_ACTION')) {
-      if (data.game_id == undefined) {
-        throw new Error("NO_ACTION message / game_id is undefined");
-      }
-      let no_action_game_id = Number(data.game_id);
-      if ( isNaN(no_action_game_id) || (no_action_game_id < 0) || (no_action_game_id != game_id) ) {
-        throw new Error("NO_ACTION message / invalid game_id: " + no_action_game_id + " (" + game_id + ")");
-      }
+    else if (init_done && (data.smm_req_type == 'DEBUFFER')) {
+      // Debuffering already handled at message reception
     }
 
     // **********
@@ -3887,6 +3882,44 @@ try {
       }
 
       if ((data.smm_buffer_messages != undefined) && (data.smm_req_type != undefined)) { // (unexpected message - was observed in practice)
+
+        // ********************************************
+        // Immediate specific "debuffer" event handling
+        // ********************************************
+
+        if (data.smm_req_type == 'DEBUFFER') {
+          if (!init_done) {
+            throw new Error("DEBUFFER message / init_done");
+          }
+          if (data.game_id == undefined) {
+            throw new Error("DEBUFFER message / game_id is undefined");
+          }
+          let debuffer_game_id = Number(data.game_id);
+          if ( isNaN(debuffer_game_id) || (debuffer_game_id < 0) || (debuffer_game_id != game_id) ) {
+            throw new Error("DEBUFFER message / invalid game_id: " + debuffer_game_id + " (" + game_id + ")");
+          }
+
+          if (data.smm_buffer_messages != 'no') {
+            throw new Error("DEBUFFER message / invalid smm_buffer_messages");
+          }
+          if (data.precalculated_games == undefined) { // (duplicated code)
+            throw new Error("DEBUFFER phase / precalculated_games is undefined");
+          }
+          if (data.precalculated_games != "") { // (duplicated code - begin)
+            if (nbColumns != 5) { // precalculated_games is only expected for 5 columns games
+              throw new Error("DEBUFFER phase / unexpected precalculated_games: " + nbColumns + ", " + curAttemptNumber);
+            }
+            if (precalculated_games_5columns.length + data.precalculated_games.length > 20000000) { // 20 MB
+              throw new Error("DEBUFFER phase / too big precalculated_games: " + precalculated_games_5columns.length);
+            }
+            precalculated_games_5columns = precalculated_games_5columns + data.precalculated_games;
+          } // (duplicated code - end)
+        }
+
+        // **********************
+        // Global buffer handling
+        // **********************
+
         let stop_message_buffering = false;
         if (data.smm_buffer_messages == 'yes') {
           buffer_incoming_messages = true;

@@ -2244,22 +2244,26 @@ function determine_smm_jscriptname(code_str_1, mark_str_1, code_str_2, mark_str_
 
 }
 
-function check_extra_precalculated_str() {
+function get_and_check_extra_precalculated_str() {
+  let res = "";
   if ( (extra_precalculated_str == undefined)
        || (extra_precalculated_str == null)
        || (extra_precalculated_str == "") ) {
-    console.log("(extra_precalculated_str is empty)");
-    extra_precalculated_str = "";
+    console.log("(empty extra_precalculated_str)");
+    res = "";
   }
   else {
     if (!extra_precalculated_str.endsWith(".")) { // invalid extra_precalculated_str string
       console.log("(invalid extra_precalculated_str)");
-      extra_precalculated_str = "";
+      res = "";
     }
     else {
       console.log("(valid extra_precalculated_str)");
+      res = extra_precalculated_str;
     }
   }
+  extra_precalculated_str = ""; // (do not send it twice)
+  return res;
 }
 
 function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, mark_str_2) {
@@ -2268,7 +2272,7 @@ function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, 
   if (gamesolver_buffered_msg_status == 0) {
     gamesolver_buffered_msg_status = 1;
     // Defensive behaviour (should never be entered): always trigger debuffering after a certain time to avoid any game blockage
-    gamesolver_buffered_msg_action_str = "try{ if ((gamesolver_buffered_msg_status == 1) && (gameSolver !== undefined) && (game_cnt == " + game_cnt + ")) {gameSolver.postMessage({'smm_buffer_messages': 'no', 'smm_req_type': 'NO_ACTION', 'game_id': " + game_cnt + "});}} catch(err){} if (game_cnt == " + game_cnt + ") {gamesolver_buffered_msg_status = 2;}";
+    gamesolver_buffered_msg_action_str = "if ((game_cnt == " + game_cnt + ") && (gamesolver_buffered_msg_status != 2)) {try{ let precalculated_games = get_and_check_extra_precalculated_str(); if (gameSolver !== undefined) {gameSolver.postMessage({'smm_buffer_messages': 'no', 'smm_req_type': 'DEBUFFER', 'precalculated_games': precalculated_games, 'game_id': " + game_cnt + "});}} catch(err){} gamesolver_buffered_msg_status = 2;}";
     setTimeout(gamesolver_buffered_msg_action_str, Math.floor(ontheflytimeout*1.1));
   }
 
@@ -2757,11 +2761,6 @@ function draw_graphic_bis() {
               if (nbColumns == 5) {
                 if (currentAttemptNumber == 2) { // first NEW_ATTEMPT message posted
                   precalculated_games = precalculated_games_5columns_1st_level[marks[currentAttemptNumber-2].nbBlacks][marks[currentAttemptNumber-2].nbWhites];
-                }
-                else if (extra_precalculated_str != "") { // subsequent NEW_ATTEMPT messages posted
-                  check_extra_precalculated_str();
-                  precalculated_games = extra_precalculated_str;
-                  extra_precalculated_str = ""; // (do not send it twice)
                 }
                 if (precalculated_games == undefined) {
                   precalculated_games = "";
