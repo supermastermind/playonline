@@ -1242,8 +1242,8 @@ nbColumnsRadioObject[previousNbColumns-nbMinColumns].checked="checked";
 return previousNbColumns;
 }
 }
-function show_play_store_app(specific_str=""){
-if((!android_appli)&&(game_cnt!=last_dialog_game_cnt+1)){
+function show_play_store_app(specific_str = "", android_stars_mode = false) {
+if ( ((!android_appli) || android_stars_mode) && (game_cnt != last_dialog_game_cnt + 1) ) {
 let str1="";
 let str2="";
 if(mobileMode){
@@ -1427,6 +1427,9 @@ show_play_store_app();
 }
 else if( (!android_appli)&&(!mobileMode)&&localStorage.gamesok&&((Number(localStorage.gamesok)==42)||(Number(localStorage.gamesok)==101)||(Number(localStorage.gamesok) % 147==0)) ){
 show_play_store_app();
+}
+else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 56) || (Number(localStorage.gamesok) == 101) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 202)) ) {
+show_play_store_app("If you like this app, put some stars <big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google Play Store! Thanks in advance!", true);
 }
 }
 catch (tmp_exc){}
