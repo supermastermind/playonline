@@ -1428,7 +1428,7 @@ show_play_store_app();
 else if( (!android_appli)&&(!mobileMode)&&localStorage.gamesok&&((Number(localStorage.gamesok)==42)||(Number(localStorage.gamesok)==101)||(Number(localStorage.gamesok) % 147==0)) ){
 show_play_store_app();
 }
-else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 56) || (Number(localStorage.gamesok) == 101) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 202)) ) {
+else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 61) || (Number(localStorage.gamesok) == 101) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 202)) ) {
 show_play_store_app("If you like this app, put some stars <big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google Play Store! Thanks in advance!", true);
 }
 }
