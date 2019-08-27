@@ -1429,7 +1429,7 @@ else if( (!android_appli)&&(!mobileMode)&&localStorage.gamesok&&((Number(localSt
 show_play_store_app();
 }
 else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 71) || (Number(localStorage.gamesok) == 101) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 202) || (Number(localStorage.gamesok) == 303) || (Number(localStorage.gamesok) == 404)) ) {
-show_play_store_app("If you like this app, put some stars <big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google&nbsp;Play Store! Thanks in advance!", true);
+show_play_store_app("Hello " + localStorage.firstname + "!<br>If you like this app, put some stars <big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google&nbsp;Play&nbsp;Store. It&nbsp;will help to make this app better known... Thanks&nbsp;in&nbsp;advance!", true);
 }
 }
 catch (tmp_exc){}
