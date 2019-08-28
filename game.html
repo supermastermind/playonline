@@ -462,7 +462,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MX";
+      let html_compatibility_game_version = "Ver_MX2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1131,11 +1131,12 @@
       var html_geoloc_next_gamesok = -100;
 
       function reformatLocationValue(x) {
-        if ((typeof x == 'undefined') || (x == undefined) || (x == null)) {
+        let res = String(x).trim();
+        if ((typeof x == 'undefined') || (x == undefined) || (x == null) || (res == "")) {
           return '-';
         }
         else {
-          return String(x).trim();
+          return res;
         }
       }
 
