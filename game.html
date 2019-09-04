@@ -462,7 +462,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MZ6";
+      let html_compatibility_game_version = "Ver_MZ7";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1282,7 +1282,7 @@
           if (navigator.geolocation) {
             // Subject to user acceptance
             // Version 1:
-            navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error, {enableHighAccuracy: true});
+            navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error, {enableHighAccuracy: false});
             // Version 2 (support of location updates & more precise than getCurrentPosition() because several iterations are made):
             /* let my_geolocation = navigator.geolocation.watchPosition(
                 function (position) { // success callback (called N times)
