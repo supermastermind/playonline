@@ -1282,7 +1282,7 @@
           if (navigator.geolocation) {
             // Subject to user acceptance
             // Version 1:
-            navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error);
+            navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error, {enableHighAccuracy: true});
             // Version 2 (support of location updates & more precise than getCurrentPosition() because several iterations are made):
             /* let my_geolocation = navigator.geolocation.watchPosition(
                 function (position) { // success callback (called N times)
