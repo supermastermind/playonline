@@ -68,9 +68,9 @@ function write_sidebar() {
       Version 3.0<br>\
       optimal strategy assessed for a great proportion of Super Master Mind games (5 columns, 8 colors)<br><br>\
       Version 2.0<br>\
-      optimal strategy assessed for all Master Mind games (4 columns, 6 colors)<br><br>\
+      optimal strategy assessed for all possible Master Mind games (4 columns, 6 colors)<br><br>\
       Version 1.5<br>\
-      optimal strategy assessed at end of games only<br><br>\
+      optimal strategy assessed at end of games<br><br>\
       Version 1.2<br>\
       possible codes at each attempt can be displayed<br><br>\
       Version 1.0<br>\
