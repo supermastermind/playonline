@@ -462,7 +462,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NB2";
+      let html_compatibility_game_version = "Ver_NA";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1288,28 +1288,22 @@
                 function (position) { // success callback (called N times)
                   my_position = {coords: {latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy}};
                   console.log('HTML geolocation iteration (latitude: ' + position.coords.latitude + ', ' + 'longitude: ' + position.coords.longitude + ', ' + 'accuracy: ' + position.coords.accuracy + ")");
-                  
-                  navigator.geolocation.clearWatch(my_geolocation); // stop further HTML geolocation iterations (i.e. further calls to watchPosition())
-                  console.log("stop HTML geolocation iterations (#1)");
-                  HTML_geolocation_success(my_position);
-                                    
                 },
                 HTML_geolocation_error, // error callback
                 {
-                  // See https://www.bountysource.com/issues/34100349-geolocation-enablehighaccuracy-on-android-always-times-out
-                  maximumAge: 7200000, // (cached position time: 2 hours)
-                  enableHighAccuracy: true, // (if true, use GPS, if false, fetch location from Network Provider)
-                  timeout: 30000 // (see other timeout value below)
+                  maximumAge: 250, // (do not use cache for long)
+                  enableHighAccuracy: true,
+                  timeout: 7000 // (see other timeout value below)
                 }
             );
             setTimeout(function() {
                 navigator.geolocation.clearWatch(my_geolocation); // stop further HTML geolocation iterations (i.e. further calls to watchPosition())
-                console.log("stop HTML geolocation iterations (#2)");
-                /* if (my_position != null) { // (at least one HTML geolocation success during the iterations)
+                console.log("stop HTML geolocation iterations");
+                if (my_position != null) { // (at least one HTML geolocation success during the iterations)
                   HTML_geolocation_success(my_position); // (use last success's position)
-                } */
+                }
               },
-              31000 // stop further HTML geolocation iterations (see other timeout value above / And on laptops, this timeout value will "limit the time" the user has to answer yes/no to "ok to share position?")
+              7300 // stop further HTML geolocation iterations (see other timeout value above / And on laptops, this timeout value will "limit the time" the user has to answer yes/no to "ok to share position?")
             );
           }
           else {
