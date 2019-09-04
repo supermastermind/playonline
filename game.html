@@ -1293,7 +1293,7 @@
                 {
                   maximumAge: 500, // (do not use cache for long)
                   enableHighAccuracy: false,
-                  timeout: 9000 // (see other timeout value below)
+                  timeout: 10000 // (see other timeout value below)
                 }
             );
             setTimeout(function() {
@@ -1303,7 +1303,7 @@
                   HTML_geolocation_success(my_position); // (use last success's position)
                 }
               },
-              9250 // stop further HTML geolocation iterations (see other timeout value above / And on laptops, this timeout value will "limit the time" the user has to answer yes/no to "ok to share position?")
+              10250 // stop further HTML geolocation iterations (see other timeout value above / And on laptops, this timeout value will "limit the time" the user has to answer yes/no to "ok to share position?")
             );
           }
           else {
