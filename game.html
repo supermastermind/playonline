@@ -1292,7 +1292,7 @@
                 HTML_geolocation_error, // error callback
                 {
                   maximumAge: 250, // (do not use cache for long)
-                  enableHighAccuracy: false,
+                  enableHighAccuracy: false, // (true can lead to "html_geoloc_status:nok-5/the request to get user location timed out")
                   timeout: 10000 // (see other timeout value below)
                 }
             );
