@@ -21,7 +21,7 @@
     <script>
       var pageLoadStartTime = new Date();
     </script>
-    
+
     <style>
       /* *** Main styles *** */
       body {
@@ -475,7 +475,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NB";
+      let html_compatibility_game_version = "Ver_NC";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1054,7 +1054,7 @@
         }
         else {
           console.log("(onrejectionhandled event: skipped)");
-        }        
+        }
       };
 
       var playerid_prefix = "ID/";
@@ -1268,25 +1268,30 @@
         });
       } // HTML_geolocation_success
 
-      function HTML_geolocation_error(error) { // called by android appli
+      function HTML_geolocation_error(error) { // called (with string parameter) by android appli
         let error_str = "?";
-        switch(error.code) {
-          case error.PERMISSION_DENIED:
-            if (!localStorage.html_geoloc_denied) {
-              localStorage.html_geoloc_denied = 0;
-            }
-            localStorage.html_geoloc_denied = Number(localStorage.html_geoloc_denied) + 1;
-            error_str = "user denied the request for geolocation/" + localStorage.html_geoloc_denied + "x";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            error_str = "location information is unavailable";
-            break;
-          case error.TIMEOUT:
-            error_str = "the request to get user location timed out";
-            break;
-          case error.UNKNOWN_ERROR:
-            error_str = "an unknown error occurred";
-            break;
+        if (error.code != undefined) {
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              if (!localStorage.html_geoloc_denied) {
+                localStorage.html_geoloc_denied = 0;
+              }
+              localStorage.html_geoloc_denied = Number(localStorage.html_geoloc_denied) + 1;
+              error_str = "user denied the request for geolocation/" + localStorage.html_geoloc_denied + "x";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              error_str = "location information is unavailable";
+              break;
+            case error.TIMEOUT:
+              error_str = "the request to get user location timed out";
+              break;
+            case error.UNKNOWN_ERROR:
+              error_str = "an unknown error occurred";
+              break;
+          }
+        }
+        else { // android appli call
+          error_str = String(error);
         }
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_status = "nok-5/" + error_str;
@@ -1296,7 +1301,7 @@
       function attempt_HTML_geolocation() {
         if (android_appli && (versionCodeInt >= 6)) {
           if (scriptsFullyLoaded) {
-            // In case of android appli, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors) 
+            // In case of android appli, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors)
             // => request location explicitly to the android appli which will call HTML_geolocation_success or HTML_geolocation_error
             console.log("(get last location request)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
             localStorage.html_geoloc_status = "run_app";
