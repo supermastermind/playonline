@@ -215,7 +215,9 @@
       var androidAppliInfoStr = null;
       var android_appli = false;
       var versionNameStr = "?";
-      var versionCodeStr = "-1";
+      var versionCodeStr = "?";
+      var versionCodeInt = -1;
+      var scriptsFullyLoaded = false;
       try {
         androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
         if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
@@ -229,6 +231,17 @@
             versionCodeStr = new URL(decodeURI(location.href)).searchParams.get("version_code");
             if (versionCodeStr == null) {
               versionCodeStr = "?";
+            }
+            else {
+              try {
+                versionCodeInt = parseInt(versionCodeStr);
+                if (isNaN(versionCodeInt) || (versionCodeInt < 0) || (versionCodeStr.indexOf(".") != -1)) {
+                  versionCodeInt = -1;
+                }
+              }
+              catch (exc) {
+                versionCodeInt = -1;
+              }
             }
             var playerIdStr = new URL(decodeURI(location.href)).searchParams.get("player_id"); // (kept for backward compatibility)
             if (playerIdStr != null) {
@@ -462,7 +475,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NA";
+      let html_compatibility_game_version = "Ver_NB";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1054,7 +1067,7 @@
                && (typeof e.rsp_cd == 'undefined')
                && (typeof e.parameter.rankings !== 'undefined') && (e.parameter.rankings.length > 10) ) {
             var rsp_rankings_str = JSON.stringify(e.parameter.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
-            console.log("1: " + rsp_rankings_str);
+            // console.log("1: " + rsp_rankings_str);
             rsp_rankings_str = rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:" + scoresTableWidthStr);
             rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:2.7vh");
             rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:" + scoresFontSizeStr);
@@ -1156,7 +1169,7 @@
       }
 
       let very_fine_location_data = null;
-      function HTML_geolocation_success(position) {
+      function HTML_geolocation_success(position, debug_str_p = null) {
         let latitude = position.coords.latitude;
         let longitude = position.coords.longitude;
         let accuracy = position.coords.accuracy; // (in meters)
@@ -1166,7 +1179,11 @@
         console.log(" accuracy: " + accuracy);
         let GEOCODING_API_URL = "https://www.mapquestapi.com/geocoding/v1/reverse?outFormat=json&location=" + latitude + "," + longitude + "&key=dCKxMASlEZayTGGw5SBfd2bGMSCUuP60";
         debug_game_state = 10;
-        localStorage.html_geoloc_status = "run_bis";
+        let debug_str = "";
+        if (debug_str_p != null) {
+          debug_str = " " + debug_str_p;
+        }
+        localStorage.html_geoloc_status = "run_bis" + debug_str;
         $.getJSON(GEOCODING_API_URL)
         .done(function(location) {
           debug_game_state = 11;
@@ -1225,28 +1242,28 @@
                 localStorage.ip = inferred_ip_address;
                 localStorage.vf_date = new Date();
                 localStorage.location_id = nbLocationURLs + 10;
-                localStorage.html_geoloc_status = "ok";
+                localStorage.html_geoloc_status = "ok" + debug_str;
               }
               else {
                 console.log("HTML geolocation error: invalid location values");
-                localStorage.html_geoloc_status = "ok-invalid";
+                localStorage.html_geoloc_status = "ok-invalid" + debug_str;
               }
             }
             else {
               console.log("HTML geolocation error: status: " + location.status);
-              localStorage.html_geoloc_status = "nok-2/" + location.status;
+              localStorage.html_geoloc_status = "nok-2/" + location.status + debug_str;
             }
           }
           catch (exc) {
             console.log("HTML geolocation error: " + exc);
-            localStorage.html_geoloc_status = "nok-3/" + exc;
+            localStorage.html_geoloc_status = "nok-3/" + exc + debug_str;
           }
           debug_game_state = 12;
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           debug_game_state = 13;
           console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-          localStorage.html_geoloc_status = "nok-4";
+          localStorage.html_geoloc_status = "nok-4" + debug_str;
           debug_game_state = 14;
         });
       } // HTML_geolocation_success
@@ -1277,7 +1294,18 @@
 
       let my_position = null;
       function attempt_HTML_geolocation() {
-        if (typeof(Storage) !== 'undefined') {
+        if (android_appli && (versionCodeInt >= 6)) {
+          if (scriptsFullyLoaded) {
+            // In case of android appli, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors) 
+            // => request location explicitly to the android appli which will call HTML_geolocation_success or HTML_geolocation_error
+            console.log("(get last location request)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
+            localStorage.html_geoloc_status = "run_app";
+          }
+          else {
+            localStorage.html_geoloc_status = "run_app_skipped";
+          }
+        }
+        else if (typeof(Storage) !== 'undefined') {
           localStorage.html_geoloc_status = "run";
           if (navigator.geolocation) {
             // Subject to user acceptance
@@ -1941,7 +1969,7 @@
 
       var attempt_HTML_geolocation_already_done = false;
       function attempt_HTML_geolocation_if_needed() {
-        if (!attempt_HTML_geolocation_already_done) {
+        if (scriptsFullyLoaded && (!attempt_HTML_geolocation_already_done)) {
           if (android_appli) { // ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
             console.log("(attempt HTML geolocation)");
             setTimeout("attempt_HTML_geolocation();", 44); // Redone after each page/webview reload at "first user interaction" (subject to user acceptance - "first user interaction" means the user has responded (yes or no) to the ACCESS_FINE_LOCATION request, which then allows him to interact with the game)
@@ -2174,6 +2202,7 @@
         })
         .always(function() {
           debug_game_state = 63;
+          scriptsFullyLoaded = true;
           console.log("(on scripts load)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
           $(".game_loading").fadeOut("slow"); // game_loading div fades out
           debug_game_state = 64;
