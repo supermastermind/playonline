@@ -1169,7 +1169,7 @@
       }
 
       let very_fine_location_data = null;
-      function HTML_geolocation_success(position, debug_str_p = null) { // called (with debug_str_p parameter filled) by android app
+      function HTML_geolocation_success(position, debug_str_p = null) { // called (with debug_str_p parameter filled) by android appli
         let latitude = position.coords.latitude;
         let longitude = position.coords.longitude;
         let accuracy = position.coords.accuracy; // (in meters)
@@ -1268,7 +1268,7 @@
         });
       } // HTML_geolocation_success
 
-      function HTML_geolocation_error(error) { // called by android app
+      function HTML_geolocation_error(error) { // called by android appli
         let error_str = "?";
         switch(error.code) {
           case error.PERMISSION_DENIED:

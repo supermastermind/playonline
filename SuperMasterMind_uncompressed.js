@@ -1692,7 +1692,7 @@ function resetGameAttributes(nbColumnsSelected) {
     if ( (!android_appli) && mobileMode && androidMode
          && localStorage.androidAppNotifShown && (Number(localStorage.androidAppNotifShown) >= 5)
          && localStorage.gamesok && (Number(localStorage.gamesok) > 55) ) {
-      window.location.replace(android_app_url); // redirect to android app page
+      window.location.replace(android_app_url); // redirect to android appli page
     }
     else if ( (!android_appli) && mobileMode && androidMode
               && localStorage.gamesok && (Number(localStorage.gamesok) % 11 == 0) ) {
