@@ -475,7 +475,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NF";
+      let html_compatibility_game_version = "Ver_NG";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1980,7 +1980,7 @@
             setTimeout("attempt_HTML_geolocation();", 44); // Redone after each page/webview reload at "first user interaction" (subject to user acceptance - "first user interaction" means the user has responded (yes or no) to the ACCESS_FINE_LOCATION request, which then allows him to interact with the game)
             attempt_HTML_geolocation_already_done = true;
             if (versionCodeInt >= 6) {
-              setTimeout("attempt_HTML_geolocation_already_done = false;", 1*3600*1000); // geolocation refresh after 1 hour on user action
+              setTimeout("attempt_HTML_geolocation_already_done = false;", 0.5*3600*1000); // geolocation refresh after 1/2 hour on user action
             }
           }
         }
