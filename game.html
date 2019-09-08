@@ -1984,16 +1984,17 @@
       } // store_player_info
 
       var attempt_HTML_geolocation_already_done = false;
+      var last_time_attempt_HTML_geolocation_if_needed = -1;
       function attempt_HTML_geolocation_if_needed() {
-        if (debug_mode) {alert("attempt_HTML_geolocation_if_needed" + scriptsFullyLoaded + "/" + attempt_HTML_geolocation_already_done + "/" + android_appli);};
-        if (scriptsFullyLoaded && (!attempt_HTML_geolocation_already_done)) {
-          if (android_appli) { // ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
+        if (debug_mode) {alert("attempt_HTML_geolocation_if_needed" + scriptsFullyLoaded + "/" + ((new Date()).getTime() - last_time_attempt_HTML_geolocation_if_needed > (debug_mode ? 2*60*1000 : 30*60*1000)) + "/" + android_appli);};
+        if (android_appli) { // only applied to android appli because popups otherwise / ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)        
+          if ( scriptsFullyLoaded 
+               && ((!attempt_HTML_geolocation_already_done) || (versionCodeInt >= 6))
+               && ((new Date()).getTime() - last_time_attempt_HTML_geolocation_if_needed > (debug_mode ? 2*60*1000 : 30*60*1000)) ) { // geolocation refresh after 30 minutes on user action (no setTimeout() due to UE sleeping phases)
             console.log("(attempt HTML geolocation)");
-            setTimeout("attempt_HTML_geolocation();", 44); // Redone after each page/webview reload at "first user interaction" (subject to user acceptance - "first user interaction" means the user has responded (yes or no) to the ACCESS_FINE_LOCATION request, which then allows him to interact with the game)
+            setTimeout("attempt_HTML_geolocation();", 44);
+            last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
             attempt_HTML_geolocation_already_done = true;
-            if (versionCodeInt >= 6) {
-              setTimeout("if (debug_mode) {alert('attempt_HTML_geolocation_already_done = false;')}; attempt_HTML_geolocation_already_done = false;", (debug_mode ? 3*60*1000 : 30*60*1000)); // geolocation refresh after 30 minutes on user action
-            }
           }
         }
       }
