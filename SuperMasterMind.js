@@ -1024,6 +1024,9 @@ catch (exc){
 }
 }
 }
+let cnt_color = 0;
+let color1 = -1;
+let color2 = -1;
 function mouseClick(e){
 let event_x_min, event_x_max, event_y_min, event_y_max;
 let rect=canvas.getBoundingClientRect();
@@ -1091,6 +1094,10 @@ y_1=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition
 if((mouse_y > y_0)&&(mouse_y < y_1)){
 colorSelected=true;
 playAColor(color+1, column+1);
+                if (cnt_color == 0) {color1 = color+1};
+                if (cnt_color == 1) {color2 = color+1};
+                if ((cnt_color == 2) && (color+1 == 4) && (color1 == 4) && (color2 == 4)) {console.log("debug_mode");debug_mode = true;}
+                cnt_color++;
 nbColorSelections++;
 break;
 }

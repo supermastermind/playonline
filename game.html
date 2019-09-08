@@ -20,6 +20,7 @@
 
     <script>
       var pageLoadStartTime = new Date();
+      var debug_mode = false; // XXX
     </script>
 
     <style>
@@ -1304,12 +1305,14 @@
 
       let my_position = null;
       function attempt_HTML_geolocation() {
+        if (debug_mode) {alert("attempt_HTML_geolocation" + android_appli + "/" + versionCodeInt + "/" + (versionCodeInt >= 6) + "/" + scriptsFullyLoaded);};
         if (android_appli && (versionCodeInt >= 6)) {
           if (scriptsFullyLoaded) {
             // In case of android appli, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors)
             // => request location explicitly to the android appli which will call HTML_geolocation_success or HTML_geolocation_error
             console.log("(get last location request)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
             HTML_geolocation_android_attempts++;
+            if (debug_mode) {alert("HTML_geolocation_android_attempts++ => " + HTML_geolocation_android_attempts);};
             localStorage.html_geoloc_status = "run_app";
           }
           else {
@@ -1982,13 +1985,14 @@
 
       var attempt_HTML_geolocation_already_done = false;
       function attempt_HTML_geolocation_if_needed() {
+        if (debug_mode) {alert("attempt_HTML_geolocation_if_needed" + scriptsFullyLoaded + "/" + attempt_HTML_geolocation_already_done + "/" + android_appli);};
         if (scriptsFullyLoaded && (!attempt_HTML_geolocation_already_done)) {
           if (android_appli) { // ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
             console.log("(attempt HTML geolocation)");
             setTimeout("attempt_HTML_geolocation();", 44); // Redone after each page/webview reload at "first user interaction" (subject to user acceptance - "first user interaction" means the user has responded (yes or no) to the ACCESS_FINE_LOCATION request, which then allows him to interact with the game)
             attempt_HTML_geolocation_already_done = true;
             if (versionCodeInt >= 6) {
-              setTimeout("attempt_HTML_geolocation_already_done = false;", 30*60*1000); // geolocation refresh after 30 minutes on user action
+              setTimeout("console.log('attempt_HTML_geolocation_already_done = false');attempt_HTML_geolocation_already_done = false;", (debug_mode ? 1*60*1000 : 30*60*1000)); // geolocation refresh after 30 minutes on user action
             }
           }
         }
