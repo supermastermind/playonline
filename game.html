@@ -278,7 +278,7 @@
       var debug_on_unload = 0;
       
       var HTML_geolocation_android_attempts = 0;
-      var HTML_geolocation_successes_str = "";
+      var HTML_geolocation_successes = 0;
       
       var storageErrorMet = true;
       try {
@@ -1189,7 +1189,7 @@
           debug_str = " " + debug_str_p;
         }
         localStorage.html_geoloc_status = "run_bis" + debug_str;
-        HTML_geolocation_successes_str = (HTML_geolocation_successes_str + " (" + latitude + "," + longitude + debug_str + ")").trim();
+        HTML_geolocation_successes++;
         $.getJSON(GEOCODING_API_URL)
         .done(function(location) {
           debug_game_state = 11;
@@ -1726,7 +1726,7 @@
                   if (localStorage.html_geoloc_status) {
                     extra_debug_info = extra_debug_info + "/html_geoloc_status:" + localStorage.html_geoloc_status 
                                        + (android_appli ? "/html_geolocation_android_attempts:" + HTML_geolocation_android_attempts : "") 
-                                       + "/html_geolocation_successes:" + ((HTML_geolocation_successes_str != "") ? HTML_geolocation_successes_str : "-");
+                                       + "/html_geolocation_successes:" + HTML_geolocation_successes;
                   }
                   if (localStorage.previousfirstname) {
                     extra_debug_info = extra_debug_info + "/PreviousFirstName:" + localStorage.previousfirstname;
