@@ -20,7 +20,6 @@
 
     <script>
       var pageLoadStartTime = new Date();
-      var debug_mode = false; // XXX
     </script>
 
     <style>
@@ -276,10 +275,10 @@
       var gameRulesDisplayed = false;
       var debug_game_state = -1;
       var debug_on_unload = 0;
-      
+
       var HTML_geolocation_android_attempts = 0;
       var HTML_geolocation_successes = 0;
-      
+
       var storageErrorMet = true;
       try {
         if (typeof(Storage) !== 'undefined') {
@@ -480,7 +479,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NK";
+      let html_compatibility_game_version = "Ver_NL";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1305,14 +1304,13 @@
 
       let my_position = null;
       function attempt_HTML_geolocation() {
-        if (debug_mode) {alert("attempt_HTML_geolocation" + android_appli + "/" + versionCodeInt + "/" + (versionCodeInt >= 6) + "/" + scriptsFullyLoaded);};
+        console.log("(attempt HTML geolocation)");
         if (android_appli && (versionCodeInt >= 6)) {
           if (scriptsFullyLoaded) {
             // In case of android appli, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors)
             // => request location explicitly to the android appli which will call HTML_geolocation_success or HTML_geolocation_error
             console.log("(get last location request)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
             HTML_geolocation_android_attempts++;
-            if (debug_mode) {alert("HTML_geolocation_android_attempts++ => " + HTML_geolocation_android_attempts);};
             localStorage.html_geoloc_status = "run_app";
           }
           else {
@@ -1724,8 +1722,8 @@
                 extra_debug_info = extra_debug_info + "/Game:" + gamestr;
                 if (typeof(Storage) !== 'undefined') {
                   if (localStorage.html_geoloc_status) {
-                    extra_debug_info = extra_debug_info + "/html_geoloc_status:" + localStorage.html_geoloc_status 
-                                       + (android_appli ? "/html_geolocation_android_attempts:" + HTML_geolocation_android_attempts : "") 
+                    extra_debug_info = extra_debug_info + "/html_geoloc_status:" + localStorage.html_geoloc_status
+                                       + (android_appli ? "/html_geolocation_android_attempts:" + HTML_geolocation_android_attempts : "")
                                        + "/html_geolocation_successes:" + HTML_geolocation_successes;
                   }
                   if (localStorage.previousfirstname) {
@@ -1986,15 +1984,13 @@
       var attempt_HTML_geolocation_already_done = false;
       var last_time_attempt_HTML_geolocation_if_needed = -1;
       function attempt_HTML_geolocation_if_needed() {
-        if (debug_mode) {alert("attempt_HTML_geolocation_if_needed" + scriptsFullyLoaded + "/" + ((new Date()).getTime() - last_time_attempt_HTML_geolocation_if_needed > (debug_mode ? 2*60*1000 : 30*60*1000)) + "/" + android_appli);};
-        if (android_appli) { // only applied to android appli because popups otherwise / ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)        
-          if ( scriptsFullyLoaded 
+        if (android_appli) { // only applied to android appli because popups otherwise / ACCESS_FINE_LOCATION is requested in android appli (subject to user acceptance)
+          if ( scriptsFullyLoaded
                && ((!attempt_HTML_geolocation_already_done) || (versionCodeInt >= 6))
-               && ((new Date()).getTime() - last_time_attempt_HTML_geolocation_if_needed > (debug_mode ? 2*60*1000 : 30*60*1000)) ) { // geolocation refresh after 30 minutes on user action (no setTimeout() due to UE sleeping phases)
-            console.log("(attempt HTML geolocation)");
+               && ((new Date()).getTime() - last_time_attempt_HTML_geolocation_if_needed > 30*60*1000) ) { // geolocation refresh after 30 minutes on user action (no setTimeout() due to UE sleeping phases)
             setTimeout("attempt_HTML_geolocation();", 44);
-            last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
             attempt_HTML_geolocation_already_done = true;
+            last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime(); // time in milliseconds
           }
         }
       }
