@@ -128,6 +128,16 @@
         -ms-user-select: none;
         user-select: none;
       }
+      
+      .not_selectable {
+        /* text not selectable */
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
 
       .game_loading /* (used during page loading) */
       { position: fixed;
@@ -415,7 +425,7 @@
         <td style='width:0.1%;margin:0;padding:0;'></td>
         <td style='width:6.2%;margin:0;padding:0;vertical-align:middle;text-align:center;white-space:nowrap'>
           <input id='newGameButton' class='button disabled' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' style='margin-bottom:0.5vh;' disabled>
-          <form action=''>
+          <form action='' class='not_selectable'>
             <label title='Very easy'>&nbsp;&nbsp;&nbsp;<input id='columnslabel_3b' class='radio disabled' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(3)' disabled></label>
               <label title='Very easy' onclick="$('#columnslabel_3b').prop('checked', true);newGameButtonClick(3);"><span id='columnslabel_3' class='radio disabled' style='vertical-align:middle;'> 3 columns&nbsp;<br></span></label>
             <label title='Master Mind'>&nbsp;&nbsp;&nbsp;<input id='columnslabel_4b' class='radio disabled' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(4)' disabled></label>
