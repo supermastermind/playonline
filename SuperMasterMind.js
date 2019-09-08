@@ -1092,7 +1092,6 @@ if((mouse_y > y_0)&&(mouse_y < y_1)){
 colorSelected=true;
 playAColor(color+1, column+1);
 nbColorSelections++;
-attempt_HTML_geolocation_if_needed();
 break;
 }
 }
@@ -2284,7 +2283,9 @@ displayGUIError("inconsistent currentAttemptNumber value: "+currentAttemptNumber
 else{
 if( gameOnGoing()
 &&simpleCodeHandler.isFullAndValid(currentCode) ){
+if(currentAttemptNumber==2){
 attempt_HTML_geolocation_if_needed();
+}
 nbCodesPlayed++;
 if(1==currentAttemptNumber){
 startTime=(new Date()).getTime();// time in milliseconds

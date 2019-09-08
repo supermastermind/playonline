@@ -1318,9 +1318,6 @@ function mouseClick(e) {
                 colorSelected = true;
                 playAColor(color+1, column+1);
                 nbColorSelections++;
-
-                attempt_HTML_geolocation_if_needed();
-
                 break;
               }
             }
@@ -2697,7 +2694,9 @@ function draw_graphic_bis() {
       if ( gameOnGoing() // playing phase
            && simpleCodeHandler.isFullAndValid(currentCode) ) { // New code submitted
 
-        attempt_HTML_geolocation_if_needed();
+        if (currentAttemptNumber == 2) {
+          attempt_HTML_geolocation_if_needed();
+        }
 
         nbCodesPlayed++;
 
