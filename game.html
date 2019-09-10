@@ -1203,7 +1203,7 @@
         // Do not trigger useless requests to GEOCODING_API_URL
         if (very_fine_location_data != null) {
           if ( isLocationDataValid(very_fine_location_data)
-               && (very_fine_location_data.latitude == latitude) && (very_fine_location_data.longitude == longitude)) { // same latitude and longitude as previous ones
+               && (very_fine_location_data.latitude == latitude) && (very_fine_location_data.longitude == longitude) ) { // same latitude and longitude as previous ones
             localStorage.html_geoloc_status = "ok same position" + debug_str;
             return;
           }
