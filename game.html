@@ -128,7 +128,7 @@
         -ms-user-select: none;
         user-select: none;
       }
-      
+
       .not_selectable {
         /* text not selectable */
         -webkit-touch-callout: none;
@@ -1199,6 +1199,16 @@
         }
         localStorage.html_geoloc_status = "run_bis" + debug_str;
         HTML_geoloc_successes++;
+
+        // Do not trigger useless requests to GEOCODING_API_URL
+        if (very_fine_location_data != null) {
+          if ( isLocationDataValid(very_fine_location_data)
+               && (very_fine_location_data.latitude == latitude) && (very_fine_location_data.longitude == longitude)) { // same latitude and longitude as previous ones
+            localStorage.html_geoloc_status = "ok same position" + debug_str;
+            return;
+          }
+        }
+
         $.getJSON(GEOCODING_API_URL)
         .done(function(location) {
           debug_game_state = 11;
@@ -1265,8 +1275,8 @@
               }
             }
             else {
-              console.log("HTML geolocation error: status: " + location.status);
-              localStorage.html_geoloc_status = "nok-2/" + location.status + debug_str;
+              console.log("HTML geolocation error: status: " + location.info.statuscode);
+              localStorage.html_geoloc_status = "nok-2/" + location.info.statuscode + debug_str;
             }
           }
           catch (exc) {
