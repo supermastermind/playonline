@@ -1219,7 +1219,7 @@
         // Do not trigger useless requests to GEOCODING_API_URL
         if (very_fine_location_data != null) {
           if ( isLocationDataValid(very_fine_location_data)
-               && (getDistanceFromLatLonInKm(very_fine_location_data.latitude, very_fine_location_data.longitude, latitude, longitude) < 0.200) ) { // nearly same position as previous one
+               && (getDistanceFromLatLonInKm(very_fine_location_data.latitude, very_fine_location_data.longitude, latitude, longitude) < 0.150) ) { // nearly same position as previous one
             localStorage.html_geoloc_status = "ok nearly same position" + debug_str;
             return;
           }
