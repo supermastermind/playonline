@@ -1167,6 +1167,22 @@
         }
       }
 
+      function deg2rad(deg) {
+        return deg * (Math.PI/180);
+      }
+      function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2-lat1);
+        var dLon = deg2rad(lon2-lon1);
+        var a =
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+          Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c; // Distance in km
+        return d;
+      }
+
       function isLocationDataValid(data_p) {
         if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) {
           return false;
@@ -1203,7 +1219,7 @@
         // Do not trigger useless requests to GEOCODING_API_URL
         if (very_fine_location_data != null) {
           if ( isLocationDataValid(very_fine_location_data)
-               && (very_fine_location_data.latitude == latitude) && (very_fine_location_data.longitude == longitude) ) { // same latitude and longitude as previous ones
+               && (getDistanceFromLatLonInKm(very_fine_location_data.latitude, very_fine_location_data.longitude, latitude, longitude) < 0.250) ) { // nearly same position as previous one
             localStorage.html_geoloc_status = "ok same position" + debug_str;
             return;
           }
