@@ -288,6 +288,7 @@
 
       var HTML_geoloc_android_attempts = 0;
       var HTML_geoloc_successes = 0;
+      var HTML_geoloc_errors = 0;
 
       var storageErrorMet = true;
       try {
@@ -1336,6 +1337,7 @@
         }
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_status = "nok-5/" + error_str;
+        HTML_geoloc_errors++;
       } // HTML_geolocation_error
 
       let my_position = null;
@@ -1760,7 +1762,8 @@
                   if (localStorage.html_geoloc_status) {
                     extra_debug_info = extra_debug_info + "/html_geoloc_status:" + localStorage.html_geoloc_status
                                        + (android_appli ? "/html_geoloc_android_attempts:" + HTML_geoloc_android_attempts : "")
-                                       + "/html_geoloc_successes:" + HTML_geoloc_successes;
+                                       + "/html_geoloc_successes:" + HTML_geoloc_successes
+                                       + "/html_geoloc_errors:" + HTML_geoloc_errors;
                   }
                   if (localStorage.previousfirstname) {
                     extra_debug_info = extra_debug_info + "/PreviousFirstName:" + localStorage.previousfirstname;
