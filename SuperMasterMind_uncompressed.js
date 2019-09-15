@@ -1674,7 +1674,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gamesolver_buffered_msg_status = 0;
   gamesolver_buffered_msg_action_str = "";
 
-  if ( ((new Date()).getTime() - loadTime >= 8*3600*1000) // (reload the page/webview from server every 8 hours at next game start: not too short to allow game.html's "last_location_data_used" + "very_fine_location_data" [w/ popups] benefits and avoid useless reloads (e.g. in mobile NW, while offline, ...), not too long to avoid outdated "last_location_data_used" + "very_fine_location_data" and allow fast application of changes)
+  if ( ((new Date()).getTime() - loadTime >= 8*3600*1000) // (reload the page/webview from server every 8 hours at next game start: not too short to allow game.html's "last_location_data_used" + "precise_location_data" [w/ popups] benefits and avoid useless reloads (e.g. in mobile NW, while offline, ...), not too long to avoid outdated "last_location_data_used" + "precise_location_data" and allow fast application of changes)
        || (nbGamesPlayedAndWon >= 30) ) { // (same arguments as above + avoid potential (firefox) memory leaks issues + can also solve modal display issues)
     if (android_appli) {
       console.log("webview reload request"); // !WARNING! -> this console text will be read by the android appli so shall not be modified

@@ -490,7 +490,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NM";
+      let html_compatibility_game_version = "Ver_NM2";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1199,7 +1199,7 @@
         return false;
       }
 
-      let very_fine_location_data = null;
+      let precise_location_data = null;
       function HTML_geolocation_success(position, debug_str_p = null) { // called (with debug_str_p parameter filled) by android appli
         let latitude = position.coords.latitude;
         let longitude = position.coords.longitude;
@@ -1218,9 +1218,9 @@
         HTML_geoloc_successes++;
 
         // Do not trigger useless requests to GEOCODING_API_URL
-        if (very_fine_location_data != null) {
-          if ( isLocationDataValid(very_fine_location_data)
-               && (getDistanceFromLatLonInKm(very_fine_location_data.latitude, very_fine_location_data.longitude, latitude, longitude) < 0.150) ) { // nearly same position as previous one
+        if (precise_location_data != null) {
+          if ( isLocationDataValid(precise_location_data)
+               && (getDistanceFromLatLonInKm(precise_location_data.latitude, precise_location_data.longitude, latitude, longitude) < 0.200) ) { // nearly same position as previous one
             localStorage.html_geoloc_status = "ok nearly same position" + debug_str;
             return;
           }
@@ -1261,7 +1261,7 @@
               }
               var inferred_ip_address = "0." + String(sum2 % 999) + "." + String(Math.floor(sum / 99) % 999) + "." + String(sum % 999);
 
-              very_fine_location_data = { latitude: reformatLocationValue(latitude),
+              precise_location_data = { latitude: reformatLocationValue(latitude),
                                           longitude: reformatLocationValue(longitude),
                                           accuracy: accuracy,
                                           country_name: reformatLocationValue(country),
@@ -1270,7 +1270,7 @@
                                           postal: zip,
                                           ip: inferred_ip_address,
                                           vf_date: new Date() };
-              if (isLocationDataValid(very_fine_location_data)) {
+              if (isLocationDataValid(precise_location_data)) {
                 // Reinit last_location_data_used to have it consistent with below localStorage.xxx values
                 last_location_data_used = null;
                 id_of_last_location_data_used = -1;
@@ -1922,12 +1922,12 @@
 
             setFormInfo: function() {
 
-              // Use very fine location data if any
-              // **********************************
+              // Use previse location data if any
+              // ********************************
 
-              if (very_fine_location_data != null) {
-                if (isLocationDataValid(very_fine_location_data)) {
-                  geolocation_handler.setFormInfoWithValidLocationData(very_fine_location_data, nbLocationURLs + 11, "VF");
+              if (precise_location_data != null) {
+                if (isLocationDataValid(precise_location_data)) {
+                  geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, nbLocationURLs + 11, "P");
                   return;
                 }
               }
