@@ -490,7 +490,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NM2";
+      let html_compatibility_game_version = "Ver_NM3";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1220,7 +1220,7 @@
         // Do not trigger useless requests to GEOCODING_API_URL
         if (precise_location_data != null) {
           if ( isLocationDataValid(precise_location_data)
-               && (getDistanceFromLatLonInKm(precise_location_data.latitude, precise_location_data.longitude, latitude, longitude) < 0.200) ) { // nearly same position as previous one
+               && (getDistanceFromLatLonInKm(precise_location_data.latitude, precise_location_data.longitude, latitude, longitude) < 0.150) ) { // nearly same position as previous one
             localStorage.html_geoloc_status = "ok nearly same position" + debug_str;
             return;
           }
@@ -1262,14 +1262,14 @@
               var inferred_ip_address = "0." + String(sum2 % 999) + "." + String(Math.floor(sum / 99) % 999) + "." + String(sum % 999);
 
               precise_location_data = { latitude: reformatLocationValue(latitude),
-                                          longitude: reformatLocationValue(longitude),
-                                          accuracy: accuracy,
-                                          country_name: reformatLocationValue(country),
-                                          region: reformatLocationValue(region),
-                                          city: reformatLocationValue(city),
-                                          postal: zip,
-                                          ip: inferred_ip_address,
-                                          vf_date: new Date() };
+                                        longitude: reformatLocationValue(longitude),
+                                        accuracy: accuracy,
+                                        country_name: reformatLocationValue(country),
+                                        region: reformatLocationValue(region),
+                                        city: reformatLocationValue(city),
+                                        postal: zip,
+                                        ip: inferred_ip_address,
+                                        vf_date: new Date() };
               if (isLocationDataValid(precise_location_data)) {
                 // Reinit last_location_data_used to have it consistent with below localStorage.xxx values
                 last_location_data_used = null;
@@ -1927,7 +1927,7 @@
 
               if (precise_location_data != null) {
                 if (isLocationDataValid(precise_location_data)) {
-                  geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, nbLocationURLs + 11, "P");
+                  geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, nbLocationURLs + 11, "P (" + Math.round(precise_location_data.accuracy) + ")");
                   return;
                 }
               }
