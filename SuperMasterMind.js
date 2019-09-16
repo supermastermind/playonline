@@ -2726,7 +2726,7 @@ else{
 res_header1=true;
 }
 if(res_header1&&(optimal_width > 0)){
-if(!display2Strings("total"+str1, str1bis+str2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
+if(!display2Strings("perf"+str1, str1bis+str2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
 lightGray, backgroundColor_2, ctx, 0, true)){
 res_header2=display2Strings("\u03A3" /* (capital sigma) */, str1bis+str2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
 lightGray, backgroundColor_2, ctx, 0, false);// (always display sum=> res_header2 will be true)
