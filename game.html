@@ -490,7 +490,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NM3";
+      let html_compatibility_game_version = "Ver_NO";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1288,7 +1288,7 @@
               }
               else {
                 console.log("HTML geolocation error: invalid location values");
-                localStorage.html_geoloc_status = "ok-invalid" + debug_str;
+                localStorage.html_geoloc_status = "ok-invalid (" + precise_location_data.latitude + "," + precise_location_data.longitude + ")" + debug_str;
               }
             }
             else {
