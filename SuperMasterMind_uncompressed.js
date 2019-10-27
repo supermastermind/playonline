@@ -3073,7 +3073,7 @@ function draw_graphic_bis() {
           let statsColor;
 
           if (currentAttemptNumber == 1) {
-            statsColor = backgroundColorTable[0];
+            statsColor = purple;
           }
           else if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
             statsColor = darkGray;
@@ -3084,7 +3084,7 @@ function draw_graphic_bis() {
           if (!displayString("\u2009" /* (thin space) */ + nbOfPossibleCodes[i-1] + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
                              statsColor, backgroundColor, ctx, true, 0, true, 0)) {
             displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
-                                       statsColor, backgroundColor, ctx);
+                          statsColor, backgroundColor, ctx);
           }
         }
       }

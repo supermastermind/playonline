@@ -2601,7 +2601,7 @@ backgroundColor=highlightColor;
 if((optimal_width > 0)||(i==currentAttemptNumber)||((i==nbOfStatsFilled_NbPossibleCodes)&&(nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1))||(!performancesDisplayed[i-1]) /* (nb of possible codes <-> perf switch) */){
 let statsColor;
 if(currentAttemptNumber==1){
-statsColor=backgroundColorTable[0];
+statsColor="purple";
 }
 else if((i==currentAttemptNumber)||(gameWon&&(i==currentAttemptNumber-1))){
 statsColor=darkGray;
