@@ -3073,7 +3073,7 @@ function draw_graphic_bis() {
           let statsColor;
 
           if (currentAttemptNumber == 1) {
-            statsColor = purple;
+            statsColor = "purple";
           }
           else if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
             statsColor = darkGray;
