@@ -3578,7 +3578,7 @@ function draw_graphic_bis() {
 
         try {
           ctx.font = medium2_bold_font;
-          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 3) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes>=1) ) {
+          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 3) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes >= 1) ) {
             let x_delta = 0.80;
             if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
                                "purple", backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
