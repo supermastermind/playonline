@@ -1874,7 +1874,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
-  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 1100); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 1000); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 888);
@@ -3578,23 +3578,23 @@ function draw_graphic_bis() {
 
         try {
           ctx.font = medium2_bold_font;
-          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 3) || (nbColorSelections < nbColumns)) ) {
+          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 3) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes>=1) ) {
             let x_delta = 0.80;
             if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                               darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                               "purple", backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                                 darkGray, backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                                 "purple", backgroundColor_2, ctx, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
                 if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                   darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
+                                   "purple", backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (mobileMode) {
                     if ((nbColumns <= 5) && (currentAttemptNumber == 1)) {
                       displayString("Tap!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                    darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
+                                    "purple", backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                     }
                   }
                   else {
                     displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                  darkGray, backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
+                                  "purple", backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                   }
                 }
               }
