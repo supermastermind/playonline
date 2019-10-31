@@ -1695,7 +1695,7 @@ function resetGameAttributes(nbColumnsSelected) {
               && localStorage.gamesok && (Number(localStorage.gamesok) % 11 == 0) ) {
       show_play_store_app();
     }
-    else if ( (!android_appli) && (!mobileMode) && localStorage.gamesok && ((Number(localStorage.gamesok) == 13) || (Number(localStorage.gamesok) == 33) || (Number(localStorage.gamesok) == 71) || (Number(localStorage.gamesok) % 107 == 0)) ) {
+    else if ( (!android_appli) && (!mobileMode) && localStorage.gamesok && ((Number(localStorage.gamesok) == 13) || (Number(localStorage.gamesok) == 27) || (Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) % 71 == 0)) ) {
       show_play_store_app();
     }
     else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) == 101) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 202) || (Number(localStorage.gamesok) == 303) || (Number(localStorage.gamesok) == 404) || (Number(localStorage.gamesok) == 707) || (Number(localStorage.gamesok) == 1061) || (Number(localStorage.gamesok) == 1414)) ) {

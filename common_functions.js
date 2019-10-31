@@ -84,6 +84,8 @@ function write_sidebar() {
         <li style='margin-left:0;'><a href='https://en.wikipedia.org/wiki/Mastermind_(board_game)'>Mastermind on wikipedia</a></li>\
         <li style='margin-left:0;'><a href='http://mathworld.wolfram.com/Mastermind.html'>Mastermind strategies</a></li>\
       </ul>\
+      <h1>Android app</h1>\
+      <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='width:11.0rem;margin-top:0.0rem;margin-bottom:0.0rem' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>\
     </div>");
 }
 
