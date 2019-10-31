@@ -3472,7 +3472,7 @@ x_0_for_drawBubble=x_0;
 if(drawInBubble){
 let delta_x=10;
 let delta_y=3;
-drawBubble(ctx, x_0_for_drawBubble - delta_x, y_0_next - delta_y, str_width+2*delta_x, y_0 - y_0_next+2*delta_y, Math.floor(str_height/2), foregroundColor, 1, bottomRightBubble);
+drawBubble(ctx, x_0_for_drawBubble - delta_x, y_0_next - delta_y, str_width+2*delta_x, y_0 - y_0_next+2*delta_y, Math.floor(str_height/2), foregroundColor, (mobileMode ? 2 : 1), bottomRightBubble);
 }
 return true;
 }
