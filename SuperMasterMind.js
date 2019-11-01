@@ -3061,7 +3061,7 @@ if(!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_
 "purple", backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)){
 if(mobileMode){
 if((nbColumns >=4)&&(nbColumns <=5)&&(currentAttemptNumber==1)){
-displayString("Tap!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
+displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
 "purple", backgroundColor_2, ctx, true, 0, true, 0, false, true, false /* bottom-left bubble */);
 }
 }
