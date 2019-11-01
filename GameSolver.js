@@ -2261,7 +2261,7 @@ maxDepthForGamePrecalculation=-1;// no game precalculation as precalculation wou
 break;
 case 7:
 nbMaxMarks=35;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*60/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*52/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
 initialNbClasses=15;//{1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
