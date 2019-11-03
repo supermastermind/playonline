@@ -1427,7 +1427,7 @@ show_play_store_app();
 else if( (!android_appli)&&(!mobileMode)&&localStorage.gamesok&&((Number(localStorage.gamesok)==13)||(Number(localStorage.gamesok)==27)||(Number(localStorage.gamesok)==51)||(Number(localStorage.gamesok) % 71==0)) ){
 show_play_store_app();
 }
-else if( android_appli&&localStorage.firstname&&localStorage.gamesok&&((Number(localStorage.gamesok)==39)||(Number(localStorage.gamesok)==67)||(Number(localStorage.gamesok)==101)||(Number(localStorage.gamesok)==156)||(Number(localStorage.gamesok)==202)||(Number(localStorage.gamesok)==303)||(Number(localStorage.gamesok)==404)||(Number(localStorage.gamesok)==707)||(Number(localStorage.gamesok)==1061)||(Number(localStorage.gamesok)==1414)) ){
+else if( android_appli&&localStorage.firstname&&localStorage.gamesok&&((Number(localStorage.gamesok)==39)||(Number(localStorage.gamesok)==67)||(Number(localStorage.gamesok)==101)||(Number(localStorage.gamesok)==156)||(Number(localStorage.gamesok)==202)||(Number(localStorage.gamesok)==303)||(Number(localStorage.gamesok)==404)||(Number(localStorage.gamesok)==707)||(Number(localStorage.gamesok)==1061)||(Number(localStorage.gamesok)==1414)||(Number(localStorage.gamesok)==1502)||(Number(localStorage.gamesok)==2002)) ){
 show_play_store_app("Hello <font color=#C900A1>"+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game, put some stars&nbsp;<big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google&nbsp;Play&nbsp;Store. It&nbsp;will help to make this app better known! Thanks&nbsp;in&nbsp;advance for&nbsp;your&nbsp;support!!", true);
 }
 }
