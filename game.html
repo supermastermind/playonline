@@ -490,7 +490,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NQ";
+      let html_compatibility_game_version = "Ver_NR";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1184,16 +1184,26 @@
         return d;
       }
 
+      let bestEffortIpAddressFound = null;
+      let bestEffortCountryNameFound = null;
       function isLocationDataValid(data_p) {
         if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) {
           return false;
         }
+        let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */));
+        let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 3));
+        if (validIpAddress) {
+          bestEffortIpAddressFound = String(data_p.ip).trim();
+          if (validCountryName) {
+            bestEffortCountryNameFound = data_p.country_name;
+          }
+        }
         if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != undefined) && (data_p.latitude != null)
              && (typeof data_p.longitude != 'undefined') && (data_p.longitude != undefined)  && (data_p.longitude != null)
              && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1))
-             && ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 3))
+             && validCountryName
              && ((typeof data_p.city != 'undefined') && (data_p.city != undefined) && (data_p.city != null) && (data_p.city.length >= 2)) // (redundant lines)
-             && ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)) ) {
+             && validIpAddress) {
           return true;
         }
         return false;
@@ -1908,10 +1918,10 @@
                 alert("Oops... your score could not be stored properly due to geolocation failure!");
                 let dummy_location_data = { latitude: '0.0',
                                             longitude: '0.0',
-                                            country_name: 'unknown',
+                                            country_name: ((bestEffortCountryNameFound != null) ? bestEffortCountryNameFound : 'unknown'),
                                             region: 'unknown',
                                             city: 'unknown',
-                                            ip: '0.0.0.0' };
+                                            ip: ((bestEffortIpAddressFound != null) ? bestEffortIpAddressFound : '0.0.0.0') };
                 if (!isLocationDataValid(dummy_location_data)) {
                   throw new Error("setFormInfoByOtherMeans: invalid dummy location data: " + JSON.stringify(dummy_location_data));
                 }
