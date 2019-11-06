@@ -1192,11 +1192,9 @@
         }
         let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */));
         let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 3));
-        if (validIpAddress) {
+        if (validIpAddress && validCountryName) {
           bestEffortIpAddressFound = String(data_p.ip).trim();
-          if (validCountryName) {
-            bestEffortCountryNameFound = data_p.country_name;
-          }
+          bestEffortCountryNameFound = data_p.country_name;
         }
         if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != undefined) && (data_p.latitude != null)
              && (typeof data_p.longitude != 'undefined') && (data_p.longitude != undefined)  && (data_p.longitude != null)
