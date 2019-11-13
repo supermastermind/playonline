@@ -1317,16 +1317,16 @@ nb_attempts_not_displayed=0;
 else{
 nb_attempts_not_displayed=Math.max(0, nbMaxAttempts - currentAttemptNumber - 1);
 if(nbColumns==4){
-nb_attempts_not_displayed=Math.min(1, nb_attempts_not_displayed);
+nb_attempts_not_displayed=Math.min(2, nb_attempts_not_displayed);
 }
 else if(nbColumns==5){
-nb_attempts_not_displayed=Math.min(3, nb_attempts_not_displayed);
+nb_attempts_not_displayed=Math.min(4, nb_attempts_not_displayed);
 }
 else if(nbColumns==6){
-nb_attempts_not_displayed=Math.min(5, nb_attempts_not_displayed);
+nb_attempts_not_displayed=Math.min(6, nb_attempts_not_displayed);
 }
 else if(nbColumns==7){
-nb_attempts_not_displayed=Math.min(6, nb_attempts_not_displayed);
+nb_attempts_not_displayed=Math.min(7, nb_attempts_not_displayed);
 }
 }
 y_step=(y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed
