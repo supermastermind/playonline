@@ -3201,9 +3201,9 @@ function draw_graphic_bis() {
           }
           let res_header1 = false;
           let res_header2 = false;
-          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if ((optimal_width > 0) && !display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, 0, true)) {
-            if (!displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+            if ((optimal_width > 0) && !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                                     lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
@@ -3249,9 +3249,9 @@ function draw_graphic_bis() {
         else {
           let res_header1 = false;
           let res_header2 = false;
-          if (!display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if ((optimal_width > 0) && !display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, 0, true)) {
-            if (!displayString("\u2009" /* (thin space) */ + "#codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+            if ((optimal_width > 0) && !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                                     lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
@@ -3587,7 +3587,7 @@ function draw_graphic_bis() {
                 if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
                                    "purple", backgroundColor_2, ctx, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (mobileMode) {
-                    if ((nbColumns >= 4) && (nbColumns <= 6) && (currentAttemptNumber == 1)) {
+                    if ((nbColumns >= 4) && (nbColumns <= 7) && (currentAttemptNumber == 1)) {
                       displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
                                     "purple", backgroundColor_2, ctx, true, 0, true, 0, false, true, false /* bottom-left bubble */);
                     }
