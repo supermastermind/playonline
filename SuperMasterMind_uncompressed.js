@@ -3201,10 +3201,10 @@ function draw_graphic_bis() {
           }
           let res_header1 = false;
           let res_header2 = false;
-          if ((optimal_width > 0) && !display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
-                               lightGray, backgroundColor_2, ctx, 0, true)) {
-            if ((optimal_width > 0) && !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
-                               lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
+          if ((optimal_width == 0) || !display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+                                                       lightGray, backgroundColor_2, ctx, 0, true)) {
+            if ((optimal_width == 0) || !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+                                                       lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                                     lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
                 res_header1 = true;
@@ -3249,9 +3249,9 @@ function draw_graphic_bis() {
         else {
           let res_header1 = false;
           let res_header2 = false;
-          if ((optimal_width > 0) && !display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+          if ((optimal_width == 0) || !display2Strings("number", "   " + "of codes" + "   ", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, 0, true)) {
-            if ((optimal_width > 0) && !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+            if ((optimal_width == 0) || !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
               if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                                     lightGray, backgroundColor_2, ctx, true, 0, true, 1)) {
