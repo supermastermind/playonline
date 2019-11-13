@@ -85,7 +85,7 @@ function write_sidebar() {
         <li style='margin-left:0;'><a href='http://mathworld.wolfram.com/Mastermind.html'>Mastermind strategies</a></li>\
       </ul>\
       <h1>Android app</h1>\
-      Android app on Google Play:<br>\
+      Get it on Google Play:<br>\
       <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='width:5.0rem;margin-top:0.5rem;margin-bottom:0.5rem' src='img/Playstore_icon.png'/></a>\
     </div>");
 }

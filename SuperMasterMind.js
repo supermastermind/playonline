@@ -1258,7 +1258,7 @@ let play_store_app_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
 <br><b>"+str+"</b><br>\
 <a href='"+android_app_url+"'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
-<small>If you like this game,&nbsp;put some stars in Google Play Store &#x1F609;<br>For any suggestion for improvement,&nbsp;please use the&nbsp;<a href='contact_info.html'>contact info</a> page</small><br><br><br>\
+<small>If you like this game,&nbsp;put some stars in Google Play &#x1F609;<br>For any suggestions for improvement,&nbsp;please use the&nbsp;<a href='contact_info.html'>contact info</a> page</small><br><br><br>\
 </font></td></tr></table></center>";
 try{
 modal_mode=4;
@@ -1428,7 +1428,7 @@ else if( (!android_appli)&&(!mobileMode)&&localStorage.gamesok&&(Number(localSto
 show_play_store_app();
 }
 else if( android_appli&&localStorage.firstname&&localStorage.gamesok&&((Number(localStorage.gamesok)==39)||(Number(localStorage.gamesok)==67)||(Number(localStorage.gamesok)==101)||(Number(localStorage.gamesok)==156)||(Number(localStorage.gamesok)==202)||(Number(localStorage.gamesok)==303)||(Number(localStorage.gamesok)==404)||(Number(localStorage.gamesok)==707)||(Number(localStorage.gamesok)==1061)||(Number(localStorage.gamesok)==1333)||(Number(localStorage.gamesok)==1644)||(Number(localStorage.gamesok)==1999)) ){
-show_play_store_app("Hello <font color=#C900A1>"+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game, put some stars&nbsp;<big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google&nbsp;Play&nbsp;Store. It&nbsp;will help to make this app better known! Thanks&nbsp;in&nbsp;advance for&nbsp;your&nbsp;support!!<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Just follow this link:", true);
+show_play_store_app("<font color=#C900A1>Hello "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game, put some stars&nbsp;<big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google&nbsp;Play. It&nbsp;will help to make this app better known! Thanks&nbsp;in&nbsp;advance for&nbsp;your&nbsp;support!!<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Just follow this link:", true);
 }
 }
 catch (tmp_exc){}
