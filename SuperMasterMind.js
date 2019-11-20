@@ -1579,7 +1579,7 @@ debug_mode=localStorage.debug_mode;
 gameSolverInitMsgContents={'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
-setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((mobileMode&&(game_cnt==1)) ? 2222 : 1000));// delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((mobileMode&&(game_cnt==1)) ? 2222 : 1111));// delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 if(randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();", 888);
 }
@@ -2676,7 +2676,7 @@ if(!displayString("\u2009\u2B50\u2009HELP   ", 0, nbMaxAttemptsToDisplay+transit
 darkGray, backgroundColor_2, ctx, true, 1, true, 0)){
 if(!displayString("\u2009\u2B50HELP\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, backgroundColor_2, ctx, true, 1, true, 0)){
-displayString("\u2009HELP\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, backgroundColor_2, ctx, true, 1, true, 0);
 }
 }
