@@ -3932,7 +3932,7 @@ function draw_graphic_bis() {
     // Display current code
     if (gameOnGoing()) { // playing phase
       ctx.font = basic_bold_font;
-      if ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes >= 1)) {
+      if ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (currentCode == 0)) {
         currentCodeColorMode = 2;
       }
       else {

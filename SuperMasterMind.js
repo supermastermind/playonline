@@ -3359,7 +3359,7 @@ main_graph_update_needed=false;
 }
 if(gameOnGoing()){
 ctx.font=basic_bold_font;
-if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes >=1)){
+if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes >=1)&&(currentCode==0)){
 currentCodeColorMode=2;
 }
 else{
