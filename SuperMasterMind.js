@@ -3439,7 +3439,7 @@ if( (!displayIfEnoughRoom)||(x_0_next - x_0 - str_width >=0) ){
 if(!ignoreRanges){
 ctx.fillStyle=backgroundColor;
 if(fillRoundedRectangle){
-let radius=Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/3.33;
+let radius=Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/2.5;
 if(currentCodeColorMode==1){
 ctx.strokeStyle=lightGray;
 }
