@@ -4023,7 +4023,7 @@ function displayString(str, x_cell, y_cell, x_cell_width,
     if (!ignoreRanges) {
       ctx.fillStyle = backgroundColor;
       if (fillRoundedRectangle) {
-        let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/5;
+        let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/3.33;
         if (currentCodeColorMode == 1) {
           ctx.strokeStyle = lightGray;
         }
