@@ -490,7 +490,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_NR";
+      let html_compatibility_game_version = "Ver_NS";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -1689,7 +1689,7 @@
               console.log(zip);
               document.getElementById('form_zip_id').value = zip;
               console.log(city);
-              document.getElementById('form_city_id').value = city;
+              document.getElementById('form_city_id').value = ((mobileMode && (!android_appli)) ? '-' : city); // (mobile IP-address based geolocation is very imprecise)
               console.log((locationId + " " + extraLocationInfo).trim());
               document.getElementById('form_geoloc_id').value = (locationId + " " + extraLocationInfo).trim();
               console.log(timezone);
