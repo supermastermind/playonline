@@ -4427,7 +4427,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     ctx.fillStyle = document.getElementById("my_table").style.backgroundColor;
     // ctx.fill();
     ctx.lineWidth = circleBorderWidth;
-    ctx.strokeStyle = averageColor("#000000", document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.30));
+    ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.15));
     ctx.stroke();
   }
 
