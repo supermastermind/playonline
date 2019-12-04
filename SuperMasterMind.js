@@ -10,7 +10,7 @@ console.log("Running SuperMasterMind.js...");
 // *************************************************************************
 // Main game variables
 // *******************
-let version="v3.1";
+let version="v3.2";
 let emptyColor=0;// (0 is also the Java default table init value)
 let nbMinColors=5;
 let nbMaxColors=10;
@@ -183,11 +183,29 @@ let foregroundColorTable=
 "#FFFFFF",
 "#FFFFFF"
 ];
-let backgroundColor_2=document.getElementById("my_table").style.backgroundColor;// (may be modified later on)
-let backgroundColor_3="#D0D0D0";// (may be modified later on)
-let lightGray="#909090";// (shall be significantly darker than backgroundColor_2)
-let darkGray="#000000";// (shall be significantly darker than lightGray)
-let highlightColor="#FFFF00";// Yellow
+if(localStorage.modernDisplay){
+modernDisplay=(localStorage.modernDisplay=="true");
+}
+let legacy_backgroundColor_2_base_color="#894B0F";// "#7F4613";// "#694927";
+let backgroundColor_2;
+let backgroundColor_3;
+let highlightColor;
+let lightGray;
+let darkGray;
+function updateThemeAttributes(){
+document.getElementById("my_table").style.backgroundColor=(modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
+document.getElementById("my_canvas").style.border=(modernDisplay ? "2px solid purple" : "2px solid black");
+let allButtons=document.getElementsByClassName("button");
+for (let i=0;i < allButtons.length;i++){
+allButtons[i].style.border=(modernDisplay ? "2px solid purple" : "2px solid black");
+}
+backgroundColor_2=(modernDisplay ? document.getElementById("my_table").style.backgroundColor : "");
+backgroundColor_3=(modernDisplay ? "#D0D0D0" : "");
+highlightColor=(modernDisplay ? "#FFFF00" : "#FFFF00");
+lightGray=(modernDisplay ? "#909090" : "#9B7B5B");// (duplicated line)
+darkGray="#000000";
+}
+updateThemeAttributes();
 let currentCodeColorMode=-1;
 // Fonts
 // *****
@@ -201,6 +219,7 @@ let basic_bold_italic_font=defaultFont;
 let small_basic_font=defaultFont;
 let small_bold_font=defaultFont;
 let small_italic_font=defaultFont;
+let very_small_font=defaultFont;
 let very_small_italic_font=defaultFont;
 let medium_basic_font=defaultFont;
 let medium_bold_font=defaultFont;
@@ -214,7 +233,7 @@ let star_font_size=min_font_size;
 // ****************
 let main_graph_update_needed=true;
 let color_selection_code=0;
-let color_cnt=0;
+let color_cnt=1;
 let tickChar="\u2714";/* (check mark/tick) */
 let crossChar="\u2716";/* (cross) */
 let firefoxMode=(navigator.userAgent.toUpperCase().search("FIREFOX")!=-1);
@@ -1071,6 +1090,19 @@ nbValidMouseClicks=2;// (trick)
 nbInvalidMouseClicks=2;// (trick)
 }
 }
+else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok) <=5)))
+&&( ((mouse_x > get_x_pixel(x_min))
+&&(mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
+&&(mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1)))
+&&(mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-2))))
+||(/*(!android_appli) &&*/ (nbValidMouseClicks==1) &&!localStorage.gamesok)
+||(/*(!android_appli) &&*/ (nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
+modernDisplay=!modernDisplay;
+localStorage.modernDisplay=modernDisplay;
+updateThemeAttributes();
+main_graph_update_needed=true;
+draw_graphic(true);
+}
 else if(gameOnGoing()){
 event_x_min=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 event_x_max=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
@@ -1459,7 +1491,7 @@ break;
 case 7:
 nbColors=Math.min(nbMaxColors, nominalGameNbColors+2);
 nbMaxAttempts=nominalGameNbMaxAttempts+3;
-document.title="Ultra Master Mind";
+document.title="Mega Master Mind";
 break;
 default:
 throw new Error("invalid selection of number of columns: "+nbColumns+" (1)");
@@ -1530,6 +1562,7 @@ nbOfStatsFilled_ListsOfPossibleCodes=0;
 nbOfStatsFilled_Perfs=0;
 currentAttemptNumber=1;
 gameWon=false;
+lightGray=(modernDisplay ? "#909090" : "#9B7B5B");// (due to lightGray update at game end - duplicated line)
 timeStr="";
 score=-1.0;
 sumPerfs=0.00;
@@ -2174,8 +2207,8 @@ CompressedDisplayMode=true;// (transition)
 updateGameSizes();
 }
 mobileMode=true;
-backgroundColor_2="#FFFFFF";
-backgroundColor_3="#EEEEEE";
+backgroundColor_2=(modernDisplay ? "#FFFFFF" : "");
+backgroundColor_3=(modernDisplay ? "#EEEEEE" : "");
 if(/Android/i.test(navigator.userAgent)||android_appli){
 androidMode=true;
 }
@@ -2268,7 +2301,7 @@ canvas.height=height;/* (necessary as canvas may have been expanded to fill its 
 ctx.setTransform(1,0,0,1,0,0);// resets the canvas current transform to the identity matrix
 updateAttributesWidthAndHeightValues(width, height);
 }
-} while (resize_detected&&(resize_cnt <=15));// several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+} while (resize_detected&&(resize_cnt <=25));// several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 if(window.innerWidth < 0.70*window.innerHeight){
 rulesTableWidthStr="100%";
 scoresTableWidthStr="100%";
@@ -2344,6 +2377,9 @@ currentCode=-1;
 gameWon=true;
 nbGamesPlayed++;
 nbGamesPlayedAndWon++;
+if(!modernDisplay){
+lightGray=darkGray;// clearer stats
+}
 }
 else{
 currentAttemptNumber++;
@@ -2351,6 +2387,9 @@ if(currentAttemptNumber==nbMaxAttempts+1){
 currentCode=-1;
 stopTime=(new Date()).getTime();// time in milliseconds
 nbGamesPlayed++;
+if(!modernDisplay){
+lightGray=darkGray;// clearer stats
+}
 }
 else{
 last_but_one_attempt_event=(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */
@@ -2405,8 +2444,27 @@ throw new Error("invalid game_id_for_initGameSolver value at next attempt: "+gam
 let nbMaxAttemptsToDisplay=((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed : currentAttemptNumber-1);
 if(main_graph_update_needed){
 let x_0, y_0, x_1, y_1;
+if(modernDisplay){
 ctx.fillStyle=backgroundColor_2;
-ctx.fillRect(0,0,current_width,current_height);
+ctx.fillRect(0, 0, current_width, current_height);
+}
+else{
+let x_attempts_0;
+let x_attempts_1;
+x_attempts_0=get_x_pixel(x_min);
+if(attempt_nb_width > 0){
+x_attempts_1=get_x_pixel(x_min+x_step*attempt_nb_width);
+}
+else{
+x_attempts_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
+}
+let lineaire=ctx.createLinearGradient(x_attempts_0, 25, x_attempts_1, 25);
+lineaire.addColorStop(0, legacy_backgroundColor_2_base_color);
+lineaire.addColorStop(0.5, (gameWon ? '#BB7702' : legacy_backgroundColor_2_base_color));// orange
+lineaire.addColorStop(1, legacy_backgroundColor_2_base_color);
+ctx.fillStyle=lineaire;
+ctx.fillRect(0, 0, current_width, current_height);
+}
 let x_cell_delta=get_x_pixel(x_min+x_step) - get_x_pixel(x_min);
 let y_cell_delta=get_y_pixel(y_min) - get_y_pixel(y_min+y_step);
 font_size=min_font_size;
@@ -2445,6 +2503,7 @@ basic_bold_italic_font="bold italic "+font_size+"px "+fontFamily;
 small_basic_font=Math.max(Math.floor(font_size/1.4), min_font_size)+"px "+fontFamily;
 small_bold_font="bold "+Math.max(Math.floor(font_size/1.4), min_font_size)+"px "+fontFamily;
 small_italic_font="italic "+Math.max(Math.floor(font_size/1.4), min_font_size)+"px "+fontFamily;
+very_small_font=Math.max(Math.floor(font_size/2.34), min_font_size)+"px "+fontFamily;
 very_small_italic_font="italic "+Math.max(Math.floor(font_size/2.34), min_font_size)+"px "+fontFamily;
 medium_basic_font=Math.max(Math.floor(font_size/1.5), min_font_size)+"px "+fontFamily;
 medium_bold_font="bold "+Math.max(Math.floor(font_size/1.5), min_font_size)+"px "+fontFamily;
@@ -2461,8 +2520,10 @@ x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 y_0=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
 y_1=get_y_pixel(y_min);
+if(backgroundColor_3!=""){
 ctx.fillStyle=backgroundColor_3;
 ctx.fillRect(x_0, y_0, x_1-x_0, y_1-y_0);
+}
 ctx.font=basic_bold_font;
 for (let attempt=0;attempt <=nbMaxAttemptsToDisplay;attempt++){
 x_0=get_x_pixel(x_min);
@@ -2498,7 +2559,7 @@ attempt_nb_str_to_display=String(attempt+1);
 if(gameWon){
 if(attempt+1==currentAttemptNumber-1){
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-darkGray, backgroundColor, ctx, false, true, 0, true, 0);
+(modernDisplay ? darkGray : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
 }
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
@@ -2516,7 +2577,7 @@ orangeColor, backgroundColor, ctx, false, true, 0, true, 0);
 }
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-((currentAttemptNumber==1) ? "purple" : darkGray), backgroundColor, ctx, false, true, 0, true, 0);
+(((currentAttemptNumber==1) ||!modernDisplay) ? (modernDisplay ? "purple" : "orange") : darkGray), backgroundColor, ctx, false, true, 0, true, 0);
 }
 }
 else{
@@ -2639,10 +2700,13 @@ backgroundColor=highlightColor;
 if((optimal_width > 0)||(i==currentAttemptNumber)||((i==nbOfStatsFilled_NbPossibleCodes)&&(nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1))||(!performancesDisplayed[i-1]) /* (nb of possible codes <-> perf switch) */){
 let statsColor;
 if(currentAttemptNumber==1){
-statsColor="purple";
+statsColor=(modernDisplay ? "purple" : "orange");
 }
-else if((i==currentAttemptNumber)||(gameWon&&(i==currentAttemptNumber-1))){
-statsColor=darkGray;
+else if(gameWon&&(i==currentAttemptNumber-1)){
+statsColor=(modernDisplay ? darkGray : lightGray);
+}
+else if(i==currentAttemptNumber){
+statsColor=(modernDisplay ? darkGray : "orange");
 }
 else{
 statsColor=lightGray;
@@ -2708,22 +2772,31 @@ let HintsThreshold=5;
 if(!showPossibleCodesMode){
 ctx.font=medium3_bold_font;
 if( (nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok) <=5)) ){
-if(!displayString("\u2009\u2B50\u2009Help\u2009/\u2009Rules     ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+let themesFullyDisplayed=true;
+let themeStr1="Display";
+let themeStr2="Display";
+if(!displayString("\u2009\u2B50\u2009"+themeStr1+" ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)){
-if(!displayString("\u2009\u2B50\u2009HELP   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+if(!displayString("\u2009\u2B50\u2009"+themeStr2+" ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)){
-if(!displayString("\u2009\u2B50HELP\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+themesFullyDisplayed=false;
+displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
+darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
+}
+}
+if(!themesFullyDisplayed ||!displayString("\u2009\u2B50\u2009Help\u2009/\u2009Rules     ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)){
+if(!themesFullyDisplayed ||!displayString("\u2009\u2B50\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)){
 displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
 }
 }
 }
-}
 if((!CompressedDisplayMode)&&(optimal_width > 0)&&(tick_width > 0)){
-ctx.font=very_small_italic_font;
+ctx.font=very_small_font;
 displayString(version, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-0.07, 5,
-lightGray, backgroundColor_2, ctx, false, true, 2, true, 1, true /* (ignoreRanges) */);
+(modernDisplay ? lightGray : darkGray), backgroundColor_2, ctx, false, true, 2, true, 1, true /* (ignoreRanges) */);
 }
 ctx.font=medium_bold_font;
 if((!gameOnGoing())&&allPerformancesFilled()){
@@ -2832,7 +2905,7 @@ ctx.fillStyle=darkGray;
 if(scode_height > 0){
 ctx.font=basic_bold_font;
 displayString("Secret code "+"\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
-darkGray, backgroundColor_2, ctx, false, true, 2, true, 0);
+(modernDisplay||(currentAttemptNumber==1) ? darkGray : (gameOnGoing() ? lightGray : "orange")), backgroundColor_2, ctx, false, true, 2, true, 0);
 if(gameOnGoing()){
 if(!dsCode){
 displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true, false);
@@ -2978,14 +3051,14 @@ greenColor, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
 }
 if(allPerformancesFilled()){
-if(CompressedDisplayMode||!displayString("\u2009" /* (thin space) */+"time: "+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
-if(!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
+if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
+if(CompressedDisplayMode ||!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-greenColor, backgroundColor_2, ctx, false, true, 0, false, 0);
+darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
 }
 }
@@ -2997,12 +3070,12 @@ ptsStr="pts"
 else{
 ptsStr="pt";
 }
-if(CompressedDisplayMode||!displayString("\u2009" /* (thin space) */+"score: "+rounded_score+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
+if(true ||!displayString("\u2009" /* (thin space) */+"score: "+rounded_score+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+rounded_score+"\u2009" /* (thin space) */+ptsStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(rounded_score+ptsStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-greenColor, backgroundColor_2, ctx, false, true, 0, false, 0);
+darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
 }
 }
@@ -3021,21 +3094,16 @@ redColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString("No!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
 redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
-if(CompressedDisplayMode||!displayString("\u2009" /* (thin space) */+"time: "+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-redColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
-if(!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-redColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
+if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
+if(CompressedDisplayMode ||!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-redColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
+darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
 }
-}
-if(CompressedDisplayMode||!displayString("\u2009score: 0\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-redColor, backgroundColor_2, ctx, false, true, 0, true, 0)){
-displayString("0\u2009pt", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
 }
 else{
@@ -3058,23 +3126,23 @@ displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode
 ctx.fillStyle=darkGray;
 try{
 ctx.font=medium2_bold_font;
-if( (nbGamesPlayedAndWon==0)&&gameOnGoing()&&((currentAttemptNumber <=3)||(nbColorSelections < nbColumns))&&(nbOfStatsFilled_NbPossibleCodes >=1) ){
+if( (nbGamesPlayedAndWon==0)&&gameOnGoing()&&((currentAttemptNumber <=1)||(nbColorSelections < nbColumns))&&(nbOfStatsFilled_NbPossibleCodes >=1) ){
 let x_delta=0.80;
 if(!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-"purple", backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)){
+(modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)){
 if(!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-"purple", backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)){
+(modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)){
 if(!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-"purple", backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)){
+(modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)){
 if(mobileMode){
 if((nbColumns >=4)&&(nbColumns <=6)&&(currentAttemptNumber==1)){
 displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
-"purple", backgroundColor_2, ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
+(modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
 }
 }
 else{
 displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-"purple", backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
+(modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
 }
 }
 }
@@ -3176,7 +3244,7 @@ darkGray, backgroundColor_2, ctx, false, true, 0, true, 0);
 if((!atLeastOneAttemptSelection)&&(!CompressedDisplayMode)&&(transition_height >=1)){
 ctx.font=small_bold_font;
 displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(70*(nbColumns+1))/100,
-"#4B0082" /* purple */, backgroundColor_2, ctx, false, true, 0, true, 0);
+(modernDisplay ? "#4B0082" /* purple */ : "orange"), backgroundColor_2, ctx, false, true, 0, true, 0);
 }
 }
 }
@@ -3359,8 +3427,19 @@ main_graph_update_needed=false;
 }
 if(gameOnGoing()){
 ctx.font=basic_bold_font;
-if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes >=1)&&(currentCode==0)){
+if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes==0)&&(currentCode==0)){
+currentCodeColorMode=1;
+}
+else if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes >=1)){
 currentCodeColorMode=2;
+}
+else if(!modernDisplay){
+if(currentCode==0){
+currentCodeColorMode=2;
+}
+else{
+currentCodeColorMode=3;
+}
 }
 else{
 currentCodeColorMode=1;
@@ -3437,14 +3516,18 @@ y_0_next=y_0 - str_height;
 }
 if( (!displayIfEnoughRoom)||(x_0_next - x_0 - str_width >=0) ){
 if(!ignoreRanges){
+if(backgroundColor!=""){
 ctx.fillStyle=backgroundColor;
 if(fillRoundedRectangle){
-let radius=Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 5.0 : 3.0);
+let radius=Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 3.0 : 3.0);
 if(currentCodeColorMode==1){
 ctx.strokeStyle=lightGray;
 }
 else if(currentCodeColorMode==2){
-ctx.strokeStyle="purple";
+ctx.strokeStyle=(modernDisplay ? "purple" : "orange");
+}
+else if(currentCodeColorMode==3){
+ctx.strokeStyle=darkGray;
 }
 else{
 ctx.strokeStyle=darkGray;
@@ -3458,6 +3541,7 @@ br: radius
 }
 else{
 ctx.fillRect(x_0+1, y_0_next+1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
+}
 }
 }
 if(justify==0){
@@ -3599,8 +3683,8 @@ if(color!=emptyColor){
 let foregroundColor=foregroundColorTable[color-1];
 let backgroundColor=backgroundColorTable[color-1];
 if(disabledColor){
-foregroundColor=averageColor(foregroundColor, backgroundColor_2, 0.25);
-backgroundColor=averageColor(backgroundColor, backgroundColor_2, 0.25);
+foregroundColor=averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
+backgroundColor=averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
 }
 if(color < 10){
 displayString(color, x_cell, y_cell, 2,
@@ -3617,7 +3701,7 @@ foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
 }
 else{
 if(secretCodeCase){
-let bckg_color=darkGray;
+let bckg_color=(modernDisplay ? darkGray : lightGray);
 if(currentAttemptNumber <=1){
 if(color_cnt >=nbColors){
 color_cnt=0;
@@ -3628,12 +3712,21 @@ if(color_cnt==5){
 color_cnt=7;
 }
 }
+if(modernDisplay){
 displayString("?", x_cell, y_cell, 2,
 bckg_color, backgroundColor_2, ctx, true, displayColorMode, 0, false, 0);
 }
 else{
+currentCodeColorMode=((currentAttemptNumber <=1) ? 3 : 1);
+displayString("?", x_cell, y_cell, 2,
+bckg_color, legacy_backgroundColor_2_base_color, ctx, true, displayColorMode, 0, false, 0);
+currentCodeColorMode=-1;
+}
+}
+else{
+let ave_color=averageColor(legacy_backgroundColor_2_base_color, "#FFFFFF", 0.95);
 displayString("", x_cell, y_cell, 2,
-darkGray, backgroundColor_3, ctx, true, displayColorMode, 0, false, 0);
+darkGray, (modernDisplay ? backgroundColor_3 : ave_color), ctx, true, displayColorMode, 0, false, 0);
 }
 }
 if(handleCurrentCodeColorMode){
@@ -3662,8 +3755,10 @@ if(circle_width_applied < 2){
 circle_width_applied=2;
 }
 let space_btw_marks=((x_0_next - x_0 - 2.0) - (nbColumns*(circle_width_applied+1.0))) / (nbColumns+1.0);
+if(backgroundColor!=""){
 ctx.fillStyle=backgroundColor;
 ctx.fillRect(x_0+1, y_0_next+1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
+}
 ctx.fillStyle="black";
 let x_0_pos;
 let left_space=1+Math.floor(space_btw_marks);
@@ -3699,7 +3794,19 @@ radius,
 ctx.fillStyle=whiteBckg;
 ctx.fill();
 ctx.lineWidth=circleBorderWidth;
-ctx.strokeStyle="black";
+ctx.strokeStyle=(modernDisplay ? "black" : whiteBckg);
+ctx.stroke();
+}
+for (let i=mark.nbBlacks+mark.nbWhites;i < nbColumns;i++){
+x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));// (int)space_btw_marks instead of space_btw_marks to have constant spacing between all circles
+ctx.beginPath();
+ctx.arc(x_0_pos+x_0_pos_offset+radius,
+Math.floor((y_0+y_0_next+1)/2),
+radius,
+0, 2 * Math.PI, false);// starting and ending angles+clockwise
+ctx.fillStyle=document.getElementById("my_table").style.backgroundColor;
+ctx.lineWidth=circleBorderWidth;
+ctx.strokeStyle=averageColor("#000000", document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.15 : 0.20));
 ctx.stroke();
 }
 }

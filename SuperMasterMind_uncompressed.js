@@ -16,7 +16,7 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 
-let version = "v3.03";
+let version = "v3.2";
 
 let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
@@ -218,11 +218,29 @@ let foregroundColorTable =
     "#FFFFFF"
   ];
 
-let backgroundColor_2 = document.getElementById("my_table").style.backgroundColor; // (may be modified later on)
-let backgroundColor_3 = "#D0D0D0"; // (may be modified later on)
-let lightGray = "#909090"; // (shall be significantly darker than backgroundColor_2)
-let darkGray = "#000000"; // (shall be significantly darker than lightGray)
-let highlightColor = "#FFFF00"; // Yellow
+if (localStorage.modernDisplay) {
+  modernDisplay = (localStorage.modernDisplay == "true");
+}
+let legacy_backgroundColor_2_base_color = "#894B0F"; // "#7F4613"; // "#694927";
+let backgroundColor_2;
+let backgroundColor_3;
+let highlightColor;
+let lightGray;
+let darkGray;
+function updateThemeAttributes() {
+  document.getElementById("my_table").style.backgroundColor = (modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
+  document.getElementById("my_canvas").style.border = (modernDisplay ? "2px solid purple" : "2px solid black");
+  let allButtons = document.getElementsByClassName("button");
+  for (let i = 0; i < allButtons.length; i++) {
+    allButtons[i].style.border = (modernDisplay ? "2px solid purple" : "2px solid black");
+  }
+  backgroundColor_2 = (modernDisplay ? document.getElementById("my_table").style.backgroundColor : "");
+  backgroundColor_3 = (modernDisplay ? "#D0D0D0" : "");
+  highlightColor = (modernDisplay ? "#FFFF00" : "#FFFF00");
+  lightGray = (modernDisplay ? "#909090" : "#9B7B5B"); // (duplicated line)
+  darkGray = "#000000";
+}
+updateThemeAttributes();
 
 let currentCodeColorMode = -1;
 
@@ -239,6 +257,7 @@ let basic_bold_italic_font = defaultFont;
 let small_basic_font = defaultFont;
 let small_bold_font = defaultFont;
 let small_italic_font = defaultFont;
+let very_small_font = defaultFont;
 let very_small_italic_font = defaultFont;
 let medium_basic_font = defaultFont;
 let medium_bold_font = defaultFont;
@@ -254,7 +273,7 @@ let star_font_size = min_font_size;
 
 let main_graph_update_needed = true;
 let color_selection_code = 0;
-let color_cnt = 0;
+let color_cnt = 1;
 
 let tickChar = "\u2714"; /* (check mark/tick) */
 let crossChar = "\u2716"; /* (cross) */
@@ -1292,6 +1311,24 @@ function mouseClick(e) {
 
   }
 
+  // ************
+  // Switch theme
+  // ************
+
+  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5))) // (condition duplicated)
+            && ( ((mouse_x > get_x_pixel(x_min))
+                  && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
+                  && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1)))
+                  && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-2))))
+                 || (/*(!android_appli) &&*/ (nbValidMouseClicks == 1) && !localStorage.gamesok) // (display rules if no games were ever won)
+                 || (/*(!android_appli) &&*/ (nbInvalidMouseClicks == 1) && !localStorage.gamesok) ) ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
+    modernDisplay = !modernDisplay;
+    localStorage.modernDisplay = modernDisplay;
+    updateThemeAttributes();
+    main_graph_update_needed = true;
+    draw_graphic(true);
+  }
+
   // ***************
   // Color selection
   // ***************
@@ -1734,7 +1771,7 @@ function resetGameAttributes(nbColumnsSelected) {
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
       nbMaxAttempts = nominalGameNbMaxAttempts + 3;
-      document.title = "Ultra Master Mind";
+      document.title = "Mega Master Mind";
       break;
     default:
       throw new Error("invalid selection of number of columns: " + nbColumns + " (1)");
@@ -1811,6 +1848,7 @@ function resetGameAttributes(nbColumnsSelected) {
   currentAttemptNumber = 1;
 
   gameWon = false;
+  lightGray = (modernDisplay ? "#909090" : "#9B7B5B"); // (due to lightGray update at game end - duplicated line)
   timeStr = "";
   score = -1.0;
   sumPerfs = 0.00;
@@ -2572,8 +2610,8 @@ function draw_graphic_bis() {
             updateGameSizes();
           }
           mobileMode = true;
-          backgroundColor_2 = "#FFFFFF";
-          backgroundColor_3 = "#EEEEEE";
+          backgroundColor_2 = (modernDisplay ? "#FFFFFF" : "");
+          backgroundColor_3 = (modernDisplay ? "#EEEEEE" : "");
           if (/Android/i.test(navigator.userAgent) || android_appli) {
             androidMode = true;
           }
@@ -2678,7 +2716,7 @@ function draw_graphic_bis() {
 
       }
 
-    } while (resize_detected && (resize_cnt <= 15)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+    } while (resize_detected && (resize_cnt <= 25)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize
 
     // Set adaptative widths
     if (window.innerWidth < 0.70*window.innerHeight) {
@@ -2762,6 +2800,9 @@ function draw_graphic_bis() {
           gameWon = true;
           nbGamesPlayed++;
           nbGamesPlayedAndWon++;
+          if (!modernDisplay) {
+            lightGray = darkGray; // clearer stats
+          }
         }
         else {
           currentAttemptNumber++;
@@ -2769,6 +2810,9 @@ function draw_graphic_bis() {
             currentCode = -1;
             stopTime = (new Date()).getTime(); // time in milliseconds
             nbGamesPlayed++;
+            if (!modernDisplay) {
+              lightGray = darkGray; // clearer stats
+            }
           }
           else {
             last_but_one_attempt_event = (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
@@ -2837,8 +2881,27 @@ function draw_graphic_bis() {
 
       let x_0, y_0, x_1, y_1;
 
-      ctx.fillStyle = backgroundColor_2;
-      ctx.fillRect(0,0,current_width,current_height);
+      if (modernDisplay) {
+        ctx.fillStyle = backgroundColor_2;
+        ctx.fillRect(0, 0, current_width, current_height);
+      }
+      else {
+        let x_attempts_0;
+        let x_attempts_1;
+        x_attempts_0 = get_x_pixel(x_min);
+        if (attempt_nb_width > 0) {
+          x_attempts_1 = get_x_pixel(x_min+x_step*attempt_nb_width);
+        }
+        else {
+          x_attempts_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
+        }
+        let lineaire = ctx.createLinearGradient(x_attempts_0, 25, x_attempts_1, 25);
+        lineaire.addColorStop(0, legacy_backgroundColor_2_base_color);
+        lineaire.addColorStop(0.5, (gameWon ? '#BB7702' : legacy_backgroundColor_2_base_color)); // orange // '#885000' '#996602'
+        lineaire.addColorStop(1, legacy_backgroundColor_2_base_color);
+        ctx.fillStyle = lineaire;
+        ctx.fillRect(0, 0, current_width, current_height);
+      }
 
       // ***************
       // Adapt font size
@@ -2886,6 +2949,7 @@ function draw_graphic_bis() {
       small_basic_font = Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       small_bold_font = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       small_italic_font = "italic " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
+      very_small_font = Math.max(Math.floor(font_size/2.34), min_font_size) + "px " + fontFamily;
       very_small_italic_font = "italic " + Math.max(Math.floor(font_size/2.34), min_font_size) + "px " + fontFamily;
 
       medium_basic_font = Math.max(Math.floor(font_size/1.5), min_font_size) + "px " + fontFamily;
@@ -2909,8 +2973,10 @@ function draw_graphic_bis() {
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
       y_1 = get_y_pixel(y_min);
-      ctx.fillStyle = backgroundColor_3;
-      ctx.fillRect(x_0, y_0, x_1-x_0, y_1-y_0);
+      if (backgroundColor_3 != "") {
+        ctx.fillStyle = backgroundColor_3;
+        ctx.fillRect(x_0, y_0, x_1-x_0, y_1-y_0);
+      }
 
       ctx.font = basic_bold_font;
       for (let attempt = 0; attempt <= nbMaxAttemptsToDisplay; attempt++) {
@@ -2947,7 +3013,7 @@ function draw_graphic_bis() {
           if (gameWon) {
             if (attempt+1 == currentAttemptNumber-1) {
               displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                            darkGray, backgroundColor, ctx, false, true, 0, true, 0);
+                            (modernDisplay ? darkGray : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
             }
             else {
               displayString(attempt_nb_str_to_display, 0, attempt, str_width,
@@ -2965,7 +3031,7 @@ function draw_graphic_bis() {
             }
             else {
               displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                            ((currentAttemptNumber == 1) ? "purple" : darkGray), backgroundColor, ctx, false, true, 0, true, 0);
+                            (((currentAttemptNumber == 1) || !modernDisplay) ? (modernDisplay ? "purple" : "orange") : darkGray), backgroundColor, ctx, false, true, 0, true, 0);
             }
           }
           else {
@@ -3115,10 +3181,13 @@ function draw_graphic_bis() {
           let statsColor;
 
           if (currentAttemptNumber == 1) {
-            statsColor = "purple";
+            statsColor = (modernDisplay ? "purple" : "orange");
           }
-          else if ((i == currentAttemptNumber) || (gameWon && (i == currentAttemptNumber-1))) {
-            statsColor = darkGray;
+          else if (gameWon && (i == currentAttemptNumber-1)) {
+            statsColor = (modernDisplay ? darkGray : lightGray);
+          }
+          else if (i == currentAttemptNumber) {
+            statsColor = (modernDisplay ? darkGray : "orange");
           }
           else {
             statsColor = lightGray;
@@ -3196,15 +3265,24 @@ function draw_graphic_bis() {
 
         ctx.font = medium3_bold_font;
         if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated for mouse click management)
-          if (!displayString("\u2009\u2B50\u2009Help\u2009/\u2009Rules     ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+          let themesFullyDisplayed = true;
+          let themeStr1 = "Display";
+          let themeStr2 = "Display";
+          if (!displayString("\u2009\u2B50\u2009" + themeStr1 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-            if (!displayString("\u2009\u2B50\u2009HELP   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+            if (!displayString("\u2009\u2B50\u2009" + themeStr2 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
                                darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-              if (!displayString("\u2009\u2B50HELP\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                                 darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-                displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                              darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
-              }
+              themesFullyDisplayed = false;
+              displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
+                            darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
+            }
+          }
+          if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Help\u2009/\u2009Rules     ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                                                      darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
+            if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                                                        darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
+              displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                            darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
             }
           }
         }
@@ -3213,9 +3291,9 @@ function draw_graphic_bis() {
         // ********************
 
         if ((!CompressedDisplayMode) && (optimal_width > 0) && (tick_width > 0)) {
-          ctx.font = very_small_italic_font;
+          ctx.font = very_small_font;
           displayString(version, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-0.07, 5,
-                        lightGray, backgroundColor_2, ctx, false, true, 2, true, 1, true /* (ignoreRanges) */);
+                        (modernDisplay ? lightGray : darkGray), backgroundColor_2, ctx, false, true, 2, true, 1, true /* (ignoreRanges) */);
         }
 
         // Display column headers
@@ -3335,7 +3413,7 @@ function draw_graphic_bis() {
         if (scode_height > 0) {
           ctx.font = basic_bold_font;
           displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
-                        darkGray, backgroundColor_2, ctx, false, true, 2, true, 0);
+                        (modernDisplay || (currentAttemptNumber == 1) ? darkGray : (gameOnGoing() ? lightGray : "orange")), backgroundColor_2, ctx, false, true, 2, true, 0);
           if (gameOnGoing()) {
             if (!dsCode) {
               displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true, false);
@@ -3494,14 +3572,14 @@ function draw_graphic_bis() {
               }
             }
             if (allPerformancesFilled()) {
-              if (CompressedDisplayMode || !displayString("\u2009" /* (thin space) */ + "time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                                          greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
-                if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                   greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+              if (!displayString("\u2009" /* (thin space) */ + "\u23F0\u2009" + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+                if (CompressedDisplayMode || !displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                                            darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
                   if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                     greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+                                     darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
                     displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                                     greenColor, backgroundColor_2, ctx, false, true, 0, false, 0);
+                                  darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
                   }
                 }
               }
@@ -3513,12 +3591,12 @@ function draw_graphic_bis() {
               else {
                 ptsStr = "pt";
               }
-              if (CompressedDisplayMode || !displayString("\u2009" /* (thin space) */ + "score: " + rounded_score + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                                                          greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+              if (true || !displayString("\u2009" /* (thin space) */ + "score: " + rounded_score + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
+                                         darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
                 if (!displayString("\u2009" /* (thin space) */ + rounded_score + "\u2009" /* (thin space) */ + ptsStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                                   greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+                                   darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
                   displayString(rounded_score + ptsStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                                greenColor, backgroundColor_2, ctx, false, true, 0, false, 0);
+                                darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
                 }
               }
             }
@@ -3529,10 +3607,8 @@ function draw_graphic_bis() {
                               lightGray, backgroundColor_2, ctx, false, true, 0, false, 0);
               }
             }
-
           }
           else if (currentAttemptNumber == nbMaxAttemptsToDisplay+1) { // game lost
-
             score = 0.0;
             // (code duplicated:)
             if (!displayString("\u2009You lost!\u2009", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
@@ -3540,21 +3616,16 @@ function draw_graphic_bis() {
               displayString("No!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                             redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
             }
-            if (CompressedDisplayMode || !displayString("\u2009" /* (thin space) */ + "time: " + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                                        redColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
-              if (!displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                 redColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+            if (!displayString("\u2009" /* (thin space) */ + "\u23F0\u2009" + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                               darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+              if (CompressedDisplayMode || !displayString("\u2009" /* (thin space) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                                                          darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
                 if (!displayString("\u2009" /* (thin space) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                   redColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
+                                   darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)) {
                   displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
-                                                   redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
+                                                   darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
                 }
               }
-            }
-            if (CompressedDisplayMode || !displayString("\u2009score: 0\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                                                        redColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
-              displayString("0\u2009pt", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-                            redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
             }
           }
           else {
@@ -3585,23 +3656,23 @@ function draw_graphic_bis() {
 
         try {
           ctx.font = medium2_bold_font;
-          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 3) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes >= 1) ) {
+          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 1) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes >= 1) ) {
             let x_delta = 0.80;
             if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                               "purple", backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                               (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                                 "purple", backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                                 (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
                 if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                   "purple", backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
+                                   (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (mobileMode) {
                     if ((nbColumns >= 4) && (nbColumns <= 6) && (currentAttemptNumber == 1)) {
                       displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
-                                    "purple", backgroundColor_2, ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
+                                    (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
                     }
                   }
                   else {
                     displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                  "purple", backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
+                                  (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                   }
                 }
               }
@@ -3712,7 +3783,7 @@ function draw_graphic_bis() {
               if ((!atLeastOneAttemptSelection) && (!CompressedDisplayMode) && (transition_height >= 1)) {
                 ctx.font = small_bold_font;
                 displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(70*(nbColumns+1))/100,
-                              "#4B0082" /* purple */, backgroundColor_2, ctx, false, true, 0, true, 0);
+                              (modernDisplay ? "#4B0082" /* purple */ : "orange"), backgroundColor_2, ctx, false, true, 0, true, 0);
               }
             }
           } // (res)
@@ -3932,8 +4003,19 @@ function draw_graphic_bis() {
     // Display current code
     if (gameOnGoing()) { // playing phase
       ctx.font = basic_bold_font;
-      if ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes >= 1) && (currentCode == 0)) {
+      if ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes == 0) && (currentCode == 0)) {
+        currentCodeColorMode = 1;
+      }
+      else if ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes >= 1)) {
         currentCodeColorMode = 2;
+      }
+      else if (!modernDisplay) {
+        if (currentCode == 0) {
+          currentCodeColorMode = 2;
+        }
+        else {
+          currentCodeColorMode = 3;
+        }
       }
       else {
         currentCodeColorMode = 1;
@@ -4021,27 +4103,32 @@ function displayString(str, x_cell, y_cell, x_cell_width,
 
   if ( (!displayIfEnoughRoom) || (x_0_next - x_0 - str_width >= 0) ) {
     if (!ignoreRanges) {
-      ctx.fillStyle = backgroundColor;
-      if (fillRoundedRectangle) {
-        let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 5.0 : 3.0);
-        if (currentCodeColorMode == 1) {
-          ctx.strokeStyle = lightGray;
-        }
-        else if (currentCodeColorMode == 2) {
-          ctx.strokeStyle = "purple";
+      if (backgroundColor != "") { // N.A. background
+        ctx.fillStyle = backgroundColor;
+        if (fillRoundedRectangle) {
+          let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 3.0 : 3.0);
+          if (currentCodeColorMode == 1) {
+            ctx.strokeStyle = lightGray;
+          }
+          else if (currentCodeColorMode == 2) {
+            ctx.strokeStyle = (modernDisplay ? "purple" : "orange");
+          }
+          else if (currentCodeColorMode == 3) {
+            ctx.strokeStyle = darkGray;
+          }
+          else {
+            ctx.strokeStyle = darkGray;
+          }
+          drawRoundedRect(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, {
+            tl: radius,
+            tr: radius,
+            bl: radius,
+            br: radius
+          }, true, true);
         }
         else {
-          ctx.strokeStyle = darkGray;
+         ctx.fillRect(x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
         }
-        drawRoundedRect(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, {
-          tl: radius,
-          tr: radius,
-          bl: radius,
-          br: radius
-        }, true, true);
-      }
-      else {
-       ctx.fillRect(x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
       }
     }
     if (justify == 0) { // centered
@@ -4199,8 +4286,8 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
     let foregroundColor = foregroundColorTable[color-1];
     let backgroundColor = backgroundColorTable[color-1];
     if (disabledColor) {
-      foregroundColor = averageColor(foregroundColor, backgroundColor_2, 0.25);
-      backgroundColor = averageColor(backgroundColor, backgroundColor_2, 0.25);
+      foregroundColor = averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
+      backgroundColor = averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
     }
     if (color < 10) {
       displayString(color, x_cell, y_cell, 2,
@@ -4217,7 +4304,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
   }
   else {
     if (secretCodeCase) {
-      let bckg_color = darkGray;
+      let bckg_color = (modernDisplay ? darkGray : lightGray);
       if (currentAttemptNumber <= 1) { // a little fun
         if (color_cnt >= nbColors) {
           color_cnt = 0;
@@ -4228,12 +4315,21 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
           color_cnt = 7;
         }
       }
-      displayString("?", x_cell, y_cell, 2,
-                    bckg_color, backgroundColor_2, ctx, true, displayColorMode, 0, false, 0);
+      if (modernDisplay) {
+        displayString("?", x_cell, y_cell, 2,
+                      bckg_color, backgroundColor_2, ctx, true, displayColorMode, 0, false, 0);
+      }
+      else {
+        currentCodeColorMode = ((currentAttemptNumber <= 1) ? 3 : 1);
+        displayString("?", x_cell, y_cell, 2,
+                      bckg_color, legacy_backgroundColor_2_base_color, ctx, true, displayColorMode, 0, false, 0);
+        currentCodeColorMode = -1;
+      }
     }
     else {
+      let ave_color = averageColor(legacy_backgroundColor_2_base_color, "#FFFFFF", 0.95);
       displayString("", x_cell, y_cell, 2,
-                    darkGray, backgroundColor_3, ctx, true, displayColorMode, 0, false, 0);
+                    darkGray, (modernDisplay ? backgroundColor_3 : ave_color), ctx, true, displayColorMode, 0, false, 0);
     }
   }
   if (handleCurrentCodeColorMode) {
@@ -4247,7 +4343,6 @@ function displayCode(code, y_cell, ctx, secretCodeCase = false, checkDisabledCol
     displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ?  obviouslyImpossibleColors[color] : false));
   }
 }
-
 
 function displayMark(mark, y_cell, backgroundColor, ctx) {
 
@@ -4269,8 +4364,10 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
   // Space between marks whose circle's diameter is circle_width_applied
   let space_btw_marks = ((x_0_next - x_0 - 2.0) - (nbColumns*(circle_width_applied+1.0))) / (nbColumns+1.0);
 
-  ctx.fillStyle = backgroundColor;
-  ctx.fillRect(x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
+  if (backgroundColor != "") { // N.A. background
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
+  }
 
   ctx.fillStyle = "black";
 
@@ -4315,9 +4412,23 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     ctx.fillStyle = whiteBckg;
     ctx.fill();
     ctx.lineWidth = circleBorderWidth;
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = (modernDisplay ? "black" : whiteBckg);
     ctx.stroke();
+  }
 
+  for (let i = mark.nbBlacks + mark.nbWhites; i < nbColumns; i++) {
+    x_0_pos = Math.round(x_0 + 1.0 + Math.floor(space_btw_marks) + i*(circle_width_applied+1.0+Math.floor(space_btw_marks))); // (int)space_btw_marks instead of space_btw_marks to have constant spacing between all circles
+
+    ctx.beginPath();
+    ctx.arc(x_0_pos + x_0_pos_offset + radius, // center x
+            Math.floor((y_0 + y_0_next + 1)/2), // center y
+            radius, // radius
+            0, 2 * Math.PI, false); // starting and ending angles + clockwise
+    ctx.fillStyle = document.getElementById("my_table").style.backgroundColor;
+    // ctx.fill();
+    ctx.lineWidth = circleBorderWidth;
+    ctx.strokeStyle = averageColor("#000000", document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.15 : 0.20));
+    ctx.stroke();
   }
 
 }
