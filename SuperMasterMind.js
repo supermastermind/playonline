@@ -186,7 +186,7 @@ let foregroundColorTable=
 if(localStorage.modernDisplay){
 modernDisplay=(localStorage.modernDisplay=="true");
 }
-let legacy_backgroundColor_2_base_color="#7F4613";// "#894B0F";// "#694927";
+let legacy_backgroundColor_2_base_color="#5F340E"; // "#7F4613";// "#894B0F";// "#694927";
 let backgroundColor_2;
 let backgroundColor_3;
 let highlightColor;
