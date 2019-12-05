@@ -2460,7 +2460,7 @@ x_attempts_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100))
 }
 let lineaire=ctx.createLinearGradient(x_attempts_0, 25, x_attempts_1, 25);
 lineaire.addColorStop(0, legacy_backgroundColor_2_base_color);
-lineaire.addColorStop(0.5, (gameWon ? '#BB7702' : legacy_backgroundColor_2_base_color));// orange
+lineaire.addColorStop(0.5, (gameWon ? '#BB7702' : averageColor("#FFFF00", document.getElementById("my_table").style.backgroundColor, 0.15)));// orange
 lineaire.addColorStop(1, legacy_backgroundColor_2_base_color);
 ctx.fillStyle=lineaire;
 ctx.fillRect(0, 0, current_width, current_height);
