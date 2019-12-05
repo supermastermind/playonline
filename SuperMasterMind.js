@@ -3806,7 +3806,7 @@ radius,
 0, 2 * Math.PI, false);// starting and ending angles+clockwise
 ctx.fillStyle=document.getElementById("my_table").style.backgroundColor;
 ctx.lineWidth=circleBorderWidth;
-ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.15));
+ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.20));
 ctx.stroke();
 }
 }
