@@ -3563,6 +3563,8 @@ function draw_graphic_bis() {
             }
 
             // (code duplicated:)
+            displayString("\u{1F3C6}" /* trophy */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
+                          greenColor, backgroundColor_2, ctx, false, true, 0, true, 0);            
             if (!displayString(victoryStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
                                greenColor, backgroundColor_2, ctx, false, true, 0, true, 0)) {
               if (!displayString(victoryStr2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
