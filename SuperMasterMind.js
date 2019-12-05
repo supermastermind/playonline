@@ -2923,8 +2923,8 @@ let totalTimeInSeconds=Math.floor((stopTime - startTime)/1000);
 let timeInMilliSeconds=(stopTime - startTime) % 1000;
 let timeInHours=Math.floor(totalTimeInSeconds/3600);
 let timeInSecondsWithinHour=(totalTimeInSeconds - timeInHours*3600);
-let timeInMinutes=Math.floor(timeInSecondsWithinHour/60);
-let timeInSeconds=timeInSecondsWithinHour - timeInMinutes*60;
+let timeInMinutes = Math.floor(timeInSecondsWithinHour/60);
+let timeInSeconds = timeInSecondsWithinHour - timeInMinutes*60;
 if(timeInHours >=24){
 timeStr="> 1 day";
 }
@@ -3055,11 +3055,11 @@ greenColor, backgroundColor_2, ctx, false, true, 0, false, 0);
 if(allPerformancesFilled()){
 if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
-if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u200A" /* (hair space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
-if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u200A" /* (hair space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
@@ -3098,11 +3098,11 @@ redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
 if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
-if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u200A" /* (hair space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
-if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u200A" /* (hair space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
