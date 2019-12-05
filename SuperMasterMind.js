@@ -11,30 +11,30 @@ console.log("Running SuperMasterMind.js...");
 // Main game variables
 // *******************
 let version="v3.2";
-let emptyColor=0;// (0 is also the Java default table init value)
+let emptyColor=0;
 let nbMinColors=5;
 let nbMaxColors=10;
 let nbMinColumns=3;
 let nbMaxColumns=7;
 let overallNbMinAttempts=4;
 let overallNbMaxAttempts=15;
-let nominalGameNbColumns=5;// classical Super Master Mind game
-let nominalGameNbColors=8;// classical Super Master Mind game
-let nominalGameNbMaxAttempts=12;// classical Super Master Mind game
+let nominalGameNbColumns=5;
+let nominalGameNbColors=8;
+let nominalGameNbMaxAttempts=12;
 let defaultNbColumns=5;
-let nbColumns=-1;// N.A.
-let nbColors=-1;// N.A.
-let nbMaxAttempts=-1;// N.A.
+let nbColumns=-1;
+let nbColors=-1;
+let nbMaxAttempts=-1;
 let simpleCodeHandler=null;
 let showPossibleCodesMode=false;
 let showPossibleCodesOffsetMode=false;
-let nbMinPossibleCodesShown=-1;// N.A.
-let nbMaxPossibleCodesShown=-1;// N.A.
-let nbPossibleCodesShown=-1;// N.A. (only valid if showPossibleCodesMode is true)
-let currentPossibleCodeShown=-1;// N.A. (only valid if showPossibleCodesMode is true)
+let nbMinPossibleCodesShown=-1;
+let nbMaxPossibleCodesShown=-1;
+let nbPossibleCodesShown=-1;
+let currentPossibleCodeShown=-1;
 let disableMouseMoveEffects=false;
 let atLeastOneAttemptSelection=false;
-let currentPossibleCodeShownBeforeMouseMove=-1;// N.A. (only valid if showPossibleCodesMode is true)
+let currentPossibleCodeShownBeforeMouseMove=-1;
 let lastidxBeforeMouseMove=-1;
 let nbValidMouseClicks=0;
 let nbInvalidMouseClicks=0;
@@ -53,27 +53,27 @@ let performancesDisplayed;
 let possibleCodesLists;
 let possibleCodesListsSizes;
 let possibleCodesListsSubdivisions;
-let globalPerformancesList;// (same size as possibleCodesLists)
+let globalPerformancesList;
 let PerformanceLOW=-0.25;
 let PerformanceVERYLOW=-0.50;
-let PerformanceNA=-3.00;// (duplicated in GameSolver script)
-let PerformanceUNKNOWN=-2.00;// (duplicated in GameSolver script)
-let PerformanceMinValidValue=-1.50;// (a valid relative performance can be < -1.00 in some extremely rare (impossible code) cases - duplicated in GameSolver script)
-let PerformanceMaxValidValue=+1.30;// (a valid relative performance can be > 0.00 in some rare (impossible code) cases - duplicated in GameSolver script)
+let PerformanceNA=-3.00;
+let PerformanceUNKNOWN=-2.00;
+let PerformanceMinValidValue=-1.50;
+let PerformanceMaxValidValue=+1.30;
 let nbOfStatsFilled_NbPossibleCodes=0;
 let nbOfStatsFilled_ListsOfPossibleCodes=0;
 let nbOfStatsFilled_Perfs=0;
 let currentAttemptNumber=1;
 let gameWon=false;
-let timeStr="";// (only valid if game over)
+let timeStr="";
 let score=-1.0;
 let sumPerfs=0.00;
 let nbUnknownPerfs=0;
 let sCode=-1;
 let sCodeRevealed=-1;
-let loadTime=(new Date()).getTime();// time in milliseconds
-let startTime=-1;// N.A.
-let stopTime=-1;// N.A.
+let loadTime=(new Date()).getTime();
+let startTime=-1;
+let stopTime=-1;
 let newGameEvent=true;
 let nbOnGoingGamesAborted=0;
 let nbGamesAbortedWithOnGoingWorker=0;
@@ -90,16 +90,16 @@ let at_least_one_useless_code_played=false;
 let game_cnt=0;
 let last_dialog_game_cnt=-10;
 let gameSolver=undefined;
-let gameSolverDbg=-1;// (debug value)
+let gameSolverDbg=-1;
 let gameSolverInitMsgContents=null;
 let gameSolverConfigDbg=null;
 let game_id_for_gameSolverConfig=-1;
 let game_id_for_initGameSolver=-1;
 let gamesolver_buffered_msg_status=0;
 let gamesolver_buffered_msg_action_str="";
-let isWorkerAlive=-2;// (debug value)
-let workerCreationTime=-1;// (debug value)
-let workerTerminationTime=-1;// (debug value)
+let isWorkerAlive=-2;
+let workerCreationTime=-1;
+let workerTerminationTime=-1;
 // GUI variables
 // *************
 let newGameButtonIniName=document.getElementById("newGameButton").value;
@@ -130,12 +130,12 @@ let CompressedDisplayMode_uncompressWidth=944;
 // ******************
 let left_border_margin_x=-1.0;
 let right_border_margin_x=-1.0;
-let bottom_border_margin_y=-1.0;// N.A. - Bottom border margin for y axis in %
+let bottom_border_margin_y=-1.0;
 let top_border_margin_y=-1.0;
-let current_width=-1;// N.A.
+let current_width=-1;
 let width_shift;
 let reduced_width;
-let current_height=-1;// N.A.
+let current_height=-1;
 let height_shift;
 let reduced_height;
 let x_axis_height;
@@ -143,8 +143,8 @@ let x_min=0.0;
 let x_max=100.0;
 let y_min=0.0;
 let y_max=100.0;
-let x_step=1.0;// N.A.
-let y_step=1.0;// N.A.
+let x_step=1.0;
+let y_step=1.0;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
 let optimal_width=4;
@@ -154,9 +154,9 @@ let scode_height=1;
 let nb_attempts_not_displayed=0;
 // Colors
 // ******
-let greenColor="#008200";// Green
-let orangeColor="#FF7700";// Orange
-let redColor="#F00000";// Red
+let greenColor="#008200";
+let orangeColor="#FF7700";
+let redColor="#F00000";
 let backgroundColorTable=
 [
 "#0000A8",
@@ -186,7 +186,7 @@ let foregroundColorTable=
 if(localStorage.modernDisplay){
 modernDisplay=(localStorage.modernDisplay=="true");
 }
-let legacy_backgroundColor_2_base_color="#5F340E"; // "#7F4613";// "#894B0F";// "#694927";
+let legacy_backgroundColor_2_base_color="#5F340E";
 let backgroundColor_2;
 let backgroundColor_3;
 let highlightColor;
@@ -202,7 +202,7 @@ allButtons[i].style.border=(modernDisplay ? "2px solid purple" : "2px solid blac
 backgroundColor_2=(modernDisplay ? document.getElementById("my_table").style.backgroundColor : "");
 backgroundColor_3=(modernDisplay ? "#D0D0D0" : "");
 highlightColor=(modernDisplay ? "#FFFF00" : "#FFFF00");
-lightGray=(modernDisplay ? "#909090" : "#9B7B5B");// (duplicated line)
+lightGray=(modernDisplay ? "#909090" : "#9B7B5B");
 darkGray="#000000";
 }
 updateThemeAttributes();
@@ -211,7 +211,7 @@ let currentCodeColorMode=-1;
 // *****
 let fontFamily="Verdana";
 let defaultFont="10px "+fontFamily;
-let min_font_size=7;// (font size below 7 may not be easily readable in canvas)
+let min_font_size=7;
 let max_font_size=288;
 let basic_font=defaultFont;
 let basic_bold_font=defaultFont;
@@ -326,7 +326,7 @@ precalculated_games_5columns_1st_level[0][0]=
 "1|11122:0B0W|N:7776|33333:83D5,33334:77CB,33344:73D4,33345:730E,33433:77CB,33434:73D4,33435:730E,33444:73D4,33445:71D8,33455:71D8,33456:72D3,34533:730E,34534:71D8,34536:72D3,34566:72D3,34567:7649." +
 "1|11123:0B0W|N:3125|44444:302F,44445:2B2F,44455:2954,44456:2945,44544:2B2F,44545:2954,44546:2945,44555:2954,44556:28CF,44566:28CF,44567:298C,45644:2945,45645:28CF,45647:298C,45677:298C,45678:2BDD." +
 "1|11223:0B0W|N:3125|44444:302F,44445:2B2F,44454:2B2F,44455:2954,44456:2945,44554:2954,44556:28CF,44564:2945,44565:28CF,44567:298C,45454:2954,45456:28CF,45464:2945,45465:28CF,45467:298C,45674:298C,45678:2BDD.";
-let extra_precalculated_str="";// (variable updated by the .js scripts generated by extractPrecalculatedPerfs.java - do not rename it)
+let extra_precalculated_str="";
 // *************************************************************************
 // *************************************************************************
 // Error handling
@@ -535,7 +535,7 @@ compressCodeToString(code){
 let res="";
 for (let col=0;col < this.nbColumns;col++){
 let color=this.getColor(code, col+1);
-res=res+color.toString(16).toUpperCase();// (hexa number used if >=10)
+res=res+color.toString(16).toUpperCase();
 }
 return res;
 }
@@ -554,7 +554,7 @@ if( (colorRevealed >=1)&&(colorRevealed <=this.nbColors)
 code=this.setColor(code, colorRevealed, col+1);
 }
 else{
-let color_idx=Math.floor(Math.random() * (this.nbColors - nbObviouslyImpossibleColors)+1);// in 1 .. nb possible colors
+let color_idx=Math.floor(Math.random() * (this.nbColors - nbObviouslyImpossibleColors)+1);
 let selected_color=-1;
 let color_cnt=1;
 let possiblecolor_cnt=0;
@@ -627,7 +627,7 @@ cnt++;
 return cnt;
 }
 isEmpty(code){
-return (code==0);// only emptyColor in the code
+return (code==0);
 }
 replaceEmptyColor(code, emptyColorIdx, code2){
 let cnt=0;
@@ -790,7 +790,7 @@ let nb_possible_codes_listed=Number(data.nb_possible_codes_listed);
 if( isNaN(nb_possible_codes_listed)||(nb_possible_codes_listed <=0)||(nb_possible_codes_listed > nbMaxPossibleCodesShown) ){
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: "+nb_possible_codes_listed, new Error().stack);
 }
-let possible_codes_subdivision=-1;// N.A.
+let possible_codes_subdivision=-1;
 try{
 if(data.possible_codes_subdivision!==undefined){
 possible_codes_subdivision=Number(data.possible_codes_subdivision);
@@ -907,7 +907,7 @@ if(nbNewGameEventsCancelled <=2){
 var rsp=confirm("Do you really want to abort current game?");
 if(!rsp){
 nbNewGameEventsCancelled++;
-return;// Cancel or "x" (close) button
+return;
 }
 }
 }
@@ -1083,11 +1083,11 @@ catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }
 if(nbValidMouseClicks==1){
-nbValidMouseClicks=2;// (trick)
+nbValidMouseClicks=2;
 }
 else{
-nbValidMouseClicks=2;// (trick)
-nbInvalidMouseClicks=2;// (trick)
+nbValidMouseClicks=2;
+nbInvalidMouseClicks=2;
 }
 }
 else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok) <=5)))
@@ -1341,7 +1341,7 @@ x_step=(x_max - x_min) / (attempt_nb_width
 +nbColumns*2
 +nb_possible_codes_width
 +optimal_width
-+tick_width);// OK/NOK
++tick_width);
 if(!showPossibleCodesMode){
 if(nbColumns <=3){
 nb_attempts_not_displayed=0;
@@ -1365,7 +1365,7 @@ y_step=(y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed
 +transition_height
 +scode_height
 +transition_height
-+nbColors);// color selection
++nbColors);
 }
 else{
 nb_attempts_not_displayed=0;
@@ -1375,7 +1375,7 @@ displayGUIError("invalid context for updateGameSizes(): "+gameOnGoing()+", "+all
 y_step=(y_max - y_min) / (currentAttemptNumber-1
 +transition_height
 +nbPossibleCodesShown
-+1);// tick display
++1);
 }
 }
 function postInitMessageToGameSolver(cnt_p){
@@ -1439,10 +1439,10 @@ gamesolver_buffered_msg_action_str="";
 if( ((new Date()).getTime() - loadTime >=8*3600*1000)
 ||(nbGamesPlayedAndWon >=30) ){
 if(android_appli){
-console.log("webview reload request");//!WARNING! -> this console text will be read by the android appli so shall not be modified
+console.log("webview reload request");
 }
 else{
-loadTime=(new Date()).getTime();// time in milliseconds (this line should be useless)
+loadTime=(new Date()).getTime();
 location.reload(true);
 }
 }
@@ -1450,7 +1450,7 @@ try{
 if( (!android_appli)&&mobileMode&&androidMode
 &&localStorage.androidAppNotifShown&&(Number(localStorage.androidAppNotifShown) >=5)
 &&localStorage.gamesok&&(Number(localStorage.gamesok) > 55) ){
-window.location.replace(android_app_url);// redirect to android appli page
+window.location.replace(android_app_url);
 }
 else if( (!android_appli)&&mobileMode&&androidMode
 &&localStorage.gamesok&&(Number(localStorage.gamesok) > 0)&&(Number(localStorage.gamesok) % 11==0) ){
@@ -1550,11 +1550,11 @@ performancesDisplayed[i]=false;
 possibleCodesLists=new Array(nbMaxAttempts);
 possibleCodesListsSizes=new Array(nbMaxAttempts);
 possibleCodesListsSubdivisions=new Array(nbMaxAttempts);
-globalPerformancesList=new Array(nbMaxAttempts);// (same size as possibleCodesLists)
+globalPerformancesList=new Array(nbMaxAttempts);
 for (i=0;i < nbMaxAttempts;i++){
 possibleCodesLists[i]=new Array(nbMaxPossibleCodesShown);
 possibleCodesListsSizes[i]=0;
-possibleCodesListsSubdivisions[i]=-1;// N.A.
+possibleCodesListsSubdivisions[i]=-1;
 globalPerformancesList[i]=new Array(nbMaxPossibleCodesShown);
 }
 nbOfStatsFilled_NbPossibleCodes=0;
@@ -1562,7 +1562,7 @@ nbOfStatsFilled_ListsOfPossibleCodes=0;
 nbOfStatsFilled_Perfs=0;
 currentAttemptNumber=1;
 gameWon=false;
-lightGray=(modernDisplay ? "#909090" : "#9B7B5B");// (due to lightGray update at game end - duplicated line)
+lightGray=(modernDisplay ? "#909090" : "#9B7B5B");
 timeStr="";
 score=-1.0;
 sumPerfs=0.00;
@@ -1612,7 +1612,7 @@ debug_mode=localStorage.debug_mode;
 gameSolverInitMsgContents={'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'game_id': game_cnt, 'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
-setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((mobileMode&&(game_cnt==1)) ? 2222 : 1111));// delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((mobileMode&&(game_cnt==1)) ? 2222 : 1111));
 if(randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();", 888);
 }
@@ -1701,7 +1701,7 @@ if(sum_max < nbColumns){
 displayGUIError("invalid stats (sum_max="+sum_max+") (2)", new Error().stack);
 return false;
 }
-nbOfStatsFilled_NbPossibleCodes=attempt_nb;// Assumption: the number of possible codes is assumed to be the first stat to be written among all stats
+nbOfStatsFilled_NbPossibleCodes=attempt_nb;
 main_graph_update_needed=true;
 draw_graphic(false);
 return true;
@@ -1728,8 +1728,8 @@ if( ((relative_perf_p < PerformanceMinValidValue)&&(relative_perf_p!=Performance
 displayGUIError("invalid perfs ("+attempt_nb+", "+nbOfStatsFilled_Perfs+", "+nbOfStatsFilled_NbPossibleCodes+", "+relative_perf_p+", "+best_global_performance_p+", "+relative_perf_evaluation_done_p+", "+code_p+", "+attempt_nb+")", new Error().stack);
 return false;
 }
-relative_performances_of_codes_played[attempt_nb-1]=relative_perf_p;// may be known or unknown
-global_best_performances[attempt_nb-1]=best_global_performance_p;// may be PerformanceUNKNOWN
+relative_performances_of_codes_played[attempt_nb-1]=relative_perf_p;
+global_best_performances[attempt_nb-1]=best_global_performance_p;
 if(relative_perf_p==PerformanceUNKNOWN){
 nbUnknownPerfs++;
 }
@@ -1791,7 +1791,7 @@ displayGUIError("invalid stats (unknown code performance(s) after evaluation) (5
 return false;
 }
 possibleCodesLists[attempt_nb-1][i]=code;
-globalPerformancesList[attempt_nb-1][i]=global_perf;// may be PerformanceUNKNOWN
+globalPerformancesList[attempt_nb-1][i]=global_perf;
 }
 possibleCodesListsSizes[attempt_nb-1]=nb_possible_codes_listed;
 possibleCodesListsSubdivisions[attempt_nb-1]=possible_codes_subdivision;
@@ -1810,7 +1810,7 @@ my_array[i]=new Array(y);
 }
 return my_array;
 }
-let table_tmp=new2DArray(2, 9);// (9 is the highest number standing on one char)
+let table_tmp=new2DArray(2, 9);
 let are_there_5_identical_colors=new Array(2);
 let are_there_4_identical_colors=new Array(2);
 let is_there_triple=new Array(2);
@@ -1843,7 +1843,7 @@ for (let color=0;color < table_tmp[code_idx].length;color++){
 table_tmp[code_idx][color]=0;
 }
 for (let column=0;column < 5;column++){
-let color=code_str.charAt(column);// - 48;
+let color=code_str.charAt(column);
 if((color < 1)||(color >=9)){
 throw new Error("determine_smm_jscriptname: internal error (out of range color: "+color+")");
 }
@@ -1918,9 +1918,9 @@ suffix=suffix+"_"+ table_tmp[0][one_double_color[1]]+"Y";
 if((!is_there_triple[0])&&(nb_doubles[0]==1)){
 let nb_double_intersections=0;
 for (let column=0;column < 5;column++){
-let color_1=code_str_1.charAt(column);// - 48;
+let color_1=code_str_1.charAt(column);
 if(color_1==one_double_color[0]){
-let color_2=code_str_2.charAt(column);// - 48;
+let color_2=code_str_2.charAt(column);
 if(color_2==one_double_color[1]){
 nb_double_intersections++;
 }
@@ -1949,7 +1949,7 @@ console.log("(valid extra_precalculated_str)");
 res=extra_precalculated_str;
 }
 }
-extra_precalculated_str="";// (do not send it twice)
+extra_precalculated_str="";
 return res;
 }
 function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, mark_str_2){
@@ -1969,10 +1969,10 @@ dataType: "jsonp",
 timeout: ontheflytimeout
 })
 .done(function(location){
-setTimeout(gamesolver_buffered_msg_action_str, 44);// (as shifted in time, may be run in a next game with a different game_id, which will have no effect as game_id is checked)
+setTimeout(gamesolver_buffered_msg_action_str, 44);
 })
 .fail(function(jqxhr, textStatus, error){
-setTimeout(gamesolver_buffered_msg_action_str, 44);// (as shifted in time, may be run in a next game with a different game_id, which will have no effect as game_id is checked)
+setTimeout(gamesolver_buffered_msg_action_str, 44);
 if(jqxhr.status!=200){
 console.log(("precalculated games fetch failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
 }
@@ -2032,7 +2032,7 @@ current_height=Math.max(height, 1);
 width_shift=Math.floor((current_width * left_border_margin_x) / 100.0);
 reduced_width=Math.floor((current_width * (100.0 - left_border_margin_x - right_border_margin_x)) / 100.0);
 height_shift=Math.floor((current_height * top_border_margin_y) / 100.0);
-x_axis_height=0;// Fixed x axis height
+x_axis_height=0;
 reduced_height=Math.floor((current_height * (100.0 - top_border_margin_y - bottom_border_margin_y)) / 100.0) - x_axis_height;
 }
 function get_x_pixel(x){
@@ -2067,7 +2067,7 @@ if(y > y_max) y=y_max;
 return height_shift+reduced_height+x_axis_height - Math.ceil(((y - y_min) * x_axis_height) / 1.0);
 }
 else{ */
-return height_shift+reduced_height - Math.ceil(((y - (y_min+1.0)) * reduced_height) / (y_max - (y_min+1.0)));// (Math.ceil() is better than Math.floor() to address y grid's rounding issues)
+return height_shift+reduced_height - Math.ceil(((y - (y_min+1.0)) * reduced_height) / (y_max - (y_min+1.0)));
 /* } */
 }
 function get_y_coordinate(y_pixel){
@@ -2160,7 +2160,7 @@ updateGameSizes();
 draw_graphic_bis();
 }
 if(fullMode){
-draw_graphic_bis();// sometimes improves the display  - not perfect but best solution found
+draw_graphic_bis();
 }
 }
 function draw_graphic_bis(){
@@ -2189,12 +2189,12 @@ resize_detected=true;
 resize_cnt++;
 if(CompressedDisplayMode){
 if(width >=CompressedDisplayMode_uncompressWidth){
-CompressedDisplayMode=false;// (transition)
+CompressedDisplayMode=false;
 updateGameSizes();
 }
 }
 else if(width <=CompressedDisplayMode_compressWidth){
-CompressedDisplayMode=true;// (transition)
+CompressedDisplayMode=true;
 updateGameSizes();
 }
 mobileMode=false;
@@ -2203,7 +2203,7 @@ if( (/Mobi/i.test(navigator.userAgent))||(/Android/i.test(navigator.userAgent))
 ||(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent))
 ||android_appli ){
 if(!CompressedDisplayMode){
-CompressedDisplayMode=true;// (transition)
+CompressedDisplayMode=true;
 updateGameSizes();
 }
 mobileMode=true;
@@ -2240,7 +2240,7 @@ if(firefoxMode){
 document.getElementById("my_canvas").style.height="95%";
 }
 else{
-document.getElementById("my_canvas").style.height="99.25%";// (does not work with Firefox)
+document.getElementById("my_canvas").style.height="99.25%";
 }
 try{
 document.getElementById("img_1").style.display='none';
@@ -2249,7 +2249,7 @@ document.getElementById("img_2").style.display='none';
 catch (err){}
 left_border_margin_x=1.0;
 right_border_margin_x=1.0;
-bottom_border_margin_y=1.5;// Bottom border margin for y axis in %
+bottom_border_margin_y=1.5;
 top_border_margin_y=0.65;
 }
 else{
@@ -2275,7 +2275,7 @@ document.getElementById("img_2").style.display='inline';
 catch (err){}
 left_border_margin_x=5.0;
 right_border_margin_x=5.0;
-bottom_border_margin_y=2.5;// Bottom border margin for y axis in %
+bottom_border_margin_y=2.5;
 top_border_margin_y=2.5;
 }
 let allButtons=document.getElementsByClassName("button");
@@ -2290,18 +2290,18 @@ allRadioButtons[i].style.fontSize="12px";
 }
 else{
 for (let i=0;i < allButtons.length;i++){
-allButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");// proportional to viewport height
+allButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");
 }
 for (let i=0;i < allRadioButtons.length;i++){
-allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");// proportional to viewport height
+allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "2.5vh" : "2vh");
 }
 }
 canvas.width=width;/* (necessary as canvas may have been expanded to fill its container) */
 canvas.height=height;/* (necessary as canvas may have been expanded to fill its container) */
-ctx.setTransform(1,0,0,1,0,0);// resets the canvas current transform to the identity matrix
+ctx.setTransform(1,0,0,1,0,0);
 updateAttributesWidthAndHeightValues(width, height);
 }
-} while (resize_detected&&(resize_cnt <=25));// several iterative calls are necessary to redraw the canvas with proper width and height on window resize
+} while (resize_detected&&(resize_cnt <=25));
 if(window.innerWidth < 0.70*window.innerHeight){
 rulesTableWidthStr="100%";
 scoresTableWidthStr="100%";
@@ -2315,19 +2315,19 @@ scoresFontSizeStr="1.4vh";
 abbreviateScores=true;
 }
 else if(window.innerWidth > 1.7*window.innerHeight){
-rulesTableWidthStr="34%";// (~35% for 67% window ratio)
+rulesTableWidthStr="34%";
 scoresTableWidthStr="70%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=false;
 }
 else if(window.innerWidth > 1.3*window.innerHeight){
-rulesTableWidthStr="44%";// (~44% for 83% window ratio)
+rulesTableWidthStr="44%";
 scoresTableWidthStr="95%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=false;
 }
 else{
-rulesTableWidthStr="53%";// (~53% for 100% window ratio)
+rulesTableWidthStr="53%";
 scoresTableWidthStr="100%";
 scoresFontSizeStr="1.4vh";
 abbreviateScores=true;
@@ -2355,7 +2355,7 @@ attempt_HTML_geolocation_if_needed();
 }
 nbCodesPlayed++;
 if(1==currentAttemptNumber){
-startTime=(new Date()).getTime();// time in milliseconds
+startTime=(new Date()).getTime();
 stopTime=startTime;
 updateAndStoreNbGamesStarted(+1);
 }
@@ -2371,24 +2371,24 @@ obviouslyImpossibleColors[simpleCodeHandler.getColor(currentCode, col+1)]=true;
 }
 }
 if(marks[currentAttemptNumber-1].nbBlacks==nbColumns){
-stopTime=(new Date()).getTime();// time in milliseconds
+stopTime=(new Date()).getTime();
 currentAttemptNumber++;
 currentCode=-1;
 gameWon=true;
 nbGamesPlayed++;
 nbGamesPlayedAndWon++;
 if(!modernDisplay){
-lightGray=darkGray;// clearer stats
+lightGray=darkGray;
 }
 }
 else{
 currentAttemptNumber++;
 if(currentAttemptNumber==nbMaxAttempts+1){
 currentCode=-1;
-stopTime=(new Date()).getTime();// time in milliseconds
+stopTime=(new Date()).getTime();
 nbGamesPlayed++;
 if(!modernDisplay){
-lightGray=darkGray;// clearer stats
+lightGray=darkGray;
 }
 }
 else{
@@ -2460,7 +2460,7 @@ x_attempts_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100))
 }
 let lineaire=ctx.createLinearGradient(x_attempts_0, 25, x_attempts_1, 25);
 lineaire.addColorStop(0, legacy_backgroundColor_2_base_color);
-lineaire.addColorStop(0.5, (gameWon ? '#BB7702' : legacy_backgroundColor_2_base_color));// orange
+lineaire.addColorStop(0.5, ((gameWon||(currentAttemptNumber==1)) ? '#BB7702' : legacy_backgroundColor_2_base_color));
 lineaire.addColorStop(1, legacy_backgroundColor_2_base_color);
 ctx.fillStyle=lineaire;
 ctx.fillRect(0, 0, current_width, current_height);
@@ -2486,14 +2486,14 @@ star_font_size=min_font_size;
 let last_valid_star_font_size=star_font_size;
 let star_font_tmp="bold "+star_font_size+"px "+fontFamily;
 ctx.font=star_font_tmp;
-let star_font_width_1char=ctx.measureText("\u2B50").width;// star
+let star_font_width_1char=ctx.measureText("\u2B50").width;
 let star_font_height=star_font_size;
 while ((star_font_height <=Math.min(y_cell_delta-6,y_cell_delta*85.0/100.0) /* (margin+char height imprecision) */)&&(star_font_size <=max_font_size)&&(star_font_width_1char <=x_cell_delta-3)){
 last_valid_star_font_size=star_font_size;
 star_font_size=star_font_size+1;
 star_font_tmp="bold "+star_font_size+"px "+fontFamily;
 ctx.font=star_font_tmp;
-star_font_width_1char=ctx.measureText("\u2B50").width;// star
+star_font_width_1char=ctx.measureText("\u2B50").width;
 star_font_height=star_font_size;
 }
 star_font_size=Math.min(last_valid_star_font_size, font_size);
@@ -2651,10 +2651,10 @@ performancesDisplayed[i-1]=true;
 }
 let clockStr;
 if(gameWon &&!allPerformancesFilled()){
-clockStr="\u231b";// hourglass
+clockStr="\u231b";
 }
 else{
-clockStr="\u301C";// wave
+clockStr="\u301C";
 }
 if(optimal_width > 0){
 if(nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1){
@@ -2741,7 +2741,7 @@ displayGUIError("useless code inconsistency: "+relative_performances_of_codes_pl
 if(!displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 greenColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("Y", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-greenColor, backgroundColor, ctx, false, true, 0, true, 0);// (may be thinner than tickChar)
+greenColor, backgroundColor, ctx, false, true, 0, true, 0);
 }
 }
 else{
@@ -2749,7 +2749,7 @@ if(i <=2){
 if(!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-redColor, backgroundColor, ctx, false, true, 0, true, 0);// (may be thinner than crossChar)
+redColor, backgroundColor, ctx, false, true, 0, true, 0);
 }
 }
 else{
@@ -2760,7 +2760,7 @@ redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 if(!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-redColor, backgroundColor, ctx, false, true, 0, true, 0);// (may be thinner than crossChar)
+redColor, backgroundColor, ctx, false, true, 0, true, 0);
 }
 }
 }
@@ -2801,7 +2801,7 @@ displayString(version, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_po
 ctx.font=medium_bold_font;
 if((!gameOnGoing())&&allPerformancesFilled()){
 let str1, str1bis, str2;
-let sum_rounded=Math.round(sumPerfs * 100.0) / 100.0;// 0.01 precision
+let sum_rounded=Math.round(sumPerfs * 100.0) / 100.0;
 str1=":";
 str1bis="";
 /* if(nbUnknownPerfs==0){
@@ -2813,10 +2813,10 @@ str1="";
 str1bis="\u2248 ";
 } */
 if(sum_rounded > 0.0){
-str2="+"+sum_rounded.toFixed(2)+"!";// 2 decimal figures
+str2="+"+sum_rounded.toFixed(2)+"!";
 }
 else{
-str2=sum_rounded.toFixed(2);// 2 decimal figures
+str2=sum_rounded.toFixed(2);
 }
 let res_header1=false;
 let res_header2=false;
@@ -2840,7 +2840,7 @@ if(res_header1&&(optimal_width > 0)){
 if(!display2Strings("perf"+str1, str1bis+str2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
 lightGray, backgroundColor_2, ctx, 0, true)){
 res_header2=display2Strings("\u03A3" /* (capital sigma) */, str1bis+str2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
-lightGray, backgroundColor_2, ctx, 0, false);// (always display sum=> res_header2 will be true)
+lightGray, backgroundColor_2, ctx, 0, false);
 }
 else{
 res_header2=true;
@@ -2922,9 +2922,9 @@ if(!gameOnGoing()){
 let totalTimeInSeconds=Math.floor((stopTime - startTime)/1000);
 let timeInMilliSeconds=(stopTime - startTime) % 1000;
 let timeInHours=Math.floor(totalTimeInSeconds/3600);
-let timeInSecondsWithinHour=(totalTimeInSeconds - timeInHours*3600);// (range: [0;3599]
+let timeInSecondsWithinHour=(totalTimeInSeconds - timeInHours*3600);
 let timeInMinutes=Math.floor(timeInSecondsWithinHour/60);
-let timeInSeconds=timeInSecondsWithinHour - timeInMinutes*60;// (range: [0;59])
+let timeInSeconds=timeInSecondsWithinHour - timeInMinutes*60;
 if(timeInHours >=24){
 timeStr="> 1 day";
 }
@@ -2968,28 +2968,28 @@ let time_in_seconds_corresponding_to_one_attempt_in_score;
 let multiply_factor;
 switch (nbColumns){
 case 3:
-nb_attempts_for_max_score=3;// (estimate: ~16% of scores, below 3 would not be relevant)
-time_in_seconds_corresponding_to_one_attempt_in_score=45.0;// (time corresponding to 2 attempts: 1 min 30)
+nb_attempts_for_max_score=3;
+time_in_seconds_corresponding_to_one_attempt_in_score=45.0;
 multiply_factor=0.50;
 break;
 case 4:
-nb_attempts_for_max_score=3;// (estimate: ~5% of scores)
-time_in_seconds_corresponding_to_one_attempt_in_score=150.0;// (time corresponding to 2 attempts: 5 min)
+nb_attempts_for_max_score=3;
+time_in_seconds_corresponding_to_one_attempt_in_score=150.0;
 multiply_factor=0.75;
 break;
 case 5:
-nb_attempts_for_max_score=4;// (estimate: ~5% of scores)
-time_in_seconds_corresponding_to_one_attempt_in_score=360.0;// (time corresponding to 2 attempts: 12 min)
+nb_attempts_for_max_score=4;
+time_in_seconds_corresponding_to_one_attempt_in_score=360.0;
 multiply_factor=1.0;
 break;
 case 6:
-nb_attempts_for_max_score=6;// (estimate: ~15% of scores)
-time_in_seconds_corresponding_to_one_attempt_in_score=480.0;// (time corresponding to 2 attempts: 16 min)
+nb_attempts_for_max_score=6;
+time_in_seconds_corresponding_to_one_attempt_in_score=480.0;
 multiply_factor=1.5;
 break;
 case 7:
-nb_attempts_for_max_score=7;// (estimate: ~7% of scores)
-time_in_seconds_corresponding_to_one_attempt_in_score=750.0;// (time corresponding to 2 attempts: 25 min)
+nb_attempts_for_max_score=7;
+time_in_seconds_corresponding_to_one_attempt_in_score=750.0;
 multiply_factor=2.0;
 break;
 default:
@@ -3012,14 +3012,14 @@ time_delta_score=(totalTimeInSeconds*10.0)/time_in_seconds_short_games;
 else{
 time_delta_score=10.0+(10.0 * (totalTimeInSeconds - time_in_seconds_short_games)) / (2*time_in_seconds_corresponding_to_one_attempt_in_score - time_in_seconds_short_games);
 }
-let max_time_delta_score=2*10.0;// the time spent will tend not to cost more than 2 attempts in the score
+let max_time_delta_score=2*10.0;
 if( (time_delta_score <=max_time_delta_score)
 ||(currentAttemptNumber-1 /* number of attempts */ >=nbMaxAttempts) /* at last attempt, score will tend towards zero "more quickly" as time goes on */ ){
 score=multiply_factor * (score_from_nb_attempts - time_delta_score)+0.499 - timeInMilliSeconds/10000000;
 }
 else{
 score=multiply_factor * (score_from_nb_attempts - max_time_delta_score
-- (time_delta_score - max_time_delta_score)/1.5)+0.499 - timeInMilliSeconds/10000000;// "good player's slope / 3"
+- (time_delta_score - max_time_delta_score)/1.5)+0.499 - timeInMilliSeconds/10000000;
 }
 if(score < min_score){
 score=min_score;/* (score will never be zero in case the game was won) */
@@ -3041,7 +3041,7 @@ else{
 victoryStr="\u2009You won!\u2009";
 victoryStr2="\u2009You won\u2009";
 victoryStr3="Yes!";
-} 	
+}
 displayString("\u{1F3C6}" /* trophy */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
 greenColor, backgroundColor_2, ctx, false, true, 0, true, 0);
 if(!displayString(victoryStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
@@ -3055,12 +3055,15 @@ greenColor, backgroundColor_2, ctx, false, true, 0, false, 0);
 if(allPerformancesFilled()){
 if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
+if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
+}
 }
 }
 }
@@ -3072,13 +3075,10 @@ ptsStr="pts"
 else{
 ptsStr="pt";
 }
-if(true ||!displayString("\u2009" /* (thin space) */+"score: "+rounded_score+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
-darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+rounded_score+"\u2009" /* (thin space) */+ptsStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(rounded_score+ptsStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
-}
 }
 }
 else{
@@ -3098,12 +3098,15 @@ redColor, backgroundColor_2, ctx, false, true, 0, false, 0);
 }
 if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
+if(!displayString("\u2009" /* (thin space) */+"\u23F0\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009" /* (thin space) */+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u2009" /* (thin space) */)+"\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, backgroundColor_2, ctx, false, true, 0, false, 0);
+}
 }
 }
 }
@@ -3296,7 +3299,7 @@ y_1=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+nbPossibl
 drawLine(ctx, x_0, y_0, x_1, y_1);
 }
 let best_global_perf=global_best_performances[currentPossibleCodeShown-1];
-let valid_best_global_perf=((best_global_perf!=PerformanceUNKNOWN)&&(best_global_perf > 0.01));// valid global_best_performances value
+let valid_best_global_perf=((best_global_perf!=PerformanceUNKNOWN)&&(best_global_perf > 0.01));
 for (let codeidx=0;codeidx < nbOfCodesListed;codeidx++){
 let code=possibleCodesLists[currentPossibleCodeShown-1][codeidx+code_list_offset];
 let y_cell=nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1-codeidx;
@@ -3493,17 +3496,17 @@ let x_0_for_drawBubble;
 let x_0_next=get_x_pixel(x_min+x_step*(x_cell+x_cell_width));
 let y_0;
 let y_0_next;
-let y_offset=1;// (works with Chrome & Firefox)
+let y_offset=1;
 if(edgeMode){
 y_offset=0;
 }
 /* previous offsets:
-let y_offset=0;// (works with Chrome)
+let y_offset=0;
 if(firefoxMode){
-y_offset=1;// (works with Firefox)
+y_offset=1;
 } */
 let str_width=ctx.measureText(str).width;
-let str_height=parseInt(ctx.font.match(/\d+/)[0]);// only get numbers=> this is the font height
+let str_height=parseInt(ctx.font.match(/\d+/)[0]);
 if(0==halfLine){
 y_0=get_y_pixel(y_min+y_step*y_cell);
 y_0_next=get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
@@ -3571,22 +3574,22 @@ let half_hidding_rect_width=Math.min(16*(x_0_next - x_0)/100, str_width/2+2);
 ctx.fillRect(x_0+(x_0_next - x_0)/2 - half_hidding_rect_width, y_0_next+3, 2*half_hidding_rect_width+2, y_0 - y_0_next - 4);
 }
 ctx.fillStyle=foregroundColor;
-ctx.textAlign="center";// horizontal alignment
-ctx.textBaseline="middle";// vertical alignment
+ctx.textAlign="center";
+ctx.textBaseline="middle";
 ctx.fillText(str, (x_0+x_0_next)/2, (y_0+y_0_next)/2+y_offset);
 x_0_for_drawBubble=Math.max((x_0+x_0_next)/2 - str_width/2, 0);
 }
 else if(justify==2){
 ctx.fillStyle=foregroundColor;
-ctx.textAlign="end";// horizontal alignment
-ctx.textBaseline="middle";// vertical alignment
+ctx.textAlign="end";
+ctx.textBaseline="middle";
 ctx.fillText(str, x_0_next, (y_0+y_0_next)/2+y_offset);
 x_0_for_drawBubble=Math.max(x_0_next - str_width, 0);
 }
 else{
 ctx.fillStyle=foregroundColor;
-ctx.textAlign="start";// horizontal alignment
-ctx.textBaseline="middle";// vertical alignment
+ctx.textAlign="start";
+ctx.textBaseline="middle";
 ctx.fillText(str, x_0, (y_0+y_0_next)/2+y_offset);
 x_0_for_drawBubble=x_0;
 }
@@ -3635,7 +3638,7 @@ displayGUIError("error in averageColor (1): "+color1+", "+color2+", "+color1Coef
 return color1_p;
 }
 if((color1.indexOf("#")==0)&&(color1.length==7)){
-r1=Number("0x"+color1.substring(1,3));// (hexa number parsing)
+r1=Number("0x"+color1.substring(1,3));
 g1=Number("0x"+color1.substring(3,5));
 b1=Number("0x"+color1.substring(5,7));
 }
@@ -3650,7 +3653,7 @@ displayGUIError("error in averageColor (2): "+color1+", "+color2+", "+color1Coef
 return color1_p;
 }
 if((color2.indexOf("#")==0)&&(color2.length==7)){
-r2=Number("0x"+color2.substring(1,3));// (hexa number parsing)
+r2=Number("0x"+color2.substring(1,3));
 g2=Number("0x"+color2.substring(3,5));
 b2=Number("0x"+color2.substring(5,7));
 }
@@ -3746,12 +3749,12 @@ let x_0=get_x_pixel(x_min+x_step*attempt_nb_width);
 let x_0_next=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 let circle_width=(2.0*(x_0_next - x_0 - 2)) / (3.0 * nbColumns+1);
 let circle_width_applied=Math.floor(circle_width);
-if((circle_width_applied % 2)==1) circle_width_applied++;// makes marks larger and even values avoid Java displaying issues when drawOval is run
+if((circle_width_applied % 2)==1) circle_width_applied++;
 let y_0=get_y_pixel(y_min+y_step*y_cell);
 let y_0_next=get_y_pixel(y_min+y_step*(y_cell+1));
 let constant_y_cell_delta=get_y_pixel(y_min) - get_y_pixel(y_min+y_step);
 while (circle_width_applied > Math.floor((55*constant_y_cell_delta)/100)){
-circle_width_applied=circle_width_applied - 2;// (keeps even)
+circle_width_applied=circle_width_applied - 2;
 }
 if(circle_width_applied < 2){
 circle_width_applied=2;
@@ -3774,12 +3777,12 @@ circleBorderWidth=0.6;
 whiteBckg="#FFFFFF";
 }
 for (let i=0;i < mark.nbBlacks;i++){
-x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));// Math.floor(space_btw_marks) instead of space_btw_marks to have constant spacing between all circles
+x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));
 ctx.beginPath();
 ctx.arc(x_0_pos+x_0_pos_offset+radius,
 Math.floor((y_0+y_0_next+1)/2),
 radius,
-0, 2 * Math.PI, false);// starting and ending angles+clockwise
+0, 2 * Math.PI, false);
 ctx.fillStyle="black";
 ctx.fill();
 ctx.lineWidth=circleBorderWidth;
@@ -3787,12 +3790,12 @@ ctx.strokeStyle="black";
 ctx.stroke();
 }
 for (let i=mark.nbBlacks;i < mark.nbBlacks+mark.nbWhites;i++){
-x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));// (int)space_btw_marks instead of space_btw_marks to have constant spacing between all circles
+x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));
 ctx.beginPath();
 ctx.arc(x_0_pos+x_0_pos_offset+radius,
 Math.floor((y_0+y_0_next+1)/2),
 radius,
-0, 2 * Math.PI, false);// starting and ending angles+clockwise
+0, 2 * Math.PI, false);
 ctx.fillStyle=whiteBckg;
 ctx.fill();
 ctx.lineWidth=circleBorderWidth;
@@ -3801,12 +3804,12 @@ ctx.stroke();
 }
 if(nbColumns >=4){
 for (let i=mark.nbBlacks+mark.nbWhites;i < nbColumns;i++){
-x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));// (int)space_btw_marks instead of space_btw_marks to have constant spacing between all circles
+x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));
 ctx.beginPath();
 ctx.arc(x_0_pos+x_0_pos_offset+radius,
 Math.floor((y_0+y_0_next+1)/2),
 radius,
-0, 2 * Math.PI, false);// starting and ending angles+clockwise
+0, 2 * Math.PI, false);
 ctx.fillStyle=document.getElementById("my_table").style.backgroundColor;
 ctx.lineWidth=circleBorderWidth;
 ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.20));
@@ -3854,8 +3857,8 @@ ctx.stroke();
 }
 }
 function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag=false){
-let performance=Math.round(perf * 100.0) / 100.0;// 0.01 precision
-let optimalglobalperformance=Math.round(optimalGlobalPerf * 100.0) / 100.0;// 0.01 precision
+let performance=Math.round(perf * 100.0) / 100.0;
+let optimalglobalperformance=Math.round(optimalGlobalPerf * 100.0) / 100.0;
 let x_cell;
 let cell_width;
 let extra_x_space=0;
@@ -3888,7 +3891,7 @@ else if(performance!=PerformanceNA){
 if(performance <=-1.00){
 let color=redColor;
 if(perf!=-1.00){
-color="#4B0082";// purple to highlight those very particular cases
+color="#4B0082";
 }
 if(!displayString(" useless"+isPossible_str+" ", x_cell, y_cell, cell_width,
 color, backgroundColor, ctx, false, true, 0, true, 0)){
@@ -3933,8 +3936,8 @@ else if(performance==0.00){
 let starStr="";
 let starStr2="";
 if(starDisplayIfOptimal){
-starStr="\u2B50\u2009";// star
-starStr2="\u2B50\u200A";// star (with hair space)
+starStr="\u2B50\u2009";
+starStr2="\u2B50\u200A";
 }
 if( (!globalPerfDisplayIfOptimal)
 ||(!displayString(starStr+"optimal/"+optimalglobalperformance.toFixed(2).replaceAll(",","."), x_cell-extra_x_space, y_cell, cell_width+2*extra_x_space,

@@ -19,6 +19,7 @@ normal replace " {" by "{"
   normal replace "> " by ">" // PB: &nbsp; to be used in strings!
 
 regexp replace " //(.*)" by nothing => space allows to exclude HTTPS://!
+regexp replace ";//(.*)" by nothing => ; allows to exclude HTTPS://!
 delete trailing spaces
 delete leading spaces
 regexp replace (\n)+ by \n
