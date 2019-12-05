@@ -3797,6 +3797,7 @@ ctx.lineWidth=circleBorderWidth;
 ctx.strokeStyle=(modernDisplay ? "black" : whiteBckg);
 ctx.stroke();
 }
+if(nbColumns >=4){
 for (let i=mark.nbBlacks+mark.nbWhites;i < nbColumns;i++){
 x_0_pos=Math.round(x_0+1.0+Math.floor(space_btw_marks)+i*(circle_width_applied+1.0+Math.floor(space_btw_marks)));// (int)space_btw_marks instead of space_btw_marks to have constant spacing between all circles
 ctx.beginPath();
@@ -3808,6 +3809,7 @@ ctx.fillStyle=document.getElementById("my_table").style.backgroundColor;
 ctx.lineWidth=circleBorderWidth;
 ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.20));
 ctx.stroke();
+}
 }
 }
 function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomRightBubble)

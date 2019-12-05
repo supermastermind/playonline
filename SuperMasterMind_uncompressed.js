@@ -4416,19 +4416,21 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     ctx.stroke();
   }
 
-  for (let i = mark.nbBlacks + mark.nbWhites; i < nbColumns; i++) {
-    x_0_pos = Math.round(x_0 + 1.0 + Math.floor(space_btw_marks) + i*(circle_width_applied+1.0+Math.floor(space_btw_marks))); // (int)space_btw_marks instead of space_btw_marks to have constant spacing between all circles
+  if (nbColumns >= 4) {
+    for (let i = mark.nbBlacks + mark.nbWhites; i < nbColumns; i++) {
+      x_0_pos = Math.round(x_0 + 1.0 + Math.floor(space_btw_marks) + i*(circle_width_applied+1.0+Math.floor(space_btw_marks))); // (int)space_btw_marks instead of space_btw_marks to have constant spacing between all circles
 
-    ctx.beginPath();
-    ctx.arc(x_0_pos + x_0_pos_offset + radius, // center x
-            Math.floor((y_0 + y_0_next + 1)/2), // center y
-            radius, // radius
-            0, 2 * Math.PI, false); // starting and ending angles + clockwise
-    ctx.fillStyle = document.getElementById("my_table").style.backgroundColor;
-    // ctx.fill();
-    ctx.lineWidth = circleBorderWidth;
-    ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.20));
-    ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x_0_pos + x_0_pos_offset + radius, // center x
+              Math.floor((y_0 + y_0_next + 1)/2), // center y
+              radius, // radius
+              0, 2 * Math.PI, false); // starting and ending angles + clockwise
+      ctx.fillStyle = document.getElementById("my_table").style.backgroundColor;
+      // ctx.fill();
+      ctx.lineWidth = circleBorderWidth;
+      ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.20));
+      ctx.stroke();
+    }
   }
 
 }
