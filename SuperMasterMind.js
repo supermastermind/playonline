@@ -10,7 +10,7 @@ console.log("Running SuperMasterMind.js...");
 // *************************************************************************
 // Main game variables
 // *******************
-let version="v3.2";
+let version="v3.3";
 let emptyColor=0;
 let nbMinColors=5;
 let nbMaxColors=10;
@@ -183,8 +183,8 @@ let foregroundColorTable=
 "#FFFFFF",
 "#FFFFFF"
 ];
-if(localStorage.modernDisplay){
-modernDisplay=(localStorage.modernDisplay=="true");
+if(localStorage.modernDisplayApplied){
+modernDisplay=(localStorage.modernDisplayApplied=="true");
 }
 let legacy_backgroundColor_2_base_color="#5F340E";
 let backgroundColor_2;
@@ -1097,8 +1097,17 @@ else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.game
 &&(mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-2))))
 ||(/*(!android_appli) &&*/ (nbValidMouseClicks==1) &&!localStorage.gamesok)
 ||(/*(!android_appli) &&*/ (nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
-modernDisplay=!modernDisplay;
-localStorage.modernDisplay=modernDisplay;
+if((!modernDisplay)&&(legacyDisplayVariant==0)){
+legacyDisplayVariant=1;
+}
+else if((!modernDisplay)&&(legacyDisplayVariant==1)){
+modernDisplay=true;
+}
+else{
+modernDisplay=false;
+legacyDisplayVariant=0;
+}
+localStorage.modernDisplayApplied=modernDisplay;
 updateThemeAttributes();
 main_graph_update_needed=true;
 draw_graphic(true);
@@ -2582,7 +2591,7 @@ displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 }
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-(((currentAttemptNumber==1)&&!modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
+(((currentAttemptNumber==1) &&!modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
 }
 }
 }
@@ -3524,7 +3533,6 @@ if(!ignoreRanges){
 if(backgroundColor!=""){
 ctx.fillStyle=backgroundColor;
 if(fillRoundedRectangle){
-let radius=Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 3.0 : 3.0);
 if(currentCodeColorMode==1){
 ctx.strokeStyle=lightGray;
 }
@@ -3534,15 +3542,31 @@ ctx.strokeStyle=(modernDisplay ? "purple" : "orange");
 else if(currentCodeColorMode==3){
 ctx.strokeStyle=darkGray;
 }
+else if(currentCodeColorMode==4){
+ctx.strokeStyle=averageColor(darkGray, document.getElementById("my_table").style.backgroundColor, 0.20);
+}
 else{
 ctx.strokeStyle=darkGray;
 }
+if((!modernDisplay)&&(legacyDisplayVariant==1)){
+let radius=Math.min(x_0_next - x_0, y_0 - y_0_next)/2.5;
+ctx.beginPath();
+ctx.arc(Math.floor((x_0+x_0_next+1)/2),
+Math.floor((y_0+y_0_next+1)/2),
+radius,
+0, 2 * Math.PI, false);
+ctx.fill();
+ctx.stroke();
+}
+else{
+let radius=Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 3.0 : 3.0);
 drawRoundedRect(ctx, x_0+1, y_0_next+1, x_0_next - x_0 - 1, y_0 - y_0_next - 1,{
 tl: radius,
 tr: radius,
 bl: radius,
 br: radius
 }, true, true);
+}
 }
 else{
 ctx.fillRect(x_0+1, y_0_next+1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
@@ -3569,9 +3593,11 @@ ctx.moveTo(x_0+2, y_0_next+2);
 ctx.lineTo(x_0_next - 2, y_0 - 2);
 ctx.stroke();
 ctx.lineWidth=lineWidthIni;
+if(!((!modernDisplay)&&(legacyDisplayVariant==1))){
 ctx.fillStyle=backgroundColor;
-let half_hidding_rect_width=Math.min(16*(x_0_next - x_0)/100, str_width/2+2);
+let half_hidding_rect_width=Math.max(8*(x_0_next - x_0)/100, str_width/2+2);
 ctx.fillRect(x_0+(x_0_next - x_0)/2 - half_hidding_rect_width, y_0_next+3, 2*half_hidding_rect_width+2, y_0 - y_0_next - 4);
+}
 }
 ctx.fillStyle=foregroundColor;
 ctx.textAlign="center";
@@ -3678,6 +3704,12 @@ return color1_p;
 }
 return "rgb("+newr+","+newg+","+newb+")";
 }
+function getColorToDisplay(color){
+if((!modernDisplay)&&(legacyDisplayVariant==1)){
+return "";
+}
+return color;
+}
 function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMode, disabledColor=false){
 let handleCurrentCodeColorMode=false;
 if((currentCodeColorMode==-1)&&disabledColor){
@@ -3688,18 +3720,32 @@ if(color!=emptyColor){
 let foregroundColor=foregroundColorTable[color-1];
 let backgroundColor=backgroundColorTable[color-1];
 if(disabledColor){
+if((!modernDisplay)&&(legacyDisplayVariant==0)){
+foregroundColor=averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
+backgroundColor=averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
+currentCodeColorMode=4;
+handleCurrentCodeColorMode=true;
+}
+else if((!modernDisplay)&&(legacyDisplayVariant==1)){
+foregroundColor=averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.10);
+backgroundColor=averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.10);
+currentCodeColorMode=4;
+handleCurrentCodeColorMode=true;
+}
+else{
 foregroundColor=averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
 backgroundColor=averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
 }
+}
 if(color < 10){
-displayString(color, x_cell, y_cell, 2,
+displayString(getColorToDisplay(color), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
 }
 else{
-let res=displayString(color, x_cell, y_cell, 2,
+let res=displayString(getColorToDisplay(color), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, true, 0);
 if(!res){
-displayString(color-10, x_cell, y_cell, 2,
+displayString(getColorToDisplay(color-10), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
 }
 }
@@ -3718,19 +3764,19 @@ color_cnt=7;
 }
 }
 if(modernDisplay){
-displayString("?", x_cell, y_cell, 2,
+displayString(getColorToDisplay("?"), x_cell, y_cell, 2,
 bckg_color, backgroundColor_2, ctx, true, displayColorMode, 0, false, 0);
 }
 else{
 currentCodeColorMode=((currentAttemptNumber <=1) ? 3 : 1);
-displayString("?", x_cell, y_cell, 2,
+displayString(getColorToDisplay("?"), x_cell, y_cell, 2,
 bckg_color, legacy_backgroundColor_2_base_color, ctx, true, displayColorMode, 0, false, 0);
 currentCodeColorMode=-1;
 }
 }
 else{
 let ave_color=averageColor(legacy_backgroundColor_2_base_color, "#FFFFFF", 0.95);
-displayString("", x_cell, y_cell, 2,
+displayString(getColorToDisplay(""), x_cell, y_cell, 2,
 darkGray, (modernDisplay ? backgroundColor_3 : ave_color), ctx, true, displayColorMode, 0, false, 0);
 }
 }
