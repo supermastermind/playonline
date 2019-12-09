@@ -1577,15 +1577,14 @@ score=-1.0;
 sumPerfs=0.00;
 nbUnknownPerfs=0;
 sCode=~(simpleCodeHandler.createRandomCode());
-/* XXX */
+/* XXX
 let toto=simpleCodeHandler.createRandomCode();
-toto=simpleCodeHandler.setColor(toto, 9, 1);
-toto=simpleCodeHandler.setColor(toto, 5, 2);
-toto=simpleCodeHandler.setColor(toto, 2, 3);
-toto=simpleCodeHandler.setColor(toto, 6, 4);
-toto=simpleCodeHandler.setColor(toto, 2, 5);
-toto=simpleCodeHandler.setColor(toto, 7, 6);
-sCode=~(toto);
+toto=simpleCodeHandler.setColor(toto, 4, 1);
+toto=simpleCodeHandler.setColor(toto, 4, 2);
+toto=simpleCodeHandler.setColor(toto, 4, 3);
+toto=simpleCodeHandler.setColor(toto, 4, 4);
+toto=simpleCodeHandler.setColor(toto, 4, 5);
+sCode=~(toto);*/
 sCodeRevealed=0;
 newGameEvent=false;
 playerWasHelped=false;
@@ -2929,8 +2928,6 @@ displayCode(simpleCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_
 }
 }
 if(!gameOnGoing()){
-  startTime = 0;
-  stopTime = (3*60+50)*1000;
 let totalTimeInSeconds=Math.floor((stopTime - startTime)/1000);
 let timeInMilliSeconds=(stopTime - startTime) % 1000;
 let timeInHours=Math.floor(totalTimeInSeconds/3600);
