@@ -1264,11 +1264,11 @@ function mouseClick(e) {
   // Display rules
   // *************
 
-  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5))) // (condition duplicated)
+  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon <= 2) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5))) // (condition duplicated)
             && ((mouse_x > get_x_pixel(x_min))
-                  && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
-                  && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
-                  && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
+               && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
+               && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
+               && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
           ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
 
     let allColorsStr = "";
@@ -1305,11 +1305,11 @@ function mouseClick(e) {
   // Switch theme
   // ************
 
-  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5))) // (condition duplicated)
+  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon <= 2) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5))) // (condition duplicated)
             && ((mouse_x > get_x_pixel(x_min))
-                  && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
-                  && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1)))
-                  && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-2))))
+                && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
+                && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1)))
+                && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-2))))
           ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
 
     if ((!modernDisplay) && (legacyDisplayVariant == 0)) {
@@ -3259,7 +3259,7 @@ function draw_graphic_bis() {
         // *************
 
         ctx.font = medium3_bold_font;
-        if ( (nbGamesPlayedAndWon == 0) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated for mouse click management)
+        if ( (nbGamesPlayedAndWon <= 2) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated for mouse click management)
           let themesFullyDisplayed = true;
           let themeStr1 = "Display";
           let themeStr2 = "Display";
@@ -3272,13 +3272,10 @@ function draw_graphic_bis() {
                             darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
             }
           }
-          if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Help\u2009/\u2009Rules     ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+          if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Info    ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                                       darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-            if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Rules   ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                                                        darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-              displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                            darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
-            }
+            displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                          darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
           }
         }
 
