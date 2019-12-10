@@ -36,8 +36,6 @@ let disableMouseMoveEffects=false;
 let atLeastOneAttemptSelection=false;
 let currentPossibleCodeShownBeforeMouseMove=-1;
 let lastidxBeforeMouseMove=-1;
-let nbValidMouseClicks=0;
-let nbInvalidMouseClicks=0;
 let currentCode=-1;
 let codesPlayed;
 let marks;
@@ -1081,21 +1079,13 @@ modal.open();
 catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }
-if(nbValidMouseClicks==1){
-nbValidMouseClicks=2;
-}
-else{
-nbValidMouseClicks=2;
-nbInvalidMouseClicks=2;
-}
 }
 else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok) <=5)))
-&&( ((mouse_x > get_x_pixel(x_min))
+&&((mouse_x > get_x_pixel(x_min))
 &&(mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
 &&(mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1)))
 &&(mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-2))))
-||(/*(!android_appli) &&*/ (nbValidMouseClicks==1) &&!localStorage.gamesok)
-||(/*(!android_appli) &&*/ (nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
+){
 if((!modernDisplay)&&(legacyDisplayVariant==0)){
 legacyDisplayVariant=1;
 }
@@ -1145,10 +1135,6 @@ break;
 catch (exc){
 displayGUIError("mouseReleased: "+exc, exc.stack);
 }
-nbValidMouseClicks++;
-}
-else{
-nbInvalidMouseClicks++;
 }
 }
 else if((!gameOnGoing())&&allPossibleCodesFilled()){
