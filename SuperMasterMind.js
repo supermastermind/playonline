@@ -1052,12 +1052,11 @@ if(dsCode){
 displayGUIError("dsCode error", new Error().stack);
 }
 else if( (!showPossibleCodesMode)&&((nbGamesPlayedAndWon==0)||(localStorage.gamesok&&(Number(localStorage.gamesok) <=5)))
-&&( ((mouse_x > get_x_pixel(x_min))
+&&((mouse_x > get_x_pixel(x_min))
 &&(mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)))
 &&(mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
 &&(mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-||(/*(!android_appli) &&*/ (nbValidMouseClicks==1) &&!localStorage.gamesok)
-||(/*(!android_appli) &&*/ (nbInvalidMouseClicks==1) &&!localStorage.gamesok) ) ){
+){
 let allColorsStr="";
 for (let color_idx=0;color_idx < nominalGameNbColors;color_idx++){
 allColorsStr=allColorsStr+"<span style='color:"+foregroundColorTable[color_idx]+";background-color:"+backgroundColorTable[color_idx]+"'>"+(color_idx+1)+"</span>";
