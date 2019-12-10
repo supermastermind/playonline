@@ -1,2 +1,2 @@
 # game
-Play super master mind / code breaker online, assisted by a calculator and find the optimal strategy!
+Play super mastermind / code breaker online, assisted by a calculator which knows the optimal strategy!
