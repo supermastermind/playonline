@@ -10,7 +10,7 @@
     <meta name="keywords" content="super master mind, code breaker, game, online, optimal strategy, javascript">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- scale for smartphones -->
-    
+
     <link rel="stylesheet" type="text/css" href="style/style.css">
     <script src="common_functions.js"></script>
 
@@ -80,12 +80,19 @@
           <script>write_introduction()</script>
 
           <hr style="height:0.25rem; visibility:hidden;" />
-          Fond of this good old game?<br>
-          Train your mind by <b><font color="#F00000">playing </font><font color="#FF7700">Super </font><font color="#C0C000">Master </font><font color="#00D000">Mind </font><font color='#0000A8'>online</font></b>, assisted by a calculator which knows the optimal strategy!          
-        
+          Fond of this game?<br>
+          Have fun <b><font color="#F00000">playing</font> <font color="#C0C000">Master </font><font color="#00D000">Mind </font> / <font color="#FF7700">Super </font><font color="#C0C000">Master </font><font color="#00D000">Mind </font> <font color='#0000A8'>online</font></b> and evaluate your strategy!<br>
+          During the game, each of your attempt is compared to what the optimal strategy would have played, which will help you to progress.<br>
+          <hr style="height:0.5rem; visibility:hidden;" />
+
           <a href='game.html' onfocus='this.blur()' style="text-decoration:none;"><h3 style="margin-bottom:0.5rem;margin-top:0.5rem;"><b><img src="img/Pegs.png" style="width:7rem;border-color:#F00000;margin-right:0.5vw;vertical-align:middle">Play&nbsp;online&nbsp;now!&nbsp;</b></h3>
           <img src="img/SuperMasterMind_game_example.png" style="width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:0.5rem">
           <img src="img/SuperMasterMind_game_possible_codes_1.png" style="width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:0.5rem"></a><br>
+
+          <hr style="height:0.5rem; visibility:hidden;" />
+          At each attempt, the number of possible codes is displayed. And the lists of possible codes are displayed at game end.<br>
+          Several displays (with colors or numbers) and modes (from 3 to 7 columns and from 5 to 10 colors/numbers) are possible.<br>
+          Game scores are stored online to rank players and follow their progression.
 
           <a name="game_rules"></a>
           <h3>Game rules</h3>
@@ -102,11 +109,6 @@
           <a href="img/SuperMasterMind_rules.png"><img src="img/SuperMasterMind_rules.png" style="width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;background-color:#FFFFFF;padding-top:0.5rem;padding-bottom:0.5rem;padding-left:1.5rem;padding-right:1.5rem;margin-top:0.5rem;margin-right:0.5rem"><small>click to enlarge</small></a><br>
 
           <h3>Strategy</h3>
-          Several game modes are possible, from <b>3</b> (very easy) <b>to 7 columns</b> (expert) and from <b>5 to 10 colors</b>.
-          <hr style="height:0.5rem; visibility:hidden;" />
-          At each stage of the game, the <b>number of remaining possible codes</b> is computed and displayed.
-          The associated <b>lists of possible codes</b> can also be displayed (once the game is over, otherwise it would be cheating!).
-          <hr style="height:0.5rem; visibility:hidden;" />
           Behind the graphical game board, the program is assisted by a calculator which will give you hints to find the optimal strategy.
           This calculator compares what you played to what the <b>optimal strategy</b> would have played. For each code played,
           it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
@@ -124,11 +126,12 @@
           <script>write_optimal_strategy_details_1();</script>
 
           <h3>About</h3>
-          This program works in all recent browsers (Chrome, Firefox, Edge, Safari, on Windows, Mac, Linux, Android, iPhone...)<br>
+          On computers, this program works in all recent browsers (Chrome, Firefox, Edge, Safari, on Windows, Mac, Linux, Android, iPhone...).<br>
           On smartphones, use the Android app:<br>
           <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='width:11.0rem;margin-top:0.5rem;margin-bottom:0.5rem' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='width:5.5rem;margin-top:0.5rem;margin-bottom:0.5rem' src='img/Playstore_icon.png'/></a>
           <hr style="height:0.5rem; visibility:hidden;" />
-          Any comments or ideas? See <a href='contact_info.html' onfocus='this.blur()'><b>Contact info</b></a> <a href='contact_info.html' onfocus='this.blur()'><img src="img/email.png" style="vertical-align:middle;width:1.5rem;margin:0"></a>
+          Any comments or ideas?<br>
+          See <a href='contact_info.html' onfocus='this.blur()'><b>Contact info</b></a> <a href='contact_info.html' onfocus='this.blur()'><img src="img/email.png" style="vertical-align:middle;width:1.5rem;margin:0"></a>
 
         </div>
 
