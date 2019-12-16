@@ -111,7 +111,7 @@ var optimal_strategy_descr = "The optimal strategy is determined thanks to a <b>
 
 function write_optimal_strategy_details_1() {
   var str = "<div id='strategy_details' onclick=\"document.getElementById('strategy_details').innerHTML='" + optimal_strategy_descr + "In some situations, playing an impossible/illogical code may be better than playing the best possible/logical code(s)! This could be called a &quot;useful mistake&quot;. ";
-  str += "This will thus result in the above number being strictly positive (e.g. <b>+0.25</b>). If you get such a positive number (voluntarily), you are good!<br><div style=margin-top:5px;><a href=optimal_strategy.html><b>Optimal strategy statistics</b></a></div>';\"><font color=#A4AA04 style=cursor:pointer;><u><b>More details on the optimal strategy...</b></u></font></div><div style='margin-top:5px;'><a href=screenshots.html><b>Game examples & screenshots</b></a></div>";
+  str += "This will thus result in the above number being strictly positive (e.g. <b>+0.25</b>). If you get such a positive number (voluntarily), you are good!<br><div style=margin-top:5px;><a href=optimal_strategy.html><b>Optimal strategy algorithm & statistics</b></a></div>';\"><font color=#A4AA04 style=cursor:pointer;><u><b>More details on the optimal strategy...</b></u></font></div><div style='margin-top:5px;'><a href=screenshots.html><b>Game examples & screenshots</b></a></div>";
   document.write(str);
 }
 
