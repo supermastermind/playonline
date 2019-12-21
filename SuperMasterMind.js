@@ -1465,7 +1465,7 @@ switch (nbColumns){
 case 3:
 nbColors=Math.max(nbMinColors, nominalGameNbColors - 3);
 nbMaxAttempts=nominalGameNbMaxAttempts - 4;
-document.title="Very easy";
+document.title="Very easy game";
 break;
 case 4:
 nbColors=Math.max(nbMinColors, nominalGameNbColors - 2);
@@ -1480,12 +1480,12 @@ break;
 case 6:
 nbColors=Math.min(nbMaxColors, nominalGameNbColors+1);
 nbMaxAttempts=nominalGameNbMaxAttempts+2;
-document.title="Advanced Master Mind";
+document.title="Mega Master Mind";
 break;
 case 7:
 nbColors=Math.min(nbMaxColors, nominalGameNbColors+2);
 nbMaxAttempts=nominalGameNbMaxAttempts+3;
-document.title="Mega Master Mind";
+document.title="Giga Master Mind";
 break;
 default:
 throw new Error("invalid selection of number of columns: "+nbColumns+" (1)");
