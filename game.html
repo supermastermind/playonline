@@ -1639,11 +1639,16 @@
               // **************
 
               // Manual geolocation table corrections for particular IP addresses
-              if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 15) ) { // 176.130.42.* IPv4 addresses
+              /* if ( (ipaddress.indexOf("176.130.42.") == 0) && (ipaddress.length <= 15) ) { // 176.130.42.* IPv4 addresses
                 country = "France";
                 region = "Alsace";
                 city = "Munster";
-              }
+              } */
+              if ( (ipaddress.indexOf("77.202.16.251") == 0) && (ipaddress.length <= 15) ) { // 77.202.16.251 IPv4 address
+                country = "France";
+                region = "Alsace";
+                city = "Munster";
+              }              
 
               // Manual conversions
               if (localStorage.playerid && (localStorage.playerid.indexOf("0G5V") == 0) && (region == "Illinois") && (city == "Naperville")) {
