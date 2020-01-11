@@ -2488,9 +2488,10 @@ if( (previousNbOfPossibleCodes >=minNbCodesForPrecalculation)
 &&(curGameSize <=maxDepthForGamePrecalculation) ){
 precalculated_cur_game_or_code=lookForCodeInPrecalculatedGames(codesPlayed[curAttemptNumber-1], curGameSize, previousNbOfPossibleCodes);
 }
+let full_game_computation_ratio=1.0;
 if( (precalculated_cur_game_or_code > 0)
 ||((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
-||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation) ){
+||(previousNbOfPossibleCodes <=full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ){
 if(previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc){
 throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): "+previousNbOfPossibleCodes+", "+ nbOfCodesForSystematicEvaluation_ForMemAlloc);
 }
@@ -2521,7 +2522,7 @@ throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (
 }
 }
 else if( ((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
-||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation) ){
+||(previousNbOfPossibleCodes <=full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ){
 if(precalculated_cur_game_or_code > 0){
 throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
 }

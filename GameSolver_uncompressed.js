@@ -3354,9 +3354,10 @@ try {
         // Main useful code processing
         // ***************************
 
+        let full_game_computation_ratio = 1.0; // (shall be in ]0.0, 1.0])
         if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-             || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+             || (previousNbOfPossibleCodes <= full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
 
           if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
             throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
@@ -3395,7 +3396,7 @@ try {
           }
           // ***** Second evaluation phase in a game *****
           else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-                    || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+                    || (previousNbOfPossibleCodes <= full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
             if (precalculated_cur_game_or_code > 0) {
               throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
             }
