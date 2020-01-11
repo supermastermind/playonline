@@ -2752,7 +2752,7 @@ try {
       // console.log(str);
       let precalculation_time = new Date().getTime() - precalculation_start_time;
       if (precalculation_time >= 2700) { // 2700 = 2.7 seconds on i5 processor or on Linux VB running on i7 processor
-        send_trace_msg(str);
+        send_trace_msg("[" + precalculation_time + "ms]" + str);
       }
       else {
         send_trace_msg("skipped (" + precalculation_time + "ms)");

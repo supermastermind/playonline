@@ -2063,7 +2063,7 @@ throw new Error("recursiveEvaluatePerformances: internal error (2)");
 str="\""+str.substring(0, str.length-1)+".\" +";// remove last ','
 let precalculation_time=new Date().getTime() - precalculation_start_time;
 if(precalculation_time >=2700){
-send_trace_msg(str);
+send_trace_msg("["+precalculation_time+"ms]"+str);
 }
 else{
 send_trace_msg("skipped ("+precalculation_time+"ms)");
