@@ -2752,7 +2752,7 @@ try {
       // console.log(str);
       let precalculation_time = new Date().getTime() - precalculation_start_time;
       if (precalculation_time >= 2700) { // 2700 = 2.7 seconds on i5 processor or on Linux VB running on i7 processor
-        send_trace_msg("[" + precalculation_time + "ms]" + str);
+        send_trace_msg(str + " // " + precalculation_time + "ms");
       }
       else {
         send_trace_msg("skipped (" + precalculation_time + "ms)");
@@ -3354,7 +3354,7 @@ try {
         // Main useful code processing
         // ***************************
 
-        let full_game_computation_ratio = 0.64; // (shall be in ]0.0, 1.0])
+        let full_game_computation_ratio = 0.64; // (shall be in ]0.0, 1.0], to be set to 1.0 in (precalculation mode))
         if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
              || (previousNbOfPossibleCodes <= full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
