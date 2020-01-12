@@ -3354,7 +3354,7 @@ try {
         // Main useful code processing
         // ***************************
 
-        let full_game_computation_ratio = 1.0; // (shall be in ]0.0, 1.0])
+        let full_game_computation_ratio = 0.64; // (shall be in ]0.0, 1.0])
         if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
              || (previousNbOfPossibleCodes <= full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)

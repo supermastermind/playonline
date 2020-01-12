@@ -2488,7 +2488,7 @@ if( (previousNbOfPossibleCodes >=minNbCodesForPrecalculation)
 &&(curGameSize <=maxDepthForGamePrecalculation) ){
 precalculated_cur_game_or_code=lookForCodeInPrecalculatedGames(codesPlayed[curAttemptNumber-1], curGameSize, previousNbOfPossibleCodes);
 }
-let full_game_computation_ratio=1.0;
+let full_game_computation_ratio=0.64;
 if( (precalculated_cur_game_or_code > 0)
 ||((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
 ||(previousNbOfPossibleCodes <=full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ){
