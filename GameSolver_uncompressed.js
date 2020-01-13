@@ -282,18 +282,18 @@ try {
             throw new Error("lookForCodeInPrecalculatedGames: inconsistent end of line: " + separator_index5 + ", " + last_line_str_index);
           }
         }
-        let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
-        let sum = Number("0x" + sum_str); // (hexa number parsing)
-        if (isNaN(sum) || (sum <= 0)) {
-          throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
-        }
-        // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
 
         // Check global game + code equivalence
         // console.log("assessed: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size) + " for code "  + codeHandler.codeToString(code));
         // console.log(" versus " + str_from_list_of_codes(curGame, cur_game_size) + " for code " + codeHandler.codeToString(code_p));
         if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)) {
-          // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
+          let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
+          let sum = Number("0x" + sum_str); // (hexa number parsing)
+          if (isNaN(sum) || (sum <= 0)) {
+            throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
+          }
+          // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
+         // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
           return sum; // both game and code were precalculated - precalculated sum found
         }
 
@@ -2605,6 +2605,11 @@ try {
       // if ((depth <= 1) && (idx1 < nbCodes)) { // (precalculation mode)
       if (depth <= 1) {
 
+        let appliedMaxPerformanceEvaluationTime = maxPerformanceEvaluationTime;
+        if (precalculated_cur_game_or_code >= 0) { // both game and code were precalculated OR only game was precalculated
+          appliedMaxPerformanceEvaluationTime = appliedMaxPerformanceEvaluationTime * 1.75; // it's a pity not to use precalculation!
+        }
+
         if (first_call) {
 
           if ((!compute_sum_ini) && (nbCodes > 100)) {
@@ -2624,7 +2629,7 @@ try {
             totalNbToConsider = curNbClasses;
 
             // Processing is aborted when too long
-            if (time_elapsed > maxPerformanceEvaluationTime) {
+            if (time_elapsed > appliedMaxPerformanceEvaluationTime) {
               console.log("(processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%))");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
@@ -2634,70 +2639,70 @@ try {
 
             // Anticipation of processing abortion
             // To simplify, it is assumed here that processing times of all classes are "relatively" close to each other
-            if ( (time_elapsed > 3000) && (time_elapsed > maxPerformanceEvaluationTime*7/100) && (idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ) { // (0.179 ratio)
+            if ( (time_elapsed > 3000) && (time_elapsed > appliedMaxPerformanceEvaluationTime*7/100) && (idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ) { // (0.179 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #0)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*10/100) && (idxToConsider < Math.floor(totalNbToConsider*2/100)) ) { // (0.20 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*10/100) && (idxToConsider < Math.floor(totalNbToConsider*2/100)) ) { // (0.20 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*15/100) && (idxToConsider < Math.floor(totalNbToConsider*3.75/100)) ) { // (0.25 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*15/100) && (idxToConsider < Math.floor(totalNbToConsider*3.75/100)) ) { // (0.25 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #2)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*20/100) && (idxToConsider < Math.floor(totalNbToConsider*6/100)) ) { // (0.30 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*20/100) && (idxToConsider < Math.floor(totalNbToConsider*6/100)) ) { // (0.30 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #3)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.floor(totalNbToConsider*12/100)) ) { // (0.40 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*30/100) && (idxToConsider < Math.floor(totalNbToConsider*12/100)) ) { // (0.40 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #4)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*40/100) && (idxToConsider < Math.floor(totalNbToConsider*20/100)) ) { // (0.50 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*40/100) && (idxToConsider < Math.floor(totalNbToConsider*20/100)) ) { // (0.50 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #5)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.floor(totalNbToConsider*30/100)) ) { // (0.60 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*50/100) && (idxToConsider < Math.floor(totalNbToConsider*30/100)) ) { // (0.60 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #6)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*60/100) && (idxToConsider < Math.floor(totalNbToConsider*42/100)) ) { // (0.70 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*60/100) && (idxToConsider < Math.floor(totalNbToConsider*42/100)) ) { // (0.70 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #7)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.floor(totalNbToConsider*56/100)) ) { // (0.80 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*70/100) && (idxToConsider < Math.floor(totalNbToConsider*56/100)) ) { // (0.80 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #8)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (time_elapsed > maxPerformanceEvaluationTime*80/100) && (idxToConsider < Math.floor(totalNbToConsider*72/100)) ) { // (0.90 ratio)
+            if ( (time_elapsed > appliedMaxPerformanceEvaluationTime*80/100) && (idxToConsider < Math.floor(totalNbToConsider*72/100)) ) { // (0.90 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #9)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
@@ -2724,7 +2729,7 @@ try {
           let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
 
           // Processing is aborted when too long
-          if (time_elapsed > maxPerformanceEvaluationTime) {
+          if (time_elapsed > appliedMaxPerformanceEvaluationTime) {
             listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
             listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
             particularCodeGlobalPerformance = PerformanceNA; // output
@@ -3354,7 +3359,7 @@ try {
         // Main useful code processing
         // ***************************
 
-        let full_game_computation_ratio = 0.64; // (shall be in ]0.0, 1.0], to be set to 1.0 in (precalculation mode))
+        let full_game_computation_ratio = 1.0; // (shall be in ]0.0, 1.0], shall lead to a number ~1500 for 5-column games, to be set to 1.0 in (precalculation mode))
         if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
              || (previousNbOfPossibleCodes <= full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
