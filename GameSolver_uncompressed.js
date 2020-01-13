@@ -283,16 +283,17 @@ try {
           }
         }
 
+        let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
+        let sum = Number("0x" + sum_str); // (hexa number parsing)
+        if (isNaN(sum) || (sum <= 0)) {
+          throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
+        }
+        // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
+
         // Check global game + code equivalence
         // console.log("assessed: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size) + " for code "  + codeHandler.codeToString(code));
         // console.log(" versus " + str_from_list_of_codes(curGame, cur_game_size) + " for code " + codeHandler.codeToString(code_p));
         if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)) {
-          let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
-          let sum = Number("0x" + sum_str); // (hexa number parsing)
-          if (isNaN(sum) || (sum <= 0)) {
-            throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
-          }
-          // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
          // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
           return sum; // both game and code were precalculated - precalculated sum found
         }

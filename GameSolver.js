@@ -186,12 +186,12 @@ if(separator_index5!=last_line_str_index){
 throw new Error("lookForCodeInPrecalculatedGames: inconsistent end of line: "+separator_index5+", "+last_line_str_index);
 }
 }
-if(areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)){
 let sum_str=line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
 let sum=Number("0x"+sum_str);
 if(isNaN(sum)||(sum <=0)){
 throw new Error("lookForCodeInPrecalculatedGames: invalid sum: "+sum_str);
 }
+if(areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)){
 return sum;
 }
 if(separator_index5 >=last_line_str_index){
