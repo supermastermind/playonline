@@ -64,7 +64,9 @@ try {
   let maxPerformanceEvaluationTime = -1;
 
   let refNbOfCodesForSystematicEvaluation = 1500; // (high values may induce latencies)
+  let refNbOfCodesForSystematicEvaluation_AllCodesEvaluated = 1500; // (shall be <= refNbOfCodesForSystematicEvaluation - high values may induce latencies)
   let nbOfCodesForSystematicEvaluation = -1;
+  let nbOfCodesForSystematicEvaluation_AllCodesEvaluated = -1;
   let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
 
   let initialNbClasses = -1;
@@ -2992,6 +2994,7 @@ try {
           nbMaxMarks = 9;
           maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*10/30; // (short games)
           nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
+          nbOfCodesForSystematicEvaluation_AllCodesEvaluated = initialNbPossibleCodes;
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes;
           initialNbClasses = 3; // {111, 112, 123}
           maxDepth = Math.min(11, overallMaxDepth);
@@ -3002,6 +3005,7 @@ try {
           nbMaxMarks = 14;
           maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*20/30; // (short games)
           nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
+          nbOfCodesForSystematicEvaluation_AllCodesEvaluated = initialNbPossibleCodes;
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
           initialNbClasses = 5; // {1111, 1112, 1122, 1123, 1234}
           maxDepth = Math.min(12, overallMaxDepth);
@@ -3012,6 +3016,7 @@ try {
           nbMaxMarks = 20;
           maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*44/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
+          nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
           initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
           maxDepth = Math.min(13, overallMaxDepth);
@@ -3022,6 +3027,7 @@ try {
           nbMaxMarks = 27;
           maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*44/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+          nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
           initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
           maxDepth = Math.min(14, overallMaxDepth);
@@ -3043,6 +3049,7 @@ try {
           nbMaxMarks = 35;
           maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*44/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+          nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
           initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
           maxDepth = Math.min(15, overallMaxDepth);
@@ -3053,6 +3060,12 @@ try {
           throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
       }
 
+      if ((nbOfCodesForSystematicEvaluation <= 0) || (nbOfCodesForSystematicEvaluation_AllCodesEvaluated <= 0) || (nbOfCodesForSystematicEvaluation_ForMemAlloc <= 0) || (refNbOfCodesForSystematicEvaluation_AllCodesEvaluated > refNbOfCodesForSystematicEvaluation)) {
+        throw new Error("INIT phase / internal error: [ref]nbOfCodesForSystematicEvaluation series");
+      }
+      if (nbOfCodesForSystematicEvaluation_AllCodesEvaluated > nbOfCodesForSystematicEvaluation) {
+        throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation_AllCodesEvaluated");
+      }
       if (nbOfCodesForSystematicEvaluation > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
         throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation");
       }
@@ -3360,10 +3373,9 @@ try {
         // Main useful code processing
         // ***************************
 
-        let full_game_computation_ratio = 1.0; // (shall be in ]0.0, 1.0], shall lead to a number ~1500 for 5-column games, to be set to 1.0 in (precalculation mode))
         if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-             || (previousNbOfPossibleCodes <= full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+             || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ) { // number of possible codes is not too high (general case)
 
           if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
             throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
@@ -3402,7 +3414,7 @@ try {
           }
           // ***** Second evaluation phase in a game *****
           else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-                    || (previousNbOfPossibleCodes <= full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ) { // number of possible codes is not too high (general case)
+                    || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ) { // number of possible codes is not too high (general case)
             if (precalculated_cur_game_or_code > 0) {
               throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
             }

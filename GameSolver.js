@@ -42,7 +42,9 @@ let incoming_messages_table=new Array(3*overallMaxDepth);
 let baseOfMaxPerformanceEvaluationTime=30000;
 let maxPerformanceEvaluationTime=-1;
 let refNbOfCodesForSystematicEvaluation=1500;
+let refNbOfCodesForSystematicEvaluation_AllCodesEvaluated=1500;
 let nbOfCodesForSystematicEvaluation=-1;
+let nbOfCodesForSystematicEvaluation_AllCodesEvaluated=-1;
 let nbOfCodesForSystematicEvaluation_ForMemAlloc=-1;
 let initialNbClasses=-1;
 let curNbClasses=-1;
@@ -2227,6 +2229,7 @@ case 3:
 nbMaxMarks=9;
 maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*10/30;
 nbOfCodesForSystematicEvaluation=initialNbPossibleCodes;
+nbOfCodesForSystematicEvaluation_AllCodesEvaluated=initialNbPossibleCodes;
 nbOfCodesForSystematicEvaluation_ForMemAlloc=initialNbPossibleCodes;
 initialNbClasses=3;
 maxDepth=Math.min(11, overallMaxDepth);
@@ -2237,6 +2240,7 @@ case 4:
 nbMaxMarks=14;
 maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*20/30;
 nbOfCodesForSystematicEvaluation=initialNbPossibleCodes;
+nbOfCodesForSystematicEvaluation_AllCodesEvaluated=initialNbPossibleCodes;
 nbOfCodesForSystematicEvaluation_ForMemAlloc=initialNbPossibleCodes;
 initialNbClasses=5;
 maxDepth=Math.min(12, overallMaxDepth);
@@ -2247,6 +2251,7 @@ case 5:
 nbMaxMarks=20;
 maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=initialNbPossibleCodes;
 initialNbClasses=7;
 maxDepth=Math.min(13, overallMaxDepth);
@@ -2257,6 +2262,7 @@ case 6:
 nbMaxMarks=27;
 maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
 initialNbClasses=11;
 maxDepth=Math.min(14, overallMaxDepth);
@@ -2267,6 +2273,7 @@ case 7:
 nbMaxMarks=35;
 maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
+nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
 initialNbClasses=15;
 maxDepth=Math.min(15, overallMaxDepth);
@@ -2275,6 +2282,12 @@ maxDepthForGamePrecalculation=-1;
 break;
 default:
 throw new Error("INIT phase / invalid nbColumns: "+nbColumns);
+}
+if((nbOfCodesForSystematicEvaluation <=0)||(nbOfCodesForSystematicEvaluation_AllCodesEvaluated <=0)||(nbOfCodesForSystematicEvaluation_ForMemAlloc <=0)||(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated > refNbOfCodesForSystematicEvaluation)){
+throw new Error("INIT phase / internal error: [ref]nbOfCodesForSystematicEvaluation series");
+}
+if(nbOfCodesForSystematicEvaluation_AllCodesEvaluated > nbOfCodesForSystematicEvaluation){
+throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation_AllCodesEvaluated");
 }
 if(nbOfCodesForSystematicEvaluation > nbOfCodesForSystematicEvaluation_ForMemAlloc){
 throw new Error("INIT phase / internal error: nbOfCodesForSystematicEvaluation");
@@ -2492,10 +2505,9 @@ if( (previousNbOfPossibleCodes >=minNbCodesForPrecalculation)
 &&(curGameSize <=maxDepthForGamePrecalculation) ){
 precalculated_cur_game_or_code=lookForCodeInPrecalculatedGames(codesPlayed[curAttemptNumber-1], curGameSize, previousNbOfPossibleCodes);
 }
-let full_game_computation_ratio=1.0;
 if( (precalculated_cur_game_or_code > 0)
 ||((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
-||(previousNbOfPossibleCodes <=full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ){
+||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ){
 if(previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc){
 throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): "+previousNbOfPossibleCodes+", "+ nbOfCodesForSystematicEvaluation_ForMemAlloc);
 }
@@ -2526,7 +2538,7 @@ throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (
 }
 }
 else if( ((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
-||(previousNbOfPossibleCodes <=full_game_computation_ratio * nbOfCodesForSystematicEvaluation) ){
+||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ){
 if(precalculated_cur_game_or_code > 0){
 throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
 }
