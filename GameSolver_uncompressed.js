@@ -293,11 +293,6 @@ try {
           throw new Error("lookForCodeInPrecalculatedGames: inconsistent code and perf pair: " + line_str);
         }
 
-        // Precalculated code
-        let code_str = line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
-        let code = codeHandler.uncompressStringToCode(code_str);
-
-        // Precalculated sum
         let separator_index5 = line_str.indexOf(separator3Str, middle_of_code_perf_pair_index+1);
         if (separator_index5 == -1) {
           separator_index5 = line_str.indexOf(dotStr, middle_of_code_perf_pair_index+1);
@@ -310,8 +305,12 @@ try {
         // console.log("assessed: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size) + " for code "  + codeHandler.codeToString(code));
         // console.log(" versus " + str_from_list_of_codes(curGame, cur_game_size) + " for code " + codeHandler.codeToString(code_p));
         if (!reuse_optims) {
+          // Precalculated code
+          let code_str = line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
+          let code = codeHandler.uncompressStringToCode(code_str);
           if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)) {
             // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
+            // Precalculated sum
             let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
             let sum = Number("0x" + sum_str); // (hexa number parsing)
             if (isNaN(sum) || (sum <= 0)) {
@@ -323,18 +322,28 @@ try {
         }
         else { // (validLookForCodeInPrecalculatedGamesReuseTables && reuse_mode == 1 or 2)
           if (lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt] == 0) {
+            let code = 0;
             let codeClass2;
             if (lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt] == 0) {
+              // Precalculated code
+              let code_str = line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
+              code = codeHandler.uncompressStringToCode(code_str);
               codeClass2 = codeHandler.getSMMCodeClassId(code);
               lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt] = codeClass2;
             }
             else {
               codeClass2 = lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt];
             }
-            if ((codeClass1 == codeClass2)) {
+            if (codeClass1 == codeClass2) {
+              if (code == 0) {
+                // Precalculated code
+                let code_str = line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
+                code = codeHandler.uncompressStringToCode(code_str);
+              }
               if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)) {
                 // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
                 lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt] = 1;
+                // Precalculated sum
                 let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
                 let sum = Number("0x" + sum_str); // (hexa number parsing)
                 if (isNaN(sum) || (sum <= 0)) {
@@ -2723,8 +2732,8 @@ try {
       if (depth <= 1) {
 
         let appliedMaxPerformanceEvaluationTime = maxPerformanceEvaluationTime;
-        if (precalculated_cur_game_or_code >= 0) { // both game and code were precalculated OR only game was precalculated
-          appliedMaxPerformanceEvaluationTime = appliedMaxPerformanceEvaluationTime * 1.75; // it's a pity not to use precalculation!
+        if (areCurrentGameOrCodePrecalculated >= 0) { // both game and code were precalculated OR only game was precalculated (Note: "> 0" would not be good here, as a subsequent impossible code evaluation would fail instantly)
+          appliedMaxPerformanceEvaluationTime = appliedMaxPerformanceEvaluationTime * 1.40; // it's a pity not to use precalculated results!
         }
 
         if (first_call) {
@@ -2756,28 +2765,28 @@ try {
 
             // Anticipation of processing abortion
             // To simplify, it is assumed here that processing times of all classes are "relatively" close to each other
-            if ( (precalculated_cur_game_or_code < 0) && (time_elapsed > 3000) && (time_elapsed > appliedMaxPerformanceEvaluationTime*7/100) && (idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ) { // (0.179 ratio)
+            if ( (areCurrentGameOrCodePrecalculated < 0) && (time_elapsed > 3000) && (time_elapsed > appliedMaxPerformanceEvaluationTime*7/100) && (idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ) { // (0.179 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #0)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (precalculated_cur_game_or_code < 0) && (time_elapsed > appliedMaxPerformanceEvaluationTime*10/100) && (idxToConsider < Math.floor(totalNbToConsider*2/100)) ) { // (0.20 ratio)
+            if ( (areCurrentGameOrCodePrecalculated < 0) && (time_elapsed > appliedMaxPerformanceEvaluationTime*10/100) && (idxToConsider < Math.floor(totalNbToConsider*2/100)) ) { // (0.20 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #1)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (precalculated_cur_game_or_code < 0) && (time_elapsed > appliedMaxPerformanceEvaluationTime*15/100) && (idxToConsider < Math.floor(totalNbToConsider*3.75/100)) ) { // (0.25 ratio)
+            if ( (areCurrentGameOrCodePrecalculated < 0) && (time_elapsed > appliedMaxPerformanceEvaluationTime*15/100) && (idxToConsider < Math.floor(totalNbToConsider*3.75/100)) ) { // (0.25 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #2)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
               particularCodeGlobalPerformance = PerformanceNA; // output
               recursiveEvaluatePerformancesWasAborted = true; return PerformanceUNKNOWN;
             }
-            if ( (precalculated_cur_game_or_code < 0) && (time_elapsed > appliedMaxPerformanceEvaluationTime*20/100) && (idxToConsider < Math.floor(totalNbToConsider*6/100)) ) { // (0.30 ratio)
+            if ( (areCurrentGameOrCodePrecalculated < 0) && (time_elapsed > appliedMaxPerformanceEvaluationTime*20/100) && (idxToConsider < Math.floor(totalNbToConsider*6/100)) ) { // (0.30 ratio)
               console.log("(anticipation of processing abortion after " + time_elapsed + "ms (" + Math.round(100*idxToConsider/totalNbToConsider) + "%) #3)");
               listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
               listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)

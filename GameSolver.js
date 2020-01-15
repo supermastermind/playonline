@@ -196,8 +196,6 @@ let middle_of_code_perf_pair_index=line_str.indexOf(separator2Str, last_end_of_c
 if(middle_of_code_perf_pair_index==-1){
 throw new Error("lookForCodeInPrecalculatedGames: inconsistent code and perf pair: "+line_str);
 }
-let code_str=line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
-let code=codeHandler.uncompressStringToCode(code_str);
 let separator_index5=line_str.indexOf(separator3Str, middle_of_code_perf_pair_index+1);
 if(separator_index5==-1){
 separator_index5=line_str.indexOf(dotStr, middle_of_code_perf_pair_index+1);
@@ -206,6 +204,8 @@ throw new Error("lookForCodeInPrecalculatedGames: inconsistent end of line: "+se
 }
 }
 if(!reuse_optims){
+let code_str=line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
+let code=codeHandler.uncompressStringToCode(code_str);
 if(areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)){
 let sum_str=line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
 let sum=Number("0x"+sum_str);
@@ -217,15 +217,22 @@ return sum;
 }
 else{
 if(lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt]==0){
+let code=0;
 let codeClass2;
 if(lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt]==0){
+let code_str=line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
+code=codeHandler.uncompressStringToCode(code_str);
 codeClass2=codeHandler.getSMMCodeClassId(code);
 lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt]=codeClass2;
 }
 else{
 codeClass2=lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt];
 }
-if((codeClass1==codeClass2)){
+if(codeClass1==codeClass2){
+if(code==0){
+let code_str=line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
+code=codeHandler.uncompressStringToCode(code_str);
+}
 if(areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)){
 lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt]=1;
 let sum_str=line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
@@ -2042,8 +2049,8 @@ best_sum=sum;
 }
 if(depth <=1){
 let appliedMaxPerformanceEvaluationTime=maxPerformanceEvaluationTime;
-if(precalculated_cur_game_or_code >=0){
-appliedMaxPerformanceEvaluationTime=appliedMaxPerformanceEvaluationTime * 1.75;
+if(areCurrentGameOrCodePrecalculated >=0){
+appliedMaxPerformanceEvaluationTime=appliedMaxPerformanceEvaluationTime * 1.40;
 }
 if(first_call){
 if((!compute_sum_ini)&&(nbCodes > 100)){
@@ -2065,28 +2072,28 @@ listOfGlobalPerformances[nbCodes-1]=PerformanceNA;
 particularCodeGlobalPerformance=PerformanceNA;
 recursiveEvaluatePerformancesWasAborted=true;return PerformanceUNKNOWN;
 }
-if( (precalculated_cur_game_or_code < 0)&&(time_elapsed > 3000)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*7/100)&&(idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ){
+if( (areCurrentGameOrCodePrecalculated < 0)&&(time_elapsed > 3000)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*7/100)&&(idxToConsider < Math.floor(totalNbToConsider*1.25/100)) ){
 console.log("(anticipation of processing abortion after "+time_elapsed+"ms ("+Math.round(100*idxToConsider/totalNbToConsider)+"%) #0)");
 listOfGlobalPerformances[0]=PerformanceNA;
 listOfGlobalPerformances[nbCodes-1]=PerformanceNA;
 particularCodeGlobalPerformance=PerformanceNA;
 recursiveEvaluatePerformancesWasAborted=true;return PerformanceUNKNOWN;
 }
-if( (precalculated_cur_game_or_code < 0)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*10/100)&&(idxToConsider < Math.floor(totalNbToConsider*2/100)) ){
+if( (areCurrentGameOrCodePrecalculated < 0)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*10/100)&&(idxToConsider < Math.floor(totalNbToConsider*2/100)) ){
 console.log("(anticipation of processing abortion after "+time_elapsed+"ms ("+Math.round(100*idxToConsider/totalNbToConsider)+"%) #1)");
 listOfGlobalPerformances[0]=PerformanceNA;
 listOfGlobalPerformances[nbCodes-1]=PerformanceNA;
 particularCodeGlobalPerformance=PerformanceNA;
 recursiveEvaluatePerformancesWasAborted=true;return PerformanceUNKNOWN;
 }
-if( (precalculated_cur_game_or_code < 0)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*15/100)&&(idxToConsider < Math.floor(totalNbToConsider*3.75/100)) ){
+if( (areCurrentGameOrCodePrecalculated < 0)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*15/100)&&(idxToConsider < Math.floor(totalNbToConsider*3.75/100)) ){
 console.log("(anticipation of processing abortion after "+time_elapsed+"ms ("+Math.round(100*idxToConsider/totalNbToConsider)+"%) #2)");
 listOfGlobalPerformances[0]=PerformanceNA;
 listOfGlobalPerformances[nbCodes-1]=PerformanceNA;
 particularCodeGlobalPerformance=PerformanceNA;
 recursiveEvaluatePerformancesWasAborted=true;return PerformanceUNKNOWN;
 }
-if( (precalculated_cur_game_or_code < 0)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*20/100)&&(idxToConsider < Math.floor(totalNbToConsider*6/100)) ){
+if( (areCurrentGameOrCodePrecalculated < 0)&&(time_elapsed > appliedMaxPerformanceEvaluationTime*20/100)&&(idxToConsider < Math.floor(totalNbToConsider*6/100)) ){
 console.log("(anticipation of processing abortion after "+time_elapsed+"ms ("+Math.round(100*idxToConsider/totalNbToConsider)+"%) #3)");
 listOfGlobalPerformances[0]=PerformanceNA;
 listOfGlobalPerformances[nbCodes-1]=PerformanceNA;
