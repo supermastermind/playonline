@@ -123,6 +123,7 @@ try {
   marksIdxsForGamePrecalculation.fill(-1);
 
   let lookForCodeInPrecalculatedGamesReuseTable = null;
+  let lookForCodeInPrecalculatedGamesClassIdsTable = null;
 
   let precalculation_mode_mark = {nbBlacks:0, nbWhites:0};
 
@@ -177,9 +178,10 @@ try {
         throw new Error("lookForCodeInPrecalculatedGames: invalid nbColumns value: " + nbColumns);
     }
 
-    let validLookForCodeInPrecalculatedGamesReuseTable = (lookForCodeInPrecalculatedGamesReuseTable != null);
-    if (validLookForCodeInPrecalculatedGamesReuseTable && (reuse_mode == 1)) {
+    let validLookForCodeInPrecalculatedGamesReuseTables = ((lookForCodeInPrecalculatedGamesReuseTable != null) && (lookForCodeInPrecalculatedGamesClassIdsTable != null));
+    if (validLookForCodeInPrecalculatedGamesReuseTables && (reuse_mode == 1)) {
       lookForCodeInPrecalculatedGamesReuseTable.fill(0);
+      lookForCodeInPrecalculatedGamesClassIdsTable.fill(0);
     }
 
     let dot_index = 0;
@@ -276,6 +278,11 @@ try {
       // Parse precalculated codes
       // *************************
 
+      let codeClass1 = -1; // N.A.
+      let reuse_optims = (validLookForCodeInPrecalculatedGamesReuseTables && (reuse_mode != 0));
+      if (reuse_optims) {
+        codeClass1 = codeHandler.getSMMCodeClassId(code_p);
+      }
       let precalculated_code_cnt = -1;
       let last_end_of_code_perf_pair_index = separator_index4+1;
       while (true) {
@@ -299,28 +306,43 @@ try {
           }
         }
 
-        let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
-        let sum = Number("0x" + sum_str); // (hexa number parsing)
-        if (isNaN(sum) || (sum <= 0)) {
-          throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
-        }
-        // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
-
         // Check global game + code equivalence
         // console.log("assessed: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size) + " for code "  + codeHandler.codeToString(code));
         // console.log(" versus " + str_from_list_of_codes(curGame, cur_game_size) + " for code " + codeHandler.codeToString(code_p));
-        if ((!validLookForCodeInPrecalculatedGamesReuseTable) || (reuse_mode == 0)) {
+        if (!reuse_optims) {
           if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)) {
             // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
+            let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
+            let sum = Number("0x" + sum_str); // (hexa number parsing)
+            if (isNaN(sum) || (sum <= 0)) {
+              throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
+            }
+            // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
             return sum; // both game and code were precalculated - precalculated sum found
           }
         }
-        else { // (validLookForCodeInPrecalculatedGamesReuseTable && reuse_mode == 1 or 2)
+        else { // (validLookForCodeInPrecalculatedGamesReuseTables && reuse_mode == 1 or 2)
           if (lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt] == 0) {
-            if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)) {
-              // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
-              lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt] = 1;
-              return sum; // both game and code were precalculated - precalculated sum found
+            let codeClass2;
+            if (lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt] == 0) {
+              codeClass2 = codeHandler.getSMMCodeClassId(code);
+              lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt] = codeClass2;
+            }
+            else {
+              codeClass2 = lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt];
+            }
+            if ((codeClass1 == codeClass2)) {
+              if (areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)) {
+                // console.log("precalculated game found: " + compressed_str_from_lists_of_codes_and_markidxs(curGameForGamePrecalculation, marksIdxsForGamePrecalculation, cur_game_size));
+                lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt] = 1;
+                let sum_str = line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
+                let sum = Number("0x" + sum_str); // (hexa number parsing)
+                if (isNaN(sum) || (sum <= 0)) {
+                  throw new Error("lookForCodeInPrecalculatedGames: invalid sum: " + sum_str);
+                }
+                // console.log(codeHandler.codeToString(code) + ":" + sum + ",");
+                return sum; // both game and code were precalculated - precalculated sum found
+              }
             }
           }
         }
@@ -604,11 +626,11 @@ try {
       return sum;
     }
 
-    // SMM code class ids: {0: 11111, 1: 11112, 2: 11122, 3: 11123, 4: 11223, 5: 11234, 6: 12345}
+    // SMM code class ids: {1: 11111, 2: 11112, 3: 11122, 4: 11123, 5: 11223, 6: 11234, 7: 12345}
     getSMMCodeClassId(code) {
       let color;
 
-      if (this.nbColumns != 5) { // function only for Super Master Mind
+      if (this.nbColumns != 5) { // function only for Super Master Mind game
         throw new Error("CodeHandler: getSMMCodeClassId (" + this.nbColumns + ")");
       }
 
@@ -635,18 +657,18 @@ try {
           is_there_triple = true;
         }
         else if (nb_different_colors == 4) {
-          return 1;
+          return 2;
         }
         else if (nb_different_colors == 5) {
-          return 0;
+          return 1;
         }
       }
       if (is_there_triple) {
         if (nb_doubles == 0) {
-          return 3;
+          return 4;
         }
         else if (nb_doubles == 1) {
-          return 2;
+          return 3;
         }
         else {
           throw new Error("CodeHandler: getSMMCodeClassId - internal error #1");
@@ -654,13 +676,13 @@ try {
       }
       else {
         if (nb_doubles == 0) {
-          return 6;
+          return 7;
         }
         else if (nb_doubles == 1) {
-          return 5;
+          return 6;
         }
         else if (nb_doubles == 2) {
-          return 4;
+          return 5;
         }
         else {
           throw new Error("CodeHandler: getSMMCodeClassId - internal error #2");
@@ -3093,6 +3115,7 @@ try {
           marks_optimization_mask = 0x1FFF;
           maxDepthForGamePrecalculation = -1; // no game precalculation needed (-1 or 3)
           lookForCodeInPrecalculatedGamesReuseTable = null;
+          lookForCodeInPrecalculatedGamesClassIdsTable = null;
           break;
         case 4:
           nbMaxMarks = 14;
@@ -3105,6 +3128,7 @@ try {
           marks_optimization_mask = 0x3FFF;
           maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
           lookForCodeInPrecalculatedGamesReuseTable = null;
+          lookForCodeInPrecalculatedGamesClassIdsTable = null;
           break;
         case 5:
           nbMaxMarks = 20;
@@ -3117,6 +3141,7 @@ try {
           marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
           maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
           lookForCodeInPrecalculatedGamesReuseTable = new Array(initialNbPossibleCodes);
+          lookForCodeInPrecalculatedGamesClassIdsTable = new Array(initialNbPossibleCodes);
           break;
         case 6:
           nbMaxMarks = 27;
@@ -3129,6 +3154,7 @@ try {
           marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
           maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
           lookForCodeInPrecalculatedGamesReuseTable = null;
+          lookForCodeInPrecalculatedGamesClassIdsTable = null;
           break;
         case 7:
           // ******************************************
@@ -3152,6 +3178,7 @@ try {
           marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
           maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
           lookForCodeInPrecalculatedGamesReuseTable = null;
+          lookForCodeInPrecalculatedGamesClassIdsTable = null;
           break;
         default:
           throw new Error("INIT phase / invalid nbColumns: " + nbColumns);
@@ -3664,6 +3691,9 @@ try {
           }
           if ((lookForCodeInPrecalculatedGamesReuseTable != null) && (lookForCodeInPrecalculatedGamesReuseTable.length != initialNbPossibleCodes)) {
             throw new Error("NEW_ATTEMPT phase / lookForCodeInPrecalculatedGamesReuseTable allocation was modified");
+          }
+          if ((lookForCodeInPrecalculatedGamesClassIdsTable != null) && (lookForCodeInPrecalculatedGamesClassIdsTable.length != initialNbPossibleCodes)) {
+            throw new Error("NEW_ATTEMPT phase / lookForCodeInPrecalculatedGamesClassIdsTable allocation was modified");
           }
 
           if (code_colors.length != nbMaxColumns) {

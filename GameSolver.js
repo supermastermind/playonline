@@ -86,6 +86,7 @@ curGameForGamePrecalculation.fill(0);
 let marksIdxsForGamePrecalculation=new Array(maxDepthForGamePrecalculation_ForMemAlloc);
 marksIdxsForGamePrecalculation.fill(-1);
 let lookForCodeInPrecalculatedGamesReuseTable=null;
+let lookForCodeInPrecalculatedGamesClassIdsTable=null;
 let precalculation_mode_mark={nbBlacks:0, nbWhites:0};
 let precalculated_games_4columns=
 "0||N:1296|1111:13C7,1112:11C8,1122:1168,1123:110C,1234:115F.";
@@ -115,9 +116,10 @@ break;
 default:
 throw new Error("lookForCodeInPrecalculatedGames: invalid nbColumns value: "+nbColumns);
 }
-let validLookForCodeInPrecalculatedGamesReuseTable=(lookForCodeInPrecalculatedGamesReuseTable!=null);
-if(validLookForCodeInPrecalculatedGamesReuseTable&&(reuse_mode==1)){
+let validLookForCodeInPrecalculatedGamesReuseTables=((lookForCodeInPrecalculatedGamesReuseTable!=null)&&(lookForCodeInPrecalculatedGamesClassIdsTable!=null));
+if(validLookForCodeInPrecalculatedGamesReuseTables&&(reuse_mode==1)){
 lookForCodeInPrecalculatedGamesReuseTable.fill(0);
+lookForCodeInPrecalculatedGamesClassIdsTable.fill(0);
 }
 let dot_index=0;
 let last_dot_index=0;
@@ -181,6 +183,11 @@ throw new Error("lookForCodeInPrecalculatedGames: too low number of possible cod
 if(nb_possible_codes!=nb_possible_codes_p){
 throw new Error("lookForCodeInPrecalculatedGames: invalid numbers of possible codes: "+nb_possible_codes+", "+nb_possible_codes_p);
 }
+let codeClass1=-1;
+let reuse_optims=(validLookForCodeInPrecalculatedGamesReuseTables&&(reuse_mode!=0));
+if(reuse_optims){
+codeClass1=codeHandler.getSMMCodeClassId(code_p);
+}
 let precalculated_code_cnt=-1;
 let last_end_of_code_perf_pair_index=separator_index4+1;
 while (true){
@@ -198,21 +205,36 @@ if(separator_index5!=last_line_str_index){
 throw new Error("lookForCodeInPrecalculatedGames: inconsistent end of line: "+separator_index5+", "+last_line_str_index);
 }
 }
+if(!reuse_optims){
+if(areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)){
 let sum_str=line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
 let sum=Number("0x"+sum_str);
 if(isNaN(sum)||(sum <=0)){
 throw new Error("lookForCodeInPrecalculatedGames: invalid sum: "+sum_str);
 }
-if((!validLookForCodeInPrecalculatedGamesReuseTable)||(reuse_mode==0)){
-if(areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)){
 return sum;
 }
 }
 else{
 if(lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt]==0){
+let codeClass2;
+if(lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt]==0){
+codeClass2=codeHandler.getSMMCodeClassId(code);
+lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt]=codeClass2;
+}
+else{
+codeClass2=lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt];
+}
+if((codeClass1==codeClass2)){
 if(areCodesEquivalent(code_p, code /* (shall be in second parameter) */, cur_game_size, false, -1 /* N.A. */, curGameForGamePrecalculation)){
 lookForCodeInPrecalculatedGamesReuseTable[precalculated_code_cnt]=1;
+let sum_str=line_str.substring(middle_of_code_perf_pair_index+1, separator_index5);
+let sum=Number("0x"+sum_str);
+if(isNaN(sum)||(sum <=0)){
+throw new Error("lookForCodeInPrecalculatedGames: invalid sum: "+sum_str);
+}
 return sum;
+}
 }
 }
 }
@@ -449,18 +471,18 @@ else if(nb_different_colors==3){
 is_there_triple=true;
 }
 else if(nb_different_colors==4){
-return 1;
+return 2;
 }
 else if(nb_different_colors==5){
-return 0;
+return 1;
 }
 }
 if(is_there_triple){
 if(nb_doubles==0){
-return 3;
+return 4;
 }
 else if(nb_doubles==1){
-return 2;
+return 3;
 }
 else{
 throw new Error("CodeHandler: getSMMCodeClassId - internal error #1");
@@ -468,13 +490,13 @@ throw new Error("CodeHandler: getSMMCodeClassId - internal error #1");
 }
 else{
 if(nb_doubles==0){
-return 6;
+return 7;
 }
 else if(nb_doubles==1){
-return 5;
+return 6;
 }
 else if(nb_doubles==2){
-return 4;
+return 5;
 }
 else{
 throw new Error("CodeHandler: getSMMCodeClassId - internal error #2");
@@ -2317,6 +2339,7 @@ maxDepth=Math.min(11, overallMaxDepth);
 marks_optimization_mask=0x1FFF;
 maxDepthForGamePrecalculation=-1;
 lookForCodeInPrecalculatedGamesReuseTable=null;
+lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 4:
 nbMaxMarks=14;
@@ -2329,6 +2352,7 @@ maxDepth=Math.min(12, overallMaxDepth);
 marks_optimization_mask=0x3FFF;
 maxDepthForGamePrecalculation=3;
 lookForCodeInPrecalculatedGamesReuseTable=null;
+lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 5:
 nbMaxMarks=20;
@@ -2341,6 +2365,7 @@ maxDepth=Math.min(13, overallMaxDepth);
 marks_optimization_mask=0xFFFF;
 maxDepthForGamePrecalculation=3;
 lookForCodeInPrecalculatedGamesReuseTable=new Array(initialNbPossibleCodes);
+lookForCodeInPrecalculatedGamesClassIdsTable=new Array(initialNbPossibleCodes);
 break;
 case 6:
 nbMaxMarks=27;
@@ -2353,6 +2378,7 @@ maxDepth=Math.min(14, overallMaxDepth);
 marks_optimization_mask=0xFFFF;
 maxDepthForGamePrecalculation=-1;
 lookForCodeInPrecalculatedGamesReuseTable=null;
+lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 7:
 nbMaxMarks=35;
@@ -2365,6 +2391,7 @@ maxDepth=Math.min(15, overallMaxDepth);
 marks_optimization_mask=0xFFFF;
 maxDepthForGamePrecalculation=-1;
 lookForCodeInPrecalculatedGamesReuseTable=null;
+lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 default:
 throw new Error("INIT phase / invalid nbColumns: "+nbColumns);
@@ -2762,6 +2789,9 @@ throw new Error("NEW_ATTEMPT phase / cur_permutations_table allocation was modif
 }
 if((lookForCodeInPrecalculatedGamesReuseTable!=null)&&(lookForCodeInPrecalculatedGamesReuseTable.length!=initialNbPossibleCodes)){
 throw new Error("NEW_ATTEMPT phase / lookForCodeInPrecalculatedGamesReuseTable allocation was modified");
+}
+if((lookForCodeInPrecalculatedGamesClassIdsTable!=null)&&(lookForCodeInPrecalculatedGamesClassIdsTable.length!=initialNbPossibleCodes)){
+throw new Error("NEW_ATTEMPT phase / lookForCodeInPrecalculatedGamesClassIdsTable allocation was modified");
 }
 if(code_colors.length!=nbMaxColumns){
 throw new Error("NEW_ATTEMPT phase / code_colors allocation was modified");
