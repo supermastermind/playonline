@@ -87,6 +87,7 @@ let marksIdxsForGamePrecalculation=new Array(maxDepthForGamePrecalculation_ForMe
 marksIdxsForGamePrecalculation.fill(-1);
 let lookForCodeInPrecalculatedGamesReuseTable=null;
 let lookForCodeInPrecalculatedGamesClassIdsTable=null;
+let lookForCodeInPrecalculatedGamesLastlineStr=null;
 let precalculation_mode_mark={nbBlacks:0, nbWhites:0};
 let precalculated_games_4columns=
 "0||N:1296|1111:13C7,1112:11C8,1122:1168,1123:110C,1234:115F.";
@@ -117,9 +118,24 @@ default:
 throw new Error("lookForCodeInPrecalculatedGames: invalid nbColumns value: "+nbColumns);
 }
 let validLookForCodeInPrecalculatedGamesReuseTables=((lookForCodeInPrecalculatedGamesReuseTable!=null)&&(lookForCodeInPrecalculatedGamesClassIdsTable!=null));
-if(validLookForCodeInPrecalculatedGamesReuseTables&&(reuse_mode==1)){
+if(validLookForCodeInPrecalculatedGamesReuseTables){
+if(reuse_mode==1){
 lookForCodeInPrecalculatedGamesReuseTable.fill(0);
 lookForCodeInPrecalculatedGamesClassIdsTable.fill(0);
+lookForCodeInPrecalculatedGamesLastlineStr=null;
+}
+else if(reuse_mode==2){
+if(lookForCodeInPrecalculatedGamesLastlineStr==null){
+throw new Error("lookForCodeInPrecalculatedGames: null lookForCodeInPrecalculatedGamesLastlineStr");
+}
+precalculated_games=lookForCodeInPrecalculatedGamesLastlineStr;
+}
+else{
+lookForCodeInPrecalculatedGamesLastlineStr=null;
+}
+}
+else{
+lookForCodeInPrecalculatedGamesLastlineStr=null;
 }
 let dot_index=0;
 let last_dot_index=0;
@@ -167,6 +183,9 @@ if(!areCodesEquivalent(0, 0, cur_game_size, true, -1 /* N.A. */, curGameForGameP
 last_dot_index=dot_index+1;
 continue;
 }
+if(validLookForCodeInPrecalculatedGamesReuseTables&&(reuse_mode==1)){
+lookForCodeInPrecalculatedGamesLastlineStr=line_str;
+}
 let separator_index4=line_str.indexOf(separatorStr, last_separator_index);
 let nb_possible_codes_str=line_str.substring(last_separator_index, separator_index4);
 if((separator_index4==-1)||(nb_possible_codes_str.indexOf(nbCodesPrefixStr)!=0)){
@@ -186,7 +205,7 @@ throw new Error("lookForCodeInPrecalculatedGames: invalid numbers of possible co
 let codeClass1=-1;
 let reuse_optims=(validLookForCodeInPrecalculatedGamesReuseTables&&(reuse_mode!=0));
 if(reuse_optims){
-codeClass1=codeHandler.getSMMCodeClassId(code_p);
+codeClass1=codeHandler.getSMMCodeClassId(code_p, curGame, cur_game_size);
 }
 let precalculated_code_cnt=-1;
 let last_end_of_code_perf_pair_index=separator_index4+1;
@@ -222,7 +241,7 @@ let codeClass2;
 if(lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt]==0){
 let code_str=line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
 code=codeHandler.uncompressStringToCode(code_str);
-codeClass2=codeHandler.getSMMCodeClassId(code);
+codeClass2=codeHandler.getSMMCodeClassId(code, curGameForGamePrecalculation, cur_game_size);
 lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt]=codeClass2;
 }
 else{
@@ -379,6 +398,19 @@ this.code1_colors=new Array(this.nbMaxColumns);
 this.code2_colors=new Array(this.nbMaxColumns);
 this.colors_int=new Array(this.nbMaxColumns);
 this.different_colors=new Array(this.nbColors+1);
+this.complete_game=new Array(overallNbMaxAttempts+1);
+this.different_game_colors_per_row=new Array(overallNbMaxAttempts+1);
+for (let i=0;i < overallNbMaxAttempts+1;i++){
+this.different_game_colors_per_row[i]=new Array(this.nbColors+1);
+}
+this.different_game_colors_per_column=new Array(this.nbColumns);
+for (let i=0;i < this.nbColumns;i++){
+this.different_game_colors_per_column[i]=new Array(this.nbColors+1);
+}
+this.color_correlation_matrix=new Array(this.nbColors+1);
+for (let i=0;i < this.nbColors+1;i++){
+this.color_correlation_matrix[i]=new Array(this.nbColors+1);
+}
 }
 getNbColumns(){
 return this.nbColumns;
@@ -451,25 +483,163 @@ sum=sum+1;
 }
 return sum;
 }
-getSMMCodeClassId(code){
-let color;
+getSMMCodeClassId(code, game=null, game_size=0){
 if(this.nbColumns!=5){
 throw new Error("CodeHandler: getSMMCodeClassId ("+this.nbColumns+")");
 }
 this.different_colors.fill(0);
-color=(code & 0x0000000F);
+for (let col=0;col < this.nbColumns;col++){
+let color=this.getColor(code, col+1);
 this.different_colors[color]++;
-color=((code >> 4) & 0x0000000F);
-this.different_colors[color]++;
-color=((code >> 8) & 0x0000000F);
-this.different_colors[color]++;
-color=((code >> 12) & 0x0000000F);
-this.different_colors[color]++;
-color=((code >> 16) & 0x0000000F);
-this.different_colors[color]++;
+}
+let extra_game_id=0;
+if((game!=null)&&(game_size >=1)){
+let complete_game_size=game_size+1;
+if(complete_game_size > overallNbMaxAttempts+1){
+throw new Error("CodeHandler: getSMMCodeClassId - internal error #1");
+}
+this.complete_game.fill(0);
+for (let i=0;i < game_size;i++){
+this.complete_game[i]=game[i]
+}
+this.complete_game[game_size]=code;
+for (let row=0;row < complete_game_size;row++){
+this.different_game_colors_per_row[row].fill(0);
+for (let col=0;col < this.nbColumns;col++){
+let color=this.getColor(this.complete_game[row], col+1);
+this.different_game_colors_per_row[row][color]++;
+}
+}
+for (let col=0;col < this.nbColumns;col++){
+this.different_game_colors_per_column[col].fill(0);
+for (let row=0;row < complete_game_size;row++){
+let color=this.getColor(this.complete_game[row], col+1);
+this.different_game_colors_per_column[col][color]++;
+}
+}
+for (let i=0;i < this.nbColors+1;i++){
+this.color_correlation_matrix[i].fill(0);
+}
+for (let col=0;col < this.nbColumns;col++){
+for (let row1=0;row1 < complete_game_size;row1++){
+for (let row2=0;row2 < complete_game_size;row2++){
+if(row1 < row2){
+let color1=this.getColor(this.complete_game[row1], col+1);
+let color2=this.getColor(this.complete_game[row2], col+1);
+let color_min;
+let color_max;
+if(color1 <=color2){
+color_min=color1;
+color_max=color2;
+}
+else{
+color_min=color2;
+color_max=color1;
+}
+let coef=((row1+1) * 0xA26970) ^ ((row2+1) * 0xF14457)
+^ (this.different_game_colors_per_row[row1][color1] * 0x749841) ^ (this.different_game_colors_per_row[row2][color2] * 0x369874)
+^ (this.different_game_colors_per_row[row1][color2] * 0xB54796) ^ (this.different_game_colors_per_row[row2][color1] * 0x252241);
+if(color_min==color_max){
+coef=coef ^ 0x5C1148;
+}
+this.color_correlation_matrix[color_min][color_max]=this.color_correlation_matrix[color_min][color_max] ^ coef;
+}
+}
+}
+}
+for (let row=0;row < complete_game_size;row++){
+for (let col1=0;col1 < this.nbColumns;col1++){
+for (let col2=0;col2 < this.nbColumns;col2++){
+if(col1 < col2){
+let color1=this.getColor(this.complete_game[row], col1+1);
+let color2=this.getColor(this.complete_game[row], col2+1);
+let color_min;
+let color_max;
+if(color1 <=color2){
+color_min=color1;
+color_max=color2;
+}
+else{
+color_min=color2;
+color_max=color1;
+}
+let common_mask=0xA49875;
+let coef=((row+1) * 0x2A3698)
+^ (this.different_game_colors_per_column[col1][color1] * common_mask) ^ (this.different_game_colors_per_column[col2][color2] * common_mask)
+^ (this.different_game_colors_per_column[col2][color1] * common_mask) ^ (this.different_game_colors_per_column[col1][color2] * common_mask);
+if(color_min==color_max){
+coef=coef ^ 0x533E16;
+}
+this.color_correlation_matrix[color_min][color_max]=this.color_correlation_matrix[color_min][color_max] ^ coef;
+}
+}
+}
+}
+for (let col1=0;col1 < this.nbColumns;col1++){
+for (let row1=0;row1 < complete_game_size;row1++){
+let color1=this.getColor(this.complete_game[row1], col1+1);
+for (let col2=0;col2 < this.nbColumns;col2++){
+if(col1!=col2){
+for (let row2=0;row2 < complete_game_size;row2++){
+if(row1 < row2){
+let color2=this.getColor(this.complete_game[row2], col2+1);
+if(color1!=color2){
+if( (this.different_game_colors_per_row[row1][color2]==0)&&(this.different_game_colors_per_row[row2][color1]==0)
+&&(this.different_game_colors_per_column[col1][color2]==0)&&(this.different_game_colors_per_column[col2][color1]==0) ){
+let color_min;
+let color_max;
+if(color1 <=color2){
+color_min=color1;
+color_max=color2;
+}
+else{
+color_min=color2;
+color_max=color1;
+}
+let coef=((row1+1) * 0xB48725) ^ ((row2+1) * 0x67F428);
+this.color_correlation_matrix[color_min][color_max]=this.color_correlation_matrix[color_min][color_max] ^ coef;
+}
+}
+}
+}
+}
+}
+}
+}
+let nbUnusedColors=0;
+for (let color=1;color <=this.nbColors;color++){
+let isColorUsedInCurrentGame=false;
+for (let row=0;row < complete_game_size;row++){
+for (let col=0;col < this.nbColumns;col++){
+if(color==this.getColor(this.complete_game[row], col+1)){
+isColorUsedInCurrentGame=true;
+break
+}
+}
+if(isColorUsedInCurrentGame){
+break;
+}
+}
+if(!isColorUsedInCurrentGame){
+nbUnusedColors=nbUnusedColors+1;
+}
+}
+for (let i=0;i < this.nbColors+1;i++){
+for (let j=0;j < this.nbColors+1;j++){
+extra_game_id=extra_game_id+this.color_correlation_matrix[i][j];
+}
+}
+if(extra_game_id <=0){
+throw new Error("CodeHandler: getSMMCodeClassId - internal error #2: "+extra_game_id);
+}
+extra_game_id=extra_game_id+nbUnusedColors * 444;
+if(extra_game_id!=Math.floor(extra_game_id)){
+throw new Error("CodeHandler: getSMMCodeClassId - internal error #3: "+extra_game_id);
+}
+}
 let is_there_triple=false;
 let nb_doubles=0;
-for (color=1;color <=this.nbColors;color++){
+for (let color=1;color <=this.nbColors;color++){
 let nb_different_colors=this.different_colors[color];
 if(nb_different_colors==2){
 nb_doubles++;
@@ -478,35 +648,35 @@ else if(nb_different_colors==3){
 is_there_triple=true;
 }
 else if(nb_different_colors==4){
-return 2;
+return 200+extra_game_id;
 }
 else if(nb_different_colors==5){
-return 1;
+return 100+extra_game_id;
 }
 }
 if(is_there_triple){
 if(nb_doubles==0){
-return 4;
+return 400+extra_game_id;
 }
 else if(nb_doubles==1){
-return 3;
+return 300+extra_game_id;
 }
 else{
-throw new Error("CodeHandler: getSMMCodeClassId - internal error #1");
+throw new Error("CodeHandler: getSMMCodeClassId - internal error #4");
 }
 }
 else{
 if(nb_doubles==0){
-return 7;
+return 700+extra_game_id;
 }
 else if(nb_doubles==1){
-return 6;
+return 600+extra_game_id;
 }
 else if(nb_doubles==2){
-return 5;
+return 500+extra_game_id;
 }
 else{
-throw new Error("CodeHandler: getSMMCodeClassId - internal error #2");
+throw new Error("CodeHandler: getSMMCodeClassId - internal error #5");
 }
 }
 }
@@ -2050,7 +2220,7 @@ best_sum=sum;
 if(depth <=1){
 let appliedMaxPerformanceEvaluationTime=maxPerformanceEvaluationTime;
 if(areCurrentGameOrCodePrecalculated >=0){
-appliedMaxPerformanceEvaluationTime=appliedMaxPerformanceEvaluationTime * 1.40;
+appliedMaxPerformanceEvaluationTime=appliedMaxPerformanceEvaluationTime * 1.27;
 }
 if(first_call){
 if((!compute_sum_ini)&&(nbCodes > 100)){
