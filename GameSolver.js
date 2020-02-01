@@ -563,10 +563,11 @@ else{
 color_min=color2;
 color_max=color1;
 }
-let common_mask=0xA49875;
+let common_mask_1=0xA49875;
+let common_mask_2=0xCE84F4;
 let coef=((row+1) * 0x2A3698)
-^ (this.different_game_colors_per_column[col1][color1] * common_mask) ^ (this.different_game_colors_per_column[col2][color2] * common_mask)
-^ (this.different_game_colors_per_column[col2][color1] * common_mask) ^ (this.different_game_colors_per_column[col1][color2] * common_mask);
+^ (this.different_game_colors_per_column[col1][color1] * common_mask_1) ^ (this.different_game_colors_per_column[col2][color2] * common_mask_1)
+^ (this.different_game_colors_per_column[col2][color1] * common_mask_2) ^ (this.different_game_colors_per_column[col1][color2] * common_mask_2);
 if(color_min==color_max){
 coef=coef ^ 0x533E16;
 }
