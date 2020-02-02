@@ -63,8 +63,8 @@ try {
   let baseOfMaxPerformanceEvaluationTime = 30000; // 30 seconds / much higher in (precalculation mode)
   let maxPerformanceEvaluationTime = -1;
 
-  let refNbOfCodesForSystematicEvaluation = 1500; // (high values may induce latencies)
-  let refNbOfCodesForSystematicEvaluation_AllCodesEvaluated = 1500; // (shall be <= refNbOfCodesForSystematicEvaluation - high values may induce latencies)
+  let refNbOfCodesForSystematicEvaluation = 2222; // (high values may induce latencies)
+  let refNbOfCodesForSystematicEvaluation_AllCodesEvaluated = 2222; // (shall be <= refNbOfCodesForSystematicEvaluation - high values may induce latencies)
   let nbOfCodesForSystematicEvaluation = -1;
   let nbOfCodesForSystematicEvaluation_AllCodesEvaluated = -1;
   let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
@@ -86,8 +86,6 @@ try {
   let listOfGlobalPerformances;
   let listsOfPossibleCodes;
   let nbOfPossibleCodes;
-  let listOfClassesFirstCall;
-  let nbOfClassesFirstCall = -1;
   let listOfEquivalentCodesAndPerformances;
   let marks_already_computed_table = null;
   let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
@@ -2317,7 +2315,7 @@ try {
 
   // Outputs: listOfGlobalPerformances[]
   //          particularCodeGlobalPerformance in case of impossible code
-  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode, areCurrentGameOrCodePrecalculated_p) {
+  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode, areCurrentGameOrCodePrecalculated_p, nbOfClassesFirstCall) {
 
     let idx;
     let res;
@@ -2352,28 +2350,6 @@ try {
         }
         if ( (!codeHandler.marksEqual(marksTable_NbToMark[marksIdxs[idx]], marks[idx])) || (!codeHandler.isMarkValid(marksTable_NbToMark[marksIdxs[idx]])) )  {
           throw new Error("evaluatePerformances: invalid currrent marks (" + idx + ")");
-        }
-      }
-
-      // Determine current number of classes
-      // ***********************************
-
-      listOfClassesFirstCall.fill(0);
-      nbOfClassesFirstCall = 0;
-
-      for (let idx1 = 0; idx1 < nbCodes; idx1++) {
-        let cur_code = listOfCodes[idx1];
-        let equiv_code_found = false;
-        for (let idx2 = 0; idx2 < nbOfClassesFirstCall; idx2++) {
-          let known_code = listOfClassesFirstCall[idx2];
-          if (areCodesEquivalent(cur_code, known_code, curGameSize, false, -1 /* N.A. */, null)) {
-            equiv_code_found = true;
-            break;
-          }
-        }
-        if (!equiv_code_found) {
-          listOfClassesFirstCall[nbOfClassesFirstCall] = cur_code;
-          nbOfClassesFirstCall++;
         }
       }
 
@@ -3706,12 +3682,39 @@ try {
           precalculated_cur_game_or_code = lookForCodeInPrecalculatedGames(codesPlayed[curAttemptNumber-1], curGameSize, previousNbOfPossibleCodes, 0);
         }
 
+        // Determine current number of classes
+        // ***********************************
+
+        let index = (curAttemptNumber%2);
+
+        let listOfClassesFirstCall = new Array(previousNbOfPossibleCodes);;
+        listOfClassesFirstCall.fill(0);
+        let nbOfClassesFirstCall = 0;
+
+        for (let idx1 = 0; idx1 < previousNbOfPossibleCodes; idx1++) {
+          let cur_code = possibleCodesForPerfEvaluation[index][idx1];
+          let equiv_code_found = false;
+          for (let idx2 = 0; idx2 < nbOfClassesFirstCall; idx2++) {
+            let known_code = listOfClassesFirstCall[idx2];
+            if (areCodesEquivalent(cur_code, known_code, curGameSize, false, -1 /* N.A. */, null)) {
+              equiv_code_found = true;
+              break;
+            }
+          }
+          if (!equiv_code_found) {
+            listOfClassesFirstCall[nbOfClassesFirstCall] = cur_code;
+            nbOfClassesFirstCall++;
+          }
+        }
+
         // Main useful code processing
         // ***************************
 
         if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-             || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ) { // number of possible codes is not too high (general case)
+             || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.67) // number of possible codes is not too high (1/3)
+             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.80) && (nbOfClassesFirstCall < 40)) // number of possible codes is not too high (2/3)
+             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall < 20)) ) { // number of possible codes is not too high (3/3)
 
           if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
             throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
@@ -3735,7 +3738,6 @@ try {
               listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
               nbOfPossibleCodes = undefined;
               nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
-              listOfClassesFirstCall = new Array(arraySizeAtInit);
               listOfEquivalentCodesAndPerformances = undefined;
               listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit+1);
               for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
@@ -3750,7 +3752,9 @@ try {
           }
           // ***** Second evaluation phase in a game *****
           else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-                    || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ) { // number of possible codes is not too high (general case)
+                    || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.67) // number of possible codes is not too high (1/3)
+                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.80) && (nbOfClassesFirstCall < 40)) // number of possible codes is not too high (2/3)
+                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall < 20)) ) { // number of possible codes is not too high (3/3)
             if (precalculated_cur_game_or_code > 0) {
               throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
             }
@@ -3764,7 +3768,6 @@ try {
               listsOfPossibleCodes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
               nbOfPossibleCodes = undefined;
               nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
-              listOfClassesFirstCall = new Array(arraySizeAtInit);
               listOfEquivalentCodesAndPerformances = undefined;
               listOfEquivalentCodesAndPerformances = new2DArray(maxDepthApplied, arraySizeAtInit+1);
               for (let idx1 = 0; idx1 < maxDepthApplied; idx1++) { // structure allocation
@@ -3796,11 +3799,10 @@ try {
           // ********************
 
           let code_played_global_performance = PerformanceNA;
-          let index = (curAttemptNumber%2);
           if (0 == isAttemptPossibleinGameSolver(curAttemptNumber)) { // code played is possible
             // Evaluate performances for possibleCodesForPerfEvaluation[curAttemptNumber%2]:
             let startTime = (new Date()).getTime();
-            best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */, precalculated_cur_game_or_code);
+            best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, 0 /* empty code */, precalculated_cur_game_or_code, nbOfClassesFirstCall);
             if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
               let code_played_found = false;
               for (let i = 0; i < previousNbOfPossibleCodes; i++) {
@@ -3826,7 +3828,7 @@ try {
           else { // code played is not possible
             // Evaluate performances for possibleCodesForPerfEvaluation[curAttemptNumber%2]:
             let startTime = (new Date()).getTime();
-            best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[curAttemptNumber-1], precalculated_cur_game_or_code);
+            best_global_performance = evaluatePerformances(-1 /* first depth */, possibleCodesForPerfEvaluation[index], previousNbOfPossibleCodes, codesPlayed[curAttemptNumber-1], precalculated_cur_game_or_code, nbOfClassesFirstCall);
             if (best_global_performance != PerformanceUNKNOWN) { // performance evaluation succeeded
               if ((particularCodeGlobalPerformance == PerformanceNA) || (particularCodeGlobalPerformance == PerformanceUNKNOWN) || (particularCodeGlobalPerformance <= 0.01)) {
                 throw new Error("NEW_ATTEMPT phase / invalid particularCodeGlobalPerformance: " + particularCodeGlobalPerformance);
@@ -3889,7 +3891,7 @@ try {
           if (marksIdxs.length != nbMaxAttempts+maxDepth) {
             throw new Error("NEW_ATTEMPT phase / marksIdxs allocation was modified");
           }
-          if (listOfClassesFirstCall.length != arraySizeAtInit) {
+          if (listOfClassesFirstCall.length != previousNbOfPossibleCodes) {
             throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
           }
           if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit+1)) {
