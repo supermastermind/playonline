@@ -1486,7 +1486,7 @@ function mouseMove(e) {
 function playAColor(color, column) {
   if (gameOnGoing()) {
     if ((color != emptyColor) && obviouslyImpossibleColors[color]) {
-      if ( (nbColumns <= 7) || (currentAttemptNumber == nbMaxAttempts) ) { // (covers "not too complex" games and precalculated games)
+      if ( (nbColumns <= 5) || (currentAttemptNumber == nbMaxAttempts) ) { // (covers "not too complex" games and precalculated games)
         return;
       }
     }

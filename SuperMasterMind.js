@@ -1233,7 +1233,7 @@ lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;
 function playAColor(color, column){
 if(gameOnGoing()){
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
-if( (nbColumns <=7)||(currentAttemptNumber==nbMaxAttempts) ){
+if( (nbColumns <= 5)||(currentAttemptNumber==nbMaxAttempts) ){
 return;
 }
 }
