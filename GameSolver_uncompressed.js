@@ -2315,7 +2315,7 @@ try {
 
   // Outputs: listOfGlobalPerformances[]
   //          particularCodeGlobalPerformance in case of impossible code
-  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode, areCurrentGameOrCodePrecalculated_p, nbOfClassesFirstCall) {
+  function evaluatePerformances(depth, listOfCodes, nbCodes, particularCode, areCurrentGameOrCodePrecalculated_p, nbOfClassesFirstCall_p) {
 
     let idx;
     let res;
@@ -2353,7 +2353,7 @@ try {
         }
       }
 
-      curNbClasses = nbOfClassesFirstCall;
+      curNbClasses = nbOfClassesFirstCall_p;
       if ( (curNbClasses <= 0) || (curNbClasses > nbCodes)
            || ((curGameSize == 0) && (curNbClasses != initialNbClasses)) ) {
         throw new Error("evaluatePerformances: invalid curNbClasses: " + curNbClasses);
@@ -3061,7 +3061,7 @@ try {
       str = "\"" + str.substring(0, str.length-1) + ".\" +"; // remove last ','
       // console.log(str);
       let precalculation_time = new Date().getTime() - precalculation_start_time;
-      if (precalculation_time >= 2500) { // 2500 = 2.5 seconds on i5 processor or on Linux VB running on i7 processor
+      if (precalculation_time >= 2700) { // 2700 = 2.7 seconds on i5 processor or on Linux VB running on i7 processor
         send_trace_msg(str + " // " + precalculation_time + "ms");
       }
       else {
@@ -3687,24 +3687,35 @@ try {
 
         let index = (curAttemptNumber%2);
 
-        let listOfClassesFirstCall = new Array(previousNbOfPossibleCodes);;
-        listOfClassesFirstCall.fill(0);
+        let listOfClassesFirstCall = null;
         let nbOfClassesFirstCall = 0;
 
-        for (let idx1 = 0; idx1 < previousNbOfPossibleCodes; idx1++) {
-          let cur_code = possibleCodesForPerfEvaluation[index][idx1];
-          let equiv_code_found = false;
-          for (let idx2 = 0; idx2 < nbOfClassesFirstCall; idx2++) {
-            let known_code = listOfClassesFirstCall[idx2];
-            if (areCodesEquivalent(cur_code, known_code, curGameSize, false, -1 /* N.A. */, null)) {
-              equiv_code_found = true;
-              break;
+        if ( (nbColumns <= 5)
+             || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ) { // (****) optimization for 6 & 7 columns games
+          listOfClassesFirstCall = new Array(previousNbOfPossibleCodes);
+          listOfClassesFirstCall.fill(0);
+
+          for (let idx1 = 0; idx1 < previousNbOfPossibleCodes; idx1++) {
+            let cur_code = possibleCodesForPerfEvaluation[index][idx1];
+            let equiv_code_found = false;
+            for (let idx2 = 0; idx2 < nbOfClassesFirstCall; idx2++) {
+              let known_code = listOfClassesFirstCall[idx2];
+              if (areCodesEquivalent(cur_code, known_code, curGameSize, false, -1 /* N.A. */, null)) {
+                equiv_code_found = true;
+                break;
+              }
+            }
+            if (!equiv_code_found) {
+              listOfClassesFirstCall[nbOfClassesFirstCall] = cur_code;
+              nbOfClassesFirstCall++;
             }
           }
-          if (!equiv_code_found) {
-            listOfClassesFirstCall[nbOfClassesFirstCall] = cur_code;
-            nbOfClassesFirstCall++;
+        }
+        else {
+          if (precalculated_cur_game_or_code >= 0) {
+            throw new Error("NEW_ATTEMPT phase / invalid optimization");
           }
+          nbOfClassesFirstCall = -1; // (invalid value)
         }
 
         // Main useful code processing
@@ -3714,7 +3725,7 @@ try {
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
              || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.67) // number of possible codes is not too high (1/3)
              || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.80) && (nbOfClassesFirstCall < 40)) // number of possible codes is not too high (2/3)
-             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall < 20)) ) { // number of possible codes is not too high (3/3)
+             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall < 20)) ) { // number of possible codes is not too high (****) (3/3)
 
           if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
             throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
@@ -3754,7 +3765,7 @@ try {
           else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
                     || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.67) // number of possible codes is not too high (1/3)
                     || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.80) && (nbOfClassesFirstCall < 40)) // number of possible codes is not too high (2/3)
-                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall < 20)) ) { // number of possible codes is not too high (3/3)
+                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall < 20)) ) { // number of possible codes is not too high (****) (3/3)
             if (precalculated_cur_game_or_code > 0) {
               throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
             }
@@ -3891,7 +3902,7 @@ try {
           if (marksIdxs.length != nbMaxAttempts+maxDepth) {
             throw new Error("NEW_ATTEMPT phase / marksIdxs allocation was modified");
           }
-          if (listOfClassesFirstCall.length != previousNbOfPossibleCodes) {
+          if ((listOfClassesFirstCall != null) && (listOfClassesFirstCall.length != previousNbOfPossibleCodes)) {
             throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
           }
           if (!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit+1)) {
@@ -4020,7 +4031,7 @@ try {
               throw new Error("NEW_ATTEMPT phase / internal error (total_equiv_code_cnt): " + j + ", " + total_equiv_code_cnt + ", " + nb_codes_shown + ", " + equiv_code_ratio);
             }
             if (j != first_optimal_code_idx) {
-              possibleCodesShown[equiv_code_cnt] = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][j].equiv_code;;
+              possibleCodesShown[equiv_code_cnt] = listOfEquivalentCodesAndPerformances[0 /* (first depth) */][j].equiv_code;
               equiv_code_cnt++;
               if (equiv_code_cnt >= nb_codes_shown) {
                 break;
