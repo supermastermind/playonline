@@ -1378,7 +1378,7 @@ try {
 
     let N; // possibleCodesAfterNAttempts is build at attempt N (shall be >= 1)
     if (nbColumns >= 7) { // (higher memory consumption)
-      N = 5;
+      N = 4;
     }
     else {
       N = 2;

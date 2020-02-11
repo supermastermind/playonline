@@ -1072,7 +1072,7 @@ maxNbColorsTable[color]=0;
 }
 let N;
 if(nbColumns >=7){
-N=5;
+N=4;
 }
 else{
 N=2;
