@@ -2528,7 +2528,7 @@ lookForCodeInPrecalculatedGamesClassIdsTable=new Array(initialNbPossibleCodes);
 break;
 case 6:
 nbMaxMarks=27;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*35/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
@@ -2541,7 +2541,7 @@ lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 7:
 nbMaxMarks=35;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*35/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
@@ -2779,23 +2779,33 @@ precalculated_cur_game_or_code=lookForCodeInPrecalculatedGames(codesPlayed[curAt
 }
 let index=(curAttemptNumber%2);
 let listOfClassesFirstCall=null;
+let listOfClassesIdsFirstCall=null;
 let nbOfClassesFirstCall=0;
 if( (nbColumns <=5)
 ||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ){
 listOfClassesFirstCall=new Array(previousNbOfPossibleCodes);
 listOfClassesFirstCall.fill(0);
+listOfClassesIdsFirstCall=new Array(previousNbOfPossibleCodes);
+listOfClassesIdsFirstCall.fill(0);
 for (let idx1=0;idx1 < previousNbOfPossibleCodes;idx1++){
 let cur_code=possibleCodesForPerfEvaluation[index][idx1];
+let codeClass1=0;
+if(nbColumns==5){
+codeClass1=codeHandler.getSMMCodeClassId(cur_code, curGame, curGameSize);
+}
 let equiv_code_found=false;
 for (let idx2=0;idx2 < nbOfClassesFirstCall;idx2++){
+if(codeClass1==listOfClassesIdsFirstCall[idx2]){
 let known_code=listOfClassesFirstCall[idx2];
 if(areCodesEquivalent(cur_code, known_code, curGameSize, false, -1 /* N.A. */, null)){
 equiv_code_found=true;
 break;
 }
 }
+}
 if(!equiv_code_found){
 listOfClassesFirstCall[nbOfClassesFirstCall]=cur_code;
+listOfClassesIdsFirstCall[nbOfClassesFirstCall]=codeClass1;
 nbOfClassesFirstCall++;
 }
 }
@@ -2966,6 +2976,9 @@ throw new Error("NEW_ATTEMPT phase / marksIdxs allocation was modified");
 }
 if((listOfClassesFirstCall!=null)&&(listOfClassesFirstCall.length!=previousNbOfPossibleCodes)){
 throw new Error("NEW_ATTEMPT phase / listOfClassesFirstCall allocation was modified");
+}
+if((listOfClassesIdsFirstCall!=null)&&(listOfClassesIdsFirstCall.length!=previousNbOfPossibleCodes)){
+throw new Error("NEW_ATTEMPT phase / listOfClassesIdsFirstCall allocation was modified");
 }
 if(!check2DArraySizes(listOfEquivalentCodesAndPerformances, maxDepthApplied, arraySizeAtInit+1)){
 throw new Error("NEW_ATTEMPT phase / listOfEquivalentCodesAndPerformances allocation was modified");
