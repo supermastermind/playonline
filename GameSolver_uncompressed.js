@@ -79,6 +79,7 @@ try {
   let maxDepth = -1;
   let maxDepthApplied = -1;
   let marks_optimization_mask;
+  let listOfClassIds = null;
 
   let performanceListsInitDone = false;
   let performanceListsInitDoneForPrecalculatedGames = false;
@@ -1553,7 +1554,7 @@ try {
           }
           let mark0_nb_pegs = marks[0].nbBlacks + marks[0].nbWhites;
           let mark1_nb_pegs = -1;
-          if (attempt_nb == 3) {
+          if (attempt_nb >= 3) {
             mark1_nb_pegs = marks[1].nbBlacks + marks[1].nbWhites;
           }
           for (let color1 = 1; color1 <= nbColors; color1++) {
@@ -2530,10 +2531,12 @@ try {
       compute_sum = compute_sum_ini;
       // precalculated_sum = false; useless setting due to compute_sum setting
       if (!compute_sum) {
+        let cur_code_class_id = ((listOfClassIds != null) ? listOfClassIds[cur_code] : 0);
         sum = 0.0;
         for (idx = 0; idx < nbOfEquivalentCodesAndPerformances; idx++) {
           let known_code = listOfEquivalentCodesAndPerformances[next_depth][idx].equiv_code;
-          if (areCodesEquivalent(cur_code, known_code, next_cur_game_idx, false, -1 /* N.A. */, null)) {
+          let known_code_class_id = ((listOfClassIds != null) ? listOfClassIds[known_code] : 0);
+          if ((cur_code_class_id == known_code_class_id) && areCodesEquivalent(cur_code, known_code, next_cur_game_idx, false, -1 /* N.A. */, null)) {
             sum = listOfEquivalentCodesAndPerformances[next_depth][idx].equiv_sum;
             break;
           }
@@ -3437,6 +3440,16 @@ try {
       possibleCodesForPerfEvaluation[1] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
       // initialCodeListForPrecalculatedMode = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc); // (precalculation mode)
 
+      if (nbColumns == 5) { // Optimization for Super Master Mind games
+        if (nbColors != 8) {
+          throw new Error("INIT phase / internal error (unexpected number of colors)");
+        }
+        listOfClassIds = new Array(0x88888+1); // (A few Mbytes)
+      }
+      else {
+        listOfClassIds = null;
+      }
+
       // **********
       // Update GUI
       // **********
@@ -3702,6 +3715,17 @@ try {
             let codeClass1 = 0;
             if (nbColumns == 5) { // Optimization for Super Master Mind games
               codeClass1 = codeHandler.getSMMCodeClassId(cur_code, curGame, curGameSize);
+              if (listOfClassIds != null) {
+                listOfClassIds[cur_code] = codeClass1;
+              }
+              else {
+                throw new Error("NEW_ATTEMPT phase / null listOfClassIds");
+              }
+            }
+            else {
+              if (listOfClassIds != null) {
+                throw new Error("NEW_ATTEMPT phase / non null listOfClassIds (1)");
+              }
             }
             let equiv_code_found = false;
             for (let idx2 = 0; idx2 < nbOfClassesFirstCall; idx2++) {
@@ -3724,6 +3748,9 @@ try {
           if (precalculated_cur_game_or_code >= 0) {
             throw new Error("NEW_ATTEMPT phase / invalid optimization");
           }
+          if (listOfClassIds != null) {
+            throw new Error("NEW_ATTEMPT phase / non null listOfClassIds (2)");
+          }
           nbOfClassesFirstCall = -1; // (invalid value)
         }
 
@@ -3738,6 +3765,9 @@ try {
 
           if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
             throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
+          }
+          if (nbOfClassesFirstCall <= 0) {
+            throw new Error("NEW_ATTEMPT phase / invalid nbOfClassesFirstCall: " + nbOfClassesFirstCall);
           }
 
           // Initializations
@@ -4224,6 +4254,9 @@ try {
       if ( (possibleCodesForPerfEvaluation[0].length != nbOfCodesForSystematicEvaluation_ForMemAlloc)
            || (possibleCodesForPerfEvaluation[1].length != nbOfCodesForSystematicEvaluation_ForMemAlloc) ) {
         throw new Error("inconsistent possibleCodesForPerfEvaluation length: " + possibleCodesForPerfEvaluation[0].length + ", " + possibleCodesForPerfEvaluation[1].length + ", " + nbOfCodesForSystematicEvaluation_ForMemAlloc);
+      }
+      if ((listOfClassIds != null) && (listOfClassIds.length != 0x88888+1)) {
+        throw new Error("inconsistent listOfClassIds length: " + listOfClassIds.length);
       }
 
     }
