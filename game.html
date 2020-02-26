@@ -459,10 +459,17 @@
           }
           catch (exc) {}
           if (localStorage.firstname) {
-            document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>");
+            let kdo_str = "";
+            if (localStorage.firstname == "Jeannot") {
+              kdo_str = "<br><img src='img/Kdo.png' align='left' style='width:6%;margin:0.5% 0 0 1.5%'>";
+            }
+            document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>" + "<span id='kdo_id'>" + kdo_str + "</span>");
             setTimeout(function() {
               $("#welcome_id").fadeOut().empty();
             }, 60000);
+            setTimeout(function() {
+              $("#kdo_id").fadeOut().empty();
+            }, 30000);
           }
         }
       </script>
@@ -488,7 +495,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MC";
+      let html_compatibility_game_version = "Ver_MD";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
