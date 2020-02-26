@@ -72,7 +72,7 @@ function write_sidebar() {
       Version 1.5<br>\
       optimal strategy assessed at end of games<br><br>\
       Version 1.2<br>\
-      possible codes at each attempt can be displayed<br><br>\
+      possible codes at each attempt are displayed<br><br>\
       Version 1.0<br>\
       online game scores<br><br>\
       Version 0.5<br>\
