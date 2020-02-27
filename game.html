@@ -461,7 +461,7 @@
           if (localStorage.firstname) {
             let kdo_str = "";
             if (localStorage.firstname == "Jeannot") {
-              kdo_str = "<br><img src='img/Kdo.png' align='left' style='width:6%;margin:0.5% 0 0 1.5%'>";
+              kdo_str = "<br><img src='img/Kdo.png' align='left' style='width:6%;margin:0.5% 0 0 1.5%;border-radius:40%'>";
             }
             document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>" + "<span id='kdo_id'>" + kdo_str + "</span>");
             setTimeout(function() {
@@ -483,10 +483,12 @@
           var date = new Date();
           var m = date.getMonth();
           var d = date.getDate();
-          if ( ((m == 11) && (d >= 8)) // after December 8th
-               || ((m == 0) && (d <= 15)) ) { // before January 15th
-            // (Display values will be updated below if necessary)
-            document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>&nbsp;<br><img id='img_2' style='display:none;' src='img/End_of_year2.png'>&nbsp;");
+          if (!android_appli) {
+            if ( ((m == 11) && (d >= 8)) // after December 8th
+                 || ((m == 0) && (d <= 15)) ) { // before January 15th
+              // (Display values will be updated below if necessary)
+              document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>&nbsp;<br><img id='img_2' style='display:none;' src='img/End_of_year2.png'>&nbsp;");
+            }
           }
         }
       </script>
