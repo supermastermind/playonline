@@ -3329,7 +3329,7 @@ try {
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
           initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
           maxDepth = Math.min(13, overallMaxDepth);
-          marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
+          marks_optimization_mask = 0x1FFFF; // (do not consume too much memory)
           maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
           lookForCodeInPrecalculatedGamesReuseTable = new Array(initialNbPossibleCodes);
           lookForCodeInPrecalculatedGamesClassIdsTable = new Array(initialNbPossibleCodes);
@@ -3342,7 +3342,7 @@ try {
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
           initialNbClasses = 11; // {111111, 111112, 111122, 111123, 111222, 111223, 111234, 112233, 112234, 112345, 123456}
           maxDepth = Math.min(14, overallMaxDepth);
-          marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
+          marks_optimization_mask = 0x1FFFF; // (do not consume too much memory)
           maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
           lookForCodeInPrecalculatedGamesReuseTable = null;
           lookForCodeInPrecalculatedGamesClassIdsTable = null;
@@ -3366,7 +3366,7 @@ try {
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
           initialNbClasses = 15; // {1111111, 1111112, 1111122, 1111123, 1111222, 1111223, 1111234, 1112223, 1112233, 1112234, 1112345, 1122334, 1122345, 1123456, 1234567}
           maxDepth = Math.min(15, overallMaxDepth);
-          marks_optimization_mask = 0xFFFF; // (do not consume too much memory)
+          marks_optimization_mask = 0x1FFFF; // (do not consume too much memory)
           maxDepthForGamePrecalculation = -1; // no game precalculation as precalculation would be too long (-1 or 3)
           lookForCodeInPrecalculatedGamesReuseTable = null;
           lookForCodeInPrecalculatedGamesClassIdsTable = null;
