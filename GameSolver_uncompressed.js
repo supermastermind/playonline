@@ -1037,32 +1037,41 @@ try {
       let codeY;
 
       // Marks optimization (1/2) - begin
-      // Notes: - Hash key computing shall be symetrical wrt code1 and code2 and very fast.
-      //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative).
-      //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator.
+      // Notes: - Hash key computing shall be very fast
+      //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative)
+      //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator
 
-      let sum_codes = code1 + code2;
-      let key = ( (sum_codes /* (use LSBs) */
-                  + (sum_codes >> 9) /* (use MSBs) */
-                  + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
+      let min_code, max_code;
+      if (code1 < code2) {
+        min_code = code1;
+        max_code = code2;
+      }
+      else {
+        min_code = code2;
+        max_code = code1;
+      }
+      let sum_max_code = max_code + (max_code >> 2);
+      let key = ( (min_code + sum_max_code /* (use LSBs) */
+                  + ((min_code ^ (sum_max_code >> 3)) >> 9) /* (use MSBs) */ ) & marks_optimization_mask );
+
       marks_already_computed_table_cell = marks_already_computed_table[key];
       codeX = marks_already_computed_table_cell.code1a;
       codeY = marks_already_computed_table_cell.code2a;
-      if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+      if ((codeX == min_code) && (codeY == max_code)) {
         mark.nbBlacks = marks_already_computed_table_cell.nbBlacksa;
         mark.nbWhites = marks_already_computed_table_cell.nbWhitesa;
       }
       else {
         codeX = marks_already_computed_table_cell.code1b;
         codeY = marks_already_computed_table_cell.code2b;
-        if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+        if ((codeX == min_code) && (codeY == max_code)) {
           mark.nbBlacks = marks_already_computed_table_cell.nbBlacksb;
           mark.nbWhites = marks_already_computed_table_cell.nbWhitesb;
         }
         else {
           codeX = marks_already_computed_table_cell.code1c;
           codeY = marks_already_computed_table_cell.code2c;
-          if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
+          if ((codeX == min_code) && (codeY == max_code)) {
             mark.nbBlacks = marks_already_computed_table_cell.nbBlacksc;
             mark.nbWhites = marks_already_computed_table_cell.nbWhitesc;
           }
@@ -1115,22 +1124,22 @@ try {
 
             // Marks optimization (2/2) - begin
             if (marks_already_computed_table_cell.write_index == 0) {
-              marks_already_computed_table_cell.code1a = code1;
-              marks_already_computed_table_cell.code2a = code2;
+              marks_already_computed_table_cell.code1a = min_code;
+              marks_already_computed_table_cell.code2a = max_code;
               marks_already_computed_table_cell.nbBlacksa = nbBlacks;
               marks_already_computed_table_cell.nbWhitesa = nbWhites;
               marks_already_computed_table_cell.write_index = 1;
             }
             else if (marks_already_computed_table_cell.write_index == 1) {
-              marks_already_computed_table_cell.code1b = code1;
-              marks_already_computed_table_cell.code2b = code2;
+              marks_already_computed_table_cell.code1b = min_code;
+              marks_already_computed_table_cell.code2b = max_code;
               marks_already_computed_table_cell.nbBlacksb = nbBlacks;
               marks_already_computed_table_cell.nbWhitesb = nbWhites;
               marks_already_computed_table_cell.write_index = 2;
             }
             else if (marks_already_computed_table_cell.write_index == 2) {
-              marks_already_computed_table_cell.code1c = code1;
-              marks_already_computed_table_cell.code2c = code2;
+              marks_already_computed_table_cell.code1c = min_code;
+              marks_already_computed_table_cell.code2c = max_code;
               marks_already_computed_table_cell.nbBlacksc = nbBlacks;
               marks_already_computed_table_cell.nbWhitesc = nbWhites;
               marks_already_computed_table_cell.write_index = 0;
@@ -2304,10 +2313,6 @@ try {
   let mark_perf_tmpe = {nbBlacks:-1, nbWhites:-1}; // N.A.
   let mark_perf_tmpf = {nbBlacks:-1, nbWhites:-1}; // N.A.
 
-  let code1_colors = new Array(nbMaxColumns);
-  let code2_colors = new Array(nbMaxColumns);
-  let colors_int = new Array(nbMaxColumns);
-
   let particularCodeToAssess = 0; // empty code
   let particularCodeGlobalPerformance = PerformanceNA;
   let recursiveEvaluatePerformancesWasAborted = false;
@@ -2427,9 +2432,6 @@ try {
     let sum;
     let sum_marks;
     let best_sum = 100000000000.0;
-    let marks_already_computed_table_cell;
-    let codeX;
-    let codeY;
     let nb_classes_cnt = 0;
     let reuse_mode = 1;
 
@@ -2578,127 +2580,11 @@ try {
 
         nextNbsCodes.fill(0); // (faster than (or close to) a loop on 0..nbMaxMarks-1)
 
-        // (duplicated code from fillMark() for better performances (1/2) - begin)
-        code1_colors[0] = (cur_code & 0x0000000F);
-        code1_colors[1] = ((cur_code >> 4) & 0x0000000F);
-        code1_colors[2] = ((cur_code >> 8) & 0x0000000F);
-        code1_colors[3] = ((cur_code >> 12) & 0x0000000F);
-        code1_colors[4] = ((cur_code >> 16) & 0x0000000F);
-        code1_colors[5] = ((cur_code >> 20) & 0x0000000F);
-        code1_colors[6] = ((cur_code >> 24) & 0x0000000F);
-        // (duplicated code from fillMark() for better performances (1/2) - end)
-
         // Determine all possible marks for cur code
         for (idx2 = 0; idx2 < nbCodes; idx2++) {
           other_code = listOfCodes[idx2];
-
           if (cur_code != other_code) {
-            // codeHandler.fillMark(cur_code, other_code, mark_perf_tmp);
-
-            // (duplicated code from fillMark() for better performances (2/2) - begin)
-            let code1 = cur_code;
-            let code2 = other_code;
-
-            // Marks optimization (1/2) - begin
-            // Notes: - Hash key computing shall be symetrical wrt code1 and code2 and very fast.
-            //        - Bit operations are done on 32 bits in javascript (so for example 'x >> y', with x > 0 on 64 bits, may be negative).
-            //        - The final hash key will anyway always be in the range [0, marks_optimization_mask] after bit mask application with the '&' operator.
-            let sum_codes = code1 + code2;
-            let key = ( (sum_codes /* (use LSBs) */
-                        + (sum_codes >> 9) /* (use MSBs) */
-                        + code1 * code2 /* (mix LSBs) */) & marks_optimization_mask ); // (duplicated code)
-            marks_already_computed_table_cell = marks_already_computed_table[key];
-            codeX = marks_already_computed_table_cell.code1a;
-            codeY = marks_already_computed_table_cell.code2a;
-            if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
-              mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksa;
-              mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesa;
-            }
-            else {
-              codeX = marks_already_computed_table_cell.code1b;
-              codeY = marks_already_computed_table_cell.code2b;
-              if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
-                mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksb;
-                mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesb;
-              }
-              else {
-                codeX = marks_already_computed_table_cell.code1c;
-                codeY = marks_already_computed_table_cell.code2c;
-                if ( ((codeX == code1) && (codeY == code2)) || ((codeX == code2) && (codeY == code1)) ) {
-                  mark_perf_tmp.nbBlacks = marks_already_computed_table_cell.nbBlacksc;
-                  mark_perf_tmp.nbWhites = marks_already_computed_table_cell.nbWhitesc;
-                }
-                // Marks optimization (1/2) - end
-                else {
-                  let nbBlacks = 0;
-                  let nbWhites = 0;
-                  let col1, col2;
-
-                  // The below operations are unrolled for better performances
-                  colors_int[0] = true;
-                  colors_int[1] = true;
-                  colors_int[2] = true;
-                  colors_int[3] = true;
-                  colors_int[4] = true;
-                  colors_int[5] = true;
-                  colors_int[6] = true;
-                  code2_colors[0] = (code2 & 0x0000000F);
-                  code2_colors[1] = ((code2 >> 4) & 0x0000000F);
-                  code2_colors[2] = ((code2 >> 8) & 0x0000000F);
-                  code2_colors[3] = ((code2 >> 12) & 0x0000000F);
-                  code2_colors[4] = ((code2 >> 16) & 0x0000000F);
-                  code2_colors[5] = ((code2 >> 20) & 0x0000000F);
-                  code2_colors[6] = ((code2 >> 24) & 0x0000000F);
-
-                  for (col1 = 0; col1 < nbColumns; col1++) {
-                    if (code1_colors[col1] == code2_colors[col1]) {
-                      nbBlacks++;
-                    }
-                    else {
-                      for (col2 = 0; col2 < nbColumns; col2++) {
-                        if ((code1_colors[col1] == code2_colors[col2]) && (code1_colors[col2] != code2_colors[col2]) && colors_int[col2]) {
-                          colors_int[col2] = false;
-                          nbWhites++;
-                          break;
-                        }
-                      }
-                    }
-                  }
-
-                  mark_perf_tmp.nbBlacks = nbBlacks;
-                  mark_perf_tmp.nbWhites = nbWhites;
-
-                  // Marks optimization (2/2) - begin
-                  if (marks_already_computed_table_cell.write_index == 0) {
-                    marks_already_computed_table_cell.code1a = code1;
-                    marks_already_computed_table_cell.code2a = code2;
-                    marks_already_computed_table_cell.nbBlacksa = nbBlacks;
-                    marks_already_computed_table_cell.nbWhitesa = nbWhites;
-                    marks_already_computed_table_cell.write_index = 1;
-                  }
-                  else if (marks_already_computed_table_cell.write_index == 1) {
-                    marks_already_computed_table_cell.code1b = code1;
-                    marks_already_computed_table_cell.code2b = code2;
-                    marks_already_computed_table_cell.nbBlacksb = nbBlacks;
-                    marks_already_computed_table_cell.nbWhitesb = nbWhites;
-                    marks_already_computed_table_cell.write_index = 2;
-                  }
-                  else if (marks_already_computed_table_cell.write_index == 2) {
-                    marks_already_computed_table_cell.code1c = code1;
-                    marks_already_computed_table_cell.code2c = code2;
-                    marks_already_computed_table_cell.nbBlacksc = nbBlacks;
-                    marks_already_computed_table_cell.nbWhitesc = nbWhites;
-                    marks_already_computed_table_cell.write_index = 0;
-                  }
-                  else {
-                    throw new Error("recursiveEvaluatePerformances: wrong write_index: " + marks_already_computed_table_cell.write_index);
-                  }
-                  // Marks optimization (2/2) - end
-                }
-              }
-            }
-            // (duplicated code from fillMark() for better performances (2/2) - end)
-
+            codeHandler.fillMark(cur_code, other_code, mark_perf_tmp);
             mark_perf_tmp_idx = marksTable_MarkToNb[mark_perf_tmp.nbBlacks][mark_perf_tmp.nbWhites];
             nextListsOfCodes[mark_perf_tmp_idx][nextNbsCodes[mark_perf_tmp_idx]] = other_code;
             nextNbsCodes[mark_perf_tmp_idx]++;
@@ -2707,7 +2593,6 @@ try {
             nextListsOfCodes[best_mark_idx][nextNbsCodes[best_mark_idx]] = other_code;
             nextNbsCodes[best_mark_idx]++;
           }
-
         }
 
         // Assess cur code
