@@ -10,7 +10,7 @@ console.log("Running SuperMasterMind.js...");
 // *************************************************************************
 // Main game variables
 // *******************
-let version="v3.4";
+let version="v3.3";
 let emptyColor=0;
 let nbMinColors=5;
 let nbMaxColors=10;
