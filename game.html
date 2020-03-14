@@ -1095,7 +1095,7 @@
             rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:2.7vh");
             rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:" + scoresFontSizeStr);
             rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
-            rsp_rankings_str = rsp_rankings_str.replace(/[\[][\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;background-image:url(img/Smartphone.png);background-repeat:no-repeat;background-position:right top;background-size:auto 80%'>"); // actual <td> syntax is applied: "[[" -> "<td ...>" / case with background image
+            rsp_rankings_str = rsp_rankings_str.replace(/[\[][\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;background-image:url(img/Smartphone.png);background-repeat:no-repeat;background-position:right center;background-size:auto 94%'>"); // actual <td> syntax is applied: "[[" -> "<td ...>" / case with background image
             rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='border:1px solid black;margin:2px;padding:2px;text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>" / case without background image
             rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
             rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>"); // "<s>" -> "<small>"
