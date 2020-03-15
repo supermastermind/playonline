@@ -1051,6 +1051,10 @@ try {
         max_code = code1;
       }
       let sum_max_code = max_code + (max_code >> 2);
+      // Possible optimizations not done to simplify:
+      // - an optimization would consist in using possible code indexes to then access marks_already_computed_table[index_min][index_max],
+      //   that would save the hask key calculation time + avoid any redundancy in mark computing
+      // - handling possible code indexes instead of codes would also be useful to access listOfClassIds whichever the number of columns
       let key = ( (min_code + sum_max_code /* (use LSBs) */
                   + ((min_code ^ (sum_max_code >> 3)) >> 9) /* (use MSBs) */ ) & marks_optimization_mask );
 
