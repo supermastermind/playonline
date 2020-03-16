@@ -1456,6 +1456,9 @@ show_play_store_app();
 else if( android_appli&&localStorage.firstname&&localStorage.gamesok&&((Number(localStorage.gamesok)==39)||(Number(localStorage.gamesok)==67)||(Number(localStorage.gamesok)==101)||(Number(localStorage.gamesok)==156)||(Number(localStorage.gamesok)==202)||(Number(localStorage.gamesok)==303)||(Number(localStorage.gamesok)==404)||(Number(localStorage.gamesok)==707)||(Number(localStorage.gamesok)==1061)||(Number(localStorage.gamesok)==1333)||(Number(localStorage.gamesok)==1644)||(Number(localStorage.gamesok)==1999)) ){
 show_play_store_app("<font color=#C900A1>Hello "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game, put some stars&nbsp;<big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big> in&nbsp;Google&nbsp;Play. It&nbsp;will help to make this app better known! Thanks&nbsp;in&nbsp;advance for&nbsp;your&nbsp;support!!<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Just follow this link:", true);
 }
+else if( android_appli&&localStorage.firstname&&localStorage.gamesok&&(Number(localStorage.gamesok) > 0)&&(Number(localStorage.gamesok) % 314 == 0)&&!localStorage.accountsAlreadyMerged ){
+show_play_store_app("<font color=#C900A1>Hello "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you want to merge your smartphone account & your computer account (to share the same scores on all devices), just send an email using the&nbsp;<a href='contact_info.html'>contact info</a> page", true);
+}
 }
 catch (tmp_exc){}
 main_graph_update_needed=true;
