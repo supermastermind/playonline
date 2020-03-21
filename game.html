@@ -109,6 +109,22 @@
         -webkit-backface-visibility: hidden;
        }
 
+      @-webkit-keyframes kdo_anim {
+        0% {opacity: 0;}
+        100% {width: 16%; opacity: 0.9;}
+      }
+
+      @keyframes kdo_anim {
+        0% {opacity: 0;}
+        100% {width: 16%; opacity: 0.9;}
+      }
+
+      .kdo
+      {
+      	-webkit-animation: kdo_anim 2.5s;
+        animation: kdo_anim 2.5s;
+      }
+
       .radio {
         font-family: Verdana;
         color: black;
@@ -288,7 +304,7 @@
 
       var modernDisplay = false;
       var legacyDisplayVariant = 0;
-      
+
       var HTML_geoloc_android_attempts = 0;
       var HTML_geoloc_successes = 0;
       var HTML_geoloc_errors = 0;
@@ -461,7 +477,7 @@
           if (localStorage.firstname) {
             let kdo_str = "";
             if (localStorage.firstname == "Jeannot") {
-              kdo_str = "<br><img src='img/Kdo.png' align='left' style='width:7.7%;margin:0.5% 0 0 1.0%;border-radius:40%'>";
+              kdo_str = "<br><img src='img/Kdo.png' align='left' class='kdo' style='width:7.7%;margin:0.5% 0 0 1.0%;border-radius:40%'>";
             }
             document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>" + "<span id='kdo_id'>" + kdo_str + "</span>");
             setTimeout(function() {
@@ -1658,7 +1674,7 @@
                 country = "France";
                 region = "Grand Est";
                 city = "Munster";
-              }              
+              }
 
               // Manual conversions
               if (localStorage.playerid && (localStorage.playerid.indexOf("0G5V") == 0) && (region == "Illinois") && (city == "Naperville")) {
