@@ -513,7 +513,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MH";
+      let html_compatibility_game_version = "Ver_MI";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -935,6 +935,7 @@
       // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
       // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
       //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
+      var oopsAlertAlreadyDisplayedCnt = 0;
       function submitForm(formStr = "", skipErrorDisplay = false) {
 
         if (globalErrorStatus > 0) { // skip form submission when a basic global error occurred
@@ -1000,7 +1001,10 @@
                     console.log(("form submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
                   } // else: systematic parse error (with 200 status) is ignored
                   if ((formStr == "") && (!skipErrorDisplay)) {
-                    alert("Oops... a network error occurred!");
+                    if (oopsAlertAlreadyDisplayedCnt < 2) { // Do not display too many successive (sometimes incorrect) alerts
+                      alert("Oops... a network error occurred!");
+                      oopsAlertAlreadyDisplayedCnt++;
+                    }
                   }
                 }
                 catch (exc) {
@@ -1446,7 +1450,7 @@
             if ( (localStorage.gamesok == 50) || (localStorage.gamesok == 150)
                  || (localStorage.gamesok == 222) || (localStorage.gamesok == 333) || (localStorage.gamesok == 444) || (localStorage.gamesok == 555) || (localStorage.gamesok == 777) || (localStorage.gamesok == 888) || (localStorage.gamesok == 999)
                  || (localStorage.gamesok == 2222) || (localStorage.gamesok == 3333) || (localStorage.gamesok == 4444) || (localStorage.gamesok == 5555) || (localStorage.gamesok == 7777) || (localStorage.gamesok == 8888) || (localStorage.gamesok == 9999)
-                 || ((localStorage.gamesok <= 1200) && ((localStorage.gamesok % 100) == 0))
+                 || ((localStorage.gamesok <= 1500) && ((localStorage.gamesok % 100) == 0))
                  || ((localStorage.gamesok % 500) == 0) ) {
               alert("It's your " + localStorage.gamesok + "th game!");
             }
