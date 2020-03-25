@@ -1845,13 +1845,13 @@
               var form_to_be_submitted = true;
               if (typeof(Storage) !== 'undefined') {
                 if ( (!localStorage.firstname)
-                     && (gamesok >= 7) // (coherent with "history_clear_advice")
+                     && (gamesok >= 6) // (coherent with "history_clear_advice")
                      && (attempts >= 4) // (game not too easy)
-                     && ((gamesok % 2) == 1) // (do not ask first name too often if not filled / ignore 1 result out of 2)
+                     && ((gamesok == 6) || ((gamesok % 2) == 1)) // (do not ask first name too often if not filled / ignore 1 result out of 2)
                      && ( ((nbcolumns == 4) && (score >= 55)) || ((nbcolumns == 5) && (score >= 65)) || ((nbcolumns == 6) && (score >= 120)) || ((nbcolumns == 7) && (score >= 150))
-                          || ((gamesok >= 11) && (score >= 60))
-                          || ((gamesok >= 15) && (score >= 50))
-                          || ((gamesok >= 19) && (score >= 40)) ) ) { // (experienced player)
+                          || ((gamesok >= 9) && (score >= 60))
+                          || ((gamesok >= 13) && (score >= 50))
+                          || ((gamesok >= 17) && (score >= 40)) ) ) { // (experienced player)
                   try {
                     // ***** Modal-based version does not work with android appli due to zoom issues:
                     // modal_mode = 1;
