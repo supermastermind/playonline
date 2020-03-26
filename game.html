@@ -1848,10 +1848,10 @@
                      && (gamesok >= 6) // (coherent with "history_clear_advice")
                      && (attempts >= 4) // (game not too easy)
                      && ((gamesok == 6) || ((gamesok % 2) == 1)) // (do not ask first name too often if not filled / ignore 1 result out of 2)
-                     && ( ((nbcolumns == 4) && (score >= 55)) || ((nbcolumns == 5) && (score >= 63)) || ((nbcolumns == 6) && (score >= 120)) || ((nbcolumns == 7) && (score >= 150))
+                     && ( ((nbcolumns == 4) && (score >= 55)) || ((nbcolumns == 5) && (score >= 60)) || ((nbcolumns == 6) && (score >= 110)) || ((nbcolumns == 7) && (score >= 150))
                           || ((gamesok >= 9) && (score >= 55))
                           || ((gamesok >= 13) && (score >= 45))
-                          || ((gamesok >= 17) && (score >= 30)) ) ) { // (experienced player)
+                          || ((gamesok >= 17) && (score >= 33)) ) ) { // (experienced player)
                   try {
                     // ***** Modal-based version does not work with android appli due to zoom issues:
                     // modal_mode = 1;
