@@ -1002,7 +1002,7 @@
                   } // else: systematic parse error (with 200 status) is ignored
                   if ((formStr == "") && (!skipErrorDisplay)) {
                     if (oopsAlertAlreadyDisplayedCnt < 2) { // Do not display too many successive (sometimes incorrect) alerts
-                      alert("Oops... a network error occurred!");
+                      // alert("Oops... a network error occurred!"); -> commented because too many intempestive alerts!
                       oopsAlertAlreadyDisplayedCnt++;
                     }
                   }
