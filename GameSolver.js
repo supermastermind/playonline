@@ -2426,7 +2426,7 @@ lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 5:
 nbMaxMarks=20;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*55/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*60/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=initialNbPossibleCodes;
