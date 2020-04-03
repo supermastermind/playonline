@@ -3221,7 +3221,7 @@ try {
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
           initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
           maxDepth = Math.min(13, overallMaxDepth);
-          marks_optimization_mask = 0x1FFFF; // (do not consume too much memory)
+          marks_optimization_mask = 0x1FFFF; // (do not consume too much memory) (precalculation mode): 0x7FFFF
           maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
           lookForCodeInPrecalculatedGamesReuseTable = new Array(initialNbPossibleCodes);
           lookForCodeInPrecalculatedGamesClassIdsTable = new Array(initialNbPossibleCodes);
