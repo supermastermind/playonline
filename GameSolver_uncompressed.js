@@ -2448,7 +2448,7 @@ try {
                                 && ( (next_cur_game_idx <= 1)
                                      || ((next_cur_game_idx == 2) && ((possibleGame && (codeHandler.nbDifferentColors(curGame[0]) <= 2)) || (codeHandler.isVerySimple(curGame[0]) && codeHandler.isVerySimple(curGame[1])) || (nbCodes <= nbCodesForPrecalculationThreshold))) // (***)
                                      || ((next_cur_game_idx == 3) && possibleGame && (codeHandler.nbDifferentColors(curGame[0]) <= 2) && (codeHandler.nbDifferentColors(curGame[1]) <= 2) && (codeHandler.nbDifferentColors(curGame[2]) <= 2))
-                                     || ((next_cur_game_idx == 3) && (codeHandler.nbDifferentColors(curGame[0]) == 1) && codeHandler.isVerySimple(curGame[1]) && codeHandler.codeHandler.isVerySimple(curGame[2]))
+                                     || ((next_cur_game_idx == 3) && (codeHandler.nbDifferentColors(curGame[0]) == 1) && codeHandler.isVerySimple(curGame[1]) && codeHandler.isVerySimple(curGame[2]))
                                    )
                                 && (!compute_sum_ini) ); // not a leaf
     let str; // (precalculation mode)
