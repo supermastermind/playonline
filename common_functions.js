@@ -86,7 +86,9 @@ function write_sidebar() {
       </ul>\
       <h1>Android app</h1>\
       Get it on Google Play:<br>\
-      <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='width:5.0rem;margin-top:0.5rem;margin-bottom:0.5rem' src='img/Playstore_icon.png'/></a>\
+      <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' style='width:5.0rem;margin-top:0.5rem;margin-bottom:0.5rem' src='img/Playstore_icon.png'/><br>\
+      <img alt='Angel games' style='width:8.8rem;margin-top:0;margin-bottom:0.5rem' src='img/Ange.png'/>\
+      </a>\
     </div>");
 }
 
