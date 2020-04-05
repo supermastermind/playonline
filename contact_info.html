@@ -3,15 +3,15 @@
 
   <head>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">        
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Play Super Master Mind online - Contact info</title>
     <meta name="robots" content="noindex">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- scale for smartphones -->
-    
+
     <link rel="stylesheet" type="text/css" href="style/style.css">
     <script src="common_functions.js"></script>
-    
+
     <script src='lib/jquery-3.4.1.min.js'></script>
     <!-- <script>
       // Animation during page loading:
@@ -25,7 +25,7 @@
         console.log("(on load)");
         $(".loading").fadeOut("slow"); // loading div fades out
         $(".main").fadeIn("slow"); // main div fades in
-      });  
+      });
       // 2') Defense timeout to allow interactions with the page
       setTimeout("console.log('(on load timeout)');$('.loading').fadeOut('slow');", 5000); // loading div fades out
     </script> -->
@@ -40,18 +40,18 @@
         return text;
       }
 
-      let firstContactInfoAccess = false;      
+      let firstContactInfoAccess = false;
       if (typeof(Storage) !== 'undefined') {
         if (!localStorage.firstcontactinfoaccessdone) {
           localStorage.firstcontactinfoaccessdone = "first contact info access done";
           firstContactInfoAccess = true;
-        }      
+        }
         if (!localStorage.firstaccessid) {
           let firstaccessid = 'CO - ' + makeid() + ' - ' + new Date();
           localStorage.firstaccessid = firstaccessid;
         }
       }
-    </script>    
+    </script>
   </head>
 
   <body>
@@ -59,7 +59,7 @@
     <!-- <div class="loading">
       <img src="img/loading.gif" style='width:5.5rem'><br>
       Loading...
-    </div> -->  
+    </div> -->
 
     <div id="main">
 
@@ -75,13 +75,14 @@
         <div id="content">
 
           <script>write_introduction()</script>
-          
+
           <a href='index.html' style="text-decoration:none;"><b>See rules & play online</b>
-          </a>            
-        
+          </a>
+
           <hr style="height:0.5rem; visibility:hidden;" />
           <h2>Contact info</h2>
-          For comments or ideas, suggestions for improvement, comments on the optimal strategy, requests to merge your smartphone & computer accounts...
+          <img alt='Angel games' style='width:8.8rem;margin-top:0;margin-bottom:0.5rem;border-radius:44%;border:0' src='img/Ange.png'/><br>
+          For comments or questions,<br>suggestions for improvement,<br>comments on the optimal strategy,<br>requests to merge your smartphone & computer accounts...<br>
           <hr style="height:0.5rem; visibility:hidden;" />
           <table style='border:0;margin:0;padding:0;'><tr>
             <td style='border:0;margin:0;padding:0;background:#F6F6F6;color:black'><a href='mailto:supermastermindonline@gmail.com' onfocus='this.blur()'><img src="img/email.png" style="width:1.5rem;margin:0"></a></td>
@@ -96,8 +97,8 @@
       <div id="footer">
       </div>
 
-    </div> 
-    
+    </div>
+
   </body>
 
 </html>
