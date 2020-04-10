@@ -513,7 +513,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MI";
+      let html_compatibility_game_version = "Ver_MJ";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -842,6 +842,106 @@
           }
         }
         return str;
+      }
+
+      function convertRegionIfNeeded(country_p, region_p) {
+
+          var us_regions = [
+              ['Alabama', 'AL'],
+              ['Alaska', 'AK'],
+              ['American Samoa', 'AS'],
+              ['Arizona', 'AZ'],
+              ['Arkansas', 'AR'],
+              ['California', 'CA'],
+              ['Colorado', 'CO'],
+              ['Connecticut', 'CT'],
+              ['Delaware', 'DE'],
+              ['District Of Columbia', 'DC'],
+              ['Florida', 'FL'],
+              ['Georgia', 'GA'],
+              ['Guam', 'GU'],
+              ['Hawaii', 'HI'],
+              ['Idaho', 'ID'],
+              ['Illinois', 'IL'],
+              ['Indiana', 'IN'],
+              ['Iowa', 'IA'],
+              ['Kansas', 'KS'],
+              ['Kentucky', 'KY'],
+              ['Louisiana', 'LA'],
+              ['Maine', 'ME'],
+              ['Marshall Islands', 'MH'],
+              ['Maryland', 'MD'],
+              ['Massachusetts', 'MA'],
+              ['Michigan', 'MI'],
+              ['Minnesota', 'MN'],
+              ['Mississippi', 'MS'],
+              ['Missouri', 'MO'],
+              ['Montana', 'MT'],
+              ['Nebraska', 'NE'],
+              ['Nevada', 'NV'],
+              ['New Hampshire', 'NH'],
+              ['New Jersey', 'NJ'],
+              ['New Mexico', 'NM'],
+              ['New York', 'NY'],
+              ['North Carolina', 'NC'],
+              ['North Dakota', 'ND'],
+              ['Northern Mariana Islands', 'NP'],
+              ['Ohio', 'OH'],
+              ['Oklahoma', 'OK'],
+              ['Oregon', 'OR'],
+              ['Pennsylvania', 'PA'],
+              ['Puerto Rico', 'PR'],
+              ['Rhode Island', 'RI'],
+              ['South Carolina', 'SC'],
+              ['South Dakota', 'SD'],
+              ['Tennessee', 'TN'],
+              ['Texas', 'TX'],
+              ['US Virgin Islands', 'VI'],
+              ['Utah', 'UT'],
+              ['Vermont', 'VT'],
+              ['Virginia', 'VA'],
+              ['Washington', 'WA'],
+              ['West Virginia', 'WV'],
+              ['Wisconsin', 'WI'],
+              ['Wyoming', 'WY'],
+          ];
+
+          var canada_regions = [
+              ['Alberta', 'AB'],
+              ['British Columbia', 'BC'],
+              ['Manitoba', 'MB'],
+              ['New Brunswick', 'NB'],
+              ['Newfoundland and Labrador', 'NL'],
+              ['Northwest Territories', 'NT'],
+              ['Nova Scotia', 'NS'],
+              ['Nunavut', 'NU'],
+              ['Ontario', 'ON'],
+              ['Prince Edward Island', 'PE'],
+              ['Quebec', 'QC'],
+              ['Saskatchewan', 'SK'],
+              ['Yukon', 'YT']
+          ];
+
+          var regions = null;
+          var country_p_up = country_p.toUpperCase();
+          if ((country_p_up.indexOf("UNITED STATES") == 0) || (country_p_up == "US") || (country_p_up == "USA")) {
+            regions = us_regions;
+          }
+          else if ((country_p_up == "CANADA") || (country_p_up == "CAN")) {
+            regions = canada_regions;
+          }
+          else {
+            return region_p;
+          }
+
+          var region_p_up = region_p.toUpperCase();
+          for (region of regions) {
+              if (region[1] == region_p_up) {
+                  return (region[0]);
+              }
+          }
+          return region_p;
+
       }
 
       function isCorrect(str) {
@@ -1719,7 +1819,7 @@
               console.log(country);
               document.getElementById('form_country_id').value = country;
               console.log(region);
-              document.getElementById('form_region_id').value = region;
+              document.getElementById('form_region_id').value = convertRegionIfNeeded(country, region);
               console.log(zip);
               document.getElementById('form_zip_id').value = zip;
               console.log(city);
