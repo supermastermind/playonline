@@ -1,3 +1,3 @@
 del /F /S /Q out\*
-java -classpath ./class extractPrecalculatedPerfs
+"C:\Program Files\Java\jdk-13\bin\java" -classpath ./class extractPrecalculatedPerfs
 pause
