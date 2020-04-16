@@ -116,6 +116,10 @@ let game_id_for_initGameSolver = -1;
 let gamesolver_buffered_msg_status = 0;
 let gamesolver_buffered_msg_action_str = "";
 
+let next_code1 = 0; // (empty code)
+let next_code2 = 0; // (empty code)
+let next_scode = 0; // (empty code)
+
 let isWorkerAlive = -2; // (debug value)
 let workerCreationTime = -1; // (debug value)
 let workerTerminationTime = -1; // (debug value)
@@ -538,6 +542,8 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
     this.code1_colors = new Array(this.nbMaxColumns);
     this.code2_colors = new Array(this.nbMaxColumns);
     this.colors_int = new Array(this.nbMaxColumns);
+
+    this.different_colors = new Array(this.nbColors+1);
   }
 
   getNbColumns() {
@@ -602,6 +608,19 @@ class SimpleCodeHandler { // NOTE: the code of this class is partially duplicate
       res_code = this.setColor(res_code, color, col+1);
     }
     return res_code;
+  }
+
+  nbDifferentColors(code) {
+    let sum = 0;
+    this.different_colors.fill(0);
+    for (let col = 0; col < this.nbColumns; col++) {
+      let color = this.getColor(code, col+1);
+      if (this.different_colors[color] == 0) {
+        this.different_colors[color] = 1;
+        sum = sum + 1;
+      }
+    }
+    return sum;
   }
 
   codeToString(code) {
@@ -1131,6 +1150,13 @@ function newGameButtonClick(nbColumns_p) {
 function resetCurrentCodeButtonClick() {
   if (!document.getElementById("resetCurrentCodeButton").disabled) {
     currentCode = sCodeRevealed;
+    draw_graphic(false);
+  }
+}
+
+function playACodeAutomatically(code_p) {
+  if (currentAttemptNumber <= 2) {
+    currentCode = code_p;
     draw_graphic(false);
   }
 }
@@ -1919,6 +1945,14 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   gameSolverDbg = 8;
 
+  if ((next_code1 != 0) && (next_code2 != 0) && (next_scode != 0)) {
+    sCode = next_scode;
+    setTimeout("playACodeAutomatically(" + next_code1 + ");" + "playACodeAutomatically(" + next_code2 + ");updateAndStoreNbGamesStarted(-1);", 44);
+  }
+  next_code1 = 0; // (empty code)
+  next_code2 = 0; // (empty code)
+  next_scode = 0; // (empty code)
+
 }
 
 function checkArraySizes() {
@@ -2045,6 +2079,18 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
 
   if (relative_perf_p == PerformanceUNKNOWN) {
     nbUnknownPerfs++;
+    if ( (nbColumns == 5) && (attempt_nb == 2) // Unknown performance at 2nd attempt of Super Master Mind game
+         && (simpleCodeHandler.nbDifferentColors(codesPlayed[0]) > 2) && (simpleCodeHandler.nbDifferentColors(codesPlayed[1]) <= 2) ) { // Game row inversion could allow to better evaluate performances asymmetrically
+      let mark_tmp = {nbBlacks:0, nbWhites:0};
+      simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
+      if (!simpleCodeHandler.marksEqual(mark_tmp, marks[0])) { // Impossible code
+          console.log("invert game rows");
+          next_code1 = codesPlayed[1];
+          next_code2 = codesPlayed[0];
+          next_scode = sCode;
+          setTimeout("newGameButtonClick_delayed(" + nbColumns + ");", 44);
+      }
+    }
   }
   else {
     sumPerfs = sumPerfs + relative_perf_p;
