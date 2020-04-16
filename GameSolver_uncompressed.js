@@ -3215,7 +3215,7 @@ try {
           break;
         case 5:
           nbMaxMarks = 20;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*55/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*59/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
