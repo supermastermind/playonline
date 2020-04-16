@@ -3228,7 +3228,7 @@ try {
           break;
         case 6:
           nbMaxMarks = 27;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*35/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*40/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
@@ -3252,7 +3252,7 @@ try {
           // *                *** TOTAL: 35 marks *** *
           // ******************************************
           nbMaxMarks = 35;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*35/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*40/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
