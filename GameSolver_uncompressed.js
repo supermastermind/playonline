@@ -3652,9 +3652,9 @@ try {
         if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
              || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
              || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.58) // number of possible codes is not too high (1/4)
-             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70) && (nbOfClassesFirstCall <= 40)) // number of possible codes is not too high (2/4)
-             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87) && (nbOfClassesFirstCall <= 20)) // number of possible codes is not too high (3/4)
-             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 12)) ) { // number of possible codes is not too high (****) (4/4)
+             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70) && (nbOfClassesFirstCall <= 50)) // number of possible codes is not too high (2/4)
+             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87) && (nbOfClassesFirstCall <= 25)) // number of possible codes is not too high (3/4)
+             || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 15)) ) { // number of possible codes is not too high (****) (4/4)
 
           if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
             throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
@@ -3696,9 +3696,9 @@ try {
           // ***** Second evaluation phase in a game *****
           else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
                     || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.58) // number of possible codes is not too high (1/4)
-                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70) && (nbOfClassesFirstCall <= 40)) // number of possible codes is not too high (2/4)
-                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87) && (nbOfClassesFirstCall <= 20)) // number of possible codes is not too high (3/4)
-                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 12)) ) { // number of possible codes is not too high (****) (4/4)
+                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70) && (nbOfClassesFirstCall <= 50)) // number of possible codes is not too high (2/4)
+                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87) && (nbOfClassesFirstCall <= 25)) // number of possible codes is not too high (3/4)
+                    || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 15)) ) { // number of possible codes is not too high (****) (4/4)
             if (precalculated_cur_game_or_code > 0) {
               throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
             }

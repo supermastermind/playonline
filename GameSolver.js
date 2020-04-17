@@ -2753,9 +2753,9 @@ nbOfClassesFirstCall=-1;
 if( (precalculated_cur_game_or_code > 0)
 ||((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
 ||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.58)
-||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70)&&(nbOfClassesFirstCall <=40))
-||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87)&&(nbOfClassesFirstCall <=20))
-||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated)&&(nbOfClassesFirstCall <=12)) ){
+||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70)&&(nbOfClassesFirstCall <=50))
+||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87)&&(nbOfClassesFirstCall <=25))
+||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated)&&(nbOfClassesFirstCall <=15)) ){
 if(previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc){
 throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): "+previousNbOfPossibleCodes+", "+ nbOfCodesForSystematicEvaluation_ForMemAlloc);
 }
@@ -2789,9 +2789,9 @@ throw new Error("NEW_ATTEMPT phase / inconsistent marks_already_computed_table (
 }
 else if( ((precalculated_cur_game_or_code==0)&&(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation))
 ||(previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.58)
-||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70)&&(nbOfClassesFirstCall <=40))
-||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87)&&(nbOfClassesFirstCall <=20))
-||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated)&&(nbOfClassesFirstCall <=12)) ){
+||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70)&&(nbOfClassesFirstCall <=50))
+||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87)&&(nbOfClassesFirstCall <=25))
+||((previousNbOfPossibleCodes <=nbOfCodesForSystematicEvaluation_AllCodesEvaluated)&&(nbOfClassesFirstCall <=15)) ){
 if(precalculated_cur_game_or_code > 0){
 throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
 }
