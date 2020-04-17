@@ -1758,7 +1758,7 @@ relative_performances_of_codes_played[attempt_nb-1]=relative_perf_p;
 global_best_performances[attempt_nb-1]=best_global_performance_p;
 if(relative_perf_p==PerformanceUNKNOWN){
 nbUnknownPerfs++;
-if( (nbColumns==5)&&(attempt_nb==2)&&(currentAttemptNumber==3)
+if( (nbColumns==5)&&(attempt_nb==2)&&(currentAttemptNumber==3)&&gameOnGoing()
 &&(simpleCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)&&(simpleCodeHandler.nbDifferentColors(codesPlayed[1]) <=2) ){
 let mark_tmp={nbBlacks:0, nbWhites:0};
 simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
