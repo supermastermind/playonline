@@ -2079,7 +2079,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
 
   if (relative_perf_p == PerformanceUNKNOWN) {
     nbUnknownPerfs++;
-    if ( (nbColumns == 5) && (attempt_nb == 2) // Unknown performance at 2nd attempt of Super Master Mind game
+    if ( (nbColumns == 5) && (attempt_nb == 2) && (currentAttemptNumber == 3) // Unknown performance at 2nd attempt of Super Master Mind game
          && (simpleCodeHandler.nbDifferentColors(codesPlayed[0]) > 2) && (simpleCodeHandler.nbDifferentColors(codesPlayed[1]) <= 2) ) { // Game row inversion could allow to better evaluate performances asymmetrically
       let mark_tmp = {nbBlacks:0, nbWhites:0};
       simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
