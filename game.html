@@ -2055,7 +2055,7 @@
                                             country_name: ((bestEffortCountryNameFound != null) ? bestEffortCountryNameFound : 'unknown'),
                                             region: 'unknown',
                                             city: 'unknown',
-                                            ip: ((bestEffortIpAddressFound != null) ? bestEffortIpAddressFound : '0.0.0.0') };
+                                            ip: ((bestEffortIpAddressFound != null) ? bestEffortIpAddressFound : '0.0.0.' + Math.floor(Math.random() * 99999)) }; // 99999 dummy ip addresses (will then stay stored in localStorage if not reset)
                 if (!isLocationDataValid(dummy_location_data)) {
                   throw new Error("setFormInfoByOtherMeans: invalid dummy location data: " + JSON.stringify(dummy_location_data));
                 }
