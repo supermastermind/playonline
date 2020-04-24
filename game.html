@@ -1338,6 +1338,7 @@
       }
 
       let precise_location_data = null;
+      let GEOCODING_API_URL_BASE = "https://www.mapquestapi.com/geocoding/v1/reverse?outFormat=json&location=";
       function HTML_geolocation_success(position, debug_str_p = null) { // called (with debug_str_p parameter filled) by android appli
         let latitude = position.coords.latitude;
         let longitude = position.coords.longitude;
@@ -1346,7 +1347,7 @@
         console.log(" latitude: " + latitude);
         console.log(" longitude: " + longitude);
         console.log(" accuracy: " + accuracy);
-        let GEOCODING_API_URL = "https://www.mapquestapi.com/geocoding/v1/reverse?outFormat=json&location=" + latitude + "," + longitude + "&key=dCKxMASlEZayTGGw5SBfd2bGMSCUuP60";
+        let GEOCODING_API_URL = GEOCODING_API_URL_BASE + latitude + "," + longitude + "&key=dCKxMASlEZayTGGw5SBfd2bGMSCUuP60";
         debug_game_state = 10;
         let debug_str = "";
         if (debug_str_p != null) {
