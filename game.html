@@ -819,7 +819,7 @@
         else {
           guessedIdStr = "O";
         }
-        return "GID/" + guessedIdStr + ((screen.width * screen.height * screen.colorDepth) % 999);
+        return "GID:" + guessedIdStr + ((screen.width * screen.height * screen.colorDepth) % 999);
       }
 
       function getLocation() {
