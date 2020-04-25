@@ -1825,7 +1825,7 @@
               console.log(zip);
               document.getElementById('form_zip_id').value = zip;
               console.log(city);
-              document.getElementById('form_city_id').value = ((mobileMode && (!android_appli)) ? '-' : city); // (mobile IP-address based geolocation is very imprecise)
+              document.getElementById('form_city_id').value = ((mobileMode && (!isLocationDataValid(precise_location_data))) ? '-' : city); // (mobile IP-address based geolocation is very imprecise)
               console.log((locationId + " " + extraLocationInfo).trim());
               document.getElementById('form_geoloc_id').value = (locationId + " " + extraLocationInfo).trim();
               console.log(timezone);
@@ -2056,7 +2056,7 @@
                                             country_name: ((bestEffortCountryNameFound != null) ? bestEffortCountryNameFound : 'unknown'),
                                             region: 'unknown',
                                             city: 'unknown',
-                                            ip: ((bestEffortIpAddressFound != null) ? bestEffortIpAddressFound : '0.0.0.' + Math.floor(Math.random() * 99999)) }; // 99999 dummy ip addresses (will then stay stored in localStorage.ip if not reset)
+                                            ip: ((bestEffortIpAddressFound != null) ? bestEffortIpAddressFound : '0.0.0.' + Math.floor(Math.random() * 9999999)) }; // 9999999 dummy ip addresses (will then stay stored in localStorage.ip if not reset)
                 if (!isLocationDataValid(dummy_location_data)) {
                   throw new Error("setFormInfoByOtherMeans: invalid dummy location data: " + JSON.stringify(dummy_location_data));
                 }
