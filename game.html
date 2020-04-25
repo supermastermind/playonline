@@ -718,6 +718,20 @@
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)"); // (not rem unit as no viewport! / duplicated code)
       }
 
+      function getChromeVersion() { // return -1 if N.A. / Note: covers also MS Edge!
+        try {
+          var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+          return (raw ? parseInt(raw[2], 10) : -1);
+        }
+        catch (exc) {
+          return -1;
+        }
+      }
+      let firefoxMode = (navigator.userAgent.toUpperCase().search("FIREFOX") != -1);
+      let edgeMode    = ((!firefoxMode) && (navigator.userAgent.toUpperCase().search("EDGE/") != -1));
+      let chromeMode  = ((!firefoxMode) && (!edgeMode) && (getChromeVersion() != -1));
+      let safariMode  = ((!firefoxMode) && (!edgeMode) && (!chromeMode) && (navigator.userAgent.toUpperCase().search("SAFARI") != -1));
+
       // String.replaceAll() method definition
       String.prototype.replaceAll = function(search, replacement) {
         let target = this;
@@ -786,6 +800,26 @@
 
           return res2;
         }
+      }
+
+      function guessUserId() {
+        let guessedIdStr = "";
+        if (firefoxMode) {
+          guessedIdStr = "F";
+        }
+        else if (edgeMode) {
+          guessedIdStr = "E";
+        }
+        else if (chromeMode) {
+          guessedIdStr = "C";
+        }
+        else if (safariMode) {
+          guessedIdStr = "S";
+        }
+        else {
+          guessedIdStr = "O";
+        }
+        return "GID/" + guessedIdStr + ((screen.width * screen.height * screen.colorDepth) % 999);
       }
 
       function getLocation() {
@@ -1121,16 +1155,6 @@
 
         // document.getElementById('my_form').submit();
         // $("#my_form").submit();
-      }
-
-      function getChromeVersion() { // return -1 if N.A. / issue: covers also MS Edge!
-        try {
-          var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
-          return (raw ? parseInt(raw[2], 10) : -1);
-        }
-        catch (exc) {
-          return -1;
-        }
       }
 
       // Temporary error handling (from this point in this file to simplify / will be overwritten later)
@@ -1939,7 +1963,7 @@
                   firstAccessIdStr = localStorage.firstaccessid;
                 }
               }
-              document.getElementById('form_debuginfo_id').value = getLocation() + (modernDisplay ? '/ThM' : '/ThL' + legacyDisplayVariant) + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/FirstNameAsked:' + firstNameAskedStr + '/androidAppNotifShown:' + androidAppNotifShownStr + '/FirstAccessId:' + firstAccessIdStr + '/NbGamesWon: ' + nbGamesPlayedAndWon + extra_debug_info;
+              document.getElementById('form_debuginfo_id').value = guessUserId() + "/" + getLocation() + (modernDisplay ? '/ThM' : '/ThL' + legacyDisplayVariant) + '/Screen:' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '/Inner:' + window.innerWidth + "*" + window.innerHeight + '/' + html_compatibility_game_version + '/FirstNameAsked:' + firstNameAskedStr + '/androidAppNotifShown:' + androidAppNotifShownStr + '/FirstAccessId:' + firstAccessIdStr + '/NbGamesWon: ' + nbGamesPlayedAndWon + extra_debug_info;
 
               document.getElementById('form_rankings_id').value = '-';
               document.getElementById('form_list_id').value = '-';

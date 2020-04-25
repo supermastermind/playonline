@@ -238,8 +238,6 @@ let color_selection_code=0;
 let color_cnt=1;
 let tickChar="\u2714";/* (check mark/tick) */
 let crossChar="\u2716";/* (cross) */
-let firefoxMode=(navigator.userAgent.toUpperCase().search("FIREFOX")!=-1);
-let edgeMode=(navigator.userAgent.toUpperCase().search("EDGE/")!=-1);
 let android_app_url="https://play.google.com/store/apps/details?id=supermastermind.github.io&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1";
 // Precalculated table for 5 columns
 // *********************************
