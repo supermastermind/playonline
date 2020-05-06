@@ -87,7 +87,8 @@ let nb_random_codes_played=0;
 let at_least_one_useless_code_played=false;
 let game_cnt=0;
 let last_dialog_game_cnt=-10;
-let worst_mark_alert_alread_displayed=false;
+let worst_mark_alert_already_displayed=false;
+let nb_worst_mark_alert_displayed=0;
 let gameSolver=undefined;
 let gameSolverDbg=-1;
 let gameSolverInitMsgContents=null;
@@ -1436,7 +1437,7 @@ game_cnt++;
 if(game_cnt > 1000000){
 game_cnt=1;
 }
-worst_mark_alert_alread_displayed=false;
+worst_mark_alert_already_displayed=false;
 gameSolverDbg=0;
 if(gameSolver!==undefined){
 if(game_id_for_initGameSolver!=-1){
@@ -1638,12 +1639,12 @@ setTimeout("displayRandomCodesHintIfNeeded();", 888);
 }
 gameSolverDbg=8;
 if((next_code1!=0)&&(next_code2!=0)&&(next_code3==0)&&(next_scode!=0)){
-worst_mark_alert_alread_displayed=true;
+worst_mark_alert_already_displayed=true;
 sCode=next_scode;
 setTimeout("playACodeAutomatically("+next_code1+");playACodeAutomatically("+next_code2+");updateAndStoreNbGamesStarted(-1);", 44);
 }
 else if((next_code1!=0)&&(next_code2!=0)&&(next_code3!=0)&&(next_scode!=0)){
-worst_mark_alert_alread_displayed=true;
+worst_mark_alert_already_displayed=true;
 sCode=next_scode;
 setTimeout("playACodeAutomatically("+next_code1+");playACodeAutomatically("+next_code2+");playACodeAutomatically("+next_code3+");updateAndStoreNbGamesStarted(-1);", 44);
 }
@@ -3913,8 +3914,9 @@ ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.g
 ctx.stroke();
 }
 }
-if((mark.nbBlacks+mark.nbWhites==0)&&((!localStorage.gamesok)||(Number(localStorage.gamesok) <=16))&&(!worst_mark_alert_alread_displayed)){
-worst_mark_alert_alread_displayed=true;
+if((mark.nbBlacks+mark.nbWhites==0)&&((!localStorage.gamesok)||(Number(localStorage.gamesok) <=20))&&(!worst_mark_alert_already_displayed)&&(nb_worst_mark_alert_displayed<=2)){
+worst_mark_alert_already_displayed=true;
+nb_worst_mark_alert_displayed++;
 setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 444);
 }
 }
