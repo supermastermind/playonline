@@ -4539,7 +4539,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     }
   }
 
-  if ((mark.nbBlacks + mark.nbWhites == 0) && ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 20)) && (!worst_mark_alert_alread_displayed)) {
+  if ((mark.nbBlacks + mark.nbWhites == 0) && ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 16)) && (!worst_mark_alert_alread_displayed)) {
     worst_mark_alert_alread_displayed = true;
     setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 444);
   }
