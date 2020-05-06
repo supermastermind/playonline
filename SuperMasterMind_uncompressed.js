@@ -105,6 +105,7 @@ let at_least_one_useless_code_played = false;
 
 let game_cnt = 0;
 let last_dialog_game_cnt = -10;
+let worst_mark_alert_alread_displayed = false;
 
 let gameSolver = undefined;
 let gameSolverDbg = -1; // (debug value)
@@ -1711,6 +1712,7 @@ function resetGameAttributes(nbColumnsSelected) {
   if (game_cnt > 1000000) {
     game_cnt = 1;
   }
+  worst_mark_alert_alread_displayed = false;
 
   // Clear gameSolver worker if necessary
   gameSolverDbg = 0;
@@ -1944,10 +1946,12 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverDbg = 8;
 
   if ((next_code1 != 0) && (next_code2 != 0) && (next_code3 == 0) && (next_scode != 0)) {
+    worst_mark_alert_alread_displayed = true; // (avoid multiple alerts)
     sCode = next_scode;
     setTimeout("playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");updateAndStoreNbGamesStarted(-1);", 44);
   }
   else if ((next_code1 != 0) && (next_code2 != 0) && (next_code3 != 0) && (next_scode != 0)) {
+    worst_mark_alert_alread_displayed = true; // (avoid multiple alerts)
     sCode = next_scode;
     setTimeout("playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");playACodeAutomatically(" + next_code3 + ");updateAndStoreNbGamesStarted(-1);", 44);
   }
@@ -4533,6 +4537,11 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
       ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.20));
       ctx.stroke();
     }
+  }
+
+  if ((mark.nbBlacks + mark.nbWhites == 0) && ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 20)) && (!worst_mark_alert_alread_displayed)) {
+    worst_mark_alert_alread_displayed = true;
+    setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 444);
   }
 
 }
