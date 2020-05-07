@@ -3336,7 +3336,7 @@ function draw_graphic_bis() {
         if ( (nbGamesPlayedAndWon <= 2) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 5)) ) { // (condition duplicated for mouse click management)
           let themesFullyDisplayed = true;
           let themeStr1 = "Display";
-          let themeStr2 = "Display";
+          let themeStr2 = "Disp";
           if (!displayString("\u2009\u2B50\u2009" + themeStr1 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
                              darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
             if (!displayString("\u2009\u2B50\u2009" + themeStr2 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
@@ -3346,7 +3346,7 @@ function draw_graphic_bis() {
                             darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
             }
           }
-          if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Info    ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+          if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Info ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                                       darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
             displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                           darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
