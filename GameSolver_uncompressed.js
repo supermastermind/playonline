@@ -3215,7 +3215,7 @@ try {
           break;
         case 5:
           nbMaxMarks = 20;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*59/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*48/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
@@ -3228,7 +3228,7 @@ try {
           break;
         case 6:
           nbMaxMarks = 27;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*45/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*48/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
@@ -3252,7 +3252,7 @@ try {
           // *                *** TOTAL: 35 marks *** *
           // ******************************************
           nbMaxMarks = 35;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*45/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*48/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;

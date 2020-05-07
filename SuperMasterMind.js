@@ -3914,6 +3914,14 @@ ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.g
 ctx.stroke();
 }
 }
+if(mark.nbBlacks+mark.nbWhites==0){
+ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.30 : 0.20));
+let cross_height=(0.33*(y_0 - y_0_next)+0.66*2*radius);
+let y_0_bis=Math.floor((y_0+y_0_next+1)/2)+cross_height/2;
+let y_0_next_bis=Math.floor((y_0+y_0_next+1)/2) - cross_height/2;
+drawLineWithPath(ctx, x_0, y_0_bis, x_0_next, y_0_next_bis);
+drawLineWithPath(ctx, x_0, y_0_next_bis, x_0_next, y_0_bis);
+}
 if((mark.nbBlacks+mark.nbWhites==0)&&((!localStorage.gamesok)||(Number(localStorage.gamesok) <=16))&&(!worst_mark_alert_already_displayed)&&(nb_worst_mark_alert_displayed<=2)){
 worst_mark_alert_already_displayed=true;
 nb_worst_mark_alert_displayed++;
