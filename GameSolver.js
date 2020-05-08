@@ -2426,7 +2426,7 @@ lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 5:
 nbMaxMarks=20;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*40/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=initialNbPossibleCodes;
@@ -2439,7 +2439,7 @@ lookForCodeInPrecalculatedGamesClassIdsTable=new Array(initialNbPossibleCodes);
 break;
 case 6:
 nbMaxMarks=27;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*33/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*30/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
@@ -2452,7 +2452,7 @@ lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 7:
 nbMaxMarks=35;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*33/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*30/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=nbOfCodesForSystematicEvaluation;
