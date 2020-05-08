@@ -232,6 +232,12 @@ let backgroundColor_3;
 let highlightColor;
 let lightGray;
 let darkGray;
+function setLightGray() {
+  lightGray = (modernDisplay ? "#909090" : "#9B7B5B");
+  if (!gameOnGoing() && (!modernDisplay)) {
+    lightGray = darkGray; // clearer stats
+  }
+}
 function updateThemeAttributes() {
   document.getElementById("my_table").style.backgroundColor = (modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
   document.getElementById("my_canvas").style.border = (modernDisplay ? "2px solid purple" : "2px solid black");
@@ -242,7 +248,7 @@ function updateThemeAttributes() {
   backgroundColor_2 = (modernDisplay ? document.getElementById("my_table").style.backgroundColor : "");
   backgroundColor_3 = (modernDisplay ? "#D0D0D0" : "");
   highlightColor = (modernDisplay ? "#FFFF00" : "#FFFF00");
-  lightGray = (modernDisplay ? "#909090" : "#9B7B5B"); // (duplicated line)
+  setLightGray();
   darkGray = "#000000";
 }
 updateThemeAttributes();
@@ -1873,7 +1879,7 @@ function resetGameAttributes(nbColumnsSelected) {
   currentAttemptNumber = 1;
 
   gameWon = false;
-  lightGray = (modernDisplay ? "#909090" : "#9B7B5B"); // (due to lightGray update at game end - duplicated line)
+  setLightGray(); // (due to lightGray update at game end)
   timeStr = "";
   score = -1.0;
   sumPerfs = 0.00;
@@ -2869,9 +2875,7 @@ function draw_graphic_bis() {
           gameWon = true;
           nbGamesPlayed++;
           nbGamesPlayedAndWon++;
-          if (!modernDisplay) {
-            lightGray = darkGray; // clearer stats
-          }
+          setLightGray(); // clearer stats
         }
         else {
           currentAttemptNumber++;
@@ -2879,9 +2883,7 @@ function draw_graphic_bis() {
             currentCode = -1;
             stopTime = (new Date()).getTime(); // time in milliseconds
             nbGamesPlayed++;
-            if (!modernDisplay) {
-              lightGray = darkGray; // clearer stats
-            }
+            setLightGray(); // clearer stats
           }
           else {
             last_but_one_attempt_event = (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
@@ -3346,7 +3348,11 @@ function draw_graphic_bis() {
                             darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
             }
           }
-          if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009Info ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+          let helpOrInfoStr = "Info";
+          if ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 16)) {
+            helpOrInfoStr = "Help";
+          }
+          if (!themesFullyDisplayed || !displayString("\u2009\u2B50\u2009" + helpOrInfoStr + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                                       darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
             displayString("\u2009\u2B50\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
                           darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
