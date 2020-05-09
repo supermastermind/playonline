@@ -1794,6 +1794,7 @@ else if( (nbColumns==5)&&(attempt_nb==3)&&(currentAttemptNumber==4)&&gameOnGoing
 &&(simpleCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
 &&(simpleCodeHandler.nbDifferentColors(codesPlayed[2]) <=2)
 &&!((marks[2].nbBlacks==0)&&(marks[2].nbWhites==0))
+&&!((marks[0].nbBlacks==0)&&(marks[0].nbWhites==0))
 ){
 let mark_tmp={nbBlacks:0, nbWhites:0};
 simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);

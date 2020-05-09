@@ -2114,6 +2114,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
               && (simpleCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
               && (simpleCodeHandler.nbDifferentColors(codesPlayed[2]) <= 2)
               && !((marks[2].nbBlacks == 0) && (marks[2].nbWhites == 0)) // worst mark - asymmetrical precalculation not fully covered in this case and may create confusion if worst mark warning is displayed
+              && !((marks[0].nbBlacks == 0) && (marks[0].nbWhites == 0)) // worst mark - asymmetrical precalculation not fully covered in this case and may create confusion if worst mark warning is displayed
             ) { // Game row inversion could allow to better evaluate performances asymmetrically
       let mark_tmp = {nbBlacks:0, nbWhites:0};
       simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
