@@ -3144,6 +3144,11 @@ try {
       }
       let first_session_game = data.first_session_game;
 
+      let beginner_mode = true;
+      if (data.beginner_mode !== undefined) {
+        beginner_mode = data.beginner_mode;
+      }
+
       if (data.debug_mode == undefined) {
         throw new Error("INIT phase / debug_mode is undefined");
       }
@@ -3215,7 +3220,7 @@ try {
           break;
         case 5:
           nbMaxMarks = 20;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*44/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*(beginner_mode ? 33 : 44)/30;
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)

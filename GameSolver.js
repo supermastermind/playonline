@@ -2373,6 +2373,10 @@ if(data.first_session_game==undefined){
 throw new Error("INIT phase / first_session_game is undefined");
 }
 let first_session_game=data.first_session_game;
+let beginner_mode=true;
+if (data.beginner_mode !==undefined){
+beginner_mode = data.beginner_mode;
+}
 if(data.debug_mode==undefined){
 throw new Error("INIT phase / debug_mode is undefined");
 }
@@ -2426,7 +2430,7 @@ lookForCodeInPrecalculatedGamesClassIdsTable=null;
 break;
 case 5:
 nbMaxMarks=20;
-maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*44/30;
+maxPerformanceEvaluationTime=baseOfMaxPerformanceEvaluationTime*(beginner_mode ? 33 : 44)/30;
 nbOfCodesForSystematicEvaluation=Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_AllCodesEvaluated=Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
 nbOfCodesForSystematicEvaluation_ForMemAlloc=initialNbPossibleCodes;
