@@ -2096,17 +2096,19 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
     if ( (nbColumns == 5) && (attempt_nb == 2) && (currentAttemptNumber == 3) && gameOnGoing() // Unknown performance at 2nd attempt of Super Master Mind game
          && (simpleCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
          && (simpleCodeHandler.nbDifferentColors(codesPlayed[1]) <= 2)
-         && !((marks[1].nbBlacks == 0) && (marks[1].nbWhites == 0)) // worst mark - asymmetrical precalculation not fully covered in this case and may create confusion if worst mark warning is displayed
        ) { // Game row inversion could allow to better evaluate performances asymmetrically
       let mark_tmp = {nbBlacks:0, nbWhites:0};
       simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
-      if (!simpleCodeHandler.marksEqual(mark_tmp, marks[0])) { // Impossible 2nd code
+      if ( !simpleCodeHandler.marksEqual(mark_tmp, marks[0]) // Impossible 2nd code
+            && ( !((marks[1].nbBlacks == 0) && (marks[1].nbWhites == 0))
+                 || ((mark_tmp.nbBlacks == 0) && (mark_tmp.nbWhites == 0)) ) // worst mark condition avoiding obviously impossible color replay
+         ) {
           console.log("invert game rows");
           next_code1 = codesPlayed[1];
           next_code2 = codesPlayed[0];
           next_code3 = 0; // (empty code)
           next_scode = sCode;
-          setTimeout("newGameButtonClick_delayed(" + nbColumns + ");", 44);
+          setTimeout("if (currentAttemptNumber == 3) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
       }
     }
     else if ( (nbColumns == 5) && (attempt_nb == 3) && (currentAttemptNumber == 4) && gameOnGoing() // Unknown performance at 3rd attempt of Super Master Mind game
@@ -2124,7 +2126,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
           next_code2 = codesPlayed[0];
           next_code3 = codesPlayed[1];
           next_scode = sCode;
-          setTimeout("newGameButtonClick_delayed(" + nbColumns + ");", 44);
+          setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
       }
     }
   }
