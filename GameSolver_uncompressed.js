@@ -2446,7 +2446,7 @@ try {
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                                 && (next_cur_game_idx <= maxDepthForGamePrecalculation) // (-1 or 3)
                                 && ( (next_cur_game_idx <= 1)
-                                     || ((next_cur_game_idx == 2) && ((possibleGame && (codeHandler.nbDifferentColors(curGame[0]) <= 2)) || (codeHandler.isVerySimple(curGame[0]) && codeHandler.isVerySimple(curGame[1])) || ((codeHandler.nbDifferentColors(curGame[0]) <= 2) && !codeHandler.isVerySimple(curGame[0])) || (nbCodes <= nbCodesForPrecalculationThreshold))) // (***)
+                                     || ((next_cur_game_idx == 2) && ((codeHandler.nbDifferentColors(curGame[0]) <= 2) || (nbCodes <= nbCodesForPrecalculationThreshold))) // (***)
                                      || ((next_cur_game_idx == 3) && possibleGame && (codeHandler.nbDifferentColors(curGame[0]) <= 2) && (codeHandler.nbDifferentColors(curGame[1]) <= 2) && (codeHandler.nbDifferentColors(curGame[2]) <= 2))
                                      || ((next_cur_game_idx == 3) && codeHandler.isVerySimple(curGame[0]) && codeHandler.isVerySimple(curGame[1]) && codeHandler.isVerySimple(curGame[2]))
                                    )
@@ -2516,8 +2516,8 @@ try {
             }
           }
         }
-        // Precalculation optimization (2/4): skip impossible cur code if acceptable
-        if ( (next_cur_game_idx >= 2) && (nbCodes <= nbCodesForPrecalculationThreshold) ) { // (***) - not adapted to simple codes for which nbCodesForPrecalculationThreshold shall keep realisticly low
+        // Precalculation optimization (2/4): skip impossible cur code if acceptable (i.e. if its performance can be evaluated relatively quickly with precalculated game)
+        if ( (next_cur_game_idx >= 2) && (nbCodes <= nbCodesForPrecalculationThreshold) ) { // (***)
           skip_cur_code = true;
         }
         if (skip_cur_code) {
