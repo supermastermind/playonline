@@ -2502,7 +2502,7 @@ try {
           throw new Error("recursiveEvaluatePerformances: precalculation_mode error");
         }
         let skip_cur_code = false;
-        if ((next_cur_game_idx >= 1) && (!(codeHandler.nbDifferentColors(curGame[0]) <= 2))) { // (***)
+        if (next_cur_game_idx >= 1) {
           for (let i = 0; i < next_cur_game_idx; i++) {
             // (replayed codes are addressed more generally below through useless codes, as all codes equivalent to replayed codes shall be covered to reach an optimization)
             // if (cur_code == curGame[i]) {
@@ -2511,7 +2511,9 @@ try {
             // }
             if (marksIdxs[i] == worst_mark_idx) { // 0 black + 0 white mark => all colors in this code are obviously impossible
               codeHandler.fillMark(cur_code, curGame[i], precalculation_mode_mark);
-              if ((precalculation_mode_mark.nbBlacks > 0) || (precalculation_mode_mark.nbWhites > 0)) {
+              if ( (((precalculation_mode_mark.nbBlacks > 0) || (precalculation_mode_mark.nbWhites > 0)) && (!(codeHandler.nbDifferentColors(curGame[0]) <= 2)))
+                   || ((precalculation_mode_mark.nbBlacks + precalculation_mode_mark.nbWhites >= 3) && (codeHandler.nbDifferentColors(curGame[0]) <= 2)) // allow to evaluate performances asymmetrically
+                 ) { // (***)
                 skip_cur_code = true; // obviously impossible color played
                 break;
               }
