@@ -2446,7 +2446,7 @@ try {
     let precalculation_mode = ( (nbCodes >= minNbCodesForPrecalculation) // (**) only games for which there may not be enough CPU capacity / time to calculate performances online
                                 && (next_cur_game_idx <= maxDepthForGamePrecalculation) // (-1 or 3)
                                 && ( (next_cur_game_idx <= 1)
-                                     || ((next_cur_game_idx == 2) && ((codeHandler.nbDifferentColors(curGame[0]) <= 2) || (nbCodes <= nbCodesForPrecalculationThreshold))) // (***)
+                                     || ((next_cur_game_idx == 2) && ((possibleGame && (codeHandler.nbDifferentColors(curGame[0]) <= 2)) || (codeHandler.isVerySimple(curGame[0]) && codeHandler.isVerySimple(curGame[1])) || (nbCodes <= nbCodesForPrecalculationThreshold))) // (***)
                                      || ((next_cur_game_idx == 3) && possibleGame && (codeHandler.nbDifferentColors(curGame[0]) <= 2) && (codeHandler.nbDifferentColors(curGame[1]) <= 2) && (codeHandler.nbDifferentColors(curGame[2]) <= 2))
                                      || ((next_cur_game_idx == 3) && codeHandler.isVerySimple(curGame[0]) && codeHandler.isVerySimple(curGame[1]) && codeHandler.isVerySimple(curGame[2]))
                                    )
@@ -2478,7 +2478,6 @@ try {
       nbCodesToGoThrough = nbCodesToGoThrough + initialNbPossibleCodes; // add also impossible codes
     }
     for (idx1 = 0; idx1 < nbCodesToGoThrough; idx1++) { // (precalculation mode)
-
       // Split precalculation if needed
       // 0:  11111
       // 1:  11112
@@ -2490,33 +2489,27 @@ try {
       // if (first_call && (idx1 != 10) && (idx1 != 74) && (idx1 != 83) && (idx1 != 668)) {
       //  continue;
       // }
-
       if (idx1 < nbCodes) {
         cur_code = listOfCodes[idx1];
       }
       else {
         cur_code = initialCodeListForPrecalculatedMode[idx1 - nbCodes]; // (precalculation mode) / add also impossible codes
-
         // Precalculation optimization (1/4): skip cur code if needed
         if (!precalculation_mode) {
           throw new Error("recursiveEvaluatePerformances: precalculation_mode error");
         }
         let skip_cur_code = false;
-        if (next_cur_game_idx >= 1) {
-          for (let i = 0; i < next_cur_game_idx; i++) {
-            // (replayed codes are addressed more generally below through useless codes, as all codes equivalent to replayed codes shall be covered to reach an optimization)
-            // if (cur_code == curGame[i]) {
-            //  skip_cur_code = true; // code replayed
-            //  break;
-            // }
-            if (marksIdxs[i] == worst_mark_idx) { // 0 black + 0 white mark => all colors in this code are obviously impossible
-              codeHandler.fillMark(cur_code, curGame[i], precalculation_mode_mark);
-              if ( (((precalculation_mode_mark.nbBlacks > 0) || (precalculation_mode_mark.nbWhites > 0)) && (!(codeHandler.nbDifferentColors(curGame[0]) <= 2)))
-                   || ((precalculation_mode_mark.nbBlacks + precalculation_mode_mark.nbWhites >= 3) && (codeHandler.nbDifferentColors(curGame[0]) <= 2)) // allow to evaluate performances asymmetrically
-                 ) { // (***)
-                skip_cur_code = true; // obviously impossible color played
-                break;
-              }
+        for (let i = 0; i < next_cur_game_idx; i++) {
+          // (replayed codes are addressed more generally below through useless codes, as all codes equivalent to replayed codes shall be covered to reach an optimization)
+          // if (cur_code == curGame[i]) {
+          //  skip_cur_code = true; // code replayed
+          //  break;
+          // }
+          if (marksIdxs[i] == worst_mark_idx) { // 0 black + 0 white mark => all colors in this code are obviously impossible
+            codeHandler.fillMark(cur_code, curGame[i], precalculation_mode_mark);
+            if ((precalculation_mode_mark.nbBlacks > 0) || (precalculation_mode_mark.nbWhites > 0)) {
+              skip_cur_code = true; // obviously impossible color played
+              break;
             }
           }
         }
