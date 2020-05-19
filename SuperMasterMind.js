@@ -1791,24 +1791,6 @@ next_scode=sCode;
 setTimeout("if(currentAttemptNumber==3){newGameButtonClick_delayed("+nbColumns+");}", 14);
 }
 }
-else if( (nbColumns==5)&&(attempt_nb==3)&&(currentAttemptNumber==4)&&gameOnGoing()
-&&(simpleCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-&&(simpleCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
-&&(simpleCodeHandler.nbDifferentColors(codesPlayed[2]) <=2)
-&&!((marks[2].nbBlacks==0)&&(marks[2].nbWhites==0))
-&&!((marks[0].nbBlacks==0)&&(marks[0].nbWhites==0))
-){
-let mark_tmp={nbBlacks:0, nbWhites:0};
-simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
-if(!simpleCodeHandler.marksEqual(mark_tmp, marks[0])){
-console.log("invert game rows");
-next_code1=codesPlayed[2];
-next_code2=codesPlayed[0];
-next_code3=codesPlayed[1];
-next_scode=sCode;
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed("+nbColumns+");}", 14);
-}
-}
 }
 else{
 sumPerfs=sumPerfs+relative_perf_p;
