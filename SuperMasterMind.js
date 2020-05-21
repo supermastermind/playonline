@@ -1647,17 +1647,17 @@ gameSolverDbg=8;
 if((next_code1!=0)&&(next_code2!=0)&&(next_code3==0)&&(next_scode!=0)){
 worst_mark_alert_already_displayed=true;
 sCode=next_scode;
-gameInv=1;
+if (typeof gameInv!=='undefined'){gameInv=1;}
 setTimeout("playACodeAutomatically("+next_code1+");playACodeAutomatically("+next_code2+");updateAndStoreNbGamesStarted(-1);", 44);
 }
 else if((next_code1!=0)&&(next_code2!=0)&&(next_code3!=0)&&(next_scode!=0)){
 worst_mark_alert_already_displayed=true;
 sCode=next_scode;
-gameInv=2;
+if (typeof gameInv!=='undefined'){gameInv=2;}
 setTimeout("playACodeAutomatically("+next_code1+");playACodeAutomatically("+next_code2+");playACodeAutomatically("+next_code3+");updateAndStoreNbGamesStarted(-1);", 44);
 }
 else {
-gameInv=0;
+if (typeof gameInv!=='undefined'){gameInv=0;}
 }
 next_code1=0;
 next_code2=0;
