@@ -3204,7 +3204,7 @@ try {
           break;
         case 4:
           nbMaxMarks = 14;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*20/30; // (short games)
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*15/30; // (short games)
           nbOfCodesForSystematicEvaluation = initialNbPossibleCodes; // systematic performance evaluation
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = initialNbPossibleCodes;
           nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
@@ -3230,7 +3230,7 @@ try {
           break;
         case 6:
           nbMaxMarks = 27;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*22/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*22/30; // (games never fully evaluated)
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
@@ -3254,7 +3254,7 @@ try {
           // *                *** TOTAL: 35 marks *** *
           // ******************************************
           nbMaxMarks = 35;
-          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*22/30;
+          maxPerformanceEvaluationTime = baseOfMaxPerformanceEvaluationTime*22/30; // (games never fully evaluated)
           nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
           nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
