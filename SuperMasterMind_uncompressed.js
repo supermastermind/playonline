@@ -2108,12 +2108,38 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
             && ( !((marks[1].nbBlacks == 0) && (marks[1].nbWhites == 0))
                  || ((mark_tmp.nbBlacks == 0) && (mark_tmp.nbWhites == 0)) ) // worst mark condition avoiding obviously impossible color replay
          ) {
-          console.log("invert game rows");
+          console.log("invert game rows (1)");
           next_code1 = codesPlayed[1];
           next_code2 = codesPlayed[0];
           next_code3 = 0; // (empty code)
           next_scode = sCode;
-          setTimeout("if (currentAttemptNumber == 3) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
+          if ((typeof gameInv !== 'undefined') && (gameInv != 0)) { // defense against loops
+            displayGUIError("unexpected gameInv loop (1): " + gameInv, new Error().stack);
+          }
+          else {
+            setTimeout("if (currentAttemptNumber == 3) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
+          }
+      }
+    }
+    else if ( (nbColumns == 5) && (attempt_nb == 3) && (currentAttemptNumber == 4) && gameOnGoing() // Unknown performance at 3rd attempt of Super Master Mind game
+              && (simpleCodeHandler.nbDifferentColors(codesPlayed[0]) <= 2)
+              && (simpleCodeHandler.nbDifferentColors(codesPlayed[1]) <= 2) // (will not loop with above case)
+            ) { // Game row inversion could allow to better evaluate performances asymmetrically
+      let mark_tmp = {nbBlacks:0, nbWhites:0};
+      simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
+      if ( !simpleCodeHandler.marksEqual(mark_tmp, marks[0]) // Impossible 2nd code
+           && simpleCodeHandler.marksEqual(mark_tmp, marks[1]) ) { // Inverting codes would make game possible so its performances better evaluated (will not loop)
+          console.log("invert game rows (2)");
+          next_code1 = codesPlayed[1];
+          next_code2 = codesPlayed[0];
+          next_code3 = codesPlayed[2];
+          next_scode = sCode;
+          if ((typeof gameInv !== 'undefined') && (gameInv != 0)) { // defense against loops
+            displayGUIError("unexpected gameInv loop (2): " + gameInv, new Error().stack);
+          }
+          else {
+            setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
+          }
       }
     }
   }

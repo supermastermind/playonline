@@ -1647,17 +1647,17 @@ gameSolverDbg=8;
 if((next_code1!=0)&&(next_code2!=0)&&(next_code3==0)&&(next_scode!=0)){
 worst_mark_alert_already_displayed=true;
 sCode=next_scode;
-if (typeof gameInv!=='undefined'){gameInv=1;}
+if(typeof gameInv!=='undefined'){gameInv=1;}
 setTimeout("playACodeAutomatically("+next_code1+");playACodeAutomatically("+next_code2+");updateAndStoreNbGamesStarted(-1);", 44);
 }
 else if((next_code1!=0)&&(next_code2!=0)&&(next_code3!=0)&&(next_scode!=0)){
 worst_mark_alert_already_displayed=true;
 sCode=next_scode;
-if (typeof gameInv!=='undefined'){gameInv=2;}
+if(typeof gameInv!=='undefined'){gameInv=2;}
 setTimeout("playACodeAutomatically("+next_code1+");playACodeAutomatically("+next_code2+");playACodeAutomatically("+next_code3+");updateAndStoreNbGamesStarted(-1);", 44);
 }
-else {
-if (typeof gameInv!=='undefined'){gameInv=0;}
+else{
+if(typeof gameInv!=='undefined'){gameInv=0;}
 }
 next_code1=0;
 next_code2=0;
@@ -1788,12 +1788,38 @@ if(!simpleCodeHandler.marksEqual(mark_tmp, marks[0])
 &&(!((marks[1].nbBlacks==0)&&(marks[1].nbWhites==0))
 ||((mark_tmp.nbBlacks==0)&&(mark_tmp.nbWhites==0)) )
 ){
-console.log("invert game rows");
+console.log("invert game rows (1)");
 next_code1=codesPlayed[1];
 next_code2=codesPlayed[0];
 next_code3=0;
 next_scode=sCode;
+if((typeof gameInv!=='undefined')&&(gameInv!=0)){
+displayGUIError("unexpected gameInv loop (1): "+gameInv, new Error().stack);
+}
+else{
 setTimeout("if(currentAttemptNumber==3){newGameButtonClick_delayed("+nbColumns+");}", 14);
+}
+}
+}
+else if( (nbColumns==5)&&(attempt_nb==3)&&(currentAttemptNumber==4)&&gameOnGoing()
+&&(simpleCodeHandler.nbDifferentColors(codesPlayed[0]) <=2)
+&&(simpleCodeHandler.nbDifferentColors(codesPlayed[1]) <=2)
+){
+let mark_tmp={nbBlacks:0, nbWhites:0};
+simpleCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp);
+if(!simpleCodeHandler.marksEqual(mark_tmp, marks[0])
+&&simpleCodeHandler.marksEqual(mark_tmp, marks[1]) ){
+console.log("invert game rows (2)");
+next_code1=codesPlayed[1];
+next_code2=codesPlayed[0];
+next_code3=codesPlayed[2];
+next_scode=sCode;
+if((typeof gameInv!=='undefined')&&(gameInv!=0)){
+displayGUIError("unexpected gameInv loop (2): "+gameInv, new Error().stack);
+}
+else{
+setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed("+nbColumns+");}", 14);
+}
 }
 }
 }
