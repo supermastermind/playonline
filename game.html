@@ -1312,6 +1312,7 @@
       var last_location_data_used = null;
       var id_of_last_location_data_used = -1;
       var html_geoloc_next_gamesok = -100;
+      var nb_locationURL_accesses = 0;
 
       function reformatLocationValue(x) {
         let res = String(x).trim();
@@ -2119,7 +2120,14 @@
               if (geolocation_handler.nb_JSON_queries_posted >= nbLocationURLs) {
                 throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: " + geolocation_handler.nb_JSON_queries_posted + ", " + nbLocationURLs);
               }
-              let locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
+              let locationURL = null;
+              nb_locationURL_accesses++;
+              if (nb_locationURL_accesses <= 2*nbLocationURLs) {
+                locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
+              }
+              else {
+                locationURL = "NO_MORE_URL_ACCESSED_" + nb_locationURL_accesses;
+              }
 
               geolocation_handler.nb_JSON_queries_posted++;
               let current_nb_JSON_queries_posted = geolocation_handler.nb_JSON_queries_posted;
@@ -2270,7 +2278,7 @@
         var errorStr = ("first access geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
         debug_game_state = 30;
-        $.getJSON("TBC" + locationURLs[1], function(data_p) {
+        $.getJSON("TBC" + locationURLs[1], function(data_p) { // (mechanism disabled)
           debug_game_state = 31;
           localStorage.firstgamegeoloc = "fa2";
           /* ipinfodb.com response format:
@@ -2334,7 +2342,7 @@
 
       if (firstAccess) {
         debug_game_state = 40;
-        $.getJSON("TBC" + locationURLs[0], function(data) {
+        $.getJSON("TBC" + locationURLs[0], function(data) { // (mechanism disabled)
           debug_game_state = 41;
           localStorage.firstgamegeoloc = "fatmp1";
           last_location_data_used = data;
