@@ -1461,7 +1461,7 @@ game_id_for_initGameSolver=-1;
 gamesolver_buffered_msg_status=0;
 gamesolver_buffered_msg_action_str="";
 if( ((new Date()).getTime() - loadTime >=8*3600*1000)
-||(nbGamesPlayedAndWon >=50) ){
+||(nbGamesPlayedAndWon >=80) ){
 if(android_appli){
 console.log("webview reload request");
 }
