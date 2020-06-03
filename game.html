@@ -2052,7 +2052,7 @@
               if (typeof(Storage) !== 'undefined') {
                 // Subject to user acceptance => not done systematically because may prevent all future requests in case of initial rejection
                 // Done at most once out of 2 to allow usage of previously stored location data without repetitive HTML geolocation attempt(s)
-                if (localStorage.gamesok && (Number(localStorage.gamesok) >= (android_appli ? 1 : 8)) && (Number(localStorage.gamesok) > html_geoloc_next_gamesok + 7)) {
+                if (localStorage.gamesok && (Number(localStorage.gamesok) >= (android_appli ? 1 : 8)) && (Number(localStorage.gamesok) > html_geoloc_next_gamesok + 40)) {
                   html_geoloc_next_gamesok = Number(localStorage.gamesok) + 1; // (*)
                   if ( ((!localStorage.html_geoloc_status) || (localStorage.html_geoloc_status.indexOf('ok') != 0))
                        && (!android_appli) ) {
