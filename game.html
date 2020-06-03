@@ -2123,7 +2123,7 @@
               let locationURL = null;
               if (nb_locationURL_accesses < 2*nbLocationURLs) {
                 if ( (nb_locationURL_accesses == 0) // New session shortly after previous one
-                     && localStorage.last_locationURL_access && ((new Date()).getTime() - localStorage.last_locationURL_access < 1.5*3600*1000) // (1.5 hour)
+                     && localStorage.last_locationURL_access && ((new Date()).getTime() - localStorage.last_locationURL_access < 2*3600*1000) // (2 hours)
                      && (localStorage.latitude && localStorage.longitude && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id) ) { // (condition duplicated)
                   let stored_location_data = { latitude: localStorage.latitude, // (below code duplicated)
                                                longitude: localStorage.longitude,
