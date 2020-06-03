@@ -275,7 +275,7 @@
         }
 
         if (firstHomePageAccess) {
-          $.getJSON('https://TBC', function(data) {
+          $.getJSON('https://TBC', function(data) { // (mechanism disabled)
             firstaccessgeoloc = "fatmp1";
             last_location_data_used = data;
             if ( ((typeof data.ip != 'undefined') && (data.ip != null) && (String(data.ip).trim().length >= 7 /* 0.0.0.0 */)) // (redundant lines)

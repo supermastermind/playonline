@@ -514,7 +514,7 @@
     <!-- Initializations -->
 
     <script>
-      let html_compatibility_game_version = "Ver_MM";
+      let html_compatibility_game_version = "Ver_MO";
       let nb_errors_submitted = 0;
       let mobileMode = false;
       let androidMode = false;
@@ -2066,8 +2066,8 @@
               // Use previously stored location data if any
               // ******************************************
 
-              if (localStorage.latitude && localStorage.longitude && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id) {
-                let stored_location_data = { latitude: localStorage.latitude,
+              if (localStorage.latitude && localStorage.longitude && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id) { // (condition duplicated)
+                let stored_location_data = { latitude: localStorage.latitude, // (below code duplicated)
                                              longitude: localStorage.longitude,
                                              country_name: localStorage.countryname,
                                              region: localStorage.region,
@@ -2121,12 +2121,30 @@
                 throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: " + geolocation_handler.nb_JSON_queries_posted + ", " + nbLocationURLs);
               }
               let locationURL = null;
-              nb_locationURL_accesses++;
-              if (nb_locationURL_accesses <= 2*nbLocationURLs) {
-                locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
+              if (nb_locationURL_accesses < 2*nbLocationURLs) {
+                if ( (nb_locationURL_accesses == 0) // New session shortly after previous one
+                     && localStorage.last_locationURL_access && ((new Date()).getTime() - localStorage.last_locationURL_access < 1*3600*1000)
+                     && (localStorage.latitude && localStorage.longitude && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id) ) { // (condition duplicated)
+                  let stored_location_data = { latitude: localStorage.latitude, // (below code duplicated)
+                                               longitude: localStorage.longitude,
+                                               country_name: localStorage.countryname,
+                                               region: localStorage.region,
+                                               city: localStorage.city,
+                                               ip: localStorage.ip };
+                  if (!isLocationDataValid(stored_location_data)) {
+                    throw new Error("setFormInfo: invalid stored location data: " + JSON.stringify(stored_location_data));
+                  }
+                  geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "NS");
+                  return;
+                }
+                else {
+                  nb_locationURL_accesses++;
+                  locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
+                  localStorage.last_locationURL_access = (new Date()).getTime();
+                }
               }
               else {
-                locationURL = "NO_MORE_URL_ACCESSED_" + nb_locationURL_accesses;
+                locationURL = "NO_MORE_URL_ACCESSED_" + geolocation_handler.nb_JSON_queries_posted + "_" + nb_locationURL_accesses;
               }
 
               geolocation_handler.nb_JSON_queries_posted++;
