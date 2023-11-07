@@ -1,0 +1,43 @@
+
+Method:
+1/ Set min time for 100 points
+2/ Set slope
+3/ Round slope so that -10 is a rounded time
+
+3 colonnes: échelle: 20 pts
+0 = -0pt
+3s = -0.5pts (5%) + delta due to time to make attempts + very low granularity
++20sec <=> -10 (temps rond avec delta si possible)
++40sec <=> -20
+... puis pente de moitié (60sec = -25)
+
+4 colonnes: échelle: 50 pts
+0 = -0pt
+15s = -0.5pts (5%) + delta due to time to make attempts + very low granularity
++1min05 <=> -10 (temps rond avec delta)
++2min10 <=> -20
+... puis pente de moitié
+
+5 colonnes: échelle: 100 pts
+0 = -0pt
+40s = -0.5pts (6%)
++2min20 <=> -10 (temps rond)
++4min40 <=> -20
+... puis pente de moitié
+
+6 colonnes: échelle: 150 pts
+0 = -0pt
+1min = -0.5pts (~~4%)
++4min <=> -10 (temps rond)
++8min <=> -20
+... puis pente de moitié
+
+7 colonnes: échelle: 200 pts
+0 = -0pt
+1min30 = -0.5pts (~~4%)
++5min30 <=> -10 (temps rond)
++11min <=> -20
+... puis pente de moitié
+
+Laisser totaux globaux plutôt que moyennes
+

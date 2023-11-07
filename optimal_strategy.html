@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Optimal strategy | Super Master Mind</title>
+    <meta name="title" content="Optimal strategy | Super Master Mind">
+    <meta name="description" content="Super Master Mind optimal strategy & tricks to play optimally">
+    <meta name="keywords" content="super master mind, mastermind, code breaker, game, online, optimal strategy, efficiency">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- scale for smartphones -->
+
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <script src="common_functions.js"></script>
+
+    <script src='lib/jquery-3.7.1.min.js'></script>
+    <script>
+      // Animation during page loading:
+      // 1) when document is ready
+      $(document).ready(function () {
+        console.log("(ready)");
+      });
+      // 2) when all elements of the page are completely loaded
+      $(window).on('load', function() {
+        console.log("(on load)");
+        // $(".loading").fadeOut("slow"); // loading div fades out
+      });
+      // 2') Defense timeout to allow interactions with the page
+      // setTimeout("console.log('(on load timeout)');$('.loading').fadeOut('slow');", 5000); // loading div fades out
+
+      function makeid() {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 6; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }
+
+      if (typeof(Storage) !== 'undefined') {
+        if (!localStorage.firstaccessid) {
+          let firstaccessid = 'OP - ' + makeid() + ' - ' + new Date();
+          localStorage.firstaccessid = firstaccessid;
+        }
+      }
+    </script>
+
+    <!-- Ezoic Code -->
+    <script src="//www.ezojs.com/basicads.js?d=supermastermind.github.io" type="text/javascript"></script>
+    <!-- Ezoic Code -->
+
+  </head>
+
+  <body>
+
+    <!-- <div class="loading" style='user-select:none;'>
+      <img src="img/loading.gif" style='width:5.5rem'><br>
+      Loading...
+    </div> -->
+
+    <div id="main">
+
+      <!-- HEADER -->
+      <script>write_menu(2);</script>
+
+      <div id="site_content">
+
+        <!-- SIDEBAR -->
+        <script>write_sidebar();</script>
+
+        <!-- MAIN CONTENT -->
+        <div id="content">
+
+          <div data-ezoic-cmp-override="true">
+            <script>write_introduction()</script>
+
+            <hr style="height:0.5rem; visibility:hidden;" />
+            <h2>Optimal strategy</h2>
+
+            This page gives information on the optimal strategy of Super Master Mind, Master Mind and other code breakers games, as implemented in the <a href=index.html>online game</a>, and tricks to play optimally.
+            <hr style='height:0.75vh; visibility:hidden;'>
+
+            <!-- OPTIMAL STRATEGY DETAILS -->
+            <script>write_optimal_strategy_details_2();</script>
+          </div>
+
+          <h3>Very easy game (3 columns, 5 colors):</h3>
+
+          <b>
+          <table style='margin-right:3vw;padding:0;border-collapse:collapse'>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>First code</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>Average number of attempts to find secret codes</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>&Delta;</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>123</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>3.640 <font color=#999999>(455)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>0.00</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>122</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>3.648 <font color=#999999>(456)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.01</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>111</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>4.112 <font color=#999999>(514)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#FF7700;text-align:center'>-0.47</td>
+            </tr>
+          </table>
+          </b>
+          <hr style="height:0.5rem; visibility:hidden;" />
+          For very easy games (3 columns, 5 colors, 5<sup>3</sup>&nbsp;=&nbsp;<b>125 codes</b>, <font color=#CC0099><b>optimal logical strategy</b></font> applied), <b>the optimal code to play at first attempt is 123</b> (or any other equivalent code with 3 different colors) with an average number of attempts to find secret codes of <b><sup>455</sup>&frasl;<sub>5<sup>3</sup></sub>&nbsp;=&nbsp;3.640</b> and a maximal number of attempts of <b>5</b>.
+
+          <h3>Master Mind game (4 columns, 6 colors):</h3>
+
+          <b>
+          <table style='margin-right:3vw;padding:0;border-collapse:collapse'>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>First code</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>Average number of attempts to find secret codes</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>&Delta;</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>1233</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>4.367 <font color=#999999>(5660)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>0.00</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>1234</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>4.431 <font color=#999999>(5743)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.06</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>1122</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>4.438 <font color=#999999>(5752)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.07</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>1222</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>4.512 <font color=#999999>(5848)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.15</td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>1111</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>4.907 <font color=#999999>(6359)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#F00000;text-align:center'>-0.54</td>
+            </tr>
+          </table>
+          </b>
+          <hr style="height:0.5rem; visibility:hidden;" />
+          For Master Mind games (4 columns, 6 colors, 6<sup>4</sup>&nbsp;=&nbsp;<b>1296 codes</b>, <font color=#CC0099><b>optimal logical strategy</b></font> applied), <b>the optimal code to play at first attempt is 1233</b> (or any other equivalent code with "1 double + 2 different colors")</b> with an average number of attempts to find secret codes of <b><sup>5660</sup>&frasl;<sub>6<sup>4</sup></sub>&nbsp;&asymp;&nbsp;4.367</b> and a maximal number of attempts of <b>6</b>.
+          <hr style="height:0.5rem; visibility:hidden;" />
+          This average number of attempts is slightly higher than the number offered by the Koyama and Lai's mathematically optimal strategy which allows playing impossible/illogical codes at each stage of the game (<b><sup>5625</sup>&frasl;<sub>6<sup>4</sup></sub>&nbsp;&asymp;&nbsp;4.340</b>, up to <b>6</b> attempts, <b>1233</b> as first attempt).
+          The option of playing impossible/illogical codes (in addition to the possible/logical codes) indeed brings more flexibility which results in benefits in some situations. This is illustrated in the below example:
+          <hr style="height:0.5rem; visibility:hidden;" />
+          <a href="img/MasterMind_game_illogical_strategy_1.png"><img src="img/MasterMind_game_illogical_strategy_1.png" style="width:45%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:4px;margin-right:4px;border-radius:2%"><small>click to enlarge</small></a>
+          <hr style="height:0.5rem; visibility:hidden;" />
+          With a mathematically optimal strategy like Koyama and Lai's, between 0 and 2 impossible/illogical codes are played at the second and/or third attempts of the 6<sup>4</sup> games (0 being by far the most common case, then coinciding with the <font color=#CC0099><b>optimal logical strategy</b></font>). Here is an example showing how such a mathematically optimal strategy behaves in an "extreme" case where 2 impossible/illogical codes are played (without those 2 impossible/illogical codes, the mathematically optimal <sup>5625</sup>&frasl;<sub>6<sup>4</sup></sub> performance is not reached):
+          <hr style="height:0.5rem; visibility:hidden;" />
+          <a href="img/MasterMind_game_illogical_strategy_2.png"><img src="img/MasterMind_game_illogical_strategy_2.png" style="width:45%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:4px;margin-right:4px;border-radius:2%"><small>click to enlarge</small></a>
+
+          <h3>Super Master Mind game (5 columns, 8 colors):</h3>
+
+          <b>
+          <table style='margin:0;padding:0;border-collapse:collapse'>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>First code</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>Average number of attempts to find secret codes</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFCC00;color:black;text-align:center'>&Delta;</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small>Equivalent first codes</small></td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>12233</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>5.491 <font color=#999999>(179929)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>0.00</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small><sup>5040</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;15%</small></td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>12344</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>5.495 <font color=#999999>(180053)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>0.00</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small><sup>16800</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;51%</small></td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>12345</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>5.537 <font color=#999999>(181434)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.05</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small><sup>6720</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;21%</small></td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>12333</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>5.539 <font color=#999999>(181505)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.05</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small><sup>3360</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;10%</small></td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>11222</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>5.593 <font color=#999999>(183280)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.10</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small><sup>560</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;1.7%</small></td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>12222</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>5.704 <font color=#999999>(186905)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>-0.21</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small><sup>280</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;0.85%</small></td>
+            </tr>
+            <tr>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>11111</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:black;text-align:center'>6.086 <font color=#999999>(199427)</font></td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#F00000;text-align:center'>-0.60</td>
+              <td style='border:1px solid black;margin:0;padding:0.5rem;background:#FFFFFF;color:#999999;text-align:center'><small><sup>8</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;0.024%</small></td>
+            </tr>
+          </table>
+          </b>
+          <hr style="height:0.5rem; visibility:hidden;" />
+          For Super Master Mind games (5 columns, 8 colors, 8<sup>5</sup>&nbsp;=&nbsp;<b>32768 codes</b>, <font color=#CC0099><b>optimal logical strategy</b></font> applied), <b>the optimal code to play at first attempt is 12233</b> (or any other equivalent code with "2 doubles + 1 different color") with an average number of attempts to find secret codes of <b><sup>179929</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.491</b> and a maximal number of attempts of <b>8</b>.
+          <hr style="height:0.5rem; visibility:hidden;" />
+          It is very close to the average number of attempts of <b>12344</b> (or any other equivalent code with "1 double + 3 different colors") as first attempt: <b><sup>180053</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.495</b>. In the online game, as their difference is&nbsp;<&nbsp;0.005, both 12233 and 12344 will be indicated as "optimal" first codes, even if only 12233 is actually (optimality indication with &plusmn;0.005&nbsp;precision to simplify).
+          <hr style="height:0.5rem; visibility:hidden;" />
+          About mathematically optimal strategies: processing times to evaluate them are out of reach. With <b>impossible/illogical codes allowed at second attempt</b> (with obviously impossible colors forbidden to simplify, i.e. colors present in first code with "0 black + 0 white peg" mark) <b>and then the <font color=#CC0099>optimal logical strategy</font> applied from third attempt</b>, the best 3 codes to play at first attempt become:
+          <ul style='margin:0'>
+            <li style='list-style-type:disc'><b>12344</b> with an average number of attempts to find secret codes of <b><sup>179274</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.471</b>,</li>
+            <li style='list-style-type:disc'><b>12233</b> with an average number of attempts to find secret codes of <b><sup>179330</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.473</b>,</li>
+            <li style='list-style-type:disc'><b>12345</b> with an average number of attempts to find secret codes of <b><sup>180441</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.507</b>.</li>
+          </ul>
+          That implies mathematically optimal strategies to have an optimal performance lower than 5.471, likely close to <b><font color=#0000A8>5.46</font></b>  with 12344 or 12233 as optimal first code. Indeed we observed for Master Mind games that gains brought by impossible/illogical codes at second attempt (5660-5636&nbsp;=&nbsp;24) were around twice the ones brought at third attempt (5636-5625&nbsp;=&nbsp;11), which could lead to 5.471-(5.491-5.471)/2&nbsp;&asymp;&nbsp;5.46  when transposed to Super Master Mind games.
+
+          <h3>Strategy performances / Extra tricks to play optimally:</h3>
+          <ul style='margin:0'>
+            <li style='list-style-type:disc'>With a mathematically optimal strategy (like Koyama and Lai's for Master Mind games), &Delta; values (i.e. performances of codes played relative to the performance of optimal code(s)) are always in the range <b>[-1;0]</b>. That rule applies whichever numbers of columns and colors.</li>
+            <li style='list-style-type:disc'>With the <font color=#CC0099><b>optimal logical strategy</b></font>, when you play codes, &Delta; values are in a wider range <b>[X;Y] with X<-1 and Y>0</b> (Y=0 only if the codes played are possible/logical). For example, some observed values for Super Master Mind games are:
+              <ul style='margin:0'>
+                <li style='list-style-type:circle'>&Delta;&nbsp;=&nbsp;<b><font color=#4B0082>-1.35</font></b> for an impossible/illogical code which reduces the number of possible codes but makes the rest of the game harder to solve, which at the end makes it even worse than a totally useless code which would not have modified the number of possible codes (&Delta;&nbsp;=&nbsp;<b><font color=#F00000>-1</font></b>),</li>
+                <li style='list-style-type:circle'>&Delta;&nbsp;=&nbsp;<b><font color=#008200>+0.94</font></b> for a very efficient impossible/illogical code, in a typical situation where some colors are known and distinguishing the remaining colors is more efficient to do by playing (half of them in) an impossible/illogical code:
+                  <hr style="height:0.25rem; visibility:hidden;" />
+                  <a href="img/MasterMind_game_illogical_strategy_3.png"><img src="img/MasterMind_game_illogical_strategy_3.png" style="width:45%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:4px;margin-right:4px;border-radius:2%"><small>click to enlarge</small></a>
+                  <hr style="height:0.25rem; visibility:hidden;" />
+                </li>
+                <li style='list-style-type:circle'>
+                  With that same logic, getting &Delta;&nbsp;>&nbsp;0 values is also possible at game end, when there remain few "strongly correlated" possible codes, for example:
+                  <ul style='margin:0'>
+                    <li style='list-style-type:circle'>if there remain 5 possible codes {12344, 12345, 12346, 12347, 12348}, then playing <b>12356</b>, which is impossible/illogical, leads to &Delta;&nbsp;=&nbsp;<b><font color=#008200>+0.40</font></b> <small>(<sup>(1+2+3+4+5)</sup>&frasl;<sub>5</sub>&nbsp;-&nbsp;<sup>(2+2+2+3+4)</sup>&frasl;<sub>5</sub>&nbsp;=&nbsp;0.40)</small></li>
+                    <li style='list-style-type:circle'>if there remain 4 possible codes {12345, 12346, 12347, 12348}, then playing <b>12356</b>, which is impossible/illogical, leads to &Delta;&nbsp;=&nbsp;<b><font color=#008200>+0.25</font></b> <small>(<sup>(1+2+3+4)</sup>&frasl;<sub>4</sub>&nbsp;-&nbsp;<sup>(2+2+2+3)</sup>&frasl;<sub>4</sub>&nbsp;=&nbsp;0.25)</small></li>
+                  </ul>
+                  You can be in top player rankings by applying such tricks!
+                </li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>Other games:</h3>
+          For games with more columns or colors than Super Master Mind, compromises shall also be found between playing different and duplicate colors. Here are some results helping to understand which are the best codes to play at first attempts:
+          <hr style="height:0.5rem; visibility:hidden;" />
+          <ul style='margin:0'>
+            <li style='list-style-type:disc'><b>Mega Master Mind games (6 columns, 9 colors):</b><br>
+              <hr style="height:0.25rem; visibility:hidden;" />
+              The <font color=#CC0099><b>optimal logical strategy</b></font> was not evaluated due to very long processing times. The best code to play at first attempt is presumably among:
+              <ul style='margin:0'>
+                <li style='list-style-type:disc'><b>112233</b> (or any other equivalent code with "3 doubles") with a maximum number of possible codes at second attempt of 93312 (lowest value among all first codes, which can be a good criterion even if approximate),</li>
+                <li style='list-style-type:disc'><b>123455</b> (or any other equivalent code with "1 double + 4 different colors") with a maximum number of possible codes at second attempt of 96900 (second lowest value),</li>
+                <li style='list-style-type:disc'><b>123344</b> (or any other equivalent code with "2 doubles + 2 different colors") with a maximum number of possible codes at second attempt of 100465 (third lowest value, all others being &GreaterEqual; 108618).</li>
+              </ul>
+            </li>
+            <hr style="height:0.5rem; visibility:hidden;" />
+            <li style='list-style-type:disc'><b>Ultra Master Mind (7 columns, 10 colors):</b><br>
+              <hr style="height:0.25rem; visibility:hidden;" />
+              The <font color=#CC0099><b>optimal logical strategy</b></font> was not evaluated due to "huge" processing times. The best code to play at first attempt is presumably among:
+              <ul style='margin:0'>
+                <li style='list-style-type:disc'><b>1234455</b> (or any other equivalent code with "2 doubles + 3 different colors") with a maximum number of possible codes at second attempt of 1598841 (lowest value among all first codes, which can be a good criterion even if approximate),</li>
+                <li style='list-style-type:disc'><b>1122333</b> (or any other equivalent code with "2 doubles + 1 triple") with a maximum number of possible codes at second attempt of 1647086 (second lowest value),</li>
+                <li style='list-style-type:disc'><b>1223344</b> (or any other equivalent code with "3 doubles + 1 different color") with a maximum number of possible codes at second attempt of 1651935 (third lowest value, all others being &GreaterEqual; 1721636).</li>
+              </ul>
+            </li>
+          </ul>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div id="footer">
+      </div>
+
+    </div>
+
+  </body>
+
+</html>

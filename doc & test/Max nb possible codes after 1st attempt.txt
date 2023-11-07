@@ -1,0 +1,150 @@
+
+Master mind:
+------------
+
+At 2nd attempt:
+assessed: [ 1 1 1 1 ]
+perf #0: 625 / 19ms
+assessed: [ 1 1 1 2 ]
+perf #1: 317 / 24ms
+assessed: [ 1 1 2 2 ]
+perf #7: 256 / 37ms    1
+assessed: [ 1 1 2 3 ]
+perf #8: 276 / 38ms    2
+assessed: [ 1 2 3 4 ]
+perf #51: 312 / 40ms   3
+
+At 3rd attempt (with only logical codes at 2nd attempt - results not "fully" tested / metric only based on "max" at 2nd attempt not perfect anyway):
+assessed: [ 1 1 1 1 ]
+perf #0: 120 / 66ms
+assessed: [ 1 1 1 2 ]
+perf #1: 55 / 96ms
+assessed: [ 1 1 2 2 ]
+perf #7: 46 / 137ms    1
+assessed: [ 1 1 2 3 ]
+perf #8: 51 / 153ms    2
+assessed: [ 1 2 3 4 ]
+perf #51: 54 / 175ms   3
+=> same best 3 codes
+
+Super Master Mind:
+------------------
+
+At 2nd attempt:
+assessed: [ 1 1 1 1 1 ]
+perf #0: 16807 / 91ms
+assessed: [ 1 1 1 1 2 ]
+perf #1: 7926 / 118ms
+assessed: [ 1 1 1 2 2 ]
+perf #9: 7776 / 141ms
+assessed: [ 1 1 1 2 3 ]
+perf #10: 7960 / 172ms
+assessed: [ 1 1 2 2 3 ]
+perf #74: 7105 / 203ms   3
+assessed: [ 1 1 2 3 4 ]
+perf #83: 7051 / 294ms   1
+assessed: [ 1 2 3 4 5 ]
+perf #668: 7070 / 320ms  2
+
+At 3rd attempt (with only logical codes at 2nd attempt - results not "fully" tested / metric only based on "max" at 2nd attempt not perfect anyway):
+assessed: [ 1 1 1 1 1 ]
+perf #0: 3012 / 951ms
+assessed: [ 1 1 1 1 2 ]
+perf #1: 1347 / 1540ms
+assessed: [ 1 1 1 2 2 ]
+perf #9: 1303 / 2052ms
+assessed: [ 1 1 1 2 3 ]
+perf #10: 1359 / 3062ms
+assessed: [ 1 1 2 2 3 ]
+perf #74: 1248 / 4012ms   3
+assessed: [ 1 1 2 3 4 ]
+perf #83: 1247 / 5828ms   2
+assessed: [ 1 2 3 4 5 ]
+perf #668: 1204 / 9518ms  1
+=> same best 3 codes
+
+6 columns 9 colors:
+-------------------
+
+At 2nd attempt:
+assessed: [ 1 1 1 1 1 1 ]
+perf #0: 262144 / 309ms
+assessed: [ 1 1 1 1 1 2 ]
+perf #1: 128534 / 488ms
+assessed: [ 1 1 1 1 2 2 ]
+perf #10: 117649 / 674ms
+assessed: [ 1 1 1 1 2 3 ]
+perf #11: 123924 / 800ms
+assessed: [ 1 1 1 2 2 2 ]
+perf #91: 117649 / 920ms
+assessed: [ 1 1 1 2 2 3 ]
+perf #92: 108618 / 1055ms     4
+assessed: [ 1 1 1 2 3 4 ]
+perf #102: 108861 / 1186ms
+assessed: [ 1 1 2 2 3 3 ]
+perf #830: 93312 / 1363ms     1
+assessed: [ 1 1 2 2 3 4 ]
+perf #831: 100465 / 1497ms    3
+assessed: [ 1 1 2 3 4 5 ]
+perf #922: 96900 / 1644ms     2
+assessed: [ 1 2 3 4 5 6 ]
+perf #8303: 109740 / 2415ms
+
+At 3rd attempt (with only logical codes at 2nd attempt - results not "fully" tested / metric only based on "max" at 2nd attempt not perfect anyway):
+assessed: [ 1 1 1 1 1 1 ]
+perf #0: 42630 / 55292ms
+assessed: [ 1 1 1 1 1 2 ]
+perf #1: 20256 / 93281ms
+assessed: [ 1 1 1 1 2 2 ]
+perf #10: 18072 / 116789ms
+assessed: [ 1 1 1 1 2 3 ]
+perf #11: 19145 / 174761ms
+assessed: [ 1 1 1 2 2 2 ]
+perf #91: 18072 / 196389ms
+assessed: [ 1 1 1 2 2 3 ]
+perf #92: 16231 / 255908ms    4
+assessed: [ 1 1 1 2 3 4 ]
+perf #102: 17459 / 373143ms
+assessed: [ 1 1 2 2 3 3 ]
+perf #830: 14706 / 407804ms   2
+assessed: [ 1 1 2 2 3 4 ]
+perf #831: 15572 / 517963ms   3
+assessed: [ 1 1 2 3 4 5 ]
+perf #922: 14397 / 766809ms   1
+assessed: [ 1 2 3 4 5 6 ]
+perf #8303: 17921 / 1547135ms
+=> same best 3 codes
+
+7 columns 10 colors:
+--------------------
+
+assessed: [ 1 1 1 1 1 1 1 ]
+perf #0: 4782969 / 3241ms
+assessed: [ 1 1 1 1 1 1 2 ]
+perf #1: 2416520 / 5988ms
+assessed: [ 1 1 1 1 1 2 2 ]
+perf #11: 2097152 / 9035ms
+assessed: [ 1 1 1 1 1 2 3 ]
+perf #12: 2258228 / 11679ms
+assessed: [ 1 1 1 1 2 2 2 ]
+perf #111: 2097152 / 14100ms
+assessed: [ 1 1 1 1 2 2 3 ]
+perf #112: 1952657 / 16805ms
+assessed: [ 1 1 1 1 2 3 4 ]
+perf #123: 1982763 / 19664ms
+assessed: [ 1 1 1 2 2 2 3 ]
+perf #1112: 1952657 / 22701ms
+assessed: [ 1 1 1 2 2 3 3 ]
+perf #1122: 1647086 / 25315ms   2
+assessed: [ 1 1 1 2 2 3 4 ]
+perf #1123: 1794816 / 27909ms
+assessed: [ 1 1 1 2 3 4 5 ]
+perf #1234: 1721636 / 30682ms   4
+assessed: [ 1 1 2 2 3 3 4 ]
+perf #11223: 1651935 / 39242ms  3
+assessed: [ 1 1 2 2 3 4 5 ]
+perf #11234: 1598841 / 41900ms  1
+assessed: [ 1 1 2 3 4 5 6 ]
+perf #12345: 1810915 / 45783ms
+assessed: [ 1 2 3 4 5 6 7 ]
+perf #123456: 1734705 / 144515ms

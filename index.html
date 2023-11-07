@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Play Super Master Mind online</title>
+    <meta name="title" content="Play Super Master Mind online">
+    <meta name="description" content="Play Super Master Mind online, assisted by a calculator which knows the optimal strategy!">
+    <meta name="keywords" content="super master mind, mastermind, code breaker, game, online, optimal strategy">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- scale for smartphones -->
+
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <script src="common_functions.js" charset="utf-8"></script>
+
+    <script src='lib/jquery-3.7.1.min.js'></script>
+    <script>
+      // Animation during page loading:
+      // 1) when document is ready
+      $(document).ready(function () {
+        console.log("(ready)");
+      });
+      // 2) when all elements of the page are completely loaded
+      $(window).on('load', function() {
+        console.log("(on load)");
+        // $(".loading").fadeOut("slow"); // loading div fades out
+      });
+      // 2') Defense timeout to allow interactions with the page
+      // setTimeout("console.log('(on load timeout)');$('.loading').fadeOut('slow');", 5000); // loading div fades out
+
+      function makeid() {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 6; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }
+
+      if (typeof(Storage) !== 'undefined') {
+        if (!localStorage.firstaccessid) {
+          let firstaccessid = 'HP - ' + makeid() + ' - ' + new Date();
+          localStorage.firstaccessid = firstaccessid;
+        }
+      }
+    </script>
+
+    <!-- Ezoic Code -->
+    <script src="//www.ezojs.com/basicads.js?d=supermastermind.github.io" type="text/javascript"></script>
+    <!-- Ezoic Code -->
+
+  </head>
+
+  <body onunload="console.log('exit...');">
+
+    <!-- <div class="loading" style='user-select:none;'>
+      <img src="img/loading.gif" style='width:5.5rem'><br>
+      Loading...
+    </div> -->
+
+    <div id="main">
+
+      <!-- HEADER -->
+      <script>write_menu(0);</script>
+
+      <div id="site_content">
+
+        <!-- SIDEBAR -->
+        <script>write_sidebar();</script>
+
+        <!-- MAIN CONTENT -->
+        <div id="content">
+
+          <div data-ezoic-cmp-override="true">
+            <script>write_introduction()</script>
+            <script>write_index_page_contents()</script>
+            <!-- OPTIMAL STRATEGY DETAILS -->
+            <script>write_optimal_strategy_details_1();</script>
+          </div>
+
+          <div data-ezoic-cmp-override="true">
+            <h3>Screenshots</h3>
+            <a href=screenshots.html><b>Screenshots</b></a>
+          </div>
+
+          <div data-ezoic-cmp-override="true">
+            <h3>Contact info & how to support this site?</h3>
+            <a href='contact_info.html' onfocus='this.blur()'><b>Contact</b></a>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div id="footer">
+      </div>
+
+    </div>
+
+  </body>
+
+</html>
