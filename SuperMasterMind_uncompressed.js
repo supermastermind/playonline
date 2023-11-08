@@ -4240,7 +4240,7 @@ function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_wid
   if ( (str == "\u{1F3C6}" /* trophy */)
        && (typeof trophy_image_loaded !== 'undefined') && trophy_image_loaded && (trophy_image_width != -1) && (trophy_image_height != -1) ) {
      // Replace trophy unicode character by an image
-     var reduction_factor = 0.9;
+     var reduction_factor = 1.0;
      var new_str_width = str_width * reduction_factor;
      var new_str_height = new_str_width * trophy_image_height / trophy_image_width;
      ctx.drawImage(trophy_image, x_pixel + (str_width - new_str_width)/2, y_pixel - (new_str_height - str_height) / 2, new_str_width, new_str_height);
