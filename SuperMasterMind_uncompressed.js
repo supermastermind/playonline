@@ -2394,7 +2394,7 @@ function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, 
     if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
       debug_game_state = 69.3;
       console.log(("precalculated games fetch failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-    } 
+    }
     else { // else: systematic parse error (with 200 status) is ignored
       debug_game_state = 69.4;
     }
@@ -2626,11 +2626,7 @@ function draw_graphic_bis() {
 
   try {
 
-    ctx.imageSmoothingEnabled = false;
-    // ctx.mozImageSmoothingEnabled = false; // (obsolete)
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.msImageSmoothingEnabled = false;
-    ctx.oImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true;
     ctx.globalAlpha = 1;
     ctx.setTransform(1,0,0,1,0,0); // resets the canvas current transform to the identity matrix
 
@@ -4223,7 +4219,7 @@ function draw_graphic_bis() {
 
 }
 
-function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx) {
+function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_width, str_height) {
   ctx.textAlign = "start"; // horizontal alignment
   ctx.textBaseline = "top"; // vertical alignment ("top" instead of "middle" to take adjusted str_height into account)
 
@@ -4241,7 +4237,17 @@ function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx) {
 
   // No special string
   ctx.fillStyle = foregroundColor;
-  ctx.fillText(str, x_pixel, y_pixel);
+  if ( (str == "\u{1F3C6}" /* trophy */)
+       && (typeof trophy_image_loaded !== 'undefined') && trophy_image_loaded && (trophy_image_width != -1) && (trophy_image_height != -1) ) {
+     // Replace trophy unicode character by an image
+     var reduction_factor = 0.9;
+     var new_str_width = str_width * reduction_factor;
+     var new_str_height = new_str_width * trophy_image_height / trophy_image_width;
+     ctx.drawImage(trophy_image, x_pixel + (str_width - new_str_width)/2, y_pixel - (new_str_height - str_height) / 2, new_str_width, new_str_height);
+  }
+  else {
+    ctx.fillText(str, x_pixel, y_pixel);
+  }
 }
 
 function displayString(str_p, x_cell, y_cell, x_cell_width,
@@ -4353,15 +4359,15 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
           ctx.fillRect(x_0 + (x_0_next - x_0)/2 - half_hidding_rect_width, y_0_next + 3, 2*half_hidding_rect_width+2, y_0 - y_0_next - 4);
         }
       }
-      fillTextWithColors(str, x_0 + (x_0_next - x_0 - str_width)/2, y_pixel, foregroundColor, ctx);
+      fillTextWithColors(str, x_0 + (x_0_next - x_0 - str_width)/2, y_pixel, foregroundColor, ctx, str_width, str_height);
       x_0_for_drawBubble = Math.max((x_0 + x_0_next)/2 - str_width/2, 0);
     }
     else if (justify == 2) { // right
-      fillTextWithColors(str, x_0_next - str_width, y_pixel, foregroundColor, ctx);
+      fillTextWithColors(str, x_0_next - str_width, y_pixel, foregroundColor, ctx, str_width, str_height);
       x_0_for_drawBubble = Math.max(x_0_next - str_width, 0);
     }
     else { // left
-      fillTextWithColors(str, x_0, y_pixel, foregroundColor, ctx);
+      fillTextWithColors(str, x_0, y_pixel, foregroundColor, ctx, str_width, str_height);
       x_0_for_drawBubble = x_0;
     }
 

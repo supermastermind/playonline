@@ -1401,6 +1401,17 @@
         game_event_onerrors(evt, "GAME REJECTIONHANDLED ERROR", "onrejectionhandled");
       };
 
+      var trophy_image = new Image(); // create an image object
+      var trophy_image_loaded = false;
+      var trophy_image_width = -1;
+      var trophy_image_height = -1;
+      trophy_image.src = "img/trophy.png"; // asynchronous image load
+      trophy_image.onload = function() {
+        trophy_image_loaded = true;
+        trophy_image_width = trophy_image.width;
+        trophy_image_height = trophy_image.height;
+      }
+
       function handle_rsp_delayed(e) {
         debug_game_state = 80;
         try {

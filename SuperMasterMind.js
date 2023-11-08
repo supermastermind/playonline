@@ -1566,7 +1566,7 @@ if(localStorage.debug_mode){
 debug_mode=localStorage.debug_mode;
 }
 }
-gameSolverInitMsgContents={'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok) || (Number(localStorage.gamesok) < ((typeof min_gamesok_for_firstname !== 'undefined') ? min_gamesok_for_firstname : 5) - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
+gameSolverInitMsgContents={'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok)||(Number(localStorage.gamesok) < ((typeof min_gamesok_for_firstname!=='undefined') ? min_gamesok_for_firstname : 5) - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
 setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((mobileMode&&(game_cnt <=2)) ? 2222 : 1111));
@@ -2255,10 +2255,7 @@ let draw_exception=false;
 let nbColorsRevealed=0;
 let last_but_one_attempt_event=false;
 try{
-ctx.imageSmoothingEnabled=false;
-ctx.webkitImageSmoothingEnabled=false;
-ctx.msImageSmoothingEnabled=false;
-ctx.oImageSmoothingEnabled=false;
+ctx.imageSmoothingEnabled=true;
 ctx.globalAlpha=1;
 ctx.setTransform(1,0,0,1,0,0);
 let resize_detected=false;
@@ -3638,7 +3635,7 @@ draw_exception=true;
 displayGUIError("draw error: "+err, err.stack);
 }
 }
-function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx){
+function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_width, str_height){
 ctx.textAlign="start";
 ctx.textBaseline="top";
 for (let i=0;i < specialStrTable.length;i++){
@@ -3653,7 +3650,16 @@ return;
 }
 }
 ctx.fillStyle=foregroundColor;
+if( (str=="\u{1F3C6}" /* trophy */)
+&&(typeof trophy_image_loaded!=='undefined')&&trophy_image_loaded&&(trophy_image_width!=-1)&&(trophy_image_height!=-1) ){
+var reduction_factor=0.9;
+var new_str_width=str_width * reduction_factor;
+var new_str_height=new_str_width * trophy_image_height / trophy_image_width;
+ctx.drawImage(trophy_image, x_pixel+(str_width - new_str_width)/2, y_pixel - (new_str_height - str_height) / 2, new_str_width, new_str_height);
+}
+else{
 ctx.fillText(str, x_pixel, y_pixel);
+}
 }
 function displayString(str_p, x_cell, y_cell, x_cell_width,
 foregroundColor, backgroundColor,
@@ -3758,15 +3764,15 @@ let half_hidding_rect_width=Math.max(8*(x_0_next - x_0)/100, str_width/2+2);
 ctx.fillRect(x_0+(x_0_next - x_0)/2 - half_hidding_rect_width, y_0_next+3, 2*half_hidding_rect_width+2, y_0 - y_0_next - 4);
 }
 }
-fillTextWithColors(str, x_0+(x_0_next - x_0 - str_width)/2, y_pixel, foregroundColor, ctx);
+fillTextWithColors(str, x_0+(x_0_next - x_0 - str_width)/2, y_pixel, foregroundColor, ctx, str_width, str_height);
 x_0_for_drawBubble=Math.max((x_0+x_0_next)/2 - str_width/2, 0);
 }
 else if(justify==2){
-fillTextWithColors(str, x_0_next - str_width, y_pixel, foregroundColor, ctx);
+fillTextWithColors(str, x_0_next - str_width, y_pixel, foregroundColor, ctx, str_width, str_height);
 x_0_for_drawBubble=Math.max(x_0_next - str_width, 0);
 }
 else{
-fillTextWithColors(str, x_0, y_pixel, foregroundColor, ctx);
+fillTextWithColors(str, x_0, y_pixel, foregroundColor, ctx, str_width, str_height);
 x_0_for_drawBubble=x_0;
 }
 if(drawInBubble){
@@ -4252,7 +4258,7 @@ catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }
 }
-else {
+else{
 askLocationPermissionsIfNeeded();
 }
 debug_game_state=69;
