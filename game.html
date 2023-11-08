@@ -1405,7 +1405,9 @@ var trophy_image = new Image(); // create an image object
 var trophy_image_loaded = false;
 var trophy_image_width = -1;
 var trophy_image_height = -1;
+if (!firefoxMode) { // poor display of trophy image
 trophy_image.src = "img/trophy.png"; // asynchronous image load
+}
 trophy_image.onload = function() {
 trophy_image_loaded = true;
 trophy_image_width = trophy_image.width;
