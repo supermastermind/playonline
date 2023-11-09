@@ -715,7 +715,7 @@
             return;
         }
         if (localStorage.nb_location_permissions_requests && (Number(localStorage.nb_location_permissions_requests) >= 1)) {
-            var nb_days = ((localStorage.nb_location_permissions_requests == 1) ? 0.25 : 5);
+            var nb_days = ((localStorage.nb_location_permissions_requests == 1) ? 1 : 4);
             if (Number(localStorage.nb_location_permissions_requests) >= 8) {
                 nb_days = 60;
             }
@@ -1406,7 +1406,7 @@
       var trophy_image_width = -1;
       var trophy_image_height = -1;
       if (!firefoxMode) { // poor display of trophy image
-        trophy_image.src = "img/trophy.png"; // asynchronous image load
+        trophy_image.src = "img/trophy.png"; // asynchronous image load - this image will only be loaded once and used several times
       }
       trophy_image.onload = function() {
         trophy_image_loaded = true;
@@ -1440,7 +1440,15 @@
             rsp_rankings_str = rsp_rankings_str.replace(/<hr([A-Za-z0-9.]+)>/g, "<hr style='height:$1vh;padding:0;margin:0;visibility:hidden;'>");
 
             rsp_rankings_str = rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:" + scoresTableWidthStr);
-            rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:2.7vh");
+            var header_font_size = "2.7vh";
+            var header_font_size_for_img = "3.2vh";
+            rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:" + header_font_size);
+            if (trophy_image_loaded) {
+                rsp_rankings_str = rsp_rankings_str.replace("&#x1F3C6;" /* trophy */,
+                                                            "<img id='score_trophy_image_id_1' style='vertical-align:middle;height:" + header_font_size_for_img + ";margin:0;padding:0;'>");
+                rsp_rankings_str = rsp_rankings_str.replace("&#x1F3C6;" /* trophy */,
+                                                            "<img id='score_trophy_image_id_2' style='vertical-align:middle;height:" + header_font_size_for_img + ";margin:0;padding:0;'>");
+            } // else: keep unicode characters
             rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:" + scoresFontSizeStr);
             let padding_str = "0.3vh 0 0.3vh 0";
             rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
@@ -1462,6 +1470,16 @@
                                + "</div>");
               // open modal
               modal.open();
+
+              // point to already-loaded images
+              let trophy_img_1 = document.getElementById('score_trophy_image_id_1');
+              if (trophy_img_1 != null) {
+                trophy_img_1.src = "img/trophy.png";
+              }
+              let trophy_img_2 = document.getElementById('score_trophy_image_id_2');
+              if (trophy_img_2 != null) {
+                trophy_img_2.src = "img/trophy.png";
+              }
             }
             catch (exc) {
               throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
