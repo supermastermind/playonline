@@ -2664,7 +2664,7 @@
 
               let precise_location_data = getPreciseStoredLocationData();
               if ( isLocationDataValid(precise_location_data)
-                   && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 72 : 48)*3600*1000) ) { // (X hours, but refreshing can be shorter - see below comments - mobile IP-address based geolocation is very imprecise => 72h)
+                   && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 48 : 48)*3600*1000) ) { // (X hours, but refreshing can be shorter - see below comments - mobile IP-address based geolocation is very imprecise => 48h)
                   let extra_debug_info_when_unknown_ip_address = "";
                   if (String(precise_location_data.ip).indexOf(unknownIPAddressPrefix) != -1) { // unknown IP address
                     extra_debug_info_when_unknown_ip_address = (localStorage.alternateLocationMethodDebugInfo ? ',' + localStorage.alternateLocationMethodDebugInfo : "");
