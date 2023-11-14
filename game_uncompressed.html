@@ -490,7 +490,7 @@
           month = '0' + month;
         }
         let year = String(date.getYear()-100);
-        return "-" + day + month + year; // (versus "_ddMMyy" in android appli)
+        return String(day + month + year);
       }
 
       function checkIfRecentPlayer() {
@@ -525,7 +525,7 @@
 
       if (typeof(Storage) !== 'undefined') {
         if (!localStorage.firstaccessid) {
-          let firstaccessid = 'GA - ' + makeid() + formatDate(new Date());
+          let firstaccessid = '1ST-' + makeid() + "-" + formatDate(new Date());
           localStorage.firstaccessid = firstaccessid;
         }
       }
@@ -717,7 +717,7 @@
         if (localStorage.nb_location_permissions_requests && (Number(localStorage.nb_location_permissions_requests) >= 1)) {
             var nb_days = ((localStorage.nb_location_permissions_requests == 1) ? 1 : 4);
             if (Number(localStorage.nb_location_permissions_requests) >= 8) {
-                nb_days = 60;
+                nb_days = 30; // player does not want to share position or "repetitive single permissions"
             }
             if (localStorage.ask_location_permissions_if_needed && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed < nb_days*24*3600*1000)) { // x days (permission message or warning message every x days)
                 return;
@@ -2067,7 +2067,7 @@
           store_time = new Date().getTime() + ((nbcolumns == 3) ? 4444 /* (slow down pace) */: 0);
 
           if (!localStorage.playerid) {
-            let id = makeid() + formatDate(new Date());
+            let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android appli)
             localStorage.playerid = id;
           }
 
@@ -2664,7 +2664,7 @@
 
               let precise_location_data = getPreciseStoredLocationData();
               if ( isLocationDataValid(precise_location_data)
-                   && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 24 : 48)*3600*1000) ) { // (X hours, but refreshing can be shorter - see below comments)
+                   && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 72 : 48)*3600*1000) ) { // (X hours, but refreshing can be shorter - see below comments - mobile IP-address based geolocation is very imprecise => 72h)
                   let extra_debug_info_when_unknown_ip_address = "";
                   if (String(precise_location_data.ip).indexOf(unknownIPAddressPrefix) != -1) { // unknown IP address
                     extra_debug_info_when_unknown_ip_address = (localStorage.alternateLocationMethodDebugInfo ? ',' + localStorage.alternateLocationMethodDebugInfo : "");

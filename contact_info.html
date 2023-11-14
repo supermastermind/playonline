@@ -13,25 +13,6 @@
     <script src="common_functions.js"></script>
 
     <script src='lib/jquery-3.7.1.min.js'></script>
-
-    <script>
-      function makeid() {
-        let text = "";
-        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        for (let i = 0; i < 6; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-      }
-
-      if (typeof(Storage) !== 'undefined') {
-        if (!localStorage.firstaccessid) {
-          let firstaccessid = 'CO - ' + makeid() + ' - ' + new Date();
-          localStorage.firstaccessid = firstaccessid;
-        }
-      }
-    </script>
-
   </head>
 
   <body>
