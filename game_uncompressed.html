@@ -1879,7 +1879,7 @@
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_status = "nok-5/" + error_str;
         HTML_geoloc_errors++;
-        if (android_appli /* no popups for android appli */ && (android_HTML_geolocation_retries_after_error < 2)) { // retry after some geolocation attempt failures
+        if (android_appli /* no popups for android appli */ && (android_HTML_geolocation_retries_after_error < 3)) { // retry after some geolocation attempt failures
           if (!localStorage.precise_geolocation_api_access_time || !((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times
             android_HTML_geolocation_retries_after_error++;
             setTimeout("attempt_HTML_geolocation();", 5*android_HTML_geolocation_retries_after_error*60*1000); // n*5 minutes

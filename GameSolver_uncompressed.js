@@ -645,7 +645,7 @@ class CodeHandler {
     let nbWhites = 0;
     let col1, col2;
 
-    // The below operations are unrolled for better performances
+    // The below operations are unrolled for better performances (ruling out [5] and [6] index updates when this.nbColumns <= 5 does not bring measurable gains)
     this.colors_int[0] = true;
     this.colors_int[1] = true;
     this.colors_int[2] = true;
