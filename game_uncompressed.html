@@ -1500,7 +1500,7 @@
                 }
             }
             else { // "get max" mode
-                if (!localStorage.gamesok || (Number(localStorage.gamesok) < glbScoreAndPerfHistorySize)) {
+                if (!localStorage.gamesok || (Number(localStorage.gamesok) < glbScoreAndPerfHistorySize + 5)) { // (simplified check for all column numbers)
                     console.log("(displayOrGetMaxGlbScoreAndPerf: skipped)");
                     return;
                 }
