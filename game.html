@@ -611,6 +611,10 @@ geoloc: <input id='form_geoloc_id' name='geoloc' type='text' value='-'><br>
 ipaddress: <input id='form_ipaddress_id' name='ipaddress' type='text' value='-'><br>
 
 href: <input id='form_href_id' name='href' type='text' value='-'><br>
+
+bestglbscore: <input id='form_bestglbscore_id' name='bestglbscore' type='text' value='-'><br>
+bestglbperf: <input id='form_bestglbperf_id' name='bestglbperf' type='text' value='-'><br>
+
 debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-'><br>
 gamesummary: <input id='form_gamesummary_id' name='gamesummary' type='text' value='-'><br>
 
@@ -1401,6 +1405,124 @@ window.onrejectionhandled = function(evt) {
 game_event_onerrors(evt, "GAME REJECTIONHANDLED ERROR", "onrejectionhandled");
 };
 
+var glbScoreAndPerfHistorySize = 20; // (shall be > 5)
+var glbScoreAndPerfHistoryArrayNamePrefix = "glbScoreAndPerfHistoryArray";
+var glbScoreNAValue = -100; // (also used for init value in max calculation)
+var glbPerfNAValue = -100; // (also used for init value in max calculation)
+function getGlbScoreAndPerfHistoryArrayName(nbColumns_p) {
+return glbScoreAndPerfHistoryArrayNamePrefix + "_" + nbColumns_p + "cols";
+}
+function storeGlbScoreAndPerf(nbColumns_p, glb_score, glb_perf) {
+try {
+// Check parameters
+if ((nbColumns_p != 3) && (nbColumns_p != 4) && (nbColumns_p != 5) && (nbColumns_p != 6) && (nbColumns_p != 7)) {
+throw new Error("invalid nbColumns_p: " + nbColumns_p);
+}
+var valid_glb_score = (glb_score != '-');
+var glb_score_float = glbScoreNAValue;
+if (valid_glb_score) {
+glb_score_float = parseFloat(glb_score);
+if (isNaN(glb_score_float) || !isFinite(glb_score)) {
+throw new Error("invalid glb_score value: " + glb_score);
+}
+}
+var valid_glb_perf = (glb_perf != '-');
+var glb_perf_float = glbPerfNAValue;
+if (valid_glb_perf) {
+glb_perf_float = parseFloat(glb_perf);
+if (isNaN(glb_perf_float) || !isFinite(glb_perf)) {
+throw new Error("invalid glb_perf value: " + glb_perf);
+}
+}
+
+// Initialize global scores and perfs in localStorage
+var glbScoreAndPerfHistoryArrayName = getGlbScoreAndPerfHistoryArrayName(nbColumns_p);
+var jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
+if (jsonString == null) {
+var glbScoreAndPerfHistoryArray = new Array(glbScoreAndPerfHistorySize);
+for (var i = 0; i < glbScoreAndPerfHistorySize; i++) {
+glbScoreAndPerfHistoryArray[i] = {glbscore: glbScoreNAValue, glbperf: glbPerfNAValue, date: "creation date: " + new Date()};
+}
+var jsonString2 = JSON.stringify(glbScoreAndPerfHistoryArray);
+localStorage.setItem(glbScoreAndPerfHistoryArrayName, jsonString2);
+localStorage.glbScoreAndPerfHistoryIdx = 0;
+}
+
+// Get global scores and perfs in localStorage
+jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
+if (jsonString == null) {
+throw new Error("null jsonString");
+}
+var glbScoreAndPerfHistoryArray = JSON.parse(jsonString);
+if (glbScoreAndPerfHistoryArray.length != glbScoreAndPerfHistorySize) {
+throw new Error("invalid length: " + glbScoreAndPerfHistoryArray.length + " != " + glbScoreAndPerfHistorySize);
+}
+var glbScoreAndPerfHistoryIdx = parseInt(localStorage.glbScoreAndPerfHistoryIdx);
+if (isNaN(glbScoreAndPerfHistoryIdx) || (glbScoreAndPerfHistoryIdx < 0) || (glbScoreAndPerfHistoryIdx >= glbScoreAndPerfHistorySize)) {
+throw new Error("invalid global history index: " + glbScoreAndPerfHistoryIdx);
+}
+
+// Update global scores and perfs in localStorage
+glbScoreAndPerfHistoryArray[glbScoreAndPerfHistoryIdx] = { glbscore: glb_score_float, // (glbScoreNAValue if !valid_glb_score)
+glbperf: glb_perf_float, // (glbPerfNAValue if !valid_glb_perf)
+date: new Date() };
+var jsonString2 = JSON.stringify(glbScoreAndPerfHistoryArray);
+localStorage.setItem(glbScoreAndPerfHistoryArrayName, jsonString2);
+localStorage.glbScoreAndPerfHistoryIdx = (glbScoreAndPerfHistoryIdx + 1) % glbScoreAndPerfHistorySize;
+}
+catch (exc) {
+throw new Error("storeGlbScoreAndPerf error: " + exc);
+}
+}
+
+function displayOrGetMaxGlbScoreAndPerf(nbColumns_p, display, maxGlbResultsOut) {
+if (!display) {
+maxGlbResultsOut.glbscore = glbScoreNAValue;
+maxGlbResultsOut.glbperf = glbPerfNAValue;
+}
+try {
+var glbScoreAndPerfHistoryArrayName = getGlbScoreAndPerfHistoryArrayName(nbColumns_p);
+var jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
+if (jsonString == null) {
+throw new Error("displayOrGetMaxGlbScoreAndPerf: null jsonString");
+}
+var glbScoreAndPerfHistoryArray = JSON.parse(jsonString);
+if (glbScoreAndPerfHistoryArray.length != glbScoreAndPerfHistorySize) {
+throw new Error("displayOrGetMaxGlbScoreAndPerf: invalid length: " + glbScoreAndPerfHistoryArray.length + " != " + glbScoreAndPerfHistorySize);
+}
+var glbScoreAndPerfHistoryIdx = parseInt(localStorage.glbScoreAndPerfHistoryIdx);
+if (isNaN(glbScoreAndPerfHistoryIdx) || (glbScoreAndPerfHistoryIdx < 0) || (glbScoreAndPerfHistoryIdx >= glbScoreAndPerfHistorySize)) {
+throw new Error("displayOrGetMaxGlbScoreAndPerf: invalid global history index: " + glbScoreAndPerfHistoryIdx);
+}
+if (display) { // display mode
+for (var i = 0; i < glbScoreAndPerfHistorySize; i++) {
+console.log("[" + i + ((i == glbScoreAndPerfHistoryIdx) ? "*": "") + "] " + glbScoreAndPerfHistoryArray[i].glbscore + ", " + glbScoreAndPerfHistoryArray[i].glbperf + ", " + glbScoreAndPerfHistoryArray[i].date);
+}
+}
+else { // "get max" mode
+if (!localStorage.gamesok || (Number(localStorage.gamesok) < glbScoreAndPerfHistorySize)) {
+console.log("(displayOrGetMaxGlbScoreAndPerf: skipped)");
+return;
+}
+var maxGlbScore = glbScoreNAValue;
+var maxGlbPerf = glbPerfNAValue;
+for (var i = 0; i < glbScoreAndPerfHistorySize; i++) {
+if (glbScoreAndPerfHistoryArray[i].glbscore > maxGlbScore) {
+maxGlbScore = glbScoreAndPerfHistoryArray[i].glbscore;
+}
+if (glbScoreAndPerfHistoryArray[i].glbperf > maxGlbPerf) {
+maxGlbPerf = glbScoreAndPerfHistoryArray[i].glbperf;
+}
+}
+maxGlbResultsOut.glbscore = maxGlbScore; // (can be glbScoreNAValue)
+maxGlbResultsOut.glbperf = maxGlbPerf; // (can be glbPerfNAValue)
+}
+}
+catch (exc) {
+console.log("(displayOrGetMaxGlbScoreAndPerf: exception: " + exc + ")");
+}
+}
+
 var trophy_image = new Image(); // create an image object
 var trophy_image_loaded = false;
 var trophy_image_width = -1;
@@ -1419,7 +1541,13 @@ debug_game_state = 80;
 try {
 if ( (e !== undefined) && (e != null)
 && (typeof e.rsp_cd == 'undefined') // rsp_cd means error
-&& (typeof e.rankings !== 'undefined') && (e.rankings.length > 10) ) {
+&& (typeof e.rankings !== 'undefined') && (e.rankings.length > 10)
+&& (typeof e.nbcolumns !== 'undefined') && (typeof e.globalScore !== 'undefined') && (typeof e.globalPerf !== 'undefined') ) {
+
+if (e.nbcolumns != "NA") {
+storeGlbScoreAndPerf(e.nbcolumns, e.globalScore, e.globalPerf);
+}
+
 var rsp_rankings_str = JSON.stringify(e.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
 // console.log("1: " + rsp_rankings_str);
 
@@ -1459,6 +1587,7 @@ rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>"); // "</s>" ->
 rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>"); // apply color change on numbers of assessed attempts
 rsp_rankings_str = rsp_rankings_str.replace(/(<tr((?!<td).)*<td style=\')/g, "$1border-radius:0.8vh 0 0 0.8vh;"); // make left borders round  ("?!" means "does not contain")
 rsp_rankings_str = rsp_rankings_str.replace(/(<td style=\')(((?!<td).)*<\/tr)/g, "$1border-radius:0 0.8vh 0.8vh 0;$2"); // make right borders round ("?!" means "does not contain")
+rsp_rankings_str = rsp_rankings_str.replace("HISTORY_SIZE", glbScoreAndPerfHistorySize);
 
 // console.log("2: " + rsp_rankings_str);
 // Rk: top scores are always displayed, even if current game score is not in them
@@ -2420,6 +2549,11 @@ console.log(((android_appli && (androidAppliInfoStr != null)) ? "an" + androidAp
 document.getElementById('form_app_id').value = ((android_appli && (androidAppliInfoStr != null)) ? "an" + androidAppliInfoStr : "-");
 
 document.getElementById('form_href_id').value = decodeURI(location.href);
+
+var maxGlbResultsOut = { glbscore: glbScoreNAValue, glbperf: glbPerfNAValue };
+displayOrGetMaxGlbScoreAndPerf(nbcolumns, false, maxGlbResultsOut);
+document.getElementById('form_bestglbscore_id').value = ((maxGlbResultsOut.glbscore != glbScoreNAValue) ? maxGlbResultsOut.glbscore : '-');
+document.getElementById('form_bestglbperf_id').value = ((maxGlbResultsOut.glbperf != glbPerfNAValue) ? maxGlbResultsOut.glbperf : '-');
 
 var extra_debug_info = "";
 try {
