@@ -1443,7 +1443,7 @@ function show_play_store_app(specific_str = "", android_stars_mode = false, forc
     let play_store_app_str =
       "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
       <br><b>" + str + "</b><br>\
-      <a href='" + android_app_url + "'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='img/Playstore_icon.png'/><br></a>\
+      <a href='" + android_app_url + "'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh;border-radius:7%' src='img/Playstore_icon.png'/><br></a>\
       <small>" + (((specific_str.indexOf("put some stars") == -1) && (str.indexOf("install the android app") == -1)) ? "If you like this game,&nbsp;put some stars on Google Play &#x1F609;<br>" : "") + "Any questions or comments? See&nbsp;the&nbsp;<a href='contact_info.html'>Contact</a>&nbsp;page</small><br><br><br>\
       </font></td></tr></table></center>";
     try {
