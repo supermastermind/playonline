@@ -2201,6 +2201,7 @@ localStorage.playerid = id;
 }
 
 let gamesok = -1;
+let gamesokX = -1;
 let gamesok_at_last_first_name_request = -100;
 let deltagames = -1;
 if (typeof(Storage) !== 'undefined') {
@@ -2222,6 +2223,45 @@ localStorage.gamesok = 0;
 localStorage.gamesok = Number(localStorage.gamesok) + 1;
 checkIfRecentPlayer(); // acts on localStorage.gamesok update
 gamesok = Number(localStorage.gamesok);
+switch (nbcolumns) {
+case 3: // (case never entered due to above condition)
+if (!localStorage.gamesok3) {
+localStorage.gamesok3 = 0;
+}
+localStorage.gamesok3 = Number(localStorage.gamesok3) + 1;
+gamesokX = Number(localStorage.gamesok3);
+break;
+case 4:
+if (!localStorage.gamesok4) {
+localStorage.gamesok4 = 0;
+}
+localStorage.gamesok4 = Number(localStorage.gamesok4) + 1;
+gamesokX = Number(localStorage.gamesok4);
+break;
+case 5:
+if (!localStorage.gamesok5) {
+localStorage.gamesok5 = 0;
+}
+localStorage.gamesok5 = Number(localStorage.gamesok5) + 1;
+gamesokX = Number(localStorage.gamesok5);
+break;
+case 6:
+if (!localStorage.gamesok6) {
+localStorage.gamesok6 = 0;
+}
+localStorage.gamesok6 = Number(localStorage.gamesok6) + 1;
+gamesokX = Number(localStorage.gamesok6);
+break;
+case 7:
+if (!localStorage.gamesok7) {
+localStorage.gamesok7 = 0;
+}
+localStorage.gamesok7 = Number(localStorage.gamesok7) + 1;
+gamesokX = Number(localStorage.gamesok7);
+break;
+default:
+throw new Error("store_player_info: invalid nbcolumns: " + nbcolumns);
+}
 
 let gamesok_alert_condition;
 if (gamesok <= 10000) {
@@ -2243,7 +2283,7 @@ gamesok_alert_condition =
 }
 else {
 gamesok_alert_condition =
-( ((gamesok % 1000) == 0)
+( ((gamesok % 500) == 0)
 || ((gamesok % 10000) == 1111) || ((gamesok % 10000) == 2222) || ((gamesok % 10000) == 3333) || ((gamesok % 10000) == 4444) || ((gamesok % 10000) == 5555) || ((gamesok % 10000) == 7777) || ((gamesok % 10000) == 8888) || ((gamesok % 10000) == 9999)
 || (gamesok == 12345) || (gamesok == 23456) || (gamesok == 34567) || (gamesok == 45678) || (gamesok == 56789) );
 }
@@ -2541,8 +2581,8 @@ console.log(nbuknperfs);
 document.getElementById('form_nbuknperfs_id').value = nbuknperfs;
 console.log(helpstr);
 document.getElementById('form_help_id').value = helpstr;
-console.log(gamesok);
-document.getElementById('form_gamesok_id').value = gamesok;
+console.log(gamesokX);
+document.getElementById('form_gamesok_id').value = gamesokX;
 console.log(deltagames);
 document.getElementById('form_deltagames_id').value = deltagames;
 console.log(((android_appli && (androidAppliInfoStr != null)) ? "an" + androidAppliInfoStr : "-"));
