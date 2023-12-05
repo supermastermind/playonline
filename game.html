@@ -376,7 +376,10 @@ alert("Your Chrome browser version is old, please update it to avoid errors");
 }
 }
 var repetitiveErrorsUser = false;
-if (localStorage.playerid && (localStorage.playerid == "9BZQYK-250823")) { // misc. sporadic errors / Moz5.0(Macintosh;IntelMacOSX10_15_6)AppleWK605.1.15(KHTML,likeGecko): assumed due to plugin or Mozilla on Mac
+if ( localStorage.playerid
+&& ( (localStorage.playerid == "9BZQYK-250823") // misc. sporadic errors / Moz5.0(Macintosh;IntelMacOSX10_15_6)AppleWK605.1.15(KHTML,likeGecko): assumed due to plugin or Mozilla on Mac
+|| (localStorage.playerid == "7LZ0W6-281123") ) // misc. sporadic errors / error:Script error.|url:|line number:0|column number:0|error object:null in Safari/605.1.15
+) {
 repetitiveErrorsUser = true;
 }
 
