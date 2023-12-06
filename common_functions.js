@@ -48,6 +48,7 @@ var tick_repeat_nb = 1800; // 30 minutes
 function set_div_contents_several_times(cmd_str, targeted_nb_ticks, periodical_trigger) {
   // Attempt to prevent ads additions by setting same div contents several times
   eval(cmd_str);
+  return;
   if (!periodical_trigger) {
     setTimeout(cmd_str, 250);
     setTimeout(cmd_str, 500);
