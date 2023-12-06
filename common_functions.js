@@ -43,12 +43,9 @@ function write_menu(selected_idx) {
 
 var tick_time = 1000;
 var tick_repeat_nb = 1800; // 30 minutes
-// Note: in addition to set_div_contents_several_times() calls, other method used for ezoic: use the data-ezoic-cmp-override attribute to disable Ezoic ads for the entire body of the HTML page or for a div (<div id="ad" data-ezoic-cmp-override="true">).
-// You can add the data-ezoic-cmp-override attribute to the body tag to disable Ezoic ads for the entire page and then add the data-ezoic-cmp-override="false" attribute to a specific div to re-enable Ezoic ads for that div.
 function set_div_contents_several_times(cmd_str, targeted_nb_ticks, periodical_trigger) {
   // Attempt to prevent ads additions by setting same div contents several times
   eval(cmd_str);
-  return;
   if (!periodical_trigger) {
     setTimeout(cmd_str, 250);
     setTimeout(cmd_str, 500);
@@ -79,8 +76,9 @@ function write_sidebar_delayed() {
 }
 
 function write_sidebar() {
-  document.write("<div id='sidebar_div' class='sidebar' style='visibility:hidden; data-ezoic-cmp-override=\"true\"'></div>");
-  set_div_contents_several_times("write_sidebar_delayed()", tick_repeat_nb, false);
+  document.write("<div id='sidebar_div' class='sidebar' style='visibility:hidden;'></div>");
+  // set_div_contents_several_times("write_sidebar_delayed()", tick_repeat_nb, false);
+  // write_sidebar_delayed(); => no more displayed as rather useless / incompatible with basic ezoic ads
 }
 
 
@@ -105,7 +103,7 @@ function write_index_page_contents_delayed() {
       <h3><a name='game_rules'></a>Rules</h3>\
       The goal of Super Master Mind is to find out a secret code of 5 colors chosen randomly among 8 (with duplicate colors allowed).<br>\
       The player makes successive attempts, and each code played is given pegs:<br>\
-      <ul style='margin:0' data-ezoic-cmp-override='true'>\
+      <ul style='margin:0'>\
       <li style='list-style-type:disc'>a black peg <small><small>&#x26ab;</small></small> indicates the existence of a correct color in a correct position,</li>\
       <li style='list-style-type:disc'>a white peg <small><small>&#x26aa;</small></small> indicates the existence of a correct color in a wrong position.</li>\
       </ul>\
@@ -123,7 +121,7 @@ function write_index_page_contents_delayed() {
       to this same average number when your code is played, and then displays the difference next to your code.<br>\
       <hr style='height:0.5rem; visibility:hidden;' />\
       For example:<br>\
-      <ul style='margin:0' data-ezoic-cmp-override='true'>\
+      <ul style='margin:0'>\
       <li style='list-style-type:disc'><b>0.00</b> means that what you played was optimal (no difference between your code and the optimal code(s)),</li>\
       <li style='list-style-type:disc'><b>-1.00</b> means that what you played was useless (1 attempt was lost on average, thus -1),</li>\
       <li style='list-style-type:disc'><b>-0.50</b> means that what you played was not optimal: you lost <sup>1</sup>&frasl;<sub>2</sub> attempt on average\
@@ -136,12 +134,13 @@ function write_index_page_contents_delayed() {
 }
 
 function write_index_page_contents() {
-  document.write("<div id='index_page_contents_div' style='visibility:hidden; data-ezoic-cmp-override=\"true\"'></div>");
-  set_div_contents_several_times("write_index_page_contents_delayed()", tick_repeat_nb, false);
+  document.write("<div id='index_page_contents_div' style='visibility:hidden;'></div>");
+  // set_div_contents_several_times("write_index_page_contents_delayed()", tick_repeat_nb, false);
+  write_index_page_contents_delayed();
 }
 
 function write_introduction() {
-  document.write("<div id='game_images' data-ezoic-cmp-override='true'>");
+  document.write("<div id='game_images'>");
   var img_str = "<hr style='height:0.75vh; visibility:hidden;' /><img src='img/SuperMasterMind_1.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'><img src='img/SuperMasterMind_2.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'><img src='img/SuperMasterMind_3.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'>";
   if (window.innerWidth >= 360) {
     img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'>";
