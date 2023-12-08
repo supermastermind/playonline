@@ -3665,8 +3665,10 @@ function draw_graphic_bis() {
             // Final score
             score = score_from_nb_attempts - time_delta_score;
             let min_score = 1;
-            if (score < min_score + 0.01) {
-              score = min_score + 0.01 - totalTimeInSeconds/100000000;
+            if (score <= min_score + 10 * multiply_factor) { // proper sorting of very low scores in [min_score, min_score + 10 * multiply_factor]
+              let delta_score = min_score + 10 * multiply_factor - score;
+              let delta_score_factor = 1 / (delta_score/10 + 1); // in ]0, 1]
+              score = min_score + 10 * multiply_factor * delta_score_factor;
               if (score < min_score) {
                 score = min_score;
               }
