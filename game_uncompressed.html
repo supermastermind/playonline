@@ -100,7 +100,7 @@
         margin-bottom: 1.0vh;
         -webkit-backface-visibility: visible;
       }
-      .button:hover {
+      .button:hover { /* (will be overridden dynamically) */
         background-color: orange;
         color: white;
       }
@@ -162,6 +162,17 @@
         animation: kdo_anim 3.33s;
       }
 
+      /* Hide browser's default radio button */
+      input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+      }
+
       .radio {
         font-family: Verdana;
         color: black;
@@ -172,6 +183,7 @@
         text-decoration: none;
         font-weight: bold;
         box-shadow: none;
+        vertical-align: middle;
         /* text not selectable */
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -179,6 +191,14 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+      }
+
+      /* Style radio when radio button is checked */
+      input[type="radio"]:checked + .radio {  /* (will be partly overridden dynamically) */
+        color: orange;
+        border-color: orange;
+        border-radius: 0%;
+        padding: 0 0.5vw 0 0.5vw; /* top right bottom left */
       }
 
       .not_selectable {
@@ -239,7 +259,7 @@
         width: 100%;
         top:0;
         left: 0;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.4);
         z-index:11111;
         font-size: 2.0vh;
         text-align: center;
@@ -437,14 +457,6 @@
         console.log("showPossibleCodesButtonClick function not defined yet");
       }
 
-      function checkHtmlInputIfAllowed(html_input_id, nbColumns_p) {
-        if (!$(html_input_id).prop('disabled')) {
-          $(html_input_id).prop('checked', true);
-          newGameButtonClick(nbColumns_p);
-        }
-      }
-
-
       if (!localStorage.firstgamegeoloc) { // Keep existing value if it exists
         localStorage.firstgamegeoloc = "fa";
       }
@@ -559,11 +571,8 @@
     <div class="page_transition" style='display:none;'>
     </div>
 
-    <div id="game_aborted_id" class="game_aborted" style='display:none;'>
-      <!--  duplicated code -->
-      Current game was aborted!
-      <br><img src='img/loading.gif' style='height:12%;'><br>  <!-- (not rem unit as no viewport!) -->
-      Starting a new game...
+    <div id="game_aborted_id" class="game_aborted" style='display:none;' onclick="gameAbortionEnd()">
+      <!-- (text will be overridden dynamically) -->
     </div>
 
     <!-- HTML controls and canvas -->
@@ -573,12 +582,23 @@
         <td style='width:0%;margin:0;padding:0;' id='buffer_td_1'></td>
         <td style='margin:0;padding:0;vertical-align:middle;text-align:center;white-space:nowrap'>
           <input id='newGameButton' class='button disabled' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' style='margin-bottom:0.5vh;' disabled>
+
           <form action='' class='not_selectable'>
-            <label title='Very easy game'>&#x202f;<input id='columnslabel_3b' class='radio disabled' type='radio' value='3' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(3)' disabled></label><a onclick="checkHtmlInputIfAllowed('#columnslabel_3b', 3)">&nbsp;</a><label title='Very easy game' onclick="checkHtmlInputIfAllowed('#columnslabel_3b', 3)"><span id='columnslabel_3' class='radio disabled' style='vertical-align:middle;'> 3 columns&#x202f;<br></span></label>
-            <label title='Master Mind'>&#x202f;<input id='columnslabel_4b' class='radio disabled' type='radio' value='4' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(4)' disabled></label><a onclick="checkHtmlInputIfAllowed('#columnslabel_4b', 4)">&nbsp;</a><label title='Master Mind' onclick="checkHtmlInputIfAllowed('#columnslabel_4b', 4)"><span id='columnslabel_4' class='radio disabled' style='vertical-align:middle;'> 4 columns&#x202f;<br></span></label>
-            <label title='Super Master Mind'>&#x202f;<input id='columnslabel_5b' class='radio disabled' type='radio' value='5' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(5)' disabled></label><a onclick="checkHtmlInputIfAllowed('#columnslabel_5b', 5)">&nbsp;</a><label title='Super Master Mind' onclick="checkHtmlInputIfAllowed('#columnslabel_5b', 5)"><span id='columnslabel_5' class='radio disabled' style='vertical-align:middle;'> 5 columns&#x202f;<br></span></label>
-            <label title='Mega Master Mind'>&#x202f;<input id='columnslabel_6b' class='radio disabled' type='radio' value='6' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(6)' disabled></label><a onclick="checkHtmlInputIfAllowed('#columnslabel_6b', 6)">&nbsp;</a><label title='Mega Master Mind' onclick="checkHtmlInputIfAllowed('#columnslabel_6b', 6)"><span id='columnslabel_6' class='radio disabled' style='vertical-align:middle;'> 6 columns&#x202f;<br></span></label>
-            <label title='Ultra Master Mind'>&#x202f;<input id='columnslabel_7b' class='radio disabled' type='radio' value='7' name='nbColumnsSelection' style='vertical-align:middle;' onclick='newGameButtonClick(7)' disabled></label><a onclick="checkHtmlInputIfAllowed('#columnslabel_7b', 7)">&nbsp;</a><label title='Ultra Master Mind' onclick="checkHtmlInputIfAllowed('#columnslabel_7b', 7)"><span id='columnslabel_7' class='radio disabled' style='vertical-align:middle;'> 7 columns&#x202f;<br></span></label>
+            <label title='Very easy game'>
+            <input type="radio" name='nbColumnsSelection' value="3" onclick='newGameButtonClick(3)'><span id='columnsspan_3' class="radio disabled">3 columns</span>
+            </label><br>
+            <label title='Master Mind'>
+            <input type="radio" name='nbColumnsSelection' value="4" onclick='newGameButtonClick(4)'><span id='columnsspan_4' class="radio disabled">4 columns</span>
+            </label><br>
+            <label title='Super Master Mind'>
+            <input type="radio" name='nbColumnsSelection' value="5" onclick='newGameButtonClick(5)'><span id='columnsspan_5' class="radio disabled">5 columns</span>
+            </label><br>
+            <label title='Mega Master Mind'>
+            <input type="radio" name='nbColumnsSelection' value="6" onclick='newGameButtonClick(6)'><span id='columnsspan_6' class="radio disabled">6 columns</span>
+            </label><br>
+            <label title='Ultra Master Mind'>
+            <input type="radio" name='nbColumnsSelection' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class="radio disabled">7 columns</span>
+            </label><br>
           </form>
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>

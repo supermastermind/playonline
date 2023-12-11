@@ -16,7 +16,7 @@ debug_game_state = 68;
 // Main game variables
 // *******************
 
-let version = "v4.44";
+let version = "v4.5";
 
 let nominalGameNbColumns = 5; // classical Super Master Mind game
 let nominalGameNbColors = 8; // classical Super Master Mind game
@@ -123,7 +123,12 @@ let workerTerminationTime = -1; // (debug value)
 let newGameButtonIniName = document.getElementById("newGameButton").value;
 let nbColumnsRadioObjectIniNames = new Array(nbMaxColumns-nbMinColumns+1);
 for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
-  nbColumnsRadioObjectIniNames[i-nbMinColumns] = document.getElementById("columnslabel_" + i).innerHTML;
+  try {
+    nbColumnsRadioObjectIniNames[i-nbMinColumns] = document.getElementById("columnsspan_" + i).textContent;
+  }
+  catch (exc) {
+    throw new Error("cannot find element \"columnsspan_" + i + "\"");
+  }
 }
 let resetCurrentCodeButtonIniName = document.getElementById("resetCurrentCodeButton").value;
 let playRandomCodeButtonIniName = document.getElementById("playRandomCodeButton").value;
@@ -183,12 +188,15 @@ function getGridLineWidth(inner_window_height) {
 // Colors
 // ******
 
+let blueColor = "#0000A8"; // Blue
 let greenColor = "#008200"; // Green
 let orangeColor = "#FF7700"; // Orange
 let redColor = "#F00000"; // Red
+let purpleColor = "#C900A1"; // purple
+let cyanColor = "#2DB7E5"; // Cyan
 let backgroundColorTable =
   [
-    "#0000A8",   // Blue
+    blueColor,   // Blue
     greenColor,  // Green
     redColor,    // Red
     orangeColor, // Orange
@@ -196,8 +204,8 @@ let backgroundColorTable =
     "#000000",   // Black
     "#F0F0F0",   // White (gray)
     "#EAEA00",   // Yellow
-    "#C900A1",   // Purple
-    "#2DB7E5"    // Cyan
+    purpleColor, // Purple
+    cyanColor    // Cyan
   ];
 let foregroundColorTable =
   [
@@ -236,12 +244,30 @@ let backgroundColor_3;
 let highlightColor;
 let lightGray;
 let darkGray;
+
 function setLightGray() {
   lightGray = (modernDisplay ? "#909090" : "#9B7B5B");
   if (!gameOnGoing() && (!modernDisplay)) {
     lightGray = darkGray; // clearer stats
   }
 }
+
+let lastHoverColor = "";
+function changeHoverBackgroundColor(newColor) {
+  if (newColor != lastHoverColor) {
+    // Create a new style element
+    const style = document.createElement('style');
+    style.type = 'text/css';
+
+    // Insert CSS rule for the new hover background color
+    style.innerHTML = `.button:hover { background-color: ${newColor}; color: white; }`;
+
+    // Append the new style element to the head of the document
+    document.head.appendChild(style);
+    lastHoverColor = newColor;
+  }
+}
+
 function updateThemeAttributes() {
   document.getElementById("my_table").style.backgroundColor = (modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
   document.getElementById("my_canvas_cell").style.border = document.getElementById("my_canvas_cell").style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
@@ -254,6 +280,7 @@ function updateThemeAttributes() {
   highlightColor = (modernDisplay ? "#FFFF00" : "#FFFF00");
   setLightGray();
   darkGray = "#000000";
+  changeHoverBackgroundColor(modernDisplay ? "purple" : "orange");
 }
 updateThemeAttributes(); // (allows early graphical setting)
 
@@ -854,6 +881,12 @@ function newGameButtonClick_delayed() {
   }
 }
 
+function gameAbortionEnd() {
+  $(".game_aborted").fadeOut(250);
+  dsCode = false;
+  newGameButtonClick_delayed();
+}
+
 newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("newGameButtonClick skipped");
@@ -880,27 +913,15 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
           setTimeout("dsCode = false; newGameButtonClick_delayed();", 2500);
         }
         else {
-          let reset_duration = ((nbColumns <= 4) ? 4400 : 6000);
-          if (!localStorage.firstname) {
-            reset_duration = reset_duration / 2; // game_aborted_str will be shorter
-          }
-          let game_aborted_str = "<b>Current game was aborted!" // duplicated code
-                                 + (localStorage.firstname ? "<hr style='height:0.75vh; visibility:hidden;' />You shall win 5 consecutive games<br>to get your total score and<br>performance compared to other players'" : "")
+          let game_aborted_str = "<b>Current game was aborted"
+                                 + (localStorage.firstname ? "<hr style='height:0.75vh; visibility:hidden;' />You shall win 5 consecutive games<br>to get your total score and<br>performance computed" : "")
                                  + "<br><img src='img/loading.gif' style='height:12%;'><br>  <!-- (not rem unit as no viewport!) -->"
-                                 + "Starting a new game...</b>";
+                                 + (mobileMode ? "Tap" : "Click") + " to start a new game</b>";
           $("#game_aborted_id").html(game_aborted_str);
 
-          setTimeout("dsCode = false; newGameButtonClick_delayed();", 2*reset_duration);
-          // Transition effect 1/2
+          // Transition effect
           try {
-            $(".game_aborted").fadeIn(reset_duration);
-          }
-          catch (exc) {
-          }
-
-          // Transition effect 2/2
-          try {
-            $(".game_aborted").fadeOut(reset_duration);
+            $(".game_aborted").fadeIn((nbColumns <= 4) ? 2000 : 3000);
           }
           catch (exc) {
           }
@@ -1126,7 +1147,7 @@ function mouseClick(e) {
   // Display rules
   // *************
 
-  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon <= 2222) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 32))) // (condition duplicated)
+  else if ( (!showPossibleCodesMode)
             && ((mouse_x > get_x_pixel(x_min))
                && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)*0.90))
                && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
@@ -1164,7 +1185,7 @@ function mouseClick(e) {
   // Switch theme
   // ************
 
-  else if ( (!showPossibleCodesMode) && ((nbGamesPlayedAndWon <= 2222) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 32))) // (condition duplicated)
+  else if ( (!showPossibleCodesMode)
             && ((mouse_x > get_x_pixel(x_min))
                 && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)*0.90))
                 && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1)))
@@ -1391,6 +1412,9 @@ let previousNbColumns = -1;
 function getNbColumnsSelected() {
   // Check if a radio button is checked
   let nbColumnsRadioObject = document.getElementsByName("nbColumnsSelection");
+  if (nbColumnsRadioObject.length == 0) {
+    throw new Error("getNbColumnsSelected error: null nbColumnsRadioObject.length");
+  }
   for (let i = 0; i < nbColumnsRadioObject.length; i++) {
     if (nbColumnsRadioObject[i].checked) {
      previousNbColumns = parseInt(nbColumnsRadioObject[i].value);
@@ -2630,177 +2654,200 @@ function draw_graphic_bis() {
     ctx.globalAlpha = 1;
     ctx.setTransform(1,0,0,1,0,0); // resets the canvas current transform to the identity matrix
 
-    let resize_detected = false;
-    let resize_cnt = 0;
+    let nbColumnsSelected = getNbColumnsSelected();
+    if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
+      displayGUIError("inconsistent number of columns selected: " + nbColumnsSelected, new Error().stack);
+      nbColumnsSelected = defaultNbColumns;
+    }
 
-    do {
+    let allButtons = document.getElementsByClassName("button");
+    if (allButtons.length == 0) {
+      throw new Error("allButtons.length == 0");
+    }
+    let allRadioButtons = document.getElementsByClassName("radio");
+    if (allRadioButtons.length == 0) {
+      throw new Error("allRadioButtons.length == 0");
+    }
+    let lineWidth = getLineWidth(window.innerHeight, 1);
+    let borderStr1 = (CompressedDisplayMode ? 0 : lineWidth) + (modernDisplay ? "px solid purple" : "px solid black");
+    let borderStr2 = lineWidth + (modernDisplay ? "px solid purple" : "px solid black");
 
-      resize_detected = false;
-      let width;
-      let height;
-      // width = document.getElementById("my_canvas_cell").offsetWidth-2*2-1; // 2 * 2px border
-      // height = document.getElementById("my_canvas_cell").offsetHeight-2*2-1; // 2 * 2px border;
-      // width = canvas.clientWidth;
-      // height = canvas.clientHeight;
-      // (Alternate sizes:
-      //  width = canvas.offsetWidth - 2*2; // 2*2px (canvas' border = 2px) (2nd best solution - not perfect)
-      //  height = canvas.offsetHeight - 2*2; // 2*2px (canvas' border = 2px) (2nd best solution - not perfect)
-      //  width = canvas.scrollWidth; // (3rd best solution found)
-      //  height = canvas.scrollHeight; // (3rd best solution found)
-      //  width = canvas.offsetWidth;
-      //  height = canvas.offsetHeight;
-      //  let positionInfo = canvas.getBoundingClientRect();
-      //  height = positionInfo.height;
-      //  width = positionInfo.width;
+    var $td = $('canvas').parent(); // (my_canvas_cell)
+    let width = $td.width();
+    let height = $td.height();
+    if ( (current_width != width) || (current_height != height) ) { // resize detected
 
-      var $td = $('canvas').parent(); // (my_canvas_cell)
-      width = $td.width();
-      height = $td.height();
-      if ( (current_width != width) || (current_height != height) ) {
+      var newCompressedDisplayMode = CompressedDisplayMode;
+      if (window.innerHeight >= window.innerWidth * 0.80) {
+          newCompressedDisplayMode = true;
+      }
+      else if (window.innerWidth > CompressedDisplayMode_compressWidth + 10) {
+          newCompressedDisplayMode = false;
+      }
+      else if (window.innerWidth < CompressedDisplayMode_compressWidth - 10) {
+          newCompressedDisplayMode = true;
+      }
+      if (newCompressedDisplayMode != CompressedDisplayMode) { // (transition)
+        CompressedDisplayMode = newCompressedDisplayMode;
+        updateGameSizes();
+      }
 
-        resize_detected = true;
-        resize_cnt++;
-
-        var newCompressedDisplayMode = CompressedDisplayMode;
-        if (window.innerHeight >= window.innerWidth * 0.80) {
-            newCompressedDisplayMode = true;
-        }
-        else if (window.innerWidth > CompressedDisplayMode_compressWidth + 10) {
-            newCompressedDisplayMode = false;
-        }
-        else if (window.innerWidth < CompressedDisplayMode_compressWidth - 10) {
-            newCompressedDisplayMode = true;
-        }
-        if (newCompressedDisplayMode != CompressedDisplayMode) { // (transition)
-          CompressedDisplayMode = newCompressedDisplayMode;
+      mobileMode = false;
+      androidMode = false;
+      if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/3)
+           || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) // (mobile device check 2/3)
+           || android_appli ) { // (mobile device check 3/3)
+        if (!CompressedDisplayMode) {
+          CompressedDisplayMode = true; // (transition)
           updateGameSizes();
         }
-
-        mobileMode = false;
-        androidMode = false;
-        if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/3)
-             || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) // (mobile device check 2/3)
-             || android_appli ) { // (mobile device check 3/3)
-          if (!CompressedDisplayMode) {
-            CompressedDisplayMode = true; // (transition)
-            updateGameSizes();
-          }
-          mobileMode = true;
-          backgroundColor_2 = (modernDisplay ? "#FFFFFF" : "");
-          backgroundColor_3 = (modernDisplay ? "#EEEEEE" : "");
-          if (/Android/i.test(navigator.userAgent) || android_appli) {
-            androidMode = true;
-          }
+        mobileMode = true;
+        backgroundColor_2 = (modernDisplay ? "#FFFFFF" : "");
+        backgroundColor_3 = (modernDisplay ? "#EEEEEE" : "");
+        if (/Android/i.test(navigator.userAgent) || android_appli) {
+          androidMode = true;
         }
-        if (mobileMode && androidMode) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
-          tickChar = "\u2713"; /* (check mark/tick) */
-          crossChar = "\u2715"; /* (cross) */
+      }
+      if (mobileMode && androidMode) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
+        tickChar = "\u2713"; /* (check mark/tick) */
+        crossChar = "\u2715"; /* (cross) */
+      }
+      else {
+        tickChar = "\u2714"; /* (check mark/tick) */
+        crossChar = "\u2716"; /* (cross) */
+      }
+      if (CompressedDisplayMode) {
+
+        for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
+          document.getElementById("columnsspan_" + i).textContent = i;
         }
-        else {
-          tickChar = "\u2714"; /* (check mark/tick) */
-          crossChar = "\u2716"; /* (cross) */
-        }
-        if (CompressedDisplayMode) {
-
-          for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
-            document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns].replace(" " + i + " columns", i);
-          }
-          document.getElementById("resetCurrentCodeButton").value = "\u2718";
-          document.getElementById("playRandomCodeButton").value = "\u266C";
-          document.getElementById("revealSecretColorButton").value = "?";
-          document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
-          document.getElementById("my_table").style.width = "100%";
-          document.getElementById("my_table").style.height = "100%";
-          document.getElementById("my_table").style.left = "0";
-          document.getElementById("my_table").style.top = "0";
-          if (android_appli) { // (no transition)
-            document.getElementById("my_table").style.minWidth = "100%";
-            document.getElementById("my_table").style.minHeight = "100%";
-          }
-
-          try { // (try/catch because optional pictures)
-            document.getElementById("img_1").style.display = 'none';
-            document.getElementById("img_2").style.display = 'none';
-          }
-          catch (err) {}
-
-          left_border_margin_x = 0.75;   // Left border margin for x axis in %
-          right_border_margin_x = 0.25;  // Right border margin for x axis in %
-          bottom_border_margin_y = 1.25; // Bottom border margin for y axis in %
-          top_border_margin_y = 0.65;    // Top border margin for y axis in %
-
-        }
-        else {
-
-          for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
-            document.getElementById("columnslabel_" + i).innerHTML = nbColumnsRadioObjectIniNames[i-nbMinColumns];
-          }
-          document.getElementById("resetCurrentCodeButton").value = resetCurrentCodeButtonIniName;
-          document.getElementById("playRandomCodeButton").value = playRandomCodeButtonIniName;
-          document.getElementById("revealSecretColorButton").value = revealSecretColorButtonIniName;
-          document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
-          document.getElementById("my_table").style.width = "75%";
-          document.getElementById("my_table").style.height = "90%";
-          document.getElementById("my_table").style.left = "12.5%";
-          document.getElementById("my_table").style.top = "2%";
-
-          try { // (try/catch because optional pictures)
-            document.getElementById("img_1").style.display = 'inline';
-            document.getElementById("img_2").style.display = 'inline';
-          }
-          catch (err) {}
-
-          left_border_margin_x = 5.0;   // Left border margin for x axis in %
-          right_border_margin_x = 5.0;  // Right border margin for x axis in %
-          bottom_border_margin_y = 2.5; // Bottom border margin for y axis in %
-          top_border_margin_y = 2.5;    // Top border margin for y axis in %
-
+        document.getElementById("resetCurrentCodeButton").value = "\u2718";
+        document.getElementById("playRandomCodeButton").value = "\u266C";
+        document.getElementById("revealSecretColorButton").value = "?";
+        document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonCompressedName;
+        document.getElementById("my_table").style.width = "100%";
+        document.getElementById("my_table").style.height = "100%";
+        document.getElementById("my_table").style.left = "0";
+        document.getElementById("my_table").style.top = "0";
+        if (android_appli) { // (no transition)
+          document.getElementById("my_table").style.minWidth = "100%";
+          document.getElementById("my_table").style.minHeight = "100%";
         }
 
-        let lineWidth = getLineWidth(window.innerHeight, 1);
-        if (CompressedDisplayMode) {
-          if (document.getElementById("buffer_td_1") != null) document.getElementById("buffer_td_1").style.width = "0%";
-          if (document.getElementById("buffer_td_2") != null) document.getElementById("buffer_td_2").style.width = "0%";
+        try { // (try/catch because optional pictures)
+          document.getElementById("img_1").style.display = 'none';
+          document.getElementById("img_2").style.display = 'none';
         }
-        else {
-          if (document.getElementById("buffer_td_1") != null) document.getElementById("buffer_td_1").style.width = "0.2%";
-          if (document.getElementById("buffer_td_2") != null) document.getElementById("buffer_td_2").style.width = "0.2%";
-        }
-        let borderStr1 = (CompressedDisplayMode ? 0 : lineWidth) + (modernDisplay ? "px solid purple" : "px solid black");
-        let borderStr2 = lineWidth + (modernDisplay ? "px solid purple" : "px solid black");
-        document.getElementById("my_canvas_cell").style.border = borderStr1;
-        let allButtons = document.getElementsByClassName("button");
-        for (let i = 0; i < allButtons.length; i++) {
-          allButtons[i].style.border = borderStr2;
-        }
-        let allRadioButtons = document.getElementsByClassName("radio");
-        if (height < 500) {
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = "12px";
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = "12px";
-          }
-        }
-        else {
-          for (let i = 0; i < allButtons.length; i++) {
-            allButtons[i].style.fontSize = (CompressedDisplayMode ? "2.5vh" : "2vh"); // proportional to viewport height
-          }
-          for (let i = 0; i < allRadioButtons.length; i++) {
-            allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "2.5vh" : "2vh"); // proportional to viewport height
-          }
-        }
+        catch (err) {}
 
-        var $td = $('canvas').parent(); // (my_canvas_cell)
-        width = $td.width(); // (may have changed above)
-        height = $td.height(); // (may have changed above)
-        updateAttributesWidthAndHeightValues(width, height);
-        canvas.width = width;/* (necessary as canvas may have been expanded to fill its container) */
-        canvas.height = height;/* (necessary as canvas may have been expanded to fill its container) */
+        left_border_margin_x = 0.75;   // Left border margin for x axis in %
+        right_border_margin_x = 0.25;  // Right border margin for x axis in %
+        bottom_border_margin_y = 1.25; // Bottom border margin for y axis in %
+        top_border_margin_y = 0.65;    // Top border margin for y axis in %
+
+      }
+      else {
+
+        for (let i = nbMinColumns; i <= nbMaxColumns; i++) {
+          document.getElementById("columnsspan_" + i).textContent = nbColumnsRadioObjectIniNames[i-nbMinColumns];
+        }
+        document.getElementById("resetCurrentCodeButton").value = resetCurrentCodeButtonIniName;
+        document.getElementById("playRandomCodeButton").value = playRandomCodeButtonIniName;
+        document.getElementById("revealSecretColorButton").value = revealSecretColorButtonIniName;
+        document.getElementById("showPossibleCodesButton").value = showPossibleCodesButtonIniName;
+        document.getElementById("my_table").style.width = "75%";
+        document.getElementById("my_table").style.height = "90%";
+        document.getElementById("my_table").style.left = "12.5%";
+        document.getElementById("my_table").style.top = "2%";
+
+        try { // (try/catch because optional pictures)
+          document.getElementById("img_1").style.display = 'inline';
+          document.getElementById("img_2").style.display = 'inline';
+        }
+        catch (err) {}
+
+        left_border_margin_x = 5.0;   // Left border margin for x axis in %
+        right_border_margin_x = 5.0;  // Right border margin for x axis in %
+        bottom_border_margin_y = 2.5; // Bottom border margin for y axis in %
+        top_border_margin_y = 2.5;    // Top border margin for y axis in %
 
       }
 
-    } while (false && resize_detected && (resize_cnt <= 5)); // several iterative calls are necessary to redraw the canvas with proper width and height on window resize => reason was "relative canvas position" / no longer applicable
+      if (CompressedDisplayMode) {
+        if (document.getElementById("buffer_td_1") != null) document.getElementById("buffer_td_1").style.width = "0%";
+        if (document.getElementById("buffer_td_2") != null) document.getElementById("buffer_td_2").style.width = "0%";
+      }
+      else {
+        if (document.getElementById("buffer_td_1") != null) document.getElementById("buffer_td_1").style.width = "0.2%";
+        if (document.getElementById("buffer_td_2") != null) document.getElementById("buffer_td_2").style.width = "0.2%";
+      }
+      document.getElementById("my_canvas_cell").style.border = borderStr1;
+      for (let i = 0; i < allButtons.length; i++) {
+        allButtons[i].style.border = borderStr2;
+      }
+      if (height < 500) {
+        for (let i = 0; i < allButtons.length; i++) {
+          allButtons[i].style.fontSize = "12px";
+        }
+        for (let i = 0; i < allRadioButtons.length; i++) {
+          allRadioButtons[i].style.fontSize = "12px";
+        }
+      }
+      else {
+        for (let i = 0; i < allButtons.length; i++) {
+          allButtons[i].style.fontSize = (CompressedDisplayMode ? "2.5vh" : "2vh"); // proportional to viewport height
+        }
+        for (let i = 0; i < allRadioButtons.length; i++) {
+          allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "2.6vh" : "2vh"); // proportional to viewport height
+        }
+      }
+
+      var $td = $('canvas').parent(); // (my_canvas_cell)
+      width = $td.width(); // (may have changed above)
+      height = $td.height(); // (may have changed above)
+      updateAttributesWidthAndHeightValues(width, height);
+      canvas.width = width;/* (necessary as canvas may have been expanded to fill its container) */
+      canvas.height = height;/* (necessary as canvas may have been expanded to fill its container) */
+
+    } // resize detected
+
+    for (let i = 0; i < allRadioButtons.length; i++) {
+      if (nbColumnsSelected == nbMinColumns+i) {
+        if (CompressedDisplayMode) {
+          let radioColor;
+          switch (i) {
+            case 0:
+              radioColor = blueColor;
+              break;
+            case 1:
+              radioColor = greenColor;
+              break;
+            case 2:
+              radioColor = "orange";
+              break;
+            case 3:
+              radioColor = purpleColor;
+              break;
+            case 4:
+              radioColor = cyanColor;
+              break;
+            default:
+              radioColor = "orange";
+          }
+          let borderStr3 = lineWidth + "px solid " + radioColor;
+          allRadioButtons[i].style.color = radioColor;
+          allRadioButtons[i].style.border = borderStr3;
+        }
+        else {
+          allRadioButtons[i].style.color = (modernDisplay ? "purple" : "orange");
+          allRadioButtons[i].style.border = 'none';
+        }
+      }
+      else {
+        allRadioButtons[i].style.color = "black";
+        allRadioButtons[i].style.border = 'none';
+      }
+    }
 
     // Set adaptative widths
     if (window.innerWidth < 0.70*window.innerHeight) {
@@ -2834,11 +2881,6 @@ function draw_graphic_bis() {
       abbreviateScores = true;
     }
 
-    let nbColumnsSelected = getNbColumnsSelected();
-    if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
-      displayGUIError("inconsistent number of columns selected: " + nbColumnsSelected, new Error().stack);
-      nbColumnsSelected = defaultNbColumns;
-    }
     if ( newGameEvent
          || (nbColumns != nbColumnsSelected) ) { // Check event "column number change"
       resetGameAttributes(nbColumnsSelected);
@@ -3360,38 +3402,24 @@ function draw_graphic_bis() {
         // *************
 
         ctx.font = medium3_bold_font;
-        if ( (nbGamesPlayedAndWon <= 2222) || (localStorage.gamesok && (Number(localStorage.gamesok) <= 32)) ) { // (condition duplicated for mouse click management)
-          let starStr = "\u2009\u2B50\u2009"; // star
-          let themesFullyDisplayed = true;
-          let themeStr1 = "Display"; // (longest string overall first)
-          let themeStr2 = "Disp";
-          if (!displayString(starStr + themeStr1 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
-                             darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-            if (!displayString(starStr + themeStr2 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
-                               darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-              themesFullyDisplayed = false;
-              displayString(starStr, 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
-                            darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
-            }
-          }
-          let helpOrInfoStr = "Info";
-          if ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 16)) {
-            helpOrInfoStr = "Help";
-          }
-          if (!themesFullyDisplayed || !displayString(starStr + helpOrInfoStr + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                                                      darkGray, backgroundColor_2, ctx, false, true, 1, true, 0)) {
-            displayString(starStr, 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                          darkGray, backgroundColor_2, ctx, false, true, 1, true, 0);
+        let defaultStr = "?";
+        let themesFullyDisplayed = true;
+        let themeStr1 = "DISPLAY"; // (longest string overall first)
+        let themeStr2 = "DISP";
+        if (!displayString(" " + themeStr1 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
+                           "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0)) {
+          if (!displayString("\u2009" + themeStr2 + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
+                             "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0)) {
+            themesFullyDisplayed = false;
+            displayString(defaultStr, 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
+                          "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0);
           }
         }
-
-        // Display game version
-        // ********************
-
-        if (false /* (skip it) */ && (!CompressedDisplayMode) && (optimal_width > 0) && (tick_width > 0)) {
-          ctx.font = very_small_font;
-          displayString(version, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width-5, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-0.07, 5,
-                        (modernDisplay ? lightGray : darkGray), backgroundColor_2, ctx, false, true, 2, true, 1, true /* (ignoreRanges) */);
+        let infoStr = "INFO";
+        if (!themesFullyDisplayed || !displayString(" " + infoStr + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                                                    "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0)) {
+          displayString(defaultStr, 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
+                        "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0);
         }
 
         // Display column headers
@@ -4064,39 +4092,26 @@ function draw_graphic_bis() {
         }
       }
 
+      let nbColumnsRadioObject = document.getElementsByName("nbColumnsSelection");
       if (currentAttemptNumber > 1) {
-        document.getElementById("columnslabel_3b").disabled = true;
-        document.getElementById("columnslabel_4b").disabled = true;
-        document.getElementById("columnslabel_5b").disabled = true;
-        document.getElementById("columnslabel_6b").disabled = true;
-        document.getElementById("columnslabel_7b").disabled = true;
-        document.getElementById("columnslabel_3b").className = "radio disabled";
-        document.getElementById("columnslabel_4b").className = "radio disabled";
-        document.getElementById("columnslabel_5b").className = "radio disabled";
-        document.getElementById("columnslabel_6b").className = "radio disabled";
-        document.getElementById("columnslabel_7b").className = "radio disabled";
-        document.getElementById("columnslabel_3").className = "radio disabled";
-        document.getElementById("columnslabel_4").className = "radio disabled";
-        document.getElementById("columnslabel_5").className = "radio disabled";
-        document.getElementById("columnslabel_6").className = "radio disabled";
-        document.getElementById("columnslabel_7").className = "radio disabled";
+        document.getElementById("columnsspan_3").className = "radio disabled";
+        document.getElementById("columnsspan_4").className = "radio disabled";
+        document.getElementById("columnsspan_5").className = "radio disabled";
+        document.getElementById("columnsspan_6").className = "radio disabled";
+        document.getElementById("columnsspan_7").className = "radio disabled";
+        for (let i = 0; i < nbColumnsRadioObject.length; i++) {
+            nbColumnsRadioObject[i].disabled = true;
+        }
       }
       else {
-        document.getElementById("columnslabel_3b").disabled = false;
-        document.getElementById("columnslabel_4b").disabled = false;
-        document.getElementById("columnslabel_5b").disabled = false;
-        document.getElementById("columnslabel_6b").disabled = false;
-        document.getElementById("columnslabel_7b").disabled = false;
-        document.getElementById("columnslabel_3b").className = "radio";
-        document.getElementById("columnslabel_4b").className = "radio";
-        document.getElementById("columnslabel_5b").className = "radio";
-        document.getElementById("columnslabel_6b").className = "radio";
-        document.getElementById("columnslabel_7b").className = "radio";
-        document.getElementById("columnslabel_3").className = "radio";
-        document.getElementById("columnslabel_4").className = "radio";
-        document.getElementById("columnslabel_5").className = "radio";
-        document.getElementById("columnslabel_6").className = "radio";
-        document.getElementById("columnslabel_7").className = "radio";
+        document.getElementById("columnsspan_3").className = "radio";
+        document.getElementById("columnsspan_4").className = "radio";
+        document.getElementById("columnsspan_5").className = "radio";
+        document.getElementById("columnsspan_6").className = "radio";
+        document.getElementById("columnsspan_7").className = "radio";
+        for (let i = 0; i < nbColumnsRadioObject.length; i++) {
+            nbColumnsRadioObject[i].disabled = false;
+        }
       }
 
       document.getElementById("playRandomCodeButton").disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts-1) /* (from last but one attempt) */);
@@ -4667,7 +4682,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     drawLineWithPath(ctx, x_0, y_0_next_bis, x_0_next, y_0_bis);
   }
 
-  if ((mark.nbBlacks + mark.nbWhites == 0) && ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 32)) && (!worst_mark_alert_already_displayed) && (nb_worst_mark_alert_displayed<= 2)) {
+  if ((mark.nbBlacks + mark.nbWhites == 0) && ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 30)) && (!worst_mark_alert_already_displayed) && (nb_worst_mark_alert_displayed<= 2)) {
     worst_mark_alert_already_displayed = true;
     nb_worst_mark_alert_displayed++;
     setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 444);
@@ -4886,7 +4901,7 @@ draw_graphic();
 updateThemeAttributes();
 
 let canvas = document.getElementById("my_canvas");
-canvas.addEventListener("click", mouseClick, false);
+canvas.addEventListener("mousedown", mouseClick, false);
 canvas.addEventListener("mousemove", mouseMove, false);
 
 // Welcome message at very first game on android app
