@@ -414,8 +414,8 @@
             }
             if ( !localStorage.lastAdsDisplayTime || ((new Date()).getTime() - localStorage.lastAdsDisplayTime >= 8*3600*1000) // 8 hours
                  || !localStorage.lastAdsDisplayGamesOk || (localStorage.gamesok - localStorage.lastAdsDisplayGamesOk >= 25) ) {
-              localStorage.lastAdsDisplayTime = (new Date()).getTime();
-              localStorage.lastAdsDisplayGamesOk = localStorage.gamesok;
+              localStorage.lastAdsDisplayTime = (new Date()).getTime(); // (duplicated code in index.html)
+              localStorage.lastAdsDisplayGamesOk = localStorage.gamesok; // (duplicated code in index.html)
               // Load page with ads
               window.location.href = 'index.html';
             }
