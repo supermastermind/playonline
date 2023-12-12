@@ -851,7 +851,15 @@ function onGameSolverMsg(e) {
 // Event-related functions
 // ***********************
 
-function newGameButtonClick_delayed() {
+function newGameButtonClick_delayed(display_ads_if_needed) {
+
+  // Display ads if needed
+  if (display_ads_if_needed) {
+    if (typeof displayAdsIfNeeded !== 'undefined') {
+      displayAdsIfNeeded();
+    }
+  }
+
   // Transition effect 1/2
   try {
     $(".page_transition").fadeIn("fast");
@@ -884,7 +892,7 @@ function newGameButtonClick_delayed() {
 function gameAbortionEnd() {
   $(".game_aborted").fadeOut(250);
   dsCode = false;
-  newGameButtonClick_delayed();
+  newGameButtonClick_delayed(true);
 }
 
 newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
@@ -910,7 +918,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
         nbOnGoingGamesAborted++;
 
         if (nbColumns == 3) {
-          setTimeout("dsCode = false; newGameButtonClick_delayed();", 2500);
+          setTimeout("dsCode = false; newGameButtonClick_delayed(true);", 2500);
         }
         else {
           let game_aborted_str = "<b>Current game was aborted"
@@ -921,7 +929,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
 
           // Transition effect
           try {
-            $(".game_aborted").fadeIn((nbColumns <= 4) ? 2000 : 3000);
+            $(".game_aborted").fadeIn((nbColumns <= 4) ? 2000 : 2500);
           }
           catch (exc) {
           }
@@ -934,7 +942,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
 
       }
       else {
-        newGameButtonClick_delayed();
+        newGameButtonClick_delayed(true);
       }
 
     }
@@ -2034,7 +2042,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
               displayGUIError("unexpected gameInv loop (1): " + gameInv, new Error().stack);
             }
             else {
-              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
+              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
             }
         }
         else if ( !((marks[2].nbBlacks == 0) && (marks[2].nbWhites == 0))
@@ -2050,7 +2058,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
               displayGUIError("unexpected gameInv loop (2): " + gameInv, new Error().stack);
             }
             else {
-              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
+              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
             }
         }
       }
@@ -2070,7 +2078,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
                 displayGUIError("unexpected gameInv loop (3): " + gameInv, new Error().stack);
               }
               else {
-                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
+                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
               }
         }
       }
@@ -2108,7 +2116,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
                 displayGUIError("unexpected gameInv loop (4): " + gameInv, new Error().stack);
               }
               else {
-                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(" + nbColumns + ");}", 14);
+                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
               }
         }
       }

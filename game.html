@@ -403,6 +403,30 @@ if ( localStorage.playerid
 repetitiveErrorsUser = true;
 }
 
+function displayAdsIfNeeded() {
+if (localStorage.gamesok && (Number(localStorage.gamesok) >= 12)) {
+if (!android_appli) {
+if (localStorage.lastAdsDisplayTime && ((new Date()).getTime() - localStorage.lastAdsDisplayTime <= 20*60*1000)) { // 20 minutes
+return;
+}
+if (localStorage.lastAdsDisplayGamesOk && (localStorage.gamesok - localStorage.lastAdsDisplayGamesOk <= 2)) {
+return;
+}
+if ( !localStorage.lastAdsDisplayTime || ((new Date()).getTime() - localStorage.lastAdsDisplayTime >= 8*3600*1000) // 8 hours
+|| !localStorage.lastAdsDisplayGamesOk || (localStorage.gamesok - localStorage.lastAdsDisplayGamesOk >= 25) ) {
+localStorage.lastAdsDisplayTime = (new Date()).getTime();
+localStorage.lastAdsDisplayGamesOk = localStorage.gamesok;
+// Load page with ads
+window.location.href = 'index.html';
+}
+}
+// else: ads for android appli case: to be completed in the future
+}
+}
+if (!globalErrorStatus) {
+displayAdsIfNeeded();
+}
+
 var unknownIPAddressPrefix = '0.0.0'; // (Note: checked by GS SCRIPT)
 var rulesTableWidthStr = "44%";
 var scoresTableWidthStr = "100%";
@@ -688,8 +712,8 @@ var date = new Date();
 var m = date.getMonth();
 var d = date.getDate();
 if (!android_appli) {
-if ( ((m == 11) && (d >= 12)) // after December 12th
-|| ((m == 0) && (d <= 5)) ) { // before January 5th
+if ( ((m == 11) && (d >= 15)) // after December 15th
+|| ((m == 0) && (d <= 2)) ) { // before January 2nd
 // (Display values will be updated below if necessary)
 document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>&nbsp;<br><img id='img_2' style='display:none;' src='img/End_of_year2.png'>&nbsp;");
 }
