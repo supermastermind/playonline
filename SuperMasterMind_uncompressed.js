@@ -1658,15 +1658,10 @@ function resetGameAttributes(nbColumnsSelected) {
   }
 
   try {
-    /* if ( (!android_appli) && mobileMode && androidMode
-         && localStorage.androidAppNotifShown && (Number(localStorage.androidAppNotifShown) >= 5)
-         && localStorage.gamesok && (Number(localStorage.gamesok) > 55) ) {
-      window.location.replace(android_app_url); // redirect to android appli page => given up as appli can become obsolete in Google Play
-    }
-    else */ if ( (!android_appli) && mobileMode && androidMode
+    if ( (!android_appli) && mobileMode && androidMode
                  && ( (!localStorage.gamesok && (game_cnt == 1)) // very first game played
                       || (localStorage.gamesok && ((Number(localStorage.gamesok) == 11) || (Number(localStorage.gamesok) == 22) || (Number(localStorage.gamesok) == 44) || (Number(localStorage.gamesok) == 67) || (Number(localStorage.gamesok) == 88) || (Number(localStorage.gamesok) == 128) || (Number(localStorage.gamesok) == 256))) )
-               ) {
+       ) {
       show_play_store_app();
     }
     else if ( (!android_appli) && (!mobileMode) && localStorage.gamesok && (Number(localStorage.gamesok) > 0) && ((Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) % 71 == 0) || (Number(localStorage.gamesok) % 444 == 0) || (Number(localStorage.gamesok) % 1004 == 0) || (Number(localStorage.gamesok) % 1444 == 0)) ) {
@@ -1675,17 +1670,16 @@ function resetGameAttributes(nbColumnsSelected) {
     else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 50) || (Number(localStorage.gamesok) == 77) || (Number(localStorage.gamesok) == 112) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 204) || (Number(localStorage.gamesok) == 304) || (Number(localStorage.gamesok) == 404) || (Number(localStorage.gamesok) == 707) || (Number(localStorage.gamesok) == 1061) || (Number(localStorage.gamesok) == 1333) || (Number(localStorage.gamesok) == 1644) || (Number(localStorage.gamesok) == 2004)) ) {
       show_play_store_app("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put some stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br><big>&#x1F603;&#x1F603;&#x1F603;</big><br>on&nbsp;Google&nbsp;Play", true);
     }
-    /* else if ( android_appli && localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) > 0) && (Number(localStorage.gamesok) < 3333) && (Number(localStorage.gamesok) % 314 == 0) && !localStorage.accountsAlreadyMerged ) {
-      show_play_store_app("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you want to merge your smartphone account & your computer account (to share the same scores on all devices), just send an email using the&nbsp;<a href='contact_info.html'>contact info</a> page", true);
-    } */
-    else if ( localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 105) && (nbGamesPlayedAndWon >= 1)
-              && localStorage.lastDonationTimeT && ((new Date()).getTime() - localStorage.lastDonationTimeT > 1.0*30.5*24*60*60*1000 /* (~1.0 month) */) ) {
+    else if ( localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 55) && (nbGamesPlayedAndWon >= 1)
+              && localStorage.lastDonationTimeT && ((new Date()).getTime() - localStorage.lastDonationTimeT > 21*24*60*60*1000 /* (3 weeks) */) ) {
       let paypalStr =
-        "If you enjoy this game,<br>you can donate:\
+        "If you enjoy this game, you&nbsp;can&nbsp;donate:\
         <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
         <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
         <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>\
         <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+        or sometimes look at&nbsp;ads in <a href='index.html'>main&nbsp;page</a> (it&nbsp;will bring small&nbsp;revenue)<br>\
+        <hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>\
         Thanks for your support<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
       show_play_store_app("", false, "<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>" + paypalStr);
       localStorage.lastDonationTimeT = (new Date()).getTime();
