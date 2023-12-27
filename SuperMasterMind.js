@@ -11,7 +11,7 @@ debug_game_state=68;
 // *************************************************************************
 // Main game variables
 // *******************
-let version="v4.5";
+let version="v4.6";
 let nominalGameNbColumns=5;
 let nominalGameNbColors=8;
 let nominalGameNbMaxAttempts=12;
@@ -224,7 +224,7 @@ lastHoverColor=newColor;
 function updateThemeAttributes(){
 document.getElementById("my_table").style.backgroundColor=(modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
 document.getElementById("my_canvas_cell").style.border=document.getElementById("my_canvas_cell").style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
-let allButtons=document.getElementsByClassName("button");
+let allButtons=document.getElementsByName("button_name");
 for (let i=0;i < allButtons.length;i++){
 allButtons[i].style.border=allButtons[i].style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
 }
@@ -2279,13 +2279,13 @@ if( (nbColumnsSelected < 0)||(nbColumnsSelected > nbMaxColumns) ){
 displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected, new Error().stack);
 nbColumnsSelected=defaultNbColumns;
 }
-let allButtons=document.getElementsByClassName("button");
+let allButtons=document.getElementsByName("button_name");
 if(allButtons.length==0){
-throw new Error("allButtons.length==0");
+throw new Error("allButtons.length is null");
 }
-let allRadioButtons=document.getElementsByClassName("radio");
+let allRadioButtons=document.getElementsByName("radio_name");
 if(allRadioButtons.length==0){
-throw new Error("allRadioButtons.length==0");
+throw new Error("allRadioButtons.length is null");
 }
 let lineWidth=getLineWidth(window.innerHeight, 1);
 let borderStr1=(CompressedDisplayMode ? 0 : lineWidth)+(modernDisplay ? "px solid purple" : "px solid black");
