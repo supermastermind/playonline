@@ -2281,7 +2281,12 @@ nbColumnsSelected=defaultNbColumns;
 }
 let allButtons=document.getElementsByName("button_name");
 if(allButtons.length==0){
-throw new Error("allButtons.length is null");
+let debugStr="NA";
+try {
+debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
+}
+catch (exc) {}
+throw new Error("allButtons.length is null: "+debugStr);
 }
 let allRadioButtons=document.getElementsByName("radio_name");
 if(allRadioButtons.length==0){

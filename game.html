@@ -1452,6 +1452,25 @@ window.onrejectionhandled = function(evt) {
 game_event_onerrors(evt, "GAME REJECTIONHANDLED ERROR", "onrejectionhandled");
 };
 
+var documentDOMContentLoadedEventReceived = "no";
+document.addEventListener("DOMContentLoaded", function() {
+try {
+documentDOMContentLoadedEventReceived = "yes";
+let allButtons = document.getElementsByName("button_name");
+documentDOMContentLoadedEventReceived = documentDOMContentLoadedEventReceived + " (" + allButtons.length + ")";
+}
+catch (exc) {}
+});
+var windowOnLoadEventReceived = "no";
+window.onload = function() {
+try {
+windowOnLoadEventReceived = "yes";
+let allButtons = document.getElementsByName("button_name");
+windowOnLoadEventReceived = windowOnLoadEventReceived + " (" + allButtons.length + ")";
+}
+catch (exc) {}
+}
+
 var glbScoreAndPerfHistorySize = 20; // (shall be > 5)
 var glbScoreAndPerfHistoryArrayNamePrefix = "glbScoreAndPerfHistoryArray";
 var glbScoreNAValue = -100; // (also used for init value in max calculation)
