@@ -2671,7 +2671,9 @@ function draw_graphic_bis() {
       catch (exc) {}
       if (!localStorage.reloadCase1) {
         localStorage.reloadCase1 = "y";
-        location.reload(true); // one reload attempt
+        if (localStorage.reloadCase1) { // (defense)
+          location.reload(true); // one reload attempt
+        }
       }
       throw new Error("allButtons.length is null: " + debugStr);
     }

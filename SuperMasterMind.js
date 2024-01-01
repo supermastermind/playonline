@@ -2288,7 +2288,9 @@ debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
 catch (exc) {}
 if(!localStorage.reloadCase1){
 localStorage.reloadCase1="y";
+if(localStorage.reloadCase1){
 location.reload(true);
+}
 }
 throw new Error("allButtons.length is null: "+debugStr);
 }
