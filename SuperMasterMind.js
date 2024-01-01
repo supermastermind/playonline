@@ -2286,6 +2286,10 @@ try {
 debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
 }
 catch (exc) {}
+if(!localStorage.reloadCase1){
+localStorage.reloadCase1="y";
+location.reload(true);
+}
 throw new Error("allButtons.length is null: "+debugStr);
 }
 let allRadioButtons=document.getElementsByName("radio_name");
