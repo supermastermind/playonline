@@ -2669,12 +2669,6 @@ function draw_graphic_bis() {
         debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
       }
       catch (exc) {}
-      if (!localStorage.reloadCase1) {
-        localStorage.reloadCase1 = "y";
-        if (localStorage.reloadCase1) { // (defense)
-          location.reload(true); // one reload attempt
-        }
-      }
       throw new Error("allButtons.length is null: " + debugStr);
     }
     let allRadioButtons = document.getElementsByName("radio_name");
