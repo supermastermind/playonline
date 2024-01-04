@@ -605,29 +605,29 @@ locationURLs[1] = 'https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792'
 <tr>
 <td style='width:0%;margin:0;padding:0;' id='buffer_td_1'></td>
 <td style='margin:0;padding:0;vertical-align:middle;text-align:center;white-space:nowrap'>
-<input id='newGameButton' class='button disabled' type='button' name='button_name' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' style='margin-bottom:0.5vh;' disabled>
+<input id='newGameButton' class='button disabled' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' style='margin-bottom:0.5vh;' disabled>
 
 <form action='' class='not_selectable'>
 <label title='Very easy game'>
-<input type="radio" name='nbColumnsSelection' value="3" onclick='newGameButtonClick(3)'><span id='columnsspan_3' class='radio disabled' name='radio_name'>3 columns</span>
+<input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_3' value="3" onclick='newGameButtonClick(3)'><span id='columnsspan_3' class='radio disabled' name='radio_name'>3 columns</span>
 </label><br>
 <label title='Master Mind'>
-<input type="radio" name='nbColumnsSelection' value="4" onclick='newGameButtonClick(4)'><span id='columnsspan_4' class='radio disabled' name='radio_name'>4 columns</span>
+<input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_4' value="4" onclick='newGameButtonClick(4)'><span id='columnsspan_4' class='radio disabled' name='radio_name'>4 columns</span>
 </label><br>
 <label title='Super Master Mind'>
-<input type="radio" name='nbColumnsSelection' value="5" onclick='newGameButtonClick(5)'><span id='columnsspan_5' class='radio disabled' name='radio_name'>5 columns</span>
+<input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_5' value="5" onclick='newGameButtonClick(5)'><span id='columnsspan_5' class='radio disabled' name='radio_name'>5 columns</span>
 </label><br>
 <label title='Mega Master Mind'>
-<input type="radio" name='nbColumnsSelection' value="6" onclick='newGameButtonClick(6)'><span id='columnsspan_6' class='radio disabled' name='radio_name'>6 columns</span>
+<input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_6' value="6" onclick='newGameButtonClick(6)'><span id='columnsspan_6' class='radio disabled' name='radio_name'>6 columns</span>
 </label><br>
 <label title='Ultra Master Mind'>
-<input type="radio" name='nbColumnsSelection' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class='radio disabled' name='radio_name'>7 columns</span>
+<input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_7' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class='radio disabled' name='radio_name'>7 columns</span>
 </label><br>
 </form>
-<input id='resetCurrentCodeButton' class='button disabled' type='button' name='button_name' value='Reset current code' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
-<input id='playRandomCodeButton' class='button disabled' type='button' name='button_name' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
-<input id='revealSecretColorButton' class='button disabled' type='button' name='button_name' value='Reveal secret color' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-<input id='showPossibleCodesButton' class='button disabled' type='button' name='button_name' value='Show possible codes' title='Show possible codes at each stage of the game (when game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
+<input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
+<input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
+<input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
+<input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show possible codes at each stage of the game (when game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
 </td>
 <td style='width:0%;margin:0;padding:0;' id='buffer_td_2'></td>
 <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
@@ -1456,8 +1456,6 @@ var documentDOMContentLoadedEventReceived = "no";
 document.addEventListener("DOMContentLoaded", function() {
 try {
 documentDOMContentLoadedEventReceived = "yes";
-let allButtons = document.getElementsByName("button_name");
-documentDOMContentLoadedEventReceived = documentDOMContentLoadedEventReceived + " (" + allButtons.length + ")";
 }
 catch (exc) {}
 });
@@ -1465,8 +1463,6 @@ var windowOnLoadEventReceived = "no";
 window.onload = function() {
 try {
 windowOnLoadEventReceived = "yes";
-let allButtons = document.getElementsByName("button_name");
-windowOnLoadEventReceived = windowOnLoadEventReceived + " (" + allButtons.length + ")";
 }
 catch (exc) {}
 }

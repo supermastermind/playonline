@@ -11,7 +11,7 @@ debug_game_state=68;
 // *************************************************************************
 // Main game variables
 // *******************
-let version="v4.6";
+let version="v4.7";
 let nominalGameNbColumns=5;
 let nominalGameNbColors=8;
 let nominalGameNbMaxAttempts=12;
@@ -98,6 +98,66 @@ let workerCreationTime=-1;
 let workerTerminationTime=-1;
 // GUI variables
 // *************
+let nbButtons=5;
+let allButtons=new Array(1);
+allButtons[0]=document.getElementById("newGameButton");
+allButtons[1]=document.getElementById("resetCurrentCodeButton");
+allButtons[2]=document.getElementById("playRandomCodeButton");
+allButtons[3]=document.getElementById("revealSecretColorButton");
+allButtons[4]=document.getElementById("showPossibleCodesButton");
+if(allButtons.length!=nbButtons){
+throw new Error("invalid allButtons.length: "+allButtons.length);
+}
+for (let i=0;i < allButtons.length;i++){
+if(allButtons[i]==null){
+let debugStr="NA";
+try{
+debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
+}
+catch (exc){}
+throw new Error("button at index "+i+" was not found (page load info: "+debugStr+")");
+}
+}
+let nbNbColumnsRadioObjects=5;
+let nbColumnsRadioObjects=new Array(1);
+nbColumnsRadioObjects[0]=document.getElementById("nbColumnsSelection_3");
+nbColumnsRadioObjects[1]=document.getElementById("nbColumnsSelection_4");
+nbColumnsRadioObjects[2]=document.getElementById("nbColumnsSelection_5");
+nbColumnsRadioObjects[3]=document.getElementById("nbColumnsSelection_6");
+nbColumnsRadioObjects[4]=document.getElementById("nbColumnsSelection_7");
+if(nbColumnsRadioObjects.length!=nbNbColumnsRadioObjects){
+throw new Error("invalid nbColumnsRadioObjects.length: "+nbColumnsRadioObjects.length);
+}
+for (let i=0;i < nbColumnsRadioObjects.length;i++){
+if(nbColumnsRadioObjects[i]==null){
+let debugStr="NA";
+try{
+debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
+}
+catch (exc){}
+throw new Error("nbcolumns radio object at index "+i+" was not found (page load info: "+debugStr+")");
+}
+}
+let nbRadioButtons=5;
+let allRadioButtons=new Array(1);
+allRadioButtons[0]=document.getElementById("columnsspan_3");
+allRadioButtons[1]=document.getElementById("columnsspan_4");
+allRadioButtons[2]=document.getElementById("columnsspan_5");
+allRadioButtons[3]=document.getElementById("columnsspan_6");
+allRadioButtons[4]=document.getElementById("columnsspan_7");
+if(allRadioButtons.length!=nbRadioButtons){
+throw new Error("invalid allRadioButtons.length: "+allRadioButtons.length);
+}
+for (let i=0;i < allRadioButtons.length;i++){
+if(allRadioButtons[i]==null){
+let debugStr="NA";
+try{
+debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
+}
+catch (exc){}
+throw new Error("radio button at index "+i+" was not found (page load info: "+debugStr+")");
+}
+}
 let newGameButtonIniName=document.getElementById("newGameButton").value;
 let nbColumnsRadioObjectIniNames=new Array(nbMaxColumns-nbMinColumns+1);
 for (let i=nbMinColumns;i <=nbMaxColumns;i++){
@@ -224,7 +284,6 @@ lastHoverColor=newColor;
 function updateThemeAttributes(){
 document.getElementById("my_table").style.backgroundColor=(modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
 document.getElementById("my_canvas_cell").style.border=document.getElementById("my_canvas_cell").style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
-let allButtons=document.getElementsByName("button_name");
 for (let i=0;i < allButtons.length;i++){
 allButtons[i].style.border=allButtons[i].style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
 }
@@ -1182,23 +1241,19 @@ draw_graphic(false);
 }
 let previousNbColumns=-1;
 function getNbColumnsSelected(){
-let nbColumnsRadioObject=document.getElementsByName("nbColumnsSelection");
-if(nbColumnsRadioObject.length==0){
-throw new Error("getNbColumnsSelected error: null nbColumnsRadioObject.length");
-}
-for (let i=0;i < nbColumnsRadioObject.length;i++){
-if(nbColumnsRadioObject[i].checked){
-previousNbColumns=parseInt(nbColumnsRadioObject[i].value);
+for (let i=0;i < nbColumnsRadioObjects.length;i++){
+if(nbColumnsRadioObjects[i].checked){
+previousNbColumns=parseInt(nbColumnsRadioObjects[i].value);
 return previousNbColumns;
 }
 }
 if(previousNbColumns==-1){
-nbColumnsRadioObject[defaultNbColumns-nbMinColumns].checked="checked";
-previousNbColumns=parseInt(nbColumnsRadioObject[defaultNbColumns-nbMinColumns].value);
+nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].checked="checked";
+previousNbColumns=parseInt(nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].value);
 return previousNbColumns;
 }
 else{
-nbColumnsRadioObject[previousNbColumns-nbMinColumns].checked="checked";
+nbColumnsRadioObjects[previousNbColumns-nbMinColumns].checked="checked";
 return previousNbColumns;
 }
 }
@@ -1409,7 +1464,7 @@ show_play_store_app("<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr
 }
 else if( localStorage.firstname&&localStorage.gamesok&&(Number(localStorage.gamesok) >=55)&&(nbGamesPlayedAndWon >=1)
 &&localStorage.lastDonationTimeT&&((new Date()).getTime() - localStorage.lastDonationTimeT > 21*24*60*60*1000 /* (3 weeks) */) ){
-let paypalStr =
+let paypalStr=
 "If you enjoy this game, you&nbsp;can&nbsp;donate:\
 <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
@@ -2278,19 +2333,6 @@ let nbColumnsSelected=getNbColumnsSelected();
 if( (nbColumnsSelected < 0)||(nbColumnsSelected > nbMaxColumns) ){
 displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected, new Error().stack);
 nbColumnsSelected=defaultNbColumns;
-}
-let allButtons=document.getElementsByName("button_name");
-if(allButtons.length==0){
-let debugStr="NA";
-try {
-debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
-}
-catch (exc) {}
-throw new Error("allButtons.length is null: "+debugStr);
-}
-let allRadioButtons=document.getElementsByName("radio_name");
-if(allRadioButtons.length==0){
-throw new Error("allRadioButtons.length is null");
 }
 let lineWidth=getLineWidth(window.innerHeight, 1);
 let borderStr1=(CompressedDisplayMode ? 0 : lineWidth)+(modernDisplay ? "px solid purple" : "px solid black");
@@ -3544,15 +3586,14 @@ else{
 document.getElementById("newGameButton").value=newGameButtonIniName;
 }
 }
-let nbColumnsRadioObject=document.getElementsByName("nbColumnsSelection");
 if(currentAttemptNumber > 1){
 document.getElementById("columnsspan_3").className="radio disabled";
 document.getElementById("columnsspan_4").className="radio disabled";
 document.getElementById("columnsspan_5").className="radio disabled";
 document.getElementById("columnsspan_6").className="radio disabled";
 document.getElementById("columnsspan_7").className="radio disabled";
-for (let i=0;i < nbColumnsRadioObject.length;i++){
-nbColumnsRadioObject[i].disabled=true;
+for (let i=0;i < nbColumnsRadioObjects.length;i++){
+nbColumnsRadioObjects[i].disabled=true;
 }
 }
 else{
@@ -3561,8 +3602,8 @@ document.getElementById("columnsspan_4").className="radio";
 document.getElementById("columnsspan_5").className="radio";
 document.getElementById("columnsspan_6").className="radio";
 document.getElementById("columnsspan_7").className="radio";
-for (let i=0;i < nbColumnsRadioObject.length;i++){
-nbColumnsRadioObject[i].disabled=false;
+for (let i=0;i < nbColumnsRadioObjects.length;i++){
+nbColumnsRadioObjects[i].disabled=false;
 }
 }
 document.getElementById("playRandomCodeButton").disabled=(!gameOnGoing()||(currentAttemptNumber >=nbMaxAttempts-1) /* (from last but one attempt) */);
