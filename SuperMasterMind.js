@@ -125,11 +125,13 @@ nbColumnsRadioObjects[1]=document.getElementById("nbColumnsSelection_4");
 nbColumnsRadioObjects[2]=document.getElementById("nbColumnsSelection_5");
 nbColumnsRadioObjects[3]=document.getElementById("nbColumnsSelection_6");
 nbColumnsRadioObjects[4]=document.getElementById("nbColumnsSelection_7");
-if (nbColumnsRadioObjects[0]==null){
+let debugStrBackwardCompat="(a)";
+if(nbColumnsRadioObjects[0]==null){
+debugStrBackwardCompat="(b)";
 nbColumnsRadioObjects=document.getElementsByName("nbColumnsSelection");
 }
 if(nbColumnsRadioObjects.length!=nbNbColumnsRadioObjects){
-throw new Error("invalid nbColumnsRadioObjects.length: "+nbColumnsRadioObjects.length);
+throw new Error("invalid nbColumnsRadioObjects.length: "+nbColumnsRadioObjects.length+" "+debugStrBackwardCompat);
 }
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 if(nbColumnsRadioObjects[i]==null){
