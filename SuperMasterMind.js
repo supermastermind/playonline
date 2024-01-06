@@ -125,6 +125,9 @@ nbColumnsRadioObjects[1]=document.getElementById("nbColumnsSelection_4");
 nbColumnsRadioObjects[2]=document.getElementById("nbColumnsSelection_5");
 nbColumnsRadioObjects[3]=document.getElementById("nbColumnsSelection_6");
 nbColumnsRadioObjects[4]=document.getElementById("nbColumnsSelection_7");
+if (nbColumnsRadioObjects[0]==null){
+nbColumnsRadioObjects=document.getElementsByName("nbColumnsSelection");
+}
 if(nbColumnsRadioObjects.length!=nbNbColumnsRadioObjects){
 throw new Error("invalid nbColumnsRadioObjects.length: "+nbColumnsRadioObjects.length);
 }
