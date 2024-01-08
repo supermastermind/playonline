@@ -1470,14 +1470,14 @@ show_play_store_app("<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr
 else if( localStorage.firstname&&localStorage.gamesok&&(Number(localStorage.gamesok) >=55)&&(nbGamesPlayedAndWon >=1)
 &&localStorage.lastDonationTimeT&&((new Date()).getTime() - localStorage.lastDonationTimeT > 21*24*60*60*1000 /* (3 weeks) */) ){
 let paypalStr=
-"If you enjoy this game, you&nbsp;can&nbsp;donate:\
+"If you enjoy this game, you&nbsp;can&nbsp;donate\
 <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
 <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>\
 <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-or sometimes look at&nbsp;ads in <a href='index.html'>main&nbsp;page</a> (it&nbsp;will bring small&nbsp;revenue)<br>\
+or look at some ads in the&nbsp;<a href='index.html'>main&nbsp;page</a><br>(it can bring small revenue)<br>\
 <hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>\
-Thanks for your support<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
+Thanks for your support! &#x1f603;<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 show_play_store_app("", false, "<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"+paypalStr);
 localStorage.lastDonationTimeT=(new Date()).getTime();
 if(!localStorage.nbDonationRequestsT){
@@ -1490,6 +1490,9 @@ catch (tmp_exc){}
 main_graph_update_needed=true;
 smmCodeHandler=null;
 nbColumns=nbColumnsSelected;
+if(typeof currentGameNbColumns!=='undefined'){
+currentGameNbColumns=nbColumns;
+}
 switch (nbColumns){
 case 3:
 nbColors=Math.max(nbMinColors, nominalGameNbColors - 3);

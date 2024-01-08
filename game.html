@@ -448,6 +448,7 @@ var precalculatedFileFetched = "init";
 var gamesolver_load_state = -1;
 var gamesolver_load_start_time = -1;
 var smm_load_state = -1;
+var currentGameNbColumns = -1;
 
 var modernDisplay = false;
 var legacyDisplayVariant = 0;
@@ -724,7 +725,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 
 <script>
 
-let html_compatibility_game_version = "v22.88";
+let html_compatibility_game_version = "v25.0";
 let nb_errors_submitted = 0;
 let mobileMode = false;
 let androidMode = false;
@@ -1248,7 +1249,7 @@ setTimeout(handle_stats_final_retry_str, 120000);
 }
 else { // Specific case
 document.getElementById('form_nbcolumns_id').value = "N.A."; // (ensure failure at handling)
-document.getElementById("my_form").action = smm_action;
+document.getElementById("my_form").action = ((currentGameNbColumns == 5) ? smm_action : mm_mmm_umm_action);
 my_params['form_str'] = formStr;
 }
 my_params['k'] = key;
