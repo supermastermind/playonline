@@ -100,11 +100,16 @@ let workerTerminationTime=-1;
 // *************
 let nbButtons=5;
 let allButtons=new Array(1);
-allButtons[0]=document.getElementById("newGameButton");
-allButtons[1]=document.getElementById("resetCurrentCodeButton");
-allButtons[2]=document.getElementById("playRandomCodeButton");
-allButtons[3]=document.getElementById("revealSecretColorButton");
-allButtons[4]=document.getElementById("showPossibleCodesButton");
+let newGameButtonObject=document.getElementById("newGameButton");
+allButtons[0]=newGameButtonObject;
+let resetCurrentCodeButtonObject=document.getElementById("resetCurrentCodeButton");
+allButtons[1]=resetCurrentCodeButtonObject;
+let playRandomCodeButtonObject=document.getElementById("playRandomCodeButton");
+allButtons[2]=playRandomCodeButtonObject;
+let revealSecretColorButtonObject=document.getElementById("revealSecretColorButton");
+allButtons[3]=revealSecretColorButtonObject;
+let showPossibleCodesButtonObject=document.getElementById("showPossibleCodesButton");
+allButtons[4]=showPossibleCodesButtonObject;
 if(allButtons.length!=nbButtons){
 throw new Error("invalid allButtons.length: "+allButtons.length);
 }
@@ -143,7 +148,7 @@ catch (exc){}
 throw new Error("nbcolumns radio object at index "+i+" was not found (page load info: "+debugStr+")");
 }
 }
-let nbRadioButtons=5;
+let nbRadioButtons=nbMaxColumns - nbMinColumns+1;
 let allRadioButtons=new Array(1);
 allRadioButtons[0]=document.getElementById("columnsspan_3");
 allRadioButtons[1]=document.getElementById("columnsspan_4");
@@ -163,23 +168,44 @@ catch (exc){}
 throw new Error("radio button at index "+i+" was not found (page load info: "+debugStr+")");
 }
 }
-let newGameButtonIniName=document.getElementById("newGameButton").value;
-let nbColumnsRadioObjectIniNames=new Array(nbMaxColumns-nbMinColumns+1);
-for (let i=nbMinColumns;i <=nbMaxColumns;i++){
-try{
-nbColumnsRadioObjectIniNames[i-nbMinColumns]=document.getElementById("columnsspan_"+i).textContent;
+let newGameButtonIniName=newGameButtonObject.value;
+let nbColumnsRadioObjectIniNames=new Array(allRadioButtons.length);
+for (let i=0;i < allRadioButtons.length;i++){
+nbColumnsRadioObjectIniNames[i]=allRadioButtons[i].textContent;
 }
-catch (exc){
-throw new Error("cannot find element \"columnsspan_"+i+"\"");
-}
-}
-let resetCurrentCodeButtonIniName=document.getElementById("resetCurrentCodeButton").value;
-let playRandomCodeButtonIniName=document.getElementById("playRandomCodeButton").value;
-let revealSecretColorButtonIniName=document.getElementById("revealSecretColorButton").value;
-let showPossibleCodesButtonIniName=document.getElementById("showPossibleCodesButton").value;
+let resetCurrentCodeButtonIniName=resetCurrentCodeButtonObject.value;
+let playRandomCodeButtonIniName=playRandomCodeButtonObject.value;
+let revealSecretColorButtonIniName=revealSecretColorButtonObject.value;
+let showPossibleCodesButtonIniName=showPossibleCodesButtonObject.value;
 let showPossibleCodesButtonCompressedName="\u2606";
 let showPossibleCodesButtonBackToGameName="Back to game";
 let showPossibleCodesButtonBackToGameCompressedName="\u25c0";
+let myTableObject=document.getElementById("my_table");
+if(myTableObject==null){
+throw new Error("my_table was not found");
+}
+let canvas=document.getElementById("my_canvas");
+if(canvas==null){
+throw new Error("my_canvas was not found");
+}
+let canvas_cell=document.getElementById("my_canvas_cell");
+if(canvas_cell==null){
+throw new Error("my_canvas_cell was not found");
+}
+let bufferTd1Object=document.getElementById("buffer_td_1");
+if(bufferTd1Object==null){
+throw new Error("buffer_td_1 was not found");
+}
+let bufferTd2Object=document.getElementById("buffer_td_2");
+if(bufferTd2Object==null){
+throw new Error("buffer_td_2 was not found");
+}
+let img1Object=document.getElementById("img_1");
+let img2Object=document.getElementById("img_2");
+let traceObject=document.getElementById("traces_id");
+if(traceObject==null){
+throw new Error("traces_id was not found");
+}
 let randomCodesHintToBeDisplayed=true;
 let CompressedDisplayMode=false;
 let CompressedDisplayMode_compressWidth=1000;
@@ -287,12 +313,12 @@ lastHoverColor=newColor;
 }
 }
 function updateThemeAttributes(){
-document.getElementById("my_table").style.backgroundColor=(modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
-document.getElementById("my_canvas_cell").style.border=document.getElementById("my_canvas_cell").style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
+myTableObject.style.backgroundColor=(modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
+canvas_cell.style.border=canvas_cell.style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
 for (let i=0;i < allButtons.length;i++){
 allButtons[i].style.border=allButtons[i].style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
 }
-backgroundColor_2=(modernDisplay ? document.getElementById("my_table").style.backgroundColor : "");
+backgroundColor_2=(modernDisplay ? myTableObject.style.backgroundColor : "");
 backgroundColor_3=(modernDisplay ? "#D0D0D0" : "");
 highlightColor=(modernDisplay ? "#FFFF00" : "#FFFF00");
 setLightGray();
@@ -744,7 +770,7 @@ if(data.trace_contents==undefined){
 displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined", new Error().stack);
 }
 let trace_str=data.trace_contents.concat("<br>");
-document.getElementById("traces_id").innerHTML=document.getElementById("traces_id").innerHTML.concat(trace_str);
+traceObject.innerHTML=traceObject.innerHTML.concat(trace_str);
 }
 else{
 displayGUIError("gameSolver error: unexpected rsp_type: "+data.rsp_type, new Error().stack);
@@ -796,7 +822,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("newGameButtonClick skipped");
 return;
 }
-if(!document.getElementById("newGameButton").disabled){
+if(!newGameButtonObject.disabled){
 if( (nbColumns_p==0)
 ||(currentAttemptNumber <=1) ){
 if(gameOnGoing()&&(currentAttemptNumber > 1)){
@@ -841,7 +867,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("resetCurrentCodeButtonClick skipped");
 return;
 }
-if(!document.getElementById("resetCurrentCodeButton").disabled){
+if(!resetCurrentCodeButtonObject.disabled){
 currentCode=sCodeRevealed;
 draw_graphic(false);
 }
@@ -857,7 +883,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded||dsCode){
 console.log("playRandomCodeButtonClick skipped");
 return;
 }
-if(!document.getElementById("playRandomCodeButton").disabled){
+if(!playRandomCodeButtonObject.disabled){
 randomCodesHintToBeDisplayed=false;
 nb_random_codes_played++;
 currentCode=smmCodeHandler.createRandomCode(sCodeRevealed);
@@ -869,7 +895,7 @@ if(randomCodesHintToBeDisplayed){
 if(typeof(Storage)!=='undefined'){
 if(localStorage.gamesok){
 if( (Number(localStorage.gamesok) >=100)&&((Number(localStorage.gamesok) % ((Number(localStorage.gamesok) <=400) ? 50 : 80))==0) ){
-alert("A little fun?!\nClick on the \""+document.getElementById("playRandomCodeButton").value+"\" button to play the first few codes randomly!");
+alert("A little fun?!\nClick on the \""+playRandomCodeButtonObject.value+"\" button to play the first few codes randomly!");
 randomCodesHintToBeDisplayed=false;
 }
 }
@@ -878,10 +904,10 @@ randomCodesHintToBeDisplayed=false;
 }
 function displayRevealSecretColorHintIfNeeded(){
 if(!CompressedDisplayMode){
-alert("Need some help?\nClick on the \""+document.getElementById("revealSecretColorButton").value+"\" button!");
+alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button!");
 }
 else{
-alert("Need some help?\nClick on the \""+document.getElementById("revealSecretColorButton").value+"\" button to reveal a secret color!");
+alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button to reveal a secret color!");
 }
 }
 revealSecretColorButtonClick=function(){
@@ -889,7 +915,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("revealSecretColorButtonClick skipped");
 return;
 }
-if( (!document.getElementById("revealSecretColorButton").disabled)
+if( (!revealSecretColorButtonObject.disabled)
 &&gameOnGoing()
 &&(sCode!=-1)&&(sCodeRevealed!=-1) ){
 var rsp=confirm("Do you want to reveal a color of the secret code? If so, your score will not be stored online...");
@@ -915,7 +941,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("showPossibleCodesButtonClick skipped");
 return;
 }
-if(!document.getElementById("showPossibleCodesButton").disabled){
+if(!showPossibleCodesButtonObject.disabled){
 if(showModeForced&&showPossibleCodesMode){
 return;
 }
@@ -1004,7 +1030,7 @@ catch (exc){
 if(animated_mode){
 let initialCurrentPossibleCodeShown=currentPossibleCodeShown;
 for (let i=1;i <=initialCurrentPossibleCodeShown;i++){
-setTimeout("try{if(showPossibleCodesMode &&!document.getElementById('showPossibleCodesButton').disabled&&(game_cnt=="+game_cnt+")){currentPossibleCodeShown="+i+";updateGameSizes();draw_graphic(" +!transientMode+");}}catch(possible_error){}", 444*i);
+setTimeout("try{if(showPossibleCodesMode &&!showPossibleCodesButtonObject.disabled&&(game_cnt=="+game_cnt+")){currentPossibleCodeShown="+i+";updateGameSizes();draw_graphic(" +!transientMode+");}}catch(possible_error){}", 444*i);
 }
 }
 }
@@ -1015,7 +1041,7 @@ console.log("mouseClick skipped");
 return;
 }
 let event_x_min, event_x_max, event_y_min, event_y_max;
-let rect=document.getElementById("my_canvas").getBoundingClientRect();
+let rect=canvas.getBoundingClientRect();
 let mouse_x=Math.ceil(e.clientX - rect.left);
 let mouse_y=Math.ceil(e.clientY - rect.top);
 if(dsCode){
@@ -1167,7 +1193,7 @@ return;
 }
 else if((!gameOnGoing())&&allPossibleCodesFilled()){
 let event_x_min, event_x_max, event_y_min, event_y_max;
-let rect=document.getElementById("my_canvas").getBoundingClientRect();
+let rect=canvas.getBoundingClientRect();
 let mouse_x=e.clientX - rect.left - 2.0 /* (correction) */;
 let mouse_y=e.clientY - rect.top - 2.0 /* (correction) */;
 event_x_min=get_x_pixel(x_min);
@@ -2327,7 +2353,6 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("draw_graphic_bis skipped");
 return;
 }
-let canvas=document.getElementById("my_canvas");
 let ctx=canvas.getContext("2d");
 let res;
 let draw_exception=false;
@@ -2388,24 +2413,24 @@ tickChar="\u2714";/* (check mark/tick) */
 crossChar="\u2716";/* (cross) */
 }
 if(CompressedDisplayMode){
-for (let i=nbMinColumns;i <=nbMaxColumns;i++){
-document.getElementById("columnsspan_"+i).textContent=i;
+for (let i=0;i < allRadioButtons.length;i++){
+allRadioButtons[i].textContent=nbMinColumns+i;
 }
-document.getElementById("resetCurrentCodeButton").value="\u2718";
-document.getElementById("playRandomCodeButton").value="\u266C";
-document.getElementById("revealSecretColorButton").value="?";
-document.getElementById("showPossibleCodesButton").value=showPossibleCodesButtonCompressedName;
-document.getElementById("my_table").style.width="100%";
-document.getElementById("my_table").style.height="100%";
-document.getElementById("my_table").style.left="0";
-document.getElementById("my_table").style.top="0";
+resetCurrentCodeButtonObject.value="\u2718";
+playRandomCodeButtonObject.value="\u266C";
+revealSecretColorButtonObject.value="?";
+showPossibleCodesButtonObject.value=showPossibleCodesButtonCompressedName;
+myTableObject.style.width="100%";
+myTableObject.style.height="100%";
+myTableObject.style.left="0";
+myTableObject.style.top="0";
 if(android_appli){
-document.getElementById("my_table").style.minWidth="100%";
-document.getElementById("my_table").style.minHeight="100%";
+myTableObject.style.minWidth="100%";
+myTableObject.style.minHeight="100%";
 }
 try{
-document.getElementById("img_1").style.display='none';
-document.getElementById("img_2").style.display='none';
+img1Object.style.display='none';
+img2Object.style.display='none';
 }
 catch (err){}
 left_border_margin_x=0.75;
@@ -2414,20 +2439,20 @@ bottom_border_margin_y=1.25;
 top_border_margin_y=0.65;
 }
 else{
-for (let i=nbMinColumns;i <=nbMaxColumns;i++){
-document.getElementById("columnsspan_"+i).textContent=nbColumnsRadioObjectIniNames[i-nbMinColumns];
+for (let i=0;i < allRadioButtons.length;i++){
+allRadioButtons[i].textContent=nbColumnsRadioObjectIniNames[i];
 }
-document.getElementById("resetCurrentCodeButton").value=resetCurrentCodeButtonIniName;
-document.getElementById("playRandomCodeButton").value=playRandomCodeButtonIniName;
-document.getElementById("revealSecretColorButton").value=revealSecretColorButtonIniName;
-document.getElementById("showPossibleCodesButton").value=showPossibleCodesButtonIniName;
-document.getElementById("my_table").style.width="75%";
-document.getElementById("my_table").style.height="90%";
-document.getElementById("my_table").style.left="12.5%";
-document.getElementById("my_table").style.top="2%";
+resetCurrentCodeButtonObject.value=resetCurrentCodeButtonIniName;
+playRandomCodeButtonObject.value=playRandomCodeButtonIniName;
+revealSecretColorButtonObject.value=revealSecretColorButtonIniName;
+showPossibleCodesButtonObject.value=showPossibleCodesButtonIniName;
+myTableObject.style.width="75%";
+myTableObject.style.height="90%";
+myTableObject.style.left="12.5%";
+myTableObject.style.top="2%";
 try{
-document.getElementById("img_1").style.display='inline';
-document.getElementById("img_2").style.display='inline';
+img1Object.style.display='inline';
+img2Object.style.display='inline';
 }
 catch (err){}
 left_border_margin_x=5.0;
@@ -2436,14 +2461,14 @@ bottom_border_margin_y=2.5;
 top_border_margin_y=2.5;
 }
 if(CompressedDisplayMode){
-if(document.getElementById("buffer_td_1")!=null) document.getElementById("buffer_td_1").style.width="0%";
-if(document.getElementById("buffer_td_2")!=null) document.getElementById("buffer_td_2").style.width="0%";
+if(bufferTd1Object!=null) bufferTd1Object.style.width="0%";
+if(bufferTd2Object!=null) bufferTd2Object.style.width="0%";
 }
 else{
-if(document.getElementById("buffer_td_1")!=null) document.getElementById("buffer_td_1").style.width="0.2%";
-if(document.getElementById("buffer_td_2")!=null) document.getElementById("buffer_td_2").style.width="0.2%";
+if(bufferTd1Object!=null) bufferTd1Object.style.width="0.2%";
+if(bufferTd2Object!=null) bufferTd2Object.style.width="0.2%";
 }
-document.getElementById("my_canvas_cell").style.border=borderStr1;
+canvas_cell.style.border=borderStr1;
 for (let i=0;i < allButtons.length;i++){
 allButtons[i].style.border=borderStr2;
 }
@@ -3575,90 +3600,86 @@ ctx.strokeStyle=currentColor;
 }
 }
 if(gameWon &&!allPerformancesFilled()){
-document.getElementById("newGameButton").disabled=true;
-document.getElementById("newGameButton").className ="button disabled";
+newGameButtonObject.disabled=true;
+newGameButtonObject.className ="button disabled";
 if(CompressedDisplayMode){
-document.getElementById("newGameButton").value="\u231B";/* hourglass */
+newGameButtonObject.value="\u231B";/* hourglass */
 }
 else{
-document.getElementById("newGameButton").value="PLEASE WAIT \u231B";/* hourglass */
+newGameButtonObject.value="PLEASE WAIT \u231B";/* hourglass */
 }
 }
 else{
-document.getElementById("newGameButton").disabled=false;
-document.getElementById("newGameButton").className ="button";
+newGameButtonObject.disabled=false;
+newGameButtonObject.className ="button";
 if(CompressedDisplayMode){
-document.getElementById("newGameButton").value="N";
+newGameButtonObject.value="N";
 }
 else{
-document.getElementById("newGameButton").value=newGameButtonIniName;
+newGameButtonObject.value=newGameButtonIniName;
 }
 }
 if(currentAttemptNumber > 1){
-document.getElementById("columnsspan_3").className="radio disabled";
-document.getElementById("columnsspan_4").className="radio disabled";
-document.getElementById("columnsspan_5").className="radio disabled";
-document.getElementById("columnsspan_6").className="radio disabled";
-document.getElementById("columnsspan_7").className="radio disabled";
+for (let i=0;i < allRadioButtons.length;i++){
+allRadioButtons[i].className="radio disabled";
+}
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 nbColumnsRadioObjects[i].disabled=true;
 }
 }
 else{
-document.getElementById("columnsspan_3").className="radio";
-document.getElementById("columnsspan_4").className="radio";
-document.getElementById("columnsspan_5").className="radio";
-document.getElementById("columnsspan_6").className="radio";
-document.getElementById("columnsspan_7").className="radio";
+for (let i=0;i < allRadioButtons.length;i++){
+allRadioButtons[i].className="radio";
+}
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 nbColumnsRadioObjects[i].disabled=false;
 }
 }
-document.getElementById("playRandomCodeButton").disabled=(!gameOnGoing()||(currentAttemptNumber >=nbMaxAttempts-1) /* (from last but one attempt) */);
-if(document.getElementById("playRandomCodeButton").disabled){
-document.getElementById("playRandomCodeButton").className="button disabled";
+playRandomCodeButtonObject.disabled=(!gameOnGoing()||(currentAttemptNumber >=nbMaxAttempts-1) /* (from last but one attempt) */);
+if(playRandomCodeButtonObject.disabled){
+playRandomCodeButtonObject.className="button disabled";
 }
 else{
-document.getElementById("playRandomCodeButton").className="button";
+playRandomCodeButtonObject.className="button";
 }
-document.getElementById("revealSecretColorButton").disabled=!(gameOnGoing()&&(nbColumns > 3)&&(currentAttemptNumber >=2)&&(smmCodeHandler.nbEmptyColors(sCodeRevealed)==nbColumns));
+revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns > 3)&&(currentAttemptNumber >=2)&&(smmCodeHandler.nbEmptyColors(sCodeRevealed)==nbColumns));
 if( gameOnGoing()&&(currentAttemptNumber > 1)
-&&!(document.getElementById("revealSecretColorButton").disabled)
+&&!(revealSecretColorButtonObject.disabled)
 &&(sCodeRevealed==0)
 &&( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <=5) ? 480 /* 8 min */ : 720 /* 12 min */))
 ||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */
 ||at_least_one_useless_code_played ) ){ /* (number of useless attempts) */
-document.getElementById("revealSecretColorButton").className="button";
-document.getElementById("revealSecretColorButton").className=(androidMode ? "button fast_blinking" : "button blinking");
+revealSecretColorButtonObject.className="button";
+revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" : "button blinking");
 }
-else if(document.getElementById("revealSecretColorButton").disabled){
-document.getElementById("revealSecretColorButton").className="button disabled";
-}
-else{
-document.getElementById("revealSecretColorButton").className="button";
-}
-document.getElementById("showPossibleCodesButton").disabled=!((!gameOnGoing())&&allPossibleCodesFilled());
-if(document.getElementById("showPossibleCodesButton").disabled){
-document.getElementById("showPossibleCodesButton").className="button disabled";
+else if(revealSecretColorButtonObject.disabled){
+revealSecretColorButtonObject.className="button disabled";
 }
 else{
-document.getElementById("showPossibleCodesButton").className="button";
-document.getElementById("showPossibleCodesButton").className=(androidMode ? "button fast_blinking" : "button blinking");
+revealSecretColorButtonObject.className="button";
+}
+showPossibleCodesButtonObject.disabled=!((!gameOnGoing())&&allPossibleCodesFilled());
+if(showPossibleCodesButtonObject.disabled){
+showPossibleCodesButtonObject.className="button disabled";
+}
+else{
+showPossibleCodesButtonObject.className="button";
+showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking" : "button blinking");
 }
 if(CompressedDisplayMode){
 if(showPossibleCodesMode){
-document.getElementById("showPossibleCodesButton").value=showPossibleCodesButtonBackToGameCompressedName;
+showPossibleCodesButtonObject.value=showPossibleCodesButtonBackToGameCompressedName;
 }
 else{
-document.getElementById("showPossibleCodesButton").value=showPossibleCodesButtonCompressedName;
+showPossibleCodesButtonObject.value=showPossibleCodesButtonCompressedName;
 }
 }
 else{
 if(showPossibleCodesMode){
-document.getElementById("showPossibleCodesButton").value=showPossibleCodesButtonBackToGameName;
+showPossibleCodesButtonObject.value=showPossibleCodesButtonBackToGameName;
 }
 else{
-document.getElementById("showPossibleCodesButton").value=showPossibleCodesButtonIniName;
+showPossibleCodesButtonObject.value=showPossibleCodesButtonIniName;
 }
 }
 checkArraySizes();
@@ -3690,25 +3711,25 @@ currentCodeColorMode=1;
 displayCode(currentCode, currentAttemptNumber-1, ctx, false, true);
 currentCodeColorMode=-1;
 if( gameOnGoing()&&(currentAttemptNumber > 1)
-&&!(document.getElementById("revealSecretColorButton").disabled)
+&&!(revealSecretColorButtonObject.disabled)
 &&(sCodeRevealed==0)
 &&( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <=5) ? 480 /* 8 min */ : 720 /* 12 min */))
 ||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */ ) ){
-document.getElementById("revealSecretColorButton").className="button";
-document.getElementById("revealSecretColorButton").className=(androidMode ? "button fast_blinking" : "button blinking");
+revealSecretColorButtonObject.className="button";
+revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" : "button blinking");
 }
 }
-document.getElementById("resetCurrentCodeButton").disabled =!(gameOnGoing()&&(currentCode!=sCodeRevealed));
-if(document.getElementById("resetCurrentCodeButton").disabled){
-document.getElementById("resetCurrentCodeButton").className="button disabled";
+resetCurrentCodeButtonObject.disabled =!(gameOnGoing()&&(currentCode!=sCodeRevealed));
+if(resetCurrentCodeButtonObject.disabled){
+resetCurrentCodeButtonObject.className="button disabled";
 }
 else{
-document.getElementById("resetCurrentCodeButton").className="button";
+resetCurrentCodeButtonObject.className="button";
 }
 if( last_but_one_attempt_event
 &&(nbGamesPlayedAndWon <=2)
 &&(gameOnGoing())
-&&!(document.getElementById("revealSecretColorButton").disabled)
+&&!(revealSecretColorButtonObject.disabled)
 &&(sCodeRevealed==0) ){
 setTimeout("displayRevealSecretColorHintIfNeeded();", 44);
 }
@@ -3794,7 +3815,7 @@ else if(currentCodeColorMode==3){
 ctx.strokeStyle=darkGray;
 }
 else if(currentCodeColorMode==4){
-ctx.strokeStyle=averageColor(darkGray, document.getElementById("my_table").style.backgroundColor, 0.20);
+ctx.strokeStyle=averageColor(darkGray, myTableObject.style.backgroundColor, 0.20);
 }
 else{
 ctx.strokeStyle=darkGray;
@@ -3962,20 +3983,20 @@ let foregroundColor=foregroundColorTable[color-1];
 let backgroundColor=backgroundColorTable[color-1];
 if(disabledColor){
 if((!modernDisplay)&&(legacyDisplayVariant==0)){
-foregroundColor=averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
-backgroundColor=averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
+foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.15);
+backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
 currentCodeColorMode=4;
 handleCurrentCodeColorMode=true;
 }
 else if((!modernDisplay)&&(legacyDisplayVariant==1)){
-foregroundColor=averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.10);
-backgroundColor=averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.10);
+foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.10);
+backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.10);
 currentCodeColorMode=4;
 handleCurrentCodeColorMode=true;
 }
 else{
-foregroundColor=averageColor(foregroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
-backgroundColor=averageColor(backgroundColor, document.getElementById("my_table").style.backgroundColor, 0.15);
+foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.15);
+backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
 }
 }
 if(color < 10){
@@ -4103,10 +4124,10 @@ ctx.arc(x_0_pos+x_0_pos_offset+radius,
 Math.floor((y_0+y_0_next+1)/2),
 radius,
 0, 2 * Math.PI, false);
-ctx.fillStyle=document.getElementById("my_table").style.backgroundColor;
+ctx.fillStyle=myTableObject.style.backgroundColor;
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=circleBorderWidth;
-ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), document.getElementById("my_table").style.backgroundColor, (modernDisplay ? 0.20 : 0.20));
+ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), myTableObject.style.backgroundColor, (modernDisplay ? 0.20 : 0.20));
 ctx.stroke();
 ctx.lineWidth=lineWidthIni;
 }
@@ -4320,7 +4341,6 @@ debug_game_state=68.5;
 scriptsFullyLoaded=true;
 draw_graphic();
 updateThemeAttributes();
-let canvas=document.getElementById("my_canvas");
 canvas.addEventListener("mousedown", mouseClick, false);
 canvas.addEventListener("mousemove", mouseMove, false);
 // Welcome message at very first game on android app
