@@ -752,9 +752,11 @@ else {
 lastKeyCheck = false;
 }
 };
-// Set AJAX timeout to X seconds (this will set all AJAX requests the program makes, even via $.getJSON, to have a timeout of X seconds)
+
+// Global AJAX settings
 $.ajaxSetup({
-timeout: 90000 // 90 seconds
+timeout: 90000, // 90 seconds
+cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
 });
 
 var modal_mode = -1;
