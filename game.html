@@ -1930,7 +1930,7 @@ return null;
 }
 }
 
-let GEOCODING_API_URL_BASE = "https://www.mapquestapi.com/geocoding/v1/reverse?outFormat=json&location=";
+let GEOCODING_API_URL_BASE = "https://geocode.maps.co/reverse?";
 function HTML_geolocation_success(position, debug_str_p = null) { // CALLED BY ANDROID APPLI (with debug_str_p parameter filled)
 let latitude = position.coords.latitude;
 let longitude = position.coords.longitude;
@@ -1939,7 +1939,7 @@ console.log("HTML geolocation success:");
 console.log(" latitude: " + latitude);
 console.log(" longitude: " + longitude);
 console.log(" accuracy: " + accuracy);
-let GEOCODING_API_URL = GEOCODING_API_URL_BASE + extraStr + latitude + "," + longitude + "&key=dCK" + extraStr + "xMASlEZayTGGw5SBfd2bGMSCUuP60";
+let GEOCODING_API_URL = GEOCODING_API_URL_BASE + extraStr + "lat=" + latitude + "&lon=" + longitude + "&api_key=65b" + extraStr + "bd7330aa0a629386831xwm917233";
 debug_game_state = 10;
 let debug_str = "";
 if (debug_str_p != null) {
@@ -1985,17 +1985,15 @@ $.getJSON(GEOCODING_API_URL)
 .done(function(location) {
 debug_game_state = 11;
 try {
-if (location.info.statuscode == "0") { // geocoding API success
-let country = String(location.results[0].locations[0].adminArea1).trim(); // (country name abbreviation)
-let region = String(location.results[0].locations[0].adminArea3).trim();
-let city = String(location.results[0].locations[0].adminArea5).trim();
-let zip = String(location.results[0].locations[0].postalCode).trim();
-console.log(location);
+if (location.error == undefined) { // geocoding API success
+let country = String(location.address.country).trim(); // (country name abbreviation)
+let region = String(location.address.state).trim();
+let city = String(location.address.town).trim();
+let zip = String(location.address.postcode).trim();
 console.log(" country: " + country);
 console.log(" region: " + region);
 console.log(" city: " + city);
 console.log(" zip: " + zip);
-console.log(" address: " + String(location.results[0].locations[0].street).trim());
 
 var tmp_location_data = { latitude: reformatLocationValue(latitude),
 longitude: reformatLocationValue(longitude),
@@ -2022,12 +2020,12 @@ throw new Error("HTML_geolocation_success: invalid precise location data #2: " +
 }
 else {
 console.log("HTML geolocation error: invalid location values");
-localStorage.html_geoloc_status = "ok-invalid (" + tmp_location_data.latitude + "," + tmp_location_data.longitude + ")" + debug_str;
+localStorage.html_geoloc_status = "ok-invalid" + debug_str + " (" + latitude + "," + longitude + ")";
 }
 }
 else {
-console.log("HTML geolocation error: status: " + location.info.statuscode);
-localStorage.html_geoloc_status = "nok-2/" + location.info.statuscode + debug_str;
+console.log("HTML geolocation error: location.error: " + location.error);
+localStorage.html_geoloc_status = "nok-2/" + location.error + "," + debug_str + " (" + latitude + "," + longitude + ")";
 }
 }
 catch (exc) {
@@ -2039,7 +2037,7 @@ debug_game_state = 12;
 .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
 debug_game_state = 13;
 console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-localStorage.html_geoloc_status = "nok-4" + debug_str;
+localStorage.html_geoloc_status = "nok-4" + debug_str + " " + GEOCODING_API_URL;
 debug_game_state = 14;
 });
 } // HTML_geolocation_success
