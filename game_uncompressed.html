@@ -2232,6 +2232,11 @@
         }
       }
 
+      if (!localStorage.playerid) { // ********* TEMPORARY *********
+        let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android appli)
+        localStorage.playerid = id;
+      }
+
       var last_game_cnt = -1;
       var global_geoloc_failure_alert_shown = false;
       var min_gamesok_for_firstname = 5;
