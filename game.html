@@ -2027,7 +2027,7 @@ throw new Error("HTML_geolocation_success: invalid precise location data #2: " +
 }
 else {
 console.log("HTML geolocation error: invalid location values");
-localStorage.html_geoloc_status = "ok-invalid" + debug_str + " (" + latitude + "," + longitude + "," + JSON.stringify(location.address) + ")";
+localStorage.html_geoloc_status = "ok-invalid" + debug_str + " (" + latitude + "," + longitude + ")";
 }
 }
 else {
@@ -2674,12 +2674,7 @@ var extra_debug_info = "";
 try {
 if (typeof(Storage) !== 'undefined') {
 if (localStorage.html_geoloc_status) {
-var compressed_html_geoloc_status = localStorage.html_geoloc_status;
-var debugTimeIdx = localStorage.html_geoloc_status.search(/\d\d\d\d\d\d/); // "HHmmss" debug time string
-if (debugTimeIdx != -1) {
-compressed_html_geoloc_status = localStorage.html_geoloc_status.substring(0, debugTimeIdx);
-}
-extra_debug_info = extra_debug_info + "/" + compressed_html_geoloc_status + "-"
+extra_debug_info = extra_debug_info + "/" + localStorage.html_geoloc_status + "-"
 + "A" + HTML_geoloc_attempts
 + "S" + HTML_geoloc_successes
 + "E" + HTML_geoloc_errors;
