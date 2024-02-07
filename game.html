@@ -1977,7 +1977,13 @@ try {
 if (location.error == undefined) { // geocoding API success
 let country = String(location.address.country).trim(); // (country name abbreviation)
 let region = String(location.address.state).trim();
-let city = String(location.address.town).trim();
+let city = "-"; // invalid value by default
+if (location.address.town) {
+city = String(location.address.town).trim();
+}
+else if (location.address.city) {
+city = String(location.address.city).trim();
+}
 let zip = String(location.address.postcode).trim();
 console.log(" country: " + country);
 console.log(" region: " + region);
