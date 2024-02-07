@@ -1996,6 +1996,9 @@
               else if (location.address.city) {
                 city = String(location.address.city).trim();
               }
+              else if (location.address.municipality) {
+                city = String(location.address.municipality).trim();
+              }
               let zip = String(location.address.postcode).trim();
               console.log(" country: " + country);
               console.log(" region: " + region);
