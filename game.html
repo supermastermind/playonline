@@ -1990,11 +1990,11 @@ let city = "-"; // invalid value by default
 if (location.address.town) {
 city = String(location.address.town).trim();
 }
-else if (location.address.city) {
-city = String(location.address.city).trim();
-}
 else if (location.address.village) {
 city = String(location.address.village).trim();
+}
+else if (location.address.city) {
+city = String(location.address.city).trim();
 }
 let zip = String(location.address.postcode).trim();
 console.log(" country: " + country);
