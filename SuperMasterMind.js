@@ -540,6 +540,25 @@ displayGUIError("gameSolver error: "+e.message+" at line "+e.lineno+" in "+e.fil
 function onGameSolverMessageError(e){
 displayGUIError("gameSolver MESSAGE error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
 }
+function handlePrompt() {
+var mode = prompt("Which mode do you want to select?", "444");
+if (mode == null) {
+return;
+}
+else if (mode == 222) {
+alert("Game has been running for a long time.\nRestart the app");
+// Ensure cache clearing
+console.log("webview clear cache request"); // !WARNING! -> this console text will be read by the android app so shall not be modified
+// Close the android app (to avoid reload failure cases)
+setTimeout("console.log('appli close request');", 1000); // !WARNING! -> this console text will be read by the android app so shall not be modified
+// Defense in case app was not closed
+setTimeout("console.log('webview reload request');", 2500); // !WARNING! -> this console text will be read by the android app so shall not be modified
+}
+else if (String(mode).indexOf("of") != -1) {
+document.getElementById('form_list_id').value = mode.trim();
+setTimeout("submitForm();", 444);
+}
+}
 // *************************************************************************
 // *************************************************************************
 // SmmCodeHandler class
@@ -1230,12 +1249,23 @@ lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;
 }
 }
 }
+let promptSequenceIndex = 0;
 function playAColor(color, column){
 if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("playAColor skipped");
 return;
 }
 if(gameOnGoing()){
+if ((color == 4) && (column == 3)) {
+promptSequenceIndex++;
+if (promptSequenceIndex == 8) {
+promptSequenceIndex = 0;
+setTimeout("handlePrompt()", 444);
+}
+}
+else {
+promptSequenceIndex = 0;
+}
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
 if(currentAttemptNumber==nbMaxAttempts){
 return;
