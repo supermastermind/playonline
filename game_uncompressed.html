@@ -1975,7 +1975,10 @@
           debug_game_state = 11;
           try {
             if (location.error == undefined) { // geocoding API success
-              let country = String(location.address.country).trim(); // (country name abbreviation)
+              let country = "-";
+              if (location.address.country) {
+                country = String(location.address.country).trim();
+              }
               let region = "-"; // invalid value by default
               if (location.address.state) {
                 region = String(location.address.state).trim();
@@ -2022,7 +2025,7 @@
                 localStorage.precise_city = tmp_location_data.city;
                 localStorage.precise_ip = tmp_location_data.ip;
                 localStorage.precise_location_success_time = (new Date()).getTime();
-                localStorage.html_geoloc_status = "ok" + debug_str;
+                localStorage.html_geoloc_status = "ok" + debug_str + " (" + latitude + "," + longitude + ")";
                 precise_location_data = getPreciseStoredLocationData();
                 if (!isLocationDataValid(precise_location_data)) {
                   throw new Error("HTML_geolocation_success: invalid precise location data #2: " + JSON.stringify(precise_location_data));
