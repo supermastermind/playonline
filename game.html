@@ -1864,7 +1864,7 @@ if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != undefined) &
 && (typeof data_p.longitude != 'undefined') && (data_p.longitude != undefined)  && (data_p.longitude != null)
 && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1))
 && validCountryName
-&& ((typeof data_p.city != 'undefined') && (data_p.city != undefined) && (data_p.city != null) && (data_p.city.length >= 2) && (reformatLocationValue(data_p.city) != "-") && (reformatLocationValue(data_p.city).toLowerCase() != "city") && (reformatLocationValue(data_p.city).toLowerCase() != "ville")) // rk: city may be known whereas region is not
+&& ((typeof data_p.city != 'undefined') && (data_p.city != undefined) && (data_p.city != null) && (data_p.city.length >= 2) && (reformatLocationValue(data_p.city) != "-") && (reformatLocationValue(data_p.city).toLowerCase() != "city") && (reformatLocationValue(data_p.city).toLowerCase() != "ville") && (reformatLocationValue(data_p.city).toLowerCase() != "undefined")) // rk: city may be known whereas region is not
 && validIpAddress) {
 return true;
 }
