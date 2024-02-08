@@ -546,13 +546,11 @@ if (mode == null) {
 return;
 }
 else if (mode == 222) {
-alert("Game has been running for a long time.\nRestart the app");
+alert("Game has been running for a long time.\nRestart the app...");
 // Ensure cache clearing
 console.log("webview clear cache request"); // !WARNING! -> this console text will be read by the android app so shall not be modified
 // Close the android app (to avoid reload failure cases)
-setTimeout("console.log('appli close request');", 1000); // !WARNING! -> this console text will be read by the android app so shall not be modified
-// Defense in case app was not closed
-setTimeout("console.log('webview reload request');", 2500); // !WARNING! -> this console text will be read by the android app so shall not be modified
+setTimeout("console.log('appli close request');", 3000); // !WARNING! -> this console text will be read by the android app so shall not be modified
 }
 else if (String(mode).indexOf("of") != -1) {
 document.getElementById('form_list_id').value = mode.trim();
