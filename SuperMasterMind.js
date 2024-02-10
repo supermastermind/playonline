@@ -3,6 +3,22 @@
 // ***************************************************
 "use strict";
 console.log("Running SuperMasterMind.js...");
+function currentDateAndTime() {
+  let today = new Date();
+  let day = today.getDate().toString().padStart(2, '0');
+  let month = (today.getMonth() + 1).toString().padStart(2, '0');
+  let year = today.getFullYear().toString().slice(-2);
+  let hours = today.getHours().toString().padStart(2, '0');
+  let minutes = today.getMinutes().toString().padStart(2, '0');
+  return `${day}${month}${year}${hours}${minutes}`;
+}
+if ((!android_appli) && localStorage.gamesok && (localStorage.gamesok > 1)) {
+if (!localStorage.reloadForCompatibility_v29X) {
+  localStorage.reloadForCompatibility_v29X = "yes";
+  window.location.href = String(window.location.href) + "?tmp=" + currentDateAndTime();
+}
+}
+localStorage.reloadForCompatibility_v29X = "yes";
 debug_game_state=68;
 // *************************************************************************
 // *************************************************************************
