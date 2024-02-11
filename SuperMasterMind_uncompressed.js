@@ -5,7 +5,75 @@
 "use strict";
 
 console.log("Running SuperMasterMind.js...");
+
+// **********************************
+// Check compatibility with game.html
+// **********************************
+
 debug_game_state = 68;
+
+let smm_compatibility_version = "v30"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+try { // try/catch for backward compatibility
+  current_smm_compatibility_version = smm_compatibility_version;
+}
+catch (exc) {}
+
+let loadTime = (new Date()).getTime(); // time in milliseconds
+
+function currentDateAndTime() {
+  let today = new Date();
+  let day = today.getDate().toString().padStart(2, '0');
+  let month = (today.getMonth() + 1).toString().padStart(2, '0');
+  let year = today.getFullYear().toString().slice(-2);
+  let hours = today.getHours().toString().padStart(2, '0');
+  let minutes = today.getMinutes().toString().padStart(2, '0');
+  return `${day}${month}${year}${hours}${minutes}`;
+}
+
+function reloadAllContentsDistantly() {
+  console.log("distant reload");
+  if (android_appli) { // specific webview reload in android app / cache should not increase too much on the UE
+    // Ensure cache clearing
+    console.log("webview clear cache request"); // !WARNING! -> this console text will be read by the android app so shall not be modified
+    // Close the android app (to avoid reload failure cases)
+    setTimeout("console.log('appli close request');", 3000); // !WARNING! -> this console text will be read by the android app so shall not be modified
+  }
+  else {
+    let href = String(window.location.href);
+    let params_idx = href.indexOf("?");
+    if (params_idx != -1) {
+      if (href.indexOf("android_appli") != -1) {
+        submitForm("reloadAllContentsDistantly called for " + href);
+      }
+      href = href.substring(0, params_idx);
+    }
+    // Trick the browser into thinking that the URL is different from the cached one, and force it to request the latest version of the HTML file from the server
+    // => game.html will be reloaded distantly, and javascript scripts will also be reloaded distantly because AJAX cache is disabled
+    window.location.href = href + "?tmp=" + currentDateAndTime();
+  }
+}
+
+// Check if current script version is different from game.html version:
+// script version could only be more recent as AJAX cache is disabled
+if ((!localStorage.reloadForCompatibility_v30) && (html_compatibility_game_version != smm_compatibility_version)) {
+    if (android_appli) {
+      alert("Game update detected.\nRestart the app...");
+    }
+    localStorage.reloadForCompatibility_v30 = "distant reload request done on " + currentDateAndTime();
+    reloadAllContentsDistantly();
+}
+
+function reloadAllContentsDistantlyIfNeeded() {
+  if ((new Date()).getTime() - loadTime >= (mobileMode ? 3 : 1)*24*3600*1000) { // 1 or 3 days (reload the page/webview distantly to allow application of changes)
+    loadTime = (new Date()).getTime(); // time in milliseconds - defense against potential repetitive reloads
+    if (android_appli) {
+      alert("Game has been running for a long time.\nRestart the app...");
+    }
+    reloadAllContentsDistantly();
+  }
+}
+
+debug_smm_state = 20;
 
 // *************************************************************************
 // *************************************************************************
@@ -15,8 +83,6 @@ debug_game_state = 68;
 
 // Main game variables
 // *******************
-
-let version = "v4.7";
 
 let nominalGameNbColumns = 5; // classical Super Master Mind game
 let nominalGameNbColors = 8; // classical Super Master Mind game
@@ -73,7 +139,6 @@ let nbUnknownPerfs = 0;  // (only valid if game over and all performances filled
 
 let sCode = -1;
 let sCodeRevealed = -1;
-let loadTime = (new Date()).getTime(); // time in milliseconds
 let startTime = -1; // N.A.
 let stopTime = -1; // N.A.
 let newGameEvent = true;
@@ -120,129 +185,11 @@ let workerTerminationTime = -1; // (debug value)
 // GUI variables
 // *************
 
-let nbButtons = 5;
-let allButtons = new Array(1);
-let newGameButtonObject = document.getElementById("newGameButton");
-allButtons[0] = newGameButtonObject;
-let resetCurrentCodeButtonObject = document.getElementById("resetCurrentCodeButton");
-allButtons[1] = resetCurrentCodeButtonObject;
-let playRandomCodeButtonObject = document.getElementById("playRandomCodeButton");
-allButtons[2] = playRandomCodeButtonObject;
-let revealSecretColorButtonObject = document.getElementById("revealSecretColorButton");
-allButtons[3] = revealSecretColorButtonObject;
-let showPossibleCodesButtonObject = document.getElementById("showPossibleCodesButton");
-allButtons[4] = showPossibleCodesButtonObject;
-if (allButtons.length != nbButtons) {
-  throw new Error("invalid allButtons.length: " + allButtons.length);
-}
-for (let i = 0; i < allButtons.length; i++) {
-  if (allButtons[i] == null) {
-    let debugStr = "NA";
-    try {
-      debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
-    }
-    catch (exc) {}
-    throw new Error("button at index " + i + " was not found (page load info: " + debugStr + ")");
-  }
-}
-
-let nbNbColumnsRadioObjects = 5;
-let nbColumnsRadioObjects = new Array(1);
-nbColumnsRadioObjects[0] = document.getElementById("nbColumnsSelection_3");
-nbColumnsRadioObjects[1] = document.getElementById("nbColumnsSelection_4");
-nbColumnsRadioObjects[2] = document.getElementById("nbColumnsSelection_5");
-nbColumnsRadioObjects[3] = document.getElementById("nbColumnsSelection_6");
-nbColumnsRadioObjects[4] = document.getElementById("nbColumnsSelection_7");
-let debugStrBackwardCompat = "(a)";
-if (nbColumnsRadioObjects[0] == null) { // backward compatible behaviour
-  debugStrBackwardCompat = "(b)";
-  nbColumnsRadioObjects = document.getElementsByName("nbColumnsSelection");
-}
-if (nbColumnsRadioObjects.length != nbNbColumnsRadioObjects) {
-  throw new Error("invalid nbColumnsRadioObjects.length: " + nbColumnsRadioObjects.length + " " + debugStrBackwardCompat);
-}
-for (let i = 0; i < nbColumnsRadioObjects.length; i++) {
-  if (nbColumnsRadioObjects[i] == null) {
-    let debugStr = "NA";
-    try {
-      debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
-    }
-    catch (exc) {}
-    throw new Error("nbcolumns radio object at index " + i + " was not found (page load info: " + debugStr + ")");
-  }
-}
-
-let nbRadioButtons = nbMaxColumns - nbMinColumns + 1;
-let allRadioButtons = new Array(1);
-allRadioButtons[0] = document.getElementById("columnsspan_3");
-allRadioButtons[1] = document.getElementById("columnsspan_4");
-allRadioButtons[2] = document.getElementById("columnsspan_5");
-allRadioButtons[3] = document.getElementById("columnsspan_6");
-allRadioButtons[4] = document.getElementById("columnsspan_7");
-if (allRadioButtons.length != nbRadioButtons) {
-  throw new Error("invalid allRadioButtons.length: " + allRadioButtons.length);
-}
-for (let i = 0; i < allRadioButtons.length; i++) {
-  if (allRadioButtons[i] == null) {
-    let debugStr = "NA";
-    try {
-      debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
-    }
-    catch (exc) {}
-    throw new Error("radio button at index " + i + " was not found (page load info: " + debugStr + ")");
-  }
-}
-
-let newGameButtonIniName = newGameButtonObject.value;
-let nbColumnsRadioObjectIniNames = new Array(allRadioButtons.length);
-for (let i = 0; i < allRadioButtons.length; i++) {
-    nbColumnsRadioObjectIniNames[i] = allRadioButtons[i].textContent;
-}
-let resetCurrentCodeButtonIniName = resetCurrentCodeButtonObject.value;
-let playRandomCodeButtonIniName = playRandomCodeButtonObject.value;
-let revealSecretColorButtonIniName = revealSecretColorButtonObject.value;
-let showPossibleCodesButtonIniName = showPossibleCodesButtonObject.value;
-let showPossibleCodesButtonCompressedName = "\u2606";
-let showPossibleCodesButtonBackToGameName = "Back to game";
-let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
-
-let myTableObject = document.getElementById("my_table");
-if (myTableObject == null) {
-  throw new Error("my_table was not found");
-}
-
-let canvas = document.getElementById("my_canvas");
-if (canvas == null) {
-  throw new Error("my_canvas was not found");
-}
-
-let canvas_cell = document.getElementById("my_canvas_cell");
-if (canvas_cell == null) {
-  throw new Error("my_canvas_cell was not found");
-}
-
-let bufferTd1Object = document.getElementById("buffer_td_1");
-if (bufferTd1Object == null) {
-  throw new Error("buffer_td_1 was not found");
-}
-
-let bufferTd2Object = document.getElementById("buffer_td_2");
-if (bufferTd2Object == null) {
-  throw new Error("buffer_td_2 was not found");
-}
-
-let img1Object = document.getElementById("img_1"); // may be null, optional picture
-let img2Object = document.getElementById("img_2"); // may be null, optional picture
-
-let traceObject = document.getElementById("traces_id");
-if (traceObject == null) {
-  throw new Error("traces_id was not found");
-}
+var htmlObjectsAlreadySet = false;
 
 let randomCodesHintToBeDisplayed = true;
 
 let CompressedDisplayMode = false;
-let CompressedDisplayMode_compressWidth = 1000;
 
 // Widths and heights
 // ******************
@@ -251,6 +198,9 @@ let left_border_margin_x = -1.0;   // N.A. - Left border margin for x axis in %
 let right_border_margin_x = -1.0;  // N.A. - Right border margin for x axis in %
 let bottom_border_margin_y = -1.0; // N.A. - Bottom border margin for y axis in %
 let top_border_margin_y = -1.0;    // N.A. - Top border margin for y axis in %
+
+let current_innerWidth = -1;
+let current_innerHeight = -1;
 
 let current_width = -1; // N.A.
 let width_shift;
@@ -268,6 +218,10 @@ let y_max = 100.0;
 let x_step = 1.0; // N.A.
 let y_step = 1.0; // N.A.
 
+let color_being_selected = -1;
+let column_of_color_being_selected = -1;
+let highlight_selected_text = false;
+
 let attempt_nb_width = 2;
 let nb_possible_codes_width = 5;
 let optimal_width = 4;
@@ -275,6 +229,7 @@ let tick_width = 3;
 let transition_height = 1;
 let scode_height = 1;
 let nb_attempts_not_displayed = 0;
+let skip_last_attempt_display = false;
 
 function getLineWidth(inner_window_height, min_value) {
   // window.innerHeight = 300 => limit for lineWidth = 1
@@ -295,7 +250,7 @@ let orangeColor = "#FF7700"; // Orange
 let redColor = "#F00000"; // Red
 let purpleColor = "#C900A1"; // purple
 let cyanColor = "#2DB7E5"; // Cyan
-let backgroundColorTable =
+let backgroundColorTable = // all values shall be written #RGB (not like "red", "white", ...)
   [
     blueColor,   // Blue
     greenColor,  // Green
@@ -338,6 +293,9 @@ let specialColorTable =
 
 if (localStorage.modernDisplayApplied) {
   modernDisplay = (localStorage.modernDisplayApplied == "true");
+}
+if (localStorage.legacyDisplayVariant) {
+  legacyDisplayVariant = ((localStorage.legacyDisplayVariant == "1") ? 1 : 0);
 }
 let legacy_backgroundColor_2_base_color = "#5F340E"; // "#7F4613";// "#894B0F";// "#694927";
 let backgroundColor_2;
@@ -404,7 +362,6 @@ let very_small_italic_font = defaultFont;
 let medium_basic_font = defaultFont;
 let medium_bold_font = defaultFont;
 let medium2_bold_font = defaultFont;
-let medium3_bold_font = defaultFont;
 let stats_font = defaultFont;
 let error_font = defaultFont;
 let font_size = min_font_size;
@@ -546,7 +503,7 @@ function displayGUIError(GUIErrorStr, errStack) {
   // ***********************************
 
   if (gameErrorCnt < 50) {
-    console.log("***** ERROR (" + version + ") *****: " + completedGUIErrorStr + " / " + errStack + "\n");
+    console.log("***** ERROR *****: " + completedGUIErrorStr + " / " + errStack + "\n");
     console.log("Stack:");
     let stack = new Error().stack;
     console.log(stack);
@@ -561,29 +518,23 @@ function displayGUIError(GUIErrorStr, errStack) {
   if (globalErrorCnt < maxGlobalErrors) {
     try {
       var errorStr = "";
-      if (typeof(Storage) !== 'undefined') {
-        if (localStorage.firstname) {
-          errorStr = errorStr + " for " + localStorage.firstname;
-        }
-        if (localStorage.playerid) {
-          errorStr = errorStr + " for player id " + localStorage.playerid;
-        }
-        if (localStorage.countryname) {
-          errorStr = errorStr + " in " + localStorage.countryname;
-        }
-        if (localStorage.cityname) {
-          errorStr = errorStr + " in " + localStorage.cityname;
-        }
-        if (localStorage.gamesok) {
-          errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
-        }
-        try {
-          errorStr = errorStr + " for game version " + html_compatibility_game_version;
-        }
-        catch (exc_gv) {}
-        if (gameSolverConfigDbg != null) {
-          errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
-        }
+      if (localStorage.firstname) {
+        errorStr = errorStr + " for " + localStorage.firstname;
+      }
+      if (localStorage.playerid) {
+        errorStr = errorStr + " for player id " + localStorage.playerid;
+      }
+      if (localStorage.countryname) {
+        errorStr = errorStr + " in " + localStorage.countryname;
+      }
+      if (localStorage.cityname) {
+        errorStr = errorStr + " in " + localStorage.cityname;
+      }
+      if (localStorage.gamesok) {
+        errorStr = errorStr + " after " + localStorage.gamesok + " game(s)";
+      }
+      if (gameSolverConfigDbg != null) {
+        errorStr = errorStr + " with gameSolver config " + gameSolverConfigDbg;
       }
 
       let strGame = "";
@@ -601,10 +552,11 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack, true);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30: " + (localStorage.reloadForCompatibility_v30 ? localStorage.reloadForCompatibility_v30 : "not done"));
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
+      submitForm("internal error at error form submission: " + exc + " for submitted error: " + GUIErrorStr + " / STACK: " + errStack);
     }
   }
   globalErrorCnt++;
@@ -613,7 +565,7 @@ function displayGUIError(GUIErrorStr, errStack) {
   // *****
 
   if (gameErrorStr == "") { // Only one error alert is displayed per game
-    gameErrorStr = "***** ERROR (" + version + ") *****: " + GUIErrorStr + " / " + errStack + "\n";
+    gameErrorStr = "***** ERROR *****: " + GUIErrorStr + " / " + errStack + "\n";
     alert(gameErrorStr);
   }
 
@@ -627,6 +579,20 @@ function onGameSolverError(e) {
 // Function called on gameSolver worker's MESSAGE error
 function onGameSolverMessageError(e) {
   displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
+}
+
+function handlePrompt() {
+  var mode = prompt("Which mode do you want to select?", "444");
+  if (mode == null) {
+    return;
+  }
+  else if (mode == 222) {
+    loadTime = loadTime - 24*3600*1000; // 1 day
+  }
+  else if (String(mode).indexOf("of") != -1) {
+    document.getElementById('form_list_id').value = mode.trim();
+    setTimeout("submitForm();", 444);
+  }
 }
 
 // *************************************************************************
@@ -962,7 +928,7 @@ function newGameButtonClick_delayed(display_ads_if_needed) {
 
   // Transition effect 1/2
   try {
-    $(".page_transition").fadeIn("fast");
+    $(pageTransitionObject).fadeIn("fast");
   }
   catch (exc) {
   }
@@ -983,14 +949,14 @@ function newGameButtonClick_delayed(display_ads_if_needed) {
 
   // Transition effect 2/2
   try {
-    $(".page_transition").fadeOut("fast");
+    $(pageTransitionObject).fadeOut("fast");
   }
   catch (exc) {
   }
 }
 
 function gameAbortionEnd() {
-  $(".game_aborted").fadeOut(250);
+  $(gameAbortedObject).fadeOut(200);
   dsCode = false;
   newGameButtonClick_delayed(true);
 }
@@ -1022,14 +988,14 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
         }
         else {
           let game_aborted_str = "<b>Current game was aborted"
-                                 + (localStorage.firstname ? "<hr style='height:0.75vh; visibility:hidden;' />You shall win 5 consecutive games<br>to get your total score and<br>performance computed" : "")
+                                 + (localStorage.firstname ? "<hr style='height:1.75vh;padding:0;margin:0;visibility:hidden;' />You shall win 5 consecutive games<br>to get your total score and<br>performance computed" : "")
                                  + "<br><img src='img/loading.gif' style='height:12%;'><br>  <!-- (not rem unit as no viewport!) -->"
-                                 + (mobileMode ? "Tap" : "Click") + " to start a new game</b>";
-          $("#game_aborted_id").html(game_aborted_str);
+                                 + (mobileMode ? "TAP" : "Click") + " to start a new game</b>";
+          gameAbortedObject.innerHTML = game_aborted_str;
 
           // Transition effect
           try {
-            $(".game_aborted").fadeIn((nbColumns <= 4) ? 2000 : 2500);
+            $(gameAbortedObject).fadeIn((nbColumns <= 4) ? 2000 : 2500);
           }
           catch (exc) {
           }
@@ -1056,14 +1022,14 @@ resetCurrentCodeButtonClick = function() { // (override temporary definition)
   }
   if (!resetCurrentCodeButtonObject.disabled) {
     currentCode = sCodeRevealed;
-    draw_graphic(false);
+    draw_graphic();
   }
 }
 
 function playACodeAutomatically(code_p) {
   if (currentAttemptNumber <= 3) {
     currentCode = code_p;
-    draw_graphic(false);
+    draw_graphic();
   }
 }
 
@@ -1076,18 +1042,16 @@ playRandomCodeButtonClick = function() { // (override temporary definition)
     randomCodesHintToBeDisplayed = false;
     nb_random_codes_played++;
     currentCode = smmCodeHandler.createRandomCode(sCodeRevealed);
-    draw_graphic(false);
+    draw_graphic();
   }
 }
 
 function displayRandomCodesHintIfNeeded() {
   if (randomCodesHintToBeDisplayed) {
-    if (typeof(Storage) !== 'undefined') {
-      if (localStorage.gamesok) {
-        if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % ((Number(localStorage.gamesok) <= 400) ? 50 : 80)) == 0) ) {
-          alert("A little fun?!\nClick on the \"" + playRandomCodeButtonObject.value + "\" button to play the first few codes randomly!");
-          randomCodesHintToBeDisplayed = false;
-        }
+    if (localStorage.gamesok) {
+      if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % ((Number(localStorage.gamesok) <= 400) ? 50 : 80)) == 0) ) {
+        alert("A little fun?\nClick on the \"" + playRandomCodeButtonObject.value + "\" button to play your first few codes randomly!");
+        randomCodesHintToBeDisplayed = false;
       }
     }
   }
@@ -1110,20 +1074,23 @@ revealSecretColorButtonClick = function() { // (override temporary definition)
   if ( (!revealSecretColorButtonObject.disabled)
        && gameOnGoing()
        && (sCode != -1) && (sCodeRevealed != -1) ) {
-    var rsp = confirm("Do you want to reveal a color of the secret code? If so, your score will not be stored online...");
-    if (!rsp) {
-      return; // Cancel or "x" (close) button
-    }
     let nbEmptyColors = smmCodeHandler.nbEmptyColors(sCodeRevealed);
-    if (nbEmptyColors <= 1) {
-      displayGUIError("too many revealed colors", new Error().stack);
+    let nbColorsRevealed = nbColumns - nbEmptyColors;
+    if (nbColorsRevealed == 0) {
+      var rsp = confirm("Do you want to reveal a color of the secret code? If so, your score will not be stored online");
+      if (!rsp) {
+        return; // Cancel or "x" (close) button
+      }
     }
-    else if ((nbColumns > 3) && (currentAttemptNumber >= 2) && (nbEmptyColors == nbColumns)) {
+    if (nbEmptyColors <= 2) {
+      displayGUIError("too many revealed colors: " + nbEmptyColors, new Error().stack);
+    }
+    else {
       let revealedColorIdx = Math.floor(Math.random() * nbEmptyColors);
       sCodeRevealed = smmCodeHandler.replaceEmptyColor(sCodeRevealed, revealedColorIdx, smmCodeHandler.convert(sCode));
       currentCode = sCodeRevealed;
       main_graph_update_needed = true;
-      draw_graphic(false);
+      draw_graphic();
     }
   }
 }
@@ -1143,7 +1110,7 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
     // Transition effect 1/2
     if (invertMode || showModeForced) {
       try {
-        $(".page_transition").fadeIn("fast");
+        $(pageTransitionObject).fadeIn("fast");
       }
       catch (exc) {
       }
@@ -1215,13 +1182,13 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
     }
     updateGameSizes();
     if (!animated_mode) {
-      draw_graphic(!transientMode);
+      draw_graphic();
     }
 
     // Transition effect 2/2
     if (invertMode || showModeForced) {
       try {
-        $(".page_transition").fadeOut("fast");
+        $(pageTransitionObject).fadeOut("fast");
       }
       catch (exc) {
       }
@@ -1230,49 +1197,73 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
     if (animated_mode) {
       let initialCurrentPossibleCodeShown = currentPossibleCodeShown;
       for (let i = 1; i <= initialCurrentPossibleCodeShown; i++) { // last loop will point to the initial currentPossibleCodeShown value
-        setTimeout("try{if (showPossibleCodesMode && !showPossibleCodesButtonObject.disabled && (game_cnt == " + game_cnt + ")){currentPossibleCodeShown = " + i + "; updateGameSizes(); draw_graphic(" + !transientMode + ");}}catch(possible_error){}", 444*i);
+        setTimeout("try{if (showPossibleCodesMode && !showPossibleCodesButtonObject.disabled && (game_cnt == " + game_cnt + ")){currentPossibleCodeShown = " + i + "; updateGameSizes(); draw_graphic();}}catch(possible_error){}", 444*i);
       }
     }
 
   }
 }
 
-function mouseClick(e) {
+function handleDisplayModeSelectionChange() {
+    var displayModeSelectObject = document.getElementById('displayModeSelect');
+    if (displayModeSelectObject == null) {
+      throw new Error("displayModeSelect was not found");
+    }
+    var value = displayModeSelectObject.value;
+    console.log("display mode changed: " + value);
+    switch (value) {
+        case "1":
+            modernDisplay = false;
+            legacyDisplayVariant = 0;
+            break;
+        case "2":
+            modernDisplay = false;
+            legacyDisplayVariant = 1;
+            break;
+        case "3":
+            modernDisplay = true;
+            legacyDisplayVariant = 0;
+            break;
+        default:
+            throw new Error("invalid value selected for display mode: " + value);
+    }
+    localStorage.modernDisplayApplied = modernDisplay;
+    localStorage.legacyDisplayVariant = legacyDisplayVariant;
+
+    updateThemeAttributes();
+    main_graph_update_needed = true;
+    draw_graphic();
+}
+
+settingsButtonClick = function() { // (override temporary definition)
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
-    console.log("mouseClick skipped");
+    console.log("settingsButtonClick skipped");
     return;
   }
-  let event_x_min, event_x_max, event_y_min, event_y_max;
-  let rect = canvas.getBoundingClientRect();
-  let mouse_x = Math.ceil(e.clientX - rect.left);
-  let mouse_y = Math.ceil(e.clientY - rect.top);
-
-  if (dsCode) {
-    return;
-  }
-
-  // *************
-  // Display rules
-  // *************
-
-  else if ( (!showPossibleCodesMode)
-            && ((mouse_x > get_x_pixel(x_min))
-               && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)*0.90))
-               && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors)))
-               && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1))))
-          ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
+  if (!settingsButtonObject.disabled) {
+    let display_form_str =
+      "<b>Select display mode:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
+       <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
+         <option value='1'" + ((!modernDisplay) && (legacyDisplayVariant != 1) ? " selected" : "") + ">numbers / classical display</option>\
+         <option value='2'" + ((!modernDisplay) && (legacyDisplayVariant == 1) ? " selected" : "") + ">colors only / classical display</option>\
+         <option value='3'" + (modernDisplay ? " selected" : "") + ">numbers / light display</option>\
+       </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 
     let game_rules_str =
       "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
-      <br><b>The goal of Super Master Mind is to find out a secret code of " + nominalGameNbColumns + "&nbsp;colors chosen randomly among&nbsp;8:</b><br>\
-      <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:1.5vh;margin-bottom:0'><br>\
+      <br><b>The goal of Super Master Mind is to find out a secret code of " + nominalGameNbColumns + "&nbsp;colors chosen randomly among&nbsp;8:</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
+      <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
+      + "Not clear? see detailed <b><a href='index.html#game_rules'>Game&nbsp;rules</a></b><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>"
+      + display_form_str +
+      "<b>More info:</b><hr style='height:0.10vh;padding:0;margin:0;visibility:hidden;'>\
       <center><table><tr style='text-align:center;'><td><b>&nbsp;<a href='index.html'>Main page</a>&nbsp;</b></td>\
       <td><b>&nbsp;<a href='index.html#game_rules'>Game rules</a>&nbsp;</b></td></tr>\
       <tr style='text-align:center;'><td><b>&nbsp;<a href='optimal_strategy.html'>Optimal strategy</a>&nbsp;</b></td>\
-      <td><b>&nbsp;<a href='screenshots.html'>Screenshots</a>&nbsp;</b></td></tr>\
+      <td><b>&nbsp;<a href='screenshots.html'>Examples</a>&nbsp;</b></td></tr>\
       <tr style='text-align:center;'><td><b>&nbsp;<a href='" + android_app_url + "'>Android app</a>&nbsp;</b></td>\
-      <td><b>&nbsp;<a href='contact_info.html'>Contact info</a>&nbsp;</b></td></tr><table></center><br><br>\
+      <td><b>&nbsp;<a href='contact_info.html'>Contact info</a>&nbsp;</b></td></tr></table></center><br><br>\
       </font></td></tr></table></center>";
+
     try {
       gameRulesDisplayed = true;
       modal_mode = 3;
@@ -1286,34 +1277,20 @@ function mouseClick(e) {
     catch (exc) {
       throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
     }
-
   }
+}
 
-  // ************
-  // Switch theme
-  // ************
-
-  else if ( (!showPossibleCodesMode)
-            && ((mouse_x > get_x_pixel(x_min))
-                && (mouse_x < get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100)*0.90))
-                && (mouse_y > get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-1)))
-                && (mouse_y < get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors-2))))
-          ) { // (display rules on 2 invalid mouse clicks if no games were ever won)
-
-    if ((!modernDisplay) && (legacyDisplayVariant == 0)) {
-      legacyDisplayVariant = 1; // switch to legacy display variant 1
-    }
-    else if ((!modernDisplay) && (legacyDisplayVariant == 1)) {
-      modernDisplay = true; // switch to modern display
-    }
-    else {
-      modernDisplay = false;
-      legacyDisplayVariant = 0; // switch to legacy display variant 0
-    }
-    localStorage.modernDisplayApplied = modernDisplay;
-    updateThemeAttributes();
-    main_graph_update_needed = true;
-    draw_graphic();
+function mouseDown(e) {
+  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
+    console.log("mouseDown skipped");
+    return;
+  }
+  let event_x_min, event_x_max, event_y_min, event_y_max;
+  let rect = canvas.getBoundingClientRect();
+  let mouse_x = Math.ceil(e.clientX - rect.left);
+  let mouse_y = Math.ceil(e.clientY - rect.top);
+  if (dsCode) {
+    return;
   }
 
   // ***************
@@ -1324,7 +1301,7 @@ function mouseClick(e) {
 
     event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
     event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
-    event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+nbColors));
+    event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+nbColors));
     event_y_max = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 
     if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
@@ -1338,18 +1315,23 @@ function mouseClick(e) {
           if ((mouse_x > x_0 + 1) && (mouse_x < x_1 - 1)) { // 1px margin for ambiguous clicks
             let colorSelected = false;
             for (let color = 0; color < nbColors; color++) {
-              y_0 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+(color+1)));
-              y_1 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed+transition_height+scode_height+transition_height+color));
+              y_0 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+(color+1)));
+              y_1 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+color));
               if ((mouse_y > y_0 + 1) && (mouse_y < y_1 - 1)) { // 1px margin for ambiguous clicks
                 colorSelected = true;
+                color_being_selected = color+1;
+                column_of_color_being_selected = column+1;
                 playAColor(color+1, column+1);
                 nbColorSelections++;
                 break;
               }
             }
             if (!colorSelected) {
+              color_being_selected = -1;
+              column_of_color_being_selected = -1;
               playAColor(emptyColor, column+1);
             }
+            draw_graphic();
             break;
           }
         }
@@ -1369,7 +1351,7 @@ function mouseClick(e) {
   else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
 
     if (!showPossibleCodesMode) {
-      event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed));
+      event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)));
     }
     else {
       event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
@@ -1404,7 +1386,7 @@ function mouseClick(e) {
           atLeastOneAttemptSelection = true;
           showPossibleCodesOffsetMode = !showPossibleCodesOffsetMode;
           main_graph_update_needed = true;
-          draw_graphic(false);
+          draw_graphic();
         }
         else { // (other zones)
           showPossibleCodesOffsetMode = false;
@@ -1419,6 +1401,13 @@ function mouseClick(e) {
 
   }
 
+}
+
+function mouseUp() {
+  color_being_selected = -1;
+  column_of_color_being_selected = -1;
+  highlight_selected_text = false;
+  draw_graphic();
 }
 
 function mouseMove(e) {
@@ -1475,25 +1464,36 @@ function mouseMove(e) {
   }
 }
 
+let promptSequenceIndex = 0;
 function playAColor(color, column) {
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("playAColor skipped");
     return;
   }
   if (gameOnGoing()) {
+    if ((color == 4) && (column == 3)) {
+      promptSequenceIndex++;
+      if (promptSequenceIndex == 8) {
+        promptSequenceIndex = 0;
+        setTimeout("handlePrompt()", 444);
+      }
+    }
+    else {
+      promptSequenceIndex = 0;
+    }
     if ((color != emptyColor) && obviouslyImpossibleColors[color]) {
       if (currentAttemptNumber == nbMaxAttempts) {
         return;
       }
       if ((nbColumns == 5) && (currentAttemptNumber <= 3)) { // Super Master Mind game
-        alert("To simplify calculations, obviously impossible colors can only be selected from mid-game");
+        setTimeout("alert('To simplify calculations, obviously impossible colors can only be selected from mid-game');", 111);
         return;
       }
     }
     let newCurrentCode = smmCodeHandler.setColor(currentCode, color, column);
     for (let i = 1; i < currentAttemptNumber; i++) {
       if (newCurrentCode == codesPlayed[i-1]) {
-        alert("This code was already played!");
+        setTimeout("alert('This code was already played!');", 111);
         return;
       }
     }
@@ -1507,12 +1507,12 @@ function playAColor(color, column) {
         }
       }
       if (allColorsAreObviouslyImpossible) {
-        alert("This code only contains obviously impossible colors so is useless");
+        setTimeout("alert('This code only contains obviously impossible colors so is useless!');", 111);
         return;
       }
     }
     currentCode = newCurrentCode;
-    draw_graphic(false);
+    draw_graphic();
   }
 }
 
@@ -1540,7 +1540,7 @@ function getNbColumnsSelected() {
 function show_play_store_app(specific_str = "", android_stars_mode = false, forceStr = "") {
   if (forceStr != "") {
     let str =
-      "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
+      "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
       <br><b>" + forceStr + "</b><br>\
       </font></td></tr></table></center>";
     try {
@@ -1569,10 +1569,9 @@ function show_play_store_app(specific_str = "", android_stars_mode = false, forc
     }
     let str = ((specific_str == "") ? ("For " + str1 + ",&nbsp;install the android app" + str2 + "!") : specific_str);
     let play_store_app_str =
-      "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
+      "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
       <br><b>" + str + "</b><br>\
       <a href='" + android_app_url + "'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh;border-radius:7%' src='img/Playstore_icon.png'/><br></a>\
-      <small>" + (((specific_str.indexOf("put some stars") == -1) && (str.indexOf("install the android app") == -1)) ? "If you like this game,&nbsp;put some stars on Google Play &#x1F609;<br>" : "") + "</small><br>\
       </font></td></tr></table></center>";
     try {
       modal_mode = 4;
@@ -1628,46 +1627,45 @@ function updateGameSizes() {
   }
 
   x_step = (x_max - x_min) / (attempt_nb_width // attempt number
-                              +(70*(nbColumns+1))/100 // mark
-                              +nbColumns*2 // code
-                              +nb_possible_codes_width // number of possible codes
-                              +optimal_width // optimal
-                              +tick_width); // OK/NOK
+                              + (70*(nbColumns+1))/100 // mark
+                              + nbColumns*2 // code
+                              + nb_possible_codes_width // number of possible codes
+                              + optimal_width // optimal
+                              + tick_width); // OK/NOK
 
   if (!showPossibleCodesMode) {
-    if (nbColumns <= 3) {
-      nb_attempts_not_displayed = 0;
-    }
-    else {
-      nb_attempts_not_displayed = Math.max(0, nbMaxAttempts - currentAttemptNumber - 1);
-      if (nbColumns == 4) {
-        nb_attempts_not_displayed = Math.min(2, nb_attempts_not_displayed);
+    nb_attempts_not_displayed = 0;
+    skip_last_attempt_display = false;
+    if (nbColumns >= 5) {
+      nb_attempts_not_displayed = Math.max(0, nbMaxAttempts - (gameWon ? currentAttemptNumber - 1 : currentAttemptNumber) - 1); // nb_attempts_not_displayed calculation assumes last attempt is always displayed => skip_last_attempt_display will be applied on top of it
+      let thld = (CompressedDisplayMode ? 6 : 4); // nbColumns == 5 or 6
+      if (nbColumns >= 7) {
+        thld = (CompressedDisplayMode ? 8 : 6);
       }
-      else if (nbColumns == 5) {
-        nb_attempts_not_displayed = Math.min(4, nb_attempts_not_displayed);
+      if (nb_attempts_not_displayed < thld) {
+        skip_last_attempt_display = ((currentAttemptNumber < nbMaxAttempts) || (gameWon && (currentAttemptNumber == nbMaxAttempts) /* (do not leave just last line empty when game won) */));
       }
-      else if (nbColumns == 6) {
-        nb_attempts_not_displayed = Math.min(6, nb_attempts_not_displayed);
-      }
-      else if (nbColumns == 7) {
-        nb_attempts_not_displayed = Math.min(7, nb_attempts_not_displayed);
+      else {
+        nb_attempts_not_displayed = thld;
+        skip_last_attempt_display = (gameWon && (currentAttemptNumber == nbMaxAttempts - thld)); // (do not leave just one line empty when game is won)
       }
     }
-    y_step = (y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed // number of attempts displayed
-                                +transition_height // margin
-                                +scode_height // secret code
-                                +transition_height // margin
-                                +nbColors); // color selection
+    y_step = (y_max - y_min) / (nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) // number of attempts displayed
+                                + transition_height // margin
+                                + scode_height // secret code
+                                + transition_height // margin
+                                + nbColors); // color selection
   }
   else {
     nb_attempts_not_displayed = 0;
+    skip_last_attempt_display = false;
     if ( !((!gameOnGoing()) && allPossibleCodesFilled()) || (currentAttemptNumber <= 0) ) {
       displayGUIError("invalid context for updateGameSizes(): " + gameOnGoing() + ", " + allPossibleCodesFilled(), new Error().stack);
     }
     y_step = (y_max - y_min) / (currentAttemptNumber-1 // number of attempts reached at end of game
-                                +transition_height // margin
-                                +nbPossibleCodesShown // possible codes
-                                +1); // tick display
+                                + transition_height // margin
+                                + nbPossibleCodesShown // possible codes
+                                + 1); // tick display
   }
 
 }
@@ -1741,17 +1739,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gamesolver_buffered_msg_status = 0;
   gamesolver_buffered_msg_action_str = "";
 
-  if ( ((new Date()).getTime() - loadTime >= 24*3600*1000) // (reload the page/webview from server every 24 hours to allow application of changes)
-       || (nbGamesPlayedAndWon >= 100) ) { // (same arguments as above + avoid potential (firefox) memory leaks issues)
-    if (android_appli) {
-      console.log("webview reload request"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
-    }
-    else { // not applicable to android appli (Chrome would be run instead of reloading the webview)
-      loadTime = (new Date()).getTime(); // time in milliseconds (this line should be useless)
-      localStorage.reload_time = (new Date()).getTime();
-      location.reload(true);
-    }
-  }
+  reloadAllContentsDistantlyIfNeeded();
 
   try {
     if ( (!android_appli) && mobileMode && androidMode
@@ -1764,7 +1752,7 @@ function resetGameAttributes(nbColumnsSelected) {
       show_play_store_app();
     }
     else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 50) || (Number(localStorage.gamesok) == 77) || (Number(localStorage.gamesok) == 112) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 204) || (Number(localStorage.gamesok) == 304) || (Number(localStorage.gamesok) == 404) || (Number(localStorage.gamesok) == 707) || (Number(localStorage.gamesok) == 1061) || (Number(localStorage.gamesok) == 1333) || (Number(localStorage.gamesok) == 1644) || (Number(localStorage.gamesok) == 2004)) ) {
-      show_play_store_app("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put some stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br><big>&#x1F603;&#x1F603;&#x1F603;</big><br>on&nbsp;Google&nbsp;Play", true);
+      show_play_store_app("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put some stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br><big>&#x1F603;&#x1F603;&#x1F603;</big><br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support", true);
     }
     else if ( localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 55) && (nbGamesPlayedAndWon >= 1)
               && localStorage.lastDonationTimeT && ((new Date()).getTime() - localStorage.lastDonationTimeT > 21*24*60*60*1000 /* (3 weeks) */) ) {
@@ -1772,11 +1760,11 @@ function resetGameAttributes(nbColumnsSelected) {
         "If you enjoy this game, you&nbsp;can&nbsp;donate\
         <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
         <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
-        <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>\
-        <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-        or look at some ads in the&nbsp;<a href='index.html'>main&nbsp;page</a><br>(it can bring small revenue)<br>\
-        <hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>\
-        Thanks for your support! &#x1f603;<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
+        <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>"
+        + (false /* [DISABLE ADS]*/ ? "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+        or look at some ads in the&nbsp;<a href='index.html'>main&nbsp;page</a><br>(it can bring small revenue)<br>" : "")
+        + "<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>\
+        Thanks for your support<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
       show_play_store_app("", false, "<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>" + paypalStr);
       localStorage.lastDonationTimeT = (new Date()).getTime();
       if (!localStorage.nbDonationRequestsT) {
@@ -1802,7 +1790,7 @@ function resetGameAttributes(nbColumnsSelected) {
       break;
     case 4:
       nbColors = Math.max(nbMinColors, nominalGameNbColors - 2);
-      nbMaxAttempts = nominalGameNbMaxAttempts - 2;
+      nbMaxAttempts = nominalGameNbMaxAttempts - 4;
       document.title = "Master Mind";
       break;
     case 5: // nominalGameNbColumns
@@ -1812,12 +1800,12 @@ function resetGameAttributes(nbColumnsSelected) {
       break;
     case 6:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 1);
-      nbMaxAttempts = nominalGameNbMaxAttempts + 2;
+      nbMaxAttempts = nominalGameNbMaxAttempts;
       document.title = "Mega Master Mind";
       break;
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
-      nbMaxAttempts = nominalGameNbMaxAttempts + 3;
+      nbMaxAttempts = nominalGameNbMaxAttempts + 2;
       document.title = "Ultra Master Mind";
       break;
     default:
@@ -1954,17 +1942,15 @@ function resetGameAttributes(nbColumnsSelected) {
   // gameSolver.addEventListener('message', onGameSolverMsg, false); gameSolverDbg = 7;
   gameSolver.onmessage = onGameSolverMsg; gameSolverDbg = 7;
   // Send a message to the gameSolver worker to initialize it
-  if ( (typeof(Storage) !== 'undefined') && (!sessionStorage.first_session_game) ) {
+  if (!sessionStorage.first_session_game) {
     sessionStorage.first_session_game = 1;
     first_session_game = true;
   }
   else {
     first_session_game = false;
   }
-  if (typeof(Storage) !== 'undefined') {
-    if (localStorage.debug_mode) {
-      debug_mode = localStorage.debug_mode;
-    }
+  if (localStorage.debug_mode) {
+    debug_mode = localStorage.debug_mode;
   }
 
   gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok) || (Number(localStorage.gamesok) < ((typeof min_gamesok_for_firstname !== 'undefined') ? min_gamesok_for_firstname : 5) - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
@@ -2105,7 +2091,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
   nbOfStatsFilled_NbPossibleCodes = attempt_nb; // Assumption: the number of possible codes is assumed to be the first stat to be written among all stats
 
   main_graph_update_needed = true;
-  draw_graphic(false);
+  draw_graphic();
 
   // [Likely] unknown performance at 3rd attempt of Super Master Mind game => invert some attempts
   // Game row inversion could allow to better evaluate performances asymmetrically
@@ -2259,7 +2245,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
   nbOfStatsFilled_Perfs = attempt_nb;
 
   main_graph_update_needed = true;
-  draw_graphic(false);
+  draw_graphic();
 
   // ***************************************
   // Store player's info distantly if needed
@@ -2270,7 +2256,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
       displayGUIError("internal error at store_player_info call: " + timeStr.length + ", " + score, new Error().stack);
     }
     else { // (score > 0.0 because game won)
-      let nbColorsRevealed = (nbColumns-smmCodeHandler.nbEmptyColors(sCodeRevealed));
+      let nbColorsRevealed = nbColumns - smmCodeHandler.nbEmptyColors(sCodeRevealed);
 
       let strGame = "";
       for (let i = 1; i < currentAttemptNumber; i++) {
@@ -2327,7 +2313,7 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possi
   nbOfStatsFilled_ListsOfPossibleCodes = attempt_nb;
 
   main_graph_update_needed = true;
-  draw_graphic(false);
+  draw_graphic();
   return true;
 }
 
@@ -2534,39 +2520,34 @@ function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, 
 function updateAndStoreNbGamesStarted(offset) {
 
   try {
-    if (typeof(Storage) !== 'undefined') {
-      switch (nbColumns) {
-        case 3:
-          if (localStorage.nbgamesstarted3) {
-            localStorage.nbgamesstarted3 = Number(localStorage.nbgamesstarted3) + offset;
-          }
-          break;
-        case 4:
-          if (localStorage.nbgamesstarted4) {
-            localStorage.nbgamesstarted4 = Number(localStorage.nbgamesstarted4) + offset;
-          }
-          break;
-        case 5:
-          if (localStorage.nbgamesstarted5) {
-            localStorage.nbgamesstarted5 = Number(localStorage.nbgamesstarted5) + offset;
-          }
-          break;
-        case 6:
-          if (localStorage.nbgamesstarted6) {
-            localStorage.nbgamesstarted6 = Number(localStorage.nbgamesstarted6) + offset;
-          }
-          break;
-        case 7:
-          if (localStorage.nbgamesstarted7) {
-            localStorage.nbgamesstarted7 = Number(localStorage.nbgamesstarted7) + offset;
-          }
-          break;
-        default:
-          throw new Error("updateAndStoreNbGamesStarted(): invalid number of columns: " + nbColumns);
-      }
-    }
-    else {
-      console.log("nbgamesstarted cannot be stored (no storage support)");
+    switch (nbColumns) {
+      case 3:
+        if (localStorage.nbgamesstarted3) {
+          localStorage.nbgamesstarted3 = Number(localStorage.nbgamesstarted3) + offset;
+        }
+        break;
+      case 4:
+        if (localStorage.nbgamesstarted4) {
+          localStorage.nbgamesstarted4 = Number(localStorage.nbgamesstarted4) + offset;
+        }
+        break;
+      case 5:
+        if (localStorage.nbgamesstarted5) {
+          localStorage.nbgamesstarted5 = Number(localStorage.nbgamesstarted5) + offset;
+        }
+        break;
+      case 6:
+        if (localStorage.nbgamesstarted6) {
+          localStorage.nbgamesstarted6 = Number(localStorage.nbgamesstarted6) + offset;
+        }
+        break;
+      case 7:
+        if (localStorage.nbgamesstarted7) {
+          localStorage.nbgamesstarted7 = Number(localStorage.nbgamesstarted7) + offset;
+        }
+        break;
+      default:
+        throw new Error("updateAndStoreNbGamesStarted(): invalid number of columns: " + nbColumns);
     }
   }
   catch (err) {
@@ -2717,7 +2698,7 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, stroke) {
   }
 }
 
-function draw_graphic(fullMode = true) {
+function draw_graphic() {
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("draw_graphic skipped");
     return;
@@ -2728,9 +2709,6 @@ function draw_graphic(fullMode = true) {
   if ( (gameOnGoingIni != gameOnGoing()) || (currentAttemptNumber != currentAttemptNumberIni) ) {
    updateGameSizes();
    draw_graphic_bis();
-  }
-  if (fullMode) {
-    draw_graphic_bis(); // sometimes improves the display  - not perfect but best solution found
   }
 }
 
@@ -2743,8 +2721,6 @@ function draw_graphic_bis() {
 
   let res;
   let draw_exception = false;
-
-  let nbColorsRevealed = 0;
 
   let last_but_one_attempt_event = false;
 
@@ -2761,45 +2737,36 @@ function draw_graphic_bis() {
     }
 
     let lineWidth = getLineWidth(window.innerHeight, 1);
-    let borderStr1 = (CompressedDisplayMode ? 0 : lineWidth) + (modernDisplay ? "px solid purple" : "px solid black");
-    let borderStr2 = lineWidth + (modernDisplay ? "px solid purple" : "px solid black");
-
-    var $td = $('canvas').parent(); // (my_canvas_cell)
-    let width = $td.width();
-    let height = $td.height();
-    if ( (current_width != width) || (current_height != height) ) { // resize detected
-
-      var newCompressedDisplayMode = CompressedDisplayMode;
-      if (window.innerHeight >= window.innerWidth * 0.80) {
+    if ( (Math.abs(current_innerWidth - window.innerWidth) > 1) || (Math.abs(current_innerHeight - window.innerHeight) > 1) ) { // resize detected with +-1 pixel tolerance margin
+      var newCompressedDisplayMode;
+      if (window.innerHeight >= window.innerWidth * 0.67) {
           newCompressedDisplayMode = true;
       }
-      else if (window.innerWidth > CompressedDisplayMode_compressWidth + 10) {
+      else {
           newCompressedDisplayMode = false;
       }
-      else if (window.innerWidth < CompressedDisplayMode_compressWidth - 10) {
+
+      if (window.innerWidth < 900) {
           newCompressedDisplayMode = true;
       }
-      if (newCompressedDisplayMode != CompressedDisplayMode) { // (transition)
+
+      if (mobileMode) {
+        newCompressedDisplayMode = true;
+        backgroundColor_2 = (modernDisplay ? "#FFFFFF" : "");
+        backgroundColor_3 = (modernDisplay ? "#EEEEEE" : "");
+      }
+
+      var CompressedDisplayModeHasChanged = false;
+      if (newCompressedDisplayMode != CompressedDisplayMode) {
         CompressedDisplayMode = newCompressedDisplayMode;
+        CompressedDisplayModeHasChanged = true;
         updateGameSizes();
       }
 
-      mobileMode = false;
-      androidMode = false;
-      if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/3)
-           || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Opera Mini/i.test(navigator.userAgent)) // (mobile device check 2/3)
-           || android_appli ) { // (mobile device check 3/3)
-        if (!CompressedDisplayMode) {
-          CompressedDisplayMode = true; // (transition)
-          updateGameSizes();
-        }
-        mobileMode = true;
-        backgroundColor_2 = (modernDisplay ? "#FFFFFF" : "");
-        backgroundColor_3 = (modernDisplay ? "#EEEEEE" : "");
-        if (/Android/i.test(navigator.userAgent) || android_appli) {
-          androidMode = true;
-        }
-      }
+      let borderWidth1 = (CompressedDisplayMode ? 0 : lineWidth);
+      let borderStr1 = borderWidth1 + (modernDisplay ? "px solid purple" : "px solid black");
+      let borderStr2 = lineWidth + (modernDisplay ? "px solid purple" : "px solid black");
+
       if (mobileMode && androidMode) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
         tickChar = "\u2713"; /* (check mark/tick) */
         crossChar = "\u2715"; /* (cross) */
@@ -2808,132 +2775,117 @@ function draw_graphic_bis() {
         tickChar = "\u2714"; /* (check mark/tick) */
         crossChar = "\u2716"; /* (cross) */
       }
-      if (CompressedDisplayMode) {
 
-        for (let i = 0; i < allRadioButtons.length; i++) {
-          allRadioButtons[i].textContent = nbMinColumns + i;
-        }
-        resetCurrentCodeButtonObject.value = "\u2718";
-        playRandomCodeButtonObject.value = "\u266C";
-        revealSecretColorButtonObject.value = "?";
-        showPossibleCodesButtonObject.value = showPossibleCodesButtonCompressedName;
-        myTableObject.style.width = "100%";
-        myTableObject.style.height = "100%";
-        myTableObject.style.left = "0";
-        myTableObject.style.top = "0";
-        if (android_appli) { // (no transition)
-          myTableObject.style.minWidth = "100%";
-          myTableObject.style.minHeight = "100%";
-        }
+      if (!htmlObjectsAlreadySet || CompressedDisplayModeHasChanged) {
 
-        try { // (try/catch because optional pictures)
-          img1Object.style.display = 'none';
-          img2Object.style.display = 'none';
-        }
-        catch (err) {}
+          for (let i = 0; i < allRadioButtons.length; i++) {
+            allRadioButtons[i].textContent = nbMinColumns + i;
+          }
 
-        left_border_margin_x = 0.75;   // Left border margin for x axis in %
-        right_border_margin_x = 0.25;  // Right border margin for x axis in %
-        bottom_border_margin_y = 1.25; // Bottom border margin for y axis in %
-        top_border_margin_y = 0.65;    // Top border margin for y axis in %
+          if (CompressedDisplayMode) {
+            resetCurrentCodeButtonObject.value = "\u2718";
+            playRandomCodeButtonObject.value = "\uD83C\uDFB2";
+            revealSecretColorButtonObject.value = "?";
+            showPossibleCodesButtonObject.value = showPossibleCodesButtonCompressedName;
+            myTableObject.style.width = "100%";
+            myTableObject.style.height = "100%";
+            myTableObject.style.left = "0";
+            myTableObject.style.top = "0";
+            if (android_appli) { // (no transition)
+              myTableObject.style.minWidth = "100%";
+              myTableObject.style.minHeight = "100%";
+            }
+
+            try { // (try/catch because optional pictures)
+              img1Object.style.display = 'none';
+              img2Object.style.display = 'none';
+            }
+            catch (err) {}
+
+            buttonsTdObject.style.padding = "0 0 0.30vh 0"; /* top right bottom left */
+
+            left_border_margin_x = 0.25;   // Left border margin for x axis in %
+            right_border_margin_x = 0.25;  // Right border margin for x axis in %
+            bottom_border_margin_y = 1.00; // Bottom border margin for y axis in %
+            top_border_margin_y = 0.00;    // Top border margin for y axis in %
+          }
+          else {
+            resetCurrentCodeButtonObject.value = resetCurrentCodeButtonIniName;
+            playRandomCodeButtonObject.value = playRandomCodeButtonIniName;
+            revealSecretColorButtonObject.value = revealSecretColorButtonIniName;
+            showPossibleCodesButtonObject.value = showPossibleCodesButtonIniName;
+            myTableObject.style.width = "75%";
+            myTableObject.style.height = "90%";
+            myTableObject.style.left = "12.5%"; // (100% - 75%) / 2
+            myTableObject.style.top = "2%";
+
+            try { // (try/catch because optional pictures)
+              img1Object.style.display = 'inline';
+              img2Object.style.display = 'inline';
+            }
+            catch (err) {}
+
+            buttonsTdObject.style.padding = "2.0vh 0 2.0vh 0"; /* top right bottom left */
+
+            left_border_margin_x = 5.0;   // Left border margin for x axis in %
+            right_border_margin_x = 5.0;  // Right border margin for x axis in %
+            bottom_border_margin_y = 2.5; // Bottom border margin for y axis in %
+            top_border_margin_y = 2.5;    // Top border margin for y axis in %
+          }
+          htmlObjectsAlreadySet = true;
 
       }
-      else {
 
-        for (let i = 0; i < allRadioButtons.length; i++) {
-          allRadioButtons[i].textContent = nbColumnsRadioObjectIniNames[i];
-        }
-        resetCurrentCodeButtonObject.value = resetCurrentCodeButtonIniName;
-        playRandomCodeButtonObject.value = playRandomCodeButtonIniName;
-        revealSecretColorButtonObject.value = revealSecretColorButtonIniName;
-        showPossibleCodesButtonObject.value = showPossibleCodesButtonIniName;
-        myTableObject.style.width = "75%";
-        myTableObject.style.height = "90%";
-        myTableObject.style.left = "12.5%";
-        myTableObject.style.top = "2%";
-
-        try { // (try/catch because optional pictures)
-          img1Object.style.display = 'inline';
-          img2Object.style.display = 'inline';
-        }
-        catch (err) {}
-
-        left_border_margin_x = 5.0;   // Left border margin for x axis in %
-        right_border_margin_x = 5.0;  // Right border margin for x axis in %
-        bottom_border_margin_y = 2.5; // Bottom border margin for y axis in %
-        top_border_margin_y = 2.5;    // Top border margin for y axis in %
-
-      }
-
-      if (CompressedDisplayMode) {
-        if (bufferTd1Object != null) bufferTd1Object.style.width = "0%";
-        if (bufferTd2Object != null) bufferTd2Object.style.width = "0%";
-      }
-      else {
-        if (bufferTd1Object != null) bufferTd1Object.style.width = "0.2%";
-        if (bufferTd2Object != null) bufferTd2Object.style.width = "0.2%";
-      }
       canvas_cell.style.border = borderStr1;
       for (let i = 0; i < allButtons.length; i++) {
         allButtons[i].style.border = borderStr2;
       }
-      if (height < 500) {
-        for (let i = 0; i < allButtons.length; i++) {
-          allButtons[i].style.fontSize = "12px";
-        }
-        for (let i = 0; i < allRadioButtons.length; i++) {
-          allRadioButtons[i].style.fontSize = "12px";
-        }
+      for (let i = 0; i < allButtons.length; i++) {
+        allButtons[i].style.fontSize = (CompressedDisplayMode ? "2.9vh" : "2.7vh"); // proportional to viewport height
       }
-      else {
-        for (let i = 0; i < allButtons.length; i++) {
-          allButtons[i].style.fontSize = (CompressedDisplayMode ? "2.5vh" : "2vh"); // proportional to viewport height
-        }
-        for (let i = 0; i < allRadioButtons.length; i++) {
-          allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "2.6vh" : "2vh"); // proportional to viewport height
-        }
+      for (let i = 0; i < allRadioButtons.length; i++) {
+        allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "3.5vh" : "3.5vh"); // proportional to viewport height
       }
 
-      var $td = $('canvas').parent(); // (my_canvas_cell)
-      width = $td.width(); // (may have changed above)
-      height = $td.height(); // (may have changed above)
+      current_innerWidth = window.innerWidth;
+      current_innerHeight = window.innerHeight;
+
+      // Set canvas size
+      let width = canvas_cell.clientWidth - Math.ceil(borderWidth1) - 1;
+      let height = canvas_cell.clientHeight - Math.ceil(borderWidth1) - 1;
       updateAttributesWidthAndHeightValues(width, height);
-      canvas.width = width;/* (necessary as canvas may have been expanded to fill its container) */
-      canvas.height = height;/* (necessary as canvas may have been expanded to fill its container) */
-
+      canvas.width = width;
+      canvas.height = height;
     } // resize detected
 
     for (let i = 0; i < allRadioButtons.length; i++) {
       if (nbColumnsSelected == nbMinColumns+i) {
-        if (CompressedDisplayMode) {
-          let radioColor;
-          switch (i) {
-            case 0:
-              radioColor = blueColor;
-              break;
-            case 1:
-              radioColor = greenColor;
-              break;
-            case 2:
-              radioColor = "orange";
-              break;
-            case 3:
-              radioColor = purpleColor;
-              break;
-            case 4:
-              radioColor = cyanColor;
-              break;
-            default:
-              radioColor = "orange";
-          }
-          let borderStr3 = lineWidth + "px solid " + radioColor;
-          allRadioButtons[i].style.color = radioColor;
-          allRadioButtons[i].style.border = borderStr3;
+        let radioColor;
+        switch (i) {
+          case 0:
+            radioColor = blueColor;
+            break;
+          case 1:
+            radioColor = greenColor;
+            break;
+          case 2:
+            radioColor = "orange";
+            break;
+          case 3:
+            radioColor = purpleColor;
+            break;
+          case 4:
+            radioColor = cyanColor;
+            break;
+          default:
+            radioColor = "orange";
         }
-        else {
-          allRadioButtons[i].style.color = (modernDisplay ? "purple" : "orange");
-          allRadioButtons[i].style.border = 'none';
-        }
+        let borderStr3 = lineWidth + "px solid " + radioColor;
+        allRadioButtons[i].style.color = radioColor;
+        allRadioButtons[i].style.border = borderStr3;
+        // previous version for not compressed mode:
+        // allRadioButtons[i].style.color = (modernDisplay ? "purple" : "orange");
+        // allRadioButtons[i].style.border = 'none';
       }
       else {
         allRadioButtons[i].style.color = "black";
@@ -2941,33 +2893,80 @@ function draw_graphic_bis() {
       }
     }
 
-    // Set adaptative widths
-    if (window.innerWidth < 0.70*window.innerHeight) {
+    // Set adaptative widths => possible improvement: use mathematical formulas
+    if (window.innerWidth < 0.57*window.innerHeight) {
+      generalTableWidthStr = "100%";
       rulesTableWidthStr = "100%";
       scoresTableWidthStr = "100%";
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = true;
     }
-    else if (window.innerWidth < 1.0*window.innerHeight) {
+    else if (window.innerWidth < 0.70*window.innerHeight) {
+      generalTableWidthStr = "100%";
+      rulesTableWidthStr = "85%";
+      scoresTableWidthStr = "100%";
+      scoresFontSizeStr = "1.4vh";
+      abbreviateScores = true;
+    }
+    else if (window.innerWidth < 0.82*window.innerHeight) {
+      generalTableWidthStr = "70%";
       rulesTableWidthStr = "70%";
       scoresTableWidthStr = "100%";
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = true;
     }
+    else if (window.innerWidth < 1.0*window.innerHeight) {
+      generalTableWidthStr = "70%";
+      rulesTableWidthStr = "60%";
+      scoresTableWidthStr = "100%";
+      scoresFontSizeStr = "1.4vh";
+      abbreviateScores = true;
+    }
+    else if (window.innerWidth > 2.6*window.innerHeight) {
+      generalTableWidthStr = "22%";
+      rulesTableWidthStr = "13%";
+      scoresTableWidthStr = "45%";
+      scoresFontSizeStr = "1.4vh";
+      abbreviateScores = false;
+    }
+    else if (window.innerWidth > 2*window.innerHeight) {
+      generalTableWidthStr = "30%";
+      rulesTableWidthStr = "20%";
+      scoresTableWidthStr = "60%";
+      scoresFontSizeStr = "1.4vh";
+      abbreviateScores = false;
+    }
     else if (window.innerWidth > 1.7*window.innerHeight) {
-      rulesTableWidthStr = "34%"; // (~35% for 67% window ratio)
+      generalTableWidthStr = "34%";
+      rulesTableWidthStr = "25%";
       scoresTableWidthStr = "70%";
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = false;
     }
-    else if (window.innerWidth > 1.3*window.innerHeight) {
-      rulesTableWidthStr = "44%"; // (~44% for 83% window ratio)
+    else if (window.innerWidth > 1.5*window.innerHeight) {
+      generalTableWidthStr = "44%";
+      rulesTableWidthStr = "35%";
       scoresTableWidthStr = "95%";
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = false;
     }
-    else { // (window ratio factor between 1.0 and 1.3)
-      rulesTableWidthStr = "53%"; // (~53% for 100% window ratio)
+    else if (window.innerWidth > 1.3*window.innerHeight) {
+      generalTableWidthStr = "44%";
+      rulesTableWidthStr = "40%";
+      scoresTableWidthStr = "95%";
+      scoresFontSizeStr = "1.4vh";
+      abbreviateScores = false;
+    }
+    else if (window.innerWidth > 1.1*window.innerHeight) {
+      generalTableWidthStr = "53%";
+      rulesTableWidthStr = "45%";
+      scoresTableWidthStr = "100%";
+      scoresFontSizeStr = "1.4vh";
+      abbreviateScores = true;
+    }
+    else { // (window ratio factor between 1.0 and 1.1)
+      generalTableWidthStr = "53%";
+      rulesTableWidthStr = "53%";
       scoresTableWidthStr = "100%";
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = true;
@@ -3091,7 +3090,7 @@ function draw_graphic_bis() {
     // Full repainting
     // ***************
 
-    let nbMaxAttemptsToDisplay = ((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed : currentAttemptNumber-1);
+    let nbMaxAttemptsToDisplay = ((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) : currentAttemptNumber-1);
 
     if (main_graph_update_needed) { // Note: no double buffering is needed in javascript (canvas contents do not need to be refilled as during Java's repaint())
 
@@ -3171,7 +3170,6 @@ function draw_graphic_bis() {
       medium_basic_font = Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       medium2_bold_font = "bold " + Math.min(Math.max(Math.floor(font_size/1.55)+2, min_font_size), font_size) + "px " + fontFamily;
-      medium3_bold_font = "bold " + Math.max(Math.floor(font_size/2.0), min_font_size) + "px " + fontFamily;
       if (!showPossibleCodesMode) {
         // (related to medium_bold_font)
         stats_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
@@ -3195,61 +3193,60 @@ function draw_graphic_bis() {
       }
 
       ctx.font = basic_bold_font;
-      for (let attempt = 0; attempt <= nbMaxAttemptsToDisplay; attempt++) {
+      for (let attempt = 0; attempt < nbMaxAttemptsToDisplay; attempt++) {
         x_0 = get_x_pixel(x_min);
         y_0 = get_y_pixel(y_min+attempt*y_step);
         x_1 = get_x_pixel(x_max);
         y_1 = get_y_pixel(y_min+attempt*y_step);
-        if (attempt < nbMaxAttemptsToDisplay) {
-          let backgroundColor = backgroundColor_2;
-          if (attempt+1 == currentPossibleCodeShown) {
-            backgroundColor = highlightColor;
+        let backgroundColor = backgroundColor_2;
+        if (attempt+1 == currentPossibleCodeShown) {
+          backgroundColor = highlightColor;
+        }
+        let str_width;
+        if (attempt_nb_width == 0) {
+          if (attempt+1 <= currentAttemptNumber-1) { // a mark will be displayed at this place
+            continue;
           }
-          let str_width;
-          if (attempt_nb_width == 0) {
-            if (attempt+1 <= currentAttemptNumber-1) { // a mark will be displayed at this place
-              continue;
-            }
-            str_width = (70*(nbColumns+1))/100;
-          }
-          else {
-            str_width = attempt_nb_width;
-          }
-          let attempt_nb_str_to_display = "";
-          if ((!showPossibleCodesMode) && (nb_attempts_not_displayed > 0) && (attempt+1 == nbMaxAttemptsToDisplay)) {
-            attempt_nb_str_to_display = String(nbMaxAttempts);
-          }
-          else {
-            attempt_nb_str_to_display = String(attempt+1);
-          }
-          if (gameWon) {
-            if (attempt+1 == currentAttemptNumber-1) {
-              displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                            (modernDisplay ? darkGray : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
-            }
-            else {
-              displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                            lightGray, backgroundColor, ctx, false, true, 0, true, 0);
-            }
-          }
-          else if (attempt+1 == currentAttemptNumber) {
-            if (attempt+1 == nbMaxAttempts) {
-              displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                            redColor, backgroundColor, ctx, false, true, 0, true, 0);
-            }
-            else if (attempt+2 == nbMaxAttempts) { /* (last but one attempt) */
-              displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                            orangeColor, backgroundColor, ctx, false, true, 0, true, 0);
-            }
-            else {
-              displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                            (((currentAttemptNumber == 1) || !modernDisplay) ? (modernDisplay ? "purple" : "orange") : darkGray), backgroundColor, ctx, false, true, 0, true, 0);
-            }
+          str_width = (70*(nbColumns+1))/100;
+        }
+        else {
+          str_width = attempt_nb_width;
+        }
+        let attempt_nb_to_display = -1;
+        if ((!showPossibleCodesMode) && (nb_attempts_not_displayed > 0) && (!skip_last_attempt_display) && (attempt+1 == nbMaxAttemptsToDisplay)) {
+          attempt_nb_to_display = nbMaxAttempts;
+        }
+        else {
+          attempt_nb_to_display = attempt+1;
+        }
+        let attempt_nb_str_to_display = String(attempt_nb_to_display);
+        if (gameWon) {
+          if (attempt_nb_to_display == currentAttemptNumber-1) {
+            displayString(attempt_nb_str_to_display, 0, attempt, str_width,
+                          (modernDisplay ? darkGray : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
           }
           else {
             displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                          (((currentAttemptNumber == 1) && !modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
+                          lightGray, backgroundColor, ctx, false, true, 0, true, 0);
           }
+        }
+        else if (attempt_nb_to_display == currentAttemptNumber) {
+          if (attempt_nb_to_display == nbMaxAttempts) {
+            displayString(attempt_nb_str_to_display, 0, attempt, str_width,
+                          redColor, backgroundColor, ctx, false, true, 0, true, 0);
+          }
+          else if (attempt_nb_to_display+1 == nbMaxAttempts) { // last but one attempt
+            displayString(attempt_nb_str_to_display, 0, attempt, str_width,
+                          redColor, backgroundColor, ctx, false, true, 0, true, 0);
+          }
+          else {
+            displayString(attempt_nb_str_to_display, 0, attempt, str_width,
+                          (((currentAttemptNumber == 1) || !modernDisplay) ? (modernDisplay ? "purple" : "orange") : darkGray), backgroundColor, ctx, false, true, 0, true, 0);
+          }
+        }
+        else {
+          displayString(attempt_nb_str_to_display, 0, attempt, str_width,
+                        (((currentAttemptNumber == 1) && !modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
         }
       }
 
@@ -3489,30 +3486,6 @@ function draw_graphic_bis() {
 
       let HintsThreshold = 5;
       if (!showPossibleCodesMode) {
-
-        // Display rules
-        // *************
-
-        ctx.font = medium3_bold_font;
-        let defaultStr = "?";
-        let themesFullyDisplayed = true;
-        let themeStr1 = "DISPLAY"; // (longest string overall first)
-        let themeStr2 = "DISP";
-        if (!displayString(" " + themeStr1 + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
-                           "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0)) {
-          if (!displayString("\u2009" + themeStr2 + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
-                             "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0)) {
-            themesFullyDisplayed = false;
-            displayString(defaultStr, 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-2, attempt_nb_width+(70*(nbColumns+1))/100,
-                          "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0);
-          }
-        }
-        let infoStr = "INFO";
-        if (!themesFullyDisplayed || !displayString(" " + infoStr + " ", 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                                                    "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0)) {
-          displayString(defaultStr, 0, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors-1, attempt_nb_width+(70*(nbColumns+1))/100,
-                        "#000000BB", backgroundColor_2, ctx, false, true, 1, true, 0);
-        }
 
         // Display column headers
         // **********************
@@ -3798,15 +3771,8 @@ function draw_graphic_bis() {
             if (smmCodeHandler.nbEmptyColors(sCodeRevealed) < nbColumns) {
               victoryStr = "\u2009You won with help\u2009";
               victoryStr2 = "\u2009Win with help\u2009";
-              victoryStr3 = "Win!";
-              nbColorsRevealed = (nbColumns-smmCodeHandler.nbEmptyColors(sCodeRevealed));
-              if (nbColorsRevealed == 1) { // 1 color revealed
-                score = Math.max(score / 4.44, min_score);
-              }
-              else {
-                score = min_score;
-                displayGUIError("internal error: nbColorsRevealed = " + nbColorsRevealed, new Error().stack);
-              }
+              victoryStr3 = "Win";
+              score = min_score;
             }
             else {
               victoryStr = "\u2009You won!\u2009";
@@ -3891,24 +3857,10 @@ function draw_graphic_bis() {
 
         }
 
-        // Draw color selection
-        // ********************
-
-        if (font_size != min_font_size) {
-          ctx.fillStyle = darkGray;
-        }
-        else {
-          ctx.fillStyle = backgroundColor_2;
-        }
+        // Draw color selection 1/2
+        // ************************
 
         ctx.font = basic_bold_font;
-        for (let color = 0; color < nbColors; color++) {
-          for (let col = 0; col < nbColumns; col++) {
-            color_selection_code = smmCodeHandler.setColor(color_selection_code, color+1, col+1);
-          }
-          displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing());
-        }
-
         ctx.fillStyle = darkGray;
 
         try {
@@ -4170,19 +4122,21 @@ function draw_graphic_bis() {
           newGameButtonObject.value = "\u231B"; /* hourglass */
         }
         else {
-          newGameButtonObject.value = "PLEASE WAIT \u231B"; /* hourglass */
+          newGameButtonObject.value = "WAIT... \u231B"; /* hourglass */
         }
       }
       else {
         newGameButtonObject.disabled = false;
         newGameButtonObject.className  = "button";
         if (CompressedDisplayMode) {
-          newGameButtonObject.value = "N";
+          newGameButtonObject.value = "+";
         }
         else {
           newGameButtonObject.value = newGameButtonIniName;
         }
       }
+      settingsButtonObject.disabled = false;
+      settingsButtonObject.className  = "button";
 
       if (currentAttemptNumber > 1) {
         for (let i = 0; i < allRadioButtons.length; i++) {
@@ -4201,7 +4155,7 @@ function draw_graphic_bis() {
         }
       }
 
-      playRandomCodeButtonObject.disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts-1) /* (from last but one attempt) */);
+      playRandomCodeButtonObject.disabled = (!gameOnGoing() || (currentAttemptNumber >= nbMaxAttempts-1)); // from last but one attempt
       if (playRandomCodeButtonObject.disabled) {
         playRandomCodeButtonObject.className = "button disabled";
       }
@@ -4209,11 +4163,12 @@ function draw_graphic_bis() {
         playRandomCodeButtonObject.className = "button";
       }
 
-      revealSecretColorButtonObject.disabled = !(gameOnGoing() && (nbColumns > 3) && (currentAttemptNumber >= 2) && (smmCodeHandler.nbEmptyColors(sCodeRevealed) == nbColumns));
+      let nbColorsRevealed = nbColumns - smmCodeHandler.nbEmptyColors(sCodeRevealed);
+      revealSecretColorButtonObject.disabled = !(gameOnGoing() && (nbColumns >= 4) && (currentAttemptNumber >= 3) && (nbColorsRevealed < nbColumns-2));
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(revealSecretColorButtonObject.disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))  // (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || at_least_one_useless_code_played ) ) { /* (number of useless attempts) */
         revealSecretColorButtonObject.className = "button"; // (ensures the following blinking will work)
@@ -4261,7 +4216,31 @@ function draw_graphic_bis() {
     // Partial repainting
     // ******************
 
-    // Display current code
+    // Draw color selection 2/2
+    // ************************
+
+    if (!showPossibleCodesMode) {
+      // Done even if main_graph_update_needed is false, to highlight selected text
+
+      if (font_size != min_font_size) {
+        ctx.fillStyle = darkGray;
+      }
+      else {
+        ctx.fillStyle = backgroundColor_2;
+      }
+
+      ctx.font = basic_bold_font;
+      for (let color = 0; color < nbColors; color++) {
+        for (let col = 0; col < nbColumns; col++) {
+          color_selection_code = smmCodeHandler.setColor(color_selection_code, color+1, col+1);
+        }
+        displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
+      }
+    }
+
+    // Display current code and remaining settings
+    // *******************************************
+
     if (gameOnGoing()) { // playing phase
       ctx.font = basic_bold_font;
       currentCodeColorMode = -1;
@@ -4292,7 +4271,7 @@ function draw_graphic_bis() {
       if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(revealSecretColorButtonObject.disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))  // See also (*)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))  // (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
             revealSecretColorButtonObject.className = "button"; // (ensures the following blinking will work)
             revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" : "button blinking");
@@ -4610,6 +4589,14 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
         backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
       }
     }
+    if (highlight_selected_text) {
+      if (!modernDisplay) {
+        backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.25);
+      }
+      else {
+        backgroundColor = averageColor(backgroundColor, "#800080" /* = "purple" */, 0.25);
+      }
+    }
     if (color < 10) {
       displayString(getColorToDisplay(color), x_cell, y_cell, 2,
                     foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
@@ -4658,10 +4645,12 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
   }
 }
 
-function displayCode(code, y_cell, ctx, secretCodeCase = false, checkDisabledColors = false) {
+function displayCode(code, y_cell, ctx, secretCodeCase = false, checkDisabledColors = false, check_highlight_text = false) {
   for (let col = 0; col < nbColumns; col++) {
     let color = smmCodeHandler.getColor(code, col+1);
+    highlight_selected_text = (check_highlight_text && (color == color_being_selected) && (col+1 == column_of_color_being_selected));
     displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ?  obviouslyImpossibleColors[color] : false));
+    highlight_selected_text = false;
   }
 }
 
@@ -4772,7 +4761,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
   if ((mark.nbBlacks + mark.nbWhites == 0) && ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 30)) && (!worst_mark_alert_already_displayed) && (nb_worst_mark_alert_displayed<= 2)) {
     worst_mark_alert_already_displayed = true;
     nb_worst_mark_alert_displayed++;
-    setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 444);
+    setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 111);
   }
 
 }
@@ -4987,14 +4976,15 @@ scriptsFullyLoaded = true;
 draw_graphic();
 updateThemeAttributes();
 
-canvas.addEventListener("mousedown", mouseClick, false);
+canvas.addEventListener("mousedown", mouseDown, false);
+canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);
 
 // Welcome message at very first game on android app
 // Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit
-if ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 4)) { // recent player
+if ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 5)) { // recent player
   let welcome_str =
-    "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td>\
+    "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td>\
     <img src='img/" + (android_appli ? "Welcome_android_app.png" : "Welcome_browser.png") + "' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;border:.3vw solid #79460B;border-radius: 2.0%;'>\
     </td></tr></table></center>";
   try {
@@ -5014,3 +5004,4 @@ else {
   askLocationPermissionsIfNeeded();
 }
 debug_game_state = 69;
+debug_smm_state = 100;

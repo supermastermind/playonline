@@ -6,14 +6,11 @@
     <title>Super Master Mind</title> <!-- (this title will be overwritten) -->
     <meta name="robots" content="noindex"> <!-- (this page shall be preferably accessed from the main site page) -->
 
-    <!-- no viewport tag in this page as it makes canvas fuzzy! -->
-
     <!-- Remote console at http://console.re/supermastermind displaying console text (provided all calls to "console.log(xxx)" are replaced by "console.re.log(xxx)")
          and console errors (provided the .js scripts to be debugged are copied/pasted directly into this HTML file between <script>...</script> tags,
          otherwise error details, among which error line numbers, will be lost):
       <script src="https://console.re/connector.js" data-channel="supermastermind" id="consolerescript"></script>
-      <script>console.re.log('remote log enabled!');</script>
-    -->
+      <script>console.re.log('remote log enabled!');</script> -->
 
     <script>
       var pageLoadStartTime = "NA";
@@ -86,18 +83,16 @@
       .button {
         font-family: Verdana;
         background-color: white;
-        border: 2px solid black; /* (may be modified in SuperMasterMind.js) */
+        border: 2px solid black;
         border-radius: 20%;
         color: black;
-        padding: 1.0vh 0.5vw 1.0vh 0.5vw; /* top right bottom left */
+        margin: 0;
+        padding: 0.5vh 2.0vw 0.5vh 2.0vw; /* top right bottom left */
         text-align: center;
+        vertical-align: middle;
         text-decoration: none;
         font-weight: bold;
         cursor: pointer;
-        width: 100%;
-        display: block;
-        margin-top: 1.0vh;
-        margin-bottom: 1.0vh;
         -webkit-backface-visibility: visible;
       }
       .button:hover { /* (will be overridden dynamically) */
@@ -198,7 +193,7 @@
         color: orange;
         border-color: orange;
         border-radius: 25%;
-        padding: 0 0.5vw 0 0.5vw; /* top right bottom left */
+        padding: 0 0.6vw 0 0.6vw; /* top right bottom left */
       }
 
       .not_selectable {
@@ -330,6 +325,8 @@
       var versionCodeStr = "?";
       var versionCodeInt = -1;
       var scriptsFullyLoaded = false;
+      var mobileMode = false;
+      var androidMode = false;
       var smm = (decodeURI(location.href).indexOf('https://supermastermind.github.io/playonline/game.html') != -1);
       try {
         androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
@@ -396,6 +393,28 @@
         }
       }
 
+      if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/3)
+           || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Lumia|PlayBook|BB10|Tablet|Opera Mobi|Opera Mini/i.test(navigator.userAgent)) // (mobile device check 2/3)
+           || android_appli ) { // (mobile device check 3/3)
+        mobileMode = true;
+        if (/Android/i.test(navigator.userAgent) || android_appli) {
+          androidMode = true;
+        }
+      }
+
+      function makeid() {
+        let text = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 6; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      }
+      if (!localStorage.playerid) {
+        let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android app)
+        localStorage.playerid = id;
+      }
+
       function displayAdsIfNeeded() {
         if (localStorage.gamesok && (Number(localStorage.gamesok) >= 12)) {
           if (!android_appli) {
@@ -410,10 +429,10 @@
               localStorage.lastAdsDisplayTime = (new Date()).getTime(); // (duplicated code in index.html)
               localStorage.lastAdsDisplayGamesOk = localStorage.gamesok; // (duplicated code in index.html)
               // Load page with ads
-              window.location.href = 'index.html';
+              // [DISABLE ADS] // window.location.href = 'index.html';
             }
           }
-          // else: ads for android appli case: to be completed in the future
+          // else: for android app, ads shall be handled directly in the app
         }
       }
       if (!globalErrorStatus) {
@@ -421,6 +440,7 @@
       }
 
       var unknownIPAddressPrefix = '0.0.0'; // (Note: checked by GS SCRIPT)
+      var generalTableWidthStr = "44%";
       var rulesTableWidthStr = "44%";
       var scoresTableWidthStr = "100%";
       var scoresFontSizeStr = "1.6vw";
@@ -432,7 +452,8 @@
       var nbColorSelections = 0;
       var gameRulesDisplayed = false;
       var debug_game_state = -1;
-      var debug_on_unload = 0;
+      var debug_smm_state = -1;
+      var debug_on_resize_or_unload = 0;
       var github_unicorn_error = false;
       var github_html_error = false;
       var github_load_error = false;
@@ -474,15 +495,18 @@
       var showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown = -1, showModeForced = false, transientMode = false) {
         console.log("showPossibleCodesButtonClick function not defined yet");
       }
+      var settingsButtonClick = function() {
+        console.log("settingsButtonClick function not defined yet");
+      }
 
       if (!localStorage.firstgamegeoloc) { // Keep existing value if it exists
         localStorage.firstgamegeoloc = "fa";
       }
 
       var beforeunload_case = false;
-      $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing (***)
+      $(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing
         try {
-          debug_on_unload = 1;
+          debug_on_resize_or_unload = 1;
           if (last_valid_handle_stats_final_retry_str != "") {
             // Asynchronous operations are not supported on beforeunload, thus the below beforeunload_case behaviour
             eval("console.log('stats handled on unload');" + "beforeunload_case = true;" + last_valid_handle_stats_final_retry_str + "beforeunload_case = false;");
@@ -494,21 +518,13 @@
                 }
               }
           }
+          debug_on_resize_or_unload = 2;
         }
         catch (exc) {
           console.log("error encountered at game abortion: " + exc);
           return; // (no confirmation asked)
         }
       });
-
-      function makeid() {
-        let text = "";
-        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        for (let i = 0; i < 6; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-      }
 
       function formatDate(date) {
         if (date == null) {
@@ -527,39 +543,27 @@
       }
 
       function checkIfRecentPlayer() {
-        if (typeof(Storage) !== 'undefined') {
-          if (!localStorage.gamesok) {
-            return true;
-          }
-          if (Number(localStorage.gamesok) < 5) {
-            return true;
-          }
-          if (!localStorage.recent_player_reference_time) {
-            if (Number(localStorage.gamesok) > 10) {
-              // Backward compatibility for already existing players
-              localStorage.recent_player_reference_time = 0; // (very old time)
-            }
-            else {
-              // Set recent player reference time from "localStorage.gamesok == 5" event for new players
-              localStorage.recent_player_reference_time = (new Date()).getTime();
-            }
-          }
-          if (Number(localStorage.gamesok) < 15) {
-            return true;
-          }
-          else {
-            return ((new Date()).getTime() - localStorage.recent_player_reference_time <= 1.5*24*3600*1000); // 1.5 day ~ time to close PC's browser window
-          }
-        }
-        else {
+        if (!localStorage.gamesok) {
           return true;
         }
-      }
-
-      if (typeof(Storage) !== 'undefined') {
-        if (!localStorage.firstaccessid) {
-          let firstaccessid = '1ST-' + makeid() + "-" + formatDate(new Date());
-          localStorage.firstaccessid = firstaccessid;
+        if (Number(localStorage.gamesok) < 5) {
+          return true;
+        }
+        if (!localStorage.recent_player_reference_time) {
+          if (Number(localStorage.gamesok) > 10) {
+            // Backward compatibility for already existing players
+            localStorage.recent_player_reference_time = 0; // (very old time)
+          }
+          else {
+            // Set recent player reference time from "localStorage.gamesok == 5" event for new players
+            localStorage.recent_player_reference_time = (new Date()).getTime();
+          }
+        }
+        if (Number(localStorage.gamesok) < 15) {
+          return true;
+        }
+        else {
+          return ((new Date()).getTime() - localStorage.recent_player_reference_time <= 1.5*24*3600*1000); // 1.5 day ~ time to close PC's browser window
         }
       }
 
@@ -567,26 +571,26 @@
       let alternateLocationId = ((nbLocationURLs+1 <= 5) ? 5 : nbLocationURLs+1); // (shall be < precisionLocationId, IP-address based geolocation when id < precisionLocationId)
       let precisionLocationId = 10;
       let locationURLs = new Array(nbLocationURLs);
-      let extraStr = (smm ? "" : "x");
+      let extraStr = ((smm && !localStorage.skip) ? "" : "x");
       // Favor IPv4 addresses because IPv6 addresses change at each device reboot
       // Note 06/2023: it is not clear if geolocation is better on average with legacy IPv4 addresses or with "still new" IPv6 addresses.
       // - IPV4:
       locationURLs[0] = 'https://api.ip' + extraStr + 'data.co/en?api-key=102' + extraStr + 'c5eac3a9c7c5dad17519b2029bb6bdf4a076b60dde282eecaf99f'; // (free key - seems to always return an IPv4 address, even if not documented, and even if this site supports both IPv4 and IPv6 address when in input)
       // - IPv6 (most of the time):
       locationURLs[1] = 'https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792' + extraStr + 'e8cda21ab40a7f5a349cddc79beb41ff95910c2ec0d05bfea593961e01c7a&format=json'; // (free key - returns most of the time an IPv6 address)
-      // Backup IPV4 site: not used because table updates seem less freqeuent than api.ipdata.co and because successful even when invalid IP address: locationURLs[X] = 'https://ip' + extraStr + 'info.io/json/?token=ca8' + extraStr + '32119df7bb5'; // (free key - returns always an IPv4 address by default, https://v6.ipinfo.io/json URL would have to be used for IPv6 as described in this page https://ipinfo.io/faq/article/34-ipv4-vs-ipv6)
+      // - IPV4 (backup): site not used because table updates seem less freqeuent than api.ipdata.co and because successful even when invalid IP address: locationURLs[X] = 'https://ip' + extraStr + 'info.io/json/?token=ca8' + extraStr + '32119df7bb5'; // (free key - returns always an IPv4 address by default, https://v6.ipinfo.io/json URL would have to be used for IPv6 as described in this page https://ipinfo.io/faq/article/34-ipv4-vs-ipv6)
     </script>
 
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="eval('try{draw_graphic();}catch(e){}');" onunload="/* See (***) */ debug_on_unload = 2;console.log('exit...');">
+  <body onresize="eval('try{debug_on_resize_or_unload = 3;draw_graphic();debug_on_resize_or_unload = 4;}catch(e){}');">
 
     <div id="game_loading_id" class="game_loading">
       <img src='img/loading.gif' style='height:12%;'><br>Loading... <!-- (not rem unit as no viewport! / duplicated code) -->
     </div>
 
-    <div class="page_transition" style='display:none;'>
+    <div id="page_transition_id" class="page_transition" style='display:none;'>
     </div>
 
     <div id="game_aborted_id" class="game_aborted" style='display:none;' onclick="gameAbortionEnd()">
@@ -597,33 +601,33 @@
 
     <table id='my_table' style='width:100%;height:100%;position:absolute;left:0;top:0;border:none;border-radius:0%;margin:0;padding:0;'>
       <tr>
-        <td style='width:0%;margin:0;padding:0;' id='buffer_td_1'></td>
-        <td style='margin:0;padding:0;vertical-align:middle;text-align:center;white-space:nowrap'>
-          <input id='newGameButton' class='button disabled' type='button' value='NEW GAME' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' style='margin-bottom:0.5vh;' disabled>
-
-          <form action='' class='not_selectable'>
+        <td class='not_selectable' style='width:100%;height:1%;margin:0;padding:0;vertical-align:middle;text-align:center;border:none;white-space:nowrap;' id='buttons_td'>
+          <input id='newGameButton' class='button disabled' type='button' value='NEW' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' disabled>
+          <form action='' style='display:inline;vertical-align:middle;'>
             <label title='Very easy game'>
-            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_3' value="3" onclick='newGameButtonClick(3)'><span id='columnsspan_3' class='radio disabled' name='radio_name'>3 columns</span>
-            </label><br>
+            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_3' value="3" onclick='newGameButtonClick(3)'><span id='columnsspan_3' class='radio disabled' name='radio_name'>3</span>
+            </label>
             <label title='Master Mind'>
-            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_4' value="4" onclick='newGameButtonClick(4)'><span id='columnsspan_4' class='radio disabled' name='radio_name'>4 columns</span>
-            </label><br>
+            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_4' value="4" onclick='newGameButtonClick(4)'><span id='columnsspan_4' class='radio disabled' name='radio_name'>4</span>
+            </label>
             <label title='Super Master Mind'>
-            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_5' value="5" onclick='newGameButtonClick(5)'><span id='columnsspan_5' class='radio disabled' name='radio_name'>5 columns</span>
-            </label><br>
+            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_5' value="5" onclick='newGameButtonClick(5)'><span id='columnsspan_5' class='radio disabled' name='radio_name'>5</span>
+            </label>
             <label title='Mega Master Mind'>
-            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_6' value="6" onclick='newGameButtonClick(6)'><span id='columnsspan_6' class='radio disabled' name='radio_name'>6 columns</span>
-            </label><br>
+            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_6' value="6" onclick='newGameButtonClick(6)'><span id='columnsspan_6' class='radio disabled' name='radio_name'>6</span>
+            </label>
             <label title='Ultra Master Mind'>
-            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_7' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class='radio disabled' name='radio_name'>7 columns</span>
-            </label><br>
+            <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_7' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class='radio disabled' name='radio_name'>7</span>
+            </label>
           </form>
-          <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset current code' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
-          <input id='playRandomCodeButton' class='button disabled' type='button' value='Play random code' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
-          <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal secret color' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-          <input id='showPossibleCodesButton' class='button disabled' type='button' value='Show possible codes' title='Show possible codes at each stage of the game (when game is over)' onfocus='this.blur()' onclick='showPossibleCodesButtonClick()' disabled>
+          <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Reset' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
+          <input id='playRandomCodeButton' class='button disabled' type='button' value='Random' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
+          <input id='revealSecretColorButton' class='button disabled' type='button' value='Reveal' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
+          <input id='showPossibleCodesButton' class='button disabled' type='button' value='Codes' title='Show possible codes at each stage of the game (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
+          <input id='settingsButton' class='button disabled' type='button' value='&#x2026;' title='Info & settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
         </td>
-        <td style='width:0%;margin:0;padding:0;' id='buffer_td_2'></td>
+      </tr>
+      <tr>
         <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
       </tr>
     </table>
@@ -671,46 +675,35 @@
 
     <p style='text-align:right'>
       <script>
-        if (typeof(Storage) !== 'undefined') {
-          let welcome_str = "Welcome";
-          try {
-            if ((navigator.language == "fr") || (navigator.language.indexOf("fr-") == 0)) { // covers "fr", "fr-FR", "fr-BE", "fr-CA", "fr-CH", "fr-LU"
-              welcome_str = "Bienvenue";
-            }
-          }
-          catch (exc) {}
-          if (localStorage.firstname && localStorage.playerid) {
-            let kdo_str = "";
-            if ((localStorage.firstname == "Jeannot") && (localStorage.playerid.indexOf("9XG5") != -1)) {
-              kdo_str = "<br><img src='img/Kdo.png' align='left' class='kdo' style='width:7.7%;margin:0.5% 0 0 1.0%;border-radius:40%'>";
-            }
-            document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>" + "<span id='kdo_id'>" + kdo_str + "</span>");
-            setTimeout(function() {
-              $("#welcome_id").fadeOut().empty();
-            }, 60000);
-            setTimeout(function() {
-              $("#kdo_id").fadeOut().empty();
-            }, 60000);
+        let welcome_str = "Welcome";
+        try {
+          if ((navigator.language == "fr") || (navigator.language.indexOf("fr-") == 0)) { // covers "fr", "fr-FR", "fr-BE", "fr-CA", "fr-CH", "fr-LU"
+            welcome_str = "Bienvenue";
           }
         }
-      </script>
-      <b><a href='index.html'>Main page</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='index.html#game_rules'>Game rules</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='optimal_strategy.html'>Optimal strategy</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='screenshots.html'>Screenshots</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='https://play.google.com/store/apps/details?id=supermastermind.github.io'>Android app</a></b>&nbsp;&nbsp;&nbsp;<br>
-      <b><a href='contact_info.html'>Contact info</a></b>&nbsp;&nbsp;&nbsp;<br><br>
-      <script>
-        {
-          var date = new Date();
-          var m = date.getMonth();
-          var d = date.getDate();
-          if (!android_appli) {
-            if ( ((m == 11) && (d >= 15)) // after December 15th
-                 || ((m == 0) && (d <= 2)) ) { // before January 2nd
-              // (Display values will be updated below if necessary)
-              document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>&nbsp;<br><img id='img_2' style='display:none;' src='img/End_of_year2.png'>&nbsp;");
-            }
+        catch (exc) {}
+        if (localStorage.firstname && localStorage.playerid) {
+          let kdo_str = "";
+          if ((localStorage.firstname == "Jeannot") && (localStorage.playerid.indexOf("9XG5") != -1)) {
+            kdo_str = "<br><img src='img/Kdo.png' align='left' class='kdo' style='width:7.7%;margin:0.5% 0 0 1.0%;border-radius:40%'>";
+          }
+          document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>" + "<span id='kdo_id'>" + kdo_str + "</span>");
+          setTimeout(function() {
+            $("#welcome_id").fadeOut().empty();
+          }, 60000);
+          setTimeout(function() {
+            $("#kdo_id").fadeOut().empty();
+          }, 60000);
+        }
+
+        var eoy_date = new Date();
+        var m = eoy_date.getMonth();
+        var d = eoy_date.getDate();
+        if (!android_appli && !mobileMode) {
+          if ( ((m == 11) && (d >= 15)) // after December 15th
+               || ((m == 0) && (d <= 2)) ) { // before January 2nd
+            // (Display values will be updated below if necessary)
+            document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>&nbsp;<br><img id='img_2' style='display:none;' src='img/End_of_year2.png'>&nbsp;");
           }
         }
       </script>
@@ -718,10 +711,8 @@
 
     <script>
 
-      let html_compatibility_game_version = "v22.9";
-      let nb_errors_submitted = 0;
-      let mobileMode = false;
-      let androidMode = false;
+      let html_compatibility_game_version = "v30"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
       document.body.onkeydown = function(e) {
@@ -734,12 +725,13 @@
           lastKeyCheck = true;
         }
         else if (keycheck2 && lastKeyCheck) {
-          var mode = prompt("Which mode do you want to select?", "444");
-          if (mode != null) {
-            document.getElementById('form_list_id').value = mode.trim();
-            setTimeout("submitForm();", 444);
+          try {
+            modeAlreadySelected = true;
+            handlePrompt();
           }
-          modeAlreadySelected = true;
+          catch (exc) {
+            alert(exc);
+          }
         }
         else {
           lastKeyCheck = false;
@@ -748,7 +740,7 @@
 
       // Global AJAX settings
       $.ajaxSetup({
-        timeout: 90000, // 90 seconds
+        timeout: 90000, // 90 seconds by default
         cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
       });
 
@@ -770,7 +762,7 @@
                 return;
             }
         }
-        var ask_location_permissions_if_needed_str = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android appli so shall not be modified
+        var ask_location_permissions_if_needed_str = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
         setTimeout(ask_location_permissions_if_needed_str, 1000);
         localStorage.ask_location_permissions_if_needed = (new Date()).getTime();
         if (!localStorage.nb_location_permissions_requests) {
@@ -795,49 +787,9 @@
           beforeClose: function() {
 
             console.log('(modal beforeClose)');
-            if (modal_mode == 1) {
-
-              // Get firstname entered
-              try {
-                let firstname_entered = document.getElementById("firstname_input").value;
-                firstname_entered = firstname_entered.trim();
-                if ( (firstname_entered.length >= minFirstNameLength) && (firstname_entered.length <= maxFirstNameLength) && (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)) /* (only letters) */ && isCorrect(firstname_entered) ) { // (condition duplicated)
-                  if (typeof(Storage) !== 'undefined') {
-                    localStorage.firstname = capitalizeFirstLetters(firstname_entered);
-                  }
-                }
-                else {
-                  if (typeof(Storage) !== 'undefined') {
-                    localStorage.previousfirstname = firstname_entered;
-                  }
-                  alert("Invalid first name: " + firstname_entered);
-                }
-              }
-              catch (exc) {
-                console.log("error encountered at first name selection: " + exc);
-              }
-
-              if (typeof(Storage) !== 'undefined') {
-                if (!localStorage.nbTimesFirstnameAsked) {
-                  localStorage.nbTimesFirstnameAsked = 0;
-                }
-                localStorage.nbTimesFirstnameAsked = Number(localStorage.nbTimesFirstnameAsked) + 1;
-                if (localStorage.firstname) {
-                  console.log("new firstname: " + localStorage.firstname);
-                  document.getElementById('form_firstname_id').value = localStorage.firstname;
-                }
-              }
-              setTimeout("submitForm();", 444);
-
-              modal_mode = -1;
-              return true; // close the modal
-
-            }
-
-            else if (modal_mode == 2) {
+            if (modal_mode == 2) {
 
               setTimeout("showPossibleCodesButtonClick(false, -2, true);", 444);
-              // (same effect: setTimeout("document.getElementById('showPossibleCodesButton').click();", 444);)
 
               modal_mode = -1;
               return true; // close the modal
@@ -857,11 +809,6 @@
 
           }
       });
-      /* // add a button
-      modal.addFooterBtn('OK', 'tingle-btn tingle-btn--primary', function() {
-        // here goes some logic
-        modal.close();
-      }); */
 
       let loaded_sizes = new Array(3);
       loaded_sizes[0] = 234000; // imported js scripts + game.html = 88000 (jquery) + 22000 (pako) + 7000 (tingle) + 117000 (game.html) = 234000
@@ -889,11 +836,11 @@
           return Math.min(100, 2*Math.round((percent_min + progress * (percent_max - percent_min))/2));
         }
         else {
-          throw new Error("getGlobalProgress: invalid state: " + progress + ", " + state);
+          console.log("getGlobalProgress: invalid state: " + progress + ", " + state); // (errors are not handled yet)
         }
       }
       var globalProgressForHTMLGame1 = getGlobalProgress(0.50 /* (rough value) */, 0);
-      console.log("current progress: " + Math.max(globalProgressForHTMLGame1, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame1; // !WARNING! -> this console text will be read by the android appli so shall not be modified
+      console.log("current progress: " + Math.max(globalProgressForHTMLGame1, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame1; // !WARNING! -> this console text will be read by the android app so shall not be modified
       if (globalProgressForHTMLGame1 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)"); // (not rem unit as no viewport! / duplicated code)
       }
@@ -909,6 +856,333 @@
           }
         }
       };
+
+      function str_from_jqxhr(jqxhr) { // (jqxhr: XMLHTTPRequest)
+        try {
+          let str = "jqxhr={";
+          try {
+            /* Status:
+               200: "OK"
+               403: "Forbidden"
+               404: "Page not found"
+               ... */
+            str = str + "status:" + jqxhr.status;
+            str = str + ",statusText:" + jqxhr.statusText;
+            /* readyState holds the status of the XMLHttpRequest:
+               0: request not initialized
+               1: server connection established
+               2: request received
+               3: processing request
+               4: request finished and response is ready */
+            str = str + ",readyState:" + jqxhr.readyState;
+          }
+          catch (exc) {
+            str = str + "?";
+          }
+          str = str + "}";
+          return str;
+        }
+        catch (exc) {
+          return "jqxhr=?";
+        }
+      }
+
+      var smm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbx7dfFn4JQGWWcKEjHUqPk42AxlZBcnQ5AiFcuY3op6azRwNRCJfUFNuwSjBUN_GXsQ/exec";
+      var mm_mmm_umm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbxuCShh1eJtEmwgRF6ZY47HrdVfPgoJ4lVK7OD_Pxj5tanlThWdwqnb--9m1aafYid3/exec";
+      var nbErrorsSubmitted = 0;
+      function submitForm(formStr = "") {
+
+        if (globalErrorStatus) { // skip submitForm when a basic global error occurred
+          console.log("(submitForm skipped due to global error)");
+          return;
+        }
+        if (localStorage.skip) {
+          return;
+        }
+
+        let handle_stats_final_retry_str = "";
+        let handle_stats_final_retry_conditional_str = "";
+        let key = Math.floor(Math.random()*9999999999+1).toString(32);
+        let my_params = {};
+        if (formStr == "") { // Nominal case
+          var nbColumns_in_form = document.getElementById('form_nbcolumns_id').value;
+          var form_list_in_form = document.getElementById('form_list_id').value;
+
+          if (form_list_in_form == '-') {
+            switch (String(nbColumns_in_form)) {
+              case "4":
+              case "6":
+              case "7":
+                document.getElementById("my_form").action = mm_mmm_umm_action;
+                break;
+              default:
+                document.getElementById("my_form").action = smm_action;
+            }
+          }
+          else {
+            if (form_list_in_form.indexOf('2') == -1) {
+              document.getElementById("my_form").action = smm_action;
+            }
+            else {
+              document.getElementById("my_form").action = mm_mmm_umm_action;
+            }
+          }
+
+          // console.log(JSON.stringify($("#my_form").serializeArray()));
+          let elements = document.getElementById("my_form").elements;
+          for (let i = 0, element; element = elements[i++];) {
+            my_params[element.name] = element.value;
+          }
+          if (abbreviateScores) {
+            my_params['compressrsp'] = abbreviateScores;
+          }
+          if (mobileMode) {
+            my_params['mobilemode'] = mobileMode;
+          }
+
+          if (form_list_in_form == '-') {
+            handle_stats_final_retry_str = "handle_stats_bis(" + nbColumns_in_form + ", 99, 99, 'N', '" + document.getElementById('form_playerid_id').value + "', '" + key + "', " + "'Y2');";
+            last_valid_handle_stats_final_retry_str = handle_stats_final_retry_str;
+            handle_stats_final_retry_conditional_str = "if(window.navigator.onLine){" + handle_stats_final_retry_str + "}else{console.log('stats form submission skipped (nw)');}";
+            setTimeout(handle_stats_final_retry_conditional_str, 60000);
+            setTimeout(handle_stats_final_retry_str, 120000);
+          }
+        }
+        else { // Specific error case
+          nbErrorsSubmitted++;
+          if (nbErrorsSubmitted > 3) {
+            return;
+          }
+          document.getElementById('form_nbcolumns_id').value = "N.A."; // (ensure failure at handling)
+          document.getElementById("my_form").action = (((currentGameNbColumns == -1) || (currentGameNbColumns == 5)) ? smm_action : mm_mmm_umm_action);
+          my_params['form_str'] = formStr;
+        }
+        my_params['k'] = key;
+        my_params['v'] = html_compatibility_game_version;
+        my_params['retr'] = 'N';
+
+        // Avoid request blocking by Chrome for the following reason:
+        // "Resource requests whose URLs contained both removed whitespace (`\n`, `\r`, `\t`) characters and less-than characters (`<`) are blocked.
+        //  Please remove newlines and encode less-than characters from places like element attribute values in order to load these resources.
+        //  See https://www.chromestatus.com/feature/5735596811091968 for more details."
+        replaceAllElementsInStruct(my_params, "\n", " "); // (duplicated code)
+        replaceAllElementsInStruct(my_params, "\r", ""); // (duplicated code)
+        replaceAllElementsInStruct(my_params, "\t", " "); // (duplicated code)
+        // replaceAllElementsInStruct(my_params, "<", "_");
+        // replaceAllElementsInStruct(my_params, ">", "_"); // (symmetrical replace applied)
+
+        // Submit form
+        let my_form_url = document.getElementById("my_form").action;
+        console.log("(submit form" + ((formStr == "") ? "" : " for a specific case") + ")");
+        $.ajax({
+          crossDomain: true,
+          url: my_form_url,
+          data: my_params,
+          method: "GET",
+          dataType: "jsonp",
+          timeout: 30000 // 30 seconds
+        })
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          if (formStr == "") { // Nominal case
+            try {
+              if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
+                console.log(("form submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+
+                my_params['retr'] = 'Y';
+                $.ajax({
+                  crossDomain: true,
+                  url: my_form_url,
+                  data: my_params,
+                  method: "GET",
+                  dataType: "jsonp",
+                  timeout: 30000 // 30 seconds
+                })
+                .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+                  try {
+                    if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
+                      console.log(("form submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                      if (handle_stats_final_retry_conditional_str != "") {
+                        setTimeout(handle_stats_final_retry_conditional_str, 20000);
+                      }
+                    } // else: systematic parse error (with 200 status) is ignored
+                  }
+                  catch (exc) {
+                    console.log(("form submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+                  }
+                });
+              } // else: systematic parse error (with 200 status) is ignored
+            }
+            catch (exc) {
+              console.log(("form submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+            }
+          }
+        });
+
+        // document.getElementById('my_form').submit();
+        // $("#my_form").submit();
+      }
+
+      function submitError(errorStr) { // CALLED BY ANDROID APP
+        try {
+            submitForm("error submitted by android app: " + String(errorStr));
+        }
+        catch (exc) {
+            submitForm("submitError() handling error");
+        }
+      }
+
+      function getMemoryUsage() {
+        let res = "memory usage:";
+        try {
+          res = res + String(performance.memory.usedJSHeapSize) /* used */ + "|" + String(performance.memory.totalJSHeapSize) /* allocated, >= used */ + "|" + String (performance.memory.jsHeapSizeLimit) /* maximum heap size */;
+        }
+        catch (exc) { // always fails in Firefox
+          res = res + "unknown";
+        }
+        return res;
+      }
+
+      // Temporary error handling (from this point in this file to simplify / will be overwritten later)
+      function game_onerror(message, url, lineNo, columnNo, error) {
+        let err_str = "tbc";
+        try {
+          err_str = ('error:' + message
+                     + '|url:' + url
+                     + '|line number:' + lineNo
+                     + '|column number:' + columnNo
+                     + '|error object:' + error).trim();
+          // Skip useless errors:
+          // Uncaught TypeError: Cannot read properties of undefined (reading 'query') / chrome-extension://fcneeeckalcgcklbloocjmhapagkkbfa/controls.js in ...
+          if (url.indexOf("fcneeeckalcgcklbloocjmhapagkkbfa") != -1) { // video extension
+            return;
+          }
+          // Uncaught TypeError: Cannot read properties of undefined (reading 'sendMessage') / chrome-extension://ofdopmlmgifpfkijadehmhjccbefaeec/assets/comms/commsMngr.js in ...
+          if (url.indexOf("ofdopmlmgifpfkijadehmhjccbefaeec") != -1) { // extension
+            return;
+          }
+          // Injected script
+          if ((url.indexOf("hosteagle") != -1) || (url.indexOf("injectedScript") != -1))  {
+            return;
+          }
+        }
+        catch (error) {}
+
+        try {
+          // Error observed after game start (timesinceworkercreation ~ 23s) on "Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" useragent,
+          // but not preventing (at least always?) game play (+ scores stored):
+          // - message = TypeError: null is not an object (evaluating 'reader.content')
+          // - url = https://supermastermind.github.io/playonline/game.html
+          if ( (message.indexOf("TypeError: null is not an object (evaluating 'reader.content')") != -1)
+               && (url.indexOf("game.html") != -1) ) {
+            return;
+          }
+          // Error "ResizeObserver loop limit exceeded": minor error (which would be caused by some browser extensions) that can be skipped
+          if (message.indexOf("ResizeObserver loop limit exceeded") != -1) {
+            return;
+          }
+          // Error: window error: TypeError: undefined is not an object (evaluating 'document.getElementsByTagName('video')[0].webkitExitFullScreen')
+          if (message.indexOf("webkitExitFullScreen") != -1) {
+            return;
+          }
+          // sporadic Safari [extension?] error
+          if (message.indexOf("undefined is not an object (evaluating 'a.L')") != -1) {
+            return;
+          }
+        }
+        catch (error) {}
+
+        var extra_debug_info = ""; // (duplicated code)
+        if (localStorage.firstname) {
+          extra_debug_info = extra_debug_info + localStorage.firstname;
+        }
+        if (localStorage.playerid) {
+          extra_debug_info = extra_debug_info + " " + localStorage.playerid;
+        }
+        extra_debug_info = extra_debug_info + (localStorage.gamesok ? " gamesok=" + localStorage.gamesok : "");
+        try {
+          extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + "|currentAttemptNumber=" + currentAttemptNumber + "|gameWon=" + gameWon;
+        }
+        catch (exc) {}
+        try {
+          extra_debug_info = extra_debug_info + " gamesolver_blob:" + gamesolver_blob_error + "|" + ((gamesolver_blob != null) ? gamesolver_blob.size : "null gamesolver_blob");
+        }
+        catch (exc) {}
+        try {
+          extra_debug_info = extra_debug_info + " " + getMemoryUsage() + (oldBrowserVersion ? " oldbrowser" : "");
+        }
+        catch (exc) {}
+        extra_debug_info = extra_debug_info.trim();
+        if (extra_debug_info == "") {
+          extra_debug_info = "-";
+        }
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30: " + (localStorage.reloadForCompatibility_v30 ? localStorage.reloadForCompatibility_v30 : "not done") + "): "
+                   + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
+                   + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
+                   + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
+                   + "|game:" + debug_game_state
+                   + "|smm:" + smm_load_state + "," + debug_smm_state
+                   + "|resizeorunload:" + debug_on_resize_or_unload
+                   + "|gamesolver:" + gamesolver_load_state + "|" + ((gamesolver_load_start_time != -1) ? ((new Date()).getTime() - gamesolver_load_start_time)/1000 + "s" : "-")
+                   + " for " + extra_debug_info);
+      }
+      window.onerror = game_onerror; // Note: this error capture can be redundant with the other error captures like gameSolver.onerror (same error submitted several times)
+    </script>
+    <script>
+      "use strict"; // new script section with ""use strict";", as window.onerror was just set
+
+      function game_event_onerrors(evt, errormsg, cause) {
+        var evt_str = "-";
+        try {
+          evt_str = JSON.stringify(evt).substring(0, 101).trim();
+        }
+        catch (exc) {}
+        var evt_promise_str = "-";
+        try {
+          evt_promise_str = JSON.stringify(evt.promise).substring(0, 101).trim();
+        }
+        catch (exc) {}
+        var extra_debug_info = ""; // (duplicated code)
+        if (localStorage.firstname) {
+          extra_debug_info = extra_debug_info + localStorage.firstname;
+        }
+        if (localStorage.playerid) {
+          extra_debug_info = extra_debug_info + " " + localStorage.playerid;
+        }
+        extra_debug_info = extra_debug_info + (localStorage.gamesok ? " gamesok=" + localStorage.gamesok : "");
+        try {
+          extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + "|currentAttemptNumber=" + currentAttemptNumber + "|gameWon=" + gameWon;
+        }
+        catch (exc) {}
+        extra_debug_info = extra_debug_info.trim();
+        if (extra_debug_info == "") {
+          extra_debug_info = "-";
+        }
+        submitForm("***** " + errormsg + " ***** (" + html_compatibility_game_version + "): event: " + evt + "|" + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + "|" + evt_promise_str + " | cause: " + cause + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon + "|" + debug_game_state + "|" + debug_on_resize_or_unload + " for " + extra_debug_info + " in " + userAgentStr);
+      }
+      window.onmessageerror = function(evt) {
+        game_event_onerrors(evt, "GAME MESSAGE ERROR", "onmessageerror");
+      };
+      window.onunhandledrejection = function(evt) {
+        game_event_onerrors(evt, "GAME UNHANDLEDREJECTION ERROR", "onunhandledrejection");
+      };
+      window.onrejectionhandled = function(evt) {
+        game_event_onerrors(evt, "GAME REJECTIONHANDLED ERROR", "onrejectionhandled");
+      };
+
+      var documentDOMContentLoadedEventReceived = "no";
+      document.addEventListener("DOMContentLoaded", function() {
+        try {
+          documentDOMContentLoadedEventReceived = "yes";
+        }
+        catch (exc) {}
+      });
+      var windowOnLoadEventReceived = "no";
+      window.onload = function() {
+        try {
+          windowOnLoadEventReceived = "yes";
+        }
+        catch (exc) {}
+      }
 
       function capitalizeFirstLetter(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
@@ -1136,331 +1410,9 @@
         return true;
       }
 
-      if (typeof(Storage) !== 'undefined') {
-        if (localStorage.firstname && (!isCorrect(localStorage.firstname))) {
-          localStorage.previousfirstname = localStorage.firstname;
-          localStorage.removeItem('firstname'); // localStorage.firstname
-        }
-      }
-
-      function str_from_jqxhr(jqxhr) { // (jqxhr: XMLHTTPRequest)
-        try {
-          let str = "jqxhr={";
-          try {
-            /* Status:
-               200: "OK"
-               403: "Forbidden"
-               404: "Page not found"
-               ... */
-            str = str + "status:" + jqxhr.status;
-            str = str + ",statusText:" + jqxhr.statusText;
-            /* readyState holds the status of the XMLHttpRequest:
-               0: request not initialized
-               1: server connection established
-               2: request received
-               3: processing request
-               4: request finished and response is ready */
-            str = str + ",readyState:" + jqxhr.readyState;
-          }
-          catch (exc) {
-            str = str + "?";
-          }
-          str = str + "}";
-          return str;
-        }
-        catch (exc) {
-          return "jqxhr=?";
-        }
-      }
-
-      // Interesting links about JSONP:
-      // - https://en.wikipedia.org/wiki/Same-origin_policy and https://www.getfilecloud.com/blog/using-jsonp-for-cross-domain-requests/ (JSONP usage & safety)
-      // - https://ctrlq.org/code/20197-jquery-ajax-call-google-script (usage of JSONP to avoid "Cross Origin" issues)
-      //   => "JSONP" to be replaced by "CORS" in the future when fully supported, which is safer.
-      var smm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbx7dfFn4JQGWWcKEjHUqPk42AxlZBcnQ5AiFcuY3op6azRwNRCJfUFNuwSjBUN_GXsQ/exec";
-      var mm_mmm_umm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbxuCShh1eJtEmwgRF6ZY47HrdVfPgoJ4lVK7OD_Pxj5tanlThWdwqnb--9m1aafYid3/exec";
-      var oopsAlertAlreadyDisplayedCnt = 0;
-      function submitForm(formStr = "", skipErrorDisplay = false) {
-
-        if (globalErrorStatus) { // skip submitForm when a basic global error occurred
-          console.log("(submitForm skipped due to global error)");
-          return;
-        }
-
-        let handle_stats_final_retry_str = "";
-        let handle_stats_final_retry_conditional_str = "";
-        let key = Math.floor(Math.random()*9999999999+1).toString(32);
-        let my_params = {};
-        if (formStr == "") { // Nominal case
-          var nbColumns_in_form = document.getElementById('form_nbcolumns_id').value;
-          var form_list_in_form = document.getElementById('form_list_id').value;
-
-          if (form_list_in_form == '-') {
-            switch (String(nbColumns_in_form)) {
-              case "5":
-                document.getElementById("my_form").action = smm_action;
-                break;
-              case "4":
-              case "6":
-              case "7":
-                document.getElementById("my_form").action = mm_mmm_umm_action;
-                break;
-              default:
-                throw new Error("submitForm error: " + nbColumns_in_form);
-            }
-          }
-          else {
-            if (form_list_in_form.indexOf('2') == -1) {
-              document.getElementById("my_form").action = smm_action;
-            }
-            else {
-              document.getElementById("my_form").action = mm_mmm_umm_action;
-            }
-          }
-
-          // console.log(JSON.stringify($("#my_form").serializeArray()));
-          let elements = document.getElementById("my_form").elements;
-          for (let i = 0, element; element = elements[i++];) {
-            my_params[element.name] = element.value;
-          }
-          if (abbreviateScores) {
-            my_params['compressrsp'] = abbreviateScores;
-          }
-          if (mobileMode) {
-            my_params['mobilemode'] = mobileMode;
-          }
-
-          if (form_list_in_form == '-') {
-            handle_stats_final_retry_str = "handle_stats_bis(" + nbColumns_in_form + ", 99, 99, 'N', '" + document.getElementById('form_playerid_id').value + "', '" + key + "', " + "'Y2');";
-            last_valid_handle_stats_final_retry_str = handle_stats_final_retry_str;
-            handle_stats_final_retry_conditional_str = "if(window.navigator.onLine){" + handle_stats_final_retry_str + "}else{console.log('stats form submission skipped (nw)');}";
-            setTimeout(handle_stats_final_retry_conditional_str, 60000);
-            setTimeout(handle_stats_final_retry_str, 120000);
-          }
-        }
-        else { // Specific case
-          document.getElementById('form_nbcolumns_id').value = "N.A."; // (ensure failure at handling)
-          document.getElementById("my_form").action = ((currentGameNbColumns == 5) ? smm_action : mm_mmm_umm_action);
-          my_params['form_str'] = formStr;
-        }
-        my_params['k'] = key;
-        my_params['v'] = html_compatibility_game_version;
-        my_params['retr'] = 'N';
-
-        // Avoid request blocking by Chrome for the following reason:
-        // "Resource requests whose URLs contained both removed whitespace (`\n`, `\r`, `\t`) characters and less-than characters (`<`) are blocked.
-        //  Please remove newlines and encode less-than characters from places like element attribute values in order to load these resources.
-        //  See https://www.chromestatus.com/feature/5735596811091968 for more details."
-        replaceAllElementsInStruct(my_params, "\n", " "); // (duplicated code)
-        replaceAllElementsInStruct(my_params, "\r", ""); // (duplicated code)
-        replaceAllElementsInStruct(my_params, "\t", " "); // (duplicated code)
-        // replaceAllElementsInStruct(my_params, "<", "_");
-        // replaceAllElementsInStruct(my_params, ">", "_"); // (symmetrical replace applied)
-
-        // Submit form
-        let my_form_url = document.getElementById("my_form").action;
-        console.log("(submit form" + ((formStr == "") ? "" : " for a specific case") + ")");
-        $.ajax({
-          crossDomain: true,
-          url: my_form_url,
-          data: my_params,
-          method: "GET",
-          dataType: "jsonp",
-          timeout: 30000 // 30 seconds
-        })
-        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-          try {
-            if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
-              console.log(("form submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-
-              my_params['retr'] = 'Y';
-              $.ajax({
-                crossDomain: true,
-                url: my_form_url,
-                data: my_params,
-                method: "GET",
-                dataType: "jsonp",
-                timeout: 30000 // 30 seconds
-              })
-              .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-                try {
-                  if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
-                    console.log(("form submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-                    if (handle_stats_final_retry_conditional_str != "") {
-                      setTimeout(handle_stats_final_retry_conditional_str, 20000);
-                    }
-                  } // else: systematic parse error (with 200 status) is ignored
-                  if ((formStr == "") && (!skipErrorDisplay)) {
-                    if (oopsAlertAlreadyDisplayedCnt < 2) { // Do not display too many successive (sometimes incorrect) alerts
-                      // alert("Oops... a network error occurred!"); -> commented because too many intempestive alerts!
-                      oopsAlertAlreadyDisplayedCnt++;
-                    }
-                  }
-                }
-                catch (exc) {
-                  console.log(("form submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-                }
-              });
-            } // else: systematic parse error (with 200 status) is ignored
-          }
-          catch (exc) {
-            console.log(("form submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-          }
-        });
-
-        // document.getElementById('my_form').submit();
-        // $("#my_form").submit();
-      }
-
-      function submitError(errorStr) { // CALLED BY ANDROID APPLI
-        try {
-            submitForm("error submitted by android app: " + String(errorStr), true);
-        }
-        catch (exc) {
-            submitForm("submitError() handling error", true);
-        }
-      }
-
-      function getMemoryUsage() {
-        let res = "memory usage:";
-        try {
-          res = res + String(performance.memory.usedJSHeapSize) /* used */ + "|" + String(performance.memory.totalJSHeapSize) /* allocated, >= used */ + "|" + String (performance.memory.jsHeapSizeLimit) /* maximum heap size */;
-        }
-        catch (exc) { // always fails in Firefox
-          res = res + "unknown";
-        }
-        return res;
-      }
-
-      // Temporary error handling (from this point in this file to simplify / will be overwritten later)
-      function game_onerror(message, url, lineNo, columnNo, error) {
-        let err_str = "tbc";
-        try {
-          err_str = ('error:' + message
-                     + '|url:' + url
-                     + '|line number:' + lineNo
-                     + '|column number:' + columnNo
-                     + '|error object:' + error).trim();
-          // Skip useless errors:
-          // Uncaught TypeError: Cannot read properties of undefined (reading 'query') / chrome-extension://fcneeeckalcgcklbloocjmhapagkkbfa/controls.js in ...
-          if (url.indexOf("fcneeeckalcgcklbloocjmhapagkkbfa") != -1) { // video extension
-            return;
-          }
-          // Uncaught TypeError: Cannot read properties of undefined (reading 'sendMessage') / chrome-extension://ofdopmlmgifpfkijadehmhjccbefaeec/assets/comms/commsMngr.js in ...
-          if (url.indexOf("ofdopmlmgifpfkijadehmhjccbefaeec") != -1) { // extension
-            return;
-          }
-          // Injected script
-          if ((url.indexOf("hosteagle") != -1) || (url.indexOf("injectedScript") != -1))  {
-            return;
-          }
-        }
-        catch (error) {}
-
-        try {
-          // Error observed after game start (timesinceworkercreation ~ 23s) on "Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" useragent,
-          // but not preventing (at least always?) game play (+ scores stored):
-          // - message = TypeError: null is not an object (evaluating 'reader.content')
-          // - url = https://supermastermind.github.io/playonline/game.html
-          if ( (message.indexOf("TypeError: null is not an object (evaluating 'reader.content')") != -1)
-               && (url.indexOf("game.html") != -1) ) {
-            return;
-          }
-          // Error "ResizeObserver loop limit exceeded": minor error (which would be caused by some browser extensions) that can be skipped
-          else if (message.indexOf("ResizeObserver loop limit exceeded") != -1) {
-            return;
-          }
-          // Error: window error: TypeError: undefined is not an object (evaluating 'document.getElementsByTagName('video')[0].webkitExitFullScreen')
-          else if (message.indexOf("webkitExitFullScreen") != -1) {
-            return;
-          }
-        }
-        catch (error) {}
-
-        var extra_debug_info = "-"; // (duplicated code)
-        if (localStorage.firstname) {
-          extra_debug_info = localStorage.firstname;
-        }
-        else if (localStorage.playerid) {
-          extra_debug_info = localStorage.playerid;
-        }
-        extra_debug_info = extra_debug_info + (localStorage.gamesok ? " gamesok=" + localStorage.gamesok : "");
-        try {
-          extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + "|currentAttemptNumber=" + currentAttemptNumber + "|gameWon=" + gameWon;
-        }
-        catch (exc) {}
-        try {
-          extra_debug_info = extra_debug_info + " last reload:" + (localStorage.reload_time ? ((new Date()).getTime() - localStorage.reload_time)/1000 + "s" : "-");
-        }
-        catch (exc) {}
-        try {
-          extra_debug_info = extra_debug_info + " gamesolver_blob:" + gamesolver_blob_error + "|" + ((gamesolver_blob != null) ? gamesolver_blob.size : "null gamesolver_blob");
-        }
-        catch (exc) {}
-        try {
-          extra_debug_info = extra_debug_info + " " + getMemoryUsage() + (oldBrowserVersion ? " oldbrowser" : "");
-        }
-        catch (exc) {}
-        submitForm("***** GAME ERROR ***** (" + html_compatibility_game_version + "): "
-                   + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
-                   + err_str + " in " + userAgentStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
-                   + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon + "|" + debug_game_state + "|" + debug_on_unload + "|gamesolver and smm load info:" + gamesolver_load_state + "|" + ((gamesolver_load_start_time != -1) ? ((new Date()).getTime() - gamesolver_load_start_time)/1000 + "s" : "-") + "|" + smm_load_state + " for " + extra_debug_info + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : ""), true);
-      }
-      window.onerror = game_onerror;
-      function game_event_onerrors(evt, errormsg, cause) {
-        var evt_str = "-";
-        try {
-          evt_str = JSON.stringify(evt).substring(0, 101).trim();
-        }
-        catch (exc) {}
-        var evt_promise_str = "-";
-        try {
-          evt_promise_str = JSON.stringify(evt.promise).substring(0, 101).trim();
-        }
-        catch (exc) {}
-        var extra_debug_info = "-"; // (duplicated code)
-        if (localStorage.firstname) {
-          extra_debug_info = localStorage.firstname;
-        }
-        else if (localStorage.playerid) {
-          extra_debug_info = localStorage.playerid;
-        }
-        extra_debug_info = extra_debug_info + (localStorage.gamesok ? " gamesok=" + localStorage.gamesok : "");
-        try {
-          extra_debug_info = extra_debug_info + " gameOnGoing=" + gameOnGoing() + "|currentAttemptNumber=" + currentAttemptNumber + "|gameWon=" + gameWon;
-        }
-        catch (exc) {}
-        let skip_undefined_errors = false; // ((evt == undefined) || ((evt.reason == undefined) && (evt.promise == undefined)));
-        if (!skip_undefined_errors) {
-          submitForm("***** " + errormsg + " ***** (" + html_compatibility_game_version + "): event: " + evt + "|" + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + "|" + evt_promise_str + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon + "|" + debug_game_state + "|" + debug_on_unload + " for " + extra_debug_info + " in " + userAgentStr, true);
-        }
-        else {
-          console.log("(" + cause + " event: skipped)");
-        }
-      }
-      window.onmessageerror = function(evt) {
-        game_event_onerrors(evt, "GAME MESSAGE ERROR", "onmessageerror");
-      };
-      window.onunhandledrejection = function(evt) {
-        game_event_onerrors(evt, "GAME UNHANDLEDREJECTION ERROR", "onunhandledrejection");
-      };
-      window.onrejectionhandled = function(evt) {
-        game_event_onerrors(evt, "GAME REJECTIONHANDLED ERROR", "onrejectionhandled");
-      };
-
-      var documentDOMContentLoadedEventReceived = "no";
-      document.addEventListener("DOMContentLoaded", function() {
-        try {
-          documentDOMContentLoadedEventReceived = "yes";
-        }
-        catch (exc) {}
-      });
-      var windowOnLoadEventReceived = "no";
-      window.onload = function() {
-        try {
-          windowOnLoadEventReceived = "yes";
-        }
-        catch (exc) {}
+      if (localStorage.firstname && (!isCorrect(localStorage.firstname))) {
+        localStorage.previousfirstname = localStorage.firstname;
+        localStorage.removeItem('firstname'); // localStorage.firstname
       }
 
       var glbScoreAndPerfHistorySize = 20; // (shall be > 5)
@@ -1529,7 +1481,7 @@
             localStorage.glbScoreAndPerfHistoryIdx = (glbScoreAndPerfHistoryIdx + 1) % glbScoreAndPerfHistorySize;
         }
         catch (exc) {
-            throw new Error("storeGlbScoreAndPerf error: " + exc);
+            submitForm("storeGlbScoreAndPerf error: " + exc + ": " + exc.stack);
         }
       }
 
@@ -1577,7 +1529,7 @@
             }
         }
         catch (exc) {
-            console.log("(displayOrGetMaxGlbScoreAndPerf: exception: " + exc + ")");
+            submitForm("(displayOrGetMaxGlbScoreAndPerf: exception: " + exc + ": " + exc.stack + ")");
         }
       }
 
@@ -1737,7 +1689,7 @@
              || ((applyTimes_p != "N") && (applyTimes_p != "Y"))
              || ((retr_p != "N") && (retr_p != "Y") && (retr_p != "Y2")) ) {
               submitForm("handle_stats_bis error (wrong parameters): " + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", "
-                         + applyTimes_p + ", " + pId_p + ", " + key_p  + ", " + retr_p + ", last_idx: " + last_stats_keys_index, true);
+                         + applyTimes_p + ", " + pId_p + ", " + key_p  + ", " + retr_p + ", last_idx: " + last_stats_keys_index);
               console.log("stats form submission skipped (wrong parameters)");
               return; // skip stats update
         }
@@ -1782,7 +1734,7 @@
         }
         else { // specific beforeunload case => save last stats command (only the very last command to simplify)
           if (retr_p != "Y2") {
-            submitForm("internal error when setting localStorage.pendingStats: " + retr_p, true);
+            submitForm("internal error when setting localStorage.pendingStats: " + retr_p);
           }
           localStorage.pendingStats = "handle_stats_bis(" + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", '" + applyTimes_p + "', '" + pId_p + "', '" + key_p + "', '" + retr_p + "');"
         }
@@ -1793,7 +1745,7 @@
       }
 
       var globalProgressForHTMLGame2 = getGlobalProgress(0.75 /* (rough value) */, 0);
-      console.log("current progress: " + Math.max(globalProgressForHTMLGame2, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame2; // !WARNING! -> this console text will be read by the android appli so shall not be modified
+      console.log("current progress: " + Math.max(globalProgressForHTMLGame2, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame2; // !WARNING! -> this console text will be read by the android app so shall not be modified
       if (globalProgressForHTMLGame2 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame2 + "%)"); // (not rem unit as no viewport! / duplicated code)
       }
@@ -1813,7 +1765,7 @@
 
       function reformatTime(time_in_ms) {
         if (time_in_ms < 0) {
-          throw new Error("reformatTime: negative time: " + time_in_ms);
+          return "negativetime:" + time_in_ms/1000;
         }
         let time_in_sec = Math.floor(time_in_ms/1000);
         let time_in_minutes = Math.floor(time_in_sec / 60);
@@ -1855,20 +1807,25 @@
       let dummyLocationPrefix3 = "/3:";
       let dummyLocationPrefix4 = "/4:";
       let dummyLocationPrefix5 = "/5:";
-      function isLocationDataValid(data_p) {
+      function isLocationDataValid(data_p, check_region_instead_of_city = false) {
         if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) { // (condition duplicated)
           return false;
         }
         let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && ((String(data_p.ip).indexOf(".") != -1) || (String(data_p.ip).indexOf(":") != -1)) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)); // (condition duplicated - covers IPv4 and IPv6)
         let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 2) /* covers country name abbreviations which are 2 characters long */);
-        if (validCountryName && (data_p.country_name.indexOf(dummyLocationPrefix1) == -1)) { // not dummy location
-          localStorage.bestEffortCountryName = data_p.country_name;
+        let cityOrRegionCondition;
+        if (!check_region_instead_of_city) {
+          // Note: city may be known whereas region is not
+          cityOrRegionCondition = ((typeof data_p.city != 'undefined') && (data_p.city != undefined) && (data_p.city != null) && (data_p.city.length >= 2) && (reformatLocationValue(data_p.city) != "-") && (reformatLocationValue(data_p.city).toLowerCase() != "city") && (reformatLocationValue(data_p.city).toLowerCase() != "ville") && (reformatLocationValue(data_p.city).toLowerCase() != "undefined"));
+        }
+        else {
+          cityOrRegionCondition = ((typeof data_p.region != 'undefined') && (data_p.region != undefined) && (data_p.region != null) && (data_p.region.length >= 2) && (reformatLocationValue(data_p.region) != "-") && (reformatLocationValue(data_p.region).toLowerCase() != "region") && (reformatLocationValue(data_p.region).toLowerCase() != "région") && (reformatLocationValue(data_p.region).toLowerCase() != "undefined"));
         }
         if ( (typeof data_p.latitude != 'undefined') && (data_p.latitude != undefined) && (data_p.latitude != null)
              && (typeof data_p.longitude != 'undefined') && (data_p.longitude != undefined)  && (data_p.longitude != null)
              && ((String(data_p.latitude).indexOf('.') != -1) || (String(data_p.longitude).indexOf('.') != -1))
              && validCountryName
-             && ((typeof data_p.city != 'undefined') && (data_p.city != undefined) && (data_p.city != null) && (data_p.city.length >= 2) && (reformatLocationValue(data_p.city) != "-") && (reformatLocationValue(data_p.city).toLowerCase() != "city") && (reformatLocationValue(data_p.city).toLowerCase() != "ville") && (reformatLocationValue(data_p.city).toLowerCase() != "undefined")) // rk: city may be known whereas region is not
+             && cityOrRegionCondition
              && validIpAddress) {
           return true;
         }
@@ -1898,7 +1855,7 @@
 
         localStorage.latitude = reformatLocationValue(latitude); // (local storage of most useful location information)
         localStorage.longitude = reformatLocationValue(longitude);
-        localStorage.accuracy = "?";
+        localStorage.accuracy = '?';
         localStorage.countryname = reformatLocationValue(country);
         localStorage.region = reformatLocationValue(region);
         localStorage.city = reformatLocationValue(city);
@@ -1923,8 +1880,66 @@
         }
       }
 
-      let GEOCODING_API_URL_BASE = "https://geocode.maps.co/reverse?";
-      function HTML_geolocation_success(position, debug_str_p = null) { // CALLED BY ANDROID APPLI (with debug_str_p parameter filled)
+      let city_name_to_be_skipped = "skip_me";
+      function setBestEffortLocationData(data_p, locationId) {
+        try {
+          if (isLocationDataValid(data_p)) { // best effort location shall not be valid
+            throw new Error("setBestEffortLocationData called on valid location data");
+          }
+          try {
+            // (always attempt to update localStorage.best_effort_countryname, at least for debug purposes)
+            localStorage.best_effort_countryname = data_p.country_name;
+          }
+          catch (exc) {}
+          // Consider region instead of city
+          if (isLocationDataValid(data_p, true /* check_region_instead_of_city */)) {
+            localStorage.bestEffortIPAddress = reformatLocationValue(data_p.ip);
+            localStorage.bestEffortIPAddressSource = locationId;
+            localStorage.bestEffortIPAddressStorageTime = (new Date()).getTime();
+
+            localStorage.best_effort_latitude = reformatLocationValue(data_p.latitude);
+            localStorage.best_effort_longitude = reformatLocationValue(data_p.longitude);
+            localStorage.best_effort_accuracy = '?';
+            localStorage.best_effort_countryname = reformatLocationValue(data_p.country_name);
+            localStorage.best_effort_region = reformatLocationValue(data_p.region); // region instead of city
+            localStorage.best_effort_city = city_name_to_be_skipped; // region instead of city
+            localStorage.best_effort_ip = reformatLocationValue(data_p.ip);
+            localStorage.best_effort_location_id = locationId; // location id associated to those stored location values
+            localStorage.best_effort_update_time = (new Date()).getTime(); // time associated to those stored location values
+            // Defensive check
+            let best_effort_location_data = getBestEffortLocationData();
+            if (!isLocationDataValid(best_effort_location_data)) { // shall be valid thanks to city_name_to_be_skipped
+              throw new Error("setBestEffortLocationData: invalid best effort location data: " + JSON.stringify(best_effort_location_data));
+            }
+          }
+        }
+        catch (exc) {
+          submitForm("setBestEffortLocationData error: " + exc + ": " + exc.stack);
+        }
+      }
+
+      function getBestEffortLocationData() {
+        if (localStorage.best_effort_latitude && localStorage.best_effort_longitude && localStorage.best_effort_accuracy && localStorage.best_effort_countryname && localStorage.best_effort_region && localStorage.best_effort_city && localStorage.best_effort_ip && localStorage.best_effort_location_id && localStorage.best_effort_update_time) {
+          let best_effort_location_data = { latitude: localStorage.best_effort_latitude,
+                                            longitude: localStorage.best_effort_longitude,
+                                            accuracy: localStorage.best_effort_accuracy,
+                                            country_name: localStorage.best_effort_countryname,
+                                            region: localStorage.best_effort_region,
+                                            city: localStorage.best_effort_city,
+                                            ip: localStorage.best_effort_ip };
+          return best_effort_location_data;
+        }
+        else {
+          return null;
+        }
+      }
+
+      let GEOCODING_API_URL_1 = "https://geocode.maps.co/reverse?lat=LATITUDE&lon=LONGITUDE&api_key=65b" + extraStr + "bd7330aa0a629386831xwm917" + "233";
+      let GEOCODING_API_URL_2 = "https://nominatim.openstreet" + extraStr + "map.org/reverse?lat=LATITUDE&lon=LONGITUDE&format=json&accept-language=en";
+      if (!localStorage.useFirstGeocodingApi) {
+        localStorage.useFirstGeocodingApi = "yes";
+      }
+      function HTML_geolocation_success(position, debug_str_p = null) { // CALLED BY ANDROID APP (with debug_str_p parameter filled)
         let latitude = position.coords.latitude;
         let longitude = position.coords.longitude;
         let accuracy = position.coords.accuracy; // (in meters)
@@ -1932,12 +1947,13 @@
         console.log(" latitude: " + latitude);
         console.log(" longitude: " + longitude);
         console.log(" accuracy: " + accuracy);
-        let GEOCODING_API_URL = GEOCODING_API_URL_BASE + extraStr + "lat=" + latitude + "&lon=" + longitude + "&api_key=65b" + extraStr + "bd7330aa0a629386831xwm917233";
+
         debug_game_state = 10;
         let debug_str = "";
         if (debug_str_p != null) {
           debug_str = " " + debug_str_p;
         }
+        debug_str = debug_str + " " + ((localStorage.useFirstGeocodingApi == "yes") ? "1stGeolocApi" : "2ndGeolocApi");
         localStorage.html_geoloc_status = "run_bis" + debug_str;
         HTML_geoloc_successes++;
 
@@ -1952,7 +1968,7 @@
           }
         }
 
-        // Do not trigger useless requests to GEOCODING_API_URL
+        // Do not trigger useless geocoding requests
         let precise_location_data = getPreciseStoredLocationData();
         if ( isLocationDataValid(precise_location_data)
              && (getDistanceFromLatLonInKm(precise_location_data.latitude, precise_location_data.longitude, latitude, longitude) < 0.250) ) { // nearly same position as previous one
@@ -1967,24 +1983,27 @@
           return;
         }
 
-        if (localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times - defense for restarts + android appli calls (after restarts)
+        if (localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times - defense for restarts + android app calls (after restarts)
           console.log("HTML geolocation skipped");
           localStorage.html_geoloc_status = "skipped" + debug_str;
           return;
         }
         localStorage.precise_geolocation_api_access_time = (new Date()).getTime();
 
+        let GEOCODING_API_URL = ((localStorage.useFirstGeocodingApi == "yes") ? GEOCODING_API_URL_1 : GEOCODING_API_URL_2);
+        GEOCODING_API_URL = GEOCODING_API_URL.replace("LATITUDE", latitude).replace("LONGITUDE", longitude);
         $.getJSON(GEOCODING_API_URL)
         .done(function(location) {
           debug_game_state = 11;
           try {
+            // location.error and other below location.x field checks are valid for both geocode and nominatim JSON syntaxes => no localStorage.useFirstGeocodingApi checks are needed
             if (location.error == undefined) { // geocoding API success
               let country = "-";
               if (location.address.country) {
                 country = String(location.address.country).trim();
               }
               let region = "-"; // invalid value by default
-              if (location.address.state) {
+              if (location.address.state) { // (can be best known than county)
                 region = String(location.address.state).trim();
               }
               else if (location.address.county) {
@@ -2003,10 +2022,14 @@
               else if (location.address.municipality) {
                 city = String(location.address.municipality).trim();
               }
-              else if (location.address.village) {
+              else if (location.address.village) { // (can be too precise for android approximate location permission)
                 city = String(location.address.village).trim();
               }
-              let zip = String(location.address.postcode).trim();
+              let zip = "-";
+              if (location.address.postcode) {
+                zip = String(location.address.postcode).trim();
+              }
+
               console.log(" country: " + country);
               console.log(" region: " + region);
               console.log(" city: " + city);
@@ -2029,7 +2052,7 @@
                 localStorage.precise_city = tmp_location_data.city;
                 localStorage.precise_ip = tmp_location_data.ip;
                 localStorage.precise_location_success_time = (new Date()).getTime();
-                localStorage.html_geoloc_status = "ok" + debug_str + " (" + latitude + "," + longitude + ")";
+                localStorage.html_geoloc_status = "ok-geocoding" + debug_str + " (" + latitude + "," + longitude + ")";
                 precise_location_data = getPreciseStoredLocationData();
                 if (!isLocationDataValid(precise_location_data)) {
                   throw new Error("HTML_geolocation_success: invalid precise location data #2: " + JSON.stringify(precise_location_data));
@@ -2043,11 +2066,13 @@
             else {
               console.log("HTML geolocation error: location.error: " + location.error);
               localStorage.html_geoloc_status = "nok-2/" + location.error + "," + debug_str + " (" + latitude + "," + longitude + ")";
+              localStorage.useFirstGeocodingApi = ((localStorage.useFirstGeocodingApi == "yes") ? "no" : "yes");
             }
           }
           catch (exc) {
             console.log("HTML geolocation error: " + exc);
             localStorage.html_geoloc_status = "nok-3/" + exc + debug_str;
+            localStorage.useFirstGeocodingApi = ((localStorage.useFirstGeocodingApi == "yes") ? "no" : "yes");
           }
           debug_game_state = 12;
         })
@@ -2055,12 +2080,13 @@
           debug_game_state = 13;
           console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
           localStorage.html_geoloc_status = "nok-4" + debug_str + " " + GEOCODING_API_URL;
+          localStorage.useFirstGeocodingApi = ((localStorage.useFirstGeocodingApi == "yes") ? "no" : "yes");
           debug_game_state = 14;
         });
       } // HTML_geolocation_success
 
       let android_HTML_geolocation_retries_after_error = 0;
-      function HTML_geolocation_error(error) { // CALLED BY ANDROID APPLI (with string parameter)
+      function HTML_geolocation_error(error) { // CALLED BY ANDROID APP (with string parameter)
         let error_str = "?";
         if (error.code != undefined) {
           switch(error.code) {
@@ -2082,13 +2108,13 @@
               break;
           }
         }
-        else { // android appli call
+        else { // android app call
           error_str = String(error);
         }
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_status = "nok-5/" + error_str;
         HTML_geoloc_errors++;
-        if (android_appli /* no popups for android appli */ && (android_HTML_geolocation_retries_after_error < 3)) { // retry after some geolocation attempt failures
+        if (android_appli /* no popups for android app */ && (android_HTML_geolocation_retries_after_error < 3)) { // retry after some geolocation attempt failures
           if (!localStorage.precise_geolocation_api_access_time || !((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times
             android_HTML_geolocation_retries_after_error++;
             setTimeout("attempt_HTML_geolocation();", 5*android_HTML_geolocation_retries_after_error*60*1000); // n*5 minutes
@@ -2107,9 +2133,9 @@
         console.log("(attempt HTML geolocation at " + new Date() + ")");
         if (android_appli) {
           if (scriptsFullyLoaded) {
-            // In case of android appli, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors)
-            // => request location explicitly to the android appli which will call HTML_geolocation_success or HTML_geolocation_error
-            console.log("(get last location request)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
+            // In case of android app, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors)
+            // => request location explicitly to the android app which will call HTML_geolocation_success or HTML_geolocation_error
+            console.log("(get last location request)"); // !WARNING! -> this console text will be read by the android app so shall not be modified
             HTML_geoloc_attempts++;
             localStorage.html_geoloc_status = "run_app";
           }
@@ -2150,6 +2176,7 @@
         }
       }
 
+      let ip_address_for_alternate_loc_methods = "-";
       function handle_gs_geoloc(e) { // CALLED BY GS SCRIPT
         console.log("(handle_gs_geoloc)");
 
@@ -2165,8 +2192,9 @@
                                region: e.region,
                                city: e.city,
                                ip: e.ip };
-        if (!localStorage.bestEffortIPAddress || (localStorage.bestEffortIPAddress != e.ip)) {
-            throw new Error("unexpected IP address in handle_gs_geoloc: " + (localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress + ", " : "") + e.ip);
+        if (e.ip != ip_address_for_alternate_loc_methods) {
+            submitForm("unexpected IP address in handle_gs_geoloc: " + e.ip + ", " + ip_address_for_alternate_loc_methods);
+            return;
         }
         if (isLocationDataValid(converted_data)) {
           console.log("(attempt alternate location method - success)");
@@ -2175,6 +2203,7 @@
           setStoredLocationData(converted_data.ip, alternateLocationId, converted_data.latitude, converted_data.longitude, converted_data.country_name, converted_data.region, converted_data.city);
         }
         else {
+          setBestEffortLocationData(converted_data, alternateLocationId);
           localStorage.alternateLocationMethodDebugInfo += "_gslocinvalid";
         }
       }
@@ -2187,7 +2216,7 @@
         try {
           localStorage.alternateLocationMethodDebugInfo = "altloc_";
           var xhr = new XMLHttpRequest();
-          xhr.open('GET', 'https://api.ipify.org?format=json', true); // (no limit of number of requests - IPv4 address is fetched by api.ipify.org, IPv6 address would be fetched by api64.ipify.org)
+          xhr.open('GET', 'https://api.ipif' + extraStr + 'y.org?format=json', true); // (no limit of number of requests - IPv4 address is fetched by api.ipify.org, IPv6 address would be fetched by api64.ipify.org)
           xhr.onload = function () {
               if ((xhr.readyState === xhr.DONE) && (xhr.status === 200)) {
 
@@ -2221,6 +2250,8 @@
                   if (localStorage.firstname) {
                     my_alt_loc_params['firstname'] = localStorage.firstname;
                   }
+
+                  ip_address_for_alternate_loc_methods = ipAddress;
 
                   // Submit form
                   console.log("(attempt alternate location method - gs location for " + ipAddress + ")");
@@ -2256,13 +2287,8 @@
         }
         catch (exc) {
           console.log("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc);
-          submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc, true);
+          submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc + ": " + exc.stack);
         }
-      }
-
-      if (!localStorage.playerid) { // ********* TEMPORARY *********
-        let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android appli)
-        localStorage.playerid = id;
       }
 
       var last_game_cnt = -1;
@@ -2280,182 +2306,174 @@
           last_game_cnt = game_cnt;
           store_time = new Date().getTime() + ((nbcolumns == 3) ? 4444 /* (slow down pace) */: 0);
 
-          if (!localStorage.playerid) {
-            let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android appli)
-            localStorage.playerid = id;
-          }
-
           let gamesok = -1;
           let gamesokX = -1;
           let gamesok_at_last_first_name_request = -100;
           let deltagames = -1;
-          if (typeof(Storage) !== 'undefined') {
 
-            if ( (nbcolumns == 3) // very easy games
-                 || helped ) { // games with help
-              debug_game_state = 100.2;
-              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3444);
-              debug_game_state = 100.25;
-              return; // Do not store scores any longer for very easy games and games with help, to reduce google sheet load [peaks for very easy games]
-            }
+          if ( (nbcolumns == 3) // very easy games
+               || helped ) { // games with help
+            debug_game_state = 100.2;
+            setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3444);
+            debug_game_state = 100.25;
+            return; // Do not store scores any longer for very easy games and games with help, to reduce google sheet load [peaks for very easy games]
+          }
 
-            if (!localStorage.lastDonationTimeT) {
-              localStorage.lastDonationTimeT = 0;
-            }
-            if (!localStorage.gamesok) {
-              localStorage.gamesok = 0;
-            }
-            localStorage.gamesok = Number(localStorage.gamesok) + 1;
-            checkIfRecentPlayer(); // acts on localStorage.gamesok update
-            gamesok = Number(localStorage.gamesok);
-            switch (nbcolumns) {
-                case 3: // (case never entered due to above condition)
-                    if (!localStorage.gamesok3) {
-                      localStorage.gamesok3 = 0;
-                    }
-                    localStorage.gamesok3 = Number(localStorage.gamesok3) + 1;
-                    gamesokX = Number(localStorage.gamesok3);
-                    break;
-                case 4:
-                    if (!localStorage.gamesok4) {
-                      localStorage.gamesok4 = 0;
-                    }
-                    localStorage.gamesok4 = Number(localStorage.gamesok4) + 1;
-                    gamesokX = Number(localStorage.gamesok4);
-                    break;
-                case 5:
-                    if (!localStorage.gamesok5) {
-                      localStorage.gamesok5 = 0;
-                    }
-                    localStorage.gamesok5 = Number(localStorage.gamesok5) + 1;
-                    gamesokX = Number(localStorage.gamesok5);
-                    break;
-                case 6:
-                    if (!localStorage.gamesok6) {
-                      localStorage.gamesok6 = 0;
-                    }
-                    localStorage.gamesok6 = Number(localStorage.gamesok6) + 1;
-                    gamesokX = Number(localStorage.gamesok6);
-                    break;
-                case 7:
-                    if (!localStorage.gamesok7) {
-                      localStorage.gamesok7 = 0;
-                    }
-                    localStorage.gamesok7 = Number(localStorage.gamesok7) + 1;
-                    gamesokX = Number(localStorage.gamesok7);
-                    break;
-                default:
-                    throw new Error("store_player_info: invalid nbcolumns: " + nbcolumns);
-            }
+          if (!localStorage.lastDonationTimeT) {
+            localStorage.lastDonationTimeT = 0;
+          }
+          if (!localStorage.gamesok) {
+            localStorage.gamesok = 0;
+          }
+          localStorage.gamesok = Number(localStorage.gamesok) + 1;
+          checkIfRecentPlayer(); // acts on localStorage.gamesok update
+          gamesok = Number(localStorage.gamesok);
+          switch (nbcolumns) {
+              case 3: // (case never entered due to above condition)
+                  if (!localStorage.gamesok3) {
+                    localStorage.gamesok3 = 0;
+                  }
+                  localStorage.gamesok3 = Number(localStorage.gamesok3) + 1;
+                  gamesokX = Number(localStorage.gamesok3);
+                  break;
+              case 4:
+                  if (!localStorage.gamesok4) {
+                    localStorage.gamesok4 = 0;
+                  }
+                  localStorage.gamesok4 = Number(localStorage.gamesok4) + 1;
+                  gamesokX = Number(localStorage.gamesok4);
+                  break;
+              case 5:
+                  if (!localStorage.gamesok5) {
+                    localStorage.gamesok5 = 0;
+                  }
+                  localStorage.gamesok5 = Number(localStorage.gamesok5) + 1;
+                  gamesokX = Number(localStorage.gamesok5);
+                  break;
+              case 6:
+                  if (!localStorage.gamesok6) {
+                    localStorage.gamesok6 = 0;
+                  }
+                  localStorage.gamesok6 = Number(localStorage.gamesok6) + 1;
+                  gamesokX = Number(localStorage.gamesok6);
+                  break;
+              case 7:
+                  if (!localStorage.gamesok7) {
+                    localStorage.gamesok7 = 0;
+                  }
+                  localStorage.gamesok7 = Number(localStorage.gamesok7) + 1;
+                  gamesokX = Number(localStorage.gamesok7);
+                  break;
+              default:
+                  throw new Error("store_player_info: invalid nbcolumns: " + nbcolumns);
+          }
 
-            let gamesok_alert_condition;
-            if (gamesok <= 10000) {
-              gamesok_alert_condition =
-                ( (gamesok == 50) || (gamesok == 150)
-                  || (gamesok == 111) || (gamesok == 222) || (gamesok == 333) || (gamesok == 444) || (gamesok == 555) || (gamesok == 777) || (gamesok == 888) || (gamesok == 999)
-                  || (gamesok == 1111) || (gamesok == 1234) || (gamesok == 2222) || (gamesok == 2345) || (gamesok == 3333) || (gamesok == 3456) || (gamesok == 4444) || (gamesok == 4567) || (gamesok == 5555) || (gamesok == 5678) || (gamesok == 6789) || (gamesok == 7777) || (gamesok == 8888) || (gamesok == 9999)
-                  || ((gamesok <= 2000) && ((gamesok % 100) == 0))
-                  || ((gamesok % 200) == 0)
-                  || ((gamesok % 500) == 0)
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 111))
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 222))
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 333))
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 444))
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 555))
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 777))
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 888))
-                  || ((gamesok > 1300) && ((gamesok % 1000) == 999)) );
-            }
-            else {
-              gamesok_alert_condition =
-                ( ((gamesok % 500) == 0)
-                  || ((gamesok % 10000) == 1111) || ((gamesok % 10000) == 2222) || ((gamesok % 10000) == 3333) || ((gamesok % 10000) == 4444) || ((gamesok % 10000) == 5555) || ((gamesok % 10000) == 7777) || ((gamesok % 10000) == 8888) || ((gamesok % 10000) == 9999)
-                  || (gamesok == 12345) || (gamesok == 23456) || (gamesok == 34567) || (gamesok == 45678) || (gamesok == 56789) );
-            }
-            if (gamesok_alert_condition) {
-              setTimeout("alert('It\\'s your ' + localStorage.gamesok + 'th game!');", 444);
-            }
+          let gamesok_alert_condition;
+          if (gamesok <= 10000) {
+            gamesok_alert_condition =
+              ( (gamesok == 50) || (gamesok == 150)
+                || (gamesok == 111) || (gamesok == 222) || (gamesok == 333) || (gamesok == 444) || (gamesok == 555) || (gamesok == 777) || (gamesok == 888) || (gamesok == 999)
+                || (gamesok == 1111) || (gamesok == 1234) || (gamesok == 2222) || (gamesok == 2345) || (gamesok == 3333) || (gamesok == 3456) || (gamesok == 4444) || (gamesok == 4567) || (gamesok == 5555) || (gamesok == 5678) || (gamesok == 6789) || (gamesok == 7777) || (gamesok == 8888) || (gamesok == 9999)
+                || ((gamesok <= 2000) && ((gamesok % 100) == 0))
+                || ((gamesok % 200) == 0)
+                || ((gamesok % 500) == 0)
+                || ((gamesok > 1300) && ((gamesok % 1000) == 111))
+                || ((gamesok > 1300) && ((gamesok % 1000) == 222))
+                || ((gamesok > 1300) && ((gamesok % 1000) == 333))
+                || ((gamesok > 1300) && ((gamesok % 1000) == 444))
+                || ((gamesok > 1300) && ((gamesok % 1000) == 555))
+                || ((gamesok > 1300) && ((gamesok % 1000) == 777))
+                || ((gamesok > 1300) && ((gamesok % 1000) == 888))
+                || ((gamesok > 1300) && ((gamesok % 1000) == 999)) );
+          }
+          else {
+            gamesok_alert_condition =
+              ( ((gamesok % 500) == 0)
+                || ((gamesok % 10000) == 1111) || ((gamesok % 10000) == 2222) || ((gamesok % 10000) == 3333) || ((gamesok % 10000) == 4444) || ((gamesok % 10000) == 5555) || ((gamesok % 10000) == 7777) || ((gamesok % 10000) == 8888) || ((gamesok % 10000) == 9999)
+                || (gamesok == 12345) || (gamesok == 23456) || (gamesok == 34567) || (gamesok == 45678) || (gamesok == 56789) );
+          }
+          if (gamesok_alert_condition) {
+            setTimeout("alert('It\\'s your ' + localStorage.gamesok + 'th game!');", 444);
+          }
 
-            if (!localStorage.gamesok_at_last_first_name_request) {
-              localStorage.gamesok_at_last_first_name_request = -100;
-            }
-            gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
+          if (!localStorage.gamesok_at_last_first_name_request) {
+            localStorage.gamesok_at_last_first_name_request = -100;
+          }
+          gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
 
-            if ((gamesok >= 47) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 10) && (!localStorage.firstname)) { // No interest for sharing results
-              if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
-                debug_game_state = 100.3;
-                if ((gamesok % 10) == 9) { // 9 (instead of 0) avoids conflicts with other dialogs
-                  setTimeout("alert('As you did not enter your first name, your scores will only be stored occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
-                  debug_game_state = 100.35;
-                }
-                return;
+          if ((gamesok >= 47) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 10) && (!localStorage.firstname)) { // No interest for sharing results
+            if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
+              debug_game_state = 100.3;
+              if ((gamesok % 10) == 9) { // 9 (instead of 0) avoids conflicts with other dialogs
+                setTimeout("alert('As you did not enter your first name, your scores will only be stored occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
+                debug_game_state = 100.35;
               }
-            }
-            if (localStorage.skip_storing) {
-              debug_game_state = 100.37;
               return;
             }
+          }
+          if (localStorage.skip) {
+            debug_game_state = 100.37;
+            return;
+          }
 
-            switch (nbcolumns) {
+          switch (nbcolumns) {
 
-              case 3:
-                if (!localStorage.nbgamesstarted3) {
-                  localStorage.nbgamesstarted3 = 0;
-                }
-                if (!localStorage.nbgamesstarted3_ref) {
-                  localStorage.nbgamesstarted3_ref = 0;
-                }
-                deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;
-                localStorage.nbgamesstarted3_ref = localStorage.nbgamesstarted3;
-                break;
-              case 4:
-                if (!localStorage.nbgamesstarted4) {
-                  localStorage.nbgamesstarted4 = 0;
-                }
-                if (!localStorage.nbgamesstarted4_ref) {
-                  localStorage.nbgamesstarted4_ref = 0;
-                }
-                deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;
-                localStorage.nbgamesstarted4_ref = localStorage.nbgamesstarted4;
-                break;
-              case 5:
-                if (!localStorage.nbgamesstarted5) {
-                  localStorage.nbgamesstarted5 = 0;
-                }
-                if (!localStorage.nbgamesstarted5_ref) {
-                  localStorage.nbgamesstarted5_ref = 0;
-                }
-                deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;
-                localStorage.nbgamesstarted5_ref = localStorage.nbgamesstarted5;
-                break;
-              case 6:
-                if (!localStorage.nbgamesstarted6) {
-                  localStorage.nbgamesstarted6 = 0;
-                }
-                if (!localStorage.nbgamesstarted6_ref) {
-                  localStorage.nbgamesstarted6_ref = 0;
-                }
-                deltagames = localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref - 1;
-                localStorage.nbgamesstarted6_ref = localStorage.nbgamesstarted6;
-                break;
+            case 3:
+              if (!localStorage.nbgamesstarted3) {
+                localStorage.nbgamesstarted3 = 0;
+              }
+              if (!localStorage.nbgamesstarted3_ref) {
+                localStorage.nbgamesstarted3_ref = 0;
+              }
+              deltagames = localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref - 1;
+              localStorage.nbgamesstarted3_ref = localStorage.nbgamesstarted3;
+              break;
+            case 4:
+              if (!localStorage.nbgamesstarted4) {
+                localStorage.nbgamesstarted4 = 0;
+              }
+              if (!localStorage.nbgamesstarted4_ref) {
+                localStorage.nbgamesstarted4_ref = 0;
+              }
+              deltagames = localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref - 1;
+              localStorage.nbgamesstarted4_ref = localStorage.nbgamesstarted4;
+              break;
+            case 5:
+              if (!localStorage.nbgamesstarted5) {
+                localStorage.nbgamesstarted5 = 0;
+              }
+              if (!localStorage.nbgamesstarted5_ref) {
+                localStorage.nbgamesstarted5_ref = 0;
+              }
+              deltagames = localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref - 1;
+              localStorage.nbgamesstarted5_ref = localStorage.nbgamesstarted5;
+              break;
+            case 6:
+              if (!localStorage.nbgamesstarted6) {
+                localStorage.nbgamesstarted6 = 0;
+              }
+              if (!localStorage.nbgamesstarted6_ref) {
+                localStorage.nbgamesstarted6_ref = 0;
+              }
+              deltagames = localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref - 1;
+              localStorage.nbgamesstarted6_ref = localStorage.nbgamesstarted6;
+              break;
 
-              case 7:
-                if (!localStorage.nbgamesstarted7) {
-                  localStorage.nbgamesstarted7 = 0;
-                }
-                if (!localStorage.nbgamesstarted7_ref) {
-                  localStorage.nbgamesstarted7_ref = 0;
-                }
-                deltagames = localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref - 1;
-                localStorage.nbgamesstarted7_ref = localStorage.nbgamesstarted7;
-                break;
+            case 7:
+              if (!localStorage.nbgamesstarted7) {
+                localStorage.nbgamesstarted7 = 0;
+              }
+              if (!localStorage.nbgamesstarted7_ref) {
+                localStorage.nbgamesstarted7_ref = 0;
+              }
+              deltagames = localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref - 1;
+              localStorage.nbgamesstarted7_ref = localStorage.nbgamesstarted7;
+              break;
 
-              default:
-                console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
-                debug_game_state = 100.38;
-                return;
-
-            }
+            default:
+              console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
+              debug_game_state = 100.38;
+              return;
 
           }
 
@@ -2523,46 +2541,6 @@
               else {
                 // NO LONGER USED - Code kept for backup site
                 throw new Error("convertLocationData: unexpected locationId value: " + locationId);
-
-                /* ipinfo.io response format:
-                   - SUCCESS case:
-                    ip	"444.444.444.444"
-                    city	"xxx"
-                    region	"xxx"
-                    country	"US" as a country code
-                    loc	"44.0000,44.0000"
-                    org	"xxx"
-                */
-
-                let data = JSON.parse(JSON.stringify(data_p)); // clone/duplicate data_p into data (using JSON conversion and back)
-
-                try {
-                  // convert country code to country name
-                  data.country = String(data.country); // (country name abbreviation)
-                  // loc -> latitude
-                  // loc -> longitude
-                  let commma_idx = data.loc.indexOf(',');
-                  if (commma_idx == -1) {
-                    throw new Error("(commma_idx == -1)");
-                  }
-                  data.latitude = data.loc.substring(0,commma_idx);
-                  data.longitude = data.loc.substring(commma_idx+1);
-                }
-                catch (e) {
-                  console.log("geolocation error in convertLocationData: " + locationId + ", " + e);
-                }
-
-                let converted_data = JSON.stringify(data);
-
-                // latitude -> latitude
-                // longitude -> longitude
-                // country -> country_name
-                converted_data = converted_data.replace("\"country\":", "\"country_name\":");
-                // region -> region
-                // city -> city
-                // ip -> ip
-
-                return JSON.parse(converted_data);
               }
 
             },
@@ -2627,7 +2605,7 @@
               document.getElementById('form_region_id').value = capitalizeFirstLetter(region);
               console.log(zip);
               console.log(city);
-              document.getElementById('form_city_id').value = capitalizeFirstLetter((mobileMode && (locationId < precisionLocationId)) ? '-' : city); // (mobile IP-address based geolocation is very imprecise)
+              document.getElementById('form_city_id').value = capitalizeFirstLetter(((mobileMode && (locationId < precisionLocationId)) || (city == city_name_to_be_skipped)) ? '-' : city); // (mobile IP-address based geolocation is very imprecise)
               console.log((locationId + " " + extraLocationInfo).trim());
               document.getElementById('form_geoloc_id').value = (locationId + extraLocationInfo).trim();
               console.log(timezone);
@@ -2682,46 +2660,25 @@
 
               var extra_debug_info = "";
               try {
-                if (typeof(Storage) !== 'undefined') {
-                  if (localStorage.html_geoloc_status) {
-                    extra_debug_info = extra_debug_info + "/" + localStorage.html_geoloc_status + "-"
-                                       + "A" + HTML_geoloc_attempts
-                                       + "S" + HTML_geoloc_successes
-                                       + "E" + HTML_geoloc_errors;
-                  }
-                  if (localStorage.previousfirstname && (localStorage.previousfirstname.indexOf('Sherlock') == -1)) {
-                    // extra_debug_info = extra_debug_info + "/PNa" + localStorage.previousfirstname.substring(0,maxFirstNameLength);
-                  }
+                if (localStorage.html_geoloc_status) {
+                  extra_debug_info = extra_debug_info + "/" + localStorage.html_geoloc_status + "-"
+                                     + "A" + HTML_geoloc_attempts
+                                     + "S" + HTML_geoloc_successes
+                                     + "E" + HTML_geoloc_errors;
                 }
-                // extra_debug_info = extra_debug_info + "/Cookies:" + navigator.cookieEnabled;
-                // extra_debug_info = extra_debug_info + "/Java:" + navigator.javaEnabled();
-                /* var pluginsLength = navigator.plugins.length; // (Note: plugin listing is no longer allowed in Firefox for security reasons => length will be less than the actual value)
-                extra_debug_info =  extra_debug_info + "/Plugins:" + pluginsLength;
-                if (pluginsLength > 0) {
-                  for (var i = 0; i < pluginsLength; i++) {
-                    extra_debug_info = extra_debug_info + "|" + i + ":" + navigator.plugins[i].filename + (navigator.plugins[i].version ? navigator.plugins[i].version : "");
-                  }
-                } */
-                // extra_debug_info = extra_debug_info + "/MimeTypes:" + navigator.mimeTypes.length;
               }
               catch (exc) {}
               var firstNameAskedStr = "";
               var androidAppNotifShownStr = "";
-              var firstAccessIdStr = "-";
-              if (typeof(Storage) !== 'undefined') {
-                if (localStorage.nbTimesFirstnameAsked && !localStorage.firstname) {
-                  firstNameAskedStr = '/Na' + localStorage.nbTimesFirstnameAsked + "x"; // (past game counter to simplify)
-                }
-                if (localStorage.androidAppNotifShown) {
-                   if ((!android_appli) && mobileMode && androidMode) {
-                     androidAppNotifShownStr = '/Not' + localStorage.androidAppNotifShown + "x";
-                   }
-                }
-                if (localStorage.firstaccessid && (localStorage.firstaccessid.length >= 3)) {
-                  firstAccessIdStr = localStorage.firstaccessid.substring(0, 2);
-                }
+              if (localStorage.nbTimesFirstnameAsked && !localStorage.firstname) {
+                firstNameAskedStr = '/Na' + localStorage.nbTimesFirstnameAsked + "x"; // (past game counter to simplify)
               }
-              document.getElementById('form_debuginfo_id').value = (checkIfRecentPlayer() ? "RCT/" : "") + (navigator.platform + '-' + userAgentStr + (mobileMode && !android_appli ? "/M" : "") + '/' + navigator.language /* + guessUserId() + "/" + */ + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight /* + (modernDisplay ? 'Mod' : 'Leg' + legacyDisplayVariant) */ /* + ((nbcolumns == 5) ? '/' + precalculatedFileFetched : "") */ + firstNameAskedStr + androidAppNotifShownStr /* + '/' + firstAccessIdStr */ /* + '/L' + nb_locationURL_accesses */ + ((gameInv != 0) ? '/Inv:' +  gameInv : "") /* + '/Don' + (localStorage.nbDonationRequestsT ? localStorage.nbDonationRequestsT : '0') */ + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "");
+              if (localStorage.androidAppNotifShown) {
+                 if ((!android_appli) && mobileMode && androidMode) {
+                   androidAppNotifShownStr = '/Not' + localStorage.androidAppNotifShown + "x";
+                 }
+              }
+              document.getElementById('form_debuginfo_id').value = (checkIfRecentPlayer() ? "RCT/" : "") + (navigator.platform + '-' + userAgentStr + ((mobileMode && !android_appli) ? "/M" : "") + '/' + navigator.language /* + guessUserId() + "/" + */ + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight /* + (modernDisplay ? 'Mod' : 'Leg' + legacyDisplayVariant) */ /* + ((nbcolumns == 5) ? '/' + precalculatedFileFetched : "") */ + firstNameAskedStr + androidAppNotifShownStr /* + '/L' + nb_locationURL_accesses */ + ((gameInv != 0) ? '/Inv:' +  gameInv : "") /* + '/Don' + (localStorage.nbDonationRequestsT ? localStorage.nbDonationRequestsT : '0') */ + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "");
               if ( ( (nbuknperfs > 0) && (nbcolumns <= 5) )
                    || ( localStorage.firstname
                         && (nbcolumns <= 5)
@@ -2735,83 +2692,56 @@
               document.getElementById('form_list_id').value = '-';
 
               var form_to_be_submitted = true;
-              if (typeof(Storage) !== 'undefined') {
-                if ( (!localStorage.firstname)
-                     && (gamesok >= min_gamesok_for_firstname) // (coherent with "history_clear_advice")
-                     && ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 7)) // (do not ask first name too often if not filled), ask up to one game out of 3
-                     && ( ((nbcolumns == 4) && (score >= 30)) || ((nbcolumns == 5) && (score >= 50)) || ((nbcolumns == 6) && (score >= 65)) || ((nbcolumns == 7) && (score >= 75)) // score not in last fourth of results
-                          || ((gamesok >= 7) && (score >= 40))
-                          || ((gamesok >= 9) && (score >= 30))
-                          || ((gamesok >= 11) && (score >= 25))
-                          || ((gamesok >= 13) && (score >= 20))
-                          || ((gamesok >= 20) && (score >= 10)) ) ) { // (~experienced player)
-                  try {
-                    // ***** Modal-based version does not work with android appli due to zoom issues:
-                    // modal_mode = 1;
-                    // // set modal content
-                    // // NOTE: vw unit is used instead of vh for font-size due to interactive smartphone keyboards which reduce window height
-                    // modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-                    //                 + "<hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'><font style='font-size:calc(18px + .34vw);'><b>You seem to be an experienced player!<br>"
-                    //                 + "Please enter your first name, it will be used to store your scores</b></font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                    //                 + "<font style='font-size:calc(15px + .34vw)'>Your first name (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no spaces):</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
-                    //                 + "<input id='firstname_input' type='text' value='Sherlock?' maxlength='" + maxFirstNameLength + "' style='font-size:calc(18px + .34vw)'></input><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                    //                 + (android_appli ? "" : "<font style='font-size:calc(15px + .34vw)'>To store your future scores properly (with your first name), make sure that your browser does not clear cookies/site data when exited</font><br>")
-                    //                 + "<font style='font-size:calc(15px + .34vw)'>Close this dialog to skip this step</font><hr style='height:3.0vh;padding:0;margin:0;visibility:hidden;'>"
-                    //                 + "</div>");
-                    // // open modal
-                    // modal.open();
-                    // form_to_be_submitted = false; // form to be submitted when modal is closed
+              if ( (!localStorage.firstname)
+                   && (gamesok >= min_gamesok_for_firstname) // (coherent with "history_clear_advice")
+                   && ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 7)) // (do not ask first name too often if not filled), ask up to one game out of 3
+                   && ( ((nbcolumns == 4) && (score >= 30)) || ((nbcolumns == 5) && (score >= 50)) || ((nbcolumns == 6) && (score >= 65)) || ((nbcolumns == 7) && (score >= 75)) // score not in last fourth of results
+                        || ((gamesok >= 7) && (score >= 40))
+                        || ((gamesok >= 9) && (score >= 30))
+                        || ((gamesok >= 11) && (score >= 25))
+                        || ((gamesok >= 13) && (score >= 20))
+                        || ((gamesok >= 20) && (score >= 10)) ) ) { // (~experienced player)
+                try {
+                  localStorage.gamesok_at_last_first_name_request = gamesok;
 
-                    if (typeof(Storage) !== 'undefined') {
-                      localStorage.gamesok_at_last_first_name_request = gamesok;
+                  // ***** Prompt-based version:
+                  let prompt_str = "Please enter your first name, it will be stored online with your scores and performances (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no spaces):";
+                  let firstname_entered = prompt(prompt_str, "Sherlock?");
+                  if (firstname_entered != null) { // (a first name was entered)
+                    firstname_entered = firstname_entered.trim();
+                    let condition_1 = (firstname_entered.length >= minFirstNameLength); // (condition duplicated)
+                    let condition_2 = (firstname_entered.length <= maxFirstNameLength); // (condition duplicated)
+                    let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); /* (only letters) */; // (condition duplicated)
+                    if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) { // (condition duplicated)
+                      localStorage.firstname = capitalizeFirstLetters(firstname_entered);
                     }
-
-                    // ***** Prompt-based version:
-                    let prompt_str = "Please enter your first name, it will be stored online with your scores and performances (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no spaces):";
-                    let firstname_entered = prompt(prompt_str, "Sherlock?");
-                    if (firstname_entered != null) { // (a first name was entered)
-                      firstname_entered = firstname_entered.trim();
-                      let condition_1 = (firstname_entered.length >= minFirstNameLength); // (condition duplicated)
-                      let condition_2 = (firstname_entered.length <= maxFirstNameLength); // (condition duplicated)
-                      let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); /* (only letters) */; // (condition duplicated)
-                      if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) { // (condition duplicated)
-                        if (typeof(Storage) !== 'undefined') {
-                          localStorage.firstname = capitalizeFirstLetters(firstname_entered);
-                        }
+                    else {
+                      let error_cause = "";
+                      if (!condition_1) {
+                        error_cause = " (too short)";
                       }
-                      else {
-                        let error_cause = "";
-                        if (!condition_1) {
-                          error_cause = " (too short)";
-                        }
-                        else if (!condition_2) {
-                          error_cause = " (too long)";
-                        }
-                        else if (!condition_3) {
-                          error_cause = " (invalid characters)";
-                        }
-                        if (typeof(Storage) !== 'undefined') {
-                          localStorage.previousfirstname = firstname_entered;
-                        }
-                        alert("Invalid first name" + error_cause + ": " + firstname_entered);
+                      else if (!condition_2) {
+                        error_cause = " (too long)";
                       }
+                      else if (!condition_3) {
+                        error_cause = " (invalid characters)";
+                      }
+                      localStorage.previousfirstname = firstname_entered;
+                      alert("Invalid first name" + error_cause + ": " + firstname_entered);
                     }
-
-                    if (typeof(Storage) !== 'undefined') {
-                      if (!localStorage.nbTimesFirstnameAsked) {
-                        localStorage.nbTimesFirstnameAsked = 0;
-                      }
-                      localStorage.nbTimesFirstnameAsked = Number(localStorage.nbTimesFirstnameAsked) + 1;
-                      if (localStorage.firstname) {
-                        console.log("new firstname: " + localStorage.firstname);
-                        document.getElementById('form_firstname_id').value = localStorage.firstname;
-                      }
-                    }
-
                   }
-                  catch (exc) {
-                    throw new Error("first name entry error: " + exc + ": " + exc.stack);
+
+                  if (!localStorage.nbTimesFirstnameAsked) {
+                    localStorage.nbTimesFirstnameAsked = 0;
                   }
+                  localStorage.nbTimesFirstnameAsked = Number(localStorage.nbTimesFirstnameAsked) + 1;
+                  if (localStorage.firstname) {
+                    console.log("new firstname: " + localStorage.firstname);
+                    document.getElementById('form_firstname_id').value = localStorage.firstname;
+                  }
+                }
+                catch (exc) {
+                  throw new Error("first name entry error: " + exc + ": " + exc.stack);
                 }
               }
 
@@ -2829,50 +2759,74 @@
               // Select which stored location data to use, if any
               // ************************************************
 
+              let max_time_value = 9999999999999;
               let precise_location_data = getPreciseStoredLocationData();
-              let precise_duration = -1;
+              let precise_duration = max_time_value;
               if ( isLocationDataValid(precise_location_data)
-                   && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < 13*7*24*3600*1000) ) { // 13*7 days ~ 3 months
+                   && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) { // 1 to 2 months
                 precise_duration = (new Date()).getTime() - localStorage.precise_location_success_time;
               }
+
               let stored_location_data = getStoredLocationData();
-              let ip_address_based_duration = -1;
+              let ip_address_based_duration = max_time_value;
               if ( isLocationDataValid(stored_location_data)
-                   && localStorage.location_storage_time && ((new Date()).getTime() - localStorage.location_storage_time < 13*7*24*3600*1000) ) { // 13*7 days ~ 3 months
+                   && localStorage.location_storage_time && ((new Date()).getTime() - localStorage.location_storage_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) { // 1 to 2 months
                 ip_address_based_duration = (new Date()).getTime() - localStorage.location_storage_time;
               }
-              let choice;
-              if ((precise_duration == -1) && (ip_address_based_duration == -1)) {
+
+              let best_effort_location_data = getBestEffortLocationData();
+              let best_effort_based_duration = max_time_value;
+              if ( isLocationDataValid(best_effort_location_data)
+                   && localStorage.best_effort_update_time && ((new Date()).getTime() - localStorage.best_effort_update_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) { // 1 to 2 months
+                best_effort_based_duration = (new Date()).getTime() - localStorage.best_effort_update_time;
+              }
+
+              let choice = 0;
+              if ((precise_duration == max_time_value) && (ip_address_based_duration == max_time_value) && (best_effort_based_duration == max_time_value)) {
                 choice = 0;
               }
-              else if ((precise_duration == -1) && (ip_address_based_duration != -1)) {
-                choice = 2;
-              }
-              else if ((precise_duration != -1) && (ip_address_based_duration == -1)) {
+              else if ( (precise_duration != max_time_value)
+                        && (precise_duration < ip_address_based_duration + 24*3600*1000 /* (one more day) */)
+                        && (precise_duration < best_effort_based_duration + 48*3600*1000 /* (2 more days) */) ) {
                 choice = 1;
               }
+              else if ( (ip_address_based_duration != max_time_value)
+                        && (ip_address_based_duration < best_effort_based_duration + 24*3600*1000 /* (one more day) */) ) { // locations with city presence are favored vs region presence for precision reasons (even for region relevancy)
+                choice = 2;
+              }
+              else if (best_effort_based_duration != max_time_value) {
+                choice = 3;
+              }
               else {
-                choice = ((precise_duration < ip_address_based_duration + 12*3600*1000 /* (+ 12 hours) */) ? 1 : 2);
+                throw new Error("setFormInfoByOtherMeans: invalid location selection: " + precise_duration + ", " + ip_address_based_duration + ", " + best_effort_based_duration);
               }
 
-              // Use last precise location data if any
-              // *************************************
+              // Use old precise location data
+              // *****************************
 
               if (choice == 1) {
-                  geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "POLD" + debug_str + "(" + Math.round(precise_location_data.accuracy) + "m," + reformatTime(precise_duration) + ")", false);
+                  geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "OLDP" + debug_str + "(" + Math.round(precise_location_data.accuracy) + "m," + reformatTime(precise_duration) + ")", false);
                   return;
               }
 
-              // Use last stored location data if any (IP-address based geolocation)
-              // *******************************************************************
+              // Use old stored location data (IP-address based geolocation)
+              // ***********************************************************
 
               else if (choice == 2) {
-                  geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "IPSTOLD" + debug_str + "(" + reformatTime(ip_address_based_duration) + ")", false);
+                  geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "OLDIP" + debug_str + "(" + reformatTime(ip_address_based_duration) + ")", false);
                   return;
               }
 
-              // Best effort or dummy location
-              // *****************************
+              // Use best effort location data (IP-address based geolocation)
+              // ************************************************************
+
+              else if (choice == 3) {
+                  geolocation_handler.setFormInfoWithValidLocationData(best_effort_location_data, localStorage.best_effort_location_id, "BEIP" + debug_str + "(" + reformatTime(best_effort_based_duration) + ")", false);
+                  return;
+              }
+
+              // Use dummy location
+              // ******************
 
               if (!global_geoloc_failure_alert_shown) {
                 // alert("Oops... your score could not be stored properly due to geolocation failure!"); -> intempestive alerts
@@ -2891,6 +2845,7 @@
               }
               let dummy_location_data = { latitude: '0.0',
                                           longitude: '0.0',
+                                          accuracy: '?',
                                           country_name: dummyLocationPrefix1 + timezoneCity + dummyLocationPrefix2 + getCountryNameFromBrowserLanguage('Unknown'),
                                           region: 'Unknown', // (Note: checked by GS SCRIPT)
                                           city: 'Unknown', // (Note: checked by GS SCRIPT)
@@ -2900,7 +2855,7 @@
                 throw new Error("setFormInfoByOtherMeans: invalid dummy location data: " + JSON.stringify(dummy_location_data));
               }
               geolocation_handler.setFormInfoWithValidLocationData(dummy_location_data, 0, "DU" + debug_str + " " + dummy_location_data.country_name
-                                                                   + dummyLocationPrefix3 + (localStorage.bestEffortCountryName ? localStorage.bestEffortCountryName : "-")
+                                                                   + dummyLocationPrefix3 + (localStorage.best_effort_countryname ? localStorage.best_effort_countryname : "-")
                                                                    + dummyLocationPrefix4 + (localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : "-") + ", " + (localStorage.bestEffortIPAddressSource ? localStorage.bestEffortIPAddressSource : "-") + "," + (localStorage.alternateLocationMethodDebugInfo ? localStorage.alternateLocationMethodDebugInfo : "-")
                                                                    + dummyLocationPrefix5 + (localStorage.last_handle_rsp_call ? reformatTime((new Date()).getTime() - localStorage.last_handle_rsp_call) : '-'), false);
 
@@ -2976,6 +2931,7 @@
                     geolocation_handler.setFormInfoWithValidLocationData(converted_data, current_nb_JSON_queries_posted, "IP", true);
                   }
                   else {
+                    setBestEffortLocationData(converted_data, current_nb_JSON_queries_posted);
                     locationURL_accesses_failure_causes = locationURL_accesses_failure_causes + "I|"; // Invalid location data
                     var errorStr = "invalid geolocation #" + current_nb_JSON_queries_posted + ": " + JSON.stringify(data);
                     console.log(errorStr);
@@ -3025,21 +2981,16 @@
         catch (exc) {
           debug_game_state = 102;
           console.log("internal error while storing scores: " + exc);
-          if (nb_errors_submitted == 0) {
-            // alert("Oops... an internal error occurred: " + exc);
-            var errorStr = "";
-            if (typeof(Storage) !== 'undefined') {
-              if (localStorage.firstname) {
-                errorStr = errorStr + " for " + localStorage.firstname;
-              }
-              if (localStorage.playerid) {
-                errorStr = errorStr + " for player id " + localStorage.playerid;
-              }
-            }
-            errorStr = errorStr + " on " + navigator.platform + " / " + userAgentStr + " / " + decodeURI(location.href);
-            submitForm("internal error while storing scores" + errorStr + ": " + exc, true);
-            nb_errors_submitted++;
+          // alert("Oops... an internal error occurred: " + exc);
+          var errorStr = "";
+          if (localStorage.firstname) {
+            errorStr = errorStr + " for " + localStorage.firstname;
           }
+          if (localStorage.playerid) {
+            errorStr = errorStr + " for player id " + localStorage.playerid;
+          }
+          errorStr = errorStr + " on " + navigator.platform + " / " + userAgentStr + " / " + decodeURI(location.href);
+          submitForm("internal error while storing scores" + errorStr + ": " + exc + ": " + exc.stack);
           debug_game_state = 103;
         }
 
@@ -3060,7 +3011,7 @@
           console.log("attempt_HTML_geolocation_if_needed skipped (2)");
           return;
         }
-        if (android_appli) { // no popups for android appli: ACCESS_FINE_LOCATION permission is requested, subject to user acceptance
+        if (android_appli) { // no popups for android app: ACCESS_FINE_LOCATION permission is requested, subject to user acceptance
           if ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000) { // geolocation refresh after 1.5 hour on user action
             android_HTML_geolocation_retries_after_error = 0;
             setTimeout("attempt_HTML_geolocation();", 44);
@@ -3087,6 +3038,114 @@
         }
       }
 
+      // GUI variables
+      // *************
+
+      let nbButtons = 6;
+      let allButtons = new Array(1);
+      let newGameButtonObject = document.getElementById("newGameButton");
+      allButtons[0] = newGameButtonObject;
+      let resetCurrentCodeButtonObject = document.getElementById("resetCurrentCodeButton");
+      allButtons[1] = resetCurrentCodeButtonObject;
+      let playRandomCodeButtonObject = document.getElementById("playRandomCodeButton");
+      allButtons[2] = playRandomCodeButtonObject;
+      let revealSecretColorButtonObject = document.getElementById("revealSecretColorButton");
+      allButtons[3] = revealSecretColorButtonObject;
+      let showPossibleCodesButtonObject = document.getElementById("showPossibleCodesButton");
+      allButtons[4] = showPossibleCodesButtonObject;
+      let settingsButtonObject = document.getElementById("settingsButton");
+      allButtons[5] = settingsButtonObject;
+      if (allButtons.length != nbButtons) {
+        throw new Error("invalid allButtons.length: " + allButtons.length);
+      }
+      for (let i = allButtons.length-1; i >= 0; i--) {
+        if (allButtons[i] == null) {
+          let debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
+          throw new Error("button at index " + i + " was not found (page load info: " + debugStr + ")");
+        }
+      }
+
+      let nbNbColumnsRadioObjects = 5;
+      let nbColumnsRadioObjects = new Array(1);
+      nbColumnsRadioObjects[0] = document.getElementById("nbColumnsSelection_3");
+      nbColumnsRadioObjects[1] = document.getElementById("nbColumnsSelection_4");
+      nbColumnsRadioObjects[2] = document.getElementById("nbColumnsSelection_5");
+      nbColumnsRadioObjects[3] = document.getElementById("nbColumnsSelection_6");
+      nbColumnsRadioObjects[4] = document.getElementById("nbColumnsSelection_7");
+      if (nbColumnsRadioObjects.length != nbNbColumnsRadioObjects) {
+        throw new Error("invalid nbColumnsRadioObjects.length: " + nbColumnsRadioObjects.length);
+      }
+      for (let i = nbColumnsRadioObjects.length-1; i >= 0; i--) {
+        if (nbColumnsRadioObjects[i] == null) {
+          let debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
+          throw new Error("nbcolumns radio object at index " + i + " was not found (page load info: " + debugStr + ")");
+        }
+      }
+
+      let nbRadioButtons = 5; // <=> nbMaxColumns - nbMinColumns + 1;
+      let allRadioButtons = new Array(1);
+      allRadioButtons[0] = document.getElementById("columnsspan_3");
+      allRadioButtons[1] = document.getElementById("columnsspan_4");
+      allRadioButtons[2] = document.getElementById("columnsspan_5");
+      allRadioButtons[3] = document.getElementById("columnsspan_6");
+      allRadioButtons[4] = document.getElementById("columnsspan_7");
+      if (allRadioButtons.length != nbRadioButtons) {
+        throw new Error("invalid allRadioButtons.length: " + allRadioButtons.length);
+      }
+      for (let i = allRadioButtons.length-1; i >= 0; i--) {
+        if (allRadioButtons[i] == null) {
+          let debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
+          throw new Error("radio button at index " + i + " was not found (page load info: " + debugStr + ")");
+        }
+      }
+
+      let newGameButtonIniName = newGameButtonObject.value;
+      let resetCurrentCodeButtonIniName = resetCurrentCodeButtonObject.value;
+      let playRandomCodeButtonIniName = playRandomCodeButtonObject.value;
+      let revealSecretColorButtonIniName = revealSecretColorButtonObject.value;
+      let showPossibleCodesButtonIniName = showPossibleCodesButtonObject.value;
+      let showPossibleCodesButtonCompressedName = "\ud83d\udc40";
+      let showPossibleCodesButtonBackToGameName = "Back";
+      let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
+
+      let myTableObject = document.getElementById("my_table");
+      if (myTableObject == null) {
+        throw new Error("my_table was not found");
+      }
+
+      let buttonsTdObject = document.getElementById("buttons_td");
+      if (buttonsTdObject == null) {
+        throw new Error("buttons_td was not found");
+      }
+
+      let pageTransitionObject = document.getElementById("page_transition_id");
+      if (pageTransitionObject == null) {
+        throw new Error("page_transition_id was not found");
+      }
+
+      let gameAbortedObject = document.getElementById("game_aborted_id");
+      if (gameAbortedObject == null) {
+        throw new Error("game_aborted_id was not found");
+      }
+
+      let canvas = document.getElementById("my_canvas");
+      if (canvas == null) {
+        throw new Error("my_canvas was not found");
+      }
+
+      let canvas_cell = document.getElementById("my_canvas_cell");
+      if (canvas_cell == null) {
+        throw new Error("my_canvas_cell was not found");
+      }
+
+      let img1Object = document.getElementById("img_1"); // may be null, optional picture
+      let img2Object = document.getElementById("img_2"); // may be null, optional picture
+
+      let traceObject = document.getElementById("traces_id");
+      if (traceObject == null) {
+        throw new Error("traces_id was not found");
+      }
+
       // *********************************************
       // Load GameSolver and Super Master Mind scripts
       // *********************************************
@@ -3106,7 +3165,7 @@
             ratioDebugStr = " (s)";
           }
           var globalProgress = getGlobalProgress(ratioComplete, 2);
-          console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android appli so shall not be modified
+          console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
           if (globalProgress > 0) {
             $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
           }
@@ -3122,7 +3181,7 @@
         smm_load_state = 1;
         debug_game_state = 60;
         var globalProgress = getGlobalProgress(0, 2);
-        console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android appli so shall not be modified
+        console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
         $.ajax({
             url: 'SuperMasterMind.js.gz', // SuperMasterMind.js compressed with gzip
             method: "GET",
@@ -3131,8 +3190,8 @@
             xhr: function() {
                 debug_game_state = 60.5;
                 xhr_smm.responseType = 'arraybuffer';
-                // Download progress
                 try {
+                  // Download progress
                   xhr_smm.addEventListener("progress", loadSuperMasterMindScript_progressFunction, false);
                 }
                 catch (exc) {
@@ -3144,7 +3203,7 @@
                 smm_load_state = 2;
                 debug_game_state = 67;
                 xhr_smm.removeEventListener("progress", loadSuperMasterMindScript_progressFunction, false); // same arguments as above xhr_smm.addEventListener() call
-                console.log("(on scripts load)"); // !WARNING! -> this console text will be read by the android appli so shall not be modified
+                console.log("(on scripts load)"); // !WARNING! -> this console text will be read by the android app so shall not be modified
                 // Unzip .js.gz file
                 var inflated = pako.inflate(new Uint8Array(data));
                 var script = document.createElement('script');
@@ -3165,7 +3224,7 @@
                     throw new Error("appendChild failed for SuperMasterMind script");
                 }
                 var globalProgress = getGlobalProgress(0.999, 2);
-                console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android appli so shall not be modified
+                console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
                 smm_load_state = 2.5;
                 // debug_game_state = 68 to debug_game_state = 69.x is updated in SuperMasterMind script
             },
@@ -3181,13 +3240,13 @@
         })
         .always(function() {
           $(".game_loading").fadeOut("slow"); // game_loading div fades out
-          // $("#my_all_scripts_loaded_form").submit(); // (dummy form submission for android appli's web view)
+          // $("#my_all_scripts_loaded_form").submit(); // (dummy form submission for android app's web view)
         });
         smm_load_state = 1.5;
       }
 
       var globalProgressForHTMLGame3 = getGlobalProgress(0.999 /* (rough value) */, 0);
-      console.log("current progress: " + Math.max(globalProgressForHTMLGame3, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame3; // !WARNING! -> this console text will be read by the android appli so shall not be modified
+      console.log("current progress: " + Math.max(globalProgressForHTMLGame3, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame3; // !WARNING! -> this console text will be read by the android app so shall not be modified
       if (globalProgressForHTMLGame3 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame3 + "%)"); // (not rem unit as no viewport! / duplicated code)
       }
@@ -3207,7 +3266,7 @@
             ratioDebugStr = " (s)";
           }
           var globalProgress = getGlobalProgress(ratioComplete, 1);
-          console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android appli so shall not be modified
+          console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
           if (globalProgress > 0) {
             $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
           }
@@ -3230,8 +3289,8 @@
         timeout: 300000, // 5 minutes (high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
         xhr: function() {
           debug_game_state = 70.5;
-          // Download progress
           try {
+            // Download progress
             xhr_gs.addEventListener("progress", loadGameSolverScript_progressFunction, false);
             debug_game_state = 70.55;
           }

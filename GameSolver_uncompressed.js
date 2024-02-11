@@ -18,9 +18,9 @@ let emptyColor = 0; // (0 is also the Java default table init value)
 let nbMinColors = 5;
 let nbMaxColors = 10;
 let nbMinColumns = 3;
-let nbMaxColumns = 7;
+let nbMaxColumns = 7; // (value hardcoded elsewhere: search "nbMaxColumns")
 let overallNbMinAttempts = 4;
-let overallNbMaxAttempts = 15;
+let overallNbMaxAttempts = 14;
 let overallMaxDepth = 15;
 
 let PerformanceNA = -3.00;
