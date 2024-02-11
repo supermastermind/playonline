@@ -1493,8 +1493,8 @@
         try {
             var glbScoreAndPerfHistoryArrayName = getGlbScoreAndPerfHistoryArrayName(nbColumns_p);
             var jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
-            if (jsonString == null) {
-                throw new Error("displayOrGetMaxGlbScoreAndPerf: null jsonString");
+            if (jsonString == null) { // array not yet defined
+                return;
             }
             var glbScoreAndPerfHistoryArray = JSON.parse(jsonString);
             if (glbScoreAndPerfHistoryArray.length != glbScoreAndPerfHistorySize) {
