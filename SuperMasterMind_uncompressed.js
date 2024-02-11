@@ -2802,7 +2802,7 @@ function draw_graphic_bis() {
             }
             catch (err) {}
 
-            buttonsTdObject.style.padding = "0 0 0.30vh 0"; /* top right bottom left */
+            buttonsTdObject.style.padding = "0 0 0.50vh 0"; /* top right bottom left */
 
             left_border_margin_x = 0.25;   // Left border margin for x axis in %
             right_border_margin_x = 0.25;  // Right border margin for x axis in %

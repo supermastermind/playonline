@@ -2403,7 +2403,7 @@ img1Object.style.display='none';
 img2Object.style.display='none';
 }
 catch (err){}
-buttonsTdObject.style.padding="0 0 0.30vh 0";/* top right bottom left */
+buttonsTdObject.style.padding="0 0 0.50vh 0";/* top right bottom left */
 left_border_margin_x=0.25;
 right_border_margin_x=0.25;
 bottom_border_margin_y=1.00;
