@@ -33,7 +33,7 @@ let href=String(window.location.href);
 let params_idx=href.indexOf("?");
 if(params_idx!=-1){
 if(href.indexOf("android_appli")!=-1){
-submitForm("reloadAllContentsDistantly called for "+href);
+submitForm("reloadAllContentsDistantly called for "+href, 200);
 }
 href=href.substring(0, params_idx);
 }
@@ -467,11 +467,11 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30: "+(localStorage.reloadForCompatibility_v30 ? localStorage.reloadForCompatibility_v30 : "not done"));
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30: "+(localStorage.reloadForCompatibility_v30 ? localStorage.reloadForCompatibility_v30 : "not done"), 210);
 }
 catch (exc){
 console.log("internal error at error form submission: "+exc);
-submitForm("internal error at error form submission: "+exc+" for submitted error: "+GUIErrorStr+" / STACK: "+errStack);
+submitForm("internal error at error form submission: "+exc+" for submitted error: "+GUIErrorStr+" / STACK: "+errStack, 230);
 }
 }
 globalErrorCnt++;

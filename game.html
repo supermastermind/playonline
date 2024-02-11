@@ -711,7 +711,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 
 <script>
 
-let html_compatibility_game_version = "v30"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+let html_compatibility_game_version = "v30.01"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
 let current_smm_compatibility_version = "not filled yet";
 let modeAlreadySelected = false;
 let lastKeyCheck = false;
@@ -890,7 +890,7 @@ return "jqxhr=?";
 var smm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbx7dfFn4JQGWWcKEjHUqPk42AxlZBcnQ5AiFcuY3op6azRwNRCJfUFNuwSjBUN_GXsQ/exec";
 var mm_mmm_umm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbxuCShh1eJtEmwgRF6ZY47HrdVfPgoJ4lVK7OD_Pxj5tanlThWdwqnb--9m1aafYid3/exec";
 var nbErrorsSubmitted = 0;
-function submitForm(formStr = "") {
+function submitForm(formStr = "", errorId = 0) {
 
 if (globalErrorStatus) { // skip submitForm when a basic global error occurred
 console.log("(submitForm skipped due to global error)");
@@ -910,13 +910,16 @@ var form_list_in_form = document.getElementById('form_list_id').value;
 
 if (form_list_in_form == '-') {
 switch (String(nbColumns_in_form)) {
+case "5":
+document.getElementById("my_form").action = smm_action;
+break;
 case "4":
 case "6":
 case "7":
 document.getElementById("my_form").action = mm_mmm_umm_action;
 break;
 default:
-document.getElementById("my_form").action = smm_action;
+throw new Error("submitForm error: " + nbColumns_in_form);
 }
 }
 else {
@@ -955,7 +958,7 @@ return;
 }
 document.getElementById('form_nbcolumns_id').value = "N.A."; // (ensure failure at handling)
 document.getElementById("my_form").action = (((currentGameNbColumns == -1) || (currentGameNbColumns == 5)) ? smm_action : mm_mmm_umm_action);
-my_params['form_str'] = formStr;
+my_params['form_str'] = "(error id: " + errorId + ") " + formStr;
 }
 my_params['k'] = key;
 my_params['v'] = html_compatibility_game_version;
@@ -1024,10 +1027,10 @@ console.log(("form submission failure (abnormal case): " + textStatus + " " + er
 
 function submitError(errorStr) { // CALLED BY ANDROID APP
 try {
-submitForm("error submitted by android app: " + String(errorStr));
+submitForm("error submitted by android app: " + String(errorStr), 10);
 }
 catch (exc) {
-submitForm("submitError() handling error");
+submitForm("submitError() handling error", 20);
 }
 }
 
@@ -1123,7 +1126,7 @@ submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + 
 + "|smm:" + smm_load_state + "," + debug_smm_state
 + "|resizeorunload:" + debug_on_resize_or_unload
 + "|gamesolver:" + gamesolver_load_state + "|" + ((gamesolver_load_start_time != -1) ? ((new Date()).getTime() - gamesolver_load_start_time)/1000 + "s" : "-")
-+ " for " + extra_debug_info);
++ " for " + extra_debug_info, 30);
 }
 window.onerror = game_onerror; // Note: this error capture can be redundant with the other error captures like gameSolver.onerror (same error submitted several times)
 </script>
@@ -1157,7 +1160,7 @@ extra_debug_info = extra_debug_info.trim();
 if (extra_debug_info == "") {
 extra_debug_info = "-";
 }
-submitForm("***** " + errormsg + " ***** (" + html_compatibility_game_version + "): event: " + evt + "|" + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + "|" + evt_promise_str + " | cause: " + cause + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon + "|" + debug_game_state + "|" + debug_on_resize_or_unload + " for " + extra_debug_info + " in " + userAgentStr);
+submitForm("***** " + errormsg + " ***** (" + html_compatibility_game_version + "): event: " + evt + "|" + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + "|" + evt_promise_str + " | cause: " + cause + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon + "|" + debug_game_state + "|" + debug_on_resize_or_unload + " for " + extra_debug_info + " in " + userAgentStr, 40);
 }
 window.onmessageerror = function(evt) {
 game_event_onerrors(evt, "GAME MESSAGE ERROR", "onmessageerror");
@@ -1481,7 +1484,7 @@ localStorage.setItem(glbScoreAndPerfHistoryArrayName, jsonString2);
 localStorage.glbScoreAndPerfHistoryIdx = (glbScoreAndPerfHistoryIdx + 1) % glbScoreAndPerfHistorySize;
 }
 catch (exc) {
-submitForm("storeGlbScoreAndPerf error: " + exc + ": " + exc.stack);
+submitForm("storeGlbScoreAndPerf error: " + exc + ": " + exc.stack, 50);
 }
 }
 
@@ -1530,7 +1533,7 @@ return true;
 }
 }
 catch (exc) {
-submitForm("(displayOrGetMaxGlbScoreAndPerf: exception: " + exc + ": " + exc.stack + ")");
+submitForm("(displayOrGetMaxGlbScoreAndPerf: exception: " + exc + ": " + exc.stack + ")", 60);
 return false;
 }
 return false;
@@ -1692,7 +1695,7 @@ if ( ((nbColumns_p != "4") && (nbColumns_p != "5") && (nbColumns_p != "6") && (n
 || ((applyTimes_p != "N") && (applyTimes_p != "Y"))
 || ((retr_p != "N") && (retr_p != "Y") && (retr_p != "Y2")) ) {
 submitForm("handle_stats_bis error (wrong parameters): " + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", "
-+ applyTimes_p + ", " + pId_p + ", " + key_p  + ", " + retr_p + ", last_idx: " + last_stats_keys_index);
++ applyTimes_p + ", " + pId_p + ", " + key_p  + ", " + retr_p + ", last_idx: " + last_stats_keys_index, 70);
 console.log("stats form submission skipped (wrong parameters)");
 return; // skip stats update
 }
@@ -1737,7 +1740,7 @@ timeout: 30000 // 30 seconds
 }
 else { // specific beforeunload case => save last stats command (only the very last command to simplify)
 if (retr_p != "Y2") {
-submitForm("internal error when setting localStorage.pendingStats: " + retr_p);
+submitForm("internal error when setting localStorage.pendingStats: " + retr_p, 80);
 }
 localStorage.pendingStats = "handle_stats_bis(" + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", '" + applyTimes_p + "', '" + pId_p + "', '" + key_p + "', '" + retr_p + "');"
 }
@@ -1917,7 +1920,7 @@ throw new Error("setBestEffortLocationData: invalid best effort location data: "
 }
 }
 catch (exc) {
-submitForm("setBestEffortLocationData error: " + exc + ": " + exc.stack);
+submitForm("setBestEffortLocationData error: " + exc + ": " + exc.stack, 90);
 }
 }
 
@@ -2055,7 +2058,7 @@ localStorage.precise_region = tmp_location_data.region;
 localStorage.precise_city = tmp_location_data.city;
 localStorage.precise_ip = tmp_location_data.ip;
 localStorage.precise_location_success_time = (new Date()).getTime();
-localStorage.html_geoloc_status = "ok-geocoding" + debug_str + " (" + latitude + "," + longitude + ")";
+localStorage.html_geoloc_status = "ok-geocoding" + debug_str + " (" + latitude + "|" + longitude + ")";
 precise_location_data = getPreciseStoredLocationData();
 if (!isLocationDataValid(precise_location_data)) {
 throw new Error("HTML_geolocation_success: invalid precise location data #2: " + JSON.stringify(precise_location_data));
@@ -2196,7 +2199,7 @@ region: e.region,
 city: e.city,
 ip: e.ip };
 if (e.ip != ip_address_for_alternate_loc_methods) {
-submitForm("unexpected IP address in handle_gs_geoloc: " + e.ip + ", " + ip_address_for_alternate_loc_methods);
+submitForm("unexpected IP address in handle_gs_geoloc: " + e.ip + ", " + ip_address_for_alternate_loc_methods, 100);
 return;
 }
 if (isLocationDataValid(converted_data)) {
@@ -2290,7 +2293,7 @@ xhr.send();
 }
 catch (exc) {
 console.log("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc);
-submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc + ": " + exc.stack);
+submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc + ": " + exc.stack, 110);
 }
 }
 
@@ -2993,7 +2996,7 @@ if (localStorage.playerid) {
 errorStr = errorStr + " for player id " + localStorage.playerid;
 }
 errorStr = errorStr + " on " + navigator.platform + " / " + userAgentStr + " / " + decodeURI(location.href);
-submitForm("internal error while storing scores" + errorStr + ": " + exc + ": " + exc.stack);
+submitForm("internal error while storing scores" + errorStr + ": " + exc + ": " + exc.stack, 120);
 debug_game_state = 103;
 }
 
