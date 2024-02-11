@@ -2436,10 +2436,10 @@ for (let i=0;i < allButtons.length;i++){
 allButtons[i].style.border=borderStr2;
 }
 for (let i=0;i < allButtons.length;i++){
-allButtons[i].style.fontSize=(CompressedDisplayMode ? "2.9vh" : "2.7vh");
+allButtons[i].style.fontSize=(CompressedDisplayMode ? "3.2vh" : "2.7vh");
 }
 for (let i=0;i < allRadioButtons.length;i++){
-allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "3.5vh" : "3.5vh");
+allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "3.8vh" : "3.5vh");
 }
 current_innerWidth=window.innerWidth;
 current_innerHeight=window.innerHeight;

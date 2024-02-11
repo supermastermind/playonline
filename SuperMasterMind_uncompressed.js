@@ -2841,10 +2841,10 @@ function draw_graphic_bis() {
         allButtons[i].style.border = borderStr2;
       }
       for (let i = 0; i < allButtons.length; i++) {
-        allButtons[i].style.fontSize = (CompressedDisplayMode ? "2.9vh" : "2.7vh"); // proportional to viewport height
+        allButtons[i].style.fontSize = (CompressedDisplayMode ? "3.2vh" : "2.7vh"); // proportional to viewport height
       }
       for (let i = 0; i < allRadioButtons.length; i++) {
-        allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "3.5vh" : "3.5vh"); // proportional to viewport height
+        allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "3.8vh" : "3.5vh"); // proportional to viewport height
       }
 
       current_innerWidth = window.innerWidth;
