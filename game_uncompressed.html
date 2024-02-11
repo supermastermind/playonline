@@ -1493,8 +1493,8 @@
         try {
             var glbScoreAndPerfHistoryArrayName = getGlbScoreAndPerfHistoryArrayName(nbColumns_p);
             var jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
-            if (jsonString == null) { // array not yet defined
-                return;
+            if (jsonString == null) {
+                return false; // array not yet initialized
             }
             var glbScoreAndPerfHistoryArray = JSON.parse(jsonString);
             if (glbScoreAndPerfHistoryArray.length != glbScoreAndPerfHistorySize) {
@@ -1512,7 +1512,7 @@
             else { // "get max" mode
                 if (!localStorage.gamesok || (Number(localStorage.gamesok) < glbScoreAndPerfHistorySize + 5)) { // (simplified check for all column numbers)
                     console.log("(displayOrGetMaxGlbScoreAndPerf: skipped)");
-                    return;
+                    return false;
                 }
                 var maxGlbScore = glbScoreNAValue;
                 var maxGlbPerf = glbPerfNAValue;
@@ -1526,11 +1526,14 @@
                 }
                 maxGlbResultsOut.glbscore = maxGlbScore; // (can be glbScoreNAValue)
                 maxGlbResultsOut.glbperf = maxGlbPerf; // (can be glbPerfNAValue)
+                return true;
             }
         }
         catch (exc) {
             submitForm("(displayOrGetMaxGlbScoreAndPerf: exception: " + exc + ": " + exc.stack + ")");
+            return false;
         }
+        return false;
       }
 
       var trophy_image = new Image(); // create an image object
