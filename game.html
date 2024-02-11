@@ -1350,6 +1350,10 @@ return;
 if (url.indexOf("ofdopmlmgifpfkijadehmhjccbefaeec") != -1) { // extension
 return;
 }
+// Injected script
+if ((url.indexOf("hosteagle") != -1) || (url.indexOf("injectedScript") != -1))  {
+return;
+}
 }
 catch (error) {}
 
