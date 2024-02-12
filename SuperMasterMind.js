@@ -50,7 +50,7 @@ localStorage.reloadForCompatibility_v3001="distant reload request done on "+curr
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
-if((new Date()).getTime() - loadTime >=(mobileMode ? 2 : 1)*24*3600*1000){
+if((new Date()).getTime() - loadTime >=(mobileMode ? 2.5 : 1)*24*3600*1000){
 loadTime=(new Date()).getTime();
 if(android_appli){
 alert("Game has been running for a long time.\nRestart the app...");

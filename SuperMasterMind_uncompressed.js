@@ -64,7 +64,7 @@ if ((!localStorage.reloadForCompatibility_v3001) && (html_compatibility_game_ver
 }
 
 function reloadAllContentsDistantlyIfNeeded() {
-  if ((new Date()).getTime() - loadTime >= (mobileMode ? 2 : 1)*24*3600*1000) { // 1 to 2 days (reload the page/webview distantly to allow application of changes)
+  if ((new Date()).getTime() - loadTime >= (mobileMode ? 2.5 : 1)*24*3600*1000) { // 1 to 2.5 days (reload the page/webview distantly to allow application of changes)
     loadTime = (new Date()).getTime(); // time in milliseconds - defense against potential repetitive reloads
     if (android_appli) {
       alert("Game has been running for a long time.\nRestart the app...");
