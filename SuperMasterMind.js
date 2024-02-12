@@ -7,7 +7,7 @@ console.log("Running SuperMasterMind.js...");
 // Check compatibility with game.html
 // **********************************
 debug_game_state=68;
-let smm_compatibility_version="v30.01";
+let smm_compatibility_version="v30.02";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -42,11 +42,11 @@ window.location.href=href+"?tmp="+currentDateAndTime();
 }
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if((!localStorage.reloadForCompatibility_v3001)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3002)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3001="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3002="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -467,7 +467,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.01: "+(localStorage.reloadForCompatibility_v3001 ? localStorage.reloadForCompatibility_v3001 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.02: "+(localStorage.reloadForCompatibility_v3002 ? localStorage.reloadForCompatibility_v3002 : "not done"), 210);
 }
 catch (exc){
 console.log("internal error at error form submission: "+exc);
@@ -3610,7 +3610,7 @@ if( gameOnGoing()&&(currentAttemptNumber > 1)
 ||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */
 ||at_least_one_useless_code_played ) ){ /* (number of useless attempts) */
 revealSecretColorButtonObject.className="button";
-revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" : "button blinking");
+revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
 }
 else if(revealSecretColorButtonObject.disabled){
 revealSecretColorButtonObject.className="button disabled";
@@ -3624,7 +3624,7 @@ showPossibleCodesButtonObject.className="button disabled";
 }
 else{
 showPossibleCodesButtonObject.className="button";
-showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking" : "button blinking");
+showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
 }
 if(CompressedDisplayMode){
 if(showPossibleCodesMode){
@@ -3691,7 +3691,7 @@ if( gameOnGoing()&&(currentAttemptNumber > 1)
 &&( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <=5) ? 480 /* 8 min */ : 720 /* 12 min */))
 ||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */ ) ){
 revealSecretColorButtonObject.className="button";
-revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" : "button blinking");
+revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
 }
 }
 resetCurrentCodeButtonObject.disabled =!(gameOnGoing()&&(currentCode!=sCodeRevealed));

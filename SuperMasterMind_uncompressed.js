@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.01"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.02"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3001) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3002) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3001 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3002 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -552,7 +552,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.01: " + (localStorage.reloadForCompatibility_v3001 ? localStorage.reloadForCompatibility_v3001 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.02: " + (localStorage.reloadForCompatibility_v3002 ? localStorage.reloadForCompatibility_v3002 : "not done"), 210);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -4175,7 +4175,7 @@ function draw_graphic_bis() {
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || at_least_one_useless_code_played ) ) { /* (number of useless attempts) */
         revealSecretColorButtonObject.className = "button"; // (ensures the following blinking will work)
-        revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" : "button blinking");
+        revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
       }
       else if (revealSecretColorButtonObject.disabled) {
         revealSecretColorButtonObject.className = "button disabled";
@@ -4189,7 +4189,7 @@ function draw_graphic_bis() {
       }
       else {
         showPossibleCodesButtonObject.className = "button"; // (ensures the following blinking will work)
-        showPossibleCodesButtonObject.className = (androidMode ? "button fast_blinking" : "button blinking");
+        showPossibleCodesButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
       }
 
       if (CompressedDisplayMode) {
@@ -4277,7 +4277,7 @@ function draw_graphic_bis() {
            && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))  // (*)
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
             revealSecretColorButtonObject.className = "button"; // (ensures the following blinking will work)
-            revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" : "button blinking");
+            revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
       }
     }
 
