@@ -496,6 +496,9 @@ return;
 else if(mode==222){
 loadTime=loadTime - 24*3600*1000;
 }
+else if(String(mode)=="000"){
+throw new Error("toto");
+}
 else if(String(mode).indexOf("of")!=-1){
 document.getElementById('form_list_id').value=mode.trim();
 setTimeout("submitForm();", 444);
