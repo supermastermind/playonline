@@ -106,6 +106,7 @@ let disableMouseMoveEffects = false;
 let atLeastOneAttemptSelection = false;
 let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let lastidxBeforeMouseMove = -1;
+let last_touch_start_event_time = -1;
 
 let currentCode = -1;
 let codesPlayed;
@@ -1283,15 +1284,11 @@ settingsButtonClick = function() { // (override temporary definition)
   }
 }
 
-function mouseDown(e) {
-  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
-    console.log("mouseDown skipped");
-    return;
-  }
+function handleTouchStartOrMouseDownEvent(x, y) {
   let event_x_min, event_x_max, event_y_min, event_y_max;
   let rect = canvas.getBoundingClientRect();
-  let mouse_x = Math.ceil(e.clientX - rect.left);
-  let mouse_y = Math.ceil(e.clientY - rect.top);
+  let mouse_x = Math.ceil(x - rect.left);
+  let mouse_y = Math.ceil(y - rect.top);
   if (dsCode) {
     return;
   }
@@ -1406,7 +1403,51 @@ function mouseDown(e) {
 
 }
 
+function touchStart(e) {
+  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
+    console.log("touchStart skipped");
+    last_touch_start_event_time = -1;
+    return;
+  }
+
+  if ((e == undefined) || (e.touches == undefined) || (e.touches[0] == undefined) || (e.touches[0].clientX == undefined) || (e.touches[0].clientY == undefined)) {
+    console.log("touchStart skipped #2");
+    last_touch_start_event_time = -1;
+    return;
+  }
+
+  last_touch_start_event_time = (new Date()).getTime();
+  handleTouchStartOrMouseDownEvent(e.touches[0].clientX, e.touches[0].clientY);
+}
+
+function touchEnd() {
+  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
+    console.log("touchEnd skipped");
+    return;
+  }
+  mouseUp();
+}
+
+function mouseDown(e) {
+  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
+    console.log("mouseDown skipped");
+    return;
+  }
+
+  // Detect redundant/conflictual events: touchstart event followed by mousedown event
+  if ((new Date()).getTime() - last_touch_start_event_time < 1000) { // (condition duplicated)
+    // console.log("mouseDown skipped #2");
+    return;
+  }
+
+  handleTouchStartOrMouseDownEvent(e.clientX, e.clientY);
+}
+
 function mouseUp() {
+  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
+    console.log("mouseUp skipped");
+    return;
+  }
   color_being_selected = -1;
   column_of_color_being_selected = -1;
   highlight_selected_text = false;
@@ -1418,6 +1459,12 @@ function mouseMove(e) {
     console.log("mouseMove skipped");
     return;
   }
+  // Detect redundant/conflictual events: touchstart event followed by mousemove event
+  if ((new Date()).getTime() - last_touch_start_event_time < 1000) { // (condition duplicated)
+    // console.log("mouseMove skipped #2");
+    return;
+  }
+
   if (!showPossibleCodesMode) {
     return;
   }
@@ -4979,6 +5026,8 @@ scriptsFullyLoaded = true;
 draw_graphic();
 updateThemeAttributes();
 
+canvas.addEventListener("touchstart", touchStart, { passive: true }); // { passive: true } tells the browser that the event handler won’t call preventDefault() to disable scrolling, allowing the browser to handle scrolling more efficiently
+canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);

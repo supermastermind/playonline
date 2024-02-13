@@ -84,6 +84,7 @@ let disableMouseMoveEffects=false;
 let atLeastOneAttemptSelection=false;
 let currentPossibleCodeShownBeforeMouseMove=-1;
 let lastidxBeforeMouseMove=-1;
+let last_touch_start_event_time=-1;
 let currentCode=-1;
 let codesPlayed;
 let marks;
@@ -1069,15 +1070,11 @@ throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }
 }
 }
-function mouseDown(e){
-if((gamesolver_blob==null) ||!scriptsFullyLoaded){
-console.log("mouseDown skipped");
-return;
-}
+function handleTouchStartOrMouseDownEvent(x, y){
 let event_x_min, event_x_max, event_y_min, event_y_max;
 let rect=canvas.getBoundingClientRect();
-let mouse_x=Math.ceil(e.clientX - rect.left);
-let mouse_y=Math.ceil(e.clientY - rect.top);
+let mouse_x=Math.ceil(x - rect.left);
+let mouse_y=Math.ceil(y - rect.top);
 if(dsCode){
 return;
 }
@@ -1172,7 +1169,42 @@ lastidxBeforeMouseMove=-1;
 }
 }
 }
+function touchStart(e){
+if((gamesolver_blob==null) ||!scriptsFullyLoaded){
+console.log("touchStart skipped");
+last_touch_start_event_time=-1;
+return;
+}
+if((e==undefined)||(e.touches==undefined)||(e.touches[0]==undefined)||(e.touches[0].clientX==undefined)||(e.touches[0].clientY==undefined)){
+console.log("touchStart skipped #2");
+last_touch_start_event_time=-1;
+return;
+}
+last_touch_start_event_time=(new Date()).getTime();
+handleTouchStartOrMouseDownEvent(e.touches[0].clientX, e.touches[0].clientY);
+}
+function touchEnd(){
+if((gamesolver_blob==null) ||!scriptsFullyLoaded){
+console.log("touchEnd skipped");
+return;
+}
+mouseUp();
+}
+function mouseDown(e){
+if((gamesolver_blob==null) ||!scriptsFullyLoaded){
+console.log("mouseDown skipped");
+return;
+}
+if((new Date()).getTime() - last_touch_start_event_time < 1000){
+return;
+}
+handleTouchStartOrMouseDownEvent(e.clientX, e.clientY);
+}
 function mouseUp(){
+if((gamesolver_blob==null) ||!scriptsFullyLoaded){
+console.log("mouseUp skipped");
+return;
+}
 color_being_selected=-1;
 column_of_color_being_selected=-1;
 highlight_selected_text=false;
@@ -1181,6 +1213,9 @@ draw_graphic();
 function mouseMove(e){
 if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("mouseMove skipped");
+return;
+}
+if((new Date()).getTime() - last_touch_start_event_time < 1000){
 return;
 }
 if(!showPossibleCodesMode){
@@ -3610,7 +3645,7 @@ if( gameOnGoing()&&(currentAttemptNumber > 1)
 ||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */
 ||at_least_one_useless_code_played ) ){ /* (number of useless attempts) */
 revealSecretColorButtonObject.className="button";
-revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_purple" : "_orange") : "button blinking"+(modernDisplay ? "_purple" : "_orange"));
 }
 else if(revealSecretColorButtonObject.disabled){
 revealSecretColorButtonObject.className="button disabled";
@@ -3624,7 +3659,7 @@ showPossibleCodesButtonObject.className="button disabled";
 }
 else{
 showPossibleCodesButtonObject.className="button";
-showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_purple" : "_orange") : "button blinking"+(modernDisplay ? "_purple" : "_orange"));
 }
 if(CompressedDisplayMode){
 if(showPossibleCodesMode){
@@ -3691,7 +3726,7 @@ if( gameOnGoing()&&(currentAttemptNumber > 1)
 &&( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <=5) ? 480 /* 8 min */ : 720 /* 12 min */))
 ||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */ ) ){
 revealSecretColorButtonObject.className="button";
-revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_purple" : "_orange") : "button blinking"+(modernDisplay ? "_purple" : "_orange"));
 }
 }
 resetCurrentCodeButtonObject.disabled =!(gameOnGoing()&&(currentCode!=sCodeRevealed));
@@ -4326,6 +4361,8 @@ debug_game_state=68.5;
 scriptsFullyLoaded=true;
 draw_graphic();
 updateThemeAttributes();
+canvas.addEventListener("touchstart", touchStart,{ passive: true });
+canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);
