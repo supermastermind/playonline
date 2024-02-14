@@ -1188,7 +1188,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("touchEnd skipped");
 return;
 }
-last_touch_event_time = (new Date()).getTime();
+last_touch_event_time=(new Date()).getTime();
 mouseUp();
 }
 function mouseDown(e){
