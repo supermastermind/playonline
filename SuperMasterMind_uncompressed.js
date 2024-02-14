@@ -106,7 +106,7 @@ let disableMouseMoveEffects = false;
 let atLeastOneAttemptSelection = false;
 let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let lastidxBeforeMouseMove = -1;
-let last_touch_start_event_time = -1;
+let last_touch_event_time = -1;
 
 let currentCode = -1;
 let codesPlayed;
@@ -1406,17 +1406,17 @@ function handleTouchStartOrMouseDownEvent(x, y) {
 function touchStart(e) {
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("touchStart skipped");
-    last_touch_start_event_time = -1;
+    last_touch_event_time = -1;
     return;
   }
 
   if ((e == undefined) || (e.touches == undefined) || (e.touches[0] == undefined) || (e.touches[0].clientX == undefined) || (e.touches[0].clientY == undefined)) {
     console.log("touchStart skipped #2");
-    last_touch_start_event_time = -1;
+    last_touch_event_time = -1;
     return;
   }
 
-  last_touch_start_event_time = (new Date()).getTime();
+  last_touch_event_time = (new Date()).getTime();
   handleTouchStartOrMouseDownEvent(e.touches[0].clientX, e.touches[0].clientY);
 }
 
@@ -1425,6 +1425,7 @@ function touchEnd() {
     console.log("touchEnd skipped");
     return;
   }
+  last_touch_event_time = (new Date()).getTime();
   mouseUp();
 }
 
@@ -1435,7 +1436,7 @@ function mouseDown(e) {
   }
 
   // Detect redundant/conflictual events: touchstart event followed by mousedown event
-  if ((new Date()).getTime() - last_touch_start_event_time < 1000) { // (condition duplicated)
+  if ((new Date()).getTime() - last_touch_event_time < 1000) { // (condition duplicated)
     // console.log("mouseDown skipped #2");
     return;
   }
@@ -1460,7 +1461,7 @@ function mouseMove(e) {
     return;
   }
   // Detect redundant/conflictual events: touchstart event followed by mousemove event
-  if ((new Date()).getTime() - last_touch_start_event_time < 1000) { // (condition duplicated)
+  if ((new Date()).getTime() - last_touch_event_time < 1000) { // (condition duplicated)
     // console.log("mouseMove skipped #2");
     return;
   }

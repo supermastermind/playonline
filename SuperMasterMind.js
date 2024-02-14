@@ -84,7 +84,7 @@ let disableMouseMoveEffects=false;
 let atLeastOneAttemptSelection=false;
 let currentPossibleCodeShownBeforeMouseMove=-1;
 let lastidxBeforeMouseMove=-1;
-let last_touch_start_event_time=-1;
+let last_touch_event_time=-1;
 let currentCode=-1;
 let codesPlayed;
 let marks;
@@ -1172,15 +1172,15 @@ lastidxBeforeMouseMove=-1;
 function touchStart(e){
 if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("touchStart skipped");
-last_touch_start_event_time=-1;
+last_touch_event_time=-1;
 return;
 }
 if((e==undefined)||(e.touches==undefined)||(e.touches[0]==undefined)||(e.touches[0].clientX==undefined)||(e.touches[0].clientY==undefined)){
 console.log("touchStart skipped #2");
-last_touch_start_event_time=-1;
+last_touch_event_time=-1;
 return;
 }
-last_touch_start_event_time=(new Date()).getTime();
+last_touch_event_time=(new Date()).getTime();
 handleTouchStartOrMouseDownEvent(e.touches[0].clientX, e.touches[0].clientY);
 }
 function touchEnd(){
@@ -1188,6 +1188,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("touchEnd skipped");
 return;
 }
+last_touch_event_time = (new Date()).getTime();
 mouseUp();
 }
 function mouseDown(e){
@@ -1195,7 +1196,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("mouseDown skipped");
 return;
 }
-if((new Date()).getTime() - last_touch_start_event_time < 1000){
+if((new Date()).getTime() - last_touch_event_time < 1000){
 return;
 }
 handleTouchStartOrMouseDownEvent(e.clientX, e.clientY);
@@ -1215,7 +1216,7 @@ if((gamesolver_blob==null) ||!scriptsFullyLoaded){
 console.log("mouseMove skipped");
 return;
 }
-if((new Date()).getTime() - last_touch_start_event_time < 1000){
+if((new Date()).getTime() - last_touch_event_time < 1000){
 return;
 }
 if(!showPossibleCodesMode){
