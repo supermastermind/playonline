@@ -872,7 +872,7 @@ if(!CompressedDisplayMode){
 alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button!");
 }
 else{
-alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button to reveal a color of the secret code!");
+alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button to reveal a color!");
 }
 }
 revealSecretColorButtonClick=function(){
