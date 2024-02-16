@@ -2399,7 +2399,7 @@ nbColumnsSelected=defaultNbColumns;
 let lineWidth=getLineWidth(window.innerHeight, 1);
 if( (Math.abs(current_innerWidth - window.innerWidth) > 1)||(Math.abs(current_innerHeight - window.innerHeight) > 1) ){
 var newCompressedDisplayMode;
-if(window.innerHeight >=window.innerWidth * 0.62){
+if(window.innerHeight >=window.innerWidth * 0.67){
 newCompressedDisplayMode=true;
 }
 else{
