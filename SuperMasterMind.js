@@ -124,6 +124,8 @@ let lastGameWasAbortedWithOnGoingWorker=false;
 let nbNewGameEvents=1;
 let nbNewGameEventsCancelled=0;
 let dsCode=false;
+let revealSecretColorButtonAlreadyBlinked=false;
+let showPossibleCodesButtonAlreadyBlinked=false;
 let gameErrorStr="";
 let gameErrorCnt=0;
 let globalErrorCnt=0;
@@ -870,7 +872,7 @@ if(!CompressedDisplayMode){
 alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button!");
 }
 else{
-alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button to reveal a secret color!");
+alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button to reveal a color of the secret code!");
 }
 }
 revealSecretColorButtonClick=function(){
@@ -1419,8 +1421,14 @@ nb_attempts_not_displayed=0;
 skip_last_attempt_display=false;
 if(nbColumns >=5){
 nb_attempts_not_displayed=Math.max(0, nbMaxAttempts - (gameWon ? currentAttemptNumber - 1 : currentAttemptNumber) - 1);
-let thld=(CompressedDisplayMode ? 6 : 4);
-if(nbColumns >=7){
+let thld;
+if(nbColumns==5){
+thld=(CompressedDisplayMode ? 6 : 4);
+}
+else if(nbColumns==6){
+thld=(CompressedDisplayMode ? 7 : 5);
+}
+else{
 thld=(CompressedDisplayMode ? 8 : 6);
 }
 if(nb_attempts_not_displayed < thld){
@@ -1567,7 +1575,7 @@ document.title="Super Master Mind";
 break;
 case 6:
 nbColors=Math.min(nbMaxColors, nominalGameNbColors+1);
-nbMaxAttempts=nominalGameNbMaxAttempts;
+nbMaxAttempts=nominalGameNbMaxAttempts+1;
 document.title="Mega Master Mind";
 break;
 case 7:
@@ -1672,6 +1680,8 @@ sCode=~(toto);*/
 sCodeRevealed=0;
 newGameEvent=false;
 dsCode=false;
+revealSecretColorButtonAlreadyBlinked=false;
+showPossibleCodesButtonAlreadyBlinked=false;
 gameErrorStr="";
 gameErrorCnt=0;
 nb_random_codes_played=0;
@@ -2389,7 +2399,7 @@ nbColumnsSelected=defaultNbColumns;
 let lineWidth=getLineWidth(window.innerHeight, 1);
 if( (Math.abs(current_innerWidth - window.innerWidth) > 1)||(Math.abs(current_innerHeight - window.innerHeight) > 1) ){
 var newCompressedDisplayMode;
-if(window.innerHeight >=window.innerWidth * 0.67){
+if(window.innerHeight >=window.innerWidth * 0.62){
 newCompressedDisplayMode=true;
 }
 else{
@@ -2442,7 +2452,7 @@ img1Object.style.display='none';
 img2Object.style.display='none';
 }
 catch (err){}
-buttonsTdObject.style.padding="0 0 0.50vh 0";/* top right bottom left */
+buttonsTdObject.style.padding="0 0 0.3vh 0";/* top right bottom left */
 left_border_margin_x=0.25;
 right_border_margin_x=0.25;
 bottom_border_margin_y=1.00;
@@ -3638,29 +3648,31 @@ else{
 playRandomCodeButtonObject.className="button";
 }
 let nbColorsRevealed=nbColumns - smmCodeHandler.nbEmptyColors(sCodeRevealed);
+let revealSecretColorButtonObjectIniState=revealSecretColorButtonObject.disabled;
 revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns >=4)&&(currentAttemptNumber >=3)&&(nbColorsRevealed < nbColumns-2));
-if( gameOnGoing()&&(currentAttemptNumber > 1)
-&&!(revealSecretColorButtonObject.disabled)
-&&(sCodeRevealed==0)
-&&( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <=5) ? 480 /* 8 min */ : 720 /* 12 min */))
-||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */
-||at_least_one_useless_code_played ) ){ /* (number of useless attempts) */
-revealSecretColorButtonObject.className="button";
-revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_purple" : "_orange") : "button blinking"+(modernDisplay ? "_purple" : "_orange"));
-}
-else if(revealSecretColorButtonObject.disabled){
+if(revealSecretColorButtonObject.disabled!=revealSecretColorButtonObjectIniState){
+if(revealSecretColorButtonObject.disabled){
 revealSecretColorButtonObject.className="button disabled";
 }
 else{
 revealSecretColorButtonObject.className="button";
 }
+}
+let showPossibleCodesButtonObjectIniState=showPossibleCodesButtonObject.disabled;
 showPossibleCodesButtonObject.disabled=!((!gameOnGoing())&&allPossibleCodesFilled());
+if(showPossibleCodesButtonObject.disabled!=showPossibleCodesButtonObjectIniState){
 if(showPossibleCodesButtonObject.disabled){
 showPossibleCodesButtonObject.className="button disabled";
 }
 else{
+if(showPossibleCodesButtonAlreadyBlinked){
 showPossibleCodesButtonObject.className="button";
+}
+else{
+showPossibleCodesButtonAlreadyBlinked=true;
 showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_purple" : "_orange") : "button blinking"+(modernDisplay ? "_purple" : "_orange"));
+}
+}
 }
 if(CompressedDisplayMode){
 if(showPossibleCodesMode){
@@ -3721,12 +3733,14 @@ currentCodeColorMode=1;
 }
 displayCode(currentCode, currentAttemptNumber-1, ctx, false, true);
 currentCodeColorMode=-1;
-if( gameOnGoing()&&(currentAttemptNumber > 1)
+if( (!revealSecretColorButtonAlreadyBlinked)
+&&gameOnGoing()&&(currentAttemptNumber > 1)
 &&!(revealSecretColorButtonObject.disabled)
 &&(sCodeRevealed==0)
 &&( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <=5) ? 480 /* 8 min */ : 720 /* 12 min */))
-||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */ ) ){
-revealSecretColorButtonObject.className="button";
+||(currentAttemptNumber==nbMaxAttempts-1) /* (last but one attempt) */
+||at_least_one_useless_code_played ) ){ /* (useless attempt(s)) */
+revealSecretColorButtonAlreadyBlinked=true;
 revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_purple" : "_orange") : "button blinking"+(modernDisplay ? "_purple" : "_orange"));
 }
 }

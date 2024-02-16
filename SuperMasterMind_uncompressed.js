@@ -150,6 +150,9 @@ let nbNewGameEvents = 1;
 let nbNewGameEventsCancelled = 0;
 let dsCode = false;
 
+let revealSecretColorButtonAlreadyBlinked = false;
+let showPossibleCodesButtonAlreadyBlinked = false;
+
 let gameErrorStr = "";
 let gameErrorCnt = 0;
 let globalErrorCnt = 0;
@@ -1066,7 +1069,7 @@ function displayRevealSecretColorHintIfNeeded() {
     alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button!");
   }
   else {
-    alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button to reveal a secret color!");
+    alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button to reveal a color of the secret code!");
   }
 }
 
@@ -1132,7 +1135,7 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
       currentPossibleCodeShown = -1;
     }
     else {
-      let targetedCodesShown = 20 + (nbMaxAttempts+1 - currentAttemptNumber); // (**)
+      let targetedCodesShown = 20 + (nbMaxAttempts+1 - currentAttemptNumber); // (*)
       if (targetedCodesShown > nbMaxPossibleCodesShown/2 /* (half display) */) {
         throw new Error("invalid nbMaxPossibleCodesShown: " + nbMaxPossibleCodesShown);
       }
@@ -1689,8 +1692,14 @@ function updateGameSizes() {
     skip_last_attempt_display = false;
     if (nbColumns >= 5) {
       nb_attempts_not_displayed = Math.max(0, nbMaxAttempts - (gameWon ? currentAttemptNumber - 1 : currentAttemptNumber) - 1); // nb_attempts_not_displayed calculation assumes last attempt is always displayed => skip_last_attempt_display will be applied on top of it
-      let thld = (CompressedDisplayMode ? 6 : 4); // nbColumns == 5 or 6
-      if (nbColumns >= 7) {
+      let thld;
+      if (nbColumns == 5) {
+        thld = (CompressedDisplayMode ? 6 : 4);
+      }
+      else if (nbColumns == 6) {
+        thld = (CompressedDisplayMode ? 7 : 5);
+      }
+      else { // (nbColumns >= 7)
         thld = (CompressedDisplayMode ? 8 : 6);
       }
       if (nb_attempts_not_displayed < thld) {
@@ -1851,7 +1860,7 @@ function resetGameAttributes(nbColumnsSelected) {
       break;
     case 6:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 1);
-      nbMaxAttempts = nominalGameNbMaxAttempts;
+      nbMaxAttempts = nominalGameNbMaxAttempts + 1;
       document.title = "Mega Master Mind";
       break;
     case 7:
@@ -1871,7 +1880,7 @@ function resetGameAttributes(nbColumnsSelected) {
   showPossibleCodesMode = false;
   showPossibleCodesOffsetMode = false;
   nbMinPossibleCodesShown = 2*(nbColumns+nbColors+4);
-  nbMaxPossibleCodesShown = 2*(20 + nbMaxAttempts); // (**)
+  nbMaxPossibleCodesShown = 2*(20 + nbMaxAttempts); // (*)
   if (nbMaxPossibleCodesShown < nbMinPossibleCodesShown) {
     throw new Error("inconsistent nbMinPossibleCodesShown and nbMaxPossibleCodesShown");
   }
@@ -1967,6 +1976,9 @@ function resetGameAttributes(nbColumnsSelected) {
 
   newGameEvent = false;
   dsCode = false;
+
+  revealSecretColorButtonAlreadyBlinked = false;
+  showPossibleCodesButtonAlreadyBlinked = false;
 
   gameErrorStr = "";
   gameErrorCnt = 0;
@@ -2790,7 +2802,7 @@ function draw_graphic_bis() {
     let lineWidth = getLineWidth(window.innerHeight, 1);
     if ( (Math.abs(current_innerWidth - window.innerWidth) > 1) || (Math.abs(current_innerHeight - window.innerHeight) > 1) ) { // resize detected with +-1 pixel tolerance margin
       var newCompressedDisplayMode;
-      if (window.innerHeight >= window.innerWidth * 0.67) {
+      if (window.innerHeight >= window.innerWidth * 0.62) {
           newCompressedDisplayMode = true;
       }
       else {
@@ -2853,7 +2865,7 @@ function draw_graphic_bis() {
             }
             catch (err) {}
 
-            buttonsTdObject.style.padding = "0 0 0.50vh 0"; /* top right bottom left */
+            buttonsTdObject.style.padding = "0 0 0.3vh 0"; /* top right bottom left */
 
             left_border_margin_x = 0.25;   // Left border margin for x axis in %
             right_border_margin_x = 0.25;  // Right border margin for x axis in %
@@ -4215,29 +4227,32 @@ function draw_graphic_bis() {
       }
 
       let nbColorsRevealed = nbColumns - smmCodeHandler.nbEmptyColors(sCodeRevealed);
+      let revealSecretColorButtonObjectIniState = revealSecretColorButtonObject.disabled;
       revealSecretColorButtonObject.disabled = !(gameOnGoing() && (nbColumns >= 4) && (currentAttemptNumber >= 3) && (nbColorsRevealed < nbColumns-2));
-      if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
-           && !(revealSecretColorButtonObject.disabled)
-           && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))  // (*)
-                || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
-                || at_least_one_useless_code_played ) ) { /* (number of useless attempts) */
-        revealSecretColorButtonObject.className = "button"; // (ensures the following blinking will work)
-        revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+      if (revealSecretColorButtonObject.disabled != revealSecretColorButtonObjectIniState) { // transition
+        if (revealSecretColorButtonObject.disabled) {
+          revealSecretColorButtonObject.className = "button disabled";
+        }
+        else {
+          revealSecretColorButtonObject.className = "button";
+        }
       }
-      else if (revealSecretColorButtonObject.disabled) {
-        revealSecretColorButtonObject.className = "button disabled";
-      }
-      else {
-        revealSecretColorButtonObject.className = "button";
-      }
+
+      let showPossibleCodesButtonObjectIniState = showPossibleCodesButtonObject.disabled;
       showPossibleCodesButtonObject.disabled = !((!gameOnGoing()) && allPossibleCodesFilled());
-      if (showPossibleCodesButtonObject.disabled) {
-        showPossibleCodesButtonObject.className = "button disabled";
-      }
-      else {
-        showPossibleCodesButtonObject.className = "button"; // (ensures the following blinking will work)
-        showPossibleCodesButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+      if (showPossibleCodesButtonObject.disabled != showPossibleCodesButtonObjectIniState) { // transition
+        if (showPossibleCodesButtonObject.disabled) {
+          showPossibleCodesButtonObject.className = "button disabled";
+        }
+        else {
+          if (showPossibleCodesButtonAlreadyBlinked) {
+            showPossibleCodesButtonObject.className = "button";
+          }
+          else {
+            showPossibleCodesButtonAlreadyBlinked = true;
+            showPossibleCodesButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+          }
+        }
       }
 
       if (CompressedDisplayMode) {
@@ -4318,13 +4333,15 @@ function draw_graphic_bis() {
       displayCode(currentCode, currentAttemptNumber-1, ctx, false, true);
       currentCodeColorMode = -1;
 
-      // Useful to trigger button blinking due to time only
-      if ( gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
+      // Reveal secret color button blinking
+      if ( (!revealSecretColorButtonAlreadyBlinked)
+           && gameOnGoing() && (currentAttemptNumber > 1) // (Note: full condition duplicated at several places in this file)
            && !(revealSecretColorButtonObject.disabled)
            && (sCodeRevealed == 0)
-           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))  // (*)
-                || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */ ) ) {
-            revealSecretColorButtonObject.className = "button"; // (ensures the following blinking will work)
+           && ( (((new Date()).getTime() - startTime)/1000 > ((nbColumns <= 5) ? 480 /* 8 min */ : 720 /* 12 min */))
+                || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
+                || at_least_one_useless_code_played ) ) { /* (useless attempt(s)) */
+            revealSecretColorButtonAlreadyBlinked = true;
             revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
       }
     }
