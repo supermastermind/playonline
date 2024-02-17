@@ -996,7 +996,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
         else {
           let game_aborted_str = "<b>Current game was aborted"
                                  + (localStorage.firstname ? "<hr style='height:1.75vh;padding:0;margin:0;visibility:hidden;' />You shall win 5 consecutive games<br>to get your total score and<br>performance computed" : "")
-                                 + "<br><img src='img/loading.gif' style='height:12%;'><br>  <!-- (not rem unit as no viewport!) -->"
+                                 + "<br><img alt='loading...' src='img/loading.gif' style='height:12%;'><br>  <!-- (not rem unit as no viewport!) -->"
                                  + (mobileMode ? "TAP" : "Click") + " to start a new game</b>";
           gameAbortedObject.innerHTML = game_aborted_str;
 
@@ -1057,7 +1057,7 @@ function displayRandomCodesHintIfNeeded() {
   if (randomCodesHintToBeDisplayed) {
     if (localStorage.gamesok) {
       if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % ((Number(localStorage.gamesok) <= 400) ? 50 : 80)) == 0) ) {
-        alert("A little fun?\nClick on the \"" + playRandomCodeButtonObject.value + "\" button to play your first few codes randomly!");
+        alert("A little fun?\nClick on the \"" + playRandomCodeButtonObject.value + "\" button to play your first few codes randomly");
         randomCodesHintToBeDisplayed = false;
       }
     }
@@ -1065,12 +1065,7 @@ function displayRandomCodesHintIfNeeded() {
 }
 
 function displayRevealSecretColorHintIfNeeded() {
-  if (!CompressedDisplayMode) {
-    alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button!");
-  }
-  else {
-    alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button to reveal a color!");
-  }
+  alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button to reveal a color");
 }
 
 revealSecretColorButtonClick = function() { // (override temporary definition)
@@ -1547,7 +1542,7 @@ function playAColor(color, column) {
     let newCurrentCode = smmCodeHandler.setColor(currentCode, color, column);
     for (let i = 1; i < currentAttemptNumber; i++) {
       if (newCurrentCode == codesPlayed[i-1]) {
-        setTimeout("alert('This code was already played!');", 111);
+        setTimeout("alert('This code was already played');", 111);
         return;
       }
     }
@@ -1561,7 +1556,7 @@ function playAColor(color, column) {
         }
       }
       if (allColorsAreObviouslyImpossible) {
-        setTimeout("alert('This code only contains obviously impossible colors so is useless!');", 111);
+        setTimeout("alert('This code only contains obviously impossible colors so is useless');", 111);
         return;
       }
     }
@@ -2802,7 +2797,7 @@ function draw_graphic_bis() {
     let lineWidth = getLineWidth(window.innerHeight, 1);
     if ( (Math.abs(current_innerWidth - window.innerWidth) > 1) || (Math.abs(current_innerHeight - window.innerHeight) > 1) ) { // resize detected with +-1 pixel tolerance margin
       var newCompressedDisplayMode;
-      if (window.innerHeight >= window.innerWidth * 0.67) {
+      if (window.innerHeight >= window.innerWidth * 0.77) {
           newCompressedDisplayMode = true;
       }
       else {
@@ -5055,7 +5050,7 @@ canvas.addEventListener("mousemove", mouseMove, false);
 if ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 5)) { // recent player
   let welcome_str =
     "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td>\
-    <img src='img/" + (android_appli ? "Welcome_android_app.png" : "Welcome_browser.png") + "' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;border:.3vw solid #79460B;border-radius: 2.0%;'>\
+    <img alt='welcome!' src='img/" + (android_appli ? "Welcome_android_app.png" : "Welcome_browser.png") + "' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;border:.3vw solid #79460B;border-radius: 2.0%;'>\
     </td></tr></table></center>";
   try {
     modal_mode = 5;
