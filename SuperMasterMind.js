@@ -2400,7 +2400,7 @@ newCompressedDisplayMode=true;
 else{
 newCompressedDisplayMode=false;
 }
-if(window.innerWidth < 900){
+if(window.innerWidth <=1000){
 newCompressedDisplayMode=true;
 }
 if(mobileMode){
