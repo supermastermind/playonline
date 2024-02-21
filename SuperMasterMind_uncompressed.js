@@ -2994,12 +2994,19 @@ function draw_graphic_bis() {
       scoresFontSizeStr = "1.4vh";
       abbreviateScores = false;
     }
-    else if (window.innerWidth > 1.7*window.innerHeight) {
-      generalTableWidthStr = "34%";
-      rulesTableWidthStr = "25%";
-      scoresTableWidthStr = "70%";
-      scoresFontSizeStr = "1.4vh";
-      abbreviateScores = false;
+    else if(window.innerWidth > 1.8*window.innerHeight){
+      generalTableWidthStr="34%";
+      rulesTableWidthStr="25%";
+      scoresTableWidthStr="70%";
+      scoresFontSizeStr="1.4vh";
+      abbreviateScores=false;
+    }
+    else if(window.innerWidth > 1.7*window.innerHeight){
+      generalTableWidthStr="40%";
+      rulesTableWidthStr="30%";
+      scoresTableWidthStr="85%";
+      scoresFontSizeStr="1.4vh";
+      abbreviateScores=false;
     }
     else if (window.innerWidth > 1.5*window.innerHeight) {
       generalTableWidthStr = "44%";
