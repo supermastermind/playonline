@@ -319,7 +319,7 @@ function setLightGray() {
 
 let lastHoverColor = "";
 function updateHoverBackgroundColor(newColor) {
-  if (!android_appli) {
+  if ((!android_appli) && (!mobileMode)) {
     if (newColor != lastHoverColor) {
       // Create a new style element
       const style = document.createElement('style');

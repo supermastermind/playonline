@@ -263,7 +263,7 @@ lightGray=darkGray;
 }
 let lastHoverColor="";
 function updateHoverBackgroundColor(newColor){
-if(!android_appli){
+if((!android_appli)&&(!mobileMode)){
 if(newColor!=lastHoverColor){
 const style=document.createElement('style');
 style.type='text/css';
