@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.02"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.03"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3002) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3003) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3002 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3003 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -106,6 +106,8 @@ let disableMouseMoveEffects = false;
 let atLeastOneAttemptSelection = false;
 let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let lastidxBeforeMouseMove = -1;
+let last_mouse_button_event_time = -1;
+let last_touch_button_event_time = -1;
 let last_touch_event_time = -1;
 
 let currentCode = -1;
@@ -161,7 +163,7 @@ let nb_random_codes_played = 0;
 let at_least_one_useless_code_played = false;
 
 let game_cnt = 0;
-let last_dialog_game_cnt = -10;
+let last_dialog_gamesok = -1;
 let worst_mark_alert_already_displayed = false;
 let nb_worst_mark_alert_displayed = 0;
 
@@ -316,18 +318,20 @@ function setLightGray() {
 }
 
 let lastHoverColor = "";
-function changeHoverBackgroundColor(newColor) {
-  if (newColor != lastHoverColor) {
-    // Create a new style element
-    const style = document.createElement('style');
-    style.type = 'text/css';
+function updateHoverBackgroundColor(newColor) {
+  if (!android_appli) {
+    if (newColor != lastHoverColor) {
+      // Create a new style element
+      const style = document.createElement('style');
+      style.type = 'text/css';
 
-    // Insert CSS rule for the new hover background color
-    style.innerHTML = `.button:hover { background-color: ${newColor}; color: white; }`;
+      // Insert CSS rule for the new hover background color
+      style.innerHTML = `.button:hover { background-color: ${newColor}; color: white; }`;
 
-    // Append the new style element to the head of the document
-    document.head.appendChild(style);
-    lastHoverColor = newColor;
+      // Append the new style element to the head of the document
+      document.head.appendChild(style);
+      lastHoverColor = newColor;
+    }
   }
 }
 
@@ -342,7 +346,7 @@ function updateThemeAttributes() {
   highlightColor = (modernDisplay ? "#FFFF00" : "#FFFF00");
   setLightGray();
   darkGray = "#000000";
-  changeHoverBackgroundColor(modernDisplay ? "purple" : "orange");
+  updateHoverBackgroundColor(modernDisplay ? "purple" : "orange");
 }
 updateThemeAttributes(); // (allows early graphical setting)
 
@@ -556,7 +560,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.02: " + (localStorage.reloadForCompatibility_v3002 ? localStorage.reloadForCompatibility_v3002 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.03: " + (localStorage.reloadForCompatibility_v3003 ? localStorage.reloadForCompatibility_v3003 : "not done"), 210);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -966,6 +970,29 @@ function gameAbortionEnd() {
   $(gameAbortedObject).fadeOut(200);
   dsCode = false;
   newGameButtonClick_delayed(true);
+}
+
+checkButtonEvent = function(mouseEvent) { // (override temporary definition)
+  if (mouseEvent) { // mouse event
+    if ((new Date()).getTime() - last_touch_button_event_time < 1000) {
+      // console.log("checkButtonEvent for mouse event skipped");
+      return false;
+    }
+    else {
+      last_mouse_button_event_time = (new Date()).getTime();
+      return true;
+    }
+  }
+  else { // touchpad event
+    if ((new Date()).getTime() - last_mouse_button_event_time < 1000) {
+      // console.log("checkButtonEvent for touchpad event skipped");
+      return false;
+    }
+    else {
+      last_touch_button_event_time = (new Date()).getTime();
+      return true;
+    }
+  }
 }
 
 newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
@@ -1605,7 +1632,7 @@ function show_play_store_app(specific_str = "", android_stars_mode = false, forc
       throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
     }
   }
-  else if ( ((!android_appli) || android_stars_mode) && (game_cnt != last_dialog_game_cnt + 1) ) {
+  else if ( ((!android_appli) || android_stars_mode) && (last_dialog_gamesok != (localStorage.gamesok ? localStorage.gamesok : -2)) ) {
     let str1 = "";
     let str2 = "";
     if (mobileMode) {
@@ -1638,7 +1665,7 @@ function show_play_store_app(specific_str = "", android_stars_mode = false, forc
       localStorage.androidAppNotifShown = 0;
     }
     localStorage.androidAppNotifShown = Number(localStorage.androidAppNotifShown) + 1;
-    last_dialog_game_cnt = game_cnt;
+    last_dialog_gamesok = (localStorage.gamesok ? localStorage.gamesok : -1);
   }
 }
 

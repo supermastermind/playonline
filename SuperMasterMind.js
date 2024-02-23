@@ -7,7 +7,7 @@ console.log("Running SuperMasterMind.js...");
 // Check compatibility with game.html
 // **********************************
 debug_game_state=68;
-let smm_compatibility_version="v30.02";
+let smm_compatibility_version="v30.03";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -42,11 +42,11 @@ window.location.href=href+"?tmp="+currentDateAndTime();
 }
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if((!localStorage.reloadForCompatibility_v3002)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3003)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3002="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3003="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -84,6 +84,8 @@ let disableMouseMoveEffects=false;
 let atLeastOneAttemptSelection=false;
 let currentPossibleCodeShownBeforeMouseMove=-1;
 let lastidxBeforeMouseMove=-1;
+let last_mouse_button_event_time=-1;
+let last_touch_button_event_time=-1;
 let last_touch_event_time=-1;
 let currentCode=-1;
 let codesPlayed;
@@ -132,7 +134,7 @@ let globalErrorCnt=0;
 let nb_random_codes_played=0;
 let at_least_one_useless_code_played=false;
 let game_cnt=0;
-let last_dialog_game_cnt=-10;
+let last_dialog_gamesok=-1;
 let worst_mark_alert_already_displayed=false;
 let nb_worst_mark_alert_displayed=0;
 let gameSolver=undefined;
@@ -260,13 +262,15 @@ lightGray=darkGray;
 }
 }
 let lastHoverColor="";
-function changeHoverBackgroundColor(newColor){
+function updateHoverBackgroundColor(newColor){
+if(!android_appli){
 if(newColor!=lastHoverColor){
 const style=document.createElement('style');
 style.type='text/css';
 style.innerHTML=`.button:hover{ background-color: ${newColor};color: white;}`;
 document.head.appendChild(style);
 lastHoverColor=newColor;
+}
 }
 }
 function updateThemeAttributes(){
@@ -280,7 +284,7 @@ backgroundColor_3=(modernDisplay ? "#D0D0D0" : "");
 highlightColor=(modernDisplay ? "#FFFF00" : "#FFFF00");
 setLightGray();
 darkGray="#000000";
-changeHoverBackgroundColor(modernDisplay ? "purple" : "orange");
+updateHoverBackgroundColor(modernDisplay ? "purple" : "orange");
 }
 updateThemeAttributes();
 let currentCodeColorMode=-1;
@@ -470,7 +474,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.02: "+(localStorage.reloadForCompatibility_v3002 ? localStorage.reloadForCompatibility_v3002 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.03: "+(localStorage.reloadForCompatibility_v3003 ? localStorage.reloadForCompatibility_v3003 : "not done"), 210);
 }
 catch (exc){
 console.log("internal error at error form submission: "+exc);
@@ -783,6 +787,26 @@ function gameAbortionEnd(){
 $(gameAbortedObject).fadeOut(200);
 dsCode=false;
 newGameButtonClick_delayed(true);
+}
+checkButtonEvent=function(mouseEvent){
+if(mouseEvent){
+if((new Date()).getTime() - last_touch_button_event_time < 1000){
+return false;
+}
+else{
+last_mouse_button_event_time=(new Date()).getTime();
+return true;
+}
+}
+else{
+if((new Date()).getTime() - last_mouse_button_event_time < 1000){
+return false;
+}
+else{
+last_touch_button_event_time=(new Date()).getTime();
+return true;
+}
+}
 }
 newGameButtonClick=function(nbColumns_p){
 if((gamesolver_blob==null) ||!scriptsFullyLoaded){
@@ -1344,7 +1368,7 @@ catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }
 }
-else if( ((!android_appli)||android_stars_mode)&&(game_cnt!=last_dialog_game_cnt+1) ){
+else if( ((!android_appli)||android_stars_mode)&&(last_dialog_gamesok!=(localStorage.gamesok ? localStorage.gamesok : -2)) ){
 let str1="";
 let str2="";
 if(mobileMode){
@@ -1375,7 +1399,7 @@ if(!localStorage.androidAppNotifShown){
 localStorage.androidAppNotifShown=0;
 }
 localStorage.androidAppNotifShown=Number(localStorage.androidAppNotifShown)+1;
-last_dialog_game_cnt=game_cnt;
+last_dialog_gamesok=(localStorage.gamesok ? localStorage.gamesok : -1);
 }
 }
 // *****************

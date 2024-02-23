@@ -95,10 +95,6 @@
         cursor: pointer;
         -webkit-backface-visibility: visible;
       }
-      .button:hover { /* (will be overridden dynamically) */
-        background-color: orange;
-        color: white;
-      }
       .disabled {
           opacity: 0.3;
           cursor: not-allowed;
@@ -516,6 +512,10 @@
       var gamesolver_blob_error = "no_error";
 
       // Temporary functions
+      var checkButtonEvent = function(mouseEvent) {
+        console.log("checkButtonEvent(" + mouseEvent + ") function not defined yet");
+        return (!mouseEvent); // guarantee proper android app behaviour
+      }
       var newGameButtonClick = function(nbColumns_p) {
         console.log("newGameButtonClick(" + nbColumns_p + ") function not defined yet");
       }
@@ -624,7 +624,7 @@
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
   </head>
 
-  <body onresize="eval('try{debug_on_resize_or_unload = 3;draw_graphic();debug_on_resize_or_unload = 4;}catch(e){}');">
+  <body onresize="eval('try{debug_on_resize_or_unload = 3;draw_graphic();debug_on_resize_or_unload = 4;}catch(e){}');" oncontextmenu="return false;">
 
     <div id="game_loading_id" class="game_loading">
       <img src='img/loading.gif' style='height:12%;'><br>Loading... <!-- (not rem unit as no viewport! / duplicated code) -->
@@ -660,15 +660,15 @@
             <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_7' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class='radio disabled' name='radio_name'>7</span>
             </label>
           </form>
-          <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Rst' title='Reset current code' onclick='resetCurrentCodeButtonClick()' onfocus='this.blur()' disabled>
-          <input id='playRandomCodeButton' class='button disabled' type='button' value='Rnd' title='Play a random code' onclick='playRandomCodeButtonClick()' onfocus='this.blur()' disabled>
+          <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Rst' title='Reset current code' ontouchstart='if(checkButtonEvent(false)){resetCurrentCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){resetCurrentCodeButtonClick();}' onfocus='this.blur()' disabled>
+          <input id='playRandomCodeButton' class='button disabled' type='button' value='Rnd' title='Play a random code' ontouchstart='if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
           <input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
           <input id='showPossibleCodesButton' class='button disabled' type='button' value='Codes' title='Show possible codes at each stage of the game (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
           <input id='settingsButton' class='button disabled' type='button' value='&#x2026;' title='Info & settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
         </td>
       </tr>
       <tr>
-        <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell'><canvas id='my_canvas' oncontextmenu='return false;'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
+        <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
       </tr>
     </table>
 
@@ -751,7 +751,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.02"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.03"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1158,7 +1158,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.02: " + (localStorage.reloadForCompatibility_v3002 ? localStorage.reloadForCompatibility_v3002 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.03: " + (localStorage.reloadForCompatibility_v3003 ? localStorage.reloadForCompatibility_v3003 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
