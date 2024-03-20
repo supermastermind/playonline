@@ -415,8 +415,8 @@ userAgentStr = userAgentStr + navigator.userAgent.replaceAll("AppleWebKit","Appl
 } catch (err) {
 userAgentStr = "??? " + navigator.userAgent;
 }
-if (android_appli && ((versionCodeInt == -1) || (versionCodeInt < 6))) {
-var versionCodeErrorMsg = "Android app version is " + ((versionCodeInt == - 1) ? "invalid" : "too old (" + versionCodeInt + ")") + ". Please install the last update of the android app.";
+if (android_appli && ((versionCodeInt == -1) || (versionCodeInt <= 34))) {
+var versionCodeErrorMsg = "Your app version is " + ((versionCodeInt == - 1) ? "invalid" : "very old") + ". Please install the last update of the app from Play Store.";
 alert(versionCodeErrorMsg);
 window.stop(); // stop any further execution if error at this early stage. Note: window.stop() does not work in Internet explorer.
 globalErrorStatus = true;
