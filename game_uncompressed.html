@@ -35,9 +35,12 @@
         var storageErrorMet = true;
         try {
           if (typeof(Storage) !== 'undefined') {
-            localStorage.test_storage_ok = "abc";
-            if (localStorage.test_storage_ok == "abc") {
-              storageErrorMet = false;
+            localStorage.removeItem('test_storage_ok'); // localStorage.test_storage_ok
+            if (!localStorage.test_storage_ok) {
+              localStorage.test_storage_ok = "abc";
+              if (localStorage.test_storage_ok == "abc") {
+                storageErrorMet = false;
+              }
             }
           }
         }
