@@ -1024,7 +1024,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
           let game_aborted_str = "<b>Current game was aborted"
                                  + (localStorage.firstname ? "<hr style='height:1.75vh;padding:0;margin:0;visibility:hidden;' />You shall win 5 consecutive games<br>to get your total score and<br>performance computed" : "")
                                  + "<br><img alt='loading...' src='img/loading.gif' style='height:12%;'><br>  <!-- (not rem unit as no viewport!) -->"
-                                 + (mobileMode ? "TAP" : "Click") + " to start a new game</b>";
+                                 + (mobileMode ? "Tap" : "Click") + " to start a new game</b>";
           gameAbortedObject.innerHTML = game_aborted_str;
 
           // Transition effect
@@ -3967,7 +3967,7 @@ function draw_graphic_bis() {
                                    (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (mobileMode) {
                     if ((nbColumns >= 4) && (nbColumns <= 7) && (currentAttemptNumber == 1)) {
-                      displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
+                      displayString("Tap!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
                                     (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
                     }
                   }
