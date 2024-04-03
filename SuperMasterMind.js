@@ -4412,7 +4412,7 @@ canvas.addEventListener("mousemove", mouseMove, false);
 if((!localStorage.gamesok)||(Number(localStorage.gamesok) <=5)){
 let welcome_str=
 "<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td>\
-<img alt='welcome!' src='img/"+(android_appli ? "Welcome_android_app.png" : "Welcome_browser.png")+"' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;border:.3vw solid #79460B;border-radius: 2.0%;'>\
+<img alt='welcome!' src='img/"+(android_appli ? "Welcome_android_app.png" : "Welcome_browser.png")+"' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;'>\
 </td></tr></table></center>";
 try{
 modal_mode=5;
