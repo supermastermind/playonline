@@ -1716,13 +1716,13 @@ function updateGameSizes() {
       nb_attempts_not_displayed = Math.max(0, nbMaxAttempts - (gameWon ? currentAttemptNumber - 1 : currentAttemptNumber) - 1); // nb_attempts_not_displayed calculation assumes last attempt is always displayed => skip_last_attempt_display will be applied on top of it
       let thld;
       if (nbColumns == 5) {
-        thld = (CompressedDisplayMode ? 6 : 4);
+        thld = (CompressedDisplayMode ? 5 : 4);
       }
       else if (nbColumns == 6) {
-        thld = (CompressedDisplayMode ? 7 : 5);
+        thld = (CompressedDisplayMode ? 6 : 5);
       }
       else { // (nbColumns >= 7)
-        thld = (CompressedDisplayMode ? 8 : 6);
+        thld = (CompressedDisplayMode ? 7 : 6);
       }
       if (nb_attempts_not_displayed < thld) {
         skip_last_attempt_display = ((currentAttemptNumber < nbMaxAttempts) || (gameWon && (currentAttemptNumber == nbMaxAttempts) /* (do not leave just last line empty when game won) */));
@@ -2041,7 +2041,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok) || (Number(localStorage.gamesok) < ((typeof min_gamesok_for_firstname !== 'undefined') ? min_gamesok_for_firstname : 5) - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
-  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", ((mobileMode && (game_cnt <= 2)) ? 2222 : 1111)); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", ((mobileMode && (game_cnt <= 2)) ? 1111 : 1111)); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 444);
