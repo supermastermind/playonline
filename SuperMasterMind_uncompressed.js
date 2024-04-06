@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.03"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.04"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3003) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3004) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3003 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3004 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -304,6 +304,8 @@ if (localStorage.legacyDisplayVariant) {
   legacyDisplayVariant = ((localStorage.legacyDisplayVariant == "1") ? 1 : 0);
 }
 let legacy_backgroundColor_2_base_color = "#5F340E"; // "#7F4613";// "#894B0F";// "#694927";
+let modernBaseColor = "#000000";
+let modernBaseColor2 = legacy_backgroundColor_2_base_color;
 let backgroundColor_2;
 let backgroundColor_3;
 let highlightColor;
@@ -337,16 +339,16 @@ function updateHoverBackgroundColor(newColor) {
 
 function updateThemeAttributes() {
   myTableObject.style.backgroundColor = (modernDisplay ? "#E3E3E3" : legacy_backgroundColor_2_base_color);
-  canvas_cell.style.border = canvas_cell.style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
+  canvas_cell.style.border = canvas_cell.style.border.replace((modernDisplay ? " black" : " " + modernBaseColor), (modernDisplay ? " " + modernBaseColor : " black"));
   for (let i = 0; i < allButtons.length; i++) {
-    allButtons[i].style.border = allButtons[i].style.border.replace((modernDisplay ? " black" : " purple"), (modernDisplay ? " purple" : " black"));
+    allButtons[i].style.border = allButtons[i].style.border.replace((modernDisplay ? " black" : " " + modernBaseColor), (modernDisplay ? " " + modernBaseColor: " black"));
   }
   backgroundColor_2 = (modernDisplay ? myTableObject.style.backgroundColor : "");
   backgroundColor_3 = (modernDisplay ? "#D0D0D0" : "");
   highlightColor = (modernDisplay ? "#FFFF00" : "#FFFF00");
   setLightGray();
   darkGray = "#000000";
-  updateHoverBackgroundColor(modernDisplay ? "purple" : "orange");
+  updateHoverBackgroundColor(modernDisplay ? modernBaseColor2 : "orange");
 }
 updateThemeAttributes(); // (allows early graphical setting)
 
@@ -560,7 +562,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.03: " + (localStorage.reloadForCompatibility_v3003 ? localStorage.reloadForCompatibility_v3003 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.04: " + (localStorage.reloadForCompatibility_v3004 ? localStorage.reloadForCompatibility_v3004 : "not done"), 210);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -2849,8 +2851,8 @@ function draw_graphic_bis() {
       }
 
       let borderWidth1 = (CompressedDisplayMode ? 0 : lineWidth);
-      let borderStr1 = borderWidth1 + (modernDisplay ? "px solid purple" : "px solid black");
-      let borderStr2 = lineWidth + (modernDisplay ? "px solid purple" : "px solid black");
+      let borderStr1 = borderWidth1 + (modernDisplay ? "px solid " + modernBaseColor : "px solid black");
+      let borderStr2 = lineWidth + (modernDisplay ? "px solid " + modernBaseColor: "px solid black");
 
       if (mobileMode && androidMode) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
         tickChar = "\u2713"; /* (check mark/tick) */
@@ -2969,7 +2971,7 @@ function draw_graphic_bis() {
         allRadioButtons[i].style.color = radioColor;
         allRadioButtons[i].style.border = borderStr3;
         // previous version for not compressed mode:
-        // allRadioButtons[i].style.color = (modernDisplay ? "purple" : "orange");
+        // allRadioButtons[i].style.color = (modernDisplay ? modernBaseColor : "orange");
         // allRadioButtons[i].style.border = 'none';
       }
       else {
@@ -3333,7 +3335,7 @@ function draw_graphic_bis() {
           }
           else {
             displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                          (((currentAttemptNumber == 1) || !modernDisplay) ? (modernDisplay ? "purple" : "orange") : darkGray), backgroundColor, ctx, false, true, 0, true, 0);
+                          (modernDisplay ? modernBaseColor : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
           }
         }
         else {
@@ -3484,7 +3486,7 @@ function draw_graphic_bis() {
           let statsColor;
 
           if (currentAttemptNumber == 1) {
-            statsColor = (modernDisplay ? "purple" : "orange");
+            statsColor = (modernDisplay ? modernBaseColor : "orange");
           }
           else if (gameWon && (i == currentAttemptNumber-1)) {
             statsColor = (modernDisplay ? darkGray : lightGray);
@@ -3960,20 +3962,20 @@ function draw_graphic_bis() {
           if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 1) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes >= 1) ) {
             let x_delta = 0.80;
             if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                               (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                               (modernDisplay ? modernBaseColor : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                                 (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                                 (modernDisplay ? modernBaseColor : "orange"), backgroundColor_2, ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
                 if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                   (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
+                                   (modernDisplay ? modernBaseColor : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (mobileMode) {
                     if ((nbColumns >= 4) && (nbColumns <= 7) && (currentAttemptNumber == 1)) {
                       displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
-                                    (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
+                                    (modernDisplay ? modernBaseColor : "orange"), backgroundColor_2, ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
                     }
                   }
                   else {
                     displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                  (modernDisplay ? "purple" : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
+                                  (modernDisplay ? modernBaseColor : "orange"), backgroundColor_2, ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                   }
                 }
               }
@@ -4279,7 +4281,7 @@ function draw_graphic_bis() {
           }
           else {
             showPossibleCodesButtonAlreadyBlinked = true;
-            showPossibleCodesButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+            showPossibleCodesButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_brown" : "_orange") : "button blinking" + (modernDisplay ? "_brown" : "_orange"));
           }
         }
       }
@@ -4371,7 +4373,7 @@ function draw_graphic_bis() {
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || at_least_one_useless_code_played ) ) { /* (useless attempt(s)) */
             revealSecretColorButtonAlreadyBlinked = true;
-            revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_purple" : "_orange") : "button blinking" + (modernDisplay ? "_purple" : "_orange"));
+            revealSecretColorButtonObject.className = (androidMode ? "button fast_blinking" + (modernDisplay ? "_brown" : "_orange") : "button blinking" + (modernDisplay ? "_brown" : "_orange"));
       }
     }
 
@@ -4478,7 +4480,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
             ctx.strokeStyle = ((modernDisplay || !CompressedDisplayMode) ? lightGray : darkGray);
           }
           else if (currentCodeColorMode == 2) {
-            ctx.strokeStyle = (modernDisplay ? "purple" : "orange");
+            ctx.strokeStyle = (modernDisplay ? modernBaseColor : "orange");
           }
           else if (currentCodeColorMode == 3) {
             ctx.strokeStyle = darkGray;
@@ -4691,7 +4693,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
         backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.25);
       }
       else {
-        backgroundColor = averageColor(backgroundColor, "#800080" /* = "purple" */, 0.25);
+        backgroundColor = averageColor(backgroundColor, modernBaseColor2, 0.25);
       }
     }
     if (color < 10) {
@@ -4732,9 +4734,8 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
       }
     }
     else {
-      let ave_color = averageColor(legacy_backgroundColor_2_base_color, "#FFFFFF", 0.95);
       displayString(getColorToDisplay(""), x_cell, y_cell, 2,
-                    darkGray, (modernDisplay ? backgroundColor_3 : ave_color), ctx, true, displayColorMode, 0, false, 0);
+                    darkGray, (modernDisplay ? backgroundColor_3 : averageColor(legacy_backgroundColor_2_base_color, "#FFFFFF", 0.95)), ctx, true, displayColorMode, 0, false, 0);
     }
   }
   if (handleCurrentCodeColorMode) {
