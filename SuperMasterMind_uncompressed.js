@@ -3344,7 +3344,7 @@ function draw_graphic_bis() {
         }
       }
 
-      ctx.fillStyle = ((modernDisplay || !CompressedDisplayMode) ? lightGray : darkGray);
+      ctx.fillStyle = darkGray;
       x_0 = get_x_pixel(x_min+x_step*attempt_nb_width);
       y_0 = get_y_pixel(y_min);
       x_1 = get_x_pixel(x_min+x_step*attempt_nb_width);
@@ -3564,7 +3564,7 @@ function draw_graphic_bis() {
 
       let lineWidthIni = ctx.lineWidth;
       ctx.lineWidth = getLineWidth(window.innerHeight, 1); // getGridLineWidth(window.innerHeight);
-      ctx.strokeStyle = ((modernDisplay || !CompressedDisplayMode) ? lightGray : darkGray);
+      ctx.strokeStyle = darkGray;
       x_0 = get_x_pixel(x_min);
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
       x_1 = get_x_pixel(x_max);
@@ -4133,7 +4133,7 @@ function draw_graphic_bis() {
         // Draw possible codes & their stats
         // *********************************
 
-        ctx.fillStyle = lightGray;
+        ctx.fillStyle = darkGray;
         for (let codeidx = 0; codeidx <= nbPossibleCodesShown; codeidx++) {
           x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));

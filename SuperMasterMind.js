@@ -2875,7 +2875,7 @@ displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 (((currentAttemptNumber==1) &&!modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
 }
 }
-ctx.fillStyle=((modernDisplay ||!CompressedDisplayMode) ? lightGray : darkGray);
+ctx.fillStyle=darkGray;
 x_0=get_x_pixel(x_min+x_step*attempt_nb_width);
 y_0=get_y_pixel(y_min);
 x_1=get_x_pixel(x_min+x_step*attempt_nb_width);
@@ -3061,7 +3061,7 @@ redColor, backgroundColor, ctx, false, true, 0, true, 0);
 }
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 1);
-ctx.strokeStyle=((modernDisplay ||!CompressedDisplayMode) ? lightGray : darkGray);
+ctx.strokeStyle=darkGray;
 x_0=get_x_pixel(x_min);
 y_0=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 x_1=get_x_pixel(x_max);
@@ -3571,7 +3571,7 @@ displayColor(color, Math.max(attempt_nb_width+(70*(nbColumns+1))/100-3,0), nbMax
 colors_cnt++;
 }
 }
-ctx.fillStyle=lightGray;
+ctx.fillStyle=darkGray;
 for (let codeidx=0;codeidx <=nbPossibleCodesShown;codeidx++){
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 y_0=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
