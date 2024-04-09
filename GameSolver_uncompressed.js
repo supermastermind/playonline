@@ -809,8 +809,8 @@ let incoming_messages_table = new Array(3*overallMaxDepth);
 
 let maxPerformanceEvaluationTime = -1;
 let appliedMaxPerformanceEvaluationTime = -1;
-let extraTimeForSimplisticGames = 30000; // 30 seconds
-let maxAllowedExtraTime = 30000; // 30 seconds
+let extraTimeForSimplisticGames = 15000; // 15 seconds
+let maxAllowedExtraTime = 35000; // 35 seconds
 let factorForMaxPerformanceEvaluationTime = 1000; // 1000 for 1 second - shall be much higher in (precalculation mode)
 
 let refNbOfCodesForSystematicEvaluation = 3200; // (high values may induce latencies)
