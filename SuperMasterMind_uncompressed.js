@@ -2662,7 +2662,7 @@ function get_x_pixel(x) {
     if (x < x_min) x = x_min;
     if (x > x_max) x = x_max;
   }
-  let res = Math.round(width_shift + ((x - x_min) * reduced_width) / (x_max - x_min));
+  let res = Math.ceil(width_shift + ((x - x_min) * reduced_width) / (x_max - x_min));
   if ( (res < 0) || (res > current_width) ) {
     if (res < 0) return 0;
     if (res > current_width) return current_width;
