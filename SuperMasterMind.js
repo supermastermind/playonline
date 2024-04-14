@@ -2473,7 +2473,7 @@ img2Object.style.display='none';
 }
 catch (err){}
 buttonsTdObject.style.padding="0 0 0.3vh 0";/* top right bottom left */
-left_border_margin_x=0.20;
+left_border_margin_x=0.25;
 right_border_margin_x=0.20;
 bottom_border_margin_y=1.00;
 top_border_margin_y=0.00;

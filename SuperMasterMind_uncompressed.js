@@ -2888,7 +2888,7 @@ function draw_graphic_bis() {
 
             buttonsTdObject.style.padding = "0 0 0.3vh 0"; /* top right bottom left */
 
-            left_border_margin_x = 0.20;   // Left border margin for x axis in %
+            left_border_margin_x = 0.25;   // Left border margin for x axis in %
             right_border_margin_x = 0.20;  // Right border margin for x axis in %
             bottom_border_margin_y = 1.00; // Bottom border margin for y axis in %
             top_border_margin_y = 0.00;    // Top border margin for y axis in %
