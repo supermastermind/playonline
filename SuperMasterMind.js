@@ -3805,7 +3805,7 @@ let font_width_1char=ctx.measureText("X").width;
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 0.25);
 if(0==halfLine){
-str_height=str_height * 0.80;
+str_height=str_height * (edgeMode 0.75 ? : (firefoxMode 0.85 : 0.80));
 y_0=get_y_pixel(y_min+y_step*y_cell);
 y_0_next=get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
 }
