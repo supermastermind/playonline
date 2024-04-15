@@ -191,6 +191,7 @@ let transition_height=1;
 let scode_height=1;
 let nb_attempts_not_displayed=0;
 let skip_last_attempt_display=false;
+let refLineWidth=1;
 function getLineWidth(inner_window_height, min_value){
 return Math.max(Math.floor(inner_window_height / 750+0.6), min_value);
 }
@@ -279,7 +280,7 @@ canvas_cell.style.border=canvas_cell.style.border.replace((modernDisplay ? " bla
 for (let i=0;i < allButtons.length;i++){
 allButtons[i].style.border=allButtons[i].style.border.replace((modernDisplay ? " black" : " "+modernBaseColor), (modernDisplay ? " "+modernBaseColor: " black"));
 }
-highlightColor=(modernDisplay ? "#FFFF00" : "#FFFF00");
+highlightColor="#FFFF00";
 setLightGray();
 darkGray="#000000";
 updateHoverBackgroundColor(modernDisplay ? modernBaseColor2 : "orange");
@@ -1109,12 +1110,12 @@ for (let column=0;column < nbColumns;column++){
 let x_0, y_0, x_1, y_1;
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
-if((mouse_x > x_0+1)&&(mouse_x < x_1 - 1)){
+if((mouse_x > x_0+refLineWidth)&&(mouse_x < x_1 - refLineWidth)){
 let colorSelected=false;
 for (let color=0;color < nbColors;color++){
 y_0=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+(color+1)));
 y_1=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+color));
-if((mouse_y > y_0+1)&&(mouse_y < y_1 - 1)){
+if((mouse_y > y_0+refLineWidth)&&(mouse_y < y_1 - refLineWidth)){
 colorSelected=true;
 color_being_selected=color+1;
 column_of_color_being_selected=column+1;
@@ -2263,9 +2264,9 @@ current_width=Math.max(width, 1);
 current_height=Math.max(height, 1);
 width_shift=(current_width * left_border_margin_x) / 100.0;
 reduced_width=(current_width * (100.0 - left_border_margin_x - right_border_margin_x)) / 100.0;
-height_shift=Math.floor((current_height * top_border_margin_y) / 100.0);
+height_shift=(current_height * top_border_margin_y) / 100.0;
 x_axis_height=0;
-reduced_height=Math.floor((current_height * (100.0 - top_border_margin_y - bottom_border_margin_y)) / 100.0) - x_axis_height;
+reduced_height=(current_height * (100.0 - top_border_margin_y - bottom_border_margin_y)) / 100.0 - x_axis_height;
 }
 function get_x_pixel(x){
 if( (x < x_min - 0.0000001)||(x > x_max+0.0000001) ){
@@ -2273,63 +2274,30 @@ displayGUIError("out of range x value: "+x, new Error().stack);
 if(x < x_min) x=x_min;
 if(x > x_max) x=x_max;
 }
-let res=Math.ceil(width_shift+((x - x_min) * reduced_width) / (x_max - x_min));
+let res=Math.round(width_shift+((x - x_min) * reduced_width) / (x_max - x_min));
 if( (res < 0)||(res > current_width) ){
 if(res < 0) return 0;
 if(res > current_width) return current_width;
 }
 return res;
 }
-function get_x_coordinate(x_pixel){
-let res;
-if( (x_pixel < 0)||(x_pixel > current_width) ){
-displayGUIError("out of range x pixel value: "+x_pixel, new Error().stack);
-if(x_pixel < 0) x_pixel=0;
-if(x_pixel > current_width) x_pixel=current_width;
-}
-x_pixel_bis=x_pixel;
-if(x_pixel < width_shift) x_pixel_bis=width_shift;
-res=x_min+(((x_pixel_bis - width_shift) * (x_max - x_min)) / reduced_width);
-if(res < x_min) res=x_min;
-if(res > x_max) res=x_max;
-return res;
-}
+// function get_x_coordinate(x_pixel){
+// }
 function get_y_pixel(y, ignoreRanges=false){
 if( (!ignoreRanges)&&((y < y_min - 0.0000001)||(y > y_max+0.0000001)) ){
 displayGUIError("out of range y value: "+y+", "+y_min+", "+y_max+", "+y_step+", "+showPossibleCodesMode, new Error().stack);
 if(y < y_min) y=y_min;
 if(y > y_max) y=y_max;
 }
-/* if(y < y_min+1.0){
-return height_shift+reduced_height+x_axis_height - Math.ceil(((y - y_min) * x_axis_height) / 1.0);
+let res=Math.round(height_shift+reduced_height - ((y - (y_min+1.0)) * reduced_height) / (y_max - (y_min+1.0)));
+if( (res < 0)||(res > current_height) ){
+if(res < 0) return 0;
+if(res > current_height) return current_height;
 }
-else{ */
-return height_shift+reduced_height - Math.ceil(((y - (y_min+1.0)) * reduced_height) / (y_max - (y_min+1.0)));
-/* } */
-}
-function get_y_coordinate(y_pixel){
-let res;
-if( (y_pixel < 0)||(y_pixel > current_height) ){
-displayGUIError("out of range y pixel value: "+y_pixel, new Error().stack);
-if(y_pixel < 0) y_pixel=0;
-if(y_pixel > current_height) y_pixel=current_height;
-}
-if(y_pixel > height_shift+reduced_height+x_axis_height){
-res=y_min;
-}
-else if(y_pixel < height_shift){
-res=y_max;
-}
-/* else if( (y_pixel > height_shift+reduced_height)&&(y_pixel <=height_shift+reduced_height+x_axis_height) ){
-res=y_min+(height_shift+reduced_height+x_axis_height - y_pixel) / x_axis_height;
-} */
-else{
-res=(y_min+1.0)+((height_shift+reduced_height - y_pixel) * (y_max - (y_min+1.0))) / reduced_height;
-}
-if(res < y_min) res=y_min;
-if(res > y_max) res=y_max;
 return res;
 }
+// function get_y_coordinate(y_pixel){
+// }
 // ************
 // Draw graphic
 // ************
@@ -2419,6 +2387,7 @@ displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected, n
 nbColumnsSelected=defaultNbColumns;
 }
 let lineWidth=getLineWidth(window.innerHeight, 1);
+refLineWidth=getLineWidth(window.innerHeight, 1);
 if( (Math.abs(current_innerWidth - window.innerWidth) > 1)||(Math.abs(current_innerHeight - window.innerHeight) > 1) ){
 var newCompressedDisplayMode;
 if(window.innerHeight >=window.innerWidth * 0.77){
@@ -2473,9 +2442,9 @@ img2Object.style.display='none';
 }
 catch (err){}
 buttonsTdObject.style.padding="0 0 0.3vh 0";/* top right bottom left */
-left_border_margin_x=0.25;
-right_border_margin_x=0.20;
-bottom_border_margin_y=1.00;
+left_border_margin_x=0.00;
+right_border_margin_x=0.00;
+bottom_border_margin_y=1.30
 top_border_margin_y=0.00;
 }
 else{
@@ -2512,6 +2481,7 @@ allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "3.8vh" : "3.5vh");
 }
 current_innerWidth=window.innerWidth;
 current_innerHeight=window.innerHeight;
+refLineWidth=getLineWidth(window.innerHeight, 1);
 let width=canvas_cell.clientWidth - Math.ceil(borderWidth1) - 1;
 let height=canvas_cell.clientHeight - Math.ceil(borderWidth1) - 1;
 updateAttributesWidthAndHeightValues(width, height);
@@ -3057,9 +3027,9 @@ redColor, backgroundColor, ctx, false, true, 0, true, 0);
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 1);
 ctx.strokeStyle=darkGray;
-x_0=get_x_pixel(x_min);
+x_0=get_x_pixel(x_min)+refLineWidth;
 y_0=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
-x_1=get_x_pixel(x_max);
+x_1=get_x_pixel(x_max) - refLineWidth;
 y_1=get_y_pixel(y_min);
 let radius=Math.min(x_1 - x_0, y_1 - y_0)/(CompressedDisplayMode ? 40.0 : 40.0);
 drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0,{
@@ -3572,7 +3542,7 @@ x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 y_0=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
 y_1=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
-drawLine(ctx, x_0, y_0, x_1+1, y_1);
+drawLine(ctx, x_0, y_0, x_1, y_1);
 }
 for (let col=0;col <=nbColumns;col++){
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
@@ -3620,7 +3590,7 @@ x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*
 y_1=get_y_pixel(y_min+y_step*y_cell);
 let currentColor=ctx.strokeStyle;
 ctx.strokeStyle=lightGray;
-drawLineWithPath(ctx, x_0, y_0, x_1+1, y_1);
+drawLineWithPath(ctx, x_0, y_0, x_1, y_1);
 ctx.strokeStyle=currentColor;
 }
 }
@@ -3835,7 +3805,7 @@ let font_width_1char=ctx.measureText("X").width;
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 0.25);
 if(0==halfLine){
-str_height=str_height * 0.85;
+str_height=str_height * 0.80;
 y_0=get_y_pixel(y_min+y_step*y_cell);
 y_0_next=get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
 }
@@ -4133,7 +4103,7 @@ circle_width_applied=2;
 let space_btw_marks=((x_0_next - x_0 - 2.0) - (nbColumns*(circle_width_applied+1.0))) / (nbColumns+1.0);
 if(backgroundColor!=""){
 ctx.fillStyle=backgroundColor;
-ctx.fillRect(x_0+1, y_0_next+1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
+ctx.fillRect(x_0+refLineWidth, y_0_next+1, x_0_next - x_0 - refLineWidth, y_0 - y_0_next - 1);
 }
 ctx.fillStyle="black";
 let x_0_pos;

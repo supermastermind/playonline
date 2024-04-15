@@ -237,6 +237,8 @@ let scode_height = 1;
 let nb_attempts_not_displayed = 0;
 let skip_last_attempt_display = false;
 
+let refLineWidth = 1;
+
 function getLineWidth(inner_window_height, min_value) {
   // window.innerHeight = 300 => limit for lineWidth = 1
   // window.innerHeight = 1800 => limit for lineWidth = 3 (valid use case: 1969 <-> 3 for Samsung Galaxy S20FE 5G)
@@ -341,7 +343,7 @@ function updateThemeAttributes() {
   for (let i = 0; i < allButtons.length; i++) {
     allButtons[i].style.border = allButtons[i].style.border.replace((modernDisplay ? " black" : " " + modernBaseColor), (modernDisplay ? " " + modernBaseColor: " black"));
   }
-  highlightColor = (modernDisplay ? "#FFFF00" : "#FFFF00");
+  highlightColor = "#FFFF00";
   setLightGray();
   darkGray = "#000000";
   updateHoverBackgroundColor(modernDisplay ? modernBaseColor2 : "orange");
@@ -1335,12 +1337,12 @@ function handleTouchStartOrMouseDownEvent(x, y) {
           let x_0, y_0, x_1, y_1;
           x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
           x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
-          if ((mouse_x > x_0 + 1) && (mouse_x < x_1 - 1)) { // 1px margin for ambiguous clicks
+          if ((mouse_x > x_0 + refLineWidth) && (mouse_x < x_1 - refLineWidth)) { // margin for ambiguous clicks
             let colorSelected = false;
             for (let color = 0; color < nbColors; color++) {
               y_0 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+(color+1)));
               y_1 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+color));
-              if ((mouse_y > y_0 + 1) && (mouse_y < y_1 - 1)) { // 1px margin for ambiguous clicks
+              if ((mouse_y > y_0 + refLineWidth) && (mouse_y < y_1 - refLineWidth)) { // margin for ambiguous clicks
                 colorSelected = true;
                 color_being_selected = color+1;
                 column_of_color_being_selected = column+1;
@@ -2651,9 +2653,9 @@ function updateAttributesWidthAndHeightValues(width, height) {
   current_height = Math.max(height, 1);
   width_shift = (current_width * left_border_margin_x) / 100.0;
   reduced_width = (current_width * (100.0 - left_border_margin_x - right_border_margin_x)) / 100.0;
-  height_shift = Math.floor((current_height * top_border_margin_y) / 100.0);
+  height_shift = (current_height * top_border_margin_y) / 100.0;
   x_axis_height = 0; // Fixed x axis height
-  reduced_height = Math.floor((current_height * (100.0 - top_border_margin_y - bottom_border_margin_y)) / 100.0) - x_axis_height;
+  reduced_height = (current_height * (100.0 - top_border_margin_y - bottom_border_margin_y)) / 100.0 - x_axis_height;
 }
 
 function get_x_pixel(x) {
@@ -2662,7 +2664,7 @@ function get_x_pixel(x) {
     if (x < x_min) x = x_min;
     if (x > x_max) x = x_max;
   }
-  let res = Math.ceil(width_shift + ((x - x_min) * reduced_width) / (x_max - x_min));
+  let res = Math.round(width_shift + ((x - x_min) * reduced_width) / (x_max - x_min));
   if ( (res < 0) || (res > current_width) ) {
     if (res < 0) return 0;
     if (res > current_width) return current_width;
@@ -2670,20 +2672,20 @@ function get_x_pixel(x) {
   return res;
 }
 
-function get_x_coordinate(x_pixel) {
-  let res;
-  if ( (x_pixel < 0) || (x_pixel > current_width) ) {
-    displayGUIError("out of range x pixel value: " + x_pixel, new Error().stack);
-    if (x_pixel < 0) x_pixel = 0;
-    if (x_pixel > current_width) x_pixel = current_width;
-  }
-  x_pixel_bis = x_pixel;
-  if (x_pixel < width_shift) x_pixel_bis = width_shift;
-  res = x_min + (((x_pixel_bis - width_shift) * (x_max - x_min)) / reduced_width);
-  if (res < x_min) res = x_min;
-  if (res > x_max) res = x_max;
-  return res;
-}
+// function get_x_coordinate(x_pixel) {
+  // let res;
+  // if ( (x_pixel < 0) || (x_pixel > current_width) ) {
+    // displayGUIError("out of range x pixel value: " + x_pixel, new Error().stack);
+    // if (x_pixel < 0) x_pixel = 0;
+    // if (x_pixel > current_width) x_pixel = current_width;
+  // }
+  // x_pixel_bis = x_pixel;
+  // if (x_pixel < width_shift) x_pixel_bis = width_shift;
+  // res = x_min + (((x_pixel_bis - width_shift) * (x_max - x_min)) / reduced_width);
+  // if (res < x_min) res = x_min;
+  // if (res > x_max) res = x_max;
+  // return res;
+// }
 
 function get_y_pixel(y, ignoreRanges = false) {
   if ( (!ignoreRanges) && ((y < y_min - 0.0000001) || (y > y_max + 0.0000001)) ) {
@@ -2691,37 +2693,37 @@ function get_y_pixel(y, ignoreRanges = false) {
     if (y < y_min) y = y_min;
     if (y > y_max) y = y_max;
   }
-  /* if (y < y_min + 1.0) { // x axis height
-    return height_shift + reduced_height + x_axis_height - Math.ceil(((y - y_min) * x_axis_height) / 1.0);
+  let res = Math.round(height_shift + reduced_height - ((y - (y_min + 1.0)) * reduced_height) / (y_max - (y_min + 1.0)));
+  if ( (res < 0) || (res > current_height) ) {
+    if (res < 0) return 0;
+    if (res > current_height) return current_height;
   }
-  else { */
-  return height_shift + reduced_height - Math.ceil(((y - (y_min + 1.0)) * reduced_height) / (y_max - (y_min + 1.0))); // (Math.ceil() is better than Math.floor() to address y grid's rounding issues)
-  /* } */
-}
-
-function get_y_coordinate(y_pixel) {
-  let res;
-  if ( (y_pixel < 0) || (y_pixel > current_height) ) {
-    displayGUIError("out of range y pixel value: " + y_pixel, new Error().stack);
-    if (y_pixel < 0) y_pixel = 0;
-    if (y_pixel > current_height) y_pixel = current_height;
-  }
-  if (y_pixel > height_shift + reduced_height + x_axis_height) {
-    res = y_min;
-  }
-  else if (y_pixel < height_shift) {
-    res = y_max;
-  }
-  /* else if ( (y_pixel > height_shift + reduced_height) && (y_pixel <= height_shift + reduced_height + x_axis_height) ) { // x axis height
-    res = y_min + (height_shift + reduced_height + x_axis_height - y_pixel) / x_axis_height;
-  } */
-  else {
-    res = (y_min + 1.0) + ((height_shift + reduced_height - y_pixel) * (y_max - (y_min + 1.0))) / reduced_height;
-  }
-  if (res < y_min) res = y_min;
-  if (res > y_max) res = y_max;
   return res;
 }
+
+// function get_y_coordinate(y_pixel) {
+  // let res;
+  // if ( (y_pixel < 0) || (y_pixel > current_height) ) {
+    // displayGUIError("out of range y pixel value: " + y_pixel, new Error().stack);
+    // if (y_pixel < 0) y_pixel = 0;
+    // if (y_pixel > current_height) y_pixel = current_height;
+  // }
+  // if (y_pixel > height_shift + reduced_height + x_axis_height) {
+    // res = y_min;
+  // }
+  // else if (y_pixel < height_shift) {
+    // res = y_max;
+  // }
+  // /* else if ( (y_pixel > height_shift + reduced_height) && (y_pixel <= height_shift + reduced_height + x_axis_height) ) { // x axis height
+    // res = y_min + (height_shift + reduced_height + x_axis_height - y_pixel) / x_axis_height;
+  // } */
+  // else {
+    // res = (y_min + 1.0) + ((height_shift + reduced_height - y_pixel) * (y_max - (y_min + 1.0))) / reduced_height;
+  // }
+  // if (res < y_min) res = y_min;
+  // if (res > y_max) res = y_max;
+  // return res;
+// }
 
 // ************
 // Draw graphic
@@ -2823,6 +2825,7 @@ function draw_graphic_bis() {
     }
 
     let lineWidth = getLineWidth(window.innerHeight, 1);
+    refLineWidth = getLineWidth(window.innerHeight, 1);
     if ( (Math.abs(current_innerWidth - window.innerWidth) > 1) || (Math.abs(current_innerHeight - window.innerHeight) > 1) ) { // resize detected with +-1 pixel tolerance margin
       var newCompressedDisplayMode;
       if (window.innerHeight >= window.innerWidth * 0.77) {
@@ -2888,9 +2891,9 @@ function draw_graphic_bis() {
 
             buttonsTdObject.style.padding = "0 0 0.3vh 0"; /* top right bottom left */
 
-            left_border_margin_x = 0.25;   // Left border margin for x axis in %
-            right_border_margin_x = 0.20;  // Right border margin for x axis in %
-            bottom_border_margin_y = 1.00; // Bottom border margin for y axis in %
+            left_border_margin_x = 0.00;   // Left border margin for x axis in %
+            right_border_margin_x = 0.00;  // Right border margin for x axis in %
+            bottom_border_margin_y = 1.30 // Bottom border margin for y axis in %
             top_border_margin_y = 0.00;    // Top border margin for y axis in %
           }
           else {
@@ -2933,6 +2936,7 @@ function draw_graphic_bis() {
 
       current_innerWidth = window.innerWidth;
       current_innerHeight = window.innerHeight;
+      refLineWidth = getLineWidth(window.innerHeight, 1);
 
       // Set canvas size
       let width = canvas_cell.clientWidth - Math.ceil(borderWidth1) - 1;
@@ -3558,9 +3562,9 @@ function draw_graphic_bis() {
       let lineWidthIni = ctx.lineWidth;
       ctx.lineWidth = getLineWidth(window.innerHeight, 1); // getGridLineWidth(window.innerHeight);
       ctx.strokeStyle = darkGray;
-      x_0 = get_x_pixel(x_min);
+      x_0 = get_x_pixel(x_min) + refLineWidth;
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
-      x_1 = get_x_pixel(x_max);
+      x_1 = get_x_pixel(x_max) - refLineWidth;
       y_1 = get_y_pixel(y_min);
       let radius = Math.min(x_1 - x_0, y_1 - y_0)/(CompressedDisplayMode ? 40.0 : 40.0);
       drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, {
@@ -4132,7 +4136,7 @@ function draw_graphic_bis() {
           y_0 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
           x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
           y_1 = get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
-          drawLine(ctx, x_0, y_0, x_1+1, y_1);
+          drawLine(ctx, x_0, y_0, x_1, y_1);
         }
 
         for (let col = 0; col <= nbColumns; col++) {
@@ -4191,7 +4195,7 @@ function draw_graphic_bis() {
             y_1 = get_y_pixel(y_min+y_step*y_cell);
             let currentColor = ctx.strokeStyle;
             ctx.strokeStyle = lightGray;
-            drawLineWithPath(ctx, x_0, y_0, x_1+1, y_1);
+            drawLineWithPath(ctx, x_0, y_0, x_1, y_1);
             ctx.strokeStyle = currentColor;
           }
 
@@ -4450,7 +4454,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   ctx.lineWidth = getLineWidth(window.innerHeight, 0.25);
 
   if (0 == halfLine) {
-    str_height = str_height * 0.85; // to simplify "* 0.85" is applied to reflect the actual height of number characters (constant for all numbers) / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
+    str_height = str_height * 0.80; // to simplify, apply a multiply factor to reflect the actual height of number characters (constant for all numbers) / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
   }
@@ -4773,7 +4777,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
 
   if (backgroundColor != "") { // N.A. background
     ctx.fillStyle = backgroundColor;
-    ctx.fillRect(x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1);
+    ctx.fillRect(x_0 + refLineWidth, y_0_next + 1, x_0_next - x_0 - refLineWidth, y_0 - y_0_next - 1);
   }
 
   ctx.fillStyle = "black";
