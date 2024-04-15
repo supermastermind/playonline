@@ -4454,7 +4454,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   ctx.lineWidth = getLineWidth(window.innerHeight, 0.25);
 
   if (0 == halfLine) {
-    str_height = str_height * (edgeMode 0.75 ? : (firefoxMode 0.85 : 0.80)); // to simplify, apply a multiply factor to reflect the actual height of number characters (constant for all numbers) / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
+    str_height = str_height * (edgeMode ? 0.75 : (firefoxMode ? 0.85 : 0.80)); // to simplify, apply a multiply factor to reflect the actual height of number characters (constant for all numbers) / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
   }
