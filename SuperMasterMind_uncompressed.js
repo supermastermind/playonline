@@ -2665,19 +2665,19 @@ function get_x_pixel(x) {
     if (x > x_max) x = x_max;
   }
   let res = Math.round(width_shift + ((x - x_min) * reduced_width) / (x_max - x_min));
-  if ( (res < 0) || (res > current_width) ) {
+  if ( (res < 0) || (res > current_width - 1) ) {
     if (res < 0) return 0;
-    if (res > current_width) return current_width;
+    if (res > current_width - 1) return current_width - 1;
   }
   return res;
 }
 
 // function get_x_coordinate(x_pixel) {
   // let res;
-  // if ( (x_pixel < 0) || (x_pixel > current_width) ) {
+  // if ( (x_pixel < 0) || (x_pixel > current_width - 1) ) {
     // displayGUIError("out of range x pixel value: " + x_pixel, new Error().stack);
     // if (x_pixel < 0) x_pixel = 0;
-    // if (x_pixel > current_width) x_pixel = current_width;
+    // if (x_pixel > current_width - 1) x_pixel = current_width - 1;
   // }
   // x_pixel_bis = x_pixel;
   // if (x_pixel < width_shift) x_pixel_bis = width_shift;
@@ -2694,19 +2694,19 @@ function get_y_pixel(y, ignoreRanges = false) {
     if (y > y_max) y = y_max;
   }
   let res = Math.round(height_shift + reduced_height - ((y - (y_min + 1.0)) * reduced_height) / (y_max - (y_min + 1.0)));
-  if ( (res < 0) || (res > current_height) ) {
+  if ( (res < 0) || (res > current_height - 1) ) {
     if (res < 0) return 0;
-    if (res > current_height) return current_height;
+    if (res > current_height - 1) return current_height - 1;
   }
   return res;
 }
 
 // function get_y_coordinate(y_pixel) {
   // let res;
-  // if ( (y_pixel < 0) || (y_pixel > current_height) ) {
+  // if ( (y_pixel < 0) || (y_pixel > current_height - 1) ) {
     // displayGUIError("out of range y pixel value: " + y_pixel, new Error().stack);
     // if (y_pixel < 0) y_pixel = 0;
-    // if (y_pixel > current_height) y_pixel = current_height;
+    // if (y_pixel > current_height - 1) y_pixel = current_height - 1;
   // }
   // if (y_pixel > height_shift + reduced_height + x_axis_height) {
     // res = y_min;
@@ -2893,7 +2893,7 @@ function draw_graphic_bis() {
 
             left_border_margin_x = 0.00;   // Left border margin for x axis in %
             right_border_margin_x = 0.00;  // Right border margin for x axis in %
-            bottom_border_margin_y = 1.30 // Bottom border margin for y axis in %
+            bottom_border_margin_y = 1.30 // Bottom border margin for y axis in % (value set like this to simplify)
             top_border_margin_y = 0.00;    // Top border margin for y axis in %
           }
           else {
@@ -2939,8 +2939,8 @@ function draw_graphic_bis() {
       refLineWidth = getLineWidth(window.innerHeight, 1);
 
       // Set canvas size
-      let width = canvas_cell.clientWidth - Math.ceil(borderWidth1) - 1;
-      let height = canvas_cell.clientHeight - Math.ceil(borderWidth1) - 1;
+      let width = canvas_cell.clientWidth - Math.ceil(borderWidth1);
+      let height = canvas_cell.clientHeight - Math.ceil(borderWidth1);
       updateAttributesWidthAndHeightValues(width, height);
       canvas.width = width;
       canvas.height = height;
@@ -4454,7 +4454,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   ctx.lineWidth = getLineWidth(window.innerHeight, 0.25);
 
   if (0 == halfLine) {
-    str_height = str_height * (edgeMode ? 0.75 : (firefoxMode ? 0.85 : 0.80)); // to simplify, apply a multiply factor to reflect the actual height of number characters (constant for all numbers) / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
+    str_height = str_height * (edgeMode ? 0.765 : (firefoxMode ? 0.835 : 0.80)); // to simplify, apply a multiply factor to reflect the actual height of number characters / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
   }

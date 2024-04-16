@@ -2275,9 +2275,9 @@ if(x < x_min) x=x_min;
 if(x > x_max) x=x_max;
 }
 let res=Math.round(width_shift+((x - x_min) * reduced_width) / (x_max - x_min));
-if( (res < 0)||(res > current_width) ){
+if( (res < 0)||(res > current_width - 1) ){
 if(res < 0) return 0;
-if(res > current_width) return current_width;
+if(res > current_width - 1) return current_width - 1;
 }
 return res;
 }
@@ -2290,9 +2290,9 @@ if(y < y_min) y=y_min;
 if(y > y_max) y=y_max;
 }
 let res=Math.round(height_shift+reduced_height - ((y - (y_min+1.0)) * reduced_height) / (y_max - (y_min+1.0)));
-if( (res < 0)||(res > current_height) ){
+if( (res < 0)||(res > current_height - 1) ){
 if(res < 0) return 0;
-if(res > current_height) return current_height;
+if(res > current_height - 1) return current_height - 1;
 }
 return res;
 }
@@ -2482,8 +2482,8 @@ allRadioButtons[i].style.fontSize=(CompressedDisplayMode ? "3.8vh" : "3.5vh");
 current_innerWidth=window.innerWidth;
 current_innerHeight=window.innerHeight;
 refLineWidth=getLineWidth(window.innerHeight, 1);
-let width=canvas_cell.clientWidth - Math.ceil(borderWidth1) - 1;
-let height=canvas_cell.clientHeight - Math.ceil(borderWidth1) - 1;
+let width=canvas_cell.clientWidth - Math.ceil(borderWidth1);
+let height=canvas_cell.clientHeight - Math.ceil(borderWidth1);
 updateAttributesWidthAndHeightValues(width, height);
 canvas.width=width;
 canvas.height=height;
@@ -3805,7 +3805,7 @@ let font_width_1char=ctx.measureText("X").width;
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 0.25);
 if(0==halfLine){
-str_height=str_height * (edgeMode ? 0.75 : (firefoxMode ? 0.85 : 0.80));
+str_height=str_height * (edgeMode ? 0.765 : (firefoxMode ? 0.835 : 0.80));
 y_0=get_y_pixel(y_min+y_step*y_cell);
 y_0_next=get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
 }
