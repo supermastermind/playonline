@@ -4454,7 +4454,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   ctx.lineWidth = getLineWidth(window.innerHeight, 0.25);
 
   if (0 == halfLine) {
-    str_height = str_height * 0.84; // to simplify, apply a multiply factor to reflect the actual height of number strings / a dedicated function (to be written, as not supported by ctx.measureText) could be used here to be more precise (see https://stackoverflow.com/questions/16816071/calculate-exact-character-string-height-in-javascript)
+    str_height = str_height * 0.83; // to simplify, apply a multiply factor to reflect the actual height of number strings / a dedicated function (to be written, as not supported by ctx.measureText) could be used here to be more precise (see https://stackoverflow.com/questions/16816071/calculate-exact-character-string-height-in-javascript)
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
   }
