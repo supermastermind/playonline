@@ -3027,7 +3027,7 @@ redColor, backgroundColor, ctx, false, true, 0, true, 0);
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 1);
 ctx.strokeStyle=darkGray;
-x_0=get_x_pixel(x_min)+refLineWidth;
+x_0=get_x_pixel(x_min)+refLineWidth+1;
 y_0=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 x_1=get_x_pixel(x_max) - refLineWidth+1;
 y_1=get_y_pixel(y_min);
