@@ -3564,7 +3564,7 @@ function draw_graphic_bis() {
       ctx.strokeStyle = darkGray;
       x_0 = get_x_pixel(x_min) + refLineWidth;
       y_0 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
-      x_1 = get_x_pixel(x_max) - refLineWidth;
+      x_1 = get_x_pixel(x_max) - refLineWidth + 1;
       y_1 = get_y_pixel(y_min);
       let radius = Math.min(x_1 - x_0, y_1 - y_0)/(CompressedDisplayMode ? 40.0 : 40.0);
       drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, {
@@ -4454,7 +4454,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   ctx.lineWidth = getLineWidth(window.innerHeight, 0.25);
 
   if (0 == halfLine) {
-    str_height = str_height * (edgeMode ? 0.75 : (firefoxMode ? 0.85 : 0.82)); // to simplify, apply a multiply factor to reflect the actual height of number characters / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
+    str_height = str_height * (edgeMode ? 0.75 : (firefoxMode ? 0.85 : 0.83)); // to simplify, apply a multiply factor to reflect the actual height of number characters / the generic "metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent" (actual string height in floating point pixels) does not always work properly (issues in android app)
     y_0 = get_y_pixel(y_min+y_step*y_cell);
     y_0_next = get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
   }
