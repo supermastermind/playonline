@@ -4750,7 +4750,7 @@ function displayCode(code, y_cell, ctx, secretCodeCase = false, checkDisabledCol
   for (let col = 0; col < nbColumns; col++) {
     let color = smmCodeHandler.getColor(code, col+1);
     highlight_selected_text = (check_highlight_text && (color == color_being_selected) && (col+1 == column_of_color_being_selected));
-    displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ?  obviouslyImpossibleColors[color] : false));
+    displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ? obviouslyImpossibleColors[color] : false));
     highlight_selected_text = false;
   }
 }
@@ -5077,7 +5077,7 @@ scriptsFullyLoaded = true;
 draw_graphic();
 updateThemeAttributes();
 
-canvas.addEventListener("touchstart", touchStart, { passive: true }); // { passive: true } tells the browser that the event handler won’t call preventDefault() to disable scrolling, allowing the browser to handle scrolling more efficiently
+canvas.addEventListener("touchstart", touchStart, { passive: true }); // { passive: true } tells the browser that the event handler won't call preventDefault() to disable scrolling, allowing the browser to handle scrolling more efficiently
 canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
