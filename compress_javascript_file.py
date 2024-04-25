@@ -33,6 +33,9 @@ def compress_javascript_file(source_file_path, target_file_path):
         content = re.sub(r'[ \t\n]*$', '', content, flags=re.DOTALL) # trailing spaces 2
         content = re.sub(r'\n+', '\n', content, flags=re.DOTALL) # empty lines
 
+        content = re.sub(r'}\n}', '}}', content, flags=re.DOTALL) # }...}
+        content = re.sub(r'}\n}', '}}', content, flags=re.DOTALL) # }...}
+
         # Write compressed file
         with open(target_file_path, 'wb') as file: # wb will remove ending \r characters if any
             file.write(content.encode('utf-8'))

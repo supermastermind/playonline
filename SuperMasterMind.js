@@ -32,8 +32,7 @@ submitForm("reloadAllContentsDistantly called for "+href, 200);
 href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
-}
-}
+}}
 if((!localStorage.reloadForCompatibility_v3004)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
@@ -48,8 +47,7 @@ if(android_appli){
 alert("Game has been running for a long time.\nRestart the app...");
 }
 reloadAllContentsDistantly();
-}
-}
+}}
 debug_smm_state=20;
 let nominalGameNbColumns=5;
 let nominalGameNbColors=8;
@@ -239,8 +237,7 @@ function setLightGray(){
 lightGray=(modernDisplay ? "#909090" : "#9B7B5B");
 if(!gameOnGoing()&&(!modernDisplay)){
 lightGray=darkGray;
-}
-}
+}}
 let lastHoverColor="";
 function updateHoverBackgroundColor(newColor){
 if((!android_appli)&&(!mobileMode)){
@@ -250,9 +247,7 @@ style.type='text/css';
 style.innerHTML=`.button:hover{background-color: ${newColor};color: white;}`;
 document.head.appendChild(style);
 lastHoverColor=newColor;
-}
-}
-}
+}}}
 function updateThemeAttributes(){
 myTableObject.style.backgroundColor=(modernDisplay ? "#E3E3E3" : legacy_backgroundColor_base_color);
 canvas_cell.style.border=canvas_cell.style.border.replace((modernDisplay ? " black" : " "+modernBaseColor), (modernDisplay ? " "+modernBaseColor : " black"));
@@ -446,14 +441,12 @@ submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+":
 catch (exc){
 console.log("internal error at error form submission: "+exc);
 submitForm("internal error at error form submission: "+exc+" for submitted error: "+GUIErrorStr+" / STACK: "+errStack, 230);
-}
-}
+}}
 globalErrorCnt++;
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
-}
-}
+}}
 function onGameSolverError(e){
 displayGUIError("gameSolver error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
 }
@@ -474,8 +467,7 @@ throw new Error("toto");
 else if(String(mode).indexOf("of")!=-1){
 document.getElementById('form_list_id').value=mode.trim();
 setTimeout("submitForm();", 444);
-}
-}
+}}
 class SmmCodeHandler extends CodeHandler{
 constructor(nbColumns_p, nbColors_p, nbMinColumns_p, nbMaxColumns_p, emptyColor_p){
 super(nbColumns_p, nbColors_p, nbMinColumns_p, nbMaxColumns_p, emptyColor_p, false);
@@ -485,8 +477,7 @@ let nbObviouslyImpossibleColors=0;
 for (let color=1;color < this.nbColors+1;color++){
 if(obviouslyImpossibleColors[color]){
 nbObviouslyImpossibleColors++;
-}
-}
+}}
 let code=0;
 for (let col=0;col < this.nbColumns;col++){
 let colorRevealed=this.getColor(codeRevealed, col+1);
@@ -505,13 +496,11 @@ possiblecolor_cnt++;
 if(possiblecolor_cnt==color_idx){
 selected_color=color_cnt;
 break;
-}
-}
+}}
 color_cnt++;
 if(color_cnt > this.nbColors){
 throw new Error("SmmCodeHandler: createRandomCode (1) ("+codeRevealed+")");
-}
-}
+}}
 if(selected_color==-1){
 throw new Error("SmmCodeHandler: createRandomCode (2) ("+codeRevealed+")");
 }
@@ -519,14 +508,12 @@ if((nbObviouslyImpossibleColors==0)&&(selected_color!=color_idx)){
 throw new Error("SmmCodeHandler: createRandomCode (3) ("+codeRevealed+")");
 }
 code=this.setColor(code, selected_color, col+1);
-}
-}
+}}
 for (let col=this.nbColumns+1;col <=this.nbMaxColumns;col++){
 code=this.setColor(code, this.emptyColor, col);
 }
 return code;
-}
-}
+}}
 function onGameSolverMsg(e){
 try{
 if(e.data==undefined){
@@ -548,8 +535,7 @@ isWorkerAlive=1;
 else{
 displayGUIError("gameSolver msg message error: invalid worker initialization ("+data.rsp_type+", "+data.game_id+", "+game_cnt+")", new Error().stack);
 return;
-}
-}
+}}
 else if(data.rsp_type=='NB_POSSIBLE_CODES'){
 if(data.nbOfPossibleCodes_p==undefined){
 displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);
@@ -614,15 +600,13 @@ let possible_codes_subdivision=-1;
 try{
 if(data.possible_codes_subdivision!==undefined){
 possible_codes_subdivision=Number(data.possible_codes_subdivision);
-}
-}
+}}
 catch (tmp_exc){}
 let equivalent_possible_code=0;
 try{
 if(data.equivalent_possible_code!==undefined){
 equivalent_possible_code=Number(data.equivalent_possible_code);
-}
-}
+}}
 catch (tmp_exc){}
 if(data.globalPerformancesList_p==undefined){
 displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
@@ -697,18 +681,15 @@ traceObject.innerHTML=traceObject.innerHTML.concat(trace_str);
 else{
 displayGUIError("gameSolver error: unexpected rsp_type: "+data.rsp_type, new Error().stack);
 return;
-}
-}
+}}
 catch (exc){
 displayGUIError("onGameSolverMsg error: "+exc, exc.stack);
-}
-}
+}}
 function newGameButtonClick_delayed(display_ads_if_needed){
 if(display_ads_if_needed){
 if(typeof displayAdsIfNeeded!=='undefined'){
 displayAdsIfNeeded();
-}
-}
+}}
 try{
 $(pageTransitionObject).fadeIn("fast");
 }
@@ -729,8 +710,7 @@ try{
 $(pageTransitionObject).fadeOut("fast");
 }
 catch (exc){
-}
-}
+}}
 function gameAbortionEnd(){
 $(gameAbortedObject).fadeOut(200);
 dsCode=false;
@@ -744,8 +724,7 @@ return false;
 else{
 last_mouse_button_event_time=(new Date()).getTime();
 return true;
-}
-}
+}}
 else{
 if((new Date()).getTime()-last_mouse_button_event_time < 1000){
 return false;
@@ -753,9 +732,7 @@ return false;
 else{
 last_touch_button_event_time=(new Date()).getTime();
 return true;
-}
-}
-}
+}}}
 newGameButtonClick=function(nbColumns_p){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("newGameButtonClick skipped");
@@ -771,9 +748,7 @@ var rsp=confirm("Do you really want to abort current game?");
 if(!rsp){
 nbNewGameEventsCancelled++;
 return;
-}
-}
-}
+}}}
 nbOnGoingGamesAborted++;
 if(nbColumns==3){
 setTimeout("dsCode=false;newGameButtonClick_delayed(true);", 2500);
@@ -788,8 +763,7 @@ try{
 $(gameAbortedObject).fadeIn((nbColumns <=4) ? 2000 : 2500);
 }
 catch (exc){
-}
-}
+}}
 dsCode=true;
 main_graph_update_needed=true;
 updateGameSizes();
@@ -797,10 +771,7 @@ draw_graphic();
 }
 else{
 newGameButtonClick_delayed(true);
-}
-}
-}
-}
+}}}}
 resetCurrentCodeButtonClick=function(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("resetCurrentCodeButtonClick skipped");
@@ -809,14 +780,12 @@ return;
 if(!resetCurrentCodeButtonObject.disabled){
 currentCode=sCodeRevealed;
 draw_graphic();
-}
-}
+}}
 function playACodeAutomatically(code_p){
 if(currentAttemptNumber <=3){
 currentCode=code_p;
 draw_graphic();
-}
-}
+}}
 playRandomCodeButtonClick=function(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded||dsCode){
 console.log("playRandomCodeButtonClick skipped");
@@ -827,18 +796,14 @@ randomCodesHintToBeDisplayed=false;
 nb_random_codes_played++;
 currentCode=smmCodeHandler.createRandomCode(sCodeRevealed);
 draw_graphic();
-}
-}
+}}
 function displayRandomCodesHintIfNeeded(){
 if(randomCodesHintToBeDisplayed){
 if(localStorage.gamesok){
 if((Number(localStorage.gamesok) >=100)&&((Number(localStorage.gamesok) % ((Number(localStorage.gamesok) <=400) ? 50 : 80))==0) ){
 alert("A little fun?\nClick on the \""+playRandomCodeButtonObject.value+"\" button to play your first few codes randomly");
 randomCodesHintToBeDisplayed=false;
-}
-}
-}
-}
+}}}}
 function displayRevealSecretColorHintIfNeeded(){
 alert("Need some help?\nClick on the \""+revealSecretColorButtonObject.value+"\" button to reveal a color");
 }
@@ -856,8 +821,7 @@ if(nbColorsRevealed==0){
 var rsp=confirm("Do you want to reveal a color of the secret code? If so, your score will not be stored online");
 if(!rsp){
 return;
-}
-}
+}}
 if(nbEmptyColors <=2){
 displayGUIError("too many revealed colors: "+nbEmptyColors, new Error().stack);
 }
@@ -867,9 +831,7 @@ sCodeRevealed=smmCodeHandler.replaceEmptyColor(sCodeRevealed, revealedColorIdx, 
 currentCode=sCodeRevealed;
 main_graph_update_needed=true;
 draw_graphic();
-}
-}
-}
+}}}
 showPossibleCodesButtonClick=function(invertMode=true, newPossibleCodeShown=-1, showModeForced=false, transientMode=false){
 let animated_mode=false;
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
@@ -885,8 +847,7 @@ try{
 $(pageTransitionObject).fadeIn("fast");
 }
 catch (exc){
-}
-}
+}}
 if(showModeForced){
 showPossibleCodesMode=true;
 }
@@ -933,12 +894,10 @@ if(relative_performances_of_codes_played[i] < lowest_significant_relative_perfor
 lowest_significant_relative_performance=relative_performances_of_codes_played[i];
 interesting_attempt_idx=i;
 interesting_attempt_idx_was_updated=true;
-}
-}
+}}
 if((nbOfPossibleCodes[i] >=2)&&(interesting_attempt_idx_bis==0)){
 interesting_attempt_idx_bis=i;
-}
-}
+}}
 if(!interesting_attempt_idx_was_updated){
 interesting_attempt_idx=interesting_attempt_idx_bis;
 }
@@ -946,8 +905,7 @@ currentPossibleCodeShown=interesting_attempt_idx+1;
 }
 else{
 currentPossibleCodeShown=newPossibleCodeShown;
-}
-}
+}}
 if(!transientMode){
 currentPossibleCodeShownBeforeMouseMove=currentPossibleCodeShown;
 }
@@ -960,16 +918,12 @@ try{
 $(pageTransitionObject).fadeOut("fast");
 }
 catch (exc){
-}
-}
+}}
 if(animated_mode){
 let initialCurrentPossibleCodeShown=currentPossibleCodeShown;
 for (let i=1;i <=initialCurrentPossibleCodeShown;i++){
 setTimeout("try{if(showPossibleCodesMode&&!showPossibleCodesButtonObject.disabled&&(game_cnt=="+game_cnt+")){currentPossibleCodeShown="+i+";updateGameSizes();draw_graphic();}}catch(possible_error){}", 444*i);
-}
-}
-}
-}
+}}}}
 function handleDisplayModeSelectionChange(){
 var displayModeSelectObject=document.getElementById('displayModeSelect');
 if(displayModeSelectObject==null){
@@ -1036,9 +990,7 @@ modal.open();
 }
 catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
-}
-}
-}
+}}}
 function handleTouchStartOrMouseDownEvent(x, y){
 let event_x_min, event_x_max, event_y_min, event_y_max;
 let rect=canvas.getBoundingClientRect();
@@ -1071,8 +1023,7 @@ column_of_color_being_selected=column+1;
 playAColor(color+1, column+1);
 nbColorSelections++;
 break;
-}
-}
+}}
 if(!colorSelected){
 color_being_selected=-1;
 column_of_color_being_selected=-1;
@@ -1080,14 +1031,10 @@ playAColor(emptyColor, column+1);
 }
 draw_graphic();
 break;
-}
-}
-}
+}}}
 catch (exc){
 displayGUIError("mouseReleased: "+exc, exc.stack);
-}
-}
-}
+}}}
 else if((!gameOnGoing())&&allPossibleCodesFilled()){
 if(!showPossibleCodesMode){
 event_y_min=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)));
@@ -1109,9 +1056,7 @@ atLeastOneAttemptSelection=true;
 }
 showPossibleCodesButtonClick(!showPossibleCodesMode, idx+1);
 break;
-}
-}
-}
+}}}
 else{
 if(showPossibleCodesMode){
 disableMouseMoveEffects=false;
@@ -1130,14 +1075,10 @@ else{
 showPossibleCodesOffsetMode=false;
 lastidxBeforeMouseMove=-1;
 showPossibleCodesButtonClick();
-}
-}
+}}
 else{
 lastidxBeforeMouseMove=-1;
-}
-}
-}
-}
+}}}}
 function touchStart(e){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("touchStart skipped");
@@ -1218,18 +1159,13 @@ showPossibleCodesButtonClick(false, idx+1, false, true);
 lastidxBeforeMouseMove=idx+1;
 }
 break;
-}
-}
-}
+}}}
 else{
 if(lastidxBeforeMouseMove!=currentPossibleCodeShownBeforeMouseMove){
 showPossibleCodesOffsetMode=false;
 showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforeMouseMove, false, true);
 lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;
-}
-}
-}
-}
+}}}}
 let promptSequenceIndex=0;
 function playAColor(color, column){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
@@ -1242,8 +1178,7 @@ promptSequenceIndex++;
 if(promptSequenceIndex==8){
 promptSequenceIndex=0;
 setTimeout("handlePrompt()", 444);
-}
-}
+}}
 else{
 promptSequenceIndex=0;
 }
@@ -1254,15 +1189,13 @@ return;
 if((nbColumns==5)&&(currentAttemptNumber <=3)){
 setTimeout("alert('To simplify calculations, obviously impossible colors can only be selected from mid-game');", 111);
 return;
-}
-}
+}}
 let newCurrentCode=smmCodeHandler.setColor(currentCode, color, column);
 for (let i=1;i < currentAttemptNumber;i++){
 if(newCurrentCode==codesPlayed[i-1]){
 setTimeout("alert('This code was already played');", 111);
 return;
-}
-}
+}}
 if(smmCodeHandler.isFullAndValid(newCurrentCode)){
 let allColorsAreObviouslyImpossible=true;
 for (let col=0;col < nbColumns;col++){
@@ -1270,25 +1203,21 @@ let color2=smmCodeHandler.getColor(newCurrentCode, col+1);
 if(!obviouslyImpossibleColors[color2]){
 allColorsAreObviouslyImpossible=false;
 break;
-}
-}
+}}
 if(allColorsAreObviouslyImpossible){
 setTimeout("alert('This code only contains obviously impossible colors so is useless');", 111);
 return;
-}
-}
+}}
 currentCode=newCurrentCode;
 draw_graphic();
-}
-}
+}}
 let previousNbColumns=-1;
 function getNbColumnsSelected(){
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 if(nbColumnsRadioObjects[i].checked){
 previousNbColumns=parseInt(nbColumnsRadioObjects[i].value);
 return previousNbColumns;
-}
-}
+}}
 if(previousNbColumns==-1){
 nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].checked="checked";
 previousNbColumns=parseInt(nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].value);
@@ -1297,8 +1226,7 @@ return previousNbColumns;
 else{
 nbColumnsRadioObjects[previousNbColumns-nbMinColumns].checked="checked";
 return previousNbColumns;
-}
-}
+}}
 function show_play_store_app(specific_str="", android_stars_mode=false, forceStr=""){
 if(forceStr!=""){
 let str=
@@ -1314,8 +1242,7 @@ modal.open();
 }
 catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
-}
-}
+}}
 else if(((!android_appli)||android_stars_mode)&&(last_dialog_gamesok!=(localStorage.gamesok ? localStorage.gamesok :-2)) ){
 let str1="";
 let str2="";
@@ -1348,8 +1275,7 @@ localStorage.androidAppNotifShown=0;
 }
 localStorage.androidAppNotifShown=Number(localStorage.androidAppNotifShown)+1;
 last_dialog_gamesok=(localStorage.gamesok ? localStorage.gamesok :-1);
-}
-}
+}}
 function updateGameSizes(){
 main_graph_update_needed=true;
 if(!CompressedDisplayMode){
@@ -1372,8 +1298,7 @@ scode_height=1;
 else{
 transition_height=0.075;
 scode_height=0;
-}
-}
+}}
 x_step=(x_max-x_min) / (attempt_nb_width
 +(70*(nbColumns+1))/100
 +nbColumns*2
@@ -1401,8 +1326,7 @@ skip_last_attempt_display=((currentAttemptNumber < nbMaxAttempts)||(gameWon&&(cu
 else{
 nb_attempts_not_displayed=thld;
 skip_last_attempt_display=(gameWon&&(currentAttemptNumber==nbMaxAttempts-thld));
-}
-}
+}}
 y_step=(y_max-y_min) / (nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)
 +transition_height
 +scode_height
@@ -1419,8 +1343,7 @@ y_step=(y_max-y_min) / (currentAttemptNumber-1
 +transition_height
 +nbPossibleCodesShown
 +1);
-}
-}
+}}
 function postInitMessageToGameSolver(cnt_p){
 try{
 if(game_id_for_gameSolverConfig!=cnt_p){
@@ -1446,12 +1369,10 @@ game_id_for_initGameSolver=game_cnt;
 }
 else{
 throw new Error("internal error: gameSolverInitMsgContents==null");
-}
-}
+}}
 catch (err){
 displayGUIError("postInitMessageToGameSolver() error: "+err, err.stack);
-}
-}
+}}
 function resetGameAttributes(nbColumnsSelected){
 let i;
 let first_session_game;
@@ -1473,8 +1394,7 @@ gameSolverDbg=1;
 workerTerminationTime=(new Date()).getTime();
 gameSolver.terminate();gameSolverDbg=2;
 gameSolver=undefined;
-}
-}
+}}
 gameSolverInitMsgContents=null;
 gameSolverConfigDbg=null;
 game_id_for_gameSolverConfig=-1;
@@ -1512,8 +1432,7 @@ if(!localStorage.nbDonationRequestsT){
 localStorage.nbDonationRequestsT=0;
 }
 localStorage.nbDonationRequestsT=Number(localStorage.nbDonationRequestsT)+1;
-}
-}
+}}
 catch (tmp_exc){}
 main_graph_update_needed=true;
 smmCodeHandler=null;
@@ -1701,12 +1620,10 @@ if(nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider tha
 if(colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (5)", new Error().stack);}
 if(minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (6)", new Error().stack);}
 for (let i=0;i < nbMaxAttempts;i++){
-if(minNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (7)", new Error().stack);}
-}
+if(minNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (7)", new Error().stack);}}
 if(maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (8)", new Error().stack);}
 for (let i=0;i < nbMaxAttempts;i++){
-if(maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (9)", new Error().stack);}
-}
+if(maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (9)", new Error().stack);}}
 if(obviouslyImpossibleColors.length > nbColors+1){displayGUIError("array is wider than expected (10)", new Error().stack);}
 if(relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)", new Error().stack);}
 if(global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)", new Error().stack);}
@@ -1720,9 +1637,7 @@ if(possibleCodesListsSubdivisions.length > nbMaxAttempts){displayGUIError("array
 if(equivalentPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (20)", new Error().stack);}
 for (let i=0;i < nbMaxAttempts;i++){
 if(possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (21)", new Error().stack);}
-if(globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (22)", new Error().stack);}
-}
-}
+if(globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (22)", new Error().stack);}}}
 gameOnGoing=function(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("gameOnGoing skipped");
@@ -1749,8 +1664,7 @@ for (let i=1;i <=attempt_nb-1;i++){
 smmCodeHandler.fillMark(codesPlayed[attempt_nb-1], codesPlayed[i-1], mark_tmp);
 if(!smmCodeHandler.marksEqual(mark_tmp, marks[i-1])){
 return i;
-}
-}
+}}
 return 0;
 }
 function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id){
@@ -1807,8 +1721,7 @@ displayGUIError("unexpected gameInv loop (1): "+gameInv, new Error().stack);
 }
 else{
 setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
-}
-}
+}}
 else if(!((marks[2].nbBlacks==0)&&(marks[2].nbWhites==0))
 ||((mark_tmp2a.nbBlacks==0)&&(mark_tmp2a.nbWhites==0)&&(mark_tmp2b.nbBlacks==0)&&(mark_tmp2b.nbWhites==0)) ){
 console.log("invert game rows #2");
@@ -1823,9 +1736,7 @@ displayGUIError("unexpected gameInv loop (2): "+gameInv, new Error().stack);
 }
 else{
 setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
-}
-}
-}
+}}}
 else if((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
 &&(smmCodeHandler.nbDifferentColors(codesPlayed[1])==1)
 &&(smmCodeHandler.nbDifferentColors(codesPlayed[2]) > 2) ){
@@ -1843,9 +1754,7 @@ displayGUIError("unexpected gameInv loop (3): "+gameInv, new Error().stack);
 }
 else{
 setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
-}
-}
-}
+}}}
 else if((gameInv==0)
 &&( ((smmCodeHandler.nbDifferentColors(codesPlayed[0]) >=2)
 &&(smmCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
@@ -1880,11 +1789,7 @@ displayGUIError("unexpected gameInv loop (4): "+gameInv, new Error().stack);
 }
 else{
 setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
-}
-}
-}
-}
-}
+}}}}}
 return true;
 }
 function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classical_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id){
@@ -1939,8 +1844,7 @@ strGame=strGame+smmCodeHandler.markToString(marks[i-1])+smmCodeHandler.codeToStr
 }
 strGame=strGame.trim();
 store_player_info(game_cnt, nbColumns, score, currentAttemptNumber-1, timeStr, (Math.round(sumPerfs * 100.0) / 100.0).toFixed(2) , nbUnknownPerfs, (nbColorsRevealed > 0), (((nbColorsRevealed > 0)||(nb_random_codes_played==0)) ? nbColorsRevealed+'x' : Math.min(nb_random_codes_played,9)+'ra'), strGame, wasGameShort);
-}
-}
+}}
 return true;
 }
 function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possible_codes_subdivision, equivalent_possible_code, globalPerformancesList_p, attempt_nb, game_id){
@@ -2050,8 +1954,7 @@ is_there_triple[code_idx]=true;
 else if(table_tmp[code_idx][color]==2){
 nb_doubles[code_idx]++;
 one_double_color[code_idx]=color;
-}
-}
+}}
 output_str[code_idx]="";
 if(are_there_5_identical_colors[code_idx]){
 output_str[code_idx]="5";
@@ -2068,8 +1971,7 @@ output_str[code_idx]="3+2";
 }
 else{
 throw new Error("determine_smm_jscriptname: internal error: triple with several doubles");
-}
-}
+}}
 else{
 if(nb_doubles[code_idx]==0){
 output_str[code_idx]="1+1+1+1+1";
@@ -2082,8 +1984,7 @@ output_str[code_idx]="2+2+1";
 }
 else{
 throw new Error("determine_smm_jscriptname: internal error: invalid number of doubles");
-}
-}
+}}
 output_str[code_idx]=output_str[code_idx]+"_"+mark_str;
 }
 let suffix="_"+smmCodeHandler.getSMMGameIdAfter2Attempts(code_1, code_2);
@@ -2105,8 +2006,7 @@ res="";
 else{
 console.log("(valid extra_precalculated_str)");
 res=extra_precalculated_str;
-}
-}
+}}
 extra_precalculated_str="";
 return res;
 }
@@ -2141,8 +2041,7 @@ console.log(("precalculated games fetch failure: "+textStatus+" "+error+" "+str_
 }
 else{
 debug_game_state=69.4;
-}
-});
+}});
 }
 function updateAndStoreNbGamesStarted(offset){
 try{
@@ -2174,12 +2073,10 @@ localStorage.nbgamesstarted7=Number(localStorage.nbgamesstarted7)+offset;
 break;
 default:
 throw new Error("updateAndStoreNbGamesStarted(): invalid number of columns: "+nbColumns);
-}
-}
+}}
 catch (err){
 displayGUIError("error while storing nbgamesstarted: "+err, new Error().stack);
-}
-}
+}}
 function updateAttributesWidthAndHeightValues(width, height){
 main_graph_update_needed=true;
 current_width=Math.max(width, 1);
@@ -2223,8 +2120,7 @@ ctx.fillRect(x_0,y_0,linewidth,y_1-y_0);
 }
 else{
 ctx.fillRect(x_0,y_0,x_1-x_0,linewidth);
-}
-}
+}}
 function drawLineWithPath(ctx, x_0, y_0, x_1, y_1){
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getGridLineWidth(window.innerHeight);
@@ -2248,8 +2144,7 @@ else{
 var defaultRadius={tl: 0, tr: 0, br: 0, bl: 0};
 for (var side in defaultRadius){
 radius[side]=radius[side]||defaultRadius[side];
-}
-}
+}}
 ctx.beginPath();
 ctx.moveTo(x+radius.tl, y);
 ctx.lineTo(x+width-radius.tr, y);
@@ -2266,8 +2161,7 @@ ctx.fill();
 }
 if(stroke){
 ctx.stroke();
-}
-}
+}}
 function draw_graphic(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("draw_graphic skipped");
@@ -2279,8 +2173,7 @@ draw_graphic_bis();
 if((gameOnGoingIni!=gameOnGoing())||(currentAttemptNumber!=currentAttemptNumberIni) ){
 updateGameSizes();
 draw_graphic_bis();
-}
-}
+}}
 function draw_graphic_bis(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("draw_graphic_bis skipped");
@@ -2430,8 +2323,7 @@ allRadioButtons[i].style.border=borderStr3;
 else{
 allRadioButtons[i].style.color="black";
 allRadioButtons[i].style.border='none';
-}
-}
+}}
 if(window.innerWidth < 0.57*window.innerHeight){
 generalTableWidthStr="100%";
 rulesTableWidthStr="100%";
@@ -2547,8 +2439,7 @@ smmCodeHandler.fillMark(sCodeConv, currentCode, marks[currentAttemptNumber-1]);
 if((marks[currentAttemptNumber-1].nbBlacks==0)&&(marks[currentAttemptNumber-1].nbWhites==0)){
 for (let col=0;col < nbColumns;col++){
 obviouslyImpossibleColors[smmCodeHandler.getColor(currentCode, col+1)]=true;
-}
-}
+}}
 if(marks[currentAttemptNumber-1].nbBlacks==nbColumns){
 stopTime=(new Date()).getTime();
 currentAttemptNumber++;
@@ -2569,8 +2460,7 @@ setLightGray();
 else{
 last_but_one_attempt_event=(currentAttemptNumber==nbMaxAttempts-1);
 currentCode=sCodeRevealed;
-}
-}
+}}
 updateGameSizes();
 main_graph_update_needed=true;
 let nbMaxAttemptsForEndOfGame;
@@ -2598,26 +2488,20 @@ precalculated_games=precalculated_games_5columns_1st_level[marks[currentAttemptN
 }
 if(precalculated_games==undefined){
 precalculated_games="";
-}
-}
+}}
 gameSolver.postMessage({'smm_buffer_messages': ((gamesolver_buffered_msg_status==1) ? 'yes' : 'no'), 'smm_req_type': 'NEW_ATTEMPT', 'curAttemptNumber': currentAttemptNumber-1, 'nbMaxAttemptsForEndOfGame': nbMaxAttemptsForEndOfGame, 'code': codesPlayed[currentAttemptNumber-2], 'mark_nbBlacks': marks[currentAttemptNumber-2].nbBlacks, 'mark_nbWhites': marks[currentAttemptNumber-2].nbWhites, 'precalculated_games': precalculated_games, 'game_id': game_cnt});
 gameSolverDbg++;
 if((nbColumns==5)&&(currentAttemptNumber==3)){
 completePrecalculatedGamesOnTheFly(smmCodeHandler.compressCodeToString(codesPlayed[0]), smmCodeHandler.markToString(marks[0]),
 smmCodeHandler.compressCodeToString(codesPlayed[1]), smmCodeHandler.markToString(marks[1]),
 codesPlayed[0], codesPlayed[1]);
-}
-}
+}}
 else{
 throw new Error("undefined gameSolver ("+currentAttemptNumber+")");
-}
-}
+}}
 else{
 throw new Error("invalid game_id_for_initGameSolver value at next attempt: "+game_id_for_initGameSolver);
-}
-}
-}
-}
+}}}}
 let nbMaxAttemptsToDisplay=((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) : currentAttemptNumber-1);
 if(main_graph_update_needed){
 let x_0, y_0, x_1, y_1;
@@ -2732,8 +2616,7 @@ displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 lightGray, backgroundColor, ctx, false, true, 0, true, 0);
-}
-}
+}}
 else if(attempt_nb_to_display==currentAttemptNumber){
 if(attempt_nb_to_display==nbMaxAttempts){
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
@@ -2746,13 +2629,11 @@ redColor, backgroundColor, ctx, false, true, 0, true, 0);
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 (modernDisplay ? modernBaseColor : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
-}
-}
+}}
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 (((currentAttemptNumber==1)&&!modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
-}
-}
+}}
 ctx.fillStyle=darkGray;
 x_0=get_x_pixel(x_min+x_step*attempt_nb_width);
 y_0=get_y_pixel(y_min);
@@ -2768,8 +2649,7 @@ x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
 y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 if((col==0)||(col==nbColumns)){
 drawLine(ctx, x_0, y_0, x_1, y_1);
-}
-}
+}}
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
 y_0=get_y_pixel(y_min);
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
@@ -2816,9 +2696,7 @@ if(relativePerformancesEvaluationDone[i-1]
 &&(relative_performances_of_codes_played[i-1]!=PerformanceUNKNOWN)
 &&(relative_performances_of_codes_played[i-1] <=PerformanceLOW) ){
 performancesDisplayed[i-1]=true;
-}
-}
-}
+}}}
 let clockStr;
 if(gameWon&&!allPerformancesFilled()){
 clockStr="\u231B";
@@ -2841,9 +2719,7 @@ lightGray, "", ctx, false);
 if(nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs){
 displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbOfStatsFilled_Perfs+1-1, optimal_width,
 lightGray, "", ctx, false);
-}
-}
-}
+}}}
 else{
 if(nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1){
 displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_Perfs+1-1, nb_possible_codes_width,
@@ -2859,9 +2735,7 @@ lightGray, "", ctx, false);
 if(nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs){
 displayString(clockStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbOfStatsFilled_Perfs+1-1, nb_possible_codes_width,
 lightGray, "", ctx, false);
-}
-}
-}
+}}}
 for (let i=1;i <=nbOfStatsFilled_NbPossibleCodes;i++){
 let backgroundColor="";
 if(i==currentPossibleCodeShown){
@@ -2885,9 +2759,7 @@ if(!displayString("\u2009"+nbOfPossibleCodes[i-1]+"\u2009" , attempt_nb_width+(7
 statsColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, i-1, nb_possible_codes_width,
 statsColor, backgroundColor, ctx, false);
-}
-}
-}
+}}}
 if(tick_width > 0){
 ctx.font=basic_bold_font;
 for (let i=1;i < currentAttemptNumber;i++){
@@ -2911,16 +2783,14 @@ if(!displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+
 greenColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("Y", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 greenColor, backgroundColor, ctx, false, true, 0, true, 0);
-}
-}
+}}
 else{
 if(i <=2){
 if(!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0);
-}
-}
+}}
 else{
 if(!displayString("\u2009"+crossChar+"\u2009"+isPossible+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
@@ -2930,13 +2800,7 @@ if(!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0);
-}
-}
-}
-}
-}
-}
-}
+}}}}}}}
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 1);
 ctx.strokeStyle=darkGray;
@@ -2975,12 +2839,10 @@ lightGray, "", ctx, false, true, 0, true, 1)){
 if((tick_width > 0)&&displayString("\u2009"+"#"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
 res_header1=true;
-}
-}
+}}
 else{
 res_header1=true;
-}
-}
+}}
 else{
 res_header1=true;
 }
@@ -2992,15 +2854,13 @@ lightGray, "", ctx, 0, false);
 }
 else{
 res_header2=true;
-}
-}
+}}
 if(res_header1&&(res_header2||(optimal_width <=0))&&(tick_width > 0)){
 if(!displayString("\u2009"+tickChar+"\u2009"+"/"+"\u2009"+crossChar+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
 displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
 lightGray, "", ctx, false, true, 0, true, 1);
-}
-}
+}}
 if((!gameOnGoing())&&allPossibleCodesFilled()
 &&(gameSolver!==undefined) ){
 isWorkerAlive=-1.5;
@@ -3008,8 +2868,7 @@ gameSolverDbg=1.5;
 workerTerminationTime=(new Date()).getTime();
 gameSolver.terminate();gameSolverDbg=2.5;
 gameSolver=undefined;
-}
-}
+}}
 else{
 let res_header1=false;
 let res_header2=false;
@@ -3020,12 +2879,10 @@ lightGray, "", ctx, false, true, 0, true, 1)){
 if((tick_width > 0)&&displayString("\u2009"+"#"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
 res_header1=true;
-}
-}
+}}
 else{
 res_header1=true;
-}
-}
+}}
 else{
 res_header1=true;
 }
@@ -3035,20 +2892,16 @@ lightGray, "", ctx, 0, true)){
 if(displayString("perf", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width, nbMaxAttemptsToDisplay, optimal_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
 res_header2=true;
-}
-}
+}}
 else{
 res_header2=true;
-}
-}
+}}
 if(res_header1&&(res_header2||(optimal_width <=0))&&(tick_width > 0)){
 if(!displayString("\u2009"+tickChar+"\u2009"+"/"+"\u2009"+crossChar+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
 displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, nbMaxAttemptsToDisplay, tick_width,
 lightGray, "", ctx, false, true, 0, true, 1);
-}
-}
-}
+}}}
 ctx.fillStyle=darkGray;
 if(scode_height > 0){
 ctx.font=basic_bold_font;
@@ -3058,20 +2911,17 @@ if(!displayString("\u2009Code\u2009", attempt_nb_width, nbMaxAttemptsToDisplay+t
 (modernDisplay||(currentAttemptNumber==1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 0, true, 0)){
 displayString("\u2009\u2B50\u2009" , attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
 (modernDisplay||(currentAttemptNumber==1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 0, true, 0);
-}
-}
+}}
 if(gameOnGoing()){
 if(!dsCode){
 displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true, false);
 }
 else{
 displayCode(smmCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
-}
-}
+}}
 else{
 displayCode(smmCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
-}
-}
+}}
 if(!gameOnGoing()){
 let totalTimeInMilliSeconds=stopTime-startTime
 +((gameInv!=0) ? 1000 : 0);
@@ -3093,12 +2943,10 @@ timeStr=timeInHours+"h 0"+timeInMinutes;
 }
 else{
 timeStr=timeInHours+"h "+timeInMinutes;
-}
-}
+}}
 else{
 timeStr=timeInHours+"h";
-}
-}
+}}
 else if(timeInMinutes!=0){
 timeInSeconds=Math.floor(timeInSeconds/10.0)*10;
 if(timeInMinutes >=10){
@@ -3109,8 +2957,7 @@ timeStr=timeInMinutes+" min "+timeInSeconds;
 }
 else{
 timeStr=timeInMinutes+" min";
-}
-}
+}}
 else{
 timeStr=timeInSeconds+" s";
 }
@@ -3196,8 +3043,7 @@ let delta_score_factor=1 / (delta_score/10+1);
 score=min_score+10 * multiply_factor * delta_score_factor;
 if(score < min_score){
 score=min_score;
-}
-}
+}}
 if(smmCodeHandler.nbEmptyColors(sCodeRevealed) < nbColumns){
 victoryStr="\u2009You won with help\u2009";
 victoryStr2="\u2009Win with help\u2009";
@@ -3217,8 +3063,7 @@ if(!displayString(victoryStr2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns
 greenColor, "", ctx, false, true, 0, true, 0)){
 displayString(victoryStr3, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
 greenColor, "", ctx, false, true, 0, false, 0);
-}
-}
+}}
 if(allPerformancesFilled()){
 if(!displayString("\u2009"+"\u23F0\u2009"+timeStr+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, "", ctx, false, true, 0, true, 0)){
@@ -3230,10 +3075,7 @@ if(!displayString("\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").r
 darkGray, "", ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, "", ctx, false, true, 0, false, 0);
-}
-}
-}
-}
+}}}}
 let rounded_score=Math.round(score);
 let ptsStr;
 if(rounded_score > 1){
@@ -3246,16 +3088,13 @@ if(!displayString("\u2009"+rounded_score+"\u2009"+ptsStr+"\u2009" , attempt_nb_w
 darkGray, "", ctx, false, true, 0, true, 0)){
 displayString(rounded_score+ptsStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-2, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, "", ctx, false, true, 0, false, 0);
-}
-}
+}}
 else{
 if(!displayString("\u2009"+"Please wait..."+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 lightGray, "", ctx, false, true, 0, true, 0)){
 displayString("\u231B" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 lightGray, "", ctx, false, true, 0, false, 0);
-}
-}
-}
+}}}
 else if(currentAttemptNumber==nbMaxAttemptsToDisplay+1){
 score=0.0;
 if(!displayString("\u2009You lost!\u2009", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
@@ -3273,15 +3112,10 @@ if(!displayString("\u2009"+timeStr.replaceAll(" min","m").replaceAll(" s","s").r
 darkGray, "", ctx, false, true, 0, true, 0)){
 displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, "", ctx, false, true, 0, false, 0);
-}
-}
-}
-}
-}
+}}}}}
 else{
 displayGUIError("game over inconsistency", new Error().stack);
-}
-}
+}}
 ctx.font=basic_bold_font;
 ctx.fillStyle=darkGray;
 try{
@@ -3298,19 +3132,12 @@ if(mobileMode){
 if((nbColumns >=4)&&(nbColumns <=7)&&(currentAttemptNumber==1)){
 displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
 (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
-}
-}
+}}
 else{
 displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
 (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 2, true, 0, false, true, false );
-}
-}
-}
-}
-}
-}
-catch (err_help){}
-}
+}}}}}}
+catch (err_help){}}
 else{
 let nbOfCodes=nbOfPossibleCodes[currentPossibleCodeShown-1];
 let nbOfCodesListed;
@@ -3334,9 +3161,7 @@ darkGray, "", ctx, false, true, 0, true, 0);
 if(!res){
 res=displayString("1", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, "", ctx, false, true, 0, true, 0);
-}
-}
-}
+}}}
 else{
 res=displayString(nbOfCodes+" possible codes ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, "", ctx, false, true, 0, true, 0);
@@ -3346,9 +3171,7 @@ darkGray, "", ctx, false, true, 0, true, 0);
 if(!res){
 res=displayString(String(nbOfCodes), 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, "", ctx, false, true, 0, true, 0);
-}
-}
-}
+}}}
 let currentPossibleCodeShownStr;
 switch (currentPossibleCodeShown){
 case 1:
@@ -3384,10 +3207,7 @@ if(!displayString("+\u2009"+"1"+"\u2009"+offset_str+"\u2009", 0, nbMaxAttemptsTo
 darkGray, "", ctx, false, true, 0, true, 0)){
 displayString("\u2009"+"1"+"\u2009"+offset_str+"\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, "", ctx, false, true, 0, true, 0);
-}
-}
-}
-}
+}}}}
 else{
 if(!displayString("+"+(nbOfCodes-nbOfCodesListed)+" other codes\u2009"+offset_str+" ", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, "", ctx, false, true, 0, true, 0)){
@@ -3399,19 +3219,12 @@ if(!displayString("\u2009"+(nbOfCodes-nbOfCodesListed)+"\u2009"+offset_str+"\u20
 darkGray, "", ctx, false, true, 0, true, 0)){
 displayString(offset_str, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
 darkGray, "", ctx, false, true, 0, true, 0);
-}
-}
-}
-}
-}
+}}}}}
 if((!atLeastOneAttemptSelection)&&(!CompressedDisplayMode)&&(transition_height >=1)){
 ctx.font=small_bold_font;
 displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(70*(nbColumns+1))/100,
 (modernDisplay ? "#4B0082"  : "orange"), "", ctx, false, true, 0, true, 0);
-}
-}
-}
-}
+}}}}
 else{
 displayGUIError("invalid currentPossibleCodeShown: "+currentPossibleCodeShown, new Error().stack);
 }
@@ -3420,8 +3233,7 @@ for (let col=0;col < nbColumns;col++){
 if(smmCodeHandler.getColor(colorsFoundCodes[currentPossibleCodeShown-1], col+1)!=emptyColor){
 displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+col*2, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown, 2,
 greenColor, "", ctx, false, true, 0, true, 1, true );
-}
-}
+}}
 ctx.font=basic_bold_font;
 let colors_cnt=0;
 for (let color=1;color <=nbColors;color++){
@@ -3429,9 +3241,7 @@ if(minNbColorsTables[currentPossibleCodeShown-1][color] > 0){
 for (let i=0;i < minNbColorsTables[currentPossibleCodeShown-1][color];i++){
 displayColor(color, Math.max(attempt_nb_width+(70*(nbColumns+1))/100-3,0), nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, true);
 colors_cnt++;
-}
-}
-}
+}}}
 if(colors_cnt > 0){
 colors_cnt++;
 }
@@ -3439,8 +3249,7 @@ for (let color=1;color <=nbColors;color++){
 if(maxNbColorsTables[currentPossibleCodeShown-1][color]==0){
 displayColor(color, Math.max(attempt_nb_width+(70*(nbColumns+1))/100-3,0), nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-4-colors_cnt, ctx, false, false);
 colors_cnt++;
-}
-}
+}}
 ctx.fillStyle=darkGray;
 for (let codeidx=0;codeidx <=nbPossibleCodesShown;codeidx++){
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
@@ -3497,9 +3306,7 @@ let currentColor=ctx.strokeStyle;
 ctx.strokeStyle=lightGray;
 drawLineWithPath(ctx, x_0, y_0, x_1, y_1);
 ctx.strokeStyle=currentColor;
-}
-}
-}
+}}}
 if(gameWon&&!allPerformancesFilled()){
 newGameButtonObject.disabled=true;
 newGameButtonObject.className="button disabled";
@@ -3508,8 +3315,7 @@ newGameButtonObject.value="\u231B";
 }
 else{
 newGameButtonObject.value="WAIT... \u231B";
-}
-}
+}}
 else{
 newGameButtonObject.disabled=false;
 newGameButtonObject.className="button";
@@ -3518,8 +3324,7 @@ newGameButtonObject.value="+";
 }
 else{
 newGameButtonObject.value=newGameButtonIniName;
-}
-}
+}}
 settingsButtonObject.disabled=false;
 settingsButtonObject.className="button";
 if(currentAttemptNumber > 1){
@@ -3528,16 +3333,14 @@ allRadioButtons[i].className="radio disabled";
 }
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 nbColumnsRadioObjects[i].disabled=true;
-}
-}
+}}
 else{
 for (let i=0;i < allRadioButtons.length;i++){
 allRadioButtons[i].className="radio";
 }
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 nbColumnsRadioObjects[i].disabled=false;
-}
-}
+}}
 playRandomCodeButtonObject.disabled=(!gameOnGoing()||(currentAttemptNumber >=nbMaxAttempts-1));
 if(playRandomCodeButtonObject.disabled){
 playRandomCodeButtonObject.className="button disabled";
@@ -3554,8 +3357,7 @@ revealSecretColorButtonObject.className="button disabled";
 }
 else{
 revealSecretColorButtonObject.className="button";
-}
-}
+}}
 let showPossibleCodesButtonObjectIniState=showPossibleCodesButtonObject.disabled;
 showPossibleCodesButtonObject.disabled=!((!gameOnGoing())&&allPossibleCodesFilled());
 if(showPossibleCodesButtonObject.disabled!=showPossibleCodesButtonObjectIniState){
@@ -3569,25 +3371,21 @@ showPossibleCodesButtonObject.className="button";
 else{
 showPossibleCodesButtonAlreadyBlinked=true;
 showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_brown" : "_orange") : "button blinking"+(modernDisplay ? "_brown" : "_orange"));
-}
-}
-}
+}}}
 if(CompressedDisplayMode){
 if(showPossibleCodesMode){
 showPossibleCodesButtonObject.value=showPossibleCodesButtonBackToGameCompressedName;
 }
 else{
 showPossibleCodesButtonObject.value=showPossibleCodesButtonCompressedName;
-}
-}
+}}
 else{
 if(showPossibleCodesMode){
 showPossibleCodesButtonObject.value=showPossibleCodesButtonBackToGameName;
 }
 else{
 showPossibleCodesButtonObject.value=showPossibleCodesButtonIniName;
-}
-}
+}}
 checkArraySizes();
 main_graph_update_needed=false;
 }
@@ -3604,8 +3402,7 @@ for (let col=0;col < nbColumns;col++){
 color_selection_code=smmCodeHandler.setColor(color_selection_code, color+1, col+1);
 }
 displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
-}
-}
+}}
 if(gameOnGoing()){
 ctx.font=basic_bold_font;
 currentCodeColorMode=-1;
@@ -3624,8 +3421,7 @@ currentCodeColorMode=2;
 }
 else{
 currentCodeColorMode=3;
-}
-}
+}}
 else{
 currentCodeColorMode=1;
 }
@@ -3640,8 +3436,7 @@ if((!revealSecretColorButtonAlreadyBlinked)
 ||at_least_one_useless_code_played ) ){
 revealSecretColorButtonAlreadyBlinked=true;
 revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_brown" : "_orange") : "button blinking"+(modernDisplay ? "_brown" : "_orange"));
-}
-}
+}}
 resetCurrentCodeButtonObject.disabled=!(gameOnGoing()&&(currentCode!=sCodeRevealed));
 if(resetCurrentCodeButtonObject.disabled){
 resetCurrentCodeButtonObject.className="button disabled";
@@ -3655,13 +3450,11 @@ if(last_but_one_attempt_event
 &&!(revealSecretColorButtonObject.disabled)
 &&(sCodeRevealed==0) ){
 setTimeout("displayRevealSecretColorHintIfNeeded();", 44);
-}
-}
+}}
 catch (err){
 draw_exception=true;
 displayGUIError("draw error: "+err, err.stack);
-}
-}
+}}
 function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_width, str_height){
 ctx.textAlign="start";
 ctx.textBaseline="top";
@@ -3674,8 +3467,7 @@ ctx.fillText(prefix_str, x_pixel, y_pixel);
 ctx.fillStyle=foregroundColor;
 ctx.fillText(str.substring(special_str_index+1), x_pixel+ctx.measureText(prefix_str).width, y_pixel);
 return;
-}
-}
+}}
 ctx.fillStyle=foregroundColor;
 if((str=="\u{1F3C6}" )
 &&(typeof trophy_image_loaded!=='undefined')&&trophy_image_loaded&&(trophy_image_width!=-1)&&(trophy_image_height!=-1) ){
@@ -3686,8 +3478,7 @@ ctx.drawImage(trophy_image, x_pixel+(str_width-new_str_width)/2, y_pixel-(new_st
 }
 else{
 ctx.fillText(str, x_pixel, y_pixel);
-}
-}
+}}
 function displayString(str_p, x_cell, y_cell, x_cell_width,
 foregroundColor, backgroundColor,
 ctx,
@@ -3761,13 +3552,10 @@ tr: radius,
 bl: radius,
 br: radius
 }, true, true);
-}
-}
+}}
 else{
 ctx.fillRect(x_0+1, y_0_next+1, x_0_next-x_0-1, y_0-y_0_next-1);
-}
-}
-}
+}}}
 if(justify==0){
 if(!displayColorMode){
 if(backgroundColor==""){
@@ -3795,8 +3583,7 @@ displayGUIError("displayString error: N.A. background #2", new Error().stack);
 ctx.fillStyle=backgroundColor;
 let half_hidding_rect_width=Math.max(8*(x_0_next-x_0)/100, str_width/2+2);
 ctx.fillRect(x_0+(x_0_next-x_0)/2-half_hidding_rect_width, y_0_next+3, 2*half_hidding_rect_width+2, y_0-y_0_next-4);
-}
-}
+}}
 fillTextWithColors(str, x_0+(x_0_next-x_0-str_width)/2, y_pixel, foregroundColor, ctx, str_width, str_height);
 x_0_for_drawBubble=Math.max((x_0+x_0_next)/2-str_width/2, 0);
 }
@@ -3829,16 +3616,14 @@ foregroundColor, backgroundColor, ctx, false, true, justify, displayIfEnoughRoom
 if(res){
 displayString(str1, x_cell, y_cell, x_cell_width,
 foregroundColor, backgroundColor, ctx, false, true, justify, displayIfEnoughRoom, 2);
-}
-}
+}}
 else{
 res=displayString(str1, x_cell, y_cell, x_cell_width,
 foregroundColor, backgroundColor, ctx, false, true, justify, displayIfEnoughRoom, 2);
 if(res){
 displayString(str2, x_cell, y_cell, x_cell_width,
 foregroundColor, backgroundColor, ctx, false, true, justify, displayIfEnoughRoom, 1);
-}
-}
+}}
 return res;
 }
 function averageColor(color1_p, color2_p, color1Coef){
@@ -3926,16 +3711,14 @@ handleCurrentCodeColorMode=true;
 else{
 foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.15);
 backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
-}
-}
+}}
 if(highlight_selected_text){
 if(!modernDisplay){
 backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.25);
 }
 else{
 backgroundColor=averageColor(backgroundColor, modernBaseColor2, 0.25);
-}
-}
+}}
 if(color < 10){
 displayString(getColorToDisplay(color), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
@@ -3946,9 +3729,7 @@ foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, true, 0);
 if(!res){
 displayString(getColorToDisplay(color-10), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
-}
-}
-}
+}}}
 else{
 if(secretCodeCase){
 let foregd_color=(modernDisplay ? darkGray : lightGray);
@@ -3960,8 +3741,7 @@ foregd_color=backgroundColorTable[color_cnt];
 color_cnt++;
 if(color_cnt==5){
 color_cnt=7;
-}
-}
+}}
 if(modernDisplay){
 displayString(getColorToDisplay("?"), x_cell, y_cell, 2,
 foregd_color, (mobileMode ? "#EEEEEE" : "#D0D0D0"), ctx, true, displayColorMode, 0, false, 0);
@@ -3971,25 +3751,21 @@ currentCodeColorMode=((currentAttemptNumber <=1) ? 3 : 1);
 displayString(getColorToDisplay("?"), x_cell, y_cell, 2,
 foregd_color, legacy_backgroundColor_base_color, ctx, true, displayColorMode, 0, false, 0);
 currentCodeColorMode=-1;
-}
-}
+}}
 else{
 displayString(getColorToDisplay(""), x_cell, y_cell, 2,
 darkGray, (modernDisplay ? (mobileMode ? "#EEEEEE" : "#D0D0D0") : averageColor(legacy_backgroundColor_base_color, "#FFFFFF", 0.95)), ctx, true, displayColorMode, 0, false, 0);
-}
-}
+}}
 if(handleCurrentCodeColorMode){
 currentCodeColorMode=-1;
-}
-}
+}}
 function displayCode(code, y_cell, ctx, secretCodeCase=false, checkDisabledColors=false, check_highlight_text=false){
 for (let col=0;col < nbColumns;col++){
 let color=smmCodeHandler.getColor(code, col+1);
 highlight_selected_text=(check_highlight_text&&(color==color_being_selected)&&(col+1==column_of_color_being_selected));
 displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ? obviouslyImpossibleColors[color] : false));
 highlight_selected_text=false;
-}
-}
+}}
 function displayMark(mark, y_cell, backgroundColor, ctx){
 let x_0=get_x_pixel(x_min+x_step*attempt_nb_width);
 let x_0_next=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
@@ -4068,8 +3844,7 @@ ctx.lineWidth=circleBorderWidth;
 ctx.strokeStyle=averageColor((modernDisplay ? "#000000" : "#FFFFFF"), myTableObject.style.backgroundColor, (modernDisplay ? 0.20 : 0.20));
 ctx.stroke();
 ctx.lineWidth=lineWidthIni;
-}
-}
+}}
 if(mark.nbBlacks+mark.nbWhites==0){
 ctx.strokeStyle=lightGray;
 let cross_height=(0.33*(y_0-y_0_next)+0.66*2*radius);
@@ -4082,8 +3857,7 @@ if((mark.nbBlacks+mark.nbWhites==0)&&((!localStorage.gamesok)||(Number(localStor
 worst_mark_alert_already_displayed=true;
 nb_worst_mark_alert_displayed++;
 setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 111);
-}
-}
+}}
 function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomRightBubble)
 {
 let r=x+w;
@@ -4125,8 +3899,7 @@ ctx.quadraticCurveTo(x, y, x+radius, y);
 ctx.lineTo(r-radius*2, y);
 ctx.stroke();
 ctx.lineWidth=lineWidthIni;
-}
-}
+}}
 function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag, equivalentIdeaFlag, isClassicalUselessCode){
 let performance=Math.round(perf * 100.0) / 100.0;
 let optimalglobalperformance=Math.round(optimalGlobalPerf * 100.0) / 100.0;
@@ -4152,8 +3925,7 @@ isPossible_str="";
 }
 else{
 isPossible_str="\u2009("+isPossible+")";
-}
-}
+}}
 if(performance==PerformanceUNKNOWN){
 displayString("\u2234", x_cell, y_cell, cell_width,
 lightGray, backgroundColor, ctx, false);
@@ -4183,32 +3955,25 @@ if(!displayString("\u200A"+performance.toFixed(nb_of_decimals).replaceAll(",",".
 color, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
 color, backgroundColor, ctx, false);
-}
-}
-}
-}
-}
+}}}}}
 else if(performance <=PerformanceVERYLOW){
 if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A", x_cell, y_cell, cell_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
 redColor, backgroundColor, ctx, false);
-}
-}
+}}
 else if(performance <=PerformanceLOW){
 if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A", x_cell, y_cell, cell_width,
 orangeColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
 orangeColor, backgroundColor, ctx, false);
-}
-}
+}}
 else if(performance < 0.00){
 if(!displayString("\u200A"+performance.toFixed(2).replaceAll(",",".")+"\u200A", x_cell, y_cell, cell_width,
 lightGray, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString(performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
 lightGray, backgroundColor, ctx, false);
-}
-}
+}}
 else if(performance==0.00){
 let starStr="";
 let starStr2="";
@@ -4227,11 +3992,7 @@ if(!displayString("\u200A\u200A"+starStr2+performance.toFixed(1).replaceAll(",",
 lightGray, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString(starStr2+performance.toFixed(0).replaceAll(",","."), x_cell, y_cell, cell_width,
 lightGray, backgroundColor, ctx, false);
-}
-}
-}
-}
-}
+}}}}}
 else{
 if(performance <=0.00){
 throw new Error("internal error in displayPerf (2): "+performance);
@@ -4242,10 +4003,7 @@ if(!displayString("\u200A"+"+"+performance.toFixed(2).replaceAll(",",".")+"\u200
 greenColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("+"+performance.toFixed(1).replaceAll(",","."), x_cell, y_cell, cell_width,
 greenColor, backgroundColor, ctx, false);
-}
-}
-}
-}
+}}}}
 else{
 displayString("NA", x_cell, y_cell, cell_width,
 lightGray, backgroundColor, ctx, false);
@@ -4257,8 +4015,7 @@ displayString("\uD83D\uDCA1", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*
 else if(equivalentIdeaFlag&&(tick_width > 0)&&(!globalPerfDisplayIfOptimal)){
 displayString("\uD83D\uDCA1", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell+(android_appli ? 0 : 0.065), tick_width,
 "#FFBF00", backgroundColor, ctx, false);
-}
-}
+}}
 function fullObjToString(obj){
 try{
 let str='{';
@@ -4270,8 +4027,7 @@ return str;
 }
 catch (exc){
 return "?";
-}
-}
+}}
 debug_game_state=68.5;
 scriptsFullyLoaded=true;
 draw_graphic();
@@ -4295,8 +4051,7 @@ modal.open();
 }
 catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
-}
-}
+}}
 else{
 askLocationPermissionsIfNeeded();
 }
