@@ -1134,8 +1134,12 @@ return;
 if (message.indexOf("_AutofillCallbackHandler") != -1) {
 return;
 }
-// sporadic Safari [extension?] error
+// Sporadic Safari [extension?] error
 if (message.indexOf("undefined is not an object (evaluating 'a.L')") != -1) {
+return;
+}
+// Sporadic Safari [extension?] error: error:Script error.|url:|line number:0|column number:0|error object:null in Safari/xxx
+if (safariMode && (message.indexOf("Script error.") != -1) && (url == "") && (lineNo == 0) && (columnNo == 0) && (error == null)) {
 return;
 }
 }
