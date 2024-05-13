@@ -1130,6 +1130,10 @@
           if (message.indexOf("webkitExitFullScreen") != -1) {
             return;
           }
+          // Error: ReferenceError: Can't find variable: _AutofillCallbackHandler
+          if (message.indexOf("_AutofillCallbackHandler") != -1) {
+            return;
+          }
           // sporadic Safari [extension?] error
           if (message.indexOf("undefined is not an object (evaluating 'a.L')") != -1) {
             return;

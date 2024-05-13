@@ -265,19 +265,12 @@ let fontFamily="Verdana";
 let defaultFont="10px "+fontFamily;
 let min_font_size=7;
 let max_font_size=700;
-let basic_font=defaultFont;
+let font_array__str_height=new Array(0);
+let font_array__empty_space_before_str=new Array(0);
 let basic_bold_font=defaultFont;
-let basic_bold_italic_font=defaultFont;
-let small_basic_font=defaultFont;
 let small_bold_font=defaultFont;
-let small_italic_font=defaultFont;
-let very_small_font=defaultFont;
-let very_small_italic_font=defaultFont;
-let medium_basic_font=defaultFont;
 let medium_bold_font=defaultFont;
-let medium2_bold_font=defaultFont;
-let stats_font=defaultFont;
-let error_font=defaultFont;
+let stats_bold_font=defaultFont;
 let font_size=min_font_size;
 let star_font_size=min_font_size;
 let main_graph_update_needed=true;
@@ -2106,7 +2099,7 @@ displayGUIError("out of range y value: "+y+", "+y_min+", "+y_max+", "+y_step+", 
 if(y < y_min) y=y_min;
 if(y > y_max) y=y_max;
 }
-let res=Math.round(height_shift+reduced_height-((y-(y_min+1.0)) * reduced_height) / (y_max-(y_min+1.0)));
+let res=Math.floor(height_shift+reduced_height-((y-(y_min+1.0)) * reduced_height) / (y_max-(y_min+1.0)));
 if((res < 0)||(res > current_height-1) ){
 if(res < 0) return 0;
 if(res > current_height-1) return current_height-1;
@@ -2174,12 +2167,18 @@ if((gameOnGoingIni!=gameOnGoing())||(currentAttemptNumber!=currentAttemptNumberI
 updateGameSizes();
 draw_graphic_bis();
 }}
+var main_ctx=null;
 function draw_graphic_bis(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("draw_graphic_bis skipped");
 return;
 }
-let ctx=canvas.getContext("2d");
+var main_ctx_was_null=false;
+if(main_ctx==null){
+main_ctx=canvas.getContext("2d",{willReadFrequently: true});
+main_ctx_was_null=true;
+}
+let ctx=main_ctx;
 let res;
 let draw_exception=false;
 let last_but_one_attempt_event=false;
@@ -2194,7 +2193,8 @@ nbColumnsSelected=defaultNbColumns;
 }
 let lineWidth=getLineWidth(window.innerHeight, 1);
 refLineWidth=getLineWidth(window.innerHeight, 1);
-if((Math.abs(current_innerWidth-window.innerWidth) > 1)||(Math.abs(current_innerHeight-window.innerHeight) > 1) ){
+if(main_ctx_was_null
+||(Math.abs(current_innerWidth-window.innerWidth) > 1)||(Math.abs(current_innerHeight-window.innerHeight) > 1) ){
 var newCompressedDisplayMode;
 if(window.innerHeight >=window.innerWidth * 0.77){
 newCompressedDisplayMode=true;
@@ -2558,24 +2558,31 @@ star_font_width_1char=ctx.measureText("\u2B50").width;
 star_font_height=star_font_size;
 }
 star_font_size=Math.min(last_valid_star_font_size, font_size);
-basic_font=font_size+"px "+fontFamily;
+font_array__str_height=null;
+font_array__empty_space_before_str=null;
+font_array__str_height=new Array(0);
+font_array__empty_space_before_str=new Array(0);
 basic_bold_font="bold "+font_size+"px "+fontFamily;
-basic_bold_italic_font="bold italic "+font_size+"px "+fontFamily;
-small_basic_font=Math.max(Math.floor(font_size/1.4), min_font_size)+"px "+fontFamily;
+measurePreciseTextHeight("0", basic_bold_font, str_meas_out);
+font_array__str_height[basic_bold_font]=str_meas_out.str_height;
+font_array__empty_space_before_str[basic_bold_font]=str_meas_out.empty_space_before_str;
 small_bold_font="bold "+Math.max(Math.floor(font_size/1.4), min_font_size)+"px "+fontFamily;
-small_italic_font="italic "+Math.max(Math.floor(font_size/1.4), min_font_size)+"px "+fontFamily;
-very_small_font=Math.max(Math.floor(font_size/2.34), min_font_size)+"px "+fontFamily;
-very_small_italic_font="italic "+Math.max(Math.floor(font_size/2.34), min_font_size)+"px "+fontFamily;
-medium_basic_font=Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
+measurePreciseTextHeight("0", small_bold_font, str_meas_out);
+font_array__str_height[small_bold_font]=str_meas_out.str_height;
+font_array__empty_space_before_str[small_bold_font]=str_meas_out.empty_space_before_str;
 medium_bold_font="bold "+Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
-medium2_bold_font="bold "+Math.min(Math.max(Math.floor(font_size/1.55)+2, min_font_size), font_size)+"px "+fontFamily;
+measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
+font_array__str_height[medium_bold_font]=str_meas_out.str_height;
+font_array__empty_space_before_str[medium_bold_font]=str_meas_out.empty_space_before_str;
 if(!showPossibleCodesMode){
-stats_font="bold "+Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
+stats_bold_font="bold "+Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
 }
 else{
-stats_font="bold "+Math.max(Math.floor(star_font_size), min_font_size)+"px "+fontFamily;
+stats_bold_font="bold "+Math.max(Math.floor(star_font_size), min_font_size)+"px "+fontFamily;
 }
-error_font=font_size+"px "+fontFamily;
+measurePreciseTextHeight("0", stats_bold_font, str_meas_out);
+font_array__str_height[stats_bold_font]=str_meas_out.str_height;
+font_array__empty_space_before_str[stats_bold_font]=str_meas_out.empty_space_before_str;
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 y_0=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
@@ -2680,7 +2687,7 @@ backgroundColor=highlightColor;
 }
 displayMark(marks[i-1], i-1, backgroundColor, ctx);
 }
-ctx.font=stats_font;
+ctx.font=stats_bold_font;
 let nbMaxHintsDisplayed=2;
 for (let i=0;i < nbMaxAttempts;i++){
 performancesDisplayed[i]=true;
@@ -2771,14 +2778,12 @@ let isPossible=isAttemptPossible(i);
 if(gameOnGoing()&&(i > nbMaxHintsDisplayed)
 &&((relative_performances_of_codes_played[i-1] >-0.9999)||(relative_performances_of_codes_played[i-1]==PerformanceUNKNOWN)||(relative_performances_of_codes_played[i-1]==PerformanceNA))
 &&(nbColumns >=nominalGameNbColumns) ){
-ctx.font=stats_font;
+ctx.font=stats_bold_font;
 displayString("\u2234" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 lightGray, backgroundColor, ctx, false);
 ctx.font=basic_bold_font;
 }
 else if(0==isPossible){
-if(relative_performances_of_codes_played[i-1]==-1.00){
-}
 if(!displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 greenColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("Y", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
@@ -3119,7 +3124,7 @@ displayGUIError("game over inconsistency", new Error().stack);
 ctx.font=basic_bold_font;
 ctx.fillStyle=darkGray;
 try{
-ctx.font=medium2_bold_font;
+ctx.font=medium_bold_font;
 if((nbGamesPlayedAndWon==0)&&gameOnGoing()&&((currentAttemptNumber <=1)||(nbColorSelections < nbColumns))&&(nbOfStatsFilled_NbPossibleCodes >=1) ){
 let x_delta=0.80;
 if(!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
@@ -3290,7 +3295,7 @@ if(valid_best_global_perf
 global_perf=globalPerformancesList[currentPossibleCodeShown-1][codeidx_with_ratio];
 relative_perf=best_global_perf-global_perf;
 }
-ctx.font=stats_font;
+ctx.font=stats_bold_font;
 let backgroundColor="";
 displayPerf(relative_perf, y_cell, backgroundColor, 0, true, false , PerformanceNA , ctx, (code==codesPlayed[currentPossibleCodeShown-1]), (code==equivalentPossibleCodes[currentPossibleCodeShown-1]), false);
 if((possibleCodesListsSubdivisions[currentPossibleCodeShown-1]!=-1)
@@ -3479,6 +3484,73 @@ ctx.drawImage(trophy_image, x_pixel+(str_width-new_str_width)/2, y_pixel-(new_st
 else{
 ctx.fillText(str, x_pixel, y_pixel);
 }}
+var str_meas_out={str_height:0, empty_space_before_str:0};
+const fontSizeRegex=/(\d+)px/;
+var tmp_canvas=document.createElement('canvas');
+function measurePreciseTextHeight(char_p, font, out){
+var char=String(char_p);
+var matches=font.match(fontSizeRegex);
+if(!matches){
+throw new Error("measurePreciseTextHeight error: invalid font: "+font);
+}
+let font_size=parseInt(matches[1]);
+var height=font_size;
+var width=height*2;
+tmp_canvas.width=width;
+tmp_canvas.height=height;
+var tmp_ctx=tmp_canvas.getContext("2d");
+tmp_ctx.font=font;
+tmp_ctx.textAlign="start";
+tmp_ctx.textBaseline="top";
+tmp_ctx.clearRect(0, 0, width, height);
+tmp_ctx.fillText(char, 0, 0);
+var imageData=tmp_ctx.getImageData(0, 0 , width, height).data;
+tmp_ctx=null;
+if(imageData.length!=height * width * 4){
+throw new Error("measurePreciseTextHeight error: "+imageData.length+", "+height * width * 4);
+}
+var x, y, line_found;
+var y_step=Math.max(Math.round(height/200), 1);
+line_found=false;
+var first_non_transparent_line=-1;
+for (y=0;y < height;y=y+y_step){
+let y_index_offset=y * width;
+for (x=0;x < width;x++){
+let pixel_index=(x+y_index_offset) * 4;
+if(imageData[pixel_index+3]!=0){
+first_non_transparent_line=y;
+line_found=true;
+break;
+}}
+if(line_found){
+break;
+}}
+if(first_non_transparent_line==-1){
+throw new Error("measurePreciseTextHeight error: first_non_transparent_line not found");
+}
+line_found=false;
+var last_non_transparent_line=-1;
+for (y=height-1;y >=0;y=y-y_step){
+let y_index_offset=y * width;
+for (x=0;x < width;x++){
+let pixel_index=(x+y_index_offset) * 4;
+if(imageData[pixel_index+3]!=0){
+last_non_transparent_line=y;
+line_found=true;
+break;
+}}
+if(line_found){
+break;
+}}
+if(last_non_transparent_line==-1){
+throw new Error("measurePreciseTextHeight error: last_non_transparent_line not found");
+}
+tmp_canvas.width=0;
+tmp_canvas.height=0;
+imageData=null;
+out.str_height=(last_non_transparent_line-first_non_transparent_line+1);
+out.empty_space_before_str=first_non_transparent_line;
+}
 function displayString(str_p, x_cell, y_cell, x_cell_width,
 foregroundColor, backgroundColor,
 ctx,
@@ -3490,30 +3562,39 @@ halfLine=0 ,
 ignoreRanges=false,
 drawInBubble=false, bottomRightBubble=true){
 let str=String(str_p);
+if(str.trim()==""){
+return true;
+}
 let x_0=get_x_pixel(x_min+x_step*x_cell);
 let x_0_for_drawBubble;
 let x_0_next=get_x_pixel(x_min+x_step*(x_cell+x_cell_width));
 let y_0;
 let y_0_next;
 let str_width=ctx.measureText(str).width;
-let str_height=parseInt(ctx.font.match(/\d+/)[0]);
+let str_height=font_array__str_height[ctx.font];
+if(str_height==undefined){
+displayGUIError("displayString: str_height not found for font: "+ctx.font, new Error().stack);
+}
+let empty_space_before_str=font_array__empty_space_before_str[ctx.font];
+if(empty_space_before_str==undefined){
+displayGUIError("displayString: empty_space_before_str not found for font: "+ctx.font, new Error().stack);
+}
 let font_width_1char=ctx.measureText("X").width;
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 0.25);
 if(0==halfLine){
-str_height=str_height * 0.83;
 y_0=get_y_pixel(y_min+y_step*y_cell);
 y_0_next=get_y_pixel(y_min+y_step*(y_cell+1), ignoreRanges);
 }
 else if(1==halfLine){
-y_0=get_y_pixel(y_min+y_step*y_cell)-Math.round(str_height/4);
-y_0_next=y_0-str_height;
+y_0=Math.max(get_y_pixel(y_min+y_step*y_cell)-Math.round(str_height/1.3), 0);
+y_0_next=Math.max(y_0-str_height, 0);
 }
 else{
-y_0=get_y_pixel(y_min+y_step*y_cell)-str_height-Math.round(str_height/4)-2;
-y_0_next=y_0-str_height;
+y_0=Math.max(get_y_pixel(y_min+y_step*y_cell)-str_height * 1.7-Math.round(str_height/1.3), 0);
+y_0_next=Math.max(y_0-str_height, 0);
 }
-let y_pixel=Math.round(y_0+(y_0_next-y_0-str_height)/2);
+let y_pixel=Math.max(Math.round(y_0_next+(y_0-y_0_next-str_height)/2-empty_space_before_str), 0);
 if((!displayIfEnoughRoom)||(x_0_next-x_0-str_width >=0) ){
 if(!ignoreRanges){
 if(backgroundColor!=""){
