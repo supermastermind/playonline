@@ -3588,7 +3588,7 @@ y_0=Math.max(get_y_pixel(y_min+y_step*y_cell)-Math.round(str_height/1.3), 0);
 y_0_next=Math.max(y_0-str_height, 0);
 }
 else{
-y_0=Math.max(get_y_pixel(y_min+y_step*y_cell)-str_height * 1.7-Math.round(str_height/1.3), 0);
+y_0=Math.max(get_y_pixel(y_min+y_step*y_cell)-str_height * 1.6-Math.round(str_height/1.3), 0);
 y_0_next=Math.max(y_0-str_height, 0);
 }
 let y_pixel=Math.max(Math.round(y_0_next+(y_0-y_0_next-str_height)/2-empty_space_before_str), 0);

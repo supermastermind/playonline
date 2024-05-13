@@ -4561,7 +4561,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
     y_0_next = Math.max(y_0 - str_height, 0);
   }
   else { // top half line
-    y_0 = Math.max(get_y_pixel(y_min+y_step*y_cell) - str_height * 1.7 - Math.round(str_height/1.3), 0);
+    y_0 = Math.max(get_y_pixel(y_min+y_step*y_cell) - str_height * 1.6 - Math.round(str_height/1.3), 0);
     y_0_next = Math.max(y_0 - str_height, 0);
   }
   // let y_pixel = Math.round(y_0 + (y_0_next - y_0 - str_height)/2);
