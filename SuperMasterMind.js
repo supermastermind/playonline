@@ -3562,9 +3562,6 @@ halfLine=0 ,
 ignoreRanges=false,
 drawInBubble=false, bottomRightBubble=true){
 let str=String(str_p);
-if(str.trim()==""){
-return true;
-}
 let x_0=get_x_pixel(x_min+x_step*x_cell);
 let x_0_for_drawBubble;
 let x_0_next=get_x_pixel(x_min+x_step*(x_cell+x_cell_width));

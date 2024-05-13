@@ -4533,9 +4533,6 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
                        drawInBubble = false, bottomRightBubble = true) {
 
   let str = String(str_p);
-  if (str.trim() == "") {
-    return true;
-  }
   let x_0 = get_x_pixel(x_min+x_step*x_cell);
   let x_0_for_drawBubble;
   let x_0_next = get_x_pixel(x_min+x_step*(x_cell+x_cell_width));
