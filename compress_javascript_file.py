@@ -1,6 +1,8 @@
 import re
 import traceback
 
+# Usage: python compress_javascript_file.py
+
 # Compress a javascript file while keeping its behaviour
 def compress_javascript_file(source_file_path, target_file_path):
     try:

@@ -4433,6 +4433,16 @@ function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_wid
   }
 }
 
+function array_to_string(array_p) {
+  let arrayAsString = "";
+  for (const key in array_p) {
+    if (array_p.hasOwnProperty(key)) {
+      arrayAsString += String(key) + ":" + array_p[key] + " ";
+    }
+  }
+  return "{" + arrayAsString.trim() + "}";
+}
+
 var str_meas_out = {str_height:0, empty_space_before_str:0};
 const fontSizeRegex = /(\d+)px/;
 var tmp_canvas = document.createElement('canvas');
@@ -4541,11 +4551,11 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   let str_width = ctx.measureText(str).width;
   let str_height = font_array__str_height[ctx.font];
   if (str_height == undefined) {
-    displayGUIError("displayString: str_height not found for font: " + ctx.font, new Error().stack);
+    displayGUIError("displayString: str_height not found for font: " + ctx.font + " in array: " + array_to_string(font_array__str_height), new Error().stack);
   }
   let empty_space_before_str = font_array__empty_space_before_str[ctx.font];
   if (empty_space_before_str == undefined) {
-    displayGUIError("displayString: empty_space_before_str not found for font: " + ctx.font, new Error().stack);
+    displayGUIError("displayString: empty_space_before_str not found for font: " + ctx.font + " in array: " + array_to_string(font_array__empty_space_before_str), new Error().stack);
   }
   let font_width_1char = ctx.measureText("X").width;
 
