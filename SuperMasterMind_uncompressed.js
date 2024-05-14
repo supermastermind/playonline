@@ -3222,7 +3222,7 @@ function draw_graphic_bis() {
 
       font_size = min_font_size;
       let last_valid_font_size = font_size;
-      let font_tmp = "bold " + font_size + "px " + fontFamily;
+      let font_tmp = "bold " + font_size + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
       ctx.font = font_tmp;
       let font_width_1char = ctx.measureText("X").width;
       let font_height = font_size;
@@ -3238,7 +3238,7 @@ function draw_graphic_bis() {
 
       star_font_size = min_font_size;
       let last_valid_star_font_size = star_font_size;
-      let star_font_tmp = "bold " + star_font_size + "px " + fontFamily;
+      let star_font_tmp = "bold " + star_font_size + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
       ctx.font = star_font_tmp;
       let star_font_width_1char = ctx.measureText("\u2B50").width; // star
       let star_font_height = star_font_size;
@@ -3257,26 +3257,26 @@ function draw_graphic_bis() {
       font_array__str_height = new Array(0);
       font_array__empty_space_before_str = new Array(0);
 
-      basic_bold_font = "bold " + font_size + "px " + fontFamily;
+      basic_bold_font = "bold " + font_size + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
       measurePreciseTextHeight("0", basic_bold_font, str_meas_out);
       font_array__str_height[basic_bold_font] = str_meas_out.str_height;
       font_array__empty_space_before_str[basic_bold_font] = str_meas_out.empty_space_before_str;
 
-      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
+      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
       measurePreciseTextHeight("0", small_bold_font, str_meas_out);
       font_array__str_height[small_bold_font] = str_meas_out.str_height;
       font_array__empty_space_before_str[small_bold_font] = str_meas_out.empty_space_before_str;
 
-      medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
+      medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
       measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
       font_array__str_height[medium_bold_font] = str_meas_out.str_height;
       font_array__empty_space_before_str[medium_bold_font] = str_meas_out.empty_space_before_str;
 
       if (!showPossibleCodesMode) {
-        stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
+        stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
       }
       else {
-        stats_bold_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily;
+        stats_bold_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
       }
       measurePreciseTextHeight("0", stats_bold_font, str_meas_out);
       font_array__str_height[stats_bold_font] = str_meas_out.str_height;
