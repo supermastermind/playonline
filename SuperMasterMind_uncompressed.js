@@ -4551,7 +4551,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   let str_width = ctx.measureText(str).width;
   let ctx_font_str = ctx.font;
   if (safariMode && (ctx_font_str.indexOf("bold") == -1)) { // Known Safari bug: bold prefix may disappear
-    ctx_font_str = "bold " + ctx_font_str.trim(); // Safari bug
+    ctx_font_str = "bold " + ctx_font_str.trim();
   }
   let str_height = font_array__str_height[ctx_font_str];
   if (str_height == undefined) {
