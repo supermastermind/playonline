@@ -3577,16 +3577,18 @@ let y_0;
 let y_0_next;
 let str_width=ctx.measureText(str).width;
 let ctx_font_str=ctx.font;
-if(safariMode&&(ctx_font_str.indexOf("bold")==-1)){
-ctx_font_str="bold "+ctx_font_str.trim();
-}
 let str_height=font_array__str_height[ctx_font_str];
 if(str_height==undefined){
-displayGUIError("displayString: str_height not found for font: "+ctx_font_str+" inside array: "+array_to_string(font_array__str_height), new Error().stack);
+if(safariMode&&(ctx_font_str.indexOf("bold")==-1)){
+ctx_font_str="bold "+ctx_font_str.trim();
+str_height=font_array__str_height[ctx_font_str];
 }
+if(str_height==undefined){
+displayGUIError("displayString: str_height not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(font_array__str_height), new Error().stack);
+}}
 let empty_space_before_str=font_array__empty_space_before_str[ctx_font_str];
 if(empty_space_before_str==undefined){
-displayGUIError("displayString: empty_space_before_str not found for font: "+ctx_font_str+" inside array: "+array_to_string(font_array__empty_space_before_str), new Error().stack);
+displayGUIError("displayString: empty_space_before_str not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(font_array__empty_space_before_str), new Error().stack);
 }
 let font_width_1char=ctx.measureText("X").width;
 let lineWidthIni=ctx.lineWidth;

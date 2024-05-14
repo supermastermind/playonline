@@ -3222,7 +3222,7 @@ function draw_graphic_bis() {
 
       font_size = min_font_size;
       let last_valid_font_size = font_size;
-      let font_tmp = "bold " + font_size + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
+      let font_tmp = "bold " + font_size + "px " + fontFamily;
       ctx.font = font_tmp;
       let font_width_1char = ctx.measureText("X").width;
       let font_height = font_size;
@@ -3238,7 +3238,7 @@ function draw_graphic_bis() {
 
       star_font_size = min_font_size;
       let last_valid_star_font_size = star_font_size;
-      let star_font_tmp = "bold " + star_font_size + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
+      let star_font_tmp = "bold " + star_font_size + "px " + fontFamily;
       ctx.font = star_font_tmp;
       let star_font_width_1char = ctx.measureText("\u2B50").width; // star
       let star_font_height = star_font_size;
@@ -3257,26 +3257,26 @@ function draw_graphic_bis() {
       font_array__str_height = new Array(0);
       font_array__empty_space_before_str = new Array(0);
 
-      basic_bold_font = "bold " + font_size + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
+      basic_bold_font = "bold " + font_size + "px " + fontFamily;
       measurePreciseTextHeight("0", basic_bold_font, str_meas_out);
       font_array__str_height[basic_bold_font] = str_meas_out.str_height;
       font_array__empty_space_before_str[basic_bold_font] = str_meas_out.empty_space_before_str;
 
-      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
+      small_bold_font = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", small_bold_font, str_meas_out);
       font_array__str_height[small_bold_font] = str_meas_out.str_height;
       font_array__empty_space_before_str[small_bold_font] = str_meas_out.empty_space_before_str;
 
-      medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
+      medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
       font_array__str_height[medium_bold_font] = str_meas_out.str_height;
       font_array__empty_space_before_str[medium_bold_font] = str_meas_out.empty_space_before_str;
 
       if (!showPossibleCodesMode) {
-        stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
+        stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       }
       else {
-        stats_bold_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily; // Note: see also known Safari bug on bold prefix
+        stats_bold_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily;
       }
       measurePreciseTextHeight("0", stats_bold_font, str_meas_out);
       font_array__str_height[stats_bold_font] = str_meas_out.str_height;
@@ -4550,16 +4550,19 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   let y_0_next;
   let str_width = ctx.measureText(str).width;
   let ctx_font_str = ctx.font;
-  if (safariMode && (ctx_font_str.indexOf("bold") == -1)) { // Known Safari bug: bold prefix may disappear
-    ctx_font_str = "bold " + ctx_font_str.trim();
-  }
   let str_height = font_array__str_height[ctx_font_str];
   if (str_height == undefined) {
-    displayGUIError("displayString: str_height not found for font: " + ctx_font_str + " inside array: " + array_to_string(font_array__str_height), new Error().stack);
+    if (safariMode && (ctx_font_str.indexOf("bold") == -1)) { // Known Safari bug: "bold" prefix may disappear
+      ctx_font_str = "bold " + ctx_font_str.trim(); // add "bold" prefix manually
+      str_height = font_array__str_height[ctx_font_str];
+    }
+    if (str_height == undefined) {
+      displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(font_array__str_height), new Error().stack);
+    }
   }
   let empty_space_before_str = font_array__empty_space_before_str[ctx_font_str];
   if (empty_space_before_str == undefined) {
-    displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + " inside array: " + array_to_string(font_array__empty_space_before_str), new Error().stack);
+    displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(font_array__empty_space_before_str), new Error().stack);
   }
   let font_width_1char = ctx.measureText("X").width;
 
