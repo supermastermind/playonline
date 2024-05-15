@@ -3693,7 +3693,7 @@ function handleMessage(data) {
         break;
       case 5:
         nbMaxMarks = 20;
-        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 20 : 55); // (as many games fully evaluated as possible)
+        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 20 : 45); // (as many games fully evaluated as possible)
         nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
         nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
         nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
@@ -3705,7 +3705,7 @@ function handleMessage(data) {
         break;
       case 6:
         nbMaxMarks = 27;
-        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 20 : 35); // (games never fully evaluated but extrapolated global performances)
+        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 20 : 30); // (games never fully evaluated but extrapolated global performances)
         nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
         nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
         nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
