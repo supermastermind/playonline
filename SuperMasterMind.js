@@ -3585,10 +3585,12 @@ str_height=font_array__str_height[ctx_font_str];
 }
 if(str_height==undefined){
 displayGUIError("displayString: str_height not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(font_array__str_height), new Error().stack);
+str_height=parseInt(ctx.font.match(/\d+/)[0]) * 0.83;
 }}
 let empty_space_before_str=font_array__empty_space_before_str[ctx_font_str];
 if(empty_space_before_str==undefined){
 displayGUIError("displayString: empty_space_before_str not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(font_array__empty_space_before_str), new Error().stack);
+empty_space_before_str=0;
 }
 let font_width_1char=ctx.measureText("X").width;
 let lineWidthIni=ctx.lineWidth;
