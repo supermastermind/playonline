@@ -846,7 +846,6 @@ let nbOfPossibleCodes;
 let listOfEquivalentCodesAndPerformances;
 let marks_already_computed_table = null;
 let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
-let tooLongTimeDetected = false;
 
 let initialInitDone = false;
 let curGame;
@@ -3253,10 +3252,12 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
 
       let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
 
-      if ((!tooLongTimeDetected) && (time_elapsed > appliedMaxPerformanceEvaluationTime + maxAllowedExtraTime)) {
-        tooLongTimeDetected = true;
-        var delayedErrorStr = "throw new Error('recursiveEvaluatePerformances: too long process (" + time_elapsed + "ms >> " + (appliedMaxPerformanceEvaluationTime + maxAllowedExtraTime) + "ms) (" + depth + ")')";
-        setTimeout(delayedErrorStr, 444);
+      if (time_elapsed > appliedMaxPerformanceEvaluationTime + maxAllowedExtraTime) {
+        console.log("(processing unexpectedly too long, abortion after " + time_elapsed + "ms)");
+        listOfGlobalPerformances[0] = PerformanceNA; // output (basic reset)
+        listOfGlobalPerformances[nbCodes-1] = PerformanceNA; // output (basic reset)
+        particularCodeGlobalPerformance = PerformanceNA; // output
+        recursiveEvaluatePerformancesWasAborted = true; throw new Error(performanceEvaluationAbortedStr);
       }
 
       if (first_call) {
