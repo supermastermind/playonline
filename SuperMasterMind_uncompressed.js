@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.04"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.05"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3004) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3005) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3004 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3005 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -553,7 +553,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.04: " + (localStorage.reloadForCompatibility_v3004 ? localStorage.reloadForCompatibility_v3004 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.05: " + (localStorage.reloadForCompatibility_v3005 ? localStorage.reloadForCompatibility_v3005 : "not done"), 210);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -2596,7 +2596,6 @@ function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, 
 // ****************
 
 function updateAndStoreNbGamesStarted(offset) {
-
   try {
     switch (nbColumns) {
       case 3:
@@ -2631,8 +2630,6 @@ function updateAndStoreNbGamesStarted(offset) {
   catch (err) {
     displayGUIError("error while storing nbgamesstarted: " + err, new Error().stack);
   }
-
-
 }
 
 // **************************************
@@ -3113,6 +3110,35 @@ function draw_graphic_bis() {
           nbGamesPlayed++;
           nbGamesPlayedAndWon++;
           setLightGray(); // clearer stats
+          switch (nbColumns) {
+            case 3:
+              if (localStorage.nbgamesstarted3_ref) {
+                localStorage.nbgamesstarted3_ref = Number(localStorage.nbgamesstarted3_ref) + 1;
+              }
+              break;
+            case 4:
+              if (localStorage.nbgamesstarted4_ref) {
+                localStorage.nbgamesstarted4_ref = Number(localStorage.nbgamesstarted4_ref) + 1;
+              }
+              break;
+            case 5:
+              if (localStorage.nbgamesstarted5_ref) {
+                localStorage.nbgamesstarted5_ref = Number(localStorage.nbgamesstarted5_ref) + 1;
+              }
+              break;
+            case 6:
+              if (localStorage.nbgamesstarted6_ref) {
+                localStorage.nbgamesstarted6_ref = Number(localStorage.nbgamesstarted6_ref) + 1;
+              }
+              break;
+            case 7:
+              if (localStorage.nbgamesstarted7_ref) {
+                localStorage.nbgamesstarted7_ref = Number(localStorage.nbgamesstarted7_ref) + 1;
+              }
+              break;
+            default:
+              throw new Error("inconsistent nbColumns value: " + nbColumns);
+          }
         }
         else {
           currentAttemptNumber++;

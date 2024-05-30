@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.04";
+let smm_compatibility_version="v30.05";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3004)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3005)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3004="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3005="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -429,7 +429,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.04: "+(localStorage.reloadForCompatibility_v3004 ? localStorage.reloadForCompatibility_v3004 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.05: "+(localStorage.reloadForCompatibility_v3005 ? localStorage.reloadForCompatibility_v3005 : "not done"), 210);
 }
 catch (exc){
 console.log("internal error at error form submission: "+exc);
@@ -2448,7 +2448,35 @@ gameWon=true;
 nbGamesPlayed++;
 nbGamesPlayedAndWon++;
 setLightGray();
+switch (nbColumns){
+case 3:
+if(localStorage.nbgamesstarted3_ref){
+localStorage.nbgamesstarted3_ref=Number(localStorage.nbgamesstarted3_ref)+1;
 }
+break;
+case 4:
+if(localStorage.nbgamesstarted4_ref){
+localStorage.nbgamesstarted4_ref=Number(localStorage.nbgamesstarted4_ref)+1;
+}
+break;
+case 5:
+if(localStorage.nbgamesstarted5_ref){
+localStorage.nbgamesstarted5_ref=Number(localStorage.nbgamesstarted5_ref)+1;
+}
+break;
+case 6:
+if(localStorage.nbgamesstarted6_ref){
+localStorage.nbgamesstarted6_ref=Number(localStorage.nbgamesstarted6_ref)+1;
+}
+break;
+case 7:
+if(localStorage.nbgamesstarted7_ref){
+localStorage.nbgamesstarted7_ref=Number(localStorage.nbgamesstarted7_ref)+1;
+}
+break;
+default:
+throw new Error("inconsistent nbColumns value: "+nbColumns);
+}}
 else{
 currentAttemptNumber++;
 if(currentAttemptNumber==nbMaxAttempts+1){
