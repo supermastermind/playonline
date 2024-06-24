@@ -3607,7 +3607,7 @@ let str_width=ctx.measureText(str).width;
 let ctx_font_str=ctx.font;
 let str_height=font_array__str_height[ctx_font_str];
 if(str_height==undefined){
-if(safariMode&&(ctx_font_str.indexOf("bold")==-1)){
+if((safariMode||((!android_appli)&&mobileMode&&(!androidMode)))&&(ctx_font_str.indexOf("bold")==-1)){
 ctx_font_str="bold "+ctx_font_str.trim();
 str_height=font_array__str_height[ctx_font_str];
 }
