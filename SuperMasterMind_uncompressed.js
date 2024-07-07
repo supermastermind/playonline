@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.08"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.09"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3008) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3009) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3008 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3009 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -553,7 +553,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.08: " + (localStorage.reloadForCompatibility_v3008 ? localStorage.reloadForCompatibility_v3008 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.09: " + (localStorage.reloadForCompatibility_v3009 ? localStorage.reloadForCompatibility_v3009 : "not done"), 210);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -591,7 +591,7 @@ function handlePrompt() {
     loadTime = loadTime - 24*3600*1000; // 1 day
   }
   else if (mode == 333) {
-    localStorage.nbTimesFirstnameSet = 1;
+    localStorage.nbTimesFirstnameUpdated = 1;
   }
   else if (String(mode) == "000") {
     throw new Error("toto");
@@ -1277,10 +1277,10 @@ settingsButtonClick = function() { // (override temporary definition)
     let change_first_name_str = "";
     if (localStorage.firstname) {
       let nb_first_name_changes_left_str = "";
-      if (localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) + 1 >= nbMaxTimesFirstnameChanged)) {
+      if (localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) + 1 >= nbMaxTimesFirstnameChanged)) {
         nb_first_name_changes_left_str = " <font color='#AA0000'>(last change!)</font>";
       }
-      if (!(localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) >= nbMaxTimesFirstnameChanged))) {
+      if (!(localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged))) {
           change_first_name_str = 
             "<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>"
             + "<a onclick='ask_for_firstname();modal.close();'> Change " + localStorage.firstname + nb_first_name_changes_left_str

@@ -754,7 +754,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 
 <script>
 
-let html_compatibility_game_version = "v30.08"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+let html_compatibility_game_version = "v30.09"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
 let current_smm_compatibility_version = "not filled yet";
 let modeAlreadySelected = false;
 let lastKeyCheck = false;
@@ -1169,7 +1169,7 @@ extra_debug_info = extra_debug_info.trim();
 if (extra_debug_info == "") {
 extra_debug_info = "-";
 }
-submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.08: " + (localStorage.reloadForCompatibility_v3008 ? localStorage.reloadForCompatibility_v3008 : "not done") + "): "
+submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.09: " + (localStorage.reloadForCompatibility_v3009 ? localStorage.reloadForCompatibility_v3009 : "not done") + "): "
 + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
 + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
 + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2348,12 +2348,12 @@ submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + 
 }
 }
 
-if (localStorage.firstname && (!localStorage.nbTimesFirstnameSet)) {
-localStorage.nbTimesFirstnameSet = 1;
+if (localStorage.firstname && (!localStorage.nbTimesFirstnameUpdated)) {
+localStorage.nbTimesFirstnameUpdated = 1;
 }
 let nbMaxTimesFirstnameChanged = 4;
 function ask_for_firstname() {
-if (localStorage.firstname && localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) >= nbMaxTimesFirstnameChanged)) { // first name change
+if (localStorage.firstname && localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged)) { // first name change
 alert("First name has already been changed the maximum number of times");
 return;
 }
@@ -2374,10 +2374,10 @@ return;
 localStorage.previousfirstname = localStorage.firstname;
 }
 localStorage.firstname = newFirstName;
-if (!localStorage.nbTimesFirstnameSet) {
-localStorage.nbTimesFirstnameSet = 0;
+if (!localStorage.nbTimesFirstnameUpdated) {
+localStorage.nbTimesFirstnameUpdated = 0;
 }
-localStorage.nbTimesFirstnameSet = Number(localStorage.nbTimesFirstnameSet) + 1;
+localStorage.nbTimesFirstnameUpdated = Number(localStorage.nbTimesFirstnameUpdated) + 1;
 }
 else {
 let error_cause = "";
