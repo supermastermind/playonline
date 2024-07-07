@@ -1275,13 +1275,13 @@ settingsButtonClick = function() { // (override temporary definition)
     if (localStorage.firstname) {
       let nb_first_name_changes_left_str = "";
       if (localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) + 1 >= nbMaxTimesFirstnameChanged)) {
-        nb_first_name_changes_left_str = " (last possible change)";
+        nb_first_name_changes_left_str = " (last change!)";
       }
       if (!(localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) >= nbMaxTimesFirstnameChanged))) {
           change_first_name_str = 
             "<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>"
-            + "<a href= '' onclick='ask_for_firstname();'>" + localStorage.firstname
-            + "</a>" + nb_first_name_changes_left_str + "<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
+            + "<a onclick='ask_for_firstname();'> Change " + localStorage.firstname + nb_first_name_changes_left_str
+            + "</a><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
       }
     }
 
