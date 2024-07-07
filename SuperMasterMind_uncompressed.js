@@ -1275,7 +1275,7 @@ settingsButtonClick = function() { // (override temporary definition)
     if (localStorage.firstname) {
       let nb_first_name_changes_left_str = "";
       if (localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) + 1 >= nbMaxTimesFirstnameChanged)) {
-        nb_first_name_changes_left_str = " (last change!)";
+        nb_first_name_changes_left_str = " <font color='#AA0000'>(last change!)</font>";
       }
       if (!(localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) >= nbMaxTimesFirstnameChanged))) {
           change_first_name_str = 
