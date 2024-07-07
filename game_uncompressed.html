@@ -2365,10 +2365,15 @@
           let condition_2 = (firstname_entered.length <= maxFirstNameLength); // (condition duplicated)
           let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); /* (only letters) */; // (condition duplicated)
           if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) { // (condition duplicated)
+            let newFirstName = capitalizeFirstLetters(firstname_entered);
             if (localStorage.firstname) {
+              if (localStorage.firstname == newFirstName) {
+                alert("Your first name is the same as before (please note that upper case is only applied on first letters)");
+                return;
+              }
               localStorage.previousfirstname = localStorage.firstname;
             }
-            localStorage.firstname = capitalizeFirstLetters(firstname_entered);
+            localStorage.firstname = newFirstName;
             if (!localStorage.nbTimesFirstnameSet) {
               localStorage.nbTimesFirstnameSet = 0;
             }
