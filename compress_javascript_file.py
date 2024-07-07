@@ -1,5 +1,7 @@
 import re
 import traceback
+import os
+import subprocess
 
 # Usage: python compress_javascript_file.py
 
@@ -50,3 +52,10 @@ def compress_javascript_file(source_file_path, target_file_path):
 
 compress_javascript_file("SuperMasterMind_uncompressed.js", "SuperMasterMind.js")
 compress_javascript_file("GameSolver_uncompressed.js", "GameSolver.js")
+
+# Compress SuperMasterMind.js
+if os.path.isfile("SuperMasterMind.js.gz"):
+    os.remove("SuperMasterMind.js.gz")
+# "C:\Program Files\7-Zip\7z.exe" a -tgzip SuperMasterMind.js.gz SuperMasterMind.js
+cmd = [r"C:\Program Files\7-Zip\7z.exe", "a", "SuperMasterMind.js.gz", "SuperMasterMind.js", "-tgzip"]
+subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()

@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.05";
+let smm_compatibility_version="v30.07";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3005)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3007)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3005="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3007="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -429,7 +429,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.05: "+(localStorage.reloadForCompatibility_v3005 ? localStorage.reloadForCompatibility_v3005 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.07: "+(localStorage.reloadForCompatibility_v3007 ? localStorage.reloadForCompatibility_v3007 : "not done"), 210);
 }
 catch (exc){
 console.log("internal error at error form submission: "+exc);
@@ -953,26 +953,34 @@ return;
 }
 if(!settingsButtonObject.disabled){
 let display_form_str=
-"<b>Select display mode:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
+"<b>SELECT DISPLAY MODE:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
 <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
 <option value='1'"+((!modernDisplay)&&(legacyDisplayVariant!=1) ? " selected" : "")+">numbers / classical display</option>\
 <option value='2'"+((!modernDisplay)&&(legacyDisplayVariant==1) ? " selected" : "")+">colors only / classical display</option>\
 <option value='3'"+(modernDisplay ? " selected" : "")+">numbers / light display</option>\
 </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
+let change_first_name_str="";
+if(localStorage.firstname){
+let nb_first_name_changes_left_str="";
+if(localStorage.nbTimesFirstnameSet&&(Number(localStorage.nbTimesFirstnameSet)+1 >=nbMaxTimesFirstnameChanged)){
+nb_first_name_changes_left_str=" (last possible change)";
+}
+if(!(localStorage.nbTimesFirstnameSet&&(Number(localStorage.nbTimesFirstnameSet) >=nbMaxTimesFirstnameChanged))){
+change_first_name_str=
+"<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>"
++"<a href='' onclick='ask_for_firstname();'>"+localStorage.firstname
++"</a>"+nb_first_name_changes_left_str+"<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
+}}
 let game_rules_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
-<br><b>The goal of Super Master Mind is to find out a secret code of "+nominalGameNbColumns+"&nbsp;colors chosen randomly among&nbsp;8:</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
+<br><b>HOW TO PLAY:</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
 <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
 +"Not clear? see detailed <b><a href='index.html#game_rules'>Game&nbsp;rules</a></b><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>"
-+display_form_str+
-"<b>More info:</b><hr style='height:0.10vh;padding:0;margin:0;visibility:hidden;'>\
-<center><table><tr style='text-align:center;'><td><b>&nbsp;<a href='index.html'>Main page</a>&nbsp;</b></td>\
-<td><b>&nbsp;<a href='index.html#game_rules'>Game rules</a>&nbsp;</b></td></tr>\
-<tr style='text-align:center;'><td><b>&nbsp;<a href='optimal_strategy.html'>Optimal strategy</a>&nbsp;</b></td>\
-<td><b>&nbsp;<a href='screenshots.html'>Examples</a>&nbsp;</b></td></tr>\
-<tr style='text-align:center;'><td><b>&nbsp;<a href='"+android_app_url+"'>Android app</a>&nbsp;</b></td>\
-<td><b>&nbsp;<a href='contact_info.html'>Contact info</a>&nbsp;</b></td></tr></table></center><br><br>\
-</font></td></tr></table></center>";
++display_form_str
++change_first_name_str
++"<b>MORE INFO:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
+<b><a href='index.html'>Web&nbsp;site</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a> |&nbsp;<a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='"+android_app_url+"'>Android</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
+</font></td></tr></table></center><hr style='height:2.00vh;padding:0;margin:0;visibility:hidden;'>";
 try{
 gameRulesDisplayed=true;
 modal_mode=3;
@@ -1406,19 +1414,19 @@ else if((!android_appli)&&(!mobileMode)&&localStorage.gamesok&&(Number(localStor
 show_play_store_app();
 }
 else if(android_appli&&localStorage.firstname&&localStorage.gamesok&&((Number(localStorage.gamesok)==25)||(Number(localStorage.gamesok)==50)||(Number(localStorage.gamesok)==77)||(Number(localStorage.gamesok)==112)||(Number(localStorage.gamesok)==156)||(Number(localStorage.gamesok)==204)||(Number(localStorage.gamesok)==304)||(Number(localStorage.gamesok)==404)||(Number(localStorage.gamesok)==707)||(Number(localStorage.gamesok)==1061)||(Number(localStorage.gamesok)==1333)||(Number(localStorage.gamesok)==1644)||(Number(localStorage.gamesok)==2004)) ){
-show_play_store_app("<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put some stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br><big>&#x1F603;&#x1F603;&#x1F603;</big><br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support", true);
+show_play_store_app("<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
 }
 else if(localStorage.firstname&&localStorage.gamesok&&(Number(localStorage.gamesok) >=55)&&(nbGamesPlayedAndWon >=1)
 &&localStorage.lastDonationTimeT&&((new Date()).getTime()-localStorage.lastDonationTimeT > 21*24*60*60*1000 ) ){
 let paypalStr=
-"If you enjoy this game, you&nbsp;can&nbsp;donate\
+"If you like this game, you&nbsp;can&nbsp;donate\
 <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
 <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>"
 +(false  ? "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 or look at some ads in the&nbsp;<a href='index.html'>main&nbsp;page</a><br>(it can bring small revenue)<br>" : "")
-+"<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>\
-Thanks for your support<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
++"<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 show_play_store_app("", false, "<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"+paypalStr);
 localStorage.lastDonationTimeT=(new Date()).getTime();
 if(!localStorage.nbDonationRequestsT){

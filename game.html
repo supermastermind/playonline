@@ -667,7 +667,7 @@ locationURLs[1] = 'https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792'
 <input id='playRandomCodeButton' class='button disabled' type='button' value='Rnd' title='Play a random code' ontouchstart='if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
 <input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
 <input id='showPossibleCodesButton' class='button disabled' type='button' value='Codes' title='Show possible codes at each stage of the game (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
-<input id='settingsButton' class='button disabled' type='button' value='&#x2026;' title='Info & settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
+<input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info & settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
 </td>
 </tr>
 <tr>
@@ -754,7 +754,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 
 <script>
 
-let html_compatibility_game_version = "v30.05"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+let html_compatibility_game_version = "v30.07"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
 let current_smm_compatibility_version = "not filled yet";
 let modeAlreadySelected = false;
 let lastKeyCheck = false;
@@ -1169,7 +1169,7 @@ extra_debug_info = extra_debug_info.trim();
 if (extra_debug_info == "") {
 extra_debug_info = "-";
 }
-submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.05: " + (localStorage.reloadForCompatibility_v3005 ? localStorage.reloadForCompatibility_v3005 : "not done") + "): "
+submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.07: " + (localStorage.reloadForCompatibility_v3007 ? localStorage.reloadForCompatibility_v3007 : "not done") + "): "
 + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
 + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
 + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2348,6 +2348,49 @@ submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + 
 }
 }
 
+if (localStorage.firstname && (!localStorage.nbTimesFirstnameSet)) {
+localStorage.nbTimesFirstnameSet = 1;
+}
+let nbMaxTimesFirstnameChanged = 4;
+function ask_for_firstname() {
+if (localStorage.firstname && localStorage.nbTimesFirstnameSet && (Number(localStorage.nbTimesFirstnameSet) >= nbMaxTimesFirstnameChanged)) { // first name change
+alert("First name has already been changed the maximum number of times");
+return;
+}
+let prompt_str = "Please enter your first name, it will be stored online with your scores and performances (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no spaces):";
+let firstname_entered = prompt(prompt_str, "Sherlock?");
+if (firstname_entered != null) { // (a first name was entered)
+firstname_entered = firstname_entered.trim();
+let condition_1 = (firstname_entered.length >= minFirstNameLength); // (condition duplicated)
+let condition_2 = (firstname_entered.length <= maxFirstNameLength); // (condition duplicated)
+let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); /* (only letters) */; // (condition duplicated)
+if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) { // (condition duplicated)
+if (localStorage.firstname) {
+localStorage.previousfirstname = localStorage.firstname;
+}
+localStorage.firstname = capitalizeFirstLetters(firstname_entered);
+if (!localStorage.nbTimesFirstnameSet) {
+localStorage.nbTimesFirstnameSet = 0;
+}
+localStorage.nbTimesFirstnameSet = Number(localStorage.nbTimesFirstnameSet) + 1;
+}
+else {
+let error_cause = "";
+if (!condition_1) {
+error_cause = " (too short)";
+}
+else if (!condition_2) {
+error_cause = " (too long)";
+}
+else if (!condition_3) {
+error_cause = " (invalid characters)";
+}
+localStorage.previousfirstname = firstname_entered;
+alert("Invalid first name" + error_cause + ": " + firstname_entered);
+}
+}
+}
+
 var last_game_cnt = -1;
 var global_geoloc_failure_alert_shown = false;
 var min_gamesok_for_firstname = 5;
@@ -2753,38 +2796,12 @@ if ( (!localStorage.firstname)
 || (gamesok >= 9) ) ) { // (~experienced player)
 try {
 localStorage.gamesok_at_last_first_name_request = gamesok;
-
-// ***** Prompt-based version:
-let prompt_str = "Please enter your first name, it will be stored online with your scores and performances (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no spaces):";
-let firstname_entered = prompt(prompt_str, "Sherlock?");
-if (firstname_entered != null) { // (a first name was entered)
-firstname_entered = firstname_entered.trim();
-let condition_1 = (firstname_entered.length >= minFirstNameLength); // (condition duplicated)
-let condition_2 = (firstname_entered.length <= maxFirstNameLength); // (condition duplicated)
-let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); /* (only letters) */; // (condition duplicated)
-if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) { // (condition duplicated)
-localStorage.firstname = capitalizeFirstLetters(firstname_entered);
-}
-else {
-let error_cause = "";
-if (!condition_1) {
-error_cause = " (too short)";
-}
-else if (!condition_2) {
-error_cause = " (too long)";
-}
-else if (!condition_3) {
-error_cause = " (invalid characters)";
-}
-localStorage.previousfirstname = firstname_entered;
-alert("Invalid first name" + error_cause + ": " + firstname_entered);
-}
-}
-
+ask_for_firstname();
 if (!localStorage.nbTimesFirstnameAsked) {
 localStorage.nbTimesFirstnameAsked = 0;
 }
 localStorage.nbTimesFirstnameAsked = Number(localStorage.nbTimesFirstnameAsked) + 1;
+
 if (localStorage.firstname) {
 console.log("new firstname: " + localStorage.firstname);
 document.getElementById('form_firstname_id').value = localStorage.firstname;
