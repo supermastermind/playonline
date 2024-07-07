@@ -590,6 +590,9 @@ function handlePrompt() {
   else if (mode == 222) {
     loadTime = loadTime - 24*3600*1000; // 1 day
   }
+  else if (mode == 333) {
+    localStorage.nbTimesFirstnameSet = 1;
+  }
   else if (String(mode) == "000") {
     throw new Error("toto");
   }
