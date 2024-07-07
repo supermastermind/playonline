@@ -968,7 +968,7 @@ nb_first_name_changes_left_str=" <font color='#AA0000'>(last change!)</font>";
 if(!(localStorage.nbTimesFirstnameSet&&(Number(localStorage.nbTimesFirstnameSet) >=nbMaxTimesFirstnameChanged))){
 change_first_name_str=
 "<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>"
-+"<a onclick='ask_for_firstname();'> Change "+localStorage.firstname+nb_first_name_changes_left_str
++"<a onclick='ask_for_firstname();modal.close();'> Change "+localStorage.firstname+nb_first_name_changes_left_str
 +"</a><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 }}
 let game_rules_str=
