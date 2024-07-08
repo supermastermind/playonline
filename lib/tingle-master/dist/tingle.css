@@ -25,7 +25,7 @@
   -ms-flex-align: center;
   align-items: center;
   overflow: hidden;
-  background: rgba(0, 0, 0, .8);
+  background: rgba(0, 0, 0, .3);
   opacity: 0;
   cursor: pointer;
   -webkit-transition: -webkit-transform .2s ease;
