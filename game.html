@@ -2351,7 +2351,7 @@ submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + 
 if (localStorage.firstname && (!localStorage.nbTimesFirstnameUpdated)) {
 localStorage.nbTimesFirstnameUpdated = 1;
 }
-let nbMaxTimesFirstnameChanged = 4;
+let nbMaxTimesFirstnameChanged = 5;
 function ask_for_firstname() {
 if (localStorage.firstname && localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged)) { // first name change
 alert("First name has already been changed the maximum number of times");

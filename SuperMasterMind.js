@@ -964,11 +964,16 @@ let display_form_str=
 </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 let change_first_name_str="";
 if(localStorage.firstname){
-let nb_first_name_changes_left_str="";
-if(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstnameUpdated)+1 >=nbMaxTimesFirstnameChanged)){
-nb_first_name_changes_left_str=" <font color='#AA0000'>(last change!)</font>";
-}
 if(!(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstnameUpdated) >=nbMaxTimesFirstnameChanged))){
+let nb_first_name_changes_left_str="";
+if(localStorage.nbTimesFirstnameUpdated){
+let diff=nbMaxTimesFirstnameChanged-Number(localStorage.nbTimesFirstnameUpdated);
+if(diff==2){
+nb_first_name_changes_left_str=" (2 changes left)";
+}
+else if(diff==1){
+nb_first_name_changes_left_str=" <font color='#AA0000'>(last change left)</font>";
+}}
 change_first_name_str=
 "<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>"
 +"<a onclick='ask_for_firstname();modal.close();'> Change "+localStorage.firstname+nb_first_name_changes_left_str
