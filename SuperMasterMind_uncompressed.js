@@ -1284,7 +1284,7 @@ settingsButtonClick = function() { // (override temporary definition)
               nb_first_name_changes_left_str = " (2 changes left)";
             }
             else if (diff == 1) {
-              nb_first_name_changes_left_str = " <font color='#AA0000'>(last change left)</font>";
+              nb_first_name_changes_left_str = " (last change left)";
             }
           }
           change_first_name_str = 

@@ -972,7 +972,7 @@ if(diff==2){
 nb_first_name_changes_left_str=" (2 changes left)";
 }
 else if(diff==1){
-nb_first_name_changes_left_str=" <font color='#AA0000'>(last change left)</font>";
+nb_first_name_changes_left_str=" (last change left)";
 }}
 change_first_name_str=
 "<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>"
