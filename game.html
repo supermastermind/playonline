@@ -585,11 +585,12 @@ let year = String(date.getYear()-100);
 return String(day + month + year);
 }
 
+var min_gamesok_for_firstname = 5;
 function checkIfRecentPlayer() {
 if (!localStorage.gamesok) {
 return true;
 }
-if (Number(localStorage.gamesok) < 5) {
+if (Number(localStorage.gamesok) < min_gamesok_for_firstname) {
 return true;
 }
 if (!localStorage.recent_player_reference_time) {
@@ -598,11 +599,11 @@ if (Number(localStorage.gamesok) > 10) {
 localStorage.recent_player_reference_time = 0; // (very old time)
 }
 else {
-// Set recent player reference time from "localStorage.gamesok == 5" event for new players
+// Set recent player reference time from "localStorage.gamesok == min_gamesok_for_firstname" event for new players
 localStorage.recent_player_reference_time = (new Date()).getTime();
 }
 }
-if (Number(localStorage.gamesok) < 15) {
+if (Number(localStorage.gamesok) < 3*min_gamesok_for_firstname) {
 return true;
 }
 else {
@@ -754,7 +755,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 
 <script>
 
-let html_compatibility_game_version = "v30.09"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+let html_compatibility_game_version = "v30.0A"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
 let current_smm_compatibility_version = "not filled yet";
 let modeAlreadySelected = false;
 let lastKeyCheck = false;
@@ -1169,7 +1170,7 @@ extra_debug_info = extra_debug_info.trim();
 if (extra_debug_info == "") {
 extra_debug_info = "-";
 }
-submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.09: " + (localStorage.reloadForCompatibility_v3009 ? localStorage.reloadForCompatibility_v3009 : "not done") + "): "
+submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0A: " + (localStorage.reloadForCompatibility_v300A ? localStorage.reloadForCompatibility_v300A : "not done") + "): "
 + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
 + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
 + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2398,7 +2399,6 @@ alert("Invalid first name" + error_cause + ": " + firstname_entered);
 
 var last_game_cnt = -1;
 var global_geoloc_failure_alert_shown = false;
-var min_gamesok_for_firstname = 5;
 function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, helpstr, gamestr, short_game) {
 debug_game_state = 100;
 last_game_was_short = short_game; // (simplified setting without buffering)
@@ -2431,7 +2431,7 @@ if (!localStorage.gamesok) {
 localStorage.gamesok = 0;
 }
 localStorage.gamesok = Number(localStorage.gamesok) + 1;
-checkIfRecentPlayer(); // acts on localStorage.gamesok update
+checkIfRecentPlayer(); // acts on above localStorage.gamesok update
 gamesok = Number(localStorage.gamesok);
 switch (nbcolumns) {
 case 3: // (case never entered due to above condition)
@@ -2795,7 +2795,7 @@ document.getElementById('form_list_id').value = '-';
 var form_to_be_submitted = true;
 if ( (!localStorage.firstname)
 && (gamesok >= min_gamesok_for_firstname) // (coherent with "history_clear_advice")
-&& ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 7)) // (do not ask first name too often if not filled), ask up to one game out of 3
+&& ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 7)) // ask at up to one game out of 3
 && ( ((nbcolumns == 4) && (score >= 20)) || ((nbcolumns == 5) && (score >= 30)) || ((nbcolumns == 6) && (score >= 40)) || ((nbcolumns == 7) && (score >= 50))
 || ((gamesok >= 7) && (score >= 15))
 || (gamesok >= 9) ) ) { // (~experienced player)

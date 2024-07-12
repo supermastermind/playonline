@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.09"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.0A"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3009) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v300A) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3009 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v300A = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -553,7 +553,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.09: " + (localStorage.reloadForCompatibility_v3009 ? localStorage.reloadForCompatibility_v3009 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0A: " + (localStorage.reloadForCompatibility_v300A ? localStorage.reloadForCompatibility_v300A : "not done"), 210);
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -1274,6 +1274,7 @@ settingsButtonClick = function() { // (override temporary definition)
          <option value='3'" + (modernDisplay ? " selected" : "") + ">numbers / light display</option>\
        </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 
+    let change_first_name_title_str = "<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>";
     let change_first_name_str = "";
     if (localStorage.firstname) {
       if (!(localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged))) {
@@ -1287,11 +1288,17 @@ settingsButtonClick = function() { // (override temporary definition)
               nb_first_name_changes_left_str = " (last change left)";
             }
           }
-          change_first_name_str = 
-            "<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>"
-            + "<a onclick='ask_for_firstname();modal.close();'> Change " + localStorage.firstname + nb_first_name_changes_left_str
+          change_first_name_str =
+            change_first_name_title_str
+            + "<a onclick='ask_for_firstname();modal.close();'>Change " + localStorage.firstname + nb_first_name_changes_left_str
             + "</a><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
       }
+    }
+    else if (!localStorage.nbTimesFirstnameAsked && localStorage.gamesok && (Number(localStorage.gamesok) >= Math.ceil(min_gamesok_for_firstname/2)) && (Number(localStorage.gamesok) <= 3*min_gamesok_for_firstname)) {
+          change_first_name_str =
+            change_first_name_title_str
+            + "Will be available after more wins"
+            + "<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
     }
 
     let game_rules_str =
@@ -2050,7 +2057,7 @@ function resetGameAttributes(nbColumnsSelected) {
     debug_mode = localStorage.debug_mode;
   }
 
-  gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok) || (Number(localStorage.gamesok) < ((typeof min_gamesok_for_firstname !== 'undefined') ? min_gamesok_for_firstname : 5) - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
+  gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_firstname - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
   setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", ((mobileMode && (game_cnt <= 2)) ? 1111 : 1111)); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
@@ -5248,7 +5255,7 @@ canvas.addEventListener("mousemove", mouseMove, false);
 
 // Welcome message at very first game on android app
 // Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit
-if ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 5)) { // recent player
+if ((!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_firstname)) { // recent player
   let welcome_str =
     "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td>\
     <img alt='welcome!' src='img/" + (android_appli ? "Welcome_android_app.png" : "Welcome_browser.png") + "' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;'>\
