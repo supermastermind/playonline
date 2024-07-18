@@ -2507,7 +2507,7 @@
           }
           gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
 
-          if ((gamesok >= 47) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 10) && (!localStorage.firstname)) { // No interest for sharing results
+          if ((gamesok >= 37) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 7) && (!localStorage.firstname)) { // No interest for sharing results
             if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
               debug_game_state = 100.3;
               if ((gamesok % 10) == 9) { // 9 (instead of 0) avoids conflicts with other dialogs
