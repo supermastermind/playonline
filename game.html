@@ -2419,9 +2419,9 @@ let deltagames = -1;
 
 if ( (nbcolumns == 3) // very easy games
 || helped ) { // games with help
-debug_game_state = 100.2;
-setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3444);
-debug_game_state = 100.25;
+debug_game_state = 100.20;
+setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+debug_game_state = 100.21;
 return; // Do not store scores any longer for very easy games and games with help, to reduce google sheet load [peaks for very easy games]
 }
 
@@ -2507,6 +2507,15 @@ localStorage.gamesok_at_last_first_name_request = -100;
 }
 gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
 
+// Reduce google sheet load 1/2
+if (((gamesok == 2) || (gamesok == 4)) && (gamesok < min_gamesok_for_firstname) && (!localStorage.firstname)) { // early games without first name entered
+debug_game_state = 100.22;
+setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+debug_game_state = 100.23;
+return;
+}
+
+// Reduce google sheet load 2/2
 if ((gamesok >= 37) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 7) && (!localStorage.firstname)) { // No interest for sharing results
 if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
 debug_game_state = 100.3;
@@ -2517,6 +2526,7 @@ debug_game_state = 100.35;
 return;
 }
 }
+
 if (localStorage.skip) {
 debug_game_state = 100.37;
 return;
