@@ -2352,6 +2352,11 @@
 
       if (localStorage.firstname && (!localStorage.nbTimesFirstnameUpdated)) {
         localStorage.nbTimesFirstnameUpdated = 1;
+        localStorage.firstnameUpdateTime = (new Date()).getTime();
+      }
+      if ( localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime > 8*31*24*3600*1000) ) { // 8 months
+        localStorage.nbTimesFirstnameUpdated = 1;
+        localStorage.firstnameUpdateTime = (new Date()).getTime();
       }
       let nbMaxTimesFirstnameChanged = 5;
       function ask_for_firstname() {
@@ -2380,6 +2385,7 @@
               localStorage.nbTimesFirstnameUpdated = 0;
             }
             localStorage.nbTimesFirstnameUpdated = Number(localStorage.nbTimesFirstnameUpdated) + 1;
+            localStorage.firstnameUpdateTime = (new Date()).getTime();
           }
           else {
             let error_cause = "";
@@ -2508,10 +2514,10 @@
           gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
 
           // Reduce google sheet load 1/2: no interest for sharing results
-          if ((gamesok >= 37) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 7) && (!localStorage.firstname)) {
+          if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 5) && (!localStorage.firstname)) {
             if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
               debug_game_state = 100.30;
-              if ((gamesok % 10) == 9) { // 9 (instead of 0) avoids conflicts with other dialogs
+              if ((gamesok <= 150) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
                 setTimeout("alert('As you did not enter your first name, your scores will only be stored occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
               }
               debug_game_state = 100.31;
