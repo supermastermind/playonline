@@ -59,3 +59,5 @@ if os.path.isfile("SuperMasterMind.js.gz"):
 # "C:\Program Files\7-Zip\7z.exe" a -tgzip SuperMasterMind.js.gz SuperMasterMind.js
 cmd = [r"C:\Program Files\7-Zip\7z.exe", "a", "SuperMasterMind.js.gz", "SuperMasterMind.js", "-tgzip"]
 subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()
+
+print("\nWARNING: game.html shall be updated from game_uncompressed.html manually")

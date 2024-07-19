@@ -755,7 +755,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0A"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0B"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1170,7 +1170,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0A: " + (localStorage.reloadForCompatibility_v300A ? localStorage.reloadForCompatibility_v300A : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0B: " + (localStorage.reloadForCompatibility_v300B ? localStorage.reloadForCompatibility_v300B : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2507,24 +2507,29 @@
           }
           gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
 
-          // Reduce google sheet load 1/2
-          if (((gamesok == 2) || (gamesok == 4)) && (gamesok < min_gamesok_for_firstname) && (!localStorage.firstname)) { // early games without first name entered
+          // Reduce google sheet load 1/2: no interest for sharing results
+          if ((gamesok >= 37) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 7) && (!localStorage.firstname)) {
+            if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
+              debug_game_state = 100.30;
+              if ((gamesok % 10) == 9) { // 9 (instead of 0) avoids conflicts with other dialogs
+                setTimeout("alert('As you did not enter your first name, your scores will only be stored occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
+              }
+              debug_game_state = 100.31;
+              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+              debug_game_state = 100.32;
+              return;
+            }
+          }
+
+          // Reduce google sheet load 2/2: games without first name entered yet
+          else if ( (gamesok == 2) || (gamesok == 4)
+                    || ((gamesok >= 14) && ((gamesok % 2) == 0) // skip calls towards google sheet 1 game out of 2
+                        && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 3) && (!localStorage.firstname))
+                  ) {
             debug_game_state = 100.22;
             setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
             debug_game_state = 100.23;
             return;
-          }
-
-          // Reduce google sheet load 2/2
-          if ((gamesok >= 37) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 7) && (!localStorage.firstname)) { // No interest for sharing results
-            if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
-              debug_game_state = 100.3;
-              if ((gamesok % 10) == 9) { // 9 (instead of 0) avoids conflicts with other dialogs
-                setTimeout("alert('As you did not enter your first name, your scores will only be stored occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
-                debug_game_state = 100.35;
-              }
-              return;
-            }
           }
 
           if (localStorage.skip) {
