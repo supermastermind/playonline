@@ -2517,7 +2517,7 @@ gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_n
 if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 5) && (!localStorage.firstname)) {
 if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
 debug_game_state = 100.30;
-if ((gamesok <= 150) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
+if ((gamesok <= 120) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
 setTimeout("alert('As you did not enter your first name, your scores will only be stored occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
 }
 debug_game_state = 100.31;
@@ -2529,7 +2529,7 @@ return;
 
 // Reduce google sheet load 2/2: games without first name entered yet
 else if ( (gamesok == 2) || (gamesok == 4)
-|| ((gamesok >= 14) && ((gamesok % 2) == 0) // skip calls towards google sheet 1 game out of 2
+|| ((gamesok >= 12) && ((gamesok % 3) != 0) // skip calls towards google sheet 1 game out of 3
 && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 3) && (!localStorage.firstname))
 ) {
 debug_game_state = 100.22;
