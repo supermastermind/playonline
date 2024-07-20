@@ -755,7 +755,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0B"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0C"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -832,7 +832,6 @@
 
             console.log('(modal beforeClose)');
             if (modal_mode == 2) {
-
               setTimeout("showPossibleCodesButtonClick(false, -2, true);", 444);
 
               modal_mode = -1;
@@ -843,6 +842,13 @@
               newGameButtonClick(5);
               modal_mode = -1;
               askLocationPermissionsIfNeeded();
+              return true; // close the modal
+            }
+
+            else if (modal_mode == 6) {
+              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+
+              modal_mode = -1;
               return true; // close the modal
             }
 
@@ -1170,7 +1176,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0B: " + (localStorage.reloadForCompatibility_v300B ? localStorage.reloadForCompatibility_v300B : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0C: " + (localStorage.reloadForCompatibility_v300C ? localStorage.reloadForCompatibility_v300C : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2404,6 +2410,14 @@
         }
       }
 
+      function currentDate() {
+        let today = new Date();
+        let day = today.getDate().toString().padStart(2, '0');
+        let month = (today.getMonth() + 1).toString().padStart(2, '0');
+        let year = today.getFullYear().toString().slice(-2);
+        return `${day}${month}${year}`;
+      }
+
       var last_game_cnt = -1;
       var global_geoloc_failure_alert_shown = false;
       function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, helpstr, gamestr, short_game) {
@@ -2440,6 +2454,12 @@
           localStorage.gamesok = Number(localStorage.gamesok) + 1;
           checkIfRecentPlayer(); // acts on above localStorage.gamesok update
           gamesok = Number(localStorage.gamesok);
+
+          if (!localStorage.gamesoktoday_date || !localStorage.gamesoktoday_firstvalue || (localStorage.gamesoktoday_date != currentDate())) {
+            localStorage.gamesoktoday_firstvalue = gamesok-1;
+            localStorage.gamesoktoday_date = currentDate();
+          }
+
           switch (nbcolumns) {
               case 3: // (case never entered due to above condition)
                   if (!localStorage.gamesok3) {
@@ -2513,28 +2533,85 @@
           }
           gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
 
-          // Reduce google sheet load 1/2: no interest for sharing results
-          if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 5) && (!localStorage.firstname)) {
-            if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
-              debug_game_state = 100.30;
-              if ((gamesok <= 120) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
-                setTimeout("alert('As you did not enter your first name, your scores will only be stored occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
+          // Reduce google sheet load 1/3: many successive games, making online score storages useless
+          let too_many_games_today_thld_1 = 40;
+          let too_many_games_today_thld_2 = 60;
+          if (!localStorage.gamesoktoday_firstvalue || isNaN(localStorage.gamesoktoday_firstvalue) || !isFinite(localStorage.gamesoktoday_firstvalue)) {
+            throw new Error("invalid localStorage.gamesoktoday_firstvalue: " + localStorage.gamesoktoday_firstvalue);
+          }
+          let nb_games_today = gamesok - Number(localStorage.gamesoktoday_firstvalue);
+          if (nb_games_today >= too_many_games_today_thld_1) {
+            let too_many_games_today_str = "";
+            let skip_online_score = false;
+            let str_prefix = "<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played " + nb_games_today + " games today!<br>";
+            if ((nb_games_today >= too_many_games_today_thld_2) || (!localStorage.firstname)) {
+              if (nb_games_today == too_many_games_today_thld_2) {
+                too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back tomorrow."
               }
-              debug_game_state = 100.31;
+              skip_online_score = true; // skip all calls towards google sheet today
+            }
+            else if (nb_games_today >= too_many_games_today_thld_1) {
+              if (nb_games_today == too_many_games_today_thld_1) {
+                too_many_games_today_str = str_prefix + "Scores will be stored online only for 1 game out of 2 for the rest of this day. Normal online scores will be back tomorrow.";
+                skip_online_score = true;
+              }
+              else {
+                skip_online_score = (((nb_games_today - too_many_games_today_thld_1) % 2) == 0); // skip calls towards google sheet 1 game out of 2 today
+              }
+            }
+            else {
+              throw new Error("internal nb_games_today condition: " + nb_games_today);
+            }
+            if ((too_many_games_today_str != "") && localStorage.firstname) {
+              let str = "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>"
+                        + "<br><b>"
+                        + "<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
+                        + too_many_games_today_str
+                        + "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
+                        + "</b><br>"
+                        + "</font></td></tr></table></center>";
+              try {
+                modal_mode = 6;
+                // set modal content
+                modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+                                 + str
+                                 + "</div>");
+                // open modal
+                modal.open();
+              }
+              catch (exc) {
+                throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
+              }
+            }
+            if (skip_online_score) {
+              debug_game_state = 100.30;
               setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
-              debug_game_state = 100.32;
+              debug_game_state = 100.31;
               return;
             }
           }
 
-          // Reduce google sheet load 2/2: games without first name entered yet
+          // Reduce google sheet load 2/3: no interest for sharing results
+          else if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 5) && (!localStorage.firstname)) {
+            if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
+              debug_game_state = 100.32;
+              if ((gamesok <= 120) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
+                setTimeout("alert('As you did not enter your first name, your scores will only be stored online occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
+              }
+              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+              debug_game_state = 100.33;
+              return;
+            }
+          }
+
+          // Reduce google sheet load 3/3: games without first name entered yet
           else if ( (gamesok == 2) || (gamesok == 4)
                     || ((gamesok >= 12) && ((gamesok % 3) != 0) // skip calls towards google sheet 1 game out of 3
                         && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 3) && (!localStorage.firstname))
                   ) {
-            debug_game_state = 100.22;
+            debug_game_state = 100.34;
             setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
-            debug_game_state = 100.23;
+            debug_game_state = 100.35;
             return;
           }
 
