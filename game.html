@@ -2458,7 +2458,7 @@ if (gamesok <= 750) {
 localStorage.too_many_games_today_thld_1 = 25; // (average: 30)
 localStorage.too_many_games_today_thld_2 = 35;
 }
-else if (gamesok >= 2500) { // (*)
+else if (gamesok >= 2000) { // (*)
 localStorage.too_many_games_today_thld_1 = 10; // (average: 10)
 localStorage.too_many_games_today_thld_2 = 10;
 }
@@ -2511,12 +2511,12 @@ throw new Error("store_player_info: invalid nbcolumns: " + nbcolumns);
 }
 
 let gamesok_alert_condition = false;
-if (gamesok <= 2500) { // (*)
+if (gamesok <= 2000) { // (*)
 gamesok_alert_condition =
 ( (gamesok == 50) || (gamesok == 150)
 || (gamesok == 111) || (gamesok == 222) || (gamesok == 333) || (gamesok == 444) || (gamesok == 555) || (gamesok == 777) || (gamesok == 888) || (gamesok == 999)
 || ((gamesok <= 1000) && ((gamesok % 100) == 0))
-|| ((gamesok % 500) == 0) );
+|| ((gamesok % 200) == 0) );
 }
 if (gamesok_alert_condition) {
 setTimeout("alert('It\\'s your ' + localStorage.gamesok + 'th game!');", 444);
