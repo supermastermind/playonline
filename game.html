@@ -2455,16 +2455,16 @@ if (!localStorage.gamesoktoday_date || !localStorage.gamesoktoday_firstvalue || 
 localStorage.gamesoktoday_date = currentDate();
 localStorage.gamesoktoday_firstvalue = gamesok-1;
 if (gamesok <= 750) {
-localStorage.too_many_games_today_thld_1 = 25; // (average: 32.5)
-localStorage.too_many_games_today_thld_2 = 40;
+localStorage.too_many_games_today_thld_1 = 25; // (average: 30)
+localStorage.too_many_games_today_thld_2 = 35;
 }
 else if (gamesok >= 2500) { // (*)
 localStorage.too_many_games_today_thld_1 = 10; // (average: 10)
 localStorage.too_many_games_today_thld_2 = 10;
 }
 else {
-localStorage.too_many_games_today_thld_1 = 25; // (average: 25)
-localStorage.too_many_games_today_thld_2 = 25;
+localStorage.too_many_games_today_thld_1 = 20; // (average: 25)
+localStorage.too_many_games_today_thld_2 = 30;
 }
 }
 let too_many_games_today_thld_1 = Number(localStorage.too_many_games_today_thld_1);
