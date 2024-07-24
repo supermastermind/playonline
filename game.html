@@ -755,7 +755,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 
 <script>
 
-let html_compatibility_game_version = "v30.0E"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+let html_compatibility_game_version = "v30.0F"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
 let current_smm_compatibility_version = "not filled yet";
 let modeAlreadySelected = false;
 let lastKeyCheck = false;
@@ -1169,7 +1169,7 @@ extra_debug_info = extra_debug_info.trim();
 if (extra_debug_info == "") {
 extra_debug_info = "-";
 }
-submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0E: " + (localStorage.reloadForCompatibility_v300E ? localStorage.reloadForCompatibility_v300E : "not done") + "): "
+submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0F: " + (localStorage.reloadForCompatibility_v300F ? localStorage.reloadForCompatibility_v300F : "not done") + "): "
 + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
 + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
 + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2454,13 +2454,17 @@ if (!localStorage.gamesoktoday_date || !localStorage.gamesoktoday_firstvalue || 
 || (localStorage.gamesoktoday_date != currentDate())) { // next days
 localStorage.gamesoktoday_date = currentDate();
 localStorage.gamesoktoday_firstvalue = gamesok-1;
-if (gamesok <= 750) {
-localStorage.too_many_games_today_thld_1 = 25; // (average: 30)
-localStorage.too_many_games_today_thld_2 = 35;
+if (gamesok <= 800) {
+localStorage.too_many_games_today_thld_1 = 20; // (average: 25)
+localStorage.too_many_games_today_thld_2 = 30;
 }
-else if (gamesok >= 2000) { // (*)
+else if (gamesok >= 8000) {
 localStorage.too_many_games_today_thld_1 = 10; // (average: 10)
 localStorage.too_many_games_today_thld_2 = 10;
+}
+else if (gamesok >= 2000) { // (*)
+localStorage.too_many_games_today_thld_1 = 15; // (average: 15)
+localStorage.too_many_games_today_thld_2 = 15;
 }
 else {
 localStorage.too_many_games_today_thld_1 = 20; // (average: 20)
