@@ -755,7 +755,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0F"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0G"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1169,7 +1169,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0F: " + (localStorage.reloadForCompatibility_v300F ? localStorage.reloadForCompatibility_v300F : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0G: " + (localStorage.reloadForCompatibility_v300G ? localStorage.reloadForCompatibility_v300G : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2417,6 +2417,7 @@
       var max_nb_gamesok_today_reached = false;
       function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, helpstr, gamestr, short_game) {
         debug_game_state = 100;
+        let many_games_thld = 2000;
         last_game_was_short = short_game; // (simplified setting without buffering)
         try {
 
@@ -2453,22 +2454,27 @@
           if (!localStorage.gamesoktoday_date || !localStorage.gamesoktoday_firstvalue || !localStorage.too_many_games_today_thld_1 || !localStorage.too_many_games_today_thld_2 // first day
               || (localStorage.gamesoktoday_date != currentDate())) { // next days
             localStorage.gamesoktoday_date = currentDate();
+            let many_games_previous_day = false;
+            if (localStorage.gamesoktoday_firstvalue) {
+              let nb_games_previous_day = gamesok - Number(localStorage.gamesoktoday_firstvalue) - 1;
+              many_games_previous_day = (nb_games_previous_day >= 35);
+            }
             localStorage.gamesoktoday_firstvalue = gamesok-1;
             if (gamesok <= 800) {
               localStorage.too_many_games_today_thld_1 = 20; // (average: 25)
               localStorage.too_many_games_today_thld_2 = 30;
             }
             else if (gamesok >= 8000) {
-              localStorage.too_many_games_today_thld_1 = 10; // (average: 10)
-              localStorage.too_many_games_today_thld_2 = 10;
+              localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 10); // (average: 10 or far lower by skipping days)
+              localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 10);
             }
-            else if (gamesok >= 2000) { // (*)
-              localStorage.too_many_games_today_thld_1 = 15; // (average: 15)
-              localStorage.too_many_games_today_thld_2 = 15;
+            else if (gamesok >= many_games_thld) {
+              localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 15); // (skipped or average: 15 or far lower by skipping days)
+              localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 15);
             }
             else {
-              localStorage.too_many_games_today_thld_1 = 20; // (average: 20)
-              localStorage.too_many_games_today_thld_2 = 20;
+              localStorage.too_many_games_today_thld_1 = 15; // (average: 20)
+              localStorage.too_many_games_today_thld_2 = 25;
             }
           }
           let too_many_games_today_thld_1 = Number(localStorage.too_many_games_today_thld_1);
@@ -2515,7 +2521,7 @@
           }
 
           let gamesok_alert_condition = false;
-          if (gamesok <= 2000) { // (*)
+          if (gamesok <= many_games_thld) {
             gamesok_alert_condition =
               ( (gamesok == 50) || (gamesok == 150)
                 || (gamesok == 111) || (gamesok == 222) || (gamesok == 333) || (gamesok == 444) || (gamesok == 555) || (gamesok == 777) || (gamesok == 888) || (gamesok == 999)
@@ -2546,13 +2552,13 @@
             let str_prefix = "<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played " + nb_games_today + " games today!<br>";
             if ((nb_games_today >= too_many_games_today_thld_2) || (!localStorage.firstname)) {
               if (nb_games_today == too_many_games_today_thld_2) {
-                too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back tomorrow."
+                too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back " + ((gamesok < many_games_thld) ? "tomorrow." : "in the future.");
               }
               skip_online_score = true; // skip all calls towards google sheet today
             }
             else if (nb_games_today >= too_many_games_today_thld_1) {
               if (nb_games_today == too_many_games_today_thld_1) {
-                too_many_games_today_str = str_prefix + "Scores will be stored online only for 1 game out of 2 for the rest of this day. Usual online scores will be back tomorrow.";
+                too_many_games_today_str = str_prefix + "Scores will be stored online only for 1 game out of 2 for the rest of this day.";
                 skip_online_score = true;
               }
               else {
