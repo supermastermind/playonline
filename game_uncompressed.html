@@ -2457,7 +2457,7 @@
             let many_games_previous_day = false;
             if (localStorage.gamesoktoday_firstvalue) {
               let nb_games_previous_day = gamesok - Number(localStorage.gamesoktoday_firstvalue) - 1;
-              many_games_previous_day = (nb_games_previous_day >= 35);
+              many_games_previous_day = (nb_games_previous_day > 30);
             }
             localStorage.gamesoktoday_firstvalue = gamesok-1;
             if (gamesok <= 700) {
