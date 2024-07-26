@@ -755,7 +755,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0G"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0H"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1169,7 +1169,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0G: " + (localStorage.reloadForCompatibility_v300G ? localStorage.reloadForCompatibility_v300G : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0H: " + (localStorage.reloadForCompatibility_v300H ? localStorage.reloadForCompatibility_v300H : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2460,11 +2460,11 @@
               many_games_previous_day = (nb_games_previous_day >= 35);
             }
             localStorage.gamesoktoday_firstvalue = gamesok-1;
-            if (gamesok <= 800) {
-              localStorage.too_many_games_today_thld_1 = 20; // (average: 25)
-              localStorage.too_many_games_today_thld_2 = 30;
+            if (gamesok <= 700) {
+              localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 15 : 20); // (average: 25 or 20)
+              localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 25 : 30);
             }
-            else if (gamesok >= 8000) {
+            else if (gamesok >= 2.5*many_games_thld) {
               localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 10); // (average: 10 or far lower by skipping days)
               localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 10);
             }
@@ -2473,8 +2473,8 @@
               localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 15);
             }
             else {
-              localStorage.too_many_games_today_thld_1 = 15; // (average: 20)
-              localStorage.too_many_games_today_thld_2 = 25;
+              localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 15 : 15); // (average: 20 or 15)
+              localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 15 : 25);
             }
           }
           let too_many_games_today_thld_1 = Number(localStorage.too_many_games_today_thld_1);
@@ -2598,7 +2598,7 @@
           }
 
           // Reduce google sheet load 2/3: no interest for sharing results
-          else if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 5) && (!localStorage.firstname)) {
+          else if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 4) && (!localStorage.firstname)) {
             if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
               debug_game_state = 100.32;
               if ((gamesok <= 120) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
@@ -2611,9 +2611,9 @@
           }
 
           // Reduce google sheet load 3/3: games without first name entered yet
-          else if ( (gamesok == 2) || (gamesok == 4)
+          else if ( (gamesok == 1) || (gamesok == 2) || (gamesok == 3)
                     || ((gamesok >= 12) && ((gamesok % 3) != 0) // skip calls towards google sheet 1 game out of 3
-                        && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 3) && (!localStorage.firstname))
+                        && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 2) && (!localStorage.firstname))
                   ) {
             debug_game_state = 100.34;
             setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
@@ -2902,9 +2902,9 @@
               if ( (!localStorage.firstname)
                    && (gamesok >= min_gamesok_for_firstname) // (coherent with "history_clear_advice")
                    && ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 7)) // ask at up to one game out of 3
-                   && ( ((nbcolumns == 4) && (score >= 20)) || ((nbcolumns == 5) && (score >= 30)) || ((nbcolumns == 6) && (score >= 40)) || ((nbcolumns == 7) && (score >= 50))
-                        || ((gamesok >= 7) && (score >= 15))
-                        || (gamesok >= 9) ) ) { // (~experienced player)
+                   && ( ((nbcolumns == 4) && (score >= 30)) || ((nbcolumns == 5) && (score >= 40)) || ((nbcolumns == 6) && (score >= 60)) || ((nbcolumns == 7) && (score >= 90))
+                        || ((gamesok >= 7) && (score >= 30))
+                        || (gamesok >= 9) ) ) {
                 try {
                   localStorage.gamesok_at_last_first_name_request = gamesok;
                   ask_for_firstname();
