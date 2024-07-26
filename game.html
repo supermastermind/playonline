@@ -585,7 +585,7 @@ let year = String(date.getYear()-100);
 return String(day + month + year);
 }
 
-var min_gamesok_for_firstname = 5;
+var min_gamesok_for_firstname = 7;
 function checkIfRecentPlayer() {
 if (!localStorage.gamesok) {
 return true;
@@ -2901,10 +2901,10 @@ document.getElementById('form_list_id').value = '-';
 var form_to_be_submitted = true;
 if ( (!localStorage.firstname)
 && (gamesok >= min_gamesok_for_firstname) // (coherent with "history_clear_advice")
-&& ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 7)) // ask at up to one game out of 3
+&& ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 9)) // ask at up to one game out of 3
 && ( ((nbcolumns == 4) && (score >= 30)) || ((nbcolumns == 5) && (score >= 40)) || ((nbcolumns == 6) && (score >= 60)) || ((nbcolumns == 7) && (score >= 90))
-|| ((gamesok >= 7) && (score >= 30))
-|| (gamesok >= 9) ) ) {
+|| ((gamesok >= 9) && (score >= 30))
+|| (gamesok >= 10) ) ) {
 try {
 localStorage.gamesok_at_last_first_name_request = gamesok;
 ask_for_firstname();
