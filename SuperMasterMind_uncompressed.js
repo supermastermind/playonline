@@ -1294,7 +1294,7 @@ settingsButtonClick = function() { // (override temporary definition)
             + "</a><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
       }
     }
-    else if (!localStorage.nbTimesFirstnameAsked && localStorage.gamesok && (Number(localStorage.gamesok) >= Math.ceil(min_gamesok_for_firstname/2)) && (Number(localStorage.gamesok) <= 3*min_gamesok_for_firstname)) {
+    else if (!localStorage.nbTimesFirstnameAsked && localStorage.gamesok && (Number(localStorage.gamesok) >= min_gamesok_for_firstname-1) && (Number(localStorage.gamesok) <= 3*min_gamesok_for_firstname)) {
           change_first_name_str =
             change_first_name_title_str
             + "Will be available after more wins"
