@@ -2556,7 +2556,7 @@
             let str_prefix = "<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played " + nb_games_today + " games today!<br>";
             if ((nb_games_today >= too_many_games_today_thld_2) || (!localStorage.firstname)) {
               if (nb_games_today == too_many_games_today_thld_2) {
-                too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back " + ((gamesok < many_games_thld) ? "tomorrow." : "in the future.");
+                too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back " + ((gamesok < many_games_thld) ? "tomorrow." : "in the future...");
               }
               skip_online_score = true; // skip all calls towards google sheet today
             }
