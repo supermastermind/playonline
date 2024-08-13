@@ -2458,8 +2458,8 @@ if (localStorage.gamesoktoday_firstvalue) {
 let nb_games_previous_day = gamesok - Number(localStorage.gamesoktoday_firstvalue) - 1;
 many_games_previous_day = (nb_games_previous_day > 30);
 }
-if (localStorage.gamesoktoday_time && ((new Date()).getTime() - localStorage.gamesoktoday_time > 2*24*3600*1000)) { // 2 days
-many_games_previous_day =  false;
+if (localStorage.gamesoktoday_time && ((new Date()).getTime() - localStorage.gamesoktoday_time > 3*24*3600*1000)) { // 3 days
+many_games_previous_day = false;
 }
 localStorage.gamesoktoday_date = currentDate();
 localStorage.gamesoktoday_time = (new Date()).getTime();
