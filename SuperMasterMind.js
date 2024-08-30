@@ -273,6 +273,7 @@ let medium_bold_font=defaultFont;
 let stats_bold_font=defaultFont;
 let font_size=min_font_size;
 let star_font_size=min_font_size;
+let default_font_height_factor=0.83;
 let main_graph_update_needed=true;
 let color_selection_code=0;
 let color_cnt=1;
@@ -430,16 +431,16 @@ strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
 submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0I: "+(localStorage.reloadForCompatibility_v300I ? localStorage.reloadForCompatibility_v300I : "not done"), 210);
-}
+if(gameErrorStr==""){
+gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
+alert(gameErrorStr);
+}}
 catch (exc){
 console.log("internal error at error form submission: "+exc);
 submitForm("internal error at error form submission: "+exc+" for submitted error: "+GUIErrorStr+" / STACK: "+errStack, 230);
 }}
 globalErrorCnt++;
-if(gameErrorStr==""){
-gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
-alert(gameErrorStr);
-}}
+}
 function onGameSolverError(e){
 displayGUIError("gameSolver error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
 }
@@ -3584,9 +3585,6 @@ break;
 if(line_found){
 break;
 }}
-if(first_non_transparent_line==-1){
-throw new Error("measurePreciseTextHeight error: first_non_transparent_line not found");
-}
 line_found=false;
 var last_non_transparent_line=-1;
 for (y=height-1;y >=0;y=y-y_step){
@@ -3601,8 +3599,10 @@ break;
 if(line_found){
 break;
 }}
-if(last_non_transparent_line==-1){
-throw new Error("measurePreciseTextHeight error: last_non_transparent_line not found");
+if((first_non_transparent_line==-1)||(last_non_transparent_line==-1)){
+displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: "+(first_non_transparent_line==-1)+", "+(last_non_transparent_line==-1), new Error().stack);
+first_non_transparent_line=0;
+last_non_transparent_line=Math.round((height-1) * default_font_height_factor);
 }
 tmp_canvas.width=0;
 tmp_canvas.height=0;
@@ -3636,7 +3636,7 @@ str_height=font_array__str_height[ctx_font_str];
 }
 if(str_height==undefined){
 displayGUIError("displayString: str_height not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(font_array__str_height), new Error().stack);
-str_height=parseInt(ctx.font.match(/\d+/)[0]) * 0.83;
+str_height=parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor;
 }}
 let empty_space_before_str=font_array__empty_space_before_str[ctx_font_str];
 if(empty_space_before_str==undefined){

@@ -367,6 +367,7 @@ let medium_bold_font = defaultFont;
 let stats_bold_font = defaultFont;
 let font_size = min_font_size;
 let star_font_size = min_font_size;
+let default_font_height_factor = 0.83;
 
 // Other variables
 // ****************
@@ -554,6 +555,14 @@ function displayGUIError(GUIErrorStr, errStack) {
       errorStr = errorStr + " for game " + strGame;
 
       submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0I: " + (localStorage.reloadForCompatibility_v300I ? localStorage.reloadForCompatibility_v300I : "not done"), 210);
+
+      // Alert
+      // *****
+
+      if (gameErrorStr == "") { // Not more than one error alert displayed per game
+        gameErrorStr = "***** ERROR *****: " + GUIErrorStr + " / " + errStack + "\n";
+        alert(gameErrorStr);
+      }
     }
     catch (exc) {
       console.log("internal error at error form submission: " + exc);
@@ -561,14 +570,6 @@ function displayGUIError(GUIErrorStr, errStack) {
     }
   }
   globalErrorCnt++;
-
-  // Alert
-  // *****
-
-  if (gameErrorStr == "") { // Only one error alert is displayed per game
-    gameErrorStr = "***** ERROR *****: " + GUIErrorStr + " / " + errStack + "\n";
-    alert(gameErrorStr);
-  }
 
 }
 
@@ -4550,9 +4551,6 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
         break;
       }
     }
-    if (first_non_transparent_line == -1) {
-      throw new Error("measurePreciseTextHeight error: first_non_transparent_line not found");
-    }
 
     line_found = false;
     var last_non_transparent_line = -1;
@@ -4570,8 +4568,12 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
         break;
       }
     }
-    if (last_non_transparent_line == -1) {
-      throw new Error("measurePreciseTextHeight error: last_non_transparent_line not found");
+
+    // Error observed for Chrome/xxx Mobile Safari/xxx => defense applied
+    if ((first_non_transparent_line == -1) || (last_non_transparent_line == -1)) {
+      displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), new Error().stack);
+      first_non_transparent_line = 0; // (defense)
+      last_non_transparent_line = Math.round((height-1) * default_font_height_factor); // (defense)
     }
 
     // Free memory as soon as possible
@@ -4610,7 +4612,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
     }
     if (str_height == undefined) {
       displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(font_array__str_height), new Error().stack);
-      str_height = parseInt(ctx.font.match(/\d+/)[0]) * 0.83; // (defense)
+      str_height = parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor; // (defense)
     }
   }
   let empty_space_before_str = font_array__empty_space_before_str[ctx_font_str];
