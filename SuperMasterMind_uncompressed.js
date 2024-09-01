@@ -1304,7 +1304,7 @@ settingsButtonClick = function() { // (override temporary definition)
 
     let game_rules_str =
       "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
-      <br><b>HOW TO PLAY:</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
+      <br><b>HOW TO PLAY?</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
       <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
       + "See <b><a href='index.html#game_rules'>Game&nbsp;rules</a></b> for more details<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>"
       + display_form_str
@@ -4569,7 +4569,7 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
       }
     }
 
-    // Error observed for Chrome/xxx Mobile Safari/xxx => defense applied
+    // Error observed for android appli run with Apple's "Chrome/xxx Mobile Safari/xxx" => defense applied
     if ((first_non_transparent_line == -1) || (last_non_transparent_line == -1)) {
       displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), new Error().stack);
       first_non_transparent_line = 0; // (defense)
