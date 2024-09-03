@@ -2584,7 +2584,7 @@ throw new Error("undefined gameSolver ("+currentAttemptNumber+")");
 else{
 throw new Error("invalid game_id_for_initGameSolver value at next attempt: "+game_id_for_initGameSolver);
 }}}}
-let arrow_shown_thld=((!localStorage.gamesok) ? 3 : 2);
+let arrow_shown_thld=3;
 let selected_column_arrow_shall_be_shown=( ((!localStorage.gamesok)||(Number(localStorage.gamesok) < 3))
 &&gameOnGoing()&&((currentAttemptNumber <=arrow_shown_thld)||((currentAttemptNumber==arrow_shown_thld+1)&&(currentCode==0)))
 &&is_there_a_color_being_selected() );

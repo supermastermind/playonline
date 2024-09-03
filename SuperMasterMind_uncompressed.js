@@ -3272,7 +3272,7 @@ function draw_graphic_bis() {
       }
     }
 
-    let arrow_shown_thld = ((!localStorage.gamesok) ? 3 : 2);
+    let arrow_shown_thld = 3;
     let selected_column_arrow_shall_be_shown = ( ((!localStorage.gamesok) || (Number(localStorage.gamesok) < 3)) // very recent player
                                                  && gameOnGoing() && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == 0)))
                                                  && is_there_a_color_being_selected() );
@@ -4633,7 +4633,7 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
       }
     }
 
-    // Error observed for android appli run with Apple's "Chrome/xxx Mobile Safari/xxx" => defense applied
+    // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if ((first_non_transparent_line == -1) || (last_non_transparent_line == -1)) {
       displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), new Error().stack);
       first_non_transparent_line = 0; // (defense)
