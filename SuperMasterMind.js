@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.0I";
+let smm_compatibility_version="v30.0J";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v300I)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v300J)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v300I="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v300J="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -161,7 +161,9 @@ let x_step=1.0;
 let y_step=1.0;
 let color_being_selected=-1;
 let column_of_color_being_selected=-1;
-let highlight_selected_text=false;
+let last_color_being_selected_time=0;
+let was_selected_column_arrow_shown=false;
+let highlight_selected_text_param=false;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
 let optimal_width=4;
@@ -430,7 +432,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0I: "+(localStorage.reloadForCompatibility_v300I ? localStorage.reloadForCompatibility_v300I : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0J: "+(localStorage.reloadForCompatibility_v300J ? localStorage.reloadForCompatibility_v300J : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -1008,6 +1010,14 @@ modal.open();
 catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}}
+function is_there_a_color_being_selected(){
+return ((color_being_selected!=-1)&&(column_of_color_being_selected!=-1)&&(new Date().getTime()-last_color_being_selected_time < 1000));
+}
+function reset_color_being_selected(){
+color_being_selected=-1;
+column_of_color_being_selected=-1;
+last_color_being_selected_time=0;
+}
 function handleTouchStartOrMouseDownEvent(x, y){
 let event_x_min, event_x_max, event_y_min, event_y_max;
 let rect=canvas.getBoundingClientRect();
@@ -1037,13 +1047,13 @@ if((mouse_y > y_0+refLineWidth)&&(mouse_y < y_1-refLineWidth)){
 colorSelected=true;
 color_being_selected=color+1;
 column_of_color_being_selected=column+1;
+last_color_being_selected_time=new Date().getTime();
 playAColor(color+1, column+1);
 nbColorSelections++;
 break;
 }}
 if(!colorSelected){
-color_being_selected=-1;
-column_of_color_being_selected=-1;
+reset_color_being_selected();
 playAColor(emptyColor, column+1);
 }
 draw_graphic();
@@ -1133,10 +1143,7 @@ if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("mouseUp skipped");
 return;
 }
-color_being_selected=-1;
-column_of_color_being_selected=-1;
-highlight_selected_text=false;
-draw_graphic();
+setTimeout("reset_color_being_selected();draw_graphic();", (gameOnGoing()&&is_there_a_color_being_selected() ? 100 : 1));
 }
 function mouseMove(e){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
@@ -1201,15 +1208,18 @@ promptSequenceIndex=0;
 }
 if((color!=emptyColor)&&obviouslyImpossibleColors[color]){
 if(currentAttemptNumber==nbMaxAttempts){
+reset_color_being_selected();
 return;
 }
 if((nbColumns==5)&&(currentAttemptNumber <=3)){
+reset_color_being_selected();
 setTimeout("alert('To simplify calculations, obviously impossible colors can only be selected from mid-game');", 111);
 return;
 }}
 let newCurrentCode=smmCodeHandler.setColor(currentCode, color, column);
 for (let i=1;i < currentAttemptNumber;i++){
 if(newCurrentCode==codesPlayed[i-1]){
+reset_color_being_selected();
 setTimeout("alert('This code was already played');", 111);
 return;
 }}
@@ -1222,6 +1232,7 @@ allColorsAreObviouslyImpossible=false;
 break;
 }}
 if(allColorsAreObviouslyImpossible){
+reset_color_being_selected();
 setTimeout("alert('This code only contains obviously impossible colors so is useless');", 111);
 return;
 }}
@@ -1627,6 +1638,7 @@ next_code3=0;
 next_scode=0;
 next_scoderevealed=0;
 next_gameinvid=0;
+reset_color_being_selected();
 }
 function checkArraySizes(){
 if(backgroundColorTable.length!=foregroundColorTable.length){displayGUIError("array sizes are inconsistent (0)", new Error().stack);}
@@ -2179,6 +2191,24 @@ ctx.fill();
 if(stroke){
 ctx.stroke();
 }}
+function drawArrow(ctx, fromX, fromY, toX, toY, width){
+const headlen=width*1.75;
+const dx=toX-fromX;
+const dy=toY-fromY;
+const angle=Math.atan2(dy, dx);
+ctx.lineWidth=width;
+ctx.lineCap='round';
+ctx.beginPath();
+ctx.moveTo(fromX, fromY);
+ctx.lineTo(toX, toY);
+ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(toX, toY);
+ctx.lineTo(toX-headlen * Math.cos(angle-Math.PI / 6), toY-headlen * Math.sin(angle-Math.PI / 6));
+ctx.moveTo(toX, toY);
+ctx.lineTo(toX-headlen * Math.cos(angle+Math.PI / 6), toY-headlen * Math.sin(angle+Math.PI / 6));
+ctx.stroke();
+}
 function draw_graphic(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("draw_graphic skipped");
@@ -2554,6 +2584,13 @@ throw new Error("undefined gameSolver ("+currentAttemptNumber+")");
 else{
 throw new Error("invalid game_id_for_initGameSolver value at next attempt: "+game_id_for_initGameSolver);
 }}}}
+let arrow_shown_thld=((!localStorage.gamesok) ? 3 : 2);
+let selected_column_arrow_shall_be_shown=( ((!localStorage.gamesok)||(Number(localStorage.gamesok) < 3))
+&&gameOnGoing()&&((currentAttemptNumber <=arrow_shown_thld)||((currentAttemptNumber==arrow_shown_thld+1)&&(currentCode==0)))
+&&is_there_a_color_being_selected() );
+if(selected_column_arrow_shall_be_shown!=was_selected_column_arrow_shown){
+main_graph_update_needed=true;
+}
 let nbMaxAttemptsToDisplay=((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) : currentAttemptNumber-1);
 if(main_graph_update_needed){
 let x_0, y_0, x_1, y_1;
@@ -2696,7 +2733,7 @@ displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 ctx.fillStyle=darkGray;
 x_0=get_x_pixel(x_min+x_step*attempt_nb_width);
 y_0=get_y_pixel(y_min);
-x_1=get_x_pixel(x_min+x_step*attempt_nb_width);
+x_1=x_0;
 y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 if(x_0!=get_x_pixel(x_min)){
 drawLine(ctx, x_0, y_0, x_1, y_1);
@@ -2704,14 +2741,14 @@ drawLine(ctx, x_0, y_0, x_1, y_1);
 for (let col=0;col <=nbColumns;col++){
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
 y_0=get_y_pixel(y_min);
-x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
+x_1=x_0;
 y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 if((col==0)||(col==nbColumns)){
 drawLine(ctx, x_0, y_0, x_1, y_1);
 }}
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
 y_0=get_y_pixel(y_min);
-x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
+x_1=x_0;
 y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 if(x_1!=get_x_pixel(x_max)){
 drawLine(ctx, x_0, y_0, x_1, y_1);
@@ -2725,7 +2762,7 @@ drawLine(ctx, x_0, y_0, x_1, y_1);
 }
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
 y_0=get_y_pixel(y_min);
-x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
+x_1=x_0;
 y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 if(x_1!=get_x_pixel(x_max)){
 drawLine(ctx, x_0, y_0, x_1, y_1);
@@ -2739,6 +2776,20 @@ backgroundColor=highlightColor;
 }
 displayMark(marks[i-1], i-1, backgroundColor, ctx);
 }
+if(selected_column_arrow_shall_be_shown){
+if((color_being_selected==-1)||(column_of_color_being_selected==-1)||(last_color_being_selected_time==0)){
+throw new Error("invalid set of color_being_selected values: "+color_being_selected+", "+column_of_color_being_selected+", "+last_color_being_selected_time);
+}
+ctx.strokeStyle=(modernDisplay ? lightGray : backgroundColorTable[color_being_selected-1]);
+x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
+y_0=get_y_pixel(y_min+y_step*(currentAttemptNumber));
+x_1=x_0;
+y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
+let arrow_width_ratio=((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
+let arrow_width=(get_x_pixel(x_min+x_step)-get_x_pixel(x_min)) * arrow_width_ratio;
+drawArrow(ctx, x_1, y_1+arrow_width, x_0, y_0-arrow_width, arrow_width);
+}
+was_selected_column_arrow_shown=selected_column_arrow_shall_be_shown;
 ctx.font=stats_bold_font;
 let nbMaxHintsDisplayed=2;
 for (let i=0;i < nbMaxAttempts;i++){
@@ -3312,13 +3363,13 @@ for (let codeidx=0;codeidx <=nbPossibleCodesShown;codeidx++){
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 y_0=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
-y_1=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+codeidx));
+y_1=y_0;
 drawLine(ctx, x_0, y_0, x_1, y_1);
 }
 for (let col=0;col <=nbColumns;col++){
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
 y_0=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height));
-x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+col*2));
+x_1=x_0;
 y_1=get_y_pixel(y_min+y_step*(nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown));
 drawLine(ctx, x_0, y_0, x_1, y_1);
 }
@@ -3358,7 +3409,7 @@ displayGUIError("invalid code_ratio: "+code_ratio, new Error().stack);
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
 y_0=get_y_pixel(y_min+y_step*y_cell);
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width));
-y_1=get_y_pixel(y_min+y_step*y_cell);
+y_1=y_0;
 let currentColor=ctx.strokeStyle;
 ctx.strokeStyle=lightGray;
 drawLineWithPath(ctx, x_0, y_0, x_1, y_1);
@@ -3857,7 +3908,7 @@ else{
 foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.15);
 backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
 }}
-if(highlight_selected_text){
+if(highlight_selected_text_param){
 if(!modernDisplay){
 backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.25);
 }
@@ -3907,9 +3958,9 @@ currentCodeColorMode=-1;
 function displayCode(code, y_cell, ctx, secretCodeCase=false, checkDisabledColors=false, check_highlight_text=false){
 for (let col=0;col < nbColumns;col++){
 let color=smmCodeHandler.getColor(code, col+1);
-highlight_selected_text=(check_highlight_text&&(color==color_being_selected)&&(col+1==column_of_color_being_selected));
+highlight_selected_text_param=(check_highlight_text&&gameOnGoing()&&is_there_a_color_being_selected()&&(color==color_being_selected)&&(col+1==column_of_color_being_selected));
 displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ? obviouslyImpossibleColors[color] : false));
-highlight_selected_text=false;
+highlight_selected_text_param=false;
 }}
 function displayMark(mark, y_cell, backgroundColor, ctx){
 let x_0=get_x_pixel(x_min+x_step*attempt_nb_width);
