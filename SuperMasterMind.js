@@ -2787,7 +2787,7 @@ x_1=x_0;
 y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 let arrow_width_ratio=((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
 let arrow_width=(get_x_pixel(x_min+x_step)-get_x_pixel(x_min)) * arrow_width_ratio;
-drawArrow(ctx, x_1, y_1+arrow_width, x_0, y_0-arrow_width, arrow_width);
+drawArrow(ctx, x_1, y_1+1.35 * arrow_width, x_0, y_0-1.35 * arrow_width, arrow_width);
 }
 was_selected_column_arrow_shown=selected_column_arrow_shall_be_shown;
 ctx.font=stats_bold_font;
