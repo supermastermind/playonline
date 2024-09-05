@@ -755,7 +755,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0J"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0K"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1169,7 +1169,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0J: " + (localStorage.reloadForCompatibility_v300J ? localStorage.reloadForCompatibility_v300J : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0K: " + (localStorage.reloadForCompatibility_v300K ? localStorage.reloadForCompatibility_v300K : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2363,7 +2363,7 @@
           alert("First name has already been changed the maximum number of times");
           return;
         }
-        let prompt_str = "Please enter your first name, it will be stored online with your scores and performances (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no spaces):";
+        let prompt_str = "Please enter your first name or nickname to be stored with your scores (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no space):";
         let firstname_entered = prompt(prompt_str, "Sherlock?");
         if (firstname_entered != null) { // (a first name was entered)
           firstname_entered = firstname_entered.trim();
@@ -2606,7 +2606,7 @@
             if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
               debug_game_state = 100.32;
               if ((gamesok <= 120) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
-                setTimeout("alert('As you did not enter your first name, your scores will only be stored online occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
+                setTimeout("alert('As you did not enter your first name or nickname, your scores will only be stored online occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
               }
               setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
               debug_game_state = 100.33;

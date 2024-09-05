@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.0J";
+let smm_compatibility_version="v30.0K";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v300J)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v300K)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v300J="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v300K="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -432,7 +432,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0J: "+(localStorage.reloadForCompatibility_v300J ? localStorage.reloadForCompatibility_v300J : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0K: "+(localStorage.reloadForCompatibility_v300K ? localStorage.reloadForCompatibility_v300K : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -754,7 +754,7 @@ setTimeout("dsCode=false;newGameButtonClick_delayed(true);", 2500);
 }
 else{
 let game_aborted_str="<b>Current game was aborted"
-+(localStorage.firstname ? "<hr style='height:1.75vh;padding:0;margin:0;visibility:hidden;' />You shall win 5 consecutive games<br>to get your total score and<br>performance computed" : "")
++(localStorage.firstname ? "<hr style='height:1.75vh;padding:0;margin:0;visibility:hidden;' />You shall win 5 consecutive games<br>to have your total scores and<br>performances computed" : "")
 +"<br><img alt='loading...' src='img/loading.gif' style='height:12%;'><br>  <!--(not rem unit as no viewport!)-->"
 +(mobileMode ? "Tap" : "Click")+" to start a new game</b>";
 gameAbortedObject.innerHTML=game_aborted_str;
@@ -1014,11 +1014,11 @@ function is_there_a_color_being_selected(){
 return ((color_being_selected!=-1)&&(column_of_color_being_selected!=-1)&&(new Date().getTime()-last_color_being_selected_time < 1000));
 }
 let arrow_shown_thld_1=1;
-let arrow_shown_thld_2=3;
+let arrow_shown_thld_2=2;
 function selected_color_and_column_arrow_to_be_shown(){
 let regular_cond=( ((!localStorage.arrow_shown_date)||(localStorage.arrow_shown_date!=currentDate()))
 &&((currentAttemptNumber <=arrow_shown_thld_1)||((currentAttemptNumber==arrow_shown_thld_1+1)&&(currentCode==0))) );
-if(( (!localStorage.gamesok)||(Number(localStorage.gamesok) < 3)
+if(( (!localStorage.gamesok)||(Number(localStorage.gamesok) <=1)
 ||regular_cond )
 &&gameOnGoing()&&((currentAttemptNumber <=arrow_shown_thld_2)||((currentAttemptNumber==arrow_shown_thld_2+1)&&(currentCode==0)))
 &&is_there_a_color_being_selected() ){
@@ -3233,7 +3233,7 @@ if(!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_
 (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 2, true, 0, false, true, false )){
 if(mobileMode){
 if((nbColumns >=4)&&(nbColumns <=7)&&(currentAttemptNumber==1)){
-displayString("TAP!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
+displayString("Tap!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
 (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
 }}
 else{

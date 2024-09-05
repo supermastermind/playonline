@@ -55,7 +55,7 @@
             <hr style="height:0.5rem; visibility:hidden;" />
             <h2>Optimal strategy</h2>
 
-            This page gives information on the optimal strategy of Super Master Mind, Master Mind and other code breakers games, as implemented in the <a href=index.html>online game</a> and <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io'>android app</a>, and tricks to play optimally.
+            This page gives information on the optimal strategy of Super Master Mind, Master Mind and other code breakers games, and tricks to play optimally.
             <hr style='height:0.75vh; visibility:hidden;'>
 
             <!-- OPTIMAL STRATEGY DETAILS -->
@@ -130,8 +130,8 @@
           <hr style="height:0.5rem; visibility:hidden;" />
           For Master Mind games (4 columns, 6 colors, 6<sup>4</sup>&nbsp;=&nbsp;<b>1296 codes</b>, <font color=#CC0099><b>optimal logical strategy</b></font> applied), <b>the optimal code to play at first attempt is 1233</b> (or any other equivalent code with 1 double + 2 different colors)</b> with an average number of attempts to find secret codes of <b><sup>5660</sup>&frasl;<sub>6<sup>4</sup></sub>&nbsp;&asymp;&nbsp;4.367</b> and a maximal number of attempts of <b>6</b>.
           <hr style="height:0.5rem; visibility:hidden;" />
-          This average number of attempts is slightly higher than the number offered by the Koyama and Lai's mathematically optimal strategy which allows playing illogical codes at each stage of the game (<b><sup>5625</sup>&frasl;<sub>6<sup>4</sup></sub>&nbsp;&asymp;&nbsp;4.340</b>, up to <b>6</b> attempts, <b>1233</b> as first attempt).
-          The option of playing illogical codes (in addition to logical codes) indeed brings more flexibility which results in benefits in some situations. This is illustrated by the below example:
+          This average number of attempts is slightly higher than the number reached by the Koyama and Lai's mathematically optimal strategy which allows playing illogical codes at each stage of the game (<b><sup>5625</sup>&frasl;<sub>6<sup>4</sup></sub>&nbsp;&asymp;&nbsp;4.340</b>, up to <b>6</b> attempts, <b>1233</b> as first attempt).
+          The option of playing illogical codes, in addition to logical codes, indeed brings more flexibility which results in benefits in some situations. It is illustrated in the below example:
           <hr style="height:0.5rem; visibility:hidden;" />
           <a href="img/MasterMind_game_illogical_strategy_1.png"><img src="img/MasterMind_game_illogical_strategy_1.png" style="width:45%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:4px;margin-right:4px;border-radius:2%"><small>click to enlarge</small></a>
           <hr style="height:0.5rem; visibility:hidden;" />
@@ -200,13 +200,13 @@
           <hr style="height:0.5rem; visibility:hidden;" />
           <b>About mathematically optimal strategies:</b>
           <hr style="height:0.5rem; visibility:hidden;" />
-          Processing times to evaluate them are out of reach. With <b>illogical codes allowed at second attempt</b> (with obviously impossible colors forbidden to simplify, i.e. colors present in first code with "0 black + 0 white peg" mark) <b>and then the <font color=#CC0099>optimal logical strategy</font> applied from third attempt</b>, the best 3 codes to play at first attempt become:
+          Processing times to evaluate them are out of reach. With <b>illogical codes allowed at second attempt</b> (with obviously impossible colors forbidden to simplify, i.e. colors present in first code with a "0 black + 0 white peg" mark) <b>and then the <font color=#CC0099>optimal logical strategy</font> applied from third attempt</b>, the best 3 codes to play at first attempt become:
           <ul style='margin:0'>
-            <li style='list-style-type:disc'><b>12344</b> with an average number of attempts to find secret codes of <b><sup>179274</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.471</b>,</li>
-            <li style='list-style-type:disc'><b>12233</b> with an average number of attempts to find secret codes of <b><sup>179330</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.473</b>,</li>
-            <li style='list-style-type:disc'><b>12345</b> with an average number of attempts to find secret codes of <b><sup>180441</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.507</b>.</li>
+            <li style='list-style-type:disc'><b>12344</b> with an average number of attempts to find secret codes of <b><sup>179274</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.471</b></li>
+            <li style='list-style-type:disc'><b>12233</b> with an average number of attempts to find secret codes of <b><sup>179330</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.473</b></li>
+            <li style='list-style-type:disc'><b>12345</b> with an average number of attempts to find secret codes of <b><sup>180441</sup>&frasl;<sub>8<sup>5</sup></sub>&nbsp;&asymp;&nbsp;5.507</b></li>
           </ul>
-          That implies mathematically optimal strategies to have an optimal performance lower than 5.471, likely close to <b><font color=#0000A8>5.46</font></b>  with 12344 or 12233 as optimal first code. Indeed we observed for Master Mind games that gains brought by illogical codes at second attempt (5660-5636&nbsp;=&nbsp;24) were around twice the ones brought at third attempt (5636-5625&nbsp;=&nbsp;11), which could lead to 5.471-(5.491-5.471)/2&nbsp;&asymp;&nbsp;5.46  when transposed to Super Master Mind games.
+          That implies mathematically optimal strategies to have an optimal performance lower than 5.471, likely close to <b><big><font color=#008200>5.46</font></big></b>, with 12344 or 12233 as optimal first code. Indeed we observed for Master Mind games that gains brought by illogical codes at second attempt (5660-5636&nbsp;=&nbsp;24) were around twice the ones brought at third attempt (5636-5625&nbsp;=&nbsp;11), which could lead to 5.471-(5.491-5.471)/2&nbsp;&asymp;&nbsp;5.46  when transposed to Super Master Mind games.
 
           <h3>Strategy performances & tricks to play optimally:</h3>
           <ul style='margin:0'>
@@ -220,12 +220,12 @@
                   <hr style="height:0.25rem; visibility:hidden;" />
                 </li>
                 <li style='list-style-type:circle'>
-                  With that same logic, getting &Delta;&nbsp;>&nbsp;0 values is also possible at game end, when there remain few strongly correlated possible codes, for example:
+                  With the same logic, getting &Delta;&nbsp;>&nbsp;0 values is also possible at game end, when there remain few strongly correlated possible codes, for example:
                   <ul style='margin:0'>
-                    <li style='list-style-type:circle'>if there remain 5 possible codes {12344, 12345, 12346, 12347, 12348}, then playing <b>12356</b>, which is illogical, leads to &Delta;&nbsp;=&nbsp;<b><font color=#008200>+0.40</font></b>:<br><sup>(1+2+3+4+5)</sup>&frasl;<sub>5</sub>&nbsp;-&nbsp;<sup>(2+2+2+3+4)</sup>&frasl;<sub>5</sub>&nbsp;=&nbsp;0.40</li>
-                    <li style='list-style-type:circle'>if there remain 4 possible codes {12345, 12346, 12347, 12348}, then playing <b>12356</b>, which is illogical, leads to &Delta;&nbsp;=&nbsp;<b><font color=#008200>+0.25</font></b>:<br><sup>(1+2+3+4)</sup>&frasl;<sub>4</sub>&nbsp;-&nbsp;<sup>(2+2+2+3)</sup>&frasl;<sub>4</sub>&nbsp;=&nbsp;0.25</li>
+                    <li style='list-style-type:circle'>if there remain 5 possible codes {12344, 12345, 12346, 12347, 12348}, then playing <b>12356</b>, which is illogical, leads to &Delta;&nbsp;=&nbsp;<b><font color=#008200>+0.40</font></b>:<br>&Delta;&nbsp;=&nbsp;<sup>(1+2+3+4+5)</sup>&frasl;<sub>5</sub>&nbsp;-&nbsp;<sup>(2+2+2+3+4)</sup>&frasl;<sub>5</sub>&nbsp;=&nbsp;0.40</li>
+                    <li style='list-style-type:circle'>if there remain 4 possible codes {12345, 12346, 12347, 12348}, then playing <b>12356</b>, which is illogical, leads to &Delta;&nbsp;=&nbsp;<b><font color=#008200>+0.25</font></b>:<br>&Delta;&nbsp;=&nbsp;<sup>(1+2+3+4)</sup>&frasl;<sub>4</sub>&nbsp;-&nbsp;<sup>(2+2+2+3)</sup>&frasl;<sub>4</sub>&nbsp;=&nbsp;0.25</li>
                   </ul>
-                  You can try to apply those tricks in the online game...
+                  You can try to apply those tricks in the online game!
                 </li>
               </ul>
             </li>
@@ -237,21 +237,21 @@
           <ul style='margin:0'>
             <li style='list-style-type:disc'><b>Mega Master Mind games (6 columns, 9 colors):</b><br>
               <hr style="height:0.25rem; visibility:hidden;" />
-              The <font color=#CC0099><b>optimal logical strategy</b></font> was not evaluated due to very long processing times. The best code to play at first attempt is presumably among:
+              The <font color=#CC0099><b>optimal logical strategy</b></font> was not evaluated due to very long processing times (evaluation may last one year or so on a poweful laptop). The best code to play at first attempt is presumably among:
               <ul style='margin:0'>
-                <li style='list-style-type:disc'><b>112233</b> (or any other equivalent code with 3 doubles) with a maximum number of possible codes at second attempt of 93312 (lowest value among all first codes, which can be a good criterion even if approximate),</li>
-                <li style='list-style-type:disc'><b>123455</b> (or any other equivalent code with 1 double + 4 different colors) with a maximum number of possible codes at second attempt of 96900 (second lowest value),</li>
-                <li style='list-style-type:disc'><b>123344</b> (or any other equivalent code with 2 doubles + 2 different colors) with a maximum number of possible codes at second attempt of 100465 (third lowest value, all others being &GreaterEqual; 108618).</li>
+                <li style='list-style-type:disc'><b>112233</b> (or any other equivalent code with 3 doubles) with a maximum number of possible codes at second attempt of 93312 (lowest value among all first codes, which can be a good criterion even if approximate)</li>
+                <li style='list-style-type:disc'><b>123455</b> (or any other equivalent code with 1 double + 4 different colors) with a maximum number of possible codes at second attempt of 96900 (second lowest value)</li>
+                <li style='list-style-type:disc'><b>123344</b> (or any other equivalent code with 2 doubles + 2 different colors) with a maximum number of possible codes at second attempt of 100465 (third lowest value, all others being &GreaterEqual; 108618)</li>
               </ul>
             </li>
             <hr style="height:0.5rem; visibility:hidden;" />
             <li style='list-style-type:disc'><b>Ultra Master Mind (7 columns, 10 colors):</b><br>
               <hr style="height:0.25rem; visibility:hidden;" />
-              The <font color=#CC0099><b>optimal logical strategy</b></font> was not evaluated due to "huge" processing times. The best code to play at first attempt is presumably among:
+              The <font color=#CC0099><b>optimal logical strategy</b></font> was not evaluated due to extremely long processing times. The best code to play at first attempt is presumably among:
               <ul style='margin:0'>
-                <li style='list-style-type:disc'><b>1234455</b> (or any other equivalent code with 2 doubles + 3 different colors) with a maximum number of possible codes at second attempt of 1598841 (lowest value among all first codes, which can be a good criterion even if approximate),</li>
-                <li style='list-style-type:disc'><b>1122333</b> (or any other equivalent code with 2 doubles + 1 triple) with a maximum number of possible codes at second attempt of 1647086 (second lowest value),</li>
-                <li style='list-style-type:disc'><b>1223344</b> (or any other equivalent code with 3 doubles + 1 different color) with a maximum number of possible codes at second attempt of 1651935 (third lowest value, all others being &GreaterEqual; 1721636).</li>
+                <li style='list-style-type:disc'><b>1234455</b> (or any other equivalent code with 2 doubles + 3 different colors) with a maximum number of possible codes at second attempt of 1598841 (lowest value among all first codes, which can be a good criterion even if approximate)</li>
+                <li style='list-style-type:disc'><b>1122333</b> (or any other equivalent code with 2 doubles + 1 triple) with a maximum number of possible codes at second attempt of 1647086 (second lowest value)</li>
+                <li style='list-style-type:disc'><b>1223344</b> (or any other equivalent code with 3 doubles + 1 different color) with a maximum number of possible codes at second attempt of 1651935 (third lowest value, all others being &GreaterEqual; 1721636)</li>
               </ul>
             </li>
           </ul>
