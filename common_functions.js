@@ -59,23 +59,11 @@ function set_div_contents_several_times(cmd_str, targeted_nb_ticks, periodical_t
   }
 }
 
-function write_introduction() {
-  let div_str = "<div id='game_images'>";
-  var img_str = "<hr style='height:0.75vh; visibility:hidden;' /><img src='img/SuperMasterMind_1.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'><img src='img/SuperMasterMind_2.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'><img src='img/SuperMasterMind_3.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'>";
-  if (window.innerWidth >= 360) {
-    img_str = img_str + "<img src='img/SuperMasterMind_5.png' style='width:4.5rem;border:0;margin:0px;border-radius:7%'>";
-  }
-  if (window.innerWidth >= 500) {
-    // img_str = img_str + "<img src='img/SuperMasterMind_4.png' style='width:4.5rem;border:0;margin:0px'>";
-  }
-  document.write(div_str + img_str + "</div>");
-}
-
 var optimal_strategy_descr = "The optimal strategy is determined thanks to a recursive algorithm which goes through all possible games (enumeration of all games with some &quot;equivalent games&quot; rules for optimization). The goal of this algorithm is to minimize the average number of attempts to find secret codes, all secret codes having the same probability to be selected.<br>In this algorithm, only the logical (i.e. possible) codes are considered at each stage of the game. ";
 
 function write_optimal_strategy_details_1() {
   var str = "<div>" + optimal_strategy_descr + "In some situations, playing an illogical code may be better than playing the best logical code(s). This could be called a &quot;useful mistake&quot;. "
-            + "This will thus result in the above number being strictly positive (e.g. <b>+0.25</b>). If you get such a positive number (voluntarily), you are good! &#x1F914;"
+            + "This will result in the above number being strictly positive (e.g. <b><font color=#008200>+0.25</font></b>). If you get such a positive number (voluntarily), you are good! &#x1F914;"
             + "<hr style='height:0.5rem; visibility:hidden;' />"
             + "See <a href=optimal_strategy.html><b>Optimal strategy</b></a> for more details.</div>";
   document.write(str);
