@@ -227,7 +227,7 @@ let y_step = 1.0; // N.A.
 let color_being_selected = -1;
 let column_of_color_being_selected = -1;
 let last_color_being_selected_time = 0;
-let was_selected_column_arrow_shown = false;
+let selected_color_and_column_arrow_previously_shown = -1;
 let highlight_selected_text_param = false; // (saves a function parameter)
 
 let attempt_nb_width = 2;
@@ -1308,7 +1308,7 @@ settingsButtonClick = function() { // (override temporary definition)
       "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
       <br><b>HOW TO PLAY?</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
       <img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
-      + "See <b><a href='index.html#game_rules'>Game&nbsp;rules</a></b> for more details<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>"
+      + "For more details, see <b><a href='index.html#game_rules'>Game&nbsp;rules</a></b><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>"
       + display_form_str
       + change_first_name_str
       + "<b>MORE INFO:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
@@ -1333,6 +1333,20 @@ settingsButtonClick = function() { // (override temporary definition)
 
 function is_there_a_color_being_selected() {
   return ((color_being_selected != -1) && (column_of_color_being_selected != -1) && (new Date().getTime() - last_color_being_selected_time < 1000)); // 1 second
+}
+
+let arrow_shown_thld_1 = 1; // (shall be <= arrow_shown_thld_2)
+let arrow_shown_thld_2 = 3;
+function selected_color_and_column_arrow_to_be_shown() {
+   let regular_cond = ( ((!localStorage.arrow_shown_date) || (localStorage.arrow_shown_date != currentDate()))
+                        && ((currentAttemptNumber <= arrow_shown_thld_1) || ((currentAttemptNumber == arrow_shown_thld_1+1) && (currentCode == 0))) );
+   if ( ( (!localStorage.gamesok) || (Number(localStorage.gamesok) < 3) // very recent player
+          || regular_cond )
+        && gameOnGoing() && ((currentAttemptNumber <= arrow_shown_thld_2) || ((currentAttemptNumber == arrow_shown_thld_2+1) && (currentCode == 0)))
+        && is_there_a_color_being_selected() ) {
+     return column_of_color_being_selected * 100 + color_being_selected;
+   }
+   return -1;
 }
 
 function reset_color_being_selected() {
@@ -3272,11 +3286,7 @@ function draw_graphic_bis() {
       }
     }
 
-    let arrow_shown_thld = 3;
-    let selected_column_arrow_shall_be_shown = ( ((!localStorage.gamesok) || (Number(localStorage.gamesok) < 3)) // very recent player
-                                                 && gameOnGoing() && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == 0)))
-                                                 && is_there_a_color_being_selected() );
-    if (selected_column_arrow_shall_be_shown != was_selected_column_arrow_shown) {
+    if (selected_color_and_column_arrow_previously_shown != selected_color_and_column_arrow_to_be_shown()) {
       main_graph_update_needed = true;
     }
 
@@ -3505,24 +3515,6 @@ function draw_graphic_bis() {
         displayMark(marks[i-1], i-1, backgroundColor, ctx);
 
       }
-
-      // Draw color selection arrow
-      // **************************
-
-      if (selected_column_arrow_shall_be_shown) {
-        if ((color_being_selected == -1) || (column_of_color_being_selected == -1) || (last_color_being_selected_time == 0)) {
-          throw new Error("invalid set of color_being_selected values: " + color_being_selected + ", " + column_of_color_being_selected + ", " + last_color_being_selected_time);
-        }
-        ctx.strokeStyle = (modernDisplay ? lightGray : backgroundColorTable[color_being_selected-1]);
-        x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
-        y_0 = get_y_pixel(y_min+y_step*(currentAttemptNumber));
-        x_1 = x_0;
-        y_1 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
-        let arrow_width_ratio = ((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
-        let arrow_width = (get_x_pixel(x_min+x_step) - get_x_pixel(x_min)) * arrow_width_ratio;
-        drawArrow(ctx, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
-      }
-      was_selected_column_arrow_shown = selected_column_arrow_shall_be_shown;
 
       // Draw stats
       // **********
@@ -4503,6 +4495,27 @@ function draw_graphic_bis() {
       resetCurrentCodeButtonObject.className = "button";
     }
 
+    // Draw color selection arrow
+    // **************************
+
+    if (selected_color_and_column_arrow_to_be_shown() != -1) {
+      if ((color_being_selected == -1) || (column_of_color_being_selected == -1) || (last_color_being_selected_time == 0)) {
+        throw new Error("invalid set of color_being_selected values: " + color_being_selected + ", " + column_of_color_being_selected + ", " + last_color_being_selected_time);
+      }
+      ctx.strokeStyle = (modernDisplay ? lightGray : backgroundColorTable[color_being_selected-1]);
+      let x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
+      let y_0 = get_y_pixel(y_min+y_step*((currentCode == 0) ? currentAttemptNumber - 1: currentAttemptNumber));
+      let x_1 = x_0;
+      let y_1 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
+      let arrow_width_ratio = ((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
+      let arrow_width = (get_x_pixel(x_min+x_step) - get_x_pixel(x_min)) * arrow_width_ratio;
+      drawArrow(ctx, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
+    }
+    selected_color_and_column_arrow_previously_shown = selected_color_and_column_arrow_to_be_shown();
+    if ((currentAttemptNumber == arrow_shown_thld_1+1) && (currentCode != 0)) {
+      localStorage.arrow_shown_date = currentDate();
+    }
+
     if ( last_but_one_attempt_event
          && (nbGamesPlayedAndWon <= 2)
          && (gameOnGoing())
@@ -4928,12 +4941,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
       }
     }
     if (highlight_selected_text_param) {
-      if (!modernDisplay) {
-        backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.25);
-      }
-      else {
-        backgroundColor = averageColor(backgroundColor, modernBaseColor2, 0.25);
-      }
+      backgroundColor = averageColor(foregroundColor, backgroundColor, 0.33);
     }
     if (color < 10) {
       displayString(getColorToDisplay(color), x_cell, y_cell, 2,
@@ -5098,6 +5106,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
   if ((mark.nbBlacks + mark.nbWhites == 0) && ((!localStorage.gamesok) || (Number(localStorage.gamesok) <= 30)) && (!worst_mark_alert_already_displayed) && (nb_worst_mark_alert_displayed<= 2)) {
     worst_mark_alert_already_displayed = true;
     nb_worst_mark_alert_displayed++;
+    reset_color_being_selected();draw_graphic();
     setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 111);
   }
 
