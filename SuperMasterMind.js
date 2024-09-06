@@ -992,12 +992,12 @@ change_first_name_title_str
 let game_rules_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
 <br><b>HOW TO PLAY?</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
-<img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
+<a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'></a>"
 +"For more details, go to <b><a href='index.html#game_rules'>Game&nbsp;rules</a></b><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>"
 +display_form_str
 +change_first_name_str
 +"<b>MORE INFO:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
-<b><a href='index.html'>Game&nbsp;info</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a> |&nbsp;<a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='"+android_app_url+"'>Android</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
+<b><a href='index.html'>Main&nbsp;page</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a> |&nbsp;<a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='"+android_app_url+"'>Android</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
 </font></td></tr></table></center><hr style='height:2.00vh;padding:0;margin:0;visibility:hidden;'>";
 try{
 gameRulesDisplayed=true;
