@@ -50,17 +50,16 @@
         <div id="content">
 
           <div>
-            <hr style="height:0.5rem; visibility:hidden;" />
-            <h2>Optimal strategy</h2>
+            <h1>Optimal strategy</h1>
 
-            This page gives information on the optimal strategy of Super Master Mind, Master Mind and other code breakers games, and tricks to play optimally.
+            This page gives information on the optimal strategy of Super Master Mind, Master Mind and other code breaker games, and tricks to play optimally.
             <hr style='height:0.75vh; visibility:hidden;'>
 
             <!-- OPTIMAL STRATEGY DETAILS -->
             <script>write_optimal_strategy_details_2();</script>
           </div>
 
-          <h3>Very easy game (3 columns, 5 colors):</h3>
+          <h2>Very easy game (3 columns, 5 colors)</h2>
 
           <b>
           <table style='margin-right:3vw;padding:0;border-collapse:collapse'>
@@ -89,7 +88,7 @@
           <hr style="height:0.5rem; visibility:hidden;" />
           For very easy games (3 columns, 5 colors, 5<sup>3</sup>&nbsp;=&nbsp;<b>125 codes</b>, <font color=#CC0099><b>optimal logical strategy</b></font> applied), <b>the optimal code to play at first attempt is 123</b> (or any other equivalent code with 3 different colors) with an average number of attempts to find secret codes of <b><sup>455</sup>&frasl;<sub>5<sup>3</sup></sub>&nbsp;=&nbsp;3.640</b> and a maximal number of attempts of <b>5</b>.
 
-          <h3>Master Mind game (4 columns, 6 colors):</h3>
+          <h2>Master Mind (4 columns, 6 colors)</h2>
 
           <b>
           <table style='margin-right:3vw;padding:0;border-collapse:collapse'>
@@ -128,6 +127,8 @@
           <hr style="height:0.5rem; visibility:hidden;" />
           For Master Mind games (4 columns, 6 colors, 6<sup>4</sup>&nbsp;=&nbsp;<b>1296 codes</b>, <font color=#CC0099><b>optimal logical strategy</b></font> applied), <b>the optimal code to play at first attempt is 1233</b> (or any other equivalent code with 1 double + 2 different colors)</b> with an average number of attempts to find secret codes of <b><sup>5660</sup>&frasl;<sub>6<sup>4</sup></sub>&nbsp;&asymp;&nbsp;4.367</b> and a maximal number of attempts of <b>6</b>.
           <hr style="height:0.5rem; visibility:hidden;" />
+          <b>About mathematically optimal strategies:</b>
+          <hr style="height:0.5rem; visibility:hidden;" />
           This average number of attempts is slightly higher than the number reached by the Koyama and Lai's mathematically optimal strategy which allows playing illogical codes at each stage of the game (<b><sup>5625</sup>&frasl;<sub>6<sup>4</sup></sub>&nbsp;&asymp;&nbsp;4.340</b>, up to <b>6</b> attempts, <b>1233</b> as first attempt).
           The option of playing illogical codes, in addition to logical codes, indeed brings more flexibility which results in benefits in some situations. It is illustrated in the below example:
           <hr style="height:0.5rem; visibility:hidden;" />
@@ -137,7 +138,7 @@
           <hr style="height:0.5rem; visibility:hidden;" />
           <a href="img/MasterMind_game_illogical_strategy_2.png"><img src="img/MasterMind_game_illogical_strategy_2.png" style="width:45%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:4px;margin-right:4px;border-radius:2%"><small>click to enlarge</small></a>
 
-          <h3>Super Master Mind game (5 columns, 8 colors):</h3>
+          <h2>Super Master Mind (5 columns, 8 colors)</h2>
 
           <b>
           <table style='margin:0;padding:0;border-collapse:collapse'>
@@ -206,7 +207,7 @@
           </ul>
           That implies mathematically optimal strategies to have an optimal performance lower than 5.471, likely close to <b><big><font color=#008200>5.46</font></big></b>, with 12344 or 12233 as optimal first code. Indeed we observed for Master Mind games that gains brought by illogical codes at second attempt (5660-5636&nbsp;=&nbsp;24) were around twice the ones brought at third attempt (5636-5625&nbsp;=&nbsp;11), which could lead to 5.471-(5.491-5.471)/2&nbsp;&asymp;&nbsp;5.46  when transposed to Super Master Mind games.
 
-          <h3>Strategy performances & tricks to play optimally:</h3>
+          <h2>Strategy performances & tricks to play optimally</h2>
           <ul style='margin:0'>
             <li style='list-style-type:disc'>With a mathematically optimal strategy (like Koyama and Lai's for Master Mind games), &Delta; values (i.e. performances of codes played relative to the performance of optimal code(s)) are always in the range <b>[-1;0]</b>. That rule applies whichever numbers of columns and colors.</li>
             <li style='list-style-type:disc'>With the <font color=#CC0099><b>optimal logical strategy</b></font>, when you play codes, &Delta; values are in a wider range <b>[X;Y] with X<-1 and Y>0</b> (Y=0 only if the codes played are logical). For example, some observed values for Super Master Mind games are:
@@ -229,11 +230,11 @@
             </li>
           </ul>
 
-          <h3>Other games:</h3>
+          <h2>Other games</h2>
           For games with more columns or colors than Super Master Mind, compromises shall also be found between playing different and duplicate colors. Here are some results helping to understand which are the best codes to play at first attempts:
           <hr style="height:0.5rem; visibility:hidden;" />
           <ul style='margin:0'>
-            <li style='list-style-type:disc'><b>Mega Master Mind games (6 columns, 9 colors):</b><br>
+            <li style='list-style-type:disc'><b>Mega Master Mind (6 columns, 9 colors):</b><br>
               <hr style="height:0.25rem; visibility:hidden;" />
               The <font color=#CC0099><b>optimal logical strategy</b></font> was not evaluated due to very long processing times (evaluation may last one year or so on a poweful laptop). The best code to play at first attempt is presumably among:
               <ul style='margin:0'>
