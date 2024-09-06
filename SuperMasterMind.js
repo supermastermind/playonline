@@ -997,7 +997,7 @@ let game_rules_str=
 +display_form_str
 +change_first_name_str
 +"<b>MORE INFO:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
-<b><a href='index.html'>Main&nbsp;info</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a> |&nbsp;<a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='"+android_app_url+"'>Android</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
+<b><a href='index.html'>Game&nbsp;info</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a> |&nbsp;<a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='"+android_app_url+"'>Android</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
 </font></td></tr></table></center><hr style='height:2.00vh;padding:0;margin:0;visibility:hidden;'>";
 try{
 gameRulesDisplayed=true;
