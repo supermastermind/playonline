@@ -65,7 +65,7 @@ function write_optimal_strategy_details_1() {
   var str = "<div>" + optimal_strategy_descr + "In some situations, playing an illogical code may be better than playing the best logical code(s). This could be called a &quot;useful mistake&quot;. "
             + "This will result in the above number being strictly positive (e.g. <b><font color=#008200>+0.25</font></b>). If you get such a positive number (voluntarily), you are good! &#x1F914;"
             + "<hr style='height:0.5rem; visibility:hidden;' />"
-            + "<b>Summing those numbers over all your attempts gives <font color=#CC0099>your performance</font> for the current game</b>. It will be stored together with <font color=#CC0099><b>your score</b></font>, which on its side only depends on the number of attempts you took to find the secret code and the time you needed, which are both subject to luck."
+            + "<b>Summing those numbers over all your attempts gives <font color=#CC0099>your performance</font> for the current game</b>. It will be stored together with <b>your score</b>, which on its side only depends on the number of attempts you took to find the secret code and the time you needed, which are much more subject to luck than your performance."
             + "<hr style='height:0.5rem; visibility:hidden;' />"
             + "See <a href=optimal_strategy.html><b>Optimal strategy</b></a> for more details.</div>";
   document.write(str);
