@@ -44,14 +44,14 @@ img
 { border: 0; }
 
 h1, h2, h3, h4, h5, h6 
-{ margin-bottom:0.7rem;
+{ margin-bottom:0.8rem;
   margin-top:1.0rem;
   padding:0;
   color: #000000; 
   font-weight: bold; }
 
 h1
-{ font-size: 130% }
+{ font-size: 160% }
   
 h2
 { font-size: 130% }
@@ -129,7 +129,7 @@ ul#menu li a:hover
 { width: 97%;
   overflow: hidden; /* (specifies whether to clip content or to add scrollbars when the content of an element is too big to fit in a specified area) */
   margin: 0 0 0 1%; /* top right bottom left */
-  padding: 1vh 1vw 2vh 1vw; /* top right bottom left */
+  padding: 0vh 1vw 2vh 1vw; /* top right bottom left */
   background: #FFFFFF;
   border: 0; } 
 
@@ -163,7 +163,7 @@ ul#menu li a:hover
   background: transparent url(link.png) no-repeat left center; } 
 
 #footer
-{ height: 4.44vh;
+{ height: 2.0vh;
   text-align: center; 
 }
 
