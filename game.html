@@ -755,7 +755,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 
 <script>
 
-let html_compatibility_game_version = "v30.0K"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+let html_compatibility_game_version = "v30.0L"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
 let current_smm_compatibility_version = "not filled yet";
 let modeAlreadySelected = false;
 let lastKeyCheck = false;
@@ -793,26 +793,31 @@ var store_time = (new Date()).getTime();
 var minFirstNameLength = 3;
 var maxFirstNameLength = 9;
 
-function askLocationPermissionsIfNeeded() {
+function askAndroidLocationPermissionsIfNeeded(forcedMode) {
 if (!android_appli) {
+throw new Error("askAndroidLocationPermissionsIfNeeded error: " + android_appli);
+}
+if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 1)) { // second or later location permission request
+if (localStorage.gamesok && (Number(localStorage.gamesok) < 60)) {
 return;
 }
-if (localStorage.nb_location_permissions_requests && (Number(localStorage.nb_location_permissions_requests) >= 1)) {
-var nb_days = ((localStorage.nb_location_permissions_requests == 1) ? 1 : 4);
-if (Number(localStorage.nb_location_permissions_requests) >= 8) {
-nb_days = 30; // player does not want to share position or "repetitive single permissions"
+if (Number(localStorage.nb_location_permissions_req) > 30) {
+return;
 }
-if (localStorage.ask_location_permissions_if_needed && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed < nb_days*24*3600*1000)) { // x days (permission message or warning message every x days)
+// Regular permission requests or warning messages if above conditions are met
+if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < 20*24*3600*1000)) { // 20 days (big duration as second location permission denial may be the last one)
 return;
 }
 }
+let warning_only = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here
 var ask_location_permissions_if_needed_str = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-setTimeout(ask_location_permissions_if_needed_str, 1000);
-localStorage.ask_location_permissions_if_needed = (new Date()).getTime();
-if (!localStorage.nb_location_permissions_requests) {
-localStorage.nb_location_permissions_requests = 0;
+var location_permissions_warning_if_needed_str = "console.log('(location permissions warning if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
+setTimeout((warning_only ? location_permissions_warning_if_needed_str : ask_location_permissions_if_needed_str), 1000);
+localStorage.ask_location_permissions_if_needed_date = (new Date()).getTime();
+if (!localStorage.nb_location_permissions_req) {
+localStorage.nb_location_permissions_req = 0;
 }
-localStorage.nb_location_permissions_requests = Number(localStorage.nb_location_permissions_requests) + 1;
+localStorage.nb_location_permissions_req = Number(localStorage.nb_location_permissions_req) + 1;
 }
 
 var modal = new tingle.modal({
@@ -834,6 +839,10 @@ console.log('(modal beforeClose)');
 if (modal_mode == 2) {
 setTimeout("showPossibleCodesButtonClick(false, -2, true);", 444);
 
+if (android_appli && localStorage.gamesok && (Number(localStorage.gamesok) >= min_gamesok_for_firstname-1)) { // both first name and location may be correctly filled for the first time at the same game
+askAndroidLocationPermissionsIfNeeded(false);
+}
+
 modal_mode = -1;
 return true; // close the modal
 }
@@ -841,7 +850,6 @@ return true; // close the modal
 else if (modal_mode == 5) {
 newGameButtonClick(5);
 modal_mode = -1;
-askLocationPermissionsIfNeeded();
 return true; // close the modal
 }
 
@@ -1169,7 +1177,7 @@ extra_debug_info = extra_debug_info.trim();
 if (extra_debug_info == "") {
 extra_debug_info = "-";
 }
-submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0K: " + (localStorage.reloadForCompatibility_v300K ? localStorage.reloadForCompatibility_v300K : "not done") + "): "
+submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0L: " + (localStorage.reloadForCompatibility_v300L ? localStorage.reloadForCompatibility_v300L : "not done") + "): "
 + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
 + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
 + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -1997,6 +2005,9 @@ let GEOCODING_API_URL_2 = "https://nominatim.openstreet" + extraStr + "map.org/r
 if (!localStorage.useFirstGeocodingApi) {
 localStorage.useFirstGeocodingApi = "yes";
 }
+if (!localStorage.location_permission_granted) {
+localStorage.location_permission_granted = "ini";
+}
 function HTML_geolocation_success(position, debug_str_p = null) { // CALLED BY ANDROID APP (with debug_str_p parameter filled)
 let latitude = position.coords.latitude;
 let longitude = position.coords.longitude;
@@ -2005,6 +2016,7 @@ console.log("HTML geolocation success:");
 console.log(" latitude: " + latitude);
 console.log(" longitude: " + longitude);
 console.log(" accuracy: " + accuracy);
+localStorage.location_permission_granted = "yes";
 
 debug_game_state = 10;
 let debug_str = "";
@@ -2149,11 +2161,8 @@ let error_str = "?";
 if (error.code != undefined) {
 switch(error.code) {
 case error.PERMISSION_DENIED:
-if (!localStorage.html_geoloc_denied) {
-localStorage.html_geoloc_denied = 0;
-}
-localStorage.html_geoloc_denied = Number(localStorage.html_geoloc_denied) + 1;
-error_str = "user denied the request for geolocation/" + localStorage.html_geoloc_denied + "x";
+localStorage.location_permission_granted = "no";
+error_str = "user denied the request for geolocation/" + (localStorage.nb_location_permissions_req ? localStorage.nb_location_permissions_req : "0") + "req";
 break;
 case error.POSITION_UNAVAILABLE:
 error_str = "location information is unavailable";
@@ -2182,7 +2191,6 @@ setTimeout("attempt_HTML_geolocation();", 5*android_HTML_geolocation_retries_aft
 
 let my_position = null;
 function attempt_HTML_geolocation() {
-
 if (globalErrorStatus) { // skip attempt_HTML_geolocation when a basic global error occurred
 console.log("(attempt_HTML_geolocation skipped due to global error)");
 return;
@@ -2205,31 +2213,13 @@ else {
 localStorage.html_geoloc_status = "run";
 if (navigator.geolocation) {
 // Subject to user acceptance
-// Version 1:
+// Note: a more precise alternative to getCurrentPosition() would be to use watchPosition()
 navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error);
 HTML_geoloc_attempts++;
-// Version 2 (support of location updates & more precise than getCurrentPosition() because several iterations are made):
-/* let my_geolocation = navigator.geolocation.watchPosition(
-function (position) { // success callback (called N times)
-my_position = {coords: {latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy}};
-console.log('HTML geolocation iteration (latitude: ' + position.coords.latitude + ', ' + 'longitude: ' + position.coords.longitude + ', ' + 'accuracy: ' + position.coords.accuracy + ")");
-},
-HTML_geolocation_error, // error callback
-{
-maximumAge: 250, // (do not use cache for long)
-enableHighAccuracy: true,
-timeout: 15000 // (see other timeout value below)
+if (!localStorage.nb_location_permissions_req) {
+localStorage.nb_location_permissions_req = 0;
 }
-);
-setTimeout(function() {
-navigator.geolocation.clearWatch(my_geolocation); // stop further HTML geolocation iterations (i.e. further calls to watchPosition())
-console.log("stop HTML geolocation iterations");
-if (my_position != null) { // (at least one HTML geolocation success during the iterations)
-HTML_geolocation_success(my_position); // (use last success's position)
-}
-},
-15300 // stop further HTML geolocation iterations (see other timeout value above / And on laptops, this timeout value will "limit the time" the user has to answer yes/no to "ok to share position?")
-); */
+localStorage.nb_location_permissions_req = Number(localStorage.nb_location_permissions_req) + 1;
 }
 }
 }
@@ -2464,21 +2454,25 @@ many_games_previous_day = false;
 localStorage.gamesoktoday_date = currentDate();
 localStorage.gamesoktoday_time = (new Date()).getTime();
 localStorage.gamesoktoday_firstvalue = gamesok-1;
+// No interest for sharing results 1/2
+let extra_reduction = ( (gamesok >= 150)
+&& localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 2)
+&& localStorage.location_permission_granted && (localStorage.location_permission_granted == "no") );
 if (gamesok <= 700) {
-localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 15 : 20); // (average: 25 or 20)
-localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 25 : 30);
+localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 20); // (average: 25 or 20)
+localStorage.too_many_games_today_thld_2 = ((many_games_previous_day || extra_reduction) ? 25 : 30);
 }
 else if (gamesok >= 2.5*many_games_thld) {
 localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 10); // (average: 10 or far lower by skipping days)
 localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 10);
 }
 else if (gamesok >= many_games_thld) {
-localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 15); // (skipped or average: 15 or far lower by skipping days)
-localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 15);
+localStorage.too_many_games_today_thld_1 = (many_games_previous_day  ? 0 : (extra_reduction ? 10 : 15)); // (skipped or average: 15 or far lower by skipping days)
+localStorage.too_many_games_today_thld_2 = (many_games_previous_day  ? 0 : (extra_reduction ? 10 : 15));
 }
 else {
-localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 15 : 15); // (average: 20 or 15)
-localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 15 : 25);
+localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 15); // (average: 20 or 15)
+localStorage.too_many_games_today_thld_2 = ((many_games_previous_day || extra_reduction) ? 15 : 25);
 }
 }
 let too_many_games_today_thld_1 = Number(localStorage.too_many_games_today_thld_1);
@@ -2601,7 +2595,7 @@ return;
 }
 }
 
-// Reduce google sheet load 2/3: no interest for sharing results
+// Reduce google sheet load 2/3: no interest for sharing results 2/2
 else if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 4) && (!localStorage.firstname)) {
 if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
 debug_game_state = 100.32;
@@ -2615,7 +2609,7 @@ return;
 }
 
 // Reduce google sheet load 3/3: games without first name entered yet
-else if ( (gamesok == 1) || (gamesok == 2) || (gamesok == 3)
+else if ( (gamesok < min_gamesok_for_firstname-3)
 || ((gamesok >= 12) && ((gamesok % 3) != 0) // skip calls towards google sheet 1 game out of 3
 && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 2) && (!localStorage.firstname))
 ) {
@@ -3205,11 +3199,14 @@ console.log("attempt_HTML_geolocation_if_needed skipped (3)");
 }
 else {
 // Subject to user acceptance through repetitive popups, and not done immediately because may prevent all future requests in case of initial rejection
-if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 25) // not asked immediately
+if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 30) // not asked immediately
 && ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 36*3600*1000) ) { // geolocation refresh after 36 hours on user action
-if (!localStorage.acceptHtmlGeolocationMsgAlreadyShown) {
-alert("Accept to share your precise location to have your country and city names stored with your future scores");
-localStorage.acceptHtmlGeolocationMsgAlreadyShown = "yes";
+if (!localStorage.nbTimesShareLocWarning) {
+localStorage.nbTimesShareLocWarning = 0;
+}
+localStorage.nbTimesShareLocWarning = Number(localStorage.nbTimesShareLocWarning) + 1;
+if (Number(localStorage.nbTimesShareLocWarning) <= 5) {
+alert("Please share your location to have it stored with your scores");
 }
 setTimeout("attempt_HTML_geolocation();", 44);
 localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
