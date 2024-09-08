@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.0K"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.0L"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v300K) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v300L) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v300K = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v300L = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -556,7 +556,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0K: " + (localStorage.reloadForCompatibility_v300K ? localStorage.reloadForCompatibility_v300K : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0L: " + (localStorage.reloadForCompatibility_v300L ? localStorage.reloadForCompatibility_v300L : "not done"), 210);
 
       // Alert
       // *****
@@ -595,6 +595,9 @@ function handlePrompt() {
   }
   else if (mode == 333) {
     localStorage.nbTimesFirstnameUpdated = 1;
+  }
+  else if (mode == 444) {
+    askAndroidLocationPermissionsIfNeeded(true); // forced mode
   }
   else if (String(mode) == "000") {
     throw new Error("toto");
@@ -5347,9 +5350,6 @@ if ((!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_f
   catch (exc) {
     throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
   }
-}
-else {
-  askLocationPermissionsIfNeeded();
 }
 debug_game_state = 69;
 debug_smm_state = 100;

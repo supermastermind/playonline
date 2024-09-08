@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.0K";
+let smm_compatibility_version="v30.0L";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v300K)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v300L)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v300K="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v300L="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -432,7 +432,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0K: "+(localStorage.reloadForCompatibility_v300K ? localStorage.reloadForCompatibility_v300K : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0L: "+(localStorage.reloadForCompatibility_v300L ? localStorage.reloadForCompatibility_v300L : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -459,6 +459,9 @@ loadTime=loadTime-24*3600*1000;
 }
 else if(mode==333){
 localStorage.nbTimesFirstnameUpdated=1;
+}
+else if(mode==444){
+askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(String(mode)=="000"){
 throw new Error("toto");
@@ -4257,8 +4260,5 @@ modal.open();
 catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}
-else{
-askLocationPermissionsIfNeeded();
-}
 debug_game_state=69;
 debug_smm_state=100;
