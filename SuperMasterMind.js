@@ -450,7 +450,7 @@ function onGameSolverMessageError(e){
 displayGUIError("gameSolver MESSAGE error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
 }
 function handlePrompt(){
-var mode=prompt("Which mode do you want to select?", "444");
+var mode=prompt("Which mode do you want to select?", "abc");
 if(mode==null){
 return;
 }
@@ -460,7 +460,7 @@ loadTime=loadTime-24*3600*1000;
 else if(mode==333){
 localStorage.nbTimesFirstnameUpdated=1;
 }
-else if(mode==444){
+else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(String(mode)=="000"){

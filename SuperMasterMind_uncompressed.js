@@ -586,7 +586,7 @@ function onGameSolverMessageError(e) {
 }
 
 function handlePrompt() {
-  var mode = prompt("Which mode do you want to select?", "444");
+  var mode = prompt("Which mode do you want to select?", "abc");
   if (mode == null) {
     return;
   }
@@ -596,7 +596,7 @@ function handlePrompt() {
   else if (mode == 333) {
     localStorage.nbTimesFirstnameUpdated = 1;
   }
-  else if (mode == 444) {
+  else if (mode == 555) {
     askAndroidLocationPermissionsIfNeeded(true); // forced mode
   }
   else if (String(mode) == "000") {
