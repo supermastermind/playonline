@@ -1013,7 +1013,7 @@ throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 function is_there_a_color_being_selected(){
 return ((color_being_selected!=-1)&&(column_of_color_being_selected!=-1)&&(new Date().getTime()-last_color_being_selected_time < 1000));
 }
-let arrow_shown_thld_1=1;
+let arrow_shown_thld_1=2;
 let arrow_shown_thld_2=2;
 function selected_color_and_column_arrow_to_be_shown(){
 let regular_cond=( ((!localStorage.arrow_shown_date)||(localStorage.arrow_shown_date!=currentDate()))
