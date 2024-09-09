@@ -1,41 +1,33 @@
 <!DOCTYPE html>
 <html lang="en" style='min-width:100%;min-height:100%;'>
-
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Super Master Mind</title> <!-- (this title will be overwritten) -->
 <meta name="robots" content="noindex"> <!-- (this page shall be preferably accessed from the main site page) -->
-
 <!-- Remote console at http://console.re/supermastermind displaying console text (provided all calls to "console.log(xxx)" are replaced by "console.re.log(xxx)")
 and console errors (provided the .js scripts to be debugged are copied/pasted directly into this HTML file between <script>...</script> tags,
 otherwise error details, among which error line numbers, will be lost):
 <script src="https://console.re/connector.js" data-channel="supermastermind" id="consolerescript"></script>
 <script>console.re.log('remote log enabled!');</script> -->
-
 <script>
 var pageLoadStartTime = "NA";
 var globalErrorStatus = false;
-
-// Check browser compatibility
 try {
 pageLoadStartTime = new Date();
 try {
 eval('"use strict"; class foo {}; let test_let_inst = 1; var fction_with_optional_args = function(p = true) {return p}; fction_with_optional_args();');
 } catch (err) {
-// Note: Internet Explorer does not support classes and functions with optional arguments. And old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1).
 var errorMsg = "Your browser cannot run this game. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
-// alert(errorMsg);
 throw new Error(errorMsg);
 }
 if (typeof(Worker) == "undefined") {
 var workerErrorMsg = "Your browser cannot run this game because it does not support Web workers. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
-// alert(workerErrorMsg);
 throw new Error(workerErrorMsg);
 }
 var storageErrorMet = true;
 try {
 if (typeof(Storage) !== 'undefined') {
-localStorage.removeItem('test_storage_ok'); // localStorage.test_storage_ok
+localStorage.removeItem('test_storage_ok');
 if (!localStorage.test_storage_ok) {
 localStorage.test_storage_ok = "abc";
 if (localStorage.test_storage_ok == "abc") {
@@ -47,21 +39,17 @@ storageErrorMet = false;
 catch (exc) {
 }
 if (storageErrorMet) {
-// Note: such an error occurs for Edge run locally
 var storageErrorMsg = "Your browser cannot run this game because it cannot store local data. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
-// alert(storageErrorMsg);
 throw new Error(storageErrorMsg);
 }
 }
 catch (exc) {
 alert(exc);
-window.stop(); // stop any further execution if error at this early stage. Note: window.stop() does not work in Internet explorer.
+window.stop();
 globalErrorStatus = true;
 }
 </script>
-
 <style>
-/* *** Main styles *** */
 body {
 font-family: 'Verdana';
 margin: 0%;
@@ -71,8 +59,8 @@ font-size: calc(7px + .34vw);
 background: black;
 min-width: 100%;
 min-height: 100%;
-overflow-x: hidden; /* Hide horizontal scrollbar */
-overflow-y: hidden; /* Hide vertical scrollbar */
+overflow-x: hidden;
+overflow-y: hidden;
 }
 #my_canvas {
 margin: 0;
@@ -82,15 +70,14 @@ border: none;
 border-radius: 1.5%;
 position: fixed;
 }
-/* *** Classes for button styling using CSS *** */
 .button {
 font-family: Verdana;
 background-color: white;
 border: 2px solid black;
 border-radius: 20%;
 color: black;
-margin: 0 0.1vw 0 0.1vw; /* top right bottom left */
-padding: 0.5vh 2.0vw 0.5vh 2.0vw; /* top right bottom left */
+margin: 0 0.1vw 0 0.1vw;
+padding: 0.5vh 2.0vw 0.5vh 2.0vw;
 text-align: center;
 vertical-align: middle;
 text-decoration: none;
@@ -102,8 +89,6 @@ cursor: pointer;
 opacity: 0.3;
 cursor: not-allowed;
 }
-
-/* Safari 4.0 - 8.0 */
 @-webkit-keyframes glowing_orange {
 0%   {background-color: white;}
 20%  {background-color: white;}
@@ -114,7 +99,6 @@ cursor: not-allowed;
 87%  {background-color: orange;}
 100% {background-color: white;}
 }
-/* Standard syntax */
 @keyframes glowing_orange {
 0%   {background-color: white;}
 20%  {background-color: white;}
@@ -125,8 +109,6 @@ cursor: not-allowed;
 87%  {background-color: orange;}
 100% {background-color: white;}
 }
-
-/* Safari 4.0 - 8.0 */
 @-webkit-keyframes glowing_brown {
 0%   {background-color: white;}
 20%  {background-color: white;}
@@ -137,7 +119,6 @@ cursor: not-allowed;
 87%  {background-color: #5F340E;}
 100% {background-color: white;}
 }
-/* Standard syntax */
 @keyframes glowing_brown {
 0%   {background-color: white;}
 20%  {background-color: white;}
@@ -148,54 +129,47 @@ cursor: not-allowed;
 87%  {background-color: #5F340E;}
 100% {background-color: white;}
 }
-
 .blinking_orange {
--webkit-animation-name: glowing_orange; /* Safari 4.0 - 8.0 */
--webkit-animation-duration: 3.75s; /* Safari 4.0 - 8.0 */
+-webkit-animation-name: glowing_orange;
+-webkit-animation-duration: 3.75s;
 animation-name: glowing_orange;
 animation-duration: 3.75s;
 -webkit-backface-visibility: hidden;
 }
 .fast_blinking_orange {
--webkit-animation-name: glowing_orange; /* Safari 4.0 - 8.0 */
--webkit-animation-duration: 2.75s; /* Safari 4.0 - 8.0 */
+-webkit-animation-name: glowing_orange;
+-webkit-animation-duration: 2.75s;
 animation-name: glowing_orange;
 animation-duration: 2.75s;
 -webkit-backface-visibility: hidden;
 }
-
 .blinking_brown {
--webkit-animation-name: glowing_brown; /* Safari 4.0 - 8.0 */
--webkit-animation-duration: 3.75s; /* Safari 4.0 - 8.0 */
+-webkit-animation-name: glowing_brown;
+-webkit-animation-duration: 3.75s;
 animation-name: glowing_brown;
 animation-duration: 3.75s;
 -webkit-backface-visibility: hidden;
 }
 .fast_blinking_brown {
--webkit-animation-name: glowing_brown; /* Safari 4.0 - 8.0 */
--webkit-animation-duration: 2.75s; /* Safari 4.0 - 8.0 */
+-webkit-animation-name: glowing_brown;
+-webkit-animation-duration: 2.75s;
 animation-name: glowing_brown;
 animation-duration: 2.75s;
 -webkit-backface-visibility: hidden;
 }
-
 @-webkit-keyframes kdo_anim {
 0% {opacity: 0;}
 100% {width: 16%; opacity: 0.9;}
 }
-
 @keyframes kdo_anim {
 0% {opacity: 0;}
 100% {width: 16%; opacity: 0.9;}
 }
-
 .kdo
 {
 -webkit-animation: kdo_anim 3.33s;
 animation: kdo_anim 3.33s;
 }
-
-/* Hide browser's default radio button */
 input[type="radio"] {
 appearance: none;
 -webkit-appearance: none;
@@ -205,19 +179,17 @@ height: 0;
 margin: 0;
 padding: 0;
 }
-
 .radio {
 font-family: Verdana;
 color: black;
-white-space: nowrap; /* no line breaks */
+white-space: nowrap;
 margin: 0;
-padding: 0 0.2vw 0 0.2vw; /* top right bottom left */
+padding: 0 0.2vw 0 0.2vw;
 text-align: left;
 text-decoration: none;
 font-weight: 900;
 box-shadow: none;
 vertical-align: middle;
-/* text not selectable */
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 -khtml-user-select: none;
@@ -225,18 +197,14 @@ vertical-align: middle;
 -ms-user-select: none;
 user-select: none;
 }
-
-/* Style radio when radio button is checked */
-input[type="radio"]:checked + .radio {  /* (will be partly overridden dynamically) */
+input[type="radio"]:checked + .radio {
 color: orange;
 border-color: orange;
 border-radius: 25%;
 margin: 0;
-padding: 0 1.2vw 0 1.2vw; /* top right bottom left */
+padding: 0 1.2vw 0 1.2vw;
 }
-
 .not_selectable {
-/* text not selectable */
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 -khtml-user-select: none;
@@ -244,8 +212,7 @@ padding: 0 1.2vw 0 1.2vw; /* top right bottom left */
 -ms-user-select: none;
 user-select: none;
 }
-
-.game_loading /* (used during page loading) */
+.game_loading
 { position: fixed;
 height: 100%;
 width: 100%;
@@ -257,7 +224,6 @@ font-size: 2.0vh;
 text-align: center;
 padding-top: 25.0vh;
 color: #fff;
-/* text not selectable */
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 -khtml-user-select: none;
@@ -265,8 +231,7 @@ color: #fff;
 -ms-user-select: none;
 user-select: none;
 }
-
-.page_transition /* (used during page transition) */
+.page_transition
 { position: fixed;
 height: 100%;
 width: 100%;
@@ -278,7 +243,6 @@ font-size: 2.0vh;
 text-align: center;
 padding-top: 25.0vh;
 color: #fff;
-/* text not selectable */
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 -khtml-user-select: none;
@@ -286,8 +250,7 @@ color: #fff;
 -ms-user-select: none;
 user-select: none;
 }
-
-.game_aborted /* (used at game abortion) */
+.game_aborted
 { position: fixed;
 height: 100%;
 width: 100%;
@@ -299,7 +262,6 @@ font-size: 2.0vh;
 text-align: center;
 padding-top: 25.0vh;
 color: #fff;
-/* text not selectable */
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 -khtml-user-select: none;
@@ -308,13 +270,10 @@ color: #fff;
 user-select: none;
 }
 </style>
-
 <script src='lib/jquery-3.7.1.min.js'></script>
 <script src="lib/pako_inflate-2.1.0.min.js"></script>
 <script src='lib/tingle-master/dist/tingle.min.js'></script>
-
 <script>
-// See page https://developer.mozilla.org/fr/docs/Web/HTTP/Browser_detection_using_the_user_agent
 var lastGlobalProgress = 0;
 var classicalUserAgentStr = "";
 var userAgentToHandle = navigator.userAgent;
@@ -356,7 +315,6 @@ var safariMode = ((!firefoxMode) && (!edgeMode) && (!operaMode) && (!chromeMode)
 if (safariMode) {
 classicalUserAgentStr = userAgentToHandle.substring(safariModeIdx);
 }
-
 var userAgentStr = "";
 var androidAppliInfoStr = null;
 var android_appli = false;
@@ -369,7 +327,7 @@ var androidMode = false;
 var smm = (decodeURI(location.href).indexOf('https://supermastermind.github.io/playonline/game.html') != -1);
 try {
 androidAppliInfoStr = new URL(decodeURI(location.href)).searchParams.get("android_appli");
-if (androidAppliInfoStr != null) { // check if ...?android_appli=xxx in the URL
+if (androidAppliInfoStr != null) {
 userAgentStr = "sdk" + androidAppliInfoStr;
 android_appli = true;
 try {
@@ -392,13 +350,13 @@ catch (exc) {
 versionCodeInt = -1;
 }
 }
-var playerIdStr = new URL(decodeURI(location.href)).searchParams.get("player_id"); // (kept for backward compatibility)
+var playerIdStr = new URL(decodeURI(location.href)).searchParams.get("player_id");
 if (playerIdStr != null) {
 if (!localStorage.playerid) {
 localStorage.playerid = playerIdStr;
 }
 }
-var playerIdStr2 = new URL(decodeURI(location.href)).searchParams.get("pi"); // (new version)
+var playerIdStr2 = new URL(decodeURI(location.href)).searchParams.get("pi");
 if (playerIdStr2 != null) {
 if (!localStorage.playerid) {
 localStorage.playerid = playerIdStr2;
@@ -421,26 +379,24 @@ userAgentStr = "??? " + navigator.userAgent;
 if (android_appli && ((versionCodeInt == -1) || (versionCodeInt <= 34))) {
 var versionCodeErrorMsg = "Your app version is " + ((versionCodeInt == - 1) ? "invalid" : "very old") + ". Please install the last update of the app from Play Store.";
 alert(versionCodeErrorMsg);
-window.stop(); // stop any further execution if error at this early stage. Note: window.stop() does not work in Internet explorer.
+window.stop();
 globalErrorStatus = true;
 }
 var oldBrowserVersion = false;
 if (chromeMode && (classicalUserAgentStr != "")) {
-if (classicalUserAgentStr.indexOf("Chrome/79.") != -1) { // Observed for Tvmaster - to be generalized if useful / possibly with window.stop();
+if (classicalUserAgentStr.indexOf("Chrome/79.") != -1) {
 oldBrowserVersion = true;
 alert("Your Chrome browser version is old, please update it to avoid errors");
 }
 }
-
-if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/3)
-|| (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Lumia|PlayBook|BB10|Tablet|Opera Mobi|Opera Mini/i.test(navigator.userAgent)) // (mobile device check 2/3)
-|| android_appli ) { // (mobile device check 3/3)
+if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent))
+|| (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Lumia|PlayBook|BB10|Tablet|Opera Mobi|Opera Mini/i.test(navigator.userAgent))
+|| android_appli ) {
 mobileMode = true;
 if (/Android/i.test(navigator.userAgent) || android_appli) {
 androidMode = true;
 }
 }
-
 function makeid() {
 let text = "";
 let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -450,17 +406,15 @@ text += possible.charAt(Math.floor(Math.random() * possible.length));
 return text;
 }
 if (!localStorage.playerid) {
-let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android app)
+let id = makeid() + "-" + formatDate(new Date());
 localStorage.playerid = id;
 }
-
-var unknownIPAddressPrefix = '0.0.0'; // (Note: checked by GS SCRIPT)
+var unknownIPAddressPrefix = '0.0.0';
 var generalTableWidthStr = "44%";
 var rulesTableWidthStr = "44%";
 var scoresTableWidthStr = "100%";
 var scoresFontSizeStr = "1.6vw";
 var abbreviateScores = true;
-
 var nbGamesPlayedAndWon = 0;
 var nbGamesPlayed = 0;
 var nbCodesPlayed = 0;
@@ -478,22 +432,17 @@ var gamesolver_load_state = -1;
 var gamesolver_load_start_time = -1;
 var smm_load_state = -1;
 var currentGameNbColumns = -1;
-
 var modernDisplay = false;
 var legacyDisplayVariant = 0;
-
 var HTML_geoloc_attempts = 0;
 var HTML_geoloc_successes = 0;
 var HTML_geoloc_errors = 0;
 var last_valid_handle_stats_final_retry_str = "";
-
 var gamesolver_blob = null;
 var gamesolver_blob_error = "no_error";
-
-// Temporary functions
 var checkButtonEvent = function(mouseEvent) {
 console.log("checkButtonEvent(" + mouseEvent + ") function not defined yet");
-return (!mouseEvent); // guarantee proper android app behaviour
+return (!mouseEvent);
 }
 var newGameButtonClick = function(nbColumns_p) {
 console.log("newGameButtonClick(" + nbColumns_p + ") function not defined yet");
@@ -517,23 +466,20 @@ console.log("showPossibleCodesButtonClick function not defined yet");
 var settingsButtonClick = function() {
 console.log("settingsButtonClick function not defined yet");
 }
-
-if (!localStorage.firstgamegeoloc) { // Keep existing value if it exists
+if (!localStorage.firstgamegeoloc) {
 localStorage.firstgamegeoloc = "fa";
 }
-
 var beforeunload_case = false;
-$(window).on('beforeunload', function() { // Ask for a confirmation on window exit when a game is ongoing
+$(window).on('beforeunload', function() {
 try {
 debug_on_resize_or_unload = 1;
 if (last_valid_handle_stats_final_retry_str != "") {
-// Asynchronous operations are not supported on beforeunload, thus the below beforeunload_case behaviour
 eval("console.log('stats handled on unload');" + "beforeunload_case = true;" + last_valid_handle_stats_final_retry_str + "beforeunload_case = false;");
 }
-if (!android_appli) { // in case of android_appli, webview reload can be (a bit) delayed
-if (gameOnGoing() && (currentAttemptNumber > 1)) { // (condition duplicated)
-if (localStorage.firstname && (typeof nbColumns !== 'undefined') && (nbColumns >= 5)) { // (condition duplicated)
-return "Do you really want to abort current game?"; // (message not displayed by all browsers, some browsers will display a generic message instead - code duplicated)
+if (!android_appli) {
+if (gameOnGoing() && (currentAttemptNumber > 1)) {
+if (localStorage.firstname && (typeof nbColumns !== 'undefined') && (nbColumns >= 5)) {
+return "Do you really want to abort current game?";
 }
 }
 }
@@ -541,10 +487,9 @@ debug_on_resize_or_unload = 2;
 }
 catch (exc) {
 console.log("error encountered at game abortion: " + exc);
-return; // (no confirmation asked)
+return;
 }
 });
-
 function formatDate(date) {
 if (date == null) {
 return "?";
@@ -560,7 +505,6 @@ month = '0' + month;
 let year = String(date.getYear()-100);
 return String(day + month + year);
 }
-
 var min_gamesok_for_firstname = 7;
 function checkIfRecentPlayer() {
 if (!localStorage.gamesok) {
@@ -571,11 +515,9 @@ return true;
 }
 if (!localStorage.recent_player_reference_time) {
 if (Number(localStorage.gamesok) > 10) {
-// Backward compatibility for already existing players
-localStorage.recent_player_reference_time = 0; // (very old time)
+localStorage.recent_player_reference_time = 0;
 }
 else {
-// Set recent player reference time from "localStorage.gamesok == min_gamesok_for_firstname" event for new players
 localStorage.recent_player_reference_time = (new Date()).getTime();
 }
 }
@@ -583,42 +525,29 @@ if (Number(localStorage.gamesok) < 3*min_gamesok_for_firstname) {
 return true;
 }
 else {
-return ((new Date()).getTime() - localStorage.recent_player_reference_time <= 1.5*24*3600*1000); // 1.5 day ~ time to close PC's browser window
+return ((new Date()).getTime() - localStorage.recent_player_reference_time <= 1.5*24*3600*1000);
 }
 }
-
-let nbLocationURLs = 2; // (shall be < precisionLocationId, IP-address based geolocation when id < precisionLocationId)
-let alternateLocationId = ((nbLocationURLs+1 <= 5) ? 5 : nbLocationURLs+1); // (shall be < precisionLocationId, IP-address based geolocation when id < precisionLocationId)
+let nbLocationURLs = 2;
+let alternateLocationId = ((nbLocationURLs+1 <= 5) ? 5 : nbLocationURLs+1);
 let precisionLocationId = 10;
 let locationURLs = new Array(nbLocationURLs);
 let extraStr = ((smm && !localStorage.skip) ? "" : "x");
-// Favor IPv4 addresses because IPv6 addresses change at each device reboot
-// Note 06/2023: it is not clear if geolocation is better on average with legacy IPv4 addresses or with "still new" IPv6 addresses.
-// - IPV4:
-locationURLs[0] = 'https://api.ip' + extraStr + 'data.co/en?api-key=102' + extraStr + 'c5eac3a9c7c5dad17519b2029bb6bdf4a076b60dde282eecaf99f'; // (free key - seems to always return an IPv4 address, even if not documented, and even if this site supports both IPv4 and IPv6 address when in input)
-// - IPv6 (most of the time):
-locationURLs[1] = 'https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792' + extraStr + 'e8cda21ab40a7f5a349cddc79beb41ff95910c2ec0d05bfea593961e01c7a&format=json'; // (free key - returns most of the time an IPv6 address)
-// - IPV4 (backup): site not used because table updates seem less freqeuent than api.ipdata.co and because successful even when invalid IP address: locationURLs[X] = 'https://ip' + extraStr + 'info.io/json/?token=ca8' + extraStr + '32119df7bb5'; // (free key - returns always an IPv4 address by default, https://v6.ipinfo.io/json URL would have to be used for IPv6 as described in this page https://ipinfo.io/faq/article/34-ipv4-vs-ipv6)
+locationURLs[0] = 'https://api.ip' + extraStr + 'data.co/en?api-key=102' + extraStr + 'c5eac3a9c7c5dad17519b2029bb6bdf4a076b60dde282eecaf99f';
+locationURLs[1] = 'https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792' + extraStr + 'e8cda21ab40a7f5a349cddc79beb41ff95910c2ec0d05bfea593961e01c7a&format=json';
 </script>
-
 <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
 </head>
-
 <body onresize="eval('try{debug_on_resize_or_unload = 3;draw_graphic();debug_on_resize_or_unload = 4;}catch(e){}');" oncontextmenu="return false;">
-
 <div id="game_loading_id" class="game_loading">
 <img src='img/loading.gif' style='height:12%;'><br>Loading... <!-- (not rem unit as no viewport! / duplicated code) -->
 </div>
-
 <div id="page_transition_id" class="page_transition" style='display:none;'>
 </div>
-
 <div id="game_aborted_id" class="game_aborted" style='display:none;' onclick="gameAbortionEnd()">
 <!-- (text will be overridden dynamically) -->
 </div>
-
 <!-- HTML controls and canvas -->
-
 <table id='my_table' style='width:100%;height:100%;position:absolute;left:0;top:0;border:none;border-radius:0%;margin:0;padding:0;'>
 <tr>
 <td class='not_selectable' style='width:100%;height:1%;margin:0;padding:0;vertical-align:middle;text-align:center;border:none;white-space:nowrap;' id='buttons_td'>
@@ -651,12 +580,10 @@ locationURLs[1] = 'https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792'
 <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
 </tr>
 </table>
-
 <iframe style='display:none;' name='my_frame'>Your browser does not support iframes!</iframe> <!-- suppress style='display:none;' to see the form's response -->
 <form  style='display:none;' id='my_form' target='my_frame' action='to_be_filled'>
 playerid: <input id='form_playerid_id' name='playerid' type='text' value='-' autocomplete='off'><br>
 firstname: <input id='form_firstname_id' name='firstname' type='text' value='-' autocomplete='off'><br>
-
 nbcolumns: <input id='form_nbcolumns_id' name='nbcolumns' type='text' value='-' autocomplete='off'><br>
 score: <input id='form_score_id' name='score' type='text' value='-' autocomplete='off'><br>
 attempts: <input id='form_attempts_id' name='attempts' type='text' value='-' autocomplete='off'><br>
@@ -664,40 +591,30 @@ time: <input id='form_time_id' name='time' type='text' value='-' autocomplete='o
 perfs: <input id='form_perfs_id' name='perfs' type='text' value='-' autocomplete='off'><br>
 nbuknperfs: <input id='form_nbuknperfs_id' name='nbuknperfs' type='text' value='-' autocomplete='off'><br>
 help: <input id='form_help_id' name='help' type='text' value='-' autocomplete='off'><br>
-
 gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-' autocomplete='off'><br>
 deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-' autocomplete='off'><br>
 app: <input id='form_app_id' name='app' type='text' value='-' autocomplete='off'><br>
-
 country: <input id='form_country_id' name='country' type='text' value='-' autocomplete='off'><br>
 region: <input id='form_region_id' name='region' type='text' value='-' autocomplete='off'><br>
 city: <input id='form_city_id' name='city' type='text' value='-' autocomplete='off'><br>
 geoloc: <input id='form_geoloc_id' name='geoloc' type='text' value='-' autocomplete='off'><br>
 ipaddress: <input id='form_ipaddress_id' name='ipaddress' type='text' value='-' autocomplete='off'><br>
-
 href: <input id='form_href_id' name='href' type='text' value='-' autocomplete='off'><br>
-
 bestglbscore: <input id='form_bestglbscore_id' name='bestglbscore' type='text' value='-' autocomplete='off'><br>
 bestglbperf: <input id='form_bestglbperf_id' name='bestglbperf' type='text' value='-' autocomplete='off'><br>
-
 debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-' autocomplete='off'><br>
 gamesummary: <input id='form_gamesummary_id' name='gamesummary' type='text' value='-' autocomplete='off'><br>
-
 list: <input id='form_list_id' name='list' type='text' value='-'><br>
 </form>
-
 <form style='display:none;' id='my_all_scripts_loaded_form' target='my_frame' action='https://ALL_SCRIPTS_LOADED'>
 </form>
-
 <p id='traces_id' style='color:#AAAAAA;'></p>
-
 <!-- Display extra text and pictures -->
-
 <p style='text-align:right'>
 <script>
 let welcome_str = "Welcome";
 try {
-if ((navigator.language == "fr") || (navigator.language.indexOf("fr-") == 0)) { // covers "fr", "fr-FR", "fr-BE", "fr-CA", "fr-CH", "fr-LU"
+if ((navigator.language == "fr") || (navigator.language.indexOf("fr-") == 0)) {
 welcome_str = "Bienvenue";
 }
 }
@@ -715,23 +632,19 @@ setTimeout(function() {
 $("#kdo_id").fadeOut().empty();
 }, 60000);
 }
-
 var eoy_date = new Date();
 var m = eoy_date.getMonth();
 var d = eoy_date.getDate();
 if (!android_appli && !mobileMode) {
-if ( ((m == 11) && (d >= 15)) // after December 15th
-|| ((m == 0) && (d <= 2)) ) { // before January 2nd
-// (Display values will be updated below if necessary)
+if ( ((m == 11) && (d >= 15))
+|| ((m == 0) && (d <= 2)) ) {
 document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>&nbsp;<br><img id='img_2' style='display:none;' src='img/End_of_year2.png'>&nbsp;");
 }
 }
 </script>
 </p>
-
 <script>
-
-let html_compatibility_game_version = "v30.0M"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+let html_compatibility_game_version = "v30.0M";
 let current_smm_compatibility_version = "not filled yet";
 let modeAlreadySelected = false;
 let lastKeyCheck = false;
@@ -757,42 +670,33 @@ else {
 lastKeyCheck = false;
 }
 };
-
-// Global AJAX settings
 $.ajaxSetup({
-timeout: 90000, // 90 seconds by default
-cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
+timeout: 90000,
+cache: false
 });
-
 var modal_mode = -1;
 var store_time = (new Date()).getTime();
 var minFirstNameLength = 3;
 var maxFirstNameLength = 9;
 var force_next_attempt_HTML_geolocation_if_needed = false;
-
 function askAndroidLocationPermissionsIfNeeded(forcedMode) {
 if (!android_appli) {
 throw new Error("askAndroidLocationPermissionsIfNeeded error: " + android_appli);
 }
-let multiple_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here
-if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 1)) { // second or later location permission request
-if (localStorage.gamesok && (Number(localStorage.gamesok) < 30)) { // (***) not reasked immediately
+let multiple_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3));
+if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 1)) {
+if (localStorage.gamesok && (Number(localStorage.gamesok) < 30)) {
 return;
 }
 if (Number(localStorage.nb_location_permissions_req) > 25) {
 return;
 }
-// Regular location permission requests and/or messages to grant location permission if above conditions are met
-if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))) { // 48 hours (**) / 21 days if multiple requests
+if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))) {
 return;
 }
 }
-// (*) Android location permission requests and location requests are NOT DONE AT THE SAME MOMENT => use force_next_attempt_HTML_geolocation_if_needed
-//     Subject to user acceptance through repetitive popups:
-//     - second location permission denial may be the last one
-//     - "allow location just this time" will have to be requested again regularly
-var ask_location_permissions_if_needed_str_1 = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-var ask_location_permissions_if_needed_str_2 = "console.log('(ask location permissions if needed - multiple requests)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
+var ask_location_permissions_if_needed_str_1 = "console.log('(ask location permissions if needed)');"
+var ask_location_permissions_if_needed_str_2 = "console.log('(ask location permissions if needed - multiple requests)');"
 setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (multiple_requests ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
 localStorage.ask_location_permissions_if_needed_date = (new Date()).getTime();
 if (!localStorage.nb_location_permissions_req) {
@@ -800,12 +704,10 @@ localStorage.nb_location_permissions_req = 0;
 }
 localStorage.nb_location_permissions_req = Number(localStorage.nb_location_permissions_req) + 1;
 }
-
 var modal = new tingle.modal({
 footer: false,
 stickyFooter: false,
 closeMethods: ['overlay', 'button', 'escape'],
-// closeMethods: ['button'],
 closeLabel: "Close",
 cssClass: ['custom-class-1', 'custom-class-2'],
 onOpen: function() {
@@ -815,43 +717,33 @@ onClose: function() {
 console.log('(modal onClose)');
 },
 beforeClose: function() {
-
 console.log('(modal beforeClose)');
 if (modal_mode == 2) {
 setTimeout("showPossibleCodesButtonClick(false, -2, true);", 444);
-
 if (android_appli && localStorage.gamesok && (Number(localStorage.gamesok) >= min_gamesok_for_firstname-2)) {
 askAndroidLocationPermissionsIfNeeded(false);
 }
-
 modal_mode = -1;
-return true; // close the modal
+return true;
 }
-
 else if (modal_mode == 5) {
 newGameButtonClick(5);
 modal_mode = -1;
-return true; // close the modal
+return true;
 }
-
-// else (other modal_mode values)
 modal_mode = -1;
-return true; // close the modal
-// return false; // nothing happens
-
+return true;
 }
 });
-
 let loaded_sizes = new Array(3);
-loaded_sizes[0] = 234000; // imported js scripts + game.html = 88000 (jquery) + 22000 (pako) + 7000 (tingle) + 117000 (game.html) = 234000
-loaded_sizes[1] = 138000; // GameSolver.js (state: 1)
-loaded_sizes[2] =  97000; // SuperMasterMind.js.gz (state: 2)
+loaded_sizes[0] = 88000 + 22000 + 7000 + 124000;
+loaded_sizes[1] = 135000;
+loaded_sizes[2] =  99000;
 function getGlobalProgress(progress, state) {
-if ((progress < 0) || (progress > 1)) { // error case
+if ((progress < 0) || (progress > 1)) {
 return 0;
 }
 let sum_loaded_sizes = loaded_sizes[0] + loaded_sizes[1] + loaded_sizes[2];
-
 if (state == 0) {
 let percent_min = 0;
 let percent_max = 100 * loaded_sizes[0] / sum_loaded_sizes;
@@ -868,15 +760,14 @@ let percent_max = 100;
 return Math.min(100, 2*Math.round((percent_min + progress * (percent_max - percent_min))/2));
 }
 else {
-console.log("getGlobalProgress: invalid state: " + progress + ", " + state); // (errors are not handled yet)
+console.log("getGlobalProgress: invalid state: " + progress + ", " + state);
 }
 }
-var globalProgressForHTMLGame1 = getGlobalProgress(0.50 /* (rough value) */, 0);
-console.log("current progress: " + Math.max(globalProgressForHTMLGame1, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame1; // !WARNING! -> this console text will be read by the android app so shall not be modified
+var globalProgressForHTMLGame1 = getGlobalProgress(0.50 , 0);
+console.log("current progress: " + Math.max(globalProgressForHTMLGame1, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame1;
 if (globalProgressForHTMLGame1 > 0) {
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)"); // (not rem unit as no viewport! / duplicated code)
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)");
 }
-
 String.prototype.replaceAll = function(search, replacement) {
 let target = this;
 return target.replace(new RegExp(search, 'g'), replacement);
@@ -888,24 +779,12 @@ struct[element] = struct[element].replaceAll(search, replacement);
 }
 }
 };
-
-function str_from_jqxhr(jqxhr) { // (jqxhr: XMLHTTPRequest)
+function str_from_jqxhr(jqxhr) {
 try {
 let str = "jqxhr={";
 try {
-/* Status:
-200: "OK"
-403: "Forbidden"
-404: "Page not found"
-... */
 str = str + "status:" + jqxhr.status;
 str = str + ",statusText:" + jqxhr.statusText;
-/* readyState holds the status of the XMLHttpRequest:
-0: request not initialized
-1: server connection established
-2: request received
-3: processing request
-4: request finished and response is ready */
 str = str + ",readyState:" + jqxhr.readyState;
 }
 catch (exc) {
@@ -918,28 +797,24 @@ catch (exc) {
 return "jqxhr=?";
 }
 }
-
 var smm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbx7dfFn4JQGWWcKEjHUqPk42AxlZBcnQ5AiFcuY3op6azRwNRCJfUFNuwSjBUN_GXsQ/exec";
 var mm_mmm_umm_action = "https://script.google.com/macros/s/AKf" + extraStr + "ycbxuCShh1eJtEmwgRF6ZY47HrdVfPgoJ4lVK7OD_Pxj5tanlThWdwqnb--9m1aafYid3/exec";
 var nbErrorsSubmitted = 0;
 function submitForm(formStr = "", errorId = 0) {
-
-if (globalErrorStatus) { // skip submitForm when a basic global error occurred
+if (globalErrorStatus) {
 console.log("(submitForm skipped due to global error)");
 return;
 }
 if (localStorage.skip) {
 return;
 }
-
 let handle_stats_final_retry_str = "";
 let handle_stats_final_retry_conditional_str = "";
 let key = Math.floor(Math.random()*9999999999+1).toString(32);
 let my_params = {};
-if (formStr == "") { // Nominal case
+if (formStr == "") {
 var nbColumns_in_form = document.getElementById('form_nbcolumns_id').value;
 var form_list_in_form = document.getElementById('form_list_id').value;
-
 if (form_list_in_form == '-') {
 switch (String(nbColumns_in_form)) {
 case "5":
@@ -962,8 +837,6 @@ else {
 document.getElementById("my_form").action = mm_mmm_umm_action;
 }
 }
-
-// console.log(JSON.stringify($("#my_form").serializeArray()));
 let elements = document.getElementById("my_form").elements;
 for (let i = 0, element; element = elements[i++];) {
 my_params[element.name] = element.value;
@@ -974,7 +847,6 @@ my_params['compressrsp'] = abbreviateScores;
 if (mobileMode) {
 my_params['mobilemode'] = mobileMode;
 }
-
 if (form_list_in_form == '-') {
 handle_stats_final_retry_str = "handle_stats_bis(" + nbColumns_in_form + ", 99, 99, 'N', '" + document.getElementById('form_playerid_id').value + "', '" + key + "', " + "'Y2');";
 last_valid_handle_stats_final_retry_str = handle_stats_final_retry_str;
@@ -983,30 +855,21 @@ setTimeout(handle_stats_final_retry_conditional_str, 60000);
 setTimeout(handle_stats_final_retry_str, 120000);
 }
 }
-else { // Specific error case
+else {
 nbErrorsSubmitted++;
 if (nbErrorsSubmitted > 4) {
 return;
 }
-document.getElementById('form_nbcolumns_id').value = "N.A."; // (ensure failure at handling)
+document.getElementById('form_nbcolumns_id').value = "N.A.";
 document.getElementById("my_form").action = (((currentGameNbColumns == -1) || (currentGameNbColumns == 5)) ? smm_action : mm_mmm_umm_action);
 my_params['form_str'] = "(error id: " + errorId + ") " + formStr;
 }
 my_params['k'] = key;
 my_params['v'] = html_compatibility_game_version;
 my_params['retr'] = 'N';
-
-// Avoid request blocking by Chrome for the following reason:
-// "Resource requests whose URLs contained both removed whitespace (`\n`, `\r`, `\t`) characters and less-than characters (`<`) are blocked.
-//  Please remove newlines and encode less-than characters from places like element attribute values in order to load these resources.
-//  See https://www.chromestatus.com/feature/5735596811091968 for more details."
-replaceAllElementsInStruct(my_params, "\n", " "); // (duplicated code)
-replaceAllElementsInStruct(my_params, "\r", ""); // (duplicated code)
-replaceAllElementsInStruct(my_params, "\t", " "); // (duplicated code)
-// replaceAllElementsInStruct(my_params, "<", "_");
-// replaceAllElementsInStruct(my_params, ">", "_"); // (symmetrical replace applied)
-
-// Submit form
+replaceAllElementsInStruct(my_params, "\n", " ");
+replaceAllElementsInStruct(my_params, "\r", "");
+replaceAllElementsInStruct(my_params, "\t", " ");
 let my_form_url = document.getElementById("my_form").action;
 console.log("(submit form" + ((formStr == "") ? "" : " for a specific case") + ")");
 $.ajax({
@@ -1015,14 +878,13 @@ url: my_form_url,
 data: my_params,
 method: "GET",
 dataType: "jsonp",
-timeout: 30000 // 30 seconds
+timeout: 30000
 })
-.fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-if (formStr == "") { // Nominal case
+.fail(function(jqxhr, textStatus, error) {
+if (formStr == "") {
 try {
-if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
+if (jqxhr.status != 200) {
 console.log(("form submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-
 my_params['retr'] = 'Y';
 $.ajax({
 crossDomain: true,
@@ -1030,34 +892,30 @@ url: my_form_url,
 data: my_params,
 method: "GET",
 dataType: "jsonp",
-timeout: 30000 // 30 seconds
+timeout: 30000
 })
-.fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+.fail(function(jqxhr, textStatus, error) {
 try {
-if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
+if (jqxhr.status != 200) {
 console.log(("form submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
 if (handle_stats_final_retry_conditional_str != "") {
 setTimeout(handle_stats_final_retry_conditional_str, 20000);
 }
-} // else: systematic parse error (with 200 status) is ignored
+}
 }
 catch (exc) {
 console.log(("form submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
 }
 });
-} // else: systematic parse error (with 200 status) is ignored
+}
 }
 catch (exc) {
 console.log(("form submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
 }
 }
 });
-
-// document.getElementById('my_form').submit();
-// $("#my_form").submit();
 }
-
-function submitError(errorStr) { // CALLED BY ANDROID APP
+function submitError(errorStr) {
 try {
 submitForm("error submitted by android app: " + String(errorStr), 10);
 }
@@ -1065,19 +923,16 @@ catch (exc) {
 submitForm("submitError() handling error", 20);
 }
 }
-
 function getMemoryUsage() {
 let res = "memory usage:";
 try {
-res = res + String(performance.memory.usedJSHeapSize) /* used */ + "|" + String(performance.memory.totalJSHeapSize) /* allocated, >= used */ + "|" + String (performance.memory.jsHeapSizeLimit) /* maximum heap size */;
+res = res + String(performance.memory.usedJSHeapSize)  + "|" + String(performance.memory.totalJSHeapSize)  + "|" + String (performance.memory.jsHeapSizeLimit) ;
 }
-catch (exc) { // always fails in Firefox
+catch (exc) {
 res = res + "unknown";
 }
 return res;
 }
-
-// Temporary error handling (from this point in this file to simplify / will be overwritten later)
 function game_onerror(message, url, lineNo, columnNo, error) {
 let err_str = "tbc";
 try {
@@ -1086,55 +941,40 @@ err_str = ('error:' + message
 + '|line number:' + lineNo
 + '|column number:' + columnNo
 + '|error object:' + error).trim();
-// Skip useless errors:
-// Uncaught TypeError: Cannot read properties of undefined (reading 'query') / chrome-extension://fcneeeckalcgcklbloocjmhapagkkbfa/controls.js in ...
-if (url.indexOf("fcneeeckalcgcklbloocjmhapagkkbfa") != -1) { // video extension
+if (url.indexOf("fcneeeckalcgcklbloocjmhapagkkbfa") != -1) {
 return;
 }
-// Uncaught TypeError: Cannot read properties of undefined (reading 'sendMessage') / chrome-extension://ofdopmlmgifpfkijadehmhjccbefaeec/assets/comms/commsMngr.js in ...
-if (url.indexOf("ofdopmlmgifpfkijadehmhjccbefaeec") != -1) { // extension
+if (url.indexOf("ofdopmlmgifpfkijadehmhjccbefaeec") != -1) {
 return;
 }
-// Injected script
 if ((url.indexOf("hosteagle") != -1) || (url.indexOf("injectedScript") != -1))  {
 return;
 }
 }
 catch (error) {}
-
 try {
-// Error observed after game start (timesinceworkercreation ~ 23s) on "Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" useragent,
-// but not preventing (at least always?) game play (+ scores stored):
-// - message = TypeError: null is not an object (evaluating 'reader.content')
-// - url = https://supermastermind.github.io/playonline/game.html
 if ( (message.indexOf("TypeError: null is not an object (evaluating 'reader.content')") != -1)
 && (url.indexOf("game.html") != -1) ) {
 return;
 }
-// Error "ResizeObserver loop limit exceeded": minor error (which would be caused by some browser extensions) that can be skipped
 if (message.indexOf("ResizeObserver loop limit exceeded") != -1) {
 return;
 }
-// Error: window error: TypeError: undefined is not an object (evaluating 'document.getElementsByTagName('video')[0].webkitExitFullScreen')
 if (message.indexOf("webkitExitFullScreen") != -1) {
 return;
 }
-// Error: ReferenceError: Can't find variable: _AutofillCallbackHandler
 if (message.indexOf("_AutofillCallbackHandler") != -1) {
 return;
 }
-// Sporadic Safari [extension?] error
 if (message.indexOf("undefined is not an object (evaluating 'a.L')") != -1) {
 return;
 }
-// Sporadic Safari [extension?] error: error:Script error.|url:|line number:0|column number:0|error object:null in Safari/xxx
 if (safariMode && (message.indexOf("Script error.") != -1) && (url == "") && (lineNo == 0) && (columnNo == 0) && (error == null)) {
 return;
 }
 }
 catch (error) {}
-
-var extra_debug_info = ""; // (duplicated code)
+var extra_debug_info = "";
 if (localStorage.firstname) {
 extra_debug_info = extra_debug_info + localStorage.firstname;
 }
@@ -1168,11 +1008,10 @@ submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + 
 + "|gamesolver:" + gamesolver_load_state + "|" + ((gamesolver_load_start_time != -1) ? ((new Date()).getTime() - gamesolver_load_start_time)/1000 + "s" : "-")
 + " for " + extra_debug_info, 30);
 }
-window.onerror = game_onerror; // Note: this error capture can be redundant with the other error captures like gameSolver.onerror (same error submitted several times)
+window.onerror = game_onerror;
 </script>
 <script>
-"use strict"; // new script section with ""use strict";", as window.onerror was just set
-
+"use strict";
 function game_event_onerrors(evt, errormsg, cause) {
 var evt_str = "-";
 try {
@@ -1184,7 +1023,7 @@ try {
 evt_promise_str = JSON.stringify(evt.promise).substring(0, 101).trim();
 }
 catch (exc) {}
-var extra_debug_info = ""; // (duplicated code)
+var extra_debug_info = "";
 if (localStorage.firstname) {
 extra_debug_info = extra_debug_info + localStorage.firstname;
 }
@@ -1211,7 +1050,6 @@ game_event_onerrors(evt, "GAME UNHANDLEDREJECTION ERROR", "onunhandledrejection"
 window.onrejectionhandled = function(evt) {
 game_event_onerrors(evt, "GAME REJECTIONHANDLED ERROR", "onrejectionhandled");
 };
-
 var documentDOMContentLoadedEventReceived = "no";
 document.addEventListener("DOMContentLoaded", function() {
 try {
@@ -1226,11 +1064,9 @@ windowOnLoadEventReceived = "yes";
 }
 catch (exc) {}
 }
-
 function capitalizeFirstLetter(str) {
 return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
 function capitalizeFirstLetters(str) {
 if (str.length == 0) {
 return "";
@@ -1241,7 +1077,6 @@ return str.charAt(0).toUpperCase();
 else {
 let res = str.toLowerCase();
 res = res.charAt(0).toUpperCase() + res.slice(1);
-
 let res2 = "";
 let index = res.indexOf('-');
 while ((index != -1) && (index+1 < res.length)) {
@@ -1271,7 +1106,6 @@ index = -1;
 }
 }
 res2 = res2 + res;
-
 res = res2;
 res2 = "";
 index = res.indexOf("'");
@@ -1287,14 +1121,11 @@ index = -1;
 }
 }
 res2 = res2 + res;
-
 res2 = res2.replace(" D'"," d'");
 res2 = res2.replace(" Sur "," sur ");
-
 return res2;
 }
 }
-
 function guessUserId() {
 let guessedIdStr = "";
 if (firefoxMode) {
@@ -1317,7 +1148,6 @@ guessedIdStr = "X";
 }
 return "GID:" + guessedIdStr + ((screen.width * screen.height * screen.colorDepth) % 997);
 }
-
 function getLocation() {
 switch(location.protocol) {
 case 'http:':
@@ -1327,14 +1157,12 @@ return 'P1b';
 case 'file:':
 return 'P2';
 default:
-// (other protocols)
 return 'P3';
 }
 }
-
 function nbVowels(str)
 {
-var vowel_list = 'aeiouyAEIOUY'; // (accentuated vowels are not considered here)
+var vowel_list = 'aeiouyAEIOUY';
 var vowel_count = 0;
 for (var i = 0 ; i < str.length ; i++) {
 if (vowel_list.indexOf(str[i]) !== -1) {
@@ -1343,7 +1171,6 @@ vowel_count++;
 }
 return vowel_count;
 }
-
 function getCountryNameFromBrowserLanguage(defaultCountryName) {
 let browserlanguage = navigator.language;
 let dashIdx = browserlanguage.indexOf("-");
@@ -1351,20 +1178,19 @@ if (dashIdx != -1) {
 browserlanguage = browserlanguage.substring(dashIdx+1);
 }
 browserlanguage = browserlanguage.toUpperCase().trim();
-if (browserlanguage.length >= 2) { // all country name abbreviations are 2 characters long
+if (browserlanguage.length >= 2) {
 return browserlanguage;
 }
 else {
 return defaultCountryName;
 }
 }
-
 function isCorrect(str) {
 if ( (str.length < minFirstNameLength)
 || (str.length > maxFirstNameLength)
-|| (str.toLowerCase().indexOf('sherl') != -1) // (Sherlock)
-|| (str.toLowerCase().indexOf('holm') != -1) // (Sherlock)
-|| (str.toLowerCase().indexOf('watson') != -1) // (Sherlock)
+|| (str.toLowerCase().indexOf('sherl') != -1)
+|| (str.toLowerCase().indexOf('holm') != -1)
+|| (str.toLowerCase().indexOf('watson') != -1)
 || (str.toLowerCase().indexOf('aaa') != -1)
 || (str.toLowerCase().indexOf('bbb') != -1)
 || (str.toLowerCase().indexOf('ccc') != -1)
@@ -1453,22 +1279,19 @@ return false;
 }
 return true;
 }
-
 if (localStorage.firstname && (!isCorrect(localStorage.firstname))) {
 localStorage.previousfirstname = localStorage.firstname;
-localStorage.removeItem('firstname'); // localStorage.firstname
+localStorage.removeItem('firstname');
 }
-
-var glbScoreAndPerfHistorySize = 20; // (shall be > 5)
+var glbScoreAndPerfHistorySize = 20;
 var glbScoreAndPerfHistoryArrayNamePrefix = "glbScoreAndPerfHistoryArray";
-var glbScoreNAValue = -100; // (also used for init value in max calculation)
-var glbPerfNAValue = -100; // (also used for init value in max calculation)
+var glbScoreNAValue = -100;
+var glbPerfNAValue = -100;
 function getGlbScoreAndPerfHistoryArrayName(nbColumns_p) {
 return glbScoreAndPerfHistoryArrayNamePrefix + "_" + nbColumns_p + "cols";
 }
 function storeGlbScoreAndPerf(nbColumns_p, glb_score, glb_perf) {
 try {
-// Check parameters
 if ((nbColumns_p != 3) && (nbColumns_p != 4) && (nbColumns_p != 5) && (nbColumns_p != 6) && (nbColumns_p != 7)) {
 throw new Error("invalid nbColumns_p: " + nbColumns_p);
 }
@@ -1488,8 +1311,6 @@ if (isNaN(glb_perf_float) || !isFinite(glb_perf)) {
 throw new Error("invalid glb_perf value: " + glb_perf);
 }
 }
-
-// Initialize global scores and perfs in localStorage
 var glbScoreAndPerfHistoryArrayName = getGlbScoreAndPerfHistoryArrayName(nbColumns_p);
 var jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
 if (jsonString == null) {
@@ -1501,8 +1322,6 @@ var jsonString2 = JSON.stringify(glbScoreAndPerfHistoryArray);
 localStorage.setItem(glbScoreAndPerfHistoryArrayName, jsonString2);
 localStorage.glbScoreAndPerfHistoryIdx = 0;
 }
-
-// Get global scores and perfs in localStorage
 jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
 if (jsonString == null) {
 throw new Error("null jsonString");
@@ -1515,10 +1334,8 @@ var glbScoreAndPerfHistoryIdx = parseInt(localStorage.glbScoreAndPerfHistoryIdx)
 if (isNaN(glbScoreAndPerfHistoryIdx) || (glbScoreAndPerfHistoryIdx < 0) || (glbScoreAndPerfHistoryIdx >= glbScoreAndPerfHistorySize)) {
 throw new Error("invalid global history index: " + glbScoreAndPerfHistoryIdx);
 }
-
-// Update global scores and perfs in localStorage
-glbScoreAndPerfHistoryArray[glbScoreAndPerfHistoryIdx] = { glbscore: glb_score_float, // (glbScoreNAValue if !valid_glb_score)
-glbperf: glb_perf_float, // (glbPerfNAValue if !valid_glb_perf)
+glbScoreAndPerfHistoryArray[glbScoreAndPerfHistoryIdx] = { glbscore: glb_score_float,
+glbperf: glb_perf_float,
 date: new Date() };
 var jsonString2 = JSON.stringify(glbScoreAndPerfHistoryArray);
 localStorage.setItem(glbScoreAndPerfHistoryArrayName, jsonString2);
@@ -1528,7 +1345,6 @@ catch (exc) {
 submitForm("storeGlbScoreAndPerf error: " + exc + ": " + exc.stack, 50);
 }
 }
-
 function displayOrGetMaxGlbScoreAndPerf(nbColumns_p, display, maxGlbResultsOut) {
 if (!display) {
 maxGlbResultsOut.glbscore = glbScoreNAValue;
@@ -1538,7 +1354,7 @@ try {
 var glbScoreAndPerfHistoryArrayName = getGlbScoreAndPerfHistoryArrayName(nbColumns_p);
 var jsonString = localStorage.getItem(glbScoreAndPerfHistoryArrayName);
 if (jsonString == null) {
-return false; // array not yet initialized
+return false;
 }
 var glbScoreAndPerfHistoryArray = JSON.parse(jsonString);
 if (glbScoreAndPerfHistoryArray.length != glbScoreAndPerfHistorySize) {
@@ -1548,13 +1364,13 @@ var glbScoreAndPerfHistoryIdx = parseInt(localStorage.glbScoreAndPerfHistoryIdx)
 if (isNaN(glbScoreAndPerfHistoryIdx) || (glbScoreAndPerfHistoryIdx < 0) || (glbScoreAndPerfHistoryIdx >= glbScoreAndPerfHistorySize)) {
 throw new Error("displayOrGetMaxGlbScoreAndPerf: invalid global history index: " + glbScoreAndPerfHistoryIdx);
 }
-if (display) { // display mode
+if (display) {
 for (var i = 0; i < glbScoreAndPerfHistorySize; i++) {
 console.log("[" + i + ((i == glbScoreAndPerfHistoryIdx) ? "*": "") + "] " + glbScoreAndPerfHistoryArray[i].glbscore + ", " + glbScoreAndPerfHistoryArray[i].glbperf + ", " + glbScoreAndPerfHistoryArray[i].date);
 }
 }
-else { // "get max" mode
-if (!localStorage.gamesok || (Number(localStorage.gamesok) < glbScoreAndPerfHistorySize + 5)) { // (simplified check for all column numbers)
+else {
+if (!localStorage.gamesok || (Number(localStorage.gamesok) < glbScoreAndPerfHistorySize + 5)) {
 console.log("(displayOrGetMaxGlbScoreAndPerf: skipped)");
 return false;
 }
@@ -1568,8 +1384,8 @@ if (glbScoreAndPerfHistoryArray[i].glbperf > maxGlbPerf) {
 maxGlbPerf = glbScoreAndPerfHistoryArray[i].glbperf;
 }
 }
-maxGlbResultsOut.glbscore = maxGlbScore; // (can be glbScoreNAValue)
-maxGlbResultsOut.glbperf = maxGlbPerf; // (can be glbPerfNAValue)
+maxGlbResultsOut.glbscore = maxGlbScore;
+maxGlbResultsOut.glbperf = maxGlbPerf;
 return true;
 }
 }
@@ -1579,85 +1395,70 @@ return false;
 }
 return false;
 }
-
-var trophy_image = new Image(); // create an image object
+var trophy_image = new Image();
 var trophy_image_loaded = false;
 var trophy_image_width = -1;
 var trophy_image_height = -1;
-if (!firefoxMode) { // poor display of trophy image
-trophy_image.src = "img/trophy.png"; // asynchronous image load - this image will only be loaded once and used several times
+if (!firefoxMode) {
+trophy_image.src = "img/trophy.png";
 }
 trophy_image.onload = function() {
 trophy_image_loaded = true;
 trophy_image_width = trophy_image.width;
 trophy_image_height = trophy_image.height;
 }
-
 function handle_rsp_delayed(e) {
 debug_game_state = 80;
 try {
 if ( (e !== undefined) && (e != null)
-&& (typeof e.rsp_cd == 'undefined') // rsp_cd means error
+&& (typeof e.rsp_cd == 'undefined')
 && (typeof e.rankings !== 'undefined') && (e.rankings.length > 10)
 && (typeof e.nbcolumns !== 'undefined') && (typeof e.globalScore !== 'undefined') && (typeof e.globalPerf !== 'undefined') ) {
-
 if (e.nbcolumns != "NA") {
 storeGlbScoreAndPerf(e.nbcolumns, e.globalScore, e.globalPerf);
 }
-
-var rsp_rankings_str = JSON.stringify(e.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
-// console.log("1: " + rsp_rankings_str);
-
-// Uncompress rankings HTML code
-if (rsp_rankings_str.indexOf("</tr>") == -1) { // complete </tr> for proper row formating
+var rsp_rankings_str = JSON.stringify(e.rankings).replaceAll("^\"|\"$", "");
+if (rsp_rankings_str.indexOf("</tr>") == -1) {
 rsp_rankings_str = rsp_rankings_str.replaceAll("<tr", "</tr><tr");
 rsp_rankings_str = rsp_rankings_str.replace("</table>", "</tr></table>");
-rsp_rankings_str = rsp_rankings_str.replace("</tr><tr", "<tr"); // (first occurrence)
+rsp_rankings_str = rsp_rankings_str.replace("</tr><tr", "<tr");
 }
-rsp_rankings_str = rsp_rankings_str.replaceAll("<1>", "&#9990;"); // special character 1 (android app indicator)
-rsp_rankings_str = rsp_rankings_str.replaceAll("<2>", "&#x2234;"); // special character 2
-rsp_rankings_str = rsp_rankings_str.replaceAll("<3>", "&#x2009;"); // special character 3 (thin space)
-rsp_rankings_str = rsp_rankings_str.replaceAll("<4>", "&#x266C;"); // special character 4 (random play)
-rsp_rankings_str = rsp_rankings_str.replaceAll("<5>", "&nbsp;"); // special character 5 (space)
+rsp_rankings_str = rsp_rankings_str.replaceAll("<1>", "&#9990;");
+rsp_rankings_str = rsp_rankings_str.replaceAll("<2>", "&#x2234;");
+rsp_rankings_str = rsp_rankings_str.replaceAll("<3>", "&#x2009;");
+rsp_rankings_str = rsp_rankings_str.replaceAll("<4>", "&#x266C;");
+rsp_rankings_str = rsp_rankings_str.replaceAll("<5>", "&nbsp;");
 rsp_rankings_str = rsp_rankings_str.replaceAll("<table>", "<table id='score_table' style='border:0;padding:0;border-collapse:collapse;width:TABLE_WIDTH;'>");
 rsp_rankings_str = rsp_rankings_str.replaceAll("<tr>", "<tr style='font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str = rsp_rankings_str.replace(/<tr([A-Za-z0-9]+)>/g, "<tr style='background-color:#$1;font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str = rsp_rankings_str.replace(/<hr([A-Za-z0-9.]+)>/g, "<hr style='height:$1vh;padding:0;margin:0;visibility:hidden;'>");
-
 rsp_rankings_str = rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:" + scoresTableWidthStr);
 var header_font_size = "2.7vh";
 var header_font_size_for_img = "3.2vh";
 rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:" + header_font_size);
 if (trophy_image_loaded) {
-rsp_rankings_str = rsp_rankings_str.replace("&#x1F3C6;" /* trophy */,
+rsp_rankings_str = rsp_rankings_str.replace("&#x1F3C6;" ,
 "<img id='score_trophy_image_id_1' style='vertical-align:middle;height:" + header_font_size_for_img + ";margin:0;padding:0;'>");
-rsp_rankings_str = rsp_rankings_str.replace("&#x1F3C6;" /* trophy */,
+rsp_rankings_str = rsp_rankings_str.replace("&#x1F3C6;" ,
 "<img id='score_trophy_image_id_2' style='vertical-align:middle;height:" + header_font_size_for_img + ";margin:0;padding:0;'>");
-} // else: keep unicode characters
+}
 rsp_rankings_str = rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:" + scoresFontSizeStr);
 let padding_str = "0.3vh 0 0.3vh 0";
-rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
-rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>" / case without background image
-rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
-rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>"); // "<s>" -> "<small>"
-rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>"); // "</s>" -> "</small>"
-rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>"); // apply color change on numbers of assessed attempts
-rsp_rankings_str = rsp_rankings_str.replace(/(<tr((?!<td).)*<td style=\')/g, "$1border-radius:0.8vh 0 0 0.8vh;"); // make left borders round  ("?!" means "does not contain")
-rsp_rankings_str = rsp_rankings_str.replace(/(<td style=\')(((?!<td).)*<\/tr)/g, "$1border-radius:0 0.8vh 0.8vh 0;$2"); // make right borders round ("?!" means "does not contain")
+rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>");
+rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>");
+rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>");
+rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>");
+rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>");
+rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>");
+rsp_rankings_str = rsp_rankings_str.replace(/(<tr((?!<td).)*<td style=\')/g, "$1border-radius:0.8vh 0 0 0.8vh;");
+rsp_rankings_str = rsp_rankings_str.replace(/(<td style=\')(((?!<td).)*<\/tr)/g, "$1border-radius:0 0.8vh 0.8vh 0;$2");
 rsp_rankings_str = rsp_rankings_str.replace("HISTORY_SIZE", glbScoreAndPerfHistorySize);
-
-// console.log("2: " + rsp_rankings_str);
-// Rk: top scores are always displayed, even if current game score is not in them
 try {
 modal_mode = 2;
-// set modal content
-modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+modal.setContent("<div style='-webkit-touch-callout: none;  -webkit-user-select: none;  -khtml-user-select: none;  -moz-user-select: none;  -ms-user-select: none;  user-select: none; '>"
 + rsp_rankings_str
 + "</div>");
-// open modal
 modal.open();
-
-// point to already-loaded images
 let trophy_img_1 = document.getElementById('score_trophy_image_id_1');
 if (trophy_img_1 != null) {
 trophy_img_1.src = "img/trophy.png";
@@ -1689,30 +1490,27 @@ throw new Error("handle_rsp_delayed error: " + exc + ": " + exc.stack);
 debug_game_state = 81;
 }
 var last_game_was_short = false;
-function handle_rsp(e) { // CALLED BY GS SCRIPT
+function handle_rsp(e) {
 console.log("(handle_rsp)");
 localStorage.last_handle_rsp_call = (new Date()).getTime();
-
-var score_display_time = 4444; // (see blinking time)
+var score_display_time = 4444;
 if (mobileMode) {
-score_display_time = 4444; // (see blinking time)
+score_display_time = 4444;
 }
 if (last_game_was_short && (nbGamesPlayedAndWon >= 2) && localStorage.gamesok && (Number(localStorage.gamesok) >= 10)) {
-score_display_time = score_display_time * 2 + 3000; // extra time when short games
+score_display_time = score_display_time * 2 + 3000;
 }
-
 var time_to_wait = 44;
-var time_diff = new Date().getTime() - store_time; // (can be negative)
+var time_diff = new Date().getTime() - store_time;
 if (time_diff < score_display_time) {
 time_to_wait = score_display_time - time_diff;
 }
 else {
-time_to_wait = 44; // (no time to wait, form submission was long enough)
+time_to_wait = 44;
 }
 console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
 setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
 }
-
 var statsURL = "https://script.google.com/macros/s/AKf" + extraStr + "ycbxV_dIUQ-wfdjGxHLzsEvVDp3MHMzggA9e20Td1jiSQZJXvgVvgFr_kbOE0IL4cXTyo/exec";
 var last_stats_keys_size = 50;
 var last_stats_keys_index = 0;
@@ -1720,32 +1518,26 @@ var last_stats_keys = new Array(last_stats_keys_size);
 for (var i = 0; i < last_stats_keys_size; i++) {
 last_stats_keys[i] = "__init_stats_key__";
 }
-function handle_stats(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p) { // CALLED BY THIS SCRIPT (Y2) OR BY GS SCRIPT (N or Y)
+function handle_stats(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p) {
 setTimeout("handle_stats_bis(" + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", '" + applyTimes_p + "', '" + pId_p + "', '" + key_p + "', '" + retr_p + "');", 44);
 }
 function handle_stats_bis(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p) {
-
-// console.log("handle_stats_bis: " + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", " + applyTimes_p + ", " + pId_p + ", " + key_p + ", " + retr_p);
-if (globalErrorStatus) { // skip handle_stats_bis when a basic global error occurred
+if (globalErrorStatus) {
 console.log("(handle_stats_bis skipped due to global error)");
 return;
 }
-
-// Check parameters
 if ( ((nbColumns_p != "4") && (nbColumns_p != "5") && (nbColumns_p != "6") && (nbColumns_p != "7"))
 || ((applyTimes_p != "N") && (applyTimes_p != "Y"))
 || ((retr_p != "N") && (retr_p != "Y") && (retr_p != "Y2")) ) {
 submitForm("handle_stats_bis error (wrong parameters): " + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", "
 + applyTimes_p + ", " + pId_p + ", " + key_p  + ", " + retr_p + ", last_idx: " + last_stats_keys_index, 70);
 console.log("stats form submission skipped (wrong parameters)");
-return; // skip stats update
+return;
 }
-
-// Check that stats were not already taken into account
 for (var i = 0; i < last_stats_keys_size; i++) {
 if (last_stats_keys[i] == key_p) {
 console.log("stats form submission skipped (duplicate key)");
-return; // skip stats update
+return;
 }
 }
 last_stats_keys[last_stats_keys_index] = key_p;
@@ -1753,7 +1545,6 @@ last_stats_keys_index++;
 if (last_stats_keys_index >= last_stats_keys_size) {
 last_stats_keys_index = 0;
 }
-
 var my_stats_form_url = statsURL;
 var my_stats_params = {};
 my_stats_params['col'] = nbColumns_p;
@@ -1763,12 +1554,10 @@ my_stats_params['applytimes'] = applyTimes_p;
 my_stats_params['pid'] = pId_p;
 my_stats_params['loc'] = getLocation();
 my_stats_params['v'] = html_compatibility_game_version;
-my_stats_params['retr'] = retr_p; // --> stats on retries
-/* ... my_stats_params['key'] = key_p */
-// (See reasons above in this file)
-replaceAllElementsInStruct(my_stats_params, "\n", " "); // (duplicated code)
-replaceAllElementsInStruct(my_stats_params, "\r", ""); // (duplicated code)
-replaceAllElementsInStruct(my_stats_params, "\t", " "); // (duplicated code)
+my_stats_params['retr'] = retr_p;
+replaceAllElementsInStruct(my_stats_params, "\n", " ");
+replaceAllElementsInStruct(my_stats_params, "\r", "");
+replaceAllElementsInStruct(my_stats_params, "\t", " ");
 if (!beforeunload_case) {
 $.ajax({
 crossDomain: true,
@@ -1776,30 +1565,26 @@ url: my_stats_form_url,
 data: my_stats_params,
 method: 'GET',
 dataType: 'jsonp',
-timeout: 30000 // 30 seconds
+timeout: 30000
 });
 }
-else { // specific beforeunload case => save last stats command (only the very last command to simplify)
+else {
 if (retr_p != "Y2") {
 submitForm("internal error when setting localStorage.pendingStats: " + retr_p, 80);
 }
 localStorage.pendingStats = "handle_stats_bis(" + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", '" + applyTimes_p + "', '" + pId_p + "', '" + key_p + "', '" + retr_p + "');"
 }
-
 }
-if (localStorage.pendingStats) { // Executed once at startup: check if there were pending stats
-setTimeout("console.log('pending stats handled');" + localStorage.pendingStats + "localStorage.removeItem('pendingStats');", 4444); // localStorage.pendingStats
+if (localStorage.pendingStats) {
+setTimeout("console.log('pending stats handled');" + localStorage.pendingStats + "localStorage.removeItem('pendingStats');", 4444);
 }
-
-var globalProgressForHTMLGame2 = getGlobalProgress(0.75 /* (rough value) */, 0);
-console.log("current progress: " + Math.max(globalProgressForHTMLGame2, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame2; // !WARNING! -> this console text will be read by the android app so shall not be modified
+var globalProgressForHTMLGame2 = getGlobalProgress(0.75 , 0);
+console.log("current progress: " + Math.max(globalProgressForHTMLGame2, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame2;
 if (globalProgressForHTMLGame2 > 0) {
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame2 + "%)"); // (not rem unit as no viewport! / duplicated code)
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame2 + "%)");
 }
-
 var nb_locationURL_accesses = 0;
 var locationURL_accesses_failure_causes = "";
-
 function reformatLocationValue(x) {
 let res = String(x).trim();
 if ((typeof x == 'undefined') || (x == undefined) || (x == null) || (res == "")) {
@@ -1809,7 +1594,6 @@ else {
 return res;
 }
 }
-
 function reformatTime(time_in_ms) {
 if (time_in_ms < 0) {
 return "negativetime:" + time_in_ms/1000;
@@ -1832,12 +1616,11 @@ else {
 return time_in_sec + "s";
 }
 }
-
 function deg2rad(deg) {
 return deg * (Math.PI/180);
 }
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-var R = 6371; // Radius of the earth in km
+var R = 6371;
 var dLat = deg2rad(lat2-lat1);
 var dLon = deg2rad(lon2-lon1);
 var a =
@@ -1845,24 +1628,22 @@ Math.sin(dLat/2) * Math.sin(dLat/2) +
 Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
 Math.sin(dLon/2) * Math.sin(dLon/2);
 var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-var d = R * c; // Distance in km
+var d = R * c;
 return d;
 }
-
 let dummyLocationPrefix1 = "/1:";
 let dummyLocationPrefix2 = "/2:";
 let dummyLocationPrefix3 = "/3:";
 let dummyLocationPrefix4 = "/4:";
 let dummyLocationPrefix5 = "/5:";
 function isLocationDataValid(data_p, check_region_instead_of_city = false) {
-if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) { // (condition duplicated)
+if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) {
 return false;
 }
-let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && ((String(data_p.ip).indexOf(".") != -1) || (String(data_p.ip).indexOf(":") != -1)) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)); // (condition duplicated - covers IPv4 and IPv6)
-let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 2) /* covers country name abbreviations which are 2 characters long */);
+let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && ((String(data_p.ip).indexOf(".") != -1) || (String(data_p.ip).indexOf(":") != -1)) && (String(data_p.ip).trim().length >= 7 ));
+let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 2) );
 let cityOrRegionCondition;
 if (!check_region_instead_of_city) {
-// Note: city may be known whereas region is not
 cityOrRegionCondition = ((typeof data_p.city != 'undefined') && (data_p.city != undefined) && (data_p.city != null) && (data_p.city.length >= 2) && (reformatLocationValue(data_p.city) != "-") && (reformatLocationValue(data_p.city).toLowerCase() != "city") && (reformatLocationValue(data_p.city).toLowerCase() != "ville") && (reformatLocationValue(data_p.city).toLowerCase() != "undefined"));
 }
 else {
@@ -1878,7 +1659,6 @@ return true;
 }
 return false;
 }
-
 function getPreciseStoredLocationData() {
 if (localStorage.precise_latitude && localStorage.precise_longitude && localStorage.precise_accuracy && localStorage.precise_countryname && localStorage.precise_region && localStorage.precise_city && localStorage.precise_ip && localStorage.precise_location_success_time) {
 let precise_location_data = { latitude: localStorage.precise_latitude,
@@ -1894,25 +1674,22 @@ else {
 return null;
 }
 }
-
 function setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city) {
 localStorage.bestEffortIPAddress = reformatLocationValue(ipaddress);
 localStorage.bestEffortIPAddressSource = locationId;
 localStorage.bestEffortIPAddressStorageTime = (new Date()).getTime();
-
-localStorage.latitude = reformatLocationValue(latitude); // (local storage of most useful location information)
+localStorage.latitude = reformatLocationValue(latitude);
 localStorage.longitude = reformatLocationValue(longitude);
 localStorage.accuracy = '?';
 localStorage.countryname = reformatLocationValue(country);
 localStorage.region = reformatLocationValue(region);
 localStorage.city = reformatLocationValue(city);
 localStorage.ip = reformatLocationValue(ipaddress);
-localStorage.location_id = locationId; // location id associated to those stored location values
-localStorage.location_storage_time = (new Date()).getTime(); // time associated to those stored location values
+localStorage.location_id = locationId;
+localStorage.location_storage_time = (new Date()).getTime();
 }
-
 function getStoredLocationData() {
-if (localStorage.latitude && localStorage.longitude && localStorage.accuracy && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id && localStorage.location_storage_time) { // (condition duplicated)
+if (localStorage.latitude && localStorage.longitude && localStorage.accuracy && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id && localStorage.location_storage_time) {
 let stored_location_data = { latitude: localStorage.latitude,
 longitude: localStorage.longitude,
 accuracy: localStorage.accuracy,
@@ -1926,36 +1703,31 @@ else {
 return null;
 }
 }
-
 let city_name_to_be_skipped = "skip_me";
 function setBestEffortLocationData(data_p, locationId) {
 try {
-if (isLocationDataValid(data_p)) { // best effort location shall not be valid
+if (isLocationDataValid(data_p)) {
 throw new Error("setBestEffortLocationData called on valid location data");
 }
 try {
-// (always attempt to update localStorage.best_effort_countryname, at least for debug purposes)
 localStorage.best_effort_countryname = data_p.country_name;
 }
 catch (exc) {}
-// Consider region instead of city
-if (isLocationDataValid(data_p, true /* check_region_instead_of_city */)) {
+if (isLocationDataValid(data_p, true )) {
 localStorage.bestEffortIPAddress = reformatLocationValue(data_p.ip);
 localStorage.bestEffortIPAddressSource = locationId;
 localStorage.bestEffortIPAddressStorageTime = (new Date()).getTime();
-
 localStorage.best_effort_latitude = reformatLocationValue(data_p.latitude);
 localStorage.best_effort_longitude = reformatLocationValue(data_p.longitude);
 localStorage.best_effort_accuracy = '?';
 localStorage.best_effort_countryname = reformatLocationValue(data_p.country_name);
-localStorage.best_effort_region = reformatLocationValue(data_p.region); // region instead of city
-localStorage.best_effort_city = city_name_to_be_skipped; // region instead of city
+localStorage.best_effort_region = reformatLocationValue(data_p.region);
+localStorage.best_effort_city = city_name_to_be_skipped;
 localStorage.best_effort_ip = reformatLocationValue(data_p.ip);
-localStorage.best_effort_location_id = locationId; // location id associated to those stored location values
-localStorage.best_effort_update_time = (new Date()).getTime(); // time associated to those stored location values
-// Defensive check
+localStorage.best_effort_location_id = locationId;
+localStorage.best_effort_update_time = (new Date()).getTime();
 let best_effort_location_data = getBestEffortLocationData();
-if (!isLocationDataValid(best_effort_location_data)) { // shall be valid thanks to city_name_to_be_skipped
+if (!isLocationDataValid(best_effort_location_data)) {
 throw new Error("setBestEffortLocationData: invalid best effort location data: " + JSON.stringify(best_effort_location_data));
 }
 }
@@ -1964,7 +1736,6 @@ catch (exc) {
 submitForm("setBestEffortLocationData error: " + exc + ": " + exc.stack, 90);
 }
 }
-
 function getBestEffortLocationData() {
 if (localStorage.best_effort_latitude && localStorage.best_effort_longitude && localStorage.best_effort_accuracy && localStorage.best_effort_countryname && localStorage.best_effort_region && localStorage.best_effort_city && localStorage.best_effort_ip && localStorage.best_effort_location_id && localStorage.best_effort_update_time) {
 let best_effort_location_data = { latitude: localStorage.best_effort_latitude,
@@ -1980,7 +1751,6 @@ else {
 return null;
 }
 }
-
 let GEOCODING_API_URL_1 = "https://geocode.maps.co/reverse?lat=LATITUDE&lon=LONGITUDE&api_key=65b" + extraStr + "bd7330aa0a629386831xwm917" + "233";
 let GEOCODING_API_URL_2 = "https://nominatim.openstreet" + extraStr + "map.org/reverse?lat=LATITUDE&lon=LONGITUDE&format=json&accept-language=en";
 if (!localStorage.useFirstGeocodingApi) {
@@ -1989,16 +1759,15 @@ localStorage.useFirstGeocodingApi = "yes";
 if (!localStorage.location_permission_granted) {
 localStorage.location_permission_granted = "ini";
 }
-function HTML_geolocation_success(position, debug_str_p = null) { // CALLED BY ANDROID APP (with debug_str_p parameter filled)
+function HTML_geolocation_success(position, debug_str_p = null) {
 let latitude = position.coords.latitude;
 let longitude = position.coords.longitude;
-let accuracy = position.coords.accuracy; // (in meters)
+let accuracy = position.coords.accuracy;
 console.log("HTML geolocation success:");
 console.log(" latitude: " + latitude);
 console.log(" longitude: " + longitude);
 console.log(" accuracy: " + accuracy);
 localStorage.location_permission_granted = "yes";
-
 debug_game_state = 10;
 let debug_str = "";
 if (debug_str_p != null) {
@@ -2007,22 +1776,17 @@ debug_str = " " + debug_str_p;
 debug_str = debug_str + " " + ((localStorage.useFirstGeocodingApi == "yes") ? "1stGeolocApi" : "2ndGeolocApi");
 localStorage.html_geoloc_status = "run_bis" + debug_str;
 HTML_geoloc_successes++;
-
-// Best effort or unknown IP address
-let inferred_ip_address = (localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix + '1.' /* 0.0.01.xxxxx */ + Math.floor(Math.random() * 99999999) /* 99999999 dummy ip addresses */);
-// Attempt to refresh (old or non-existing) localStorage.bestEffortIPAddress IP address
+let inferred_ip_address = (localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix + '1.'  + Math.floor(Math.random() * 99999999) );
 if ( (!localStorage.bestEffortIPAddress)
-|| (!localStorage.bestEffortIPAddressStorageTime) || ((new Date()).getTime() - localStorage.bestEffortIPAddressStorageTime > 3*24*3600*1000) ) { // 3 days
-if ( (!localStorage.bestEffortIPAddressAttemptTime) || ((new Date()).getTime() - localStorage.bestEffortIPAddressAttemptTime > 1*24*3600*1000) ) { // 1 day
-setTimeout("attemptAlternateLocationMethods(true);" /* ip_address_only */, 4444); // asynchronous to simplify
+|| (!localStorage.bestEffortIPAddressStorageTime) || ((new Date()).getTime() - localStorage.bestEffortIPAddressStorageTime > 3*24*3600*1000) ) {
+if ( (!localStorage.bestEffortIPAddressAttemptTime) || ((new Date()).getTime() - localStorage.bestEffortIPAddressAttemptTime > 1*24*3600*1000) ) {
+setTimeout("attemptAlternateLocationMethods(true);" , 4444);
 localStorage.bestEffortIPAddressAttemptTime = (new Date()).getTime();
 }
 }
-
-// Do not trigger useless geocoding requests
 let precise_location_data = getPreciseStoredLocationData();
 if ( isLocationDataValid(precise_location_data)
-&& (getDistanceFromLatLonInKm(precise_location_data.latitude, precise_location_data.longitude, latitude, longitude) < 0.250) ) { // nearly same position as previous one
+&& (getDistanceFromLatLonInKm(precise_location_data.latitude, precise_location_data.longitude, latitude, longitude) < 0.250) ) {
 console.log("previously stored precise location reused");
 localStorage.precise_ip = inferred_ip_address;
 localStorage.precise_location_success_time = (new Date()).getTime();
@@ -2033,28 +1797,25 @@ throw new Error("HTML_geolocation_success: invalid precise location data #1: " +
 }
 return;
 }
-
-if (localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times - defense for restarts + android app calls (after restarts)
+if (localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) {
 console.log("HTML geolocation skipped");
 localStorage.html_geoloc_status = "skipped" + debug_str;
 return;
 }
 localStorage.precise_geolocation_api_access_time = (new Date()).getTime();
-
 let GEOCODING_API_URL = ((localStorage.useFirstGeocodingApi == "yes") ? GEOCODING_API_URL_1 : GEOCODING_API_URL_2);
 GEOCODING_API_URL = GEOCODING_API_URL.replace("LATITUDE", latitude).replace("LONGITUDE", longitude);
 $.getJSON(GEOCODING_API_URL)
 .done(function(location) {
 debug_game_state = 11;
 try {
-// location.error and other below location.x field checks are valid for both geocode and nominatim JSON syntaxes => no localStorage.useFirstGeocodingApi checks are needed
-if (location.error == undefined) { // geocoding API success
+if (location.error == undefined) {
 let country = "-";
 if (location.address.country) {
 country = String(location.address.country).trim();
 }
-let region = "-"; // invalid value by default
-if (location.address.state) { // (can be best known than county)
+let region = "-";
+if (location.address.state) {
 region = String(location.address.state).trim();
 }
 else if (location.address.county) {
@@ -2063,7 +1824,7 @@ region = String(location.address.county).trim();
 else if (location.address.region) {
 region = String(location.address.region).trim();
 }
-let city = "-"; // invalid value by default
+let city = "-";
 if (location.address.town) {
 city = String(location.address.town).trim();
 }
@@ -2073,19 +1834,17 @@ city = String(location.address.city).trim();
 else if (location.address.municipality) {
 city = String(location.address.municipality).trim();
 }
-else if (location.address.village) { // (can be too precise for android approximate location permission)
+else if (location.address.village) {
 city = String(location.address.village).trim();
 }
 let zip = "-";
 if (location.address.postcode) {
 zip = String(location.address.postcode).trim();
 }
-
 console.log(" country: " + country);
 console.log(" region: " + region);
 console.log(" city: " + city);
 console.log(" zip: " + zip);
-
 var tmp_location_data = { latitude: reformatLocationValue(latitude),
 longitude: reformatLocationValue(longitude),
 accuracy: accuracy,
@@ -2127,17 +1886,16 @@ localStorage.useFirstGeocodingApi = ((localStorage.useFirstGeocodingApi == "yes"
 }
 debug_game_state = 12;
 })
-.fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+.fail(function(jqxhr, textStatus, error) {
 debug_game_state = 13;
 console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
 localStorage.html_geoloc_status = "nok-4" + debug_str + " " + GEOCODING_API_URL;
 localStorage.useFirstGeocodingApi = ((localStorage.useFirstGeocodingApi == "yes") ? "no" : "yes");
 debug_game_state = 14;
 });
-} // HTML_geolocation_success
-
+}
 let android_HTML_geolocation_retries_after_error = 0;
-function HTML_geolocation_error(error) { // CALLED BY ANDROID APP (with string parameter)
+function HTML_geolocation_error(error) {
 let error_str = "?";
 if (error.code != undefined) {
 switch(error.code) {
@@ -2156,33 +1914,29 @@ error_str = "an unknown error occurred";
 break;
 }
 }
-else { // android app call
+else {
 error_str = String(error);
 }
 console.log("HTML geolocation error: " + error_str);
 localStorage.html_geoloc_status = "nok-5/" + error_str;
 HTML_geoloc_errors++;
-if (android_appli /* no popups for android app */ && (android_HTML_geolocation_retries_after_error < 3)) { // retry after some geolocation attempt failures
-if (!localStorage.precise_geolocation_api_access_time || !((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times
+if (android_appli  && (android_HTML_geolocation_retries_after_error < 3)) {
+if (!localStorage.precise_geolocation_api_access_time || !((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) {
 android_HTML_geolocation_retries_after_error++;
-setTimeout("attempt_HTML_geolocation();", 5*android_HTML_geolocation_retries_after_error*60*1000); // n*5 minutes
+setTimeout("attempt_HTML_geolocation();", 5*android_HTML_geolocation_retries_after_error*60*1000);
 }
 }
-} // HTML_geolocation_error
-
+}
 let my_position = null;
 function attempt_HTML_geolocation() {
-if (globalErrorStatus) { // skip attempt_HTML_geolocation when a basic global error occurred
+if (globalErrorStatus) {
 console.log("(attempt_HTML_geolocation skipped due to global error)");
 return;
 }
-
 console.log("(attempt HTML geolocation at " + new Date() + ")");
 if (android_appli) {
 if (scriptsFullyLoaded) {
-// In case of android app, classical calls to navigator.geolocation functions often do not work (unexpected timeout errors)
-// => request location explicitly to the android app which will call HTML_geolocation_success or HTML_geolocation_error
-console.log("(get last location request)"); // !WARNING! -> this console text will be read by the android app so shall not be modified
+console.log("(get last location request)");
 HTML_geoloc_attempts++;
 localStorage.html_geoloc_status = "run_app";
 }
@@ -2193,7 +1947,6 @@ localStorage.html_geoloc_status = "run_app_skipped";
 else {
 localStorage.html_geoloc_status = "run";
 if (navigator.geolocation) {
-// Note: a more precise alternative to getCurrentPosition() would be to use watchPosition()
 navigator.geolocation.getCurrentPosition(HTML_geolocation_success, HTML_geolocation_error);
 HTML_geoloc_attempts++;
 if (!localStorage.nb_location_permissions_req) {
@@ -2203,16 +1956,13 @@ localStorage.nb_location_permissions_req = Number(localStorage.nb_location_permi
 }
 }
 }
-
 let ip_address_for_alternate_loc_methods = "-";
-function handle_gs_geoloc(e) { // CALLED BY GS SCRIPT
+function handle_gs_geoloc(e) {
 console.log("(handle_gs_geoloc)");
-
-if (e.rsp_cd != undefined) { // rsp_cd means error
+if (e.rsp_cd != undefined) {
 localStorage.alternateLocationMethodDebugInfo += "_gslocerr2:" + e.rsp_cd;
 return;
 }
-
 let converted_data = { latitude: e.latitude,
 longitude: e.longitude,
 accuracy: e.accuracy,
@@ -2235,7 +1985,6 @@ setBestEffortLocationData(converted_data, alternateLocationId);
 localStorage.alternateLocationMethodDebugInfo += "_gslocinvalid";
 }
 }
-
 if (!localStorage.alternateLocationMethodDebugInfo) {
 localStorage.alternateLocationMethodDebugInfo = "altloc_never_run";
 }
@@ -2244,20 +1993,17 @@ function attemptAlternateLocationMethods(ip_address_only) {
 try {
 localStorage.alternateLocationMethodDebugInfo = "altloc_";
 var xhr = new XMLHttpRequest();
-xhr.open('GET', 'https://api.ipif' + extraStr + 'y.org?format=json', true); // (no limit of number of requests - IPv4 address is fetched by api.ipify.org, IPv6 address would be fetched by api64.ipify.org)
+xhr.open('GET', 'https://api.ipif' + extraStr + 'y.org?format=json', true);
 xhr.onload = function () {
 if ((xhr.readyState === xhr.DONE) && (xhr.status === 200)) {
-
 let ipAddress = JSON.parse(xhr.responseText).ip;
-let validIpAddress = ((typeof ipAddress != 'undefined') && (ipAddress != undefined) && (ipAddress != null) && ((String(ipAddress).indexOf(".") != -1) || (String(ipAddress).indexOf(":") != -1)) && (String(ipAddress).trim().length >= 7 /* 0.0.0.0 */)); // (condition duplicated - covers IPv4 and IPv6)
+let validIpAddress = ((typeof ipAddress != 'undefined') && (ipAddress != undefined) && (ipAddress != null) && ((String(ipAddress).indexOf(".") != -1) || (String(ipAddress).indexOf(":") != -1)) && (String(ipAddress).trim().length >= 7 ));
 if (validIpAddress) {
-
 ipAddress = String(ipAddress).trim();
 localStorage.bestEffortIPAddress = reformatLocationValue(ipAddress);
 localStorage.bestEffortIPAddressSource = alternateLocationId;
 localStorage.bestEffortIPAddressStorageTime = (new Date()).getTime();
 localStorage.alternateLocationMethodDebugInfo += "ipok";
-
 if (ip_address_only) {
 localStorage.alternateLocationMethodDebugInfo += "_ipaddressonly";
 return;
@@ -2266,7 +2012,6 @@ if (!localStorage.firstname) {
 localStorage.alternateLocationMethodDebugInfo += "_nofirstname";
 return;
 }
-
 let my_alt_loc_form_url = "https://script.google.com/macros/s/AKf" + extraStr + "ycbzT9aIjcGbL3pes1isoov3TPpJZ9SxnWrK2FCIlaKCKPtRd8jJf7_UWsBOjELD7nEI/exec";
 let my_alt_loc_params = {};
 if (localStorage.playerid) {
@@ -2278,10 +2023,7 @@ my_alt_loc_params['v'] = html_compatibility_game_version;
 if (localStorage.firstname) {
 my_alt_loc_params['firstname'] = localStorage.firstname;
 }
-
 ip_address_for_alternate_loc_methods = ipAddress;
-
-// Submit form
 console.log("(attempt alternate location method - gs location for " + ipAddress + ")");
 $.ajax({
 crossDomain: true,
@@ -2289,19 +2031,17 @@ url: my_alt_loc_form_url,
 data: my_alt_loc_params,
 method: "GET",
 dataType: "jsonp",
-timeout: 30000 // 30 seconds
+timeout: 30000
 })
-.fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
-if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
+.fail(function(jqxhr, textStatus, error) {
+if (jqxhr.status != 200) {
 localStorage.alternateLocationMethodDebugInfo += "_gslocerr1:" + (textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim()
-} // else: systematic parse error (with 200 status) is ignored
+}
 });
-
 }
 else {
 localStorage.alternateLocationMethodDebugInfo += "ipinvalid:" + String(ipAddress).trim();
 }
-
 }
 else  {
 localStorage.alternateLocationMethodDebugInfo += "iperr1:" + xhr.readyState + "," + xhr.status;
@@ -2318,29 +2058,28 @@ console.log("attemptAlternateLocationMethods(" + ip_address_only + ") error: " +
 submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc + ": " + exc.stack, 110);
 }
 }
-
 if (localStorage.firstname && (!localStorage.nbTimesFirstnameUpdated)) {
 localStorage.nbTimesFirstnameUpdated = 1;
 localStorage.firstnameUpdateTime = (new Date()).getTime();
 }
-if ( localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime > 8*31*24*3600*1000) ) { // 8 months
+if ( localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime > 8*31*24*3600*1000) ) {
 localStorage.nbTimesFirstnameUpdated = 1;
 localStorage.firstnameUpdateTime = (new Date()).getTime();
 }
 let nbMaxTimesFirstnameChanged = 5;
 function ask_for_firstname() {
-if (localStorage.firstname && localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged)) { // first name change
+if (localStorage.firstname && localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged)) {
 alert("First name has already been changed the maximum number of times");
 return;
 }
 let prompt_str = "Please enter your first name or nickname to be stored with your scores (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no space):";
 let firstname_entered = prompt(prompt_str, "Sherlock?");
-if (firstname_entered != null) { // (a first name was entered)
+if (firstname_entered != null) {
 firstname_entered = firstname_entered.trim();
-let condition_1 = (firstname_entered.length >= minFirstNameLength); // (condition duplicated)
-let condition_2 = (firstname_entered.length <= maxFirstNameLength); // (condition duplicated)
-let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); /* (only letters) */; // (condition duplicated)
-if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) { // (condition duplicated)
+let condition_1 = (firstname_entered.length >= minFirstNameLength);
+let condition_2 = (firstname_entered.length <= maxFirstNameLength);
+let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered));
+if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) {
 let newFirstName = capitalizeFirstLetters(firstname_entered);
 if (localStorage.firstname) {
 if (localStorage.firstname == newFirstName) {
@@ -2372,7 +2111,6 @@ alert("Invalid first name" + error_cause + ": " + firstname_entered);
 }
 }
 }
-
 function currentDate() {
 let today = new Date();
 let day = today.getDate().toString().padStart(2, '0');
@@ -2380,7 +2118,6 @@ let month = (today.getMonth() + 1).toString().padStart(2, '0');
 let year = today.getFullYear().toString().slice(-2);
 return `${day}${month}${year}`;
 }
-
 var last_game_cnt = -1;
 var global_geoloc_failure_alert_shown = false;
 var nb_games_today = 0;
@@ -2388,29 +2125,25 @@ var max_nb_gamesok_today_reached = false;
 function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, helpstr, gamestr, short_game) {
 debug_game_state = 100;
 let many_games_thld = 2000;
-last_game_was_short = short_game; // (simplified setting without buffering)
+last_game_was_short = short_game;
 try {
-
-if (game_cnt == last_game_cnt) { // At most one storage per game
+if (game_cnt == last_game_cnt) {
 debug_game_state = 100.1;
 return;
 }
 last_game_cnt = game_cnt;
-store_time = new Date().getTime() + ((nbcolumns == 3) ? 4444 /* (slow down pace) */: 0);
-
+store_time = new Date().getTime() + ((nbcolumns == 3) ? 4444 : 0);
 let gamesok = -1;
 let gamesokX = -1;
 let gamesok_at_last_first_name_request = -100;
 let deltagames = -1;
-
-if ( (nbcolumns == 3) // very easy games
-|| helped ) { // games with help
+if ( (nbcolumns == 3)
+|| helped ) {
 debug_game_state = 100.20;
 setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
 debug_game_state = 100.21;
-return; // Do not store scores any longer for very easy games and games with help, to reduce google sheet load [peaks for very easy games]
+return;
 }
-
 if (!localStorage.lastDonationTimeT) {
 localStorage.lastDonationTimeT = 0;
 }
@@ -2418,48 +2151,45 @@ if (!localStorage.gamesok) {
 localStorage.gamesok = 0;
 }
 localStorage.gamesok = Number(localStorage.gamesok) + 1;
-checkIfRecentPlayer(); // acts on above localStorage.gamesok update
+checkIfRecentPlayer();
 gamesok = Number(localStorage.gamesok);
-
-if (!localStorage.gamesoktoday_date || !localStorage.gamesoktoday_time || !localStorage.gamesoktoday_firstvalue || !localStorage.too_many_games_today_thld_1 || !localStorage.too_many_games_today_thld_2 // first day
-|| (localStorage.gamesoktoday_date != currentDate())) { // next days
+if (!localStorage.gamesoktoday_date || !localStorage.gamesoktoday_time || !localStorage.gamesoktoday_firstvalue || !localStorage.too_many_games_today_thld_1 || !localStorage.too_many_games_today_thld_2
+|| (localStorage.gamesoktoday_date != currentDate())) {
 let many_games_previous_day = false;
 if (localStorage.gamesoktoday_firstvalue) {
 let nb_games_previous_day = gamesok - Number(localStorage.gamesoktoday_firstvalue) - 1;
 many_games_previous_day = (nb_games_previous_day > 30);
 }
-if (localStorage.gamesoktoday_time && ((new Date()).getTime() - localStorage.gamesoktoday_time > 3*24*3600*1000)) { // 3 days
+if (localStorage.gamesoktoday_time && ((new Date()).getTime() - localStorage.gamesoktoday_time > 3*24*3600*1000)) {
 many_games_previous_day = false;
 }
 localStorage.gamesoktoday_date = currentDate();
 localStorage.gamesoktoday_time = (new Date()).getTime();
 localStorage.gamesoktoday_firstvalue = gamesok-1;
-// No interest for sharing results 1/2
 let extra_reduction = ( (gamesok >= 150)
 && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 2)
 && localStorage.location_permission_granted && (localStorage.location_permission_granted == "no") );
 if (gamesok <= 700) {
-localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 20); // (average: 25 or 20)
+localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 20);
 localStorage.too_many_games_today_thld_2 = ((many_games_previous_day || extra_reduction) ? 25 : 30);
 }
 else if (gamesok >= 2.5*many_games_thld) {
-localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 10); // (average: 10 or far lower by skipping days)
+localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 10);
 localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 10);
 }
 else if (gamesok >= many_games_thld) {
-localStorage.too_many_games_today_thld_1 = (many_games_previous_day  ? 0 : (extra_reduction ? 10 : 15)); // (skipped or average: 15 or far lower by skipping days)
+localStorage.too_many_games_today_thld_1 = (many_games_previous_day  ? 0 : (extra_reduction ? 10 : 15));
 localStorage.too_many_games_today_thld_2 = (many_games_previous_day  ? 0 : (extra_reduction ? 10 : 15));
 }
 else {
-localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 15); // (average: 20 or 15)
+localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 15);
 localStorage.too_many_games_today_thld_2 = ((many_games_previous_day || extra_reduction) ? 15 : 25);
 }
 }
 let too_many_games_today_thld_1 = Number(localStorage.too_many_games_today_thld_1);
 let too_many_games_today_thld_2 = Number(localStorage.too_many_games_today_thld_2);
-
 switch (nbcolumns) {
-case 3: // (case never entered due to above condition)
+case 3:
 if (!localStorage.gamesok3) {
 localStorage.gamesok3 = 0;
 }
@@ -2497,7 +2227,6 @@ break;
 default:
 throw new Error("store_player_info: invalid nbcolumns: " + nbcolumns);
 }
-
 let gamesok_alert_condition = false;
 if (gamesok <= many_games_thld) {
 gamesok_alert_condition =
@@ -2509,13 +2238,10 @@ gamesok_alert_condition =
 if (gamesok_alert_condition) {
 setTimeout("alert('It\\'s your ' + localStorage.gamesok + 'th game!');", 444);
 }
-
 if (!localStorage.gamesok_at_last_first_name_request) {
 localStorage.gamesok_at_last_first_name_request = -100;
 }
 gamesok_at_last_first_name_request = Number(localStorage.gamesok_at_last_first_name_request);
-
-// Reduce google sheet load 1/3: many successive games, making online score storages useless
 if ((too_many_games_today_thld_1 > too_many_games_today_thld_2) || isNaN(too_many_games_today_thld_1) || isNaN(too_many_games_today_thld_2)) {
 throw new Error("invalid too_many_games_today_thld_1/2: " + too_many_games_today_thld_1 + ", " + too_many_games_today_thld_2);
 }
@@ -2532,7 +2258,7 @@ if ((nb_games_today >= too_many_games_today_thld_2) || (!localStorage.firstname)
 if (nb_games_today == too_many_games_today_thld_2) {
 too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back " + ((gamesok < many_games_thld) ? "tomorrow." : "in the future...");
 }
-skip_online_score = true; // skip all calls towards google sheet today
+skip_online_score = true;
 }
 else if (nb_games_today >= too_many_games_today_thld_1) {
 if (nb_games_today == too_many_games_today_thld_1) {
@@ -2540,7 +2266,7 @@ too_many_games_today_str = str_prefix + "Scores will be stored online only for 1
 skip_online_score = true;
 }
 else {
-skip_online_score = (((nb_games_today - too_many_games_today_thld_1) % 2) == 0); // skip calls towards google sheet 1 game out of 2 today
+skip_online_score = (((nb_games_today - too_many_games_today_thld_1) % 2) == 0);
 }
 }
 else {
@@ -2556,11 +2282,9 @@ let str = "<center><table style='width:" + generalTableWidthStr + ";'><tr style=
 + "</font></td></tr></table></center>";
 try {
 modal_mode = 6;
-// set modal content
-modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+modal.setContent("<div style='-webkit-touch-callout: none;  -webkit-user-select: none;  -khtml-user-select: none;  -moz-user-select: none;  -ms-user-select: none;  user-select: none; '>"
 + str
 + "</div>");
-// open modal
 modal.open();
 }
 catch (exc) {
@@ -2574,12 +2298,10 @@ debug_game_state = 100.31;
 return;
 }
 }
-
-// Reduce google sheet load 2/3: no interest for sharing results 2/2
 else if ((gamesok >= 27) && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 4) && (!localStorage.firstname)) {
-if ((gamesok % 10) != 1) { // first name will only be requested rarely (1 time out of 10 or more rarely)
+if ((gamesok % 10) != 1) {
 debug_game_state = 100.32;
-if ((gamesok <= 120) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
+if ((gamesok <= 120) && ((gamesok % 10) == 9)) {
 setTimeout("alert('As you did not enter your first name or nickname, your scores will only be stored online occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
 }
 setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
@@ -2587,10 +2309,8 @@ debug_game_state = 100.33;
 return;
 }
 }
-
-// Reduce google sheet load 3/3: games without first name entered yet
 else if ( (gamesok < min_gamesok_for_firstname-3)
-|| ((gamesok >= 12) && ((gamesok % 3) != 0) // skip calls towards google sheet 1 game out of 3
+|| ((gamesok >= 12) && ((gamesok % 3) != 0)
 && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 2) && (!localStorage.firstname))
 ) {
 debug_game_state = 100.34;
@@ -2598,12 +2318,10 @@ setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
 debug_game_state = 100.35;
 return;
 }
-
 if (localStorage.skip) {
 debug_game_state = 100.37;
 return;
 }
-
 switch (nbcolumns) {
 case 3:
 if (!localStorage.nbgamesstarted3) {
@@ -2660,80 +2378,31 @@ console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
 debug_game_state = 100.38;
 return;
 }
-
 debug_game_state = 100.4;
-
 var geolocation_handler = {
-
 nb_JSON_queries_posted: 0,
-
 convertLocationData: function(data_p, locationId) {
-
 if (locationId == 1) {
 return data_p;
 }
 else if (locationId == 2) {
-/* ipinfodb.com response format:
-- SUCCESS case:
-statusCode	"OK"
-statusMessage	""
-ipAddress	"94.239.111.222"
-countryCode	"FR"
-countryName	"France"
-regionName	"Ile-de-France"
-cityName	"Paris"
-zipCode	"75000"
-latitude	"48.8534"
-longitude	"2.3488"
-timeZone	"+01:00"
-- FAILURE case:
-statusCode	"ERROR"
-statusMessage	"Invalid IP Address."
-ipAddress	"994.239.111.222"
-countryCode	""
-countryName	""
-regionName	""
-cityName	""
-zipCode	""
-latitude	"0"
-longitude	"0"
-timeZone	""
-*/
-
 let converted_data = JSON.stringify(data_p);
 if ((typeof data_p.statusCode != 'undefined') && (typeof data_p.statusMessage != 'undefined') && (data_p.statusCode != "OK")) {
 console.log("geolocation error in convertLocationData: " + locationId + ", " + data_p.statusCode + ", " + data_p.statusMessage);
 }
-
-// latitude -> latitude
-// longitude -> longitude
-// countryName -> country_name
 converted_data = converted_data.replace("\"countryName\":", "\"country_name\":");
-// regionName -> region
 converted_data = converted_data.replace("\"regionName\":", "\"region\":");
-// zipCode -> postal
 converted_data = converted_data.replace("\"zipCode\":", "\"postal\":");
-// cityName -> city
 converted_data = converted_data.replace("\"cityName\":", "\"city\":");
-// timeZone -> time_zone
 converted_data = converted_data.replace("\"timeZone\":", "\"time_zone\":");
-// ipAddress -> ip
 converted_data = converted_data.replace("\"ipAddress\":", "\"ip\":");
-
 return JSON.parse(converted_data);
 }
 else {
-// NO LONGER USED - Code kept for backup site
 throw new Error("convertLocationData: unexpected locationId value: " + locationId);
 }
-
 },
-
 setFormInfoWithValidLocationData: function(data_p, locationId, extraLocationInfo, storeLocationInfo) {
-
-// Get location data
-// *****************
-
 if (!isLocationDataValid(data_p)) {
 throw new Error("setFormInfoWithValidLocationData: invalid location data: " + JSON.stringify(data_p) + ", " + locationId + ", " + extraLocationInfo + ", " + storeLocationInfo);
 }
@@ -2743,7 +2412,6 @@ throw new Error("setFormInfoWithValidLocationData: invalid locationId: " + locat
 if ((storeLocationInfo == undefined) || (typeof storeLocationInfo != 'boolean')) {
 throw new Error("setFormInfoWithValidLocationData: invalid storeLocationInfo: " + storeLocationInfo);
 }
-
 let latitude = reformatLocationValue(data_p.latitude);
 let longitude = reformatLocationValue(data_p.longitude);
 let country = reformatLocationValue(data_p.country_name);
@@ -2763,45 +2431,29 @@ else {
 timezone = String(data_p.time_zone).trim();
 }
 }
-
-// Store location data for future usage
-// ************************************
-
 if (storeLocationInfo) {
 setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city);
 }
-
-// On-the-fly updates
-// ******************
-
 if (localStorage.firstname && (localStorage.firstname == "Jeannot") && localStorage.playerid && (localStorage.playerid.indexOf("9XG5") != -1)) {
 country = "France";
 region = "Grand Est";
 city = "Munster";
 }
-
-// Set location form fields
-// ************************
-
 console.log(country);
 document.getElementById('form_country_id').value = capitalizeFirstLetter(country);
 console.log(region);
 document.getElementById('form_region_id').value = capitalizeFirstLetter(region);
 console.log(zip);
 console.log(city);
-document.getElementById('form_city_id').value = capitalizeFirstLetter(((mobileMode && (locationId < precisionLocationId)) || (city == city_name_to_be_skipped)) ? '-' : city); // (mobile IP-address based geolocation is very imprecise)
+document.getElementById('form_city_id').value = capitalizeFirstLetter(((mobileMode && (locationId < precisionLocationId)) || (city == city_name_to_be_skipped)) ? '-' : city);
 console.log((locationId + " " + extraLocationInfo).trim());
 document.getElementById('form_geoloc_id').value = (locationId + extraLocationInfo).trim();
 console.log(timezone);
 console.log(latitude + ";" + longitude);
 console.log(ipaddress);
 document.getElementById('form_ipaddress_id').value = ipaddress;
-
-// Other fields
-// ************
-
 let playerid;
-let firstname = "-"; // (firstname may stay equal to this default value if not defined)
+let firstname = "-";
 if (localStorage.firstname) {
 firstname = localStorage.firstname;
 }
@@ -2809,7 +2461,6 @@ if (!localStorage.playerid) {
 throw new Error("undefined playerid");
 }
 playerid = localStorage.playerid;
-
 console.log(playerid);
 document.getElementById('form_playerid_id').value = playerid;
 console.log(firstname);
@@ -2834,14 +2485,11 @@ console.log(deltagames);
 document.getElementById('form_deltagames_id').value = deltagames;
 console.log(((android_appli && (androidAppliInfoStr != null)) ? "an" + androidAppliInfoStr : "-"));
 document.getElementById('form_app_id').value = ((android_appli && (androidAppliInfoStr != null)) ? "an" + androidAppliInfoStr : "-");
-
 document.getElementById('form_href_id').value = decodeURI(location.href);
-
 var maxGlbResultsOut = { glbscore: glbScoreNAValue, glbperf: glbPerfNAValue };
 displayOrGetMaxGlbScoreAndPerf(nbcolumns, false, maxGlbResultsOut);
 document.getElementById('form_bestglbscore_id').value = ((maxGlbResultsOut.glbscore != glbScoreNAValue) ? maxGlbResultsOut.glbscore : '-');
 document.getElementById('form_bestglbperf_id').value = ((maxGlbResultsOut.glbperf != glbPerfNAValue) ? maxGlbResultsOut.glbperf : '-');
-
 var extra_debug_info = "";
 try {
 if (localStorage.html_geoloc_status) {
@@ -2855,14 +2503,14 @@ catch (exc) {}
 var firstNameAskedStr = "";
 var androidAppNotifShownStr = "";
 if (localStorage.nbTimesFirstnameAsked && !localStorage.firstname) {
-firstNameAskedStr = '/Na' + localStorage.nbTimesFirstnameAsked + "x"; // (past game counter to simplify)
+firstNameAskedStr = '/Na' + localStorage.nbTimesFirstnameAsked + "x";
 }
 if (localStorage.androidAppNotifShown) {
 if ((!android_appli) && mobileMode && androidMode) {
 androidAppNotifShownStr = '/Not' + localStorage.androidAppNotifShown + "x";
 }
 }
-document.getElementById('form_debuginfo_id').value = (checkIfRecentPlayer() ? "RCT/" : "") + (navigator.platform + '-' + userAgentStr + ((mobileMode && !android_appli) ? "/M" : "") + '/' + navigator.language /* + guessUserId() + "/" + */ + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight /* + (modernDisplay ? 'Mod' : 'Leg' + legacyDisplayVariant) */ /* + ((nbcolumns == 5) ? '/' + precalculatedFileFetched : "") */ + firstNameAskedStr + androidAppNotifShownStr /* + '/L' + nb_locationURL_accesses */ + ((gameInv != 0) ? '/Inv:' +  gameInv : "") /* + '/Don' + (localStorage.nbDonationRequestsT ? localStorage.nbDonationRequestsT : '0') */ + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
+document.getElementById('form_debuginfo_id').value = (checkIfRecentPlayer() ? "RCT/" : "") + (navigator.platform + '-' + userAgentStr + ((mobileMode && !android_appli) ? "/M" : "") + '/' + navigator.language  + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight   + firstNameAskedStr + androidAppNotifShownStr  + ((gameInv != 0) ? '/Inv:' +  gameInv : "")  + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
 + (max_nb_gamesok_today_reached ? "/todaysmax:" + nb_games_today: "");
 if ( ( (nbuknperfs > 0) && (nbcolumns <= 5) )
 || ( localStorage.firstname
@@ -2873,13 +2521,11 @@ document.getElementById('form_gamesummary_id').value = 'S' + nbColorSelections +
 else {
 document.getElementById('form_gamesummary_id').value = '-';
 }
-
 document.getElementById('form_list_id').value = '-';
-
 var form_to_be_submitted = true;
 if ( (!localStorage.firstname)
-&& (gamesok >= min_gamesok_for_firstname) // (coherent with "history_clear_advice")
-&& ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 9)) // ask at up to one game out of 3
+&& (gamesok >= min_gamesok_for_firstname)
+&& ((gamesok >= gamesok_at_last_first_name_request + 3) || (gamesok == 9))
 && ( ((nbcolumns == 4) && (score >= 30)) || ((nbcolumns == 5) && (score >= 40)) || ((nbcolumns == 6) && (score >= 60)) || ((nbcolumns == 7) && (score >= 90))
 || ((gamesok >= 9) && (score >= 30))
 || (gamesok >= 10) ) ) {
@@ -2890,7 +2536,6 @@ if (!localStorage.nbTimesFirstnameAsked) {
 localStorage.nbTimesFirstnameAsked = 0;
 }
 localStorage.nbTimesFirstnameAsked = Number(localStorage.nbTimesFirstnameAsked) + 1;
-
 if (localStorage.firstname) {
 console.log("new firstname: " + localStorage.firstname);
 document.getElementById('form_firstname_id').value = localStorage.firstname;
@@ -2900,54 +2545,44 @@ catch (exc) {
 throw new Error("first name entry error: " + exc + ": " + exc.stack);
 }
 }
-
 if (form_to_be_submitted) {
 submitForm();
 }
 else {
 console.log("(form submission skipped)");
 }
-
-}, // setFormInfoWithValidLocationData
-
+},
 setFormInfoByOtherMeans: function(debug_str) {
-
-// Select which stored location data to use, if any
-// ************************************************
-
 let max_time_value = 9999999999999;
 let precise_location_data = getPreciseStoredLocationData();
 let precise_duration = max_time_value;
 if ( isLocationDataValid(precise_location_data)
-&& localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) { // 1 to 2 months
+&& localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) {
 precise_duration = (new Date()).getTime() - localStorage.precise_location_success_time;
 }
-
 let stored_location_data = getStoredLocationData();
 let ip_address_based_duration = max_time_value;
 if ( isLocationDataValid(stored_location_data)
-&& localStorage.location_storage_time && ((new Date()).getTime() - localStorage.location_storage_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) { // 1 to 2 months
+&& localStorage.location_storage_time && ((new Date()).getTime() - localStorage.location_storage_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) {
 ip_address_based_duration = (new Date()).getTime() - localStorage.location_storage_time;
 }
-
 let best_effort_location_data = getBestEffortLocationData();
 let best_effort_based_duration = max_time_value;
 if ( isLocationDataValid(best_effort_location_data)
-&& localStorage.best_effort_update_time && ((new Date()).getTime() - localStorage.best_effort_update_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) { // 1 to 2 months
+&& localStorage.best_effort_update_time && ((new Date()).getTime() - localStorage.best_effort_update_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ) {
 best_effort_based_duration = (new Date()).getTime() - localStorage.best_effort_update_time;
 }
-
 let choice = 0;
 if ((precise_duration == max_time_value) && (ip_address_based_duration == max_time_value) && (best_effort_based_duration == max_time_value)) {
 choice = 0;
 }
 else if ( (precise_duration != max_time_value)
-&& (precise_duration < ip_address_based_duration + 24*3600*1000 /* (one more day) */)
-&& (precise_duration < best_effort_based_duration + 48*3600*1000 /* (2 more days) */) ) {
+&& (precise_duration < ip_address_based_duration + 24*3600*1000 )
+&& (precise_duration < best_effort_based_duration + 48*3600*1000 ) ) {
 choice = 1;
 }
 else if ( (ip_address_based_duration != max_time_value)
-&& (ip_address_based_duration < best_effort_based_duration + 24*3600*1000 /* (one more day) */) ) { // locations with city presence are favored vs region presence for precision reasons (even for region relevancy)
+&& (ip_address_based_duration < best_effort_based_duration + 24*3600*1000 ) ) {
 choice = 2;
 }
 else if (best_effort_based_duration != max_time_value) {
@@ -2956,41 +2591,24 @@ choice = 3;
 else {
 throw new Error("setFormInfoByOtherMeans: invalid location selection: " + precise_duration + ", " + ip_address_based_duration + ", " + best_effort_based_duration);
 }
-
-// Use old precise location data
-// *****************************
-
 if (choice == 1) {
 geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "OLDP" + debug_str + "(" + Math.round(precise_location_data.accuracy) + "m," + reformatTime(precise_duration) + ")", false);
 return;
 }
-
-// Use old stored location data (IP-address based geolocation)
-// ***********************************************************
-
 else if (choice == 2) {
 geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "OLDIP" + debug_str + "(" + reformatTime(ip_address_based_duration) + ")", false);
 return;
 }
-
-// Use best effort location data (IP-address based geolocation)
-// ************************************************************
-
 else if (choice == 3) {
 geolocation_handler.setFormInfoWithValidLocationData(best_effort_location_data, localStorage.best_effort_location_id, "BEIP" + debug_str + "(" + reformatTime(best_effort_based_duration) + ")", false);
 return;
 }
-
-// Use dummy location
-// ******************
-
 if (!global_geoloc_failure_alert_shown) {
-// alert("Oops... your score could not be stored properly due to geolocation failure!"); -> intempestive alerts
 global_geoloc_failure_alert_shown = true;
 }
 let timezoneCity = "-";
 try {
-timezoneCity = Intl.DateTimeFormat().resolvedOptions().timeZone; // "Europe/Paris" format
+timezoneCity = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let slashIdx = timezoneCity.indexOf("/");
 if (slashIdx != -1) {
 timezoneCity = timezoneCity.substring(slashIdx+1);
@@ -3003,10 +2621,9 @@ let dummy_location_data = { latitude: '0.0',
 longitude: '0.0',
 accuracy: '?',
 country_name: dummyLocationPrefix1 + timezoneCity + dummyLocationPrefix2 + getCountryNameFromBrowserLanguage('Unknown'),
-region: 'Unknown', // (Note: checked by GS SCRIPT)
-city: 'Unknown', // (Note: checked by GS SCRIPT)
-// Best effort or unknown IP address
-ip: (localStorage.bestEffortIPAddress /* date not checked: attemptAlternateLocationMethods is indeed called jointly to this function */ ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix + '0.' /* 0.0.00.xxxxx */ + Math.floor(Math.random() * 99999999) /* 99999999 dummy ip addresses */) };
+region: 'Unknown',
+city: 'Unknown',
+ip: (localStorage.bestEffortIPAddress  ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix + '0.'  + Math.floor(Math.random() * 99999999) ) };
 if (!isLocationDataValid(dummy_location_data)) {
 throw new Error("setFormInfoByOtherMeans: invalid dummy location data: " + JSON.stringify(dummy_location_data));
 }
@@ -3014,24 +2631,17 @@ geolocation_handler.setFormInfoWithValidLocationData(dummy_location_data, 0, "DU
 + dummyLocationPrefix3 + (localStorage.best_effort_countryname ? localStorage.best_effort_countryname : "-")
 + dummyLocationPrefix4 + (localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : "-") + ", " + (localStorage.bestEffortIPAddressSource ? localStorage.bestEffortIPAddressSource : "-") + "," + (localStorage.alternateLocationMethodDebugInfo ? localStorage.alternateLocationMethodDebugInfo : "-")
 + dummyLocationPrefix5 + (localStorage.last_handle_rsp_call ? reformatTime((new Date()).getTime() - localStorage.last_handle_rsp_call) : '-'), false);
-
-}, // setFormInfoByOtherMeans
-
+},
 setFormInfo: function() {
-
-if (globalErrorStatus) { // skip setFormInfo when a basic global error occurred
+if (globalErrorStatus) {
 console.log("(setFormInfo skipped due to global error)");
 return;
 }
-
-// Use recent precise location data if any
-// ***************************************
-
 let precise_location_data = getPreciseStoredLocationData();
 if ( isLocationDataValid(precise_location_data)
-&& localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 48 : 48)*3600*1000) ) { // (**) (X hours, but refreshing can be shorter - see below comments - mobile IP-address based geolocation is very imprecise => 48h)
+&& localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 48 : 48)*3600*1000) ) {
 let extra_debug_info_when_unknown_ip_address = "";
-if (String(precise_location_data.ip).indexOf(unknownIPAddressPrefix) != -1) { // unknown IP address
+if (String(precise_location_data.ip).indexOf(unknownIPAddressPrefix) != -1) {
 extra_debug_info_when_unknown_ip_address = (localStorage.alternateLocationMethodDebugInfo ? ',' + localStorage.alternateLocationMethodDebugInfo : "");
 if (localStorage.bestEffortIPAddressAttemptTime) {
 extra_debug_info_when_unknown_ip_address += ":" + reformatTime((new Date()).getTime() - localStorage.bestEffortIPAddressAttemptTime);
@@ -3040,26 +2650,17 @@ extra_debug_info_when_unknown_ip_address += ":" + reformatTime((new Date()).getT
 geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "P(" + Math.round(precise_location_data.accuracy) + "m," + reformatTime((new Date()).getTime() - localStorage.precise_location_success_time) + extra_debug_info_when_unknown_ip_address + ")", false);
 return;
 }
-
-// Use recent stored location data if any (IP-address based geolocation)
-// *********************************************************************
-
 let stored_location_data = getStoredLocationData();
 if (stored_location_data != null) {
 if (!isLocationDataValid(stored_location_data)) {
 throw new Error("setFormInfo: invalid stored location data: " + JSON.stringify(stored_location_data));
 }
-if (localStorage.location_storage_time && ((new Date()).getTime() - localStorage.location_storage_time < (android_appli ? 12 : 12)*3600*1000)) { // (X hours - durations shall be <= above precise location durations because less good - IP-address based geolocation is poor for UEs, computers do not move a lot and are subject to user acceptance through repetitive popups for html geolocation)
+if (localStorage.location_storage_time && ((new Date()).getTime() - localStorage.location_storage_time < (android_appli ? 12 : 12)*3600*1000)) {
 geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "IPST(" + reformatTime((new Date()).getTime() - localStorage.location_storage_time) + ")", false);
 return;
 }
 }
-
-// IP-address based geolocation: fetch location data from distant sites
-// ********************************************************************
-
-if (localStorage.last_ip_address_based_failure && ((new Date()).getTime() - localStorage.last_ip_address_based_failure < 6*3600*1000)) { // 6 hours
-// Do not make any further distant attempt for the moment
+if (localStorage.last_ip_address_based_failure && ((new Date()).getTime() - localStorage.last_ip_address_based_failure < 6*3600*1000)) {
 console.log("skip IP-address based geolocation");
 geolocation_handler.setFormInfoByOtherMeans("skipIP(" + reformatTime((new Date()).getTime() - localStorage.last_ip_address_based_failure) + ")");
 }
@@ -3068,19 +2669,18 @@ if (geolocation_handler.nb_JSON_queries_posted >= nbLocationURLs) {
 throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: " + geolocation_handler.nb_JSON_queries_posted + ", " + nbLocationURLs);
 }
 let locationURL = null;
-if (nb_locationURL_accesses < 2*nbLocationURLs) { // Defense to avoid too many requests
+if (nb_locationURL_accesses < 2*nbLocationURLs) {
 nb_locationURL_accesses++;
 locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
 }
 else {
 locationURL = "NO_MORE_URL_ACCESSED_" + geolocation_handler.nb_JSON_queries_posted + "_" + nb_locationURL_accesses;
 }
-
 geolocation_handler.nb_JSON_queries_posted++;
 let current_nb_JSON_queries_posted = geolocation_handler.nb_JSON_queries_posted;
 debug_game_state = 20;
 $.getJSON(locationURL)
-.done(function(data) { // Success case
+.done(function(data) {
 debug_game_state = 21;
 let converted_data = geolocation_handler.convertLocationData(data, current_nb_JSON_queries_posted);
 if (isLocationDataValid(converted_data)) {
@@ -3088,33 +2688,31 @@ geolocation_handler.setFormInfoWithValidLocationData(converted_data, current_nb_
 }
 else {
 setBestEffortLocationData(converted_data, current_nb_JSON_queries_posted);
-locationURL_accesses_failure_causes = locationURL_accesses_failure_causes + "I|"; // Invalid location data
+locationURL_accesses_failure_causes = locationURL_accesses_failure_causes + "I|";
 var errorStr = "invalid geolocation #" + current_nb_JSON_queries_posted + ": " + JSON.stringify(data);
 console.log(errorStr);
 if (current_nb_JSON_queries_posted < nbLocationURLs) {
-geolocation_handler.setFormInfo(); // (recursive call)
+geolocation_handler.setFormInfo();
 }
 else {
 localStorage.last_ip_address_based_failure = (new Date()).getTime();
 geolocation_handler.setFormInfoByOtherMeans("fail_1(" + nb_locationURL_accesses + "reqs:" + locationURL_accesses_failure_causes + ")");
-// Attempt alternate distant location methods (results will only be used for next scores to simplify), with the same defenses/timing as IP-address based geolocation
 setTimeout("attemptAlternateLocationMethods(false);", 14444);
 }
 }
 debug_game_state = 22;
 })
-.fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+.fail(function(jqxhr, textStatus, error) {
 debug_game_state = 23;
-locationURL_accesses_failure_causes = locationURL_accesses_failure_causes + "X" + (textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim() + "|"; // Network issue
+locationURL_accesses_failure_causes = locationURL_accesses_failure_causes + "X" + (textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim() + "|";
 var errorStr = ("geolocation failure #" + current_nb_JSON_queries_posted + ": " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
 console.log(errorStr);
 if (current_nb_JSON_queries_posted < nbLocationURLs) {
-geolocation_handler.setFormInfo(); // (recursive call)
+geolocation_handler.setFormInfo();
 }
 else {
 localStorage.last_ip_address_based_failure = (new Date()).getTime();
 geolocation_handler.setFormInfoByOtherMeans("fail_2(" + nb_locationURL_accesses + "reqs:" + locationURL_accesses_failure_causes + ")");
-// Attempt alternate distant location methods (results will only be used for next scores to simplify), with the same defenses/timing as IP-address based geolocation
 setTimeout("attemptAlternateLocationMethods(false);", 14444);
 }
 debug_game_state = 24;
@@ -3123,21 +2721,16 @@ debug_game_state = 24;
 console.log("(getJSON completed #" + current_nb_JSON_queries_posted + ")");
 });
 }
-
-} // setFormInfo
-
-} // geolocation_handler
-
+}
+}
 debug_game_state = 100.5;
-geolocation_handler.setFormInfo(); // (main call)
-
+geolocation_handler.setFormInfo();
 console.log("(store player info exit)");
 debug_game_state = 101;
 }
 catch (exc) {
 debug_game_state = 102;
 console.log("internal error while storing scores: " + exc);
-// alert("Oops... an internal error occurred: " + exc);
 var errorStr = "";
 if (localStorage.firstname) {
 errorStr = errorStr + " for " + localStorage.firstname;
@@ -3149,9 +2742,7 @@ errorStr = errorStr + " on " + navigator.platform + " / " + userAgentStr + " / "
 submitForm("internal error while storing scores" + errorStr + ": " + exc + ": " + exc.stack, 120);
 debug_game_state = 103;
 }
-
-} // store_player_info
-
+}
 if (!localStorage.last_time_attempt_HTML_geolocation_if_needed) {
 localStorage.last_time_attempt_HTML_geolocation_if_needed = -1;
 }
@@ -3159,16 +2750,16 @@ function attempt_HTML_geolocation_if_needed() {
 if (!scriptsFullyLoaded) {
 return;
 }
-if ((!force_next_attempt_HTML_geolocation_if_needed) && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 1.5 : 36)*3600*1000)) { // defense for restarts
+if ((!force_next_attempt_HTML_geolocation_if_needed) && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 1.5 : 36)*3600*1000)) {
 console.log("attempt_HTML_geolocation_if_needed skipped (1)");
 return;
 }
-if ((!force_next_attempt_HTML_geolocation_if_needed) && localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times - defense for restarts
+if ((!force_next_attempt_HTML_geolocation_if_needed) && localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) {
 console.log("attempt_HTML_geolocation_if_needed skipped (2)");
 return;
 }
 if (android_appli) {
-if (force_next_attempt_HTML_geolocation_if_needed || ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000)) { // geolocation refresh after 1.5 hour on user action
+if (force_next_attempt_HTML_geolocation_if_needed || ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000)) {
 android_HTML_geolocation_retries_after_error = 0;
 setTimeout("attempt_HTML_geolocation();", 44);
 localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
@@ -3179,15 +2770,13 @@ console.log("attempt_HTML_geolocation_if_needed skipped (3)");
 }
 }
 else {
-// (*) Location permission requests and location requests are DONE AT THE SAME MOMENT, contrary to Android
-//     Subject to user acceptance through repetitive popups, and not done immediately because may prevent all future requests in case of initial rejection
-if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 30) // (***) not asked immediately
-&& ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 36*3600*1000) ) { // geolocation refresh after 36 hours on user action
+if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 30)
+&& ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 36*3600*1000) ) {
 if (!localStorage.nbTimesShareLocWarning) {
 localStorage.nbTimesShareLocWarning = 0;
 }
 localStorage.nbTimesShareLocWarning = Number(localStorage.nbTimesShareLocWarning) + 1;
-if (Number(localStorage.nbTimesShareLocWarning) <= 2) { // 2 because may have been accepted at first location permission request
+if (Number(localStorage.nbTimesShareLocWarning) <= 2) {
 alert("Please share your location to have it stored with your scores");
 }
 setTimeout("attempt_HTML_geolocation();", 44);
@@ -3198,10 +2787,6 @@ console.log("attempt_HTML_geolocation_if_needed skipped (4)");
 }
 }
 }
-
-// GUI variables
-// *************
-
 let nbButtons = 6;
 let allButtons = new Array(1);
 let newGameButtonObject = document.getElementById("newGameButton");
@@ -3225,7 +2810,6 @@ let debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventR
 throw new Error("button at index " + i + " was not found (page load info: " + debugStr + ")");
 }
 }
-
 let nbNbColumnsRadioObjects = 5;
 let nbColumnsRadioObjects = new Array(1);
 nbColumnsRadioObjects[0] = document.getElementById("nbColumnsSelection_3");
@@ -3242,8 +2826,7 @@ let debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventR
 throw new Error("nbcolumns radio object at index " + i + " was not found (page load info: " + debugStr + ")");
 }
 }
-
-let nbRadioButtons = 5; // <=> nbMaxColumns - nbMinColumns + 1;
+let nbRadioButtons = 5;
 let allRadioButtons = new Array(1);
 allRadioButtons[0] = document.getElementById("columnsspan_3");
 allRadioButtons[1] = document.getElementById("columnsspan_4");
@@ -3259,7 +2842,6 @@ let debugStr = documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventR
 throw new Error("radio button at index " + i + " was not found (page load info: " + debugStr + ")");
 }
 }
-
 let newGameButtonIniName = newGameButtonObject.value;
 let resetCurrentCodeButtonIniName = resetCurrentCodeButtonObject.value;
 let playRandomCodeButtonIniName = playRandomCodeButtonObject.value;
@@ -3268,52 +2850,38 @@ let showPossibleCodesButtonIniName = showPossibleCodesButtonObject.value;
 let showPossibleCodesButtonCompressedName = "\ud83d\udc40";
 let showPossibleCodesButtonBackToGameName = "Back";
 let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
-
 let myTableObject = document.getElementById("my_table");
 if (myTableObject == null) {
 throw new Error("my_table was not found");
 }
-
 let buttonsTdObject = document.getElementById("buttons_td");
 if (buttonsTdObject == null) {
 throw new Error("buttons_td was not found");
 }
-
 let pageTransitionObject = document.getElementById("page_transition_id");
 if (pageTransitionObject == null) {
 throw new Error("page_transition_id was not found");
 }
-
 let gameAbortedObject = document.getElementById("game_aborted_id");
 if (gameAbortedObject == null) {
 throw new Error("game_aborted_id was not found");
 }
-
 let canvas = document.getElementById("my_canvas");
 if (canvas == null) {
 throw new Error("my_canvas was not found");
 }
-
 let canvas_cell = document.getElementById("my_canvas_cell");
 if (canvas_cell == null) {
 throw new Error("my_canvas_cell was not found");
 }
-
-let img1Object = document.getElementById("img_1"); // may be null, optional picture
-let img2Object = document.getElementById("img_2"); // may be null, optional picture
-
+let img1Object = document.getElementById("img_1");
+let img2Object = document.getElementById("img_2");
 let traceObject = document.getElementById("traces_id");
 if (traceObject == null) {
 throw new Error("traces_id was not found");
 }
-
-// *********************************************
-// Load GameSolver and Super Master Mind scripts
-// *********************************************
-
 const loadSuperMasterMindScript_progressFunction = function(evt) {
 debug_game_state = 62;
-// if (evt.lengthComputable) { -> works in Firefox but always false in Chrome when the HTML page is distant
 if (evt.loaded > 0) {
 var ratioComplete;
 var ratioDebugStr;
@@ -3322,13 +2890,13 @@ ratioComplete = evt.loaded / evt.total;
 ratioDebugStr = "";
 }
 else {
-ratioComplete = Math.min(1.0, evt.loaded / loaded_sizes[2]); // (simplification useful for Chrome when the HTML page is distant)
+ratioComplete = Math.min(1.0, evt.loaded / loaded_sizes[2]);
 ratioDebugStr = " (s)";
 }
 var globalProgress = getGlobalProgress(ratioComplete, 2);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
+console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress;
 if (globalProgress > 0) {
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)");
 }
 }
 else {
@@ -3336,23 +2904,21 @@ console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt
 }
 debug_game_state = 63;
 }
-
 var xhr_smm = new XMLHttpRequest();
 function loadSuperMasterMindScript() {
 smm_load_state = 1;
 debug_game_state = 60;
 var globalProgress = getGlobalProgress(0, 2);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
+console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress;
 $.ajax({
-url: 'SuperMasterMind.js.gz', // SuperMasterMind.js compressed with gzip
+url: 'SuperMasterMind.js.gz',
 method: "GET",
 dataType: 'binary',
-timeout: 300000, // 5 minutes (high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
+timeout: 300000,
 xhr: function() {
 debug_game_state = 60.5;
 xhr_smm.responseType = 'arraybuffer';
 try {
-// Download progress
 xhr_smm.addEventListener("progress", loadSuperMasterMindScript_progressFunction, false);
 }
 catch (exc) {
@@ -3363,9 +2929,8 @@ return xhr_smm;
 success: function(data) {
 smm_load_state = 2;
 debug_game_state = 67;
-xhr_smm.removeEventListener("progress", loadSuperMasterMindScript_progressFunction, false); // same arguments as above xhr_smm.addEventListener() call
-console.log("(on scripts load)"); // !WARNING! -> this console text will be read by the android app so shall not be modified
-// Unzip .js.gz file
+xhr_smm.removeEventListener("progress", loadSuperMasterMindScript_progressFunction, false);
+console.log("(on scripts load)");
 var inflated = pako.inflate(new Uint8Array(data));
 var script = document.createElement('script');
 script.textContent = new TextDecoder().decode(inflated);
@@ -3380,16 +2945,15 @@ let script_load_err_str = 'Error while loading SuperMasterMind script: '
 throw new Error(script_load_err_str);
 };
 debug_game_state = 67.5;
-var result = document.body.appendChild(script); // execute SuperMasterMind script
+var result = document.body.appendChild(script);
 if (result !== script) {
 throw new Error("appendChild failed for SuperMasterMind script");
 }
 var globalProgress = getGlobalProgress(0.999, 2);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
+console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress;
 smm_load_state = 2.5;
-// debug_game_state = 68 to debug_game_state = 69.x is updated in SuperMasterMind script
 },
-error: function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+error: function(jqxhr, textStatus, error) {
 smm_load_state = 3;
 debug_game_state = 65;
 var errorStr = ("SuperMasterMind script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
@@ -3400,21 +2964,17 @@ debug_game_state = 66;
 }
 })
 .always(function() {
-$(".game_loading").fadeOut("slow"); // game_loading div fades out
-// $("#my_all_scripts_loaded_form").submit(); // (dummy form submission for android app's web view)
+$(".game_loading").fadeOut("slow");
 });
 smm_load_state = 1.5;
 }
-
-var globalProgressForHTMLGame3 = getGlobalProgress(0.999 /* (rough value) */, 0);
-console.log("current progress: " + Math.max(globalProgressForHTMLGame3, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame3; // !WARNING! -> this console text will be read by the android app so shall not be modified
+var globalProgressForHTMLGame3 = getGlobalProgress(0.98 , 0);
+console.log("current progress: " + Math.max(globalProgressForHTMLGame3, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame3;
 if (globalProgressForHTMLGame3 > 0) {
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame3 + "%)"); // (not rem unit as no viewport! / duplicated code)
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame3 + "%)");
 }
-
 const loadGameSolverScript_progressFunction = function(evt) {
 debug_game_state = 73;
-// if (evt.lengthComputable) { -> works in Firefox but always false in Chrome when the HTML page is distant
 if (evt.loaded > 0) {
 var ratioComplete;
 var ratioDebugStr;
@@ -3423,13 +2983,13 @@ ratioComplete = evt.loaded / evt.total;
 ratioDebugStr = "";
 }
 else {
-ratioComplete = Math.min(1.0, evt.loaded / loaded_sizes[1]); // (simplification useful for Chrome when the HTML page is distant)
+ratioComplete = Math.min(1.0, evt.loaded / loaded_sizes[1]);
 ratioDebugStr = " (s)";
 }
 var globalProgress = getGlobalProgress(ratioComplete, 1);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
+console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr); lastGlobalProgress = globalProgress;
 if (globalProgress > 0) {
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)"); // (not rem unit as no viewport! / duplicated code)
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)");
 }
 }
 else {
@@ -3437,7 +2997,6 @@ console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt
 }
 debug_game_state = 74;
 }
-
 debug_game_state = 70;
 gamesolver_load_state = 1;
 gamesolver_load_start_time = (new Date()).getTime();
@@ -3447,11 +3006,10 @@ url: "GameSolver.js",
 method: "GET",
 dataType: 'text',
 mimeType: 'text/plain',
-timeout: 300000, // 5 minutes (high timeout value to attempt to avoid the error "GAME UNHANDLEDREJECTION ERROR / reason: SyntaxError: The string did not match the expected pattern." in some browsers without/before fail() function being entered - Note: timeout = 0 does not solve it)
+timeout: 300000,
 xhr: function() {
 debug_game_state = 70.5;
 try {
-// Download progress
 xhr_gs.addEventListener("progress", loadGameSolverScript_progressFunction, false);
 debug_game_state = 70.55;
 }
@@ -3461,11 +3019,10 @@ debug_game_state = 70.6;
 return xhr_gs;
 }
 })
-.done(function(data) { // Success case
+.done(function(data) {
 gamesolver_load_state = 2;
 debug_game_state = 75;
-xhr_gs.removeEventListener("progress", loadGameSolverScript_progressFunction, false); // same arguments as above xhr_gs.addEventListener() call
-// console.log(data); // data contains GameSolver script contents
+xhr_gs.removeEventListener("progress", loadGameSolverScript_progressFunction, false);
 if (data.indexOf("nicorn") != -1) {
 github_unicorn_error = true;
 }
@@ -3473,40 +3030,31 @@ if ( (data.indexOf("<html") != -1) || (data.indexOf("<HTML") != -1) || (data.ind
 github_html_error = true;
 }
 if ( (data.indexOf("too long to load") != -1) || (data.indexOf("did not respond") != -1)
-|| (data.indexOf("o server is currently available") != -1) /* 'o' for 'no' */
+|| (data.indexOf("o server is currently available") != -1)
 || (data.indexOf("emporarily Offline") != -1)  || (data.indexOf("emporarily offline") != -1) ) {
 github_load_error = true;
 }
-
-// Blob for GameSolver script including common definitions
 debug_game_state = 75.2;
 gamesolver_blob = new Blob([data], {type: "application/javascript"});
-if (gamesolver_blob.size <= 130000) { // 137120 in 09/2023 - approximate check for better compatibility
-// Oops alert for network error could also be shown here, if ever this code is entered, as done below
+if (gamesolver_blob.size <= 130000) {
 throw new Error("blob creation failed for GameSolver script (" + gamesolver_blob.size + ")");
 }
-
-// Blob for common definitions only (only useful at this stage)
 debug_game_state = 75.3;
 var end_of_common_defitions_tag = "let END_OF_COMMON_DEFINITIONS;";
 var end_of_common_defitions_index = data.indexOf(end_of_common_defitions_tag);
 if (end_of_common_defitions_index == -1)  {
-// Oops alert for network error could also be shown here, if ever this code is entered, as done below
 throw new Error("cannot find end of common definitions in GameSolver script (" + gamesolver_blob.size + ")");
 }
 var common_definitions_blob = new Blob([data.substring(0, end_of_common_defitions_index + end_of_common_defitions_tag.length)], {type: "application/javascript"});
-if (common_definitions_blob.size <= 17000) { // 17469 in 09/2023 - approximate check for better compatibility
-// Oops alert for network error could also be shown here, if ever this code is entered, as done below
+if (common_definitions_blob.size <= 17000) {
 throw new Error("blob creation failed for common definitions (" + common_definitions_blob.size + ")");
 }
-
 debug_game_state = 75.4;
 var url = URL.createObjectURL(common_definitions_blob);
 var script = document.createElement('script');
 script.src = url;
 script.async = false;
 script.onload = function() {
-// Super Master Mind script is only loaded once GameSolver script has been loaded successfully
 setTimeout("loadSuperMasterMindScript();", 44);
 gamesolver_load_state = 2.55;
 debug_game_state = 78;
@@ -3526,22 +3074,19 @@ if (result !== script) {
 throw new Error("appendChild failed for GameSolver script (" + common_definitions_blob.size + ")");
 }
 gamesolver_load_state = 2.5;
-// debug_game_state = 76 to debug_game_state = 77.x is updated in GameSolver script
 })
-.fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+.fail(function(jqxhr, textStatus, error) {
 gamesolver_load_state = 3;
 debug_game_state = 79;
 var errorStr = ("GameSolver script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
 console.log(errorStr);
 gamesolver_blob_error = errorStr;
 alert("Oops... a network error occurred!\nPlease retry...\n\n" + "(" + errorStr + ")");
-$(".game_loading").fadeOut("slow"); // game_loading div fades out
+$(".game_loading").fadeOut("slow");
 gamesolver_load_state = 3.5;
 debug_game_state = 79.5;
 });
 gamesolver_load_state = 1.5;
 </script>
-
 </body>
-
 </html>

@@ -843,9 +843,9 @@
       });
 
       let loaded_sizes = new Array(3);
-      loaded_sizes[0] = 234000; // imported js scripts + game.html = 88000 (jquery) + 22000 (pako) + 7000 (tingle) + 117000 (game.html) = 234000
-      loaded_sizes[1] = 138000; // GameSolver.js (state: 1)
-      loaded_sizes[2] =  97000; // SuperMasterMind.js.gz (state: 2)
+      loaded_sizes[0] = 88000 + 22000 + 7000 + 124000; // imported js scripts + game.html = 88000 (jquery) + 22000 (pako) + 7000 (tingle) + 124000 (game.html)
+      loaded_sizes[1] = 135000; // GameSolver.js (state: 1)
+      loaded_sizes[2] =  99000; // SuperMasterMind.js.gz (state: 2)
       function getGlobalProgress(progress, state) {
         if ((progress < 0) || (progress > 1)) { // error case
           return 0;
@@ -2339,7 +2339,7 @@
           firstname_entered = firstname_entered.trim();
           let condition_1 = (firstname_entered.length >= minFirstNameLength); // (condition duplicated)
           let condition_2 = (firstname_entered.length <= maxFirstNameLength); // (condition duplicated)
-          let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); /* (only letters) */; // (condition duplicated)
+          let condition_3 = (/^[A-Za-zÀ-ÿ'-]+$/.test(firstname_entered)); // (only letters)
           if (condition_1 && condition_2 && condition_3 && isCorrect(firstname_entered)) { // (condition duplicated)
             let newFirstName = capitalizeFirstLetters(firstname_entered);
             if (localStorage.firstname) {
@@ -3406,7 +3406,7 @@
         smm_load_state = 1.5;
       }
 
-      var globalProgressForHTMLGame3 = getGlobalProgress(0.999 /* (rough value) */, 0);
+      var globalProgressForHTMLGame3 = getGlobalProgress(0.98 /* (rough value) */, 0);
       console.log("current progress: " + Math.max(globalProgressForHTMLGame3, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame3; // !WARNING! -> this console text will be read by the android app so shall not be modified
       if (globalProgressForHTMLGame3 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame3 + "%)"); // (not rem unit as no viewport! / duplicated code)
