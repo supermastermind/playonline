@@ -779,7 +779,7 @@ if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localSt
 if (localStorage.gamesok && (Number(localStorage.gamesok) < 30)) { // (***) not reasked immediately
 return;
 }
-if (Number(localStorage.nb_location_permissions_req) > 15) { // (only warning displayed after first tries)
+if (Number(localStorage.nb_location_permissions_req) > 20) { // (only warning displayed after first tries)
 return;
 }
 // Regular permission requests or warning messages if above conditions are met
