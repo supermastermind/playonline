@@ -792,6 +792,7 @@
       var store_time = (new Date()).getTime();
       var minFirstNameLength = 3;
       var maxFirstNameLength = 9;
+      var force_next_attempt_HTML_geolocation_if_needed = false;
 
       function askAndroidLocationPermissionsIfNeeded(forcedMode) {
         if (!android_appli) {
@@ -812,7 +813,8 @@
         let warning_only = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here
         var ask_location_permissions_if_needed_str = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
         var location_permissions_warning_if_needed_str = "console.log('(location permissions warning if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-        setTimeout((warning_only ? location_permissions_warning_if_needed_str : ask_location_permissions_if_needed_str), 1000);
+        // use force_next_attempt_HTML_geolocation_if_needed because on android permission requests and location requests are not done at the same moment
+        setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (warning_only ? location_permissions_warning_if_needed_str : ask_location_permissions_if_needed_str), 1000);
         localStorage.ask_location_permissions_if_needed_date = (new Date()).getTime();
         if (!localStorage.nb_location_permissions_req) {
             localStorage.nb_location_permissions_req = 0;
@@ -3179,19 +3181,20 @@
         if (!scriptsFullyLoaded) {
           return;
         }
-        if (localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 1.5 : 36)*3600*1000)) { // defense for restarts
+        if ((!force_next_attempt_HTML_geolocation_if_needed) && localStorage.precise_location_success_time && ((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 1.5 : 36)*3600*1000)) { // defense for restarts
           console.log("attempt_HTML_geolocation_if_needed skipped (1)");
           return;
         }
-        if (localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times - defense for restarts
+        if ((!force_next_attempt_HTML_geolocation_if_needed) && localStorage.precise_geolocation_api_access_time && ((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)) { // condition duplicated 3 times - defense for restarts
           console.log("attempt_HTML_geolocation_if_needed skipped (2)");
           return;
         }
         if (android_appli) { // no popups for android app: ACCESS_FINE_LOCATION permission is requested, subject to user acceptance
-          if ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000) { // geolocation refresh after 1.5 hour on user action
+          if (force_next_attempt_HTML_geolocation_if_needed || ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000)) { // geolocation refresh after 1.5 hour on user action
             android_HTML_geolocation_retries_after_error = 0;
             setTimeout("attempt_HTML_geolocation();", 44);
             localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
+            force_next_attempt_HTML_geolocation_if_needed = false;
           }
           else {
             console.log("attempt_HTML_geolocation_if_needed skipped (3)");
