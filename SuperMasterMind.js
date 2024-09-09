@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.0L";
+let smm_compatibility_version="v30.0M";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v300L)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v300M)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v300L="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v300M="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -432,7 +432,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0L: "+(localStorage.reloadForCompatibility_v300L ? localStorage.reloadForCompatibility_v300L : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0M: "+(localStorage.reloadForCompatibility_v300M ? localStorage.reloadForCompatibility_v300M : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -687,11 +687,7 @@ return;
 catch (exc){
 displayGUIError("onGameSolverMsg error: "+exc, exc.stack);
 }}
-function newGameButtonClick_delayed(display_ads_if_needed){
-if(display_ads_if_needed){
-if(typeof displayAdsIfNeeded!=='undefined'){
-displayAdsIfNeeded();
-}}
+function newGameButtonClick_delayed(){
 try{
 $(pageTransitionObject).fadeIn("fast");
 }
@@ -716,7 +712,7 @@ catch (exc){
 function gameAbortionEnd(){
 $(gameAbortedObject).fadeOut(200);
 dsCode=false;
-newGameButtonClick_delayed(true);
+newGameButtonClick_delayed();
 }
 checkButtonEvent=function(mouseEvent){
 if(mouseEvent){
@@ -753,7 +749,7 @@ return;
 }}}
 nbOnGoingGamesAborted++;
 if(nbColumns==3){
-setTimeout("dsCode=false;newGameButtonClick_delayed(true);", 2500);
+setTimeout("dsCode=false;newGameButtonClick_delayed();", 2500);
 }
 else{
 let game_aborted_str="<b>Current game was aborted"
@@ -772,7 +768,7 @@ updateGameSizes();
 draw_graphic();
 }
 else{
-newGameButtonClick_delayed(true);
+newGameButtonClick_delayed();
 }}}}
 resetCurrentCodeButtonClick=function(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
@@ -1271,7 +1267,7 @@ else{
 nbColumnsRadioObjects[previousNbColumns-nbMinColumns].checked="checked";
 return previousNbColumns;
 }}
-function show_play_store_app(specific_str="", android_stars_mode=false, forceStr=""){
+function show_message(specific_str="", android_stars_mode=false, forceStr=""){
 if(forceStr!=""){
 let str=
 "<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
@@ -1451,13 +1447,13 @@ if((!android_appli)&&mobileMode&&androidMode
 &&( (!localStorage.gamesok&&(game_cnt==1))
 ||(localStorage.gamesok&&((Number(localStorage.gamesok)==11)||(Number(localStorage.gamesok)==22)||(Number(localStorage.gamesok)==44)||(Number(localStorage.gamesok)==67)||(Number(localStorage.gamesok)==88)||(Number(localStorage.gamesok)==128)||(Number(localStorage.gamesok)==256))) )
 ){
-show_play_store_app();
+show_message();
 }
 else if((!android_appli)&&(!mobileMode)&&localStorage.gamesok&&(Number(localStorage.gamesok) > 0)&&((Number(localStorage.gamesok)==51)||(Number(localStorage.gamesok) % 71==0)||(Number(localStorage.gamesok) % 444==0)||(Number(localStorage.gamesok) % 1004==0)||(Number(localStorage.gamesok) % 1444==0)) ){
-show_play_store_app();
+show_message();
 }
 else if(android_appli&&localStorage.firstname&&localStorage.gamesok&&((Number(localStorage.gamesok)==25)||(Number(localStorage.gamesok)==50)||(Number(localStorage.gamesok)==77)||(Number(localStorage.gamesok)==112)||(Number(localStorage.gamesok)==156)||(Number(localStorage.gamesok)==204)||(Number(localStorage.gamesok)==304)||(Number(localStorage.gamesok)==404)||(Number(localStorage.gamesok)==707)||(Number(localStorage.gamesok)==1061)||(Number(localStorage.gamesok)==1333)||(Number(localStorage.gamesok)==1644)||(Number(localStorage.gamesok)==2004)) ){
-show_play_store_app("<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
+show_message("<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
 }
 else if(localStorage.firstname&&localStorage.gamesok&&(Number(localStorage.gamesok) >=55)&&(nbGamesPlayedAndWon >=1)
 &&localStorage.lastDonationTimeT&&((new Date()).getTime()-localStorage.lastDonationTimeT > 21*24*60*60*1000 ) ){
@@ -1466,11 +1462,9 @@ let paypalStr=
 <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
 <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>"
-+(false  ? "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-or look at some ads in the&nbsp;<a href='index.html'>main&nbsp;page</a><br>(it can bring small revenue)<br>" : "")
 +"<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
-show_play_store_app("", false, "<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"+paypalStr);
+show_message("", false, "<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"+paypalStr);
 localStorage.lastDonationTimeT=(new Date()).getTime();
 if(!localStorage.nbDonationRequestsT){
 localStorage.nbDonationRequestsT=0;
@@ -1765,7 +1759,7 @@ if(gameInv!=0){
 displayGUIError("unexpected gameInv loop (1): "+gameInv, new Error().stack);
 }
 else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
+setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
 }}
 else if(!((marks[2].nbBlacks==0)&&(marks[2].nbWhites==0))
 ||((mark_tmp2a.nbBlacks==0)&&(mark_tmp2a.nbWhites==0)&&(mark_tmp2b.nbBlacks==0)&&(mark_tmp2b.nbWhites==0)) ){
@@ -1780,7 +1774,7 @@ if(gameInv!=0){
 displayGUIError("unexpected gameInv loop (2): "+gameInv, new Error().stack);
 }
 else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
+setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
 }}}
 else if((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
 &&(smmCodeHandler.nbDifferentColors(codesPlayed[1])==1)
@@ -1798,7 +1792,7 @@ if(gameInv!=0){
 displayGUIError("unexpected gameInv loop (3): "+gameInv, new Error().stack);
 }
 else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
+setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
 }}}
 else if((gameInv==0)
 &&( ((smmCodeHandler.nbDifferentColors(codesPlayed[0]) >=2)
@@ -1833,7 +1827,7 @@ if(gameInv!=0){
 displayGUIError("unexpected gameInv loop (4): "+gameInv, new Error().stack);
 }
 else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed(false);}", 14);
+setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
 }}}}}
 return true;
 }

@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.0L"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.0M"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v300L) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v300M) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v300L = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v300M = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -556,7 +556,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0L: " + (localStorage.reloadForCompatibility_v300L ? localStorage.reloadForCompatibility_v300L : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0M: " + (localStorage.reloadForCompatibility_v300M ? localStorage.reloadForCompatibility_v300M : "not done"), 210);
 
       // Alert
       // *****
@@ -930,15 +930,7 @@ function onGameSolverMsg(e) {
 // Event-related functions
 // ***********************
 
-function newGameButtonClick_delayed(display_ads_if_needed) {
-
-  // Display ads if needed
-  if (display_ads_if_needed) {
-    if (typeof displayAdsIfNeeded !== 'undefined') {
-      displayAdsIfNeeded();
-    }
-  }
-
+function newGameButtonClick_delayed() {
   // Transition effect 1/2
   try {
     $(pageTransitionObject).fadeIn("fast");
@@ -971,7 +963,7 @@ function newGameButtonClick_delayed(display_ads_if_needed) {
 function gameAbortionEnd() {
   $(gameAbortedObject).fadeOut(200);
   dsCode = false;
-  newGameButtonClick_delayed(true);
+  newGameButtonClick_delayed();
 }
 
 checkButtonEvent = function(mouseEvent) { // (override temporary definition)
@@ -1020,7 +1012,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
         nbOnGoingGamesAborted++;
 
         if (nbColumns == 3) {
-          setTimeout("dsCode = false; newGameButtonClick_delayed(true);", 2500);
+          setTimeout("dsCode = false; newGameButtonClick_delayed();", 2500);
         }
         else {
           let game_aborted_str = "<b>Current game was aborted"
@@ -1044,7 +1036,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
 
       }
       else {
-        newGameButtonClick_delayed(true);
+        newGameButtonClick_delayed();
       }
 
     }
@@ -1663,7 +1655,7 @@ function getNbColumnsSelected() {
   }
 }
 
-function show_play_store_app(specific_str = "", android_stars_mode = false, forceStr = "") {
+function show_message(specific_str = "", android_stars_mode = false, forceStr = "") {
   if (forceStr != "") {
     let str =
       "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
@@ -1878,13 +1870,13 @@ function resetGameAttributes(nbColumnsSelected) {
                  && ( (!localStorage.gamesok && (game_cnt == 1)) // very first game played
                       || (localStorage.gamesok && ((Number(localStorage.gamesok) == 11) || (Number(localStorage.gamesok) == 22) || (Number(localStorage.gamesok) == 44) || (Number(localStorage.gamesok) == 67) || (Number(localStorage.gamesok) == 88) || (Number(localStorage.gamesok) == 128) || (Number(localStorage.gamesok) == 256))) )
        ) {
-      show_play_store_app();
+      show_message();
     }
     else if ( (!android_appli) && (!mobileMode) && localStorage.gamesok && (Number(localStorage.gamesok) > 0) && ((Number(localStorage.gamesok) == 51) || (Number(localStorage.gamesok) % 71 == 0) || (Number(localStorage.gamesok) % 444 == 0) || (Number(localStorage.gamesok) % 1004 == 0) || (Number(localStorage.gamesok) % 1444 == 0)) ) {
-      show_play_store_app();
+      show_message();
     }
     else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 25) || (Number(localStorage.gamesok) == 50) || (Number(localStorage.gamesok) == 77) || (Number(localStorage.gamesok) == 112) || (Number(localStorage.gamesok) == 156) || (Number(localStorage.gamesok) == 204) || (Number(localStorage.gamesok) == 304) || (Number(localStorage.gamesok) == 404) || (Number(localStorage.gamesok) == 707) || (Number(localStorage.gamesok) == 1061) || (Number(localStorage.gamesok) == 1333) || (Number(localStorage.gamesok) == 1644) || (Number(localStorage.gamesok) == 2004)) ) {
-      show_play_store_app("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
+      show_message("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
     }
     else if ( localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 55) && (nbGamesPlayedAndWon >= 1)
               && localStorage.lastDonationTimeT && ((new Date()).getTime() - localStorage.lastDonationTimeT > 21*24*60*60*1000 /* (3 weeks) */) ) {
@@ -1893,11 +1885,9 @@ function resetGameAttributes(nbColumnsSelected) {
         <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
         <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
         <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>"
-        + (false /* [DISABLE ADS]*/ ? "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-        or look at some ads in the&nbsp;<a href='index.html'>main&nbsp;page</a><br>(it can bring small revenue)<br>" : "")
         + "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
         Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
-      show_play_store_app("", false, "<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>" + paypalStr);
+      show_message("", false, "<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>" + paypalStr);
       localStorage.lastDonationTimeT = (new Date()).getTime();
       if (!localStorage.nbDonationRequestsT) {
         localStorage.nbDonationRequestsT = 0;
@@ -2257,7 +2247,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
               displayGUIError("unexpected gameInv loop (1): " + gameInv, new Error().stack);
             }
             else {
-              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
+              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
             }
         }
         else if ( !((marks[2].nbBlacks == 0) && (marks[2].nbWhites == 0))
@@ -2273,7 +2263,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
               displayGUIError("unexpected gameInv loop (2): " + gameInv, new Error().stack);
             }
             else {
-              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
+              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
             }
         }
       }
@@ -2293,7 +2283,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
                 displayGUIError("unexpected gameInv loop (3): " + gameInv, new Error().stack);
               }
               else {
-                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
+                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
               }
         }
       }
@@ -2331,7 +2321,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
                 displayGUIError("unexpected gameInv loop (4): " + gameInv, new Error().stack);
               }
               else {
-                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed(false);}", 14);
+                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
               }
         }
       }
