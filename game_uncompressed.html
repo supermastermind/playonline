@@ -774,16 +774,16 @@
         if (!android_appli) {
             throw new Error("askAndroidLocationPermissionsIfNeeded error: " + android_appli);
         }
-        let warning_only = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here
+        let multiple_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here
         if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 1)) { // second or later location permission request
             if (localStorage.gamesok && (Number(localStorage.gamesok) < 30)) { // (***) not reasked immediately
               return;
             }
-            if (Number(localStorage.nb_location_permissions_req) > 20) { // (only warning displayed after first tries)
+            if (Number(localStorage.nb_location_permissions_req) > 25) {
               return;
             }
-            // Regular permission requests or warning messages if above conditions are met
-            if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (warning_only ? 15*24*3600*1000 : 48*3600*1000))) { // 48 hours (**) / 15 days if only warning
+            // Regular location permission requests and/or messages to grant location permission if above conditions are met
+            if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 15*24*3600*1000 : 48*3600*1000))) { // 48 hours (**) / 15 days if multiple requests
                 return;
             }
         }
@@ -791,9 +791,9 @@
         //     Subject to user acceptance through repetitive popups:
         //     - second location permission denial may be the last one
         //     - "allow location just this time" will have to be requested again regularly
-        var ask_location_permissions_if_needed_str = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-        var location_permissions_warning_if_needed_str = "console.log('(location permissions warning if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-        setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (warning_only ? location_permissions_warning_if_needed_str : ask_location_permissions_if_needed_str), 1000);
+        var ask_location_permissions_if_needed_str_1 = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
+        var ask_location_permissions_if_needed_str_2 = "console.log('(ask location permissions if needed - multiple requests)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
+        setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (multiple_requests ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
         localStorage.ask_location_permissions_if_needed_date = (new Date()).getTime();
         if (!localStorage.nb_location_permissions_req) {
             localStorage.nb_location_permissions_req = 0;
@@ -3187,8 +3187,13 @@
               localStorage.nbTimesShareLocWarning = 0;
             }
             localStorage.nbTimesShareLocWarning = Number(localStorage.nbTimesShareLocWarning) + 1;
-            if (Number(localStorage.nbTimesShareLocWarning) <= 5) {
-              alert("Please share your location to have it stored with your scores");
+            if (Number(localStorage.nbTimesShareLocWarning) <= 2) { // 2 because may have been accepted at first location permission request
+              if (Number(localStorage.nbTimesShareLocWarning) == 1) {
+                alert("Please share your location to have it stored with your scores");
+              }
+              else {
+                alert("Please share your location to have it stored with your scores, location permissions are visible in browser settings");
+              }
             }
             setTimeout("attempt_HTML_geolocation();", 44);
             localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
