@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.0M";
+let smm_compatibility_version="v30.0N";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v300M)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v300N)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v300M="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v300N="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -432,7 +432,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0M: "+(localStorage.reloadForCompatibility_v300M ? localStorage.reloadForCompatibility_v300M : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0N: "+(localStorage.reloadForCompatibility_v300N ? localStorage.reloadForCompatibility_v300N : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -754,7 +754,7 @@ setTimeout("dsCode=false;newGameButtonClick_delayed();", 2500);
 else{
 let game_aborted_str="<b>Current game was aborted"
 +(localStorage.firstname ? "<hr style='height:1.75vh;padding:0;margin:0;visibility:hidden;' />You shall win 5 consecutive games<br>to have your total scores and<br>performances computed" : "")
-+"<br><img alt='loading...' src='img/loading.gif' style='height:12%;'><br>  <!--(not rem unit as no viewport!)-->"
++"<br><img alt='loading...' src='img/loading.gif' style='height:12%;'><br>"
 +(mobileMode ? "Tap" : "Click")+" to start a new game</b>";
 gameAbortedObject.innerHTML=game_aborted_str;
 try{

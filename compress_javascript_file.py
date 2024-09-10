@@ -15,22 +15,24 @@ def compress_javascript_file(source_file_path, target_file_path, all_optims):
         with open(source_file_path, 'r', encoding='utf-8') as file:
             content = file.read()
 
-        content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL) # remove multi-line comments
+        content = re.sub(r'<!--.*?-->', '', content, flags=re.DOTALL) # remove multi-line HTML comments
+        content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL) # remove multi-line javascript comments
         # negative lookbehind (?<!:) checks that the characters ":" do not appear immediately before the current position
-        content = re.sub(r'(?<!:)(//.*?\n)', '\n', content, flags=re.DOTALL) # remove mono-line comments, excluding http://, https://, ftp://...
+        content = re.sub(r'(?<!:)(//.*?\n)', '\n', content, flags=re.DOTALL) # remove mono-line javascript comments, excluding http://, https://, ftp://...
+
+        content = re.sub(r'[ \t]+=', '=', content, flags=re.DOTALL) # =, ==
+        content = re.sub(r'=[ \t]+', '=', content, flags=re.DOTALL) # =, ==
+        content = re.sub(r'[ \t]*;[ \t]*', ';', content, flags=re.DOTALL) # ;
+        content = re.sub(r'[ \t]*{[ \t]*', '{', content, flags=re.DOTALL) # {
+        content = re.sub(r'[ \t]*}[ \t]*', '}', content, flags=re.DOTALL) # }
+        content = re.sub(r'if[ \t]*\([ \t]*', 'if(', content, flags=re.DOTALL) # if (
+        content = re.sub(r'[ \t]*\|\|[ \t]*', '||', content, flags=re.DOTALL) # ||
+        content = re.sub(r'[ \t]*&&[ \t]*', '&&', content, flags=re.DOTALL) # &&
 
         if all_optims:
-            content = re.sub(r'[ \t]+=', '=', content, flags=re.DOTALL) # =, ==
-            content = re.sub(r'=[ \t]+', '=', content, flags=re.DOTALL) # =, ==
             content = re.sub(r'[ \t]+!', '!', content, flags=re.DOTALL) # !
-            content = re.sub(r'[ \t]*\|\|[ \t]*', '||', content, flags=re.DOTALL) # ||
-            content = re.sub(r'[ \t]*&&[ \t]*', '&&', content, flags=re.DOTALL) # &&
-            content = re.sub(r'if[ \t]*\([ \t]*', 'if(', content, flags=re.DOTALL) # if (
-            content = re.sub(r'[ \t]*;[ \t]*', ';', content, flags=re.DOTALL) # ;
             content = re.sub(r'[ \t]*\+[ \t]*', '+', content, flags=re.DOTALL) # +
             content = re.sub(r'[ \t]*-[ \t]*', '-', content, flags=re.DOTALL) # -
-            content = re.sub(r'[ \t]*{[ \t]*', '{', content, flags=re.DOTALL) # {
-            content = re.sub(r'[ \t]*}[ \t]*', '}', content, flags=re.DOTALL) # }
 
         content = re.sub(r'^[ \t\n]*', '', content, flags=re.DOTALL) # leading spaces 1
         content = re.sub(r'\n[ \t]+', '\n', content, flags=re.DOTALL) # leading spaces 2
@@ -38,14 +40,13 @@ def compress_javascript_file(source_file_path, target_file_path, all_optims):
         content = re.sub(r'[ \t\n]*$', '', content, flags=re.DOTALL) # trailing spaces 2
         content = re.sub(r'\n+', '\n', content, flags=re.DOTALL) # empty lines
 
-        if all_optims:
-            content = re.sub(r'}\n}', '}}', content, flags=re.DOTALL) # }...}
-            content = re.sub(r'}\n}', '}}', content, flags=re.DOTALL) # }...}
+        content = re.sub(r'}\n}', '}}', content, flags=re.DOTALL) # }...}
+        content = re.sub(r'}\n}', '}}', content, flags=re.DOTALL) # }...}
 
         # Write compressed file
         with open(target_file_path, 'wb') as file: # wb will remove ending \r characters if any
             file.write(content.encode('utf-8'))
-            
+
         print("SUCCESS")
 
     except Exception as e:
