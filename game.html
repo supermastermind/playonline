@@ -21,7 +21,7 @@ throw new Error(workerErrorMsg);
 }
 var storageErrorMet=true;
 try{
-if(typeof(Storage) !=='undefined'){
+if(typeof(Storage)!=='undefined'){
 localStorage.removeItem('test_storage_ok');
 if(!localStorage.test_storage_ok){
 localStorage.test_storage_ok="abc";
@@ -46,7 +46,7 @@ font-family: 'Verdana';
 margin: 0%;
 padding: 0%;
 color: #777777;
-font-size: calc(7px + .34vw);
+font-size: calc(7px+.34vw);
 background: black;
 min-width: 100%;
 min-height: 100%;
@@ -182,7 +182,7 @@ vertical-align: middle;
 -ms-user-select: none;
 user-select: none;
 }
-input[type="radio"]:checked + .radio{
+input[type="radio"]:checked+.radio{
 color: orange;
 border-color: orange;
 border-radius: 25%;
@@ -263,7 +263,7 @@ var lastGlobalProgress=0;
 var classicalUserAgentStr="";
 var userAgentToHandle=navigator.userAgent;
 var firefoxModeIdx=userAgentToHandle.toUpperCase().search("FIREFOX/");
-var firefoxMode=((firefoxModeIdx !=-1)&&(userAgentToHandle.toUpperCase().search("SEAMONKEY/")==-1));
+var firefoxMode=((firefoxModeIdx!=-1)&&(userAgentToHandle.toUpperCase().search("SEAMONKEY/")==-1));
 if(firefoxMode){
 classicalUserAgentStr=userAgentToHandle.substring(firefoxModeIdx);
 }
@@ -271,7 +271,7 @@ var edgeModeIdx=userAgentToHandle.toUpperCase().search("EDG/");
 if(edgeModeIdx==-1){
 edgeModeIdx=userAgentToHandle.toUpperCase().search("EDGE/");
 }
-var edgeMode=((!firefoxMode)&&(edgeModeIdx !=-1));
+var edgeMode=((!firefoxMode)&&(edgeModeIdx!=-1));
 if(edgeMode){
 classicalUserAgentStr=userAgentToHandle.substring(edgeModeIdx);
 }
@@ -279,7 +279,7 @@ var operaModeIdx=userAgentToHandle.toUpperCase().search("OPR/");
 if(operaModeIdx==-1){
 operaModeIdx=userAgentToHandle.toUpperCase().search("OPERA/");
 }
-var operaMode=((!firefoxMode)&&(!edgeMode)&&(operaModeIdx !=-1));
+var operaMode=((!firefoxMode)&&(!edgeMode)&&(operaModeIdx!=-1));
 if(operaMode){
 classicalUserAgentStr=userAgentToHandle.substring(operaModeIdx);
 }
@@ -287,15 +287,15 @@ var chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROME/");
 if(chromeModeIdx==-1){
 chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROMIUM/");
 }
-var chromeMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(chromeModeIdx !=-1));
+var chromeMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(chromeModeIdx!=-1));
 if(chromeMode){
 classicalUserAgentStr=userAgentToHandle.substring(chromeModeIdx);
 var nextSpaceIdx=classicalUserAgentStr.indexOf(" ");
-if(nextSpaceIdx !=-1){
+if(nextSpaceIdx!=-1){
 classicalUserAgentStr=classicalUserAgentStr.substring(0, nextSpaceIdx);
 }}
 var safariModeIdx=userAgentToHandle.toUpperCase().search("SAFARI/");
-var safariMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!chromeMode)&&(safariModeIdx !=-1));
+var safariMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!chromeMode)&&(safariModeIdx!=-1));
 if(safariMode){
 classicalUserAgentStr=userAgentToHandle.substring(safariModeIdx);
 }
@@ -308,11 +308,11 @@ var versionCodeInt=-1;
 var scriptsFullyLoaded=false;
 var mobileMode=false;
 var androidMode=false;
-var smm=(decodeURI(location.href).indexOf('https://supermastermind.github.io/playonline/game.html') !=-1);
+var smm=(decodeURI(location.href).indexOf('https://supermastermind.github.io/playonline/game.html')!=-1);
 try{
 androidAppliInfoStr=new URL(decodeURI(location.href)).searchParams.get("android_appli");
-if(androidAppliInfoStr !=null){
-userAgentStr="sdk" + androidAppliInfoStr;
+if(androidAppliInfoStr!=null){
+userAgentStr="sdk"+androidAppliInfoStr;
 android_appli=true;
 try{
 versionNameStr=new URL(decodeURI(location.href)).searchParams.get("version_name");
@@ -326,42 +326,42 @@ versionCodeStr="?";
 else{
 try{
 versionCodeInt=parseInt(versionCodeStr);
-if(isNaN(versionCodeInt)||(versionCodeInt < 0)||(versionCodeStr.indexOf(".") !=-1)){
+if(isNaN(versionCodeInt)||(versionCodeInt < 0)||(versionCodeStr.indexOf(".")!=-1)){
 versionCodeInt=-1;
 }}
 catch (exc){
 versionCodeInt=-1;
 }}
 var playerIdStr=new URL(decodeURI(location.href)).searchParams.get("player_id");
-if(playerIdStr !=null){
+if(playerIdStr!=null){
 if(!localStorage.playerid){
 localStorage.playerid=playerIdStr;
 }}
 var playerIdStr2=new URL(decodeURI(location.href)).searchParams.get("pi");
-if(playerIdStr2 !=null){
+if(playerIdStr2!=null){
 if(!localStorage.playerid){
 localStorage.playerid=playerIdStr2;
 }}}catch (err_versioning){}
-userAgentStr=userAgentStr + "/" + versionNameStr + "/" + versionCodeStr;
+userAgentStr=userAgentStr+"/"+versionNameStr+"/"+versionCodeStr;
 }
 if(!android_appli){
-if(classicalUserAgentStr !=""){
+if(classicalUserAgentStr!=""){
 userAgentStr=classicalUserAgentStr;
 }
 else{
-userAgentStr=userAgentStr + navigator.userAgent.replaceAll("AppleWebKit","AppleWK").replaceAll("Mozilla","Moz").replaceAll("Windows", "Win").replaceAll("/","").replaceAll(" ","");
+userAgentStr=userAgentStr+navigator.userAgent.replaceAll("AppleWebKit","AppleWK").replaceAll("Mozilla","Moz").replaceAll("Windows", "Win").replaceAll("/","").replaceAll(" ","");
 }}}catch (err){
-userAgentStr="??? " + navigator.userAgent;
+userAgentStr="??? "+navigator.userAgent;
 }
 if(android_appli&&((versionCodeInt==-1)||(versionCodeInt <=34))){
-var versionCodeErrorMsg="Your app version is " + ((versionCodeInt==- 1) ? "invalid" : "very old") + ". Please install the last update of the app from Play Store.";
+var versionCodeErrorMsg="Your app version is "+((versionCodeInt==-1) ? "invalid" : "very old")+". Please install the last update of the app from Play Store.";
 alert(versionCodeErrorMsg);
 window.stop();
 globalErrorStatus=true;
 }
 var oldBrowserVersion=false;
-if(chromeMode&&(classicalUserAgentStr !="")){
-if(classicalUserAgentStr.indexOf("Chrome/79.") !=-1){
+if(chromeMode&&(classicalUserAgentStr!="")){
+if(classicalUserAgentStr.indexOf("Chrome/79.")!=-1){
 oldBrowserVersion=true;
 alert("Your Chrome browser version is old, please update it to avoid errors");
 }}
@@ -376,12 +376,12 @@ function makeid(){
 let text="";
 let possible="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 for (let i=0;i < 6;i++){
-text +=possible.charAt(Math.floor(Math.random() * possible.length));
+text+=possible.charAt(Math.floor(Math.random() * possible.length));
 }
 return text;
 }
 if(!localStorage.playerid){
-let id=makeid() + "-" + formatDate(new Date());
+let id=makeid()+"-"+formatDate(new Date());
 localStorage.playerid=id;
 }
 var unknownIPAddressPrefix='0.0.0';
@@ -416,11 +416,11 @@ var last_valid_handle_stats_final_retry_str="";
 var gamesolver_blob=null;
 var gamesolver_blob_error="no_error";
 var checkButtonEvent=function(mouseEvent){
-console.log("checkButtonEvent(" + mouseEvent + ") function not defined yet");
+console.log("checkButtonEvent("+mouseEvent+") function not defined yet");
 return (!mouseEvent);
 }
 var newGameButtonClick=function(nbColumns_p){
-console.log("newGameButtonClick(" + nbColumns_p + ") function not defined yet");
+console.log("newGameButtonClick("+nbColumns_p+") function not defined yet");
 }
 var gameOnGoing=function(){
 console.log("gameOnGoing function not defined yet");
@@ -448,18 +448,18 @@ var beforeunload_case=false;
 $(window).on('beforeunload', function(){
 try{
 debug_on_resize_or_unload=1;
-if(last_valid_handle_stats_final_retry_str !=""){
-eval("console.log('stats handled on unload');" + "beforeunload_case=true;" + last_valid_handle_stats_final_retry_str + "beforeunload_case=false;");
+if(last_valid_handle_stats_final_retry_str!=""){
+eval("console.log('stats handled on unload');"+"beforeunload_case=true;"+last_valid_handle_stats_final_retry_str+"beforeunload_case=false;");
 }
 if(!android_appli){
 if(gameOnGoing()&&(currentAttemptNumber > 1)){
-if(localStorage.firstname&&(typeof nbColumns !=='undefined')&&(nbColumns >=5)){
+if(localStorage.firstname&&(typeof nbColumns!=='undefined')&&(nbColumns >=5)){
 return "Do you really want to abort current game?";
 }}}
 debug_on_resize_or_unload=2;
 }
 catch (exc){
-console.log("error encountered at game abortion: " + exc);
+console.log("error encountered at game abortion: "+exc);
 return;
 }});
 function formatDate(date){
@@ -468,14 +468,14 @@ return "?";
 }
 let day=String(date.getDate());
 if(day.length < 2){
-day='0' + day;
+day='0'+day;
 }
-let month=String(date.getMonth() + 1);
+let month=String(date.getMonth()+1);
 if(month.length < 2){
-month='0' + month;
+month='0'+month;
 }
 let year=String(date.getYear()-100);
-return String(day + month + year);
+return String(day+month+year);
 }
 var min_gamesok_for_firstname=7;
 function checkIfRecentPlayer(){
@@ -496,15 +496,15 @@ if(Number(localStorage.gamesok) < 3*min_gamesok_for_firstname){
 return true;
 }
 else{
-return ((new Date()).getTime() - localStorage.recent_player_reference_time <=1.5*24*3600*1000);
+return ((new Date()).getTime()-localStorage.recent_player_reference_time <=1.5*24*3600*1000);
 }}
 let nbLocationURLs=2;
 let alternateLocationId=((nbLocationURLs+1 <=5) ? 5 : nbLocationURLs+1);
 let precisionLocationId=10;
 let locationURLs=new Array(nbLocationURLs);
 let extraStr=((smm&&!localStorage.skip) ? "" : "x");
-locationURLs[0]='https://api.ip' + extraStr + 'data.co/en?api-key=102' + extraStr + 'c5eac3a9c7c5dad17519b2029bb6bdf4a076b60dde282eecaf99f';
-locationURLs[1]='https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792' + extraStr + 'e8cda21ab40a7f5a349cddc79beb41ff95910c2ec0d05bfea593961e01c7a&format=json';
+locationURLs[0]='https://api.ip'+extraStr+'data.co/en?api-key=102'+extraStr+'c5eac3a9c7c5dad17519b2029bb6bdf4a076b60dde282eecaf99f';
+locationURLs[1]='https://api.ip'+extraStr+'infodb.com/v3/ip-city/?key=792'+extraStr+'e8cda21ab40a7f5a349cddc79beb41ff95910c2ec0d05bfea593961e01c7a&format=json';
 </script>
 <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
 </head>
@@ -587,10 +587,10 @@ welcome_str="Bienvenue";
 catch (exc){}
 if(localStorage.firstname&&localStorage.playerid){
 let kdo_str="";
-if((localStorage.firstname=="Jeannot")&&(localStorage.playerid.indexOf("9XG5") !=-1)){
+if((localStorage.firstname=="Jeannot")&&(localStorage.playerid.indexOf("9XG5")!=-1)){
 kdo_str="<br><img src='img/Kdo.png' align='left' class='kdo' style='width:7.7%;margin:0.5% 0 0 1.0%;border-radius:40%'>";
 }
-document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>" + "<span id='kdo_id'>" + kdo_str + "</span>");
+document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;"+welcome_str+" <b><font color=yellow>"+localStorage.firstname+"</font></b>!</span></font>"+"<span id='kdo_id'>"+kdo_str+"</span>");
 setTimeout(function(){
 $("#welcome_id").fadeOut().empty();
 }, 60000);
@@ -644,7 +644,7 @@ var maxFirstNameLength=9;
 var force_next_attempt_HTML_geolocation_if_needed=false;
 function askAndroidLocationPermissionsIfNeeded(forcedMode){
 if(!android_appli){
-throw new Error("askAndroidLocationPermissionsIfNeeded error: " + android_appli);
+throw new Error("askAndroidLocationPermissionsIfNeeded error: "+android_appli);
 }
 let multiple_requests=(localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=3));
 if((!forcedMode)&&localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=1)){
@@ -654,17 +654,17 @@ return;
 if(Number(localStorage.nb_location_permissions_req) > 25){
 return;
 }
-if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))){
+if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime()-localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))){
 return;
 }}
 var ask_location_permissions_if_needed_str_1="console.log('(ask location permissions if needed)');"
-var ask_location_permissions_if_needed_str_2="console.log('(ask location permissions if needed - multiple requests)');"
-setTimeout("force_next_attempt_HTML_geolocation_if_needed=true;" + (multiple_requests ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
+var ask_location_permissions_if_needed_str_2="console.log('(ask location permissions if needed-multiple requests)');"
+setTimeout("force_next_attempt_HTML_geolocation_if_needed=true;"+(multiple_requests ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
 localStorage.ask_location_permissions_if_needed_date=(new Date()).getTime();
 if(!localStorage.nb_location_permissions_req){
 localStorage.nb_location_permissions_req=0;
 }
-localStorage.nb_location_permissions_req=Number(localStorage.nb_location_permissions_req) + 1;
+localStorage.nb_location_permissions_req=Number(localStorage.nb_location_permissions_req)+1;
 }
 var modal=new tingle.modal({
 footer: false,
@@ -681,7 +681,7 @@ console.log('(modal onClose)');
 beforeClose: function(){
 console.log('(modal beforeClose)');
 if(modal_mode==2){
-setTimeout("showPossibleCodesButtonClick(false, -2, true);", 444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 444);
 if(android_appli&&localStorage.gamesok&&(Number(localStorage.gamesok) >=min_gamesok_for_firstname-2)){
 askAndroidLocationPermissionsIfNeeded(false);
 }
@@ -697,36 +697,36 @@ modal_mode=-1;
 return true;
 }});
 let loaded_sizes=new Array(3);
-loaded_sizes[0]=88000 + 22000 + 7000 + 119000;
+loaded_sizes[0]=88000+22000+7000+117000;
 loaded_sizes[1]=135000;
 loaded_sizes[2]=99000;
 function getGlobalProgress(progress, state){
 if((progress < 0)||(progress > 1)){
 return 0;
 }
-let sum_loaded_sizes=loaded_sizes[0] + loaded_sizes[1] + loaded_sizes[2];
+let sum_loaded_sizes=loaded_sizes[0]+loaded_sizes[1]+loaded_sizes[2];
 if(state==0){
 let percent_min=0;
 let percent_max=100 * loaded_sizes[0] / sum_loaded_sizes;
-return Math.min(100, Math.round(percent_min + progress * (percent_max - percent_min)));
+return Math.min(100, Math.round(percent_min+progress * (percent_max-percent_min)));
 }
 else if(state==1){
 let percent_min=100 * loaded_sizes[0] / sum_loaded_sizes;
 let percent_max=100 * (loaded_sizes[0]+loaded_sizes[1]) / sum_loaded_sizes;
-return Math.min(100, 2*Math.round((percent_min + progress * (percent_max - percent_min))/2));
+return Math.min(100, 2*Math.round((percent_min+progress * (percent_max-percent_min))/2));
 }
 else if(state==2){
 let percent_min=100 * (loaded_sizes[0]+loaded_sizes[1]) / sum_loaded_sizes;
 let percent_max=100;
-return Math.min(100, 2*Math.round((percent_min + progress * (percent_max - percent_min))/2));
+return Math.min(100, 2*Math.round((percent_min+progress * (percent_max-percent_min))/2));
 }
 else{
-console.log("getGlobalProgress: invalid state: " + progress + ", " + state);
+console.log("getGlobalProgress: invalid state: "+progress+", "+state);
 }}
 var globalProgressForHTMLGame1=getGlobalProgress(0.50 , 0);
-console.log("current progress: " + Math.max(globalProgressForHTMLGame1, lastGlobalProgress) + "% (g)");lastGlobalProgress=globalProgressForHTMLGame1;
+console.log("current progress: "+Math.max(globalProgressForHTMLGame1, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgressForHTMLGame1;
 if(globalProgressForHTMLGame1 > 0){
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)");
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading ("+globalProgressForHTMLGame1+"%)");
 }
 String.prototype.replaceAll=function(search, replacement){
 let target=this;
@@ -741,21 +741,21 @@ function str_from_jqxhr(jqxhr){
 try{
 let str="jqxhr={";
 try{
-str=str + "status:" + jqxhr.status;
-str=str + ",statusText:" + jqxhr.statusText;
-str=str + ",readyState:" + jqxhr.readyState;
+str=str+"status:"+jqxhr.status;
+str=str+",statusText:"+jqxhr.statusText;
+str=str+",readyState:"+jqxhr.readyState;
 }
 catch (exc){
-str=str + "?";
+str=str+"?";
 }
-str=str + "}";
+str=str+"}";
 return str;
 }
 catch (exc){
 return "jqxhr=?";
 }}
-var smm_action="https://script.google.com/macros/s/AKf" + extraStr + "ycbx7dfFn4JQGWWcKEjHUqPk42AxlZBcnQ5AiFcuY3op6azRwNRCJfUFNuwSjBUN_GXsQ/exec";
-var mm_mmm_umm_action="https://script.google.com/macros/s/AKf" + extraStr + "ycbxuCShh1eJtEmwgRF6ZY47HrdVfPgoJ4lVK7OD_Pxj5tanlThWdwqnb--9m1aafYid3/exec";
+var smm_action="https://script.google.com/macros/s/AKf"+extraStr+"ycbx7dfFn4JQGWWcKEjHUqPk42AxlZBcnQ5AiFcuY3op6azRwNRCJfUFNuwSjBUN_GXsQ/exec";
+var mm_mmm_umm_action="https://script.google.com/macros/s/AKf"+extraStr+"ycbxuCShh1eJtEmwgRF6ZY47HrdVfPgoJ4lVK7OD_Pxj5tanlThWdwqnb--9m1aafYid3/exec";
 var nbErrorsSubmitted=0;
 function submitForm(formStr="", errorId=0){
 if(globalErrorStatus){
@@ -783,7 +783,7 @@ case "7":
 document.getElementById("my_form").action=mm_mmm_umm_action;
 break;
 default:
-throw new Error("submitForm error: " + nbColumns_in_form);
+throw new Error("submitForm error: "+nbColumns_in_form);
 }}
 else{
 if(form_list_in_form.indexOf('2')==-1){
@@ -803,9 +803,9 @@ if(mobileMode){
 my_params['mobilemode']=mobileMode;
 }
 if(form_list_in_form=='-'){
-handle_stats_final_retry_str="handle_stats_bis(" + nbColumns_in_form + ", 99, 99, 'N', '" + document.getElementById('form_playerid_id').value + "', '" + key + "', " + "'Y2');";
+handle_stats_final_retry_str="handle_stats_bis("+nbColumns_in_form+", 99, 99, 'N', '"+document.getElementById('form_playerid_id').value+"', '"+key+"', "+"'Y2');";
 last_valid_handle_stats_final_retry_str=handle_stats_final_retry_str;
-handle_stats_final_retry_conditional_str="if(window.navigator.onLine){" + handle_stats_final_retry_str + "}else{console.log('stats form submission skipped (nw)');}";
+handle_stats_final_retry_conditional_str="if(window.navigator.onLine){"+handle_stats_final_retry_str+"}else{console.log('stats form submission skipped (nw)');}";
 setTimeout(handle_stats_final_retry_conditional_str, 60000);
 setTimeout(handle_stats_final_retry_str, 120000);
 }}
@@ -816,7 +816,7 @@ return;
 }
 document.getElementById('form_nbcolumns_id').value="N.A.";
 document.getElementById("my_form").action=(((currentGameNbColumns==-1)||(currentGameNbColumns==5)) ? smm_action : mm_mmm_umm_action);
-my_params['form_str']="(error id: " + errorId + ") " + formStr;
+my_params['form_str']="(error id: "+errorId+") "+formStr;
 }
 my_params['k']=key;
 my_params['v']=html_compatibility_game_version;
@@ -825,7 +825,7 @@ replaceAllElementsInStruct(my_params, "\n", " ");
 replaceAllElementsInStruct(my_params, "\r", "");
 replaceAllElementsInStruct(my_params, "\t", " ");
 let my_form_url=document.getElementById("my_form").action;
-console.log("(submit form" + ((formStr=="") ? "" : " for a specific case") + ")");
+console.log("(submit form"+((formStr=="") ? "" : " for a specific case")+")");
 $.ajax({
 crossDomain: true,
 url: my_form_url,
@@ -837,8 +837,8 @@ timeout: 30000
 .fail(function(jqxhr, textStatus, error){
 if(formStr==""){
 try{
-if(jqxhr.status !=200){
-console.log(("form submission failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+if(jqxhr.status!=200){
+console.log(("form submission failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
 my_params['retr']='Y';
 $.ajax({
 crossDomain: true,
@@ -850,22 +850,22 @@ timeout: 30000
 })
 .fail(function(jqxhr, textStatus, error){
 try{
-if(jqxhr.status !=200){
-console.log(("form submission retry failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-if(handle_stats_final_retry_conditional_str !=""){
+if(jqxhr.status!=200){
+console.log(("form submission retry failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
+if(handle_stats_final_retry_conditional_str!=""){
 setTimeout(handle_stats_final_retry_conditional_str, 20000);
 }}}
 catch (exc){
-console.log(("form submission retry failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+console.log(("form submission retry failure (abnormal case): "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
 }});
 }}
 catch (exc){
-console.log(("form submission failure (abnormal case): " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
+console.log(("form submission failure (abnormal case): "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
 }}});
 }
 function submitError(errorStr){
 try{
-submitForm("error submitted by android app: " + String(errorStr), 10);
+submitForm("error submitted by android app: "+String(errorStr), 10);
 }
 catch (exc){
 submitForm("submitError() handling error", 20);
@@ -873,85 +873,85 @@ submitForm("submitError() handling error", 20);
 function getMemoryUsage(){
 let res="memory usage:";
 try{
-res=res + String(performance.memory.usedJSHeapSize)  + "|" + String(performance.memory.totalJSHeapSize)  + "|" + String (performance.memory.jsHeapSizeLimit);
+res=res+String(performance.memory.usedJSHeapSize)+"|"+String(performance.memory.totalJSHeapSize)+"|"+String (performance.memory.jsHeapSizeLimit);
 }
 catch (exc){
-res=res + "unknown";
+res=res+"unknown";
 }
 return res;
 }
 function game_onerror(message, url, lineNo, columnNo, error){
 let err_str="tbc";
 try{
-err_str=('error:' + message
-+ '|url:' + url
-+ '|line number:' + lineNo
-+ '|column number:' + columnNo
-+ '|error object:' + error).trim();
-if(url.indexOf("fcneeeckalcgcklbloocjmhapagkkbfa") !=-1){
+err_str=('error:'+message
++'|url:'+url
++'|line number:'+lineNo
++'|column number:'+columnNo
++'|error object:'+error).trim();
+if(url.indexOf("fcneeeckalcgcklbloocjmhapagkkbfa")!=-1){
 return;
 }
-if(url.indexOf("ofdopmlmgifpfkijadehmhjccbefaeec") !=-1){
+if(url.indexOf("ofdopmlmgifpfkijadehmhjccbefaeec")!=-1){
 return;
 }
-if((url.indexOf("hosteagle") !=-1)||(url.indexOf("injectedScript") !=-1)){
+if((url.indexOf("hosteagle")!=-1)||(url.indexOf("injectedScript")!=-1)){
 return;
 }}
 catch (error){}
 try{
-if((message.indexOf("TypeError: null is not an object (evaluating 'reader.content')") !=-1)
-&&(url.indexOf("game.html") !=-1) ){
+if((message.indexOf("TypeError: null is not an object (evaluating 'reader.content')")!=-1)
+&&(url.indexOf("game.html")!=-1) ){
 return;
 }
-if(message.indexOf("ResizeObserver loop limit exceeded") !=-1){
+if(message.indexOf("ResizeObserver loop limit exceeded")!=-1){
 return;
 }
-if(message.indexOf("webkitExitFullScreen") !=-1){
+if(message.indexOf("webkitExitFullScreen")!=-1){
 return;
 }
-if(message.indexOf("_AutofillCallbackHandler") !=-1){
+if(message.indexOf("_AutofillCallbackHandler")!=-1){
 return;
 }
-if(message.indexOf("undefined is not an object (evaluating 'a.L')") !=-1){
+if(message.indexOf("undefined is not an object (evaluating 'a.L')")!=-1){
 return;
 }
-if(safariMode&&(message.indexOf("Script error.") !=-1)&&(url=="")&&(lineNo==0)&&(columnNo==0)&&(error==null)){
+if(safariMode&&(message.indexOf("Script error.")!=-1)&&(url=="")&&(lineNo==0)&&(columnNo==0)&&(error==null)){
 return;
 }}
 catch (error){}
 var extra_debug_info="";
 if(localStorage.firstname){
-extra_debug_info=extra_debug_info + localStorage.firstname;
+extra_debug_info=extra_debug_info+localStorage.firstname;
 }
 if(localStorage.playerid){
-extra_debug_info=extra_debug_info + " " + localStorage.playerid;
+extra_debug_info=extra_debug_info+" "+localStorage.playerid;
 }
-extra_debug_info=extra_debug_info + (localStorage.gamesok ? " gamesok=" + localStorage.gamesok : "");
+extra_debug_info=extra_debug_info+(localStorage.gamesok ? " gamesok="+localStorage.gamesok : "");
 try{
-extra_debug_info=extra_debug_info + " gameOnGoing=" + gameOnGoing() + "|currentAttemptNumber=" + currentAttemptNumber + "|gameWon=" + gameWon;
-}
-catch (exc){}
-try{
-extra_debug_info=extra_debug_info + " gamesolver_blob:" + gamesolver_blob_error + "|" + ((gamesolver_blob !=null) ? gamesolver_blob.size : "null gamesolver_blob");
+extra_debug_info=extra_debug_info+" gameOnGoing="+gameOnGoing()+"|currentAttemptNumber="+currentAttemptNumber+"|gameWon="+gameWon;
 }
 catch (exc){}
 try{
-extra_debug_info=extra_debug_info + " " + getMemoryUsage() + (oldBrowserVersion ? " oldbrowser" : "");
+extra_debug_info=extra_debug_info+" gamesolver_blob:"+gamesolver_blob_error+"|"+((gamesolver_blob!=null) ? gamesolver_blob.size : "null gamesolver_blob");
+}
+catch (exc){}
+try{
+extra_debug_info=extra_debug_info+" "+getMemoryUsage()+(oldBrowserVersion ? " oldbrowser" : "");
 }
 catch (exc){}
 extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0N: " + (localStorage.reloadForCompatibility_v300N ? localStorage.reloadForCompatibility_v300N : "not done") + "): "
-+ (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
-+ err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
-+ " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
-+ "|game:" + debug_game_state
-+ "|smm:" + smm_load_state + "," + debug_smm_state
-+ "|resizeorunload:" + debug_on_resize_or_unload
-+ "|gamesolver:" + gamesolver_load_state + "|" + ((gamesolver_load_start_time !=-1) ? ((new Date()).getTime() - gamesolver_load_start_time)/1000 + "s" : "-")
-+ " for " + extra_debug_info, 30);
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0N: "+(localStorage.reloadForCompatibility_v300N ? localStorage.reloadForCompatibility_v300N : "not done")+"): "
++(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
++err_str+" in "+userAgentStr+(android_appli ? "|"+classicalUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
++" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
++"|game:"+debug_game_state
++"|smm:"+smm_load_state+","+debug_smm_state
++"|resizeorunload:"+debug_on_resize_or_unload
++"|gamesolver:"+gamesolver_load_state+"|"+((gamesolver_load_start_time!=-1) ? ((new Date()).getTime()-gamesolver_load_start_time)/1000+"s" : "-")
++" for "+extra_debug_info, 30);
 }
 window.onerror=game_onerror;
 </script>
@@ -970,21 +970,21 @@ evt_promise_str=JSON.stringify(evt.promise).substring(0, 101).trim();
 catch (exc){}
 var extra_debug_info="";
 if(localStorage.firstname){
-extra_debug_info=extra_debug_info + localStorage.firstname;
+extra_debug_info=extra_debug_info+localStorage.firstname;
 }
 if(localStorage.playerid){
-extra_debug_info=extra_debug_info + " " + localStorage.playerid;
+extra_debug_info=extra_debug_info+" "+localStorage.playerid;
 }
-extra_debug_info=extra_debug_info + (localStorage.gamesok ? " gamesok=" + localStorage.gamesok : "");
+extra_debug_info=extra_debug_info+(localStorage.gamesok ? " gamesok="+localStorage.gamesok : "");
 try{
-extra_debug_info=extra_debug_info + " gameOnGoing=" + gameOnGoing() + "|currentAttemptNumber=" + currentAttemptNumber + "|gameWon=" + gameWon;
+extra_debug_info=extra_debug_info+" gameOnGoing="+gameOnGoing()+"|currentAttemptNumber="+currentAttemptNumber+"|gameWon="+gameWon;
 }
 catch (exc){}
 extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** " + errormsg + " ***** (" + html_compatibility_game_version + "): event: " + evt + "|" + evt_str + " / reason: " + evt.reason + " / promise: " + evt.promise + "|" + evt_promise_str + " | cause: " + cause + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon + "|" + debug_game_state + "|" + debug_on_resize_or_unload + " for " + extra_debug_info + " in " + userAgentStr, 40);
+submitForm("***** "+errormsg+" ***** ("+html_compatibility_game_version+"): event: "+evt+"|"+evt_str+" / reason: "+evt.reason+" / promise: "+evt.promise+"|"+evt_promise_str+" | cause: "+cause+" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon+"|"+debug_game_state+"|"+debug_on_resize_or_unload+" for "+extra_debug_info+" in "+userAgentStr, 40);
 }
 window.onmessageerror=function(evt){
 game_event_onerrors(evt, "GAME MESSAGE ERROR", "onmessageerror");
@@ -1008,7 +1008,7 @@ windowOnLoadEventReceived="yes";
 }
 catch (exc){}}
 function capitalizeFirstLetter(str){
-return str.charAt(0).toUpperCase() + str.slice(1);
+return str.charAt(0).toUpperCase()+str.slice(1);
 }
 function capitalizeFirstLetters(str){
 if(str.length==0){
@@ -1019,11 +1019,11 @@ return str.charAt(0).toUpperCase();
 }
 else{
 let res=str.toLowerCase();
-res=res.charAt(0).toUpperCase() + res.slice(1);
+res=res.charAt(0).toUpperCase()+res.slice(1);
 let res2="";
 let index=res.indexOf('-');
-while ((index !=-1)&&(index+1 < res.length)){
-res2=res2 + res.substring(0, index+1) + res.charAt(index+1).toUpperCase();
+while ((index!=-1)&&(index+1 < res.length)){
+res2=res2+res.substring(0, index+1)+res.charAt(index+1).toUpperCase();
 if(index+2 < res.length){
 res=res.slice(index+2);
 index=res.indexOf('-');
@@ -1032,12 +1032,12 @@ else{
 res="";
 index=-1;
 }}
-res2=res2 + res;
+res2=res2+res;
 res=res2;
 res2="";
 index=res.indexOf(' ');
-while ((index !=-1)&&(index+1 < res.length)){
-res2=res2 + res.substring(0, index+1) + res.charAt(index+1).toUpperCase();
+while ((index!=-1)&&(index+1 < res.length)){
+res2=res2+res.substring(0, index+1)+res.charAt(index+1).toUpperCase();
 if(index+2 < res.length){
 res=res.slice(index+2);
 index=res.indexOf(' ');
@@ -1046,12 +1046,12 @@ else{
 res="";
 index=-1;
 }}
-res2=res2 + res;
+res2=res2+res;
 res=res2;
 res2="";
 index=res.indexOf("'");
-while ((index !=-1)&&(index+1 < res.length)){
-res2=res2 + res.substring(0, index+1) + res.charAt(index+1).toUpperCase();
+while ((index!=-1)&&(index+1 < res.length)){
+res2=res2+res.substring(0, index+1)+res.charAt(index+1).toUpperCase();
 if(index+2 < res.length){
 res=res.slice(index+2);
 index=res.indexOf("'");
@@ -1060,7 +1060,7 @@ else{
 res="";
 index=-1;
 }}
-res2=res2 + res;
+res2=res2+res;
 res2=res2.replace(" D'"," d'");
 res2=res2.replace(" Sur "," sur ");
 return res2;
@@ -1085,7 +1085,7 @@ guessedIdStr="O";
 else{
 guessedIdStr="X";
 }
-return "GID:" + guessedIdStr + ((screen.width * screen.height * screen.colorDepth) % 997);
+return "GID:"+guessedIdStr+((screen.width * screen.height * screen.colorDepth) % 997);
 }
 function getLocation(){
 switch(location.protocol){
@@ -1103,7 +1103,7 @@ function nbVowels(str)
 var vowel_list='aeiouyAEIOUY';
 var vowel_count=0;
 for (var i=0;i < str.length;i++){
-if(vowel_list.indexOf(str[i]) !==-1){
+if(vowel_list.indexOf(str[i])!==-1){
 vowel_count++;
 }}
 return vowel_count;
@@ -1111,7 +1111,7 @@ return vowel_count;
 function getCountryNameFromBrowserLanguage(defaultCountryName){
 let browserlanguage=navigator.language;
 let dashIdx=browserlanguage.indexOf("-");
-if(dashIdx !=-1){
+if(dashIdx!=-1){
 browserlanguage=browserlanguage.substring(dashIdx+1);
 }
 browserlanguage=browserlanguage.toUpperCase().trim();
@@ -1124,76 +1124,76 @@ return defaultCountryName;
 function isCorrect(str){
 if((str.length < minFirstNameLength)
 ||(str.length > maxFirstNameLength)
-||(str.toLowerCase().indexOf('sherl') !=-1)
-||(str.toLowerCase().indexOf('holm') !=-1)
-||(str.toLowerCase().indexOf('watson') !=-1)
-||(str.toLowerCase().indexOf('aaa') !=-1)
-||(str.toLowerCase().indexOf('bbb') !=-1)
-||(str.toLowerCase().indexOf('ccc') !=-1)
-||(str.toLowerCase().indexOf('ddd') !=-1)
-||(str.toLowerCase().indexOf('eee') !=-1)
-||(str.toLowerCase().indexOf('fff') !=-1)
-||(str.toLowerCase().indexOf('ggg') !=-1)
-||(str.toLowerCase().indexOf('hhh') !=-1)
-||(str.toLowerCase().indexOf('iii') !=-1)
-||(str.toLowerCase().indexOf('jjj') !=-1)
-||(str.toLowerCase().indexOf('kkk') !=-1)
-||(str.toLowerCase().indexOf('lll') !=-1)
-||(str.toLowerCase().indexOf('mmm') !=-1)
-||(str.toLowerCase().indexOf('nnn') !=-1)
-||(str.toLowerCase().indexOf('ooo') !=-1)
-||(str.toLowerCase().indexOf('ppp') !=-1)
-||(str.toLowerCase().indexOf('qqq') !=-1)
-||(str.toLowerCase().indexOf('rrr') !=-1)
-||(str.toLowerCase().indexOf('sss') !=-1)
-||(str.toLowerCase().indexOf('ttt') !=-1)
-||(str.toLowerCase().indexOf('uuu') !=-1)
-||(str.toLowerCase().indexOf('vvv') !=-1)
-||(str.toLowerCase().indexOf('www') !=-1)
-||(str.toLowerCase().indexOf('xx') !=-1)
-||(str.toLowerCase().indexOf('yyy') !=-1)
-||(str.toLowerCase().indexOf('zzz') !=-1)
-||(str.toLowerCase().indexOf('bastard') !=-1)
-||(str.toLowerCase().indexOf('fuck') !=-1)
-||(str.toLowerCase().indexOf('sex') !=-1)
-||(str.toLowerCase().indexOf('dick') !=-1)
-||(str.toLowerCase().indexOf('viagra') !=-1)
-||(str.toLowerCase().indexOf('silde') !=-1)
-||(str.toLowerCase().indexOf('sildé') !=-1)
-||(str.toLowerCase().indexOf('nafil') !=-1)
+||(str.toLowerCase().indexOf('sherl')!=-1)
+||(str.toLowerCase().indexOf('holm')!=-1)
+||(str.toLowerCase().indexOf('watson')!=-1)
+||(str.toLowerCase().indexOf('aaa')!=-1)
+||(str.toLowerCase().indexOf('bbb')!=-1)
+||(str.toLowerCase().indexOf('ccc')!=-1)
+||(str.toLowerCase().indexOf('ddd')!=-1)
+||(str.toLowerCase().indexOf('eee')!=-1)
+||(str.toLowerCase().indexOf('fff')!=-1)
+||(str.toLowerCase().indexOf('ggg')!=-1)
+||(str.toLowerCase().indexOf('hhh')!=-1)
+||(str.toLowerCase().indexOf('iii')!=-1)
+||(str.toLowerCase().indexOf('jjj')!=-1)
+||(str.toLowerCase().indexOf('kkk')!=-1)
+||(str.toLowerCase().indexOf('lll')!=-1)
+||(str.toLowerCase().indexOf('mmm')!=-1)
+||(str.toLowerCase().indexOf('nnn')!=-1)
+||(str.toLowerCase().indexOf('ooo')!=-1)
+||(str.toLowerCase().indexOf('ppp')!=-1)
+||(str.toLowerCase().indexOf('qqq')!=-1)
+||(str.toLowerCase().indexOf('rrr')!=-1)
+||(str.toLowerCase().indexOf('sss')!=-1)
+||(str.toLowerCase().indexOf('ttt')!=-1)
+||(str.toLowerCase().indexOf('uuu')!=-1)
+||(str.toLowerCase().indexOf('vvv')!=-1)
+||(str.toLowerCase().indexOf('www')!=-1)
+||(str.toLowerCase().indexOf('xx')!=-1)
+||(str.toLowerCase().indexOf('yyy')!=-1)
+||(str.toLowerCase().indexOf('zzz')!=-1)
+||(str.toLowerCase().indexOf('bastard')!=-1)
+||(str.toLowerCase().indexOf('fuck')!=-1)
+||(str.toLowerCase().indexOf('sex')!=-1)
+||(str.toLowerCase().indexOf('dick')!=-1)
+||(str.toLowerCase().indexOf('viagra')!=-1)
+||(str.toLowerCase().indexOf('silde')!=-1)
+||(str.toLowerCase().indexOf('sildé')!=-1)
+||(str.toLowerCase().indexOf('nafil')!=-1)
 ||(str.toLowerCase().endsWith("bite"))
-||(str.toLowerCase().indexOf('stupid') !=-1)
-||(str.toLowerCase().indexOf('noname') !=-1)
-||(str.toLowerCase().indexOf('no-name') !=-1)
-||(str.toLowerCase().indexOf('unknown') !=-1)
-||(str.toLowerCase().indexOf('invalid') !=-1)
-||(str.toLowerCase().indexOf('notvalid') !=-1)
-||(str.toLowerCase().indexOf('null') !=-1)
-||(str.toLowerCase().indexOf('english') !=-1)
-||(str.toLowerCase().indexOf('england') !=-1)
-||(str.toLowerCase().indexOf('british') !=-1)
-||(str.toLowerCase().indexOf('french') !=-1)
-||(str.toLowerCase().indexOf('americ') !=-1)
-||(str.toLowerCase().indexOf('german') !=-1)
-||(str.toLowerCase().indexOf('deutsch') !=-1)
-||(str.toLowerCase().indexOf('canad') !=-1)
-||(str.toLowerCase().indexOf('myname') !=-1)
-||(str.toLowerCase().indexOf('nobody') !=-1)
-||(str.toLowerCase().indexOf('anybody') !=-1)
-||(str.toLowerCase().indexOf('noone') !=-1)
-||(str.toLowerCase().indexOf('anyone') !=-1)
-||(str.toLowerCase().indexOf('noone') !=-1)
-||(str.toLowerCase().indexOf('person') !=-1)
-||(str.toLowerCase().indexOf('dummy') !=-1)
-||(str.toLowerCase().indexOf('empty') !=-1)
-||(str.toLowerCase().indexOf('empti') !=-1)
-||(str.toLowerCase().indexOf('azert') !=-1)
-||(str.toLowerCase().indexOf('qwert') !=-1)
-||(str.toLowerCase().indexOf('masterm') !=-1)
-||(str.toLowerCase().indexOf('master-m') !=-1)
-||(str.toLowerCase().indexOf('supermas') !=-1)
-||(str.toLowerCase().indexOf('super-mas') !=-1)
-||(str.toLowerCase().indexOf('yvpj') !=-1)
+||(str.toLowerCase().indexOf('stupid')!=-1)
+||(str.toLowerCase().indexOf('noname')!=-1)
+||(str.toLowerCase().indexOf('no-name')!=-1)
+||(str.toLowerCase().indexOf('unknown')!=-1)
+||(str.toLowerCase().indexOf('invalid')!=-1)
+||(str.toLowerCase().indexOf('notvalid')!=-1)
+||(str.toLowerCase().indexOf('null')!=-1)
+||(str.toLowerCase().indexOf('english')!=-1)
+||(str.toLowerCase().indexOf('england')!=-1)
+||(str.toLowerCase().indexOf('british')!=-1)
+||(str.toLowerCase().indexOf('french')!=-1)
+||(str.toLowerCase().indexOf('americ')!=-1)
+||(str.toLowerCase().indexOf('german')!=-1)
+||(str.toLowerCase().indexOf('deutsch')!=-1)
+||(str.toLowerCase().indexOf('canad')!=-1)
+||(str.toLowerCase().indexOf('myname')!=-1)
+||(str.toLowerCase().indexOf('nobody')!=-1)
+||(str.toLowerCase().indexOf('anybody')!=-1)
+||(str.toLowerCase().indexOf('noone')!=-1)
+||(str.toLowerCase().indexOf('anyone')!=-1)
+||(str.toLowerCase().indexOf('noone')!=-1)
+||(str.toLowerCase().indexOf('person')!=-1)
+||(str.toLowerCase().indexOf('dummy')!=-1)
+||(str.toLowerCase().indexOf('empty')!=-1)
+||(str.toLowerCase().indexOf('empti')!=-1)
+||(str.toLowerCase().indexOf('azert')!=-1)
+||(str.toLowerCase().indexOf('qwert')!=-1)
+||(str.toLowerCase().indexOf('masterm')!=-1)
+||(str.toLowerCase().indexOf('master-m')!=-1)
+||(str.toLowerCase().indexOf('supermas')!=-1)
+||(str.toLowerCase().indexOf('super-mas')!=-1)
+||(str.toLowerCase().indexOf('yvpj')!=-1)
 ||(str.toLowerCase()=="super")
 ||(str.toLowerCase()=="master")
 ||(str.toLowerCase()=="mind")
@@ -1206,9 +1206,9 @@ if((str.length < minFirstNameLength)
 ||(str.toLowerCase()=="toto")
 ||(str.toLowerCase()=="ajk")
 ||(str.toLowerCase().indexOf('-')==0)
-||(str.toLowerCase().lastIndexOf('-')==str.length - 1)
-||(str.toLowerCase().indexOf('--') !=-1)
-||(str.toLowerCase().indexOf('_') !=-1)
+||(str.toLowerCase().lastIndexOf('-')==str.length-1)
+||(str.toLowerCase().indexOf('--')!=-1)
+||(str.toLowerCase().indexOf('_')!=-1)
 ||(nbVowels(str)==0)
 ||(nbVowels(str)==str.length) ){
 return false;
@@ -1224,33 +1224,33 @@ var glbScoreAndPerfHistoryArrayNamePrefix="glbScoreAndPerfHistoryArray";
 var glbScoreNAValue=-100;
 var glbPerfNAValue=-100;
 function getGlbScoreAndPerfHistoryArrayName(nbColumns_p){
-return glbScoreAndPerfHistoryArrayNamePrefix + "_" + nbColumns_p + "cols";
+return glbScoreAndPerfHistoryArrayNamePrefix+"_"+nbColumns_p+"cols";
 }
 function storeGlbScoreAndPerf(nbColumns_p, glb_score, glb_perf){
 try{
-if((nbColumns_p !=3)&&(nbColumns_p !=4)&&(nbColumns_p !=5)&&(nbColumns_p !=6)&&(nbColumns_p !=7)){
-throw new Error("invalid nbColumns_p: " + nbColumns_p);
+if((nbColumns_p!=3)&&(nbColumns_p!=4)&&(nbColumns_p!=5)&&(nbColumns_p!=6)&&(nbColumns_p!=7)){
+throw new Error("invalid nbColumns_p: "+nbColumns_p);
 }
-var valid_glb_score=(glb_score !='-');
+var valid_glb_score=(glb_score!='-');
 var glb_score_float=glbScoreNAValue;
 if(valid_glb_score){
 glb_score_float=parseFloat(glb_score);
 if(isNaN(glb_score_float)||!isFinite(glb_score)){
-throw new Error("invalid glb_score value: " + glb_score);
+throw new Error("invalid glb_score value: "+glb_score);
 }}
-var valid_glb_perf=(glb_perf !='-');
+var valid_glb_perf=(glb_perf!='-');
 var glb_perf_float=glbPerfNAValue;
 if(valid_glb_perf){
 glb_perf_float=parseFloat(glb_perf);
 if(isNaN(glb_perf_float)||!isFinite(glb_perf)){
-throw new Error("invalid glb_perf value: " + glb_perf);
+throw new Error("invalid glb_perf value: "+glb_perf);
 }}
 var glbScoreAndPerfHistoryArrayName=getGlbScoreAndPerfHistoryArrayName(nbColumns_p);
 var jsonString=localStorage.getItem(glbScoreAndPerfHistoryArrayName);
 if(jsonString==null){
 var glbScoreAndPerfHistoryArray=new Array(glbScoreAndPerfHistorySize);
 for (var i=0;i < glbScoreAndPerfHistorySize;i++){
-glbScoreAndPerfHistoryArray[i]={glbscore: glbScoreNAValue, glbperf: glbPerfNAValue, date: "creation date: " + new Date()};
+glbScoreAndPerfHistoryArray[i]={glbscore: glbScoreNAValue, glbperf: glbPerfNAValue, date: "creation date: "+new Date()};
 }
 var jsonString2=JSON.stringify(glbScoreAndPerfHistoryArray);
 localStorage.setItem(glbScoreAndPerfHistoryArrayName, jsonString2);
@@ -1261,22 +1261,22 @@ if(jsonString==null){
 throw new Error("null jsonString");
 }
 var glbScoreAndPerfHistoryArray=JSON.parse(jsonString);
-if(glbScoreAndPerfHistoryArray.length !=glbScoreAndPerfHistorySize){
-throw new Error("invalid length: " + glbScoreAndPerfHistoryArray.length + " !=" + glbScoreAndPerfHistorySize);
+if(glbScoreAndPerfHistoryArray.length!=glbScoreAndPerfHistorySize){
+throw new Error("invalid length: "+glbScoreAndPerfHistoryArray.length+"!="+glbScoreAndPerfHistorySize);
 }
 var glbScoreAndPerfHistoryIdx=parseInt(localStorage.glbScoreAndPerfHistoryIdx);
 if(isNaN(glbScoreAndPerfHistoryIdx)||(glbScoreAndPerfHistoryIdx < 0)||(glbScoreAndPerfHistoryIdx >=glbScoreAndPerfHistorySize)){
-throw new Error("invalid global history index: " + glbScoreAndPerfHistoryIdx);
+throw new Error("invalid global history index: "+glbScoreAndPerfHistoryIdx);
 }
 glbScoreAndPerfHistoryArray[glbScoreAndPerfHistoryIdx]={glbscore: glb_score_float,
 glbperf: glb_perf_float,
 date: new Date()};
 var jsonString2=JSON.stringify(glbScoreAndPerfHistoryArray);
 localStorage.setItem(glbScoreAndPerfHistoryArrayName, jsonString2);
-localStorage.glbScoreAndPerfHistoryIdx=(glbScoreAndPerfHistoryIdx + 1) % glbScoreAndPerfHistorySize;
+localStorage.glbScoreAndPerfHistoryIdx=(glbScoreAndPerfHistoryIdx+1) % glbScoreAndPerfHistorySize;
 }
 catch (exc){
-submitForm("storeGlbScoreAndPerf error: " + exc + ": " + exc.stack, 50);
+submitForm("storeGlbScoreAndPerf error: "+exc+": "+exc.stack, 50);
 }}
 function displayOrGetMaxGlbScoreAndPerf(nbColumns_p, display, maxGlbResultsOut){
 if(!display){
@@ -1290,19 +1290,19 @@ if(jsonString==null){
 return false;
 }
 var glbScoreAndPerfHistoryArray=JSON.parse(jsonString);
-if(glbScoreAndPerfHistoryArray.length !=glbScoreAndPerfHistorySize){
-throw new Error("displayOrGetMaxGlbScoreAndPerf: invalid length: " + glbScoreAndPerfHistoryArray.length + " !=" + glbScoreAndPerfHistorySize);
+if(glbScoreAndPerfHistoryArray.length!=glbScoreAndPerfHistorySize){
+throw new Error("displayOrGetMaxGlbScoreAndPerf: invalid length: "+glbScoreAndPerfHistoryArray.length+"!="+glbScoreAndPerfHistorySize);
 }
 var glbScoreAndPerfHistoryIdx=parseInt(localStorage.glbScoreAndPerfHistoryIdx);
 if(isNaN(glbScoreAndPerfHistoryIdx)||(glbScoreAndPerfHistoryIdx < 0)||(glbScoreAndPerfHistoryIdx >=glbScoreAndPerfHistorySize)){
-throw new Error("displayOrGetMaxGlbScoreAndPerf: invalid global history index: " + glbScoreAndPerfHistoryIdx);
+throw new Error("displayOrGetMaxGlbScoreAndPerf: invalid global history index: "+glbScoreAndPerfHistoryIdx);
 }
 if(display){
 for (var i=0;i < glbScoreAndPerfHistorySize;i++){
-console.log("[" + i + ((i==glbScoreAndPerfHistoryIdx) ? "*": "") + "] " + glbScoreAndPerfHistoryArray[i].glbscore + ", " + glbScoreAndPerfHistoryArray[i].glbperf + ", " + glbScoreAndPerfHistoryArray[i].date);
+console.log("["+i+((i==glbScoreAndPerfHistoryIdx) ? "*": "")+"] "+glbScoreAndPerfHistoryArray[i].glbscore+", "+glbScoreAndPerfHistoryArray[i].glbperf+", "+glbScoreAndPerfHistoryArray[i].date);
 }}
 else{
-if(!localStorage.gamesok||(Number(localStorage.gamesok) < glbScoreAndPerfHistorySize + 5)){
+if(!localStorage.gamesok||(Number(localStorage.gamesok) < glbScoreAndPerfHistorySize+5)){
 console.log("(displayOrGetMaxGlbScoreAndPerf: skipped)");
 return false;
 }
@@ -1320,7 +1320,7 @@ maxGlbResultsOut.glbperf=maxGlbPerf;
 return true;
 }}
 catch (exc){
-submitForm("(displayOrGetMaxGlbScoreAndPerf: exception: " + exc + ": " + exc.stack + ")", 60);
+submitForm("(displayOrGetMaxGlbScoreAndPerf: exception: "+exc+": "+exc.stack+")", 60);
 return false;
 }
 return false;
@@ -1340,11 +1340,11 @@ trophy_image_height=trophy_image.height;
 function handle_rsp_delayed(e){
 debug_game_state=80;
 try{
-if((e !==undefined)&&(e !=null)
+if((e!==undefined)&&(e!=null)
 &&(typeof e.rsp_cd=='undefined')
-&&(typeof e.rankings !=='undefined')&&(e.rankings.length > 10)
-&&(typeof e.nbcolumns !=='undefined')&&(typeof e.globalScore !=='undefined')&&(typeof e.globalPerf !=='undefined') ){
-if(e.nbcolumns !="NA"){
+&&(typeof e.rankings!=='undefined')&&(e.rankings.length > 10)
+&&(typeof e.nbcolumns!=='undefined')&&(typeof e.globalScore!=='undefined')&&(typeof e.globalPerf!=='undefined') ){
+if(e.nbcolumns!="NA"){
 storeGlbScoreAndPerf(e.nbcolumns, e.globalScore, e.globalPerf);
 }
 var rsp_rankings_str=JSON.stringify(e.rankings).replaceAll("^\"|\"$", "");
@@ -1362,20 +1362,20 @@ rsp_rankings_str=rsp_rankings_str.replaceAll("<table>", "<table id='score_table'
 rsp_rankings_str=rsp_rankings_str.replaceAll("<tr>", "<tr style='font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str=rsp_rankings_str.replace(/<tr([A-Za-z0-9]+)>/g, "<tr style='background-color:#$1;font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str=rsp_rankings_str.replace(/<hr([A-Za-z0-9.]+)>/g, "<hr style='height:$1vh;padding:0;margin:0;visibility:hidden;'>");
-rsp_rankings_str=rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:" + scoresTableWidthStr);
+rsp_rankings_str=rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:"+scoresTableWidthStr);
 var header_font_size="2.7vh";
 var header_font_size_for_img="3.2vh";
-rsp_rankings_str=rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:" + header_font_size);
+rsp_rankings_str=rsp_rankings_str.replaceAll("font-size:HEADER_FTZ", "font-size:"+header_font_size);
 if(trophy_image_loaded){
 rsp_rankings_str=rsp_rankings_str.replace("&#x1F3C6;" ,
-"<img id='score_trophy_image_id_1' style='vertical-align:middle;height:" + header_font_size_for_img + ";margin:0;padding:0;'>");
+"<img id='score_trophy_image_id_1' style='vertical-align:middle;height:"+header_font_size_for_img+";margin:0;padding:0;'>");
 rsp_rankings_str=rsp_rankings_str.replace("&#x1F3C6;" ,
-"<img id='score_trophy_image_id_2' style='vertical-align:middle;height:" + header_font_size_for_img + ";margin:0;padding:0;'>");
+"<img id='score_trophy_image_id_2' style='vertical-align:middle;height:"+header_font_size_for_img+";margin:0;padding:0;'>");
 }
-rsp_rankings_str=rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:" + scoresFontSizeStr);
+rsp_rankings_str=rsp_rankings_str.replaceAll("font-size:FTZ", "font-size:"+scoresFontSizeStr);
 let padding_str="0.3vh 0 0.3vh 0";
-rsp_rankings_str=rsp_rankings_str.replaceAll("<td>", "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>");
-rsp_rankings_str=rsp_rankings_str.replace(/[\[]/g, "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>");
+rsp_rankings_str=rsp_rankings_str.replaceAll("<td>", "<td style='vertical-align:middle;border:0;margin:0;padding:"+padding_str+";text-align:center;font-weight:bold;'>");
+rsp_rankings_str=rsp_rankings_str.replace(/[\[]/g, "<td style='vertical-align:middle;border:0;margin:0;padding:"+padding_str+";text-align:center;font-weight:bold;'>");
 rsp_rankings_str=rsp_rankings_str.replace(/[\]]/g, "</td>");
 rsp_rankings_str=rsp_rankings_str.replaceAll("<s>", "<small>");
 rsp_rankings_str=rsp_rankings_str.replaceAll("</s>", "</small>");
@@ -1386,32 +1386,32 @@ rsp_rankings_str=rsp_rankings_str.replace("HISTORY_SIZE", glbScoreAndPerfHistory
 try{
 modal_mode=2;
 modal.setContent("<div style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>"
-+ rsp_rankings_str
-+ "</div>");
++rsp_rankings_str
++"</div>");
 modal.open();
 let trophy_img_1=document.getElementById('score_trophy_image_id_1');
-if(trophy_img_1 !=null){
+if(trophy_img_1!=null){
 trophy_img_1.src="img/trophy.png";
 }
 let trophy_img_2=document.getElementById('score_trophy_image_id_2');
-if(trophy_img_2 !=null){
+if(trophy_img_2!=null){
 trophy_img_2.src="img/trophy.png";
 }}
 catch (exc){
-throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
+throw new Error("modal error ("+modal_mode+"): "+exc+": "+exc.stack);
 }}
 else{
 if((e==undefined)||(e==null)){
 console.log('rsp_cd: ?');
 }
-else if(typeof e.rsp_cd !=='undefined'){
-console.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
+else if(typeof e.rsp_cd!=='undefined'){
+console.log('rsp_cd: '+JSON.stringify(e.rsp_cd));
 }
 else{
 console.log('rsp_cd: ?');
 }}}
 catch (exc){
-throw new Error("handle_rsp_delayed error: " + exc + ": " + exc.stack);
+throw new Error("handle_rsp_delayed error: "+exc+": "+exc.stack);
 }
 debug_game_state=81;
 }
@@ -1424,20 +1424,20 @@ if(mobileMode){
 score_display_time=4444;
 }
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
-score_display_time=score_display_time * 2 + 3000;
+score_display_time=score_display_time * 2+3000;
 }
 var time_to_wait=44;
-var time_diff=new Date().getTime() - store_time;
+var time_diff=new Date().getTime()-store_time;
 if(time_diff < score_display_time){
-time_to_wait=score_display_time - time_diff;
+time_to_wait=score_display_time-time_diff;
 }
 else{
 time_to_wait=44;
 }
-console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
-setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
+console.log("(time_diff="+time_diff+", time_to_wait="+time_to_wait+")");
+setTimeout("handle_rsp_delayed("+JSON.stringify(e)+");", time_to_wait);
 }
-var statsURL="https://script.google.com/macros/s/AKf" + extraStr + "ycbxV_dIUQ-wfdjGxHLzsEvVDp3MHMzggA9e20Td1jiSQZJXvgVvgFr_kbOE0IL4cXTyo/exec";
+var statsURL="https://script.google.com/macros/s/AKf"+extraStr+"ycbxV_dIUQ-wfdjGxHLzsEvVDp3MHMzggA9e20Td1jiSQZJXvgVvgFr_kbOE0IL4cXTyo/exec";
 var last_stats_keys_size=50;
 var last_stats_keys_index=0;
 var last_stats_keys=new Array(last_stats_keys_size);
@@ -1445,18 +1445,18 @@ for (var i=0;i < last_stats_keys_size;i++){
 last_stats_keys[i]="__init_stats_key__";
 }
 function handle_stats(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p){
-setTimeout("handle_stats_bis(" + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", '" + applyTimes_p + "', '" + pId_p + "', '" + key_p + "', '" + retr_p + "');", 44);
+setTimeout("handle_stats_bis("+nbColumns_p+", "+totalTime_p+", "+calcTime_p+", '"+applyTimes_p+"', '"+pId_p+"', '"+key_p+"', '"+retr_p+"');", 44);
 }
 function handle_stats_bis(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p){
 if(globalErrorStatus){
 console.log("(handle_stats_bis skipped due to global error)");
 return;
 }
-if(((nbColumns_p !="4")&&(nbColumns_p !="5")&&(nbColumns_p !="6")&&(nbColumns_p !="7"))
-||((applyTimes_p !="N")&&(applyTimes_p !="Y"))
-||((retr_p !="N")&&(retr_p !="Y")&&(retr_p !="Y2")) ){
-submitForm("handle_stats_bis error (wrong parameters): " + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", "
-+ applyTimes_p + ", " + pId_p + ", " + key_p  + ", " + retr_p + ", last_idx: " + last_stats_keys_index, 70);
+if(((nbColumns_p!="4")&&(nbColumns_p!="5")&&(nbColumns_p!="6")&&(nbColumns_p!="7"))
+||((applyTimes_p!="N")&&(applyTimes_p!="Y"))
+||((retr_p!="N")&&(retr_p!="Y")&&(retr_p!="Y2")) ){
+submitForm("handle_stats_bis error (wrong parameters): "+nbColumns_p+", "+totalTime_p+", "+calcTime_p+", "
++applyTimes_p+", "+pId_p+", "+key_p+", "+retr_p+", last_idx: "+last_stats_keys_index, 70);
 console.log("stats form submission skipped (wrong parameters)");
 return;
 }
@@ -1494,18 +1494,18 @@ timeout: 30000
 });
 }
 else{
-if(retr_p !="Y2"){
-submitForm("internal error when setting localStorage.pendingStats: " + retr_p, 80);
+if(retr_p!="Y2"){
+submitForm("internal error when setting localStorage.pendingStats: "+retr_p, 80);
 }
-localStorage.pendingStats="handle_stats_bis(" + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", '" + applyTimes_p + "', '" + pId_p + "', '" + key_p + "', '" + retr_p + "');"
+localStorage.pendingStats="handle_stats_bis("+nbColumns_p+", "+totalTime_p+", "+calcTime_p+", '"+applyTimes_p+"', '"+pId_p+"', '"+key_p+"', '"+retr_p+"');"
 }}
 if(localStorage.pendingStats){
-setTimeout("console.log('pending stats handled');" + localStorage.pendingStats + "localStorage.removeItem('pendingStats');", 4444);
+setTimeout("console.log('pending stats handled');"+localStorage.pendingStats+"localStorage.removeItem('pendingStats');", 4444);
 }
 var globalProgressForHTMLGame2=getGlobalProgress(0.75 , 0);
-console.log("current progress: " + Math.max(globalProgressForHTMLGame2, lastGlobalProgress) + "% (g)");lastGlobalProgress=globalProgressForHTMLGame2;
+console.log("current progress: "+Math.max(globalProgressForHTMLGame2, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgressForHTMLGame2;
 if(globalProgressForHTMLGame2 > 0){
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame2 + "%)");
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading ("+globalProgressForHTMLGame2+"%)");
 }
 var nb_locationURL_accesses=0;
 var locationURL_accesses_failure_causes="";
@@ -1519,24 +1519,24 @@ return res;
 }}
 function reformatTime(time_in_ms){
 if(time_in_ms < 0){
-return "negativetime:" + time_in_ms/1000;
+return "negativetime:"+time_in_ms/1000;
 }
 let time_in_sec=Math.floor(time_in_ms/1000);
 let time_in_minutes=Math.floor(time_in_sec / 60);
 let time_in_hours=Math.floor(time_in_sec / 3600 * 10)/10;
 let time_in_days=Math.floor(time_in_sec / (24 * 3600) * 100)/100;
 if(time_in_days >=1){
-return time_in_days + "d";
+return time_in_days+"d";
 }
 else if(time_in_hours >=1){
-return time_in_hours + "h";
+return time_in_hours+"h";
 }
 else if(time_in_minutes > 0){
-let remaining_sec=Math.floor((time_in_sec - time_in_minutes*60)/10)*10;
-return time_in_minutes + "min" + ((time_in_minutes < 5)&&(remaining_sec !=0) ? remaining_sec + "s" : "");
+let remaining_sec=Math.floor((time_in_sec-time_in_minutes*60)/10)*10;
+return time_in_minutes+"min"+((time_in_minutes < 5)&&(remaining_sec!=0) ? remaining_sec+"s" : "");
 }
 else{
-return time_in_sec + "s";
+return time_in_sec+"s";
 }}
 function deg2rad(deg){
 return deg * (Math.PI/180);
@@ -1546,7 +1546,7 @@ var R=6371;
 var dLat=deg2rad(lat2-lat1);
 var dLon=deg2rad(lon2-lon1);
 var a=
-Math.sin(dLat/2) * Math.sin(dLat/2) +
+Math.sin(dLat/2) * Math.sin(dLat/2)+
 Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
 Math.sin(dLon/2) * Math.sin(dLon/2);
 var c=2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
@@ -1562,18 +1562,18 @@ function isLocationDataValid(data_p, check_region_instead_of_city=false){
 if((typeof data_p=='undefined')||(data_p==undefined)||(data_p==null)){
 return false;
 }
-let validIpAddress=((typeof data_p.ip !='undefined')&&(data_p.ip !=undefined)&&(data_p.ip !=null)&&((String(data_p.ip).indexOf(".") !=-1)||(String(data_p.ip).indexOf(":") !=-1))&&(String(data_p.ip).trim().length >=7 ));
-let validCountryName=((typeof data_p.country_name !='undefined')&&(data_p.country_name !=undefined)&&(data_p.country_name !=null)&&(data_p.country_name.length >=2) );
+let validIpAddress=((typeof data_p.ip!='undefined')&&(data_p.ip!=undefined)&&(data_p.ip!=null)&&((String(data_p.ip).indexOf(".")!=-1)||(String(data_p.ip).indexOf(":")!=-1))&&(String(data_p.ip).trim().length >=7 ));
+let validCountryName=((typeof data_p.country_name!='undefined')&&(data_p.country_name!=undefined)&&(data_p.country_name!=null)&&(data_p.country_name.length >=2) );
 let cityOrRegionCondition;
 if(!check_region_instead_of_city){
-cityOrRegionCondition=((typeof data_p.city !='undefined')&&(data_p.city !=undefined)&&(data_p.city !=null)&&(data_p.city.length >=2)&&(reformatLocationValue(data_p.city) !="-")&&(reformatLocationValue(data_p.city).toLowerCase() !="city")&&(reformatLocationValue(data_p.city).toLowerCase() !="ville")&&(reformatLocationValue(data_p.city).toLowerCase() !="undefined"));
+cityOrRegionCondition=((typeof data_p.city!='undefined')&&(data_p.city!=undefined)&&(data_p.city!=null)&&(data_p.city.length >=2)&&(reformatLocationValue(data_p.city)!="-")&&(reformatLocationValue(data_p.city).toLowerCase()!="city")&&(reformatLocationValue(data_p.city).toLowerCase()!="ville")&&(reformatLocationValue(data_p.city).toLowerCase()!="undefined"));
 }
 else{
-cityOrRegionCondition=((typeof data_p.region !='undefined')&&(data_p.region !=undefined)&&(data_p.region !=null)&&(data_p.region.length >=2)&&(reformatLocationValue(data_p.region) !="-")&&(reformatLocationValue(data_p.region).toLowerCase() !="region")&&(reformatLocationValue(data_p.region).toLowerCase() !="région")&&(reformatLocationValue(data_p.region).toLowerCase() !="undefined"));
+cityOrRegionCondition=((typeof data_p.region!='undefined')&&(data_p.region!=undefined)&&(data_p.region!=null)&&(data_p.region.length >=2)&&(reformatLocationValue(data_p.region)!="-")&&(reformatLocationValue(data_p.region).toLowerCase()!="region")&&(reformatLocationValue(data_p.region).toLowerCase()!="région")&&(reformatLocationValue(data_p.region).toLowerCase()!="undefined"));
 }
-if((typeof data_p.latitude !='undefined')&&(data_p.latitude !=undefined)&&(data_p.latitude !=null)
-&&(typeof data_p.longitude !='undefined')&&(data_p.longitude !=undefined)&&(data_p.longitude !=null)
-&&((String(data_p.latitude).indexOf('.') !=-1)||(String(data_p.longitude).indexOf('.') !=-1))
+if((typeof data_p.latitude!='undefined')&&(data_p.latitude!=undefined)&&(data_p.latitude!=null)
+&&(typeof data_p.longitude!='undefined')&&(data_p.longitude!=undefined)&&(data_p.longitude!=null)
+&&((String(data_p.latitude).indexOf('.')!=-1)||(String(data_p.longitude).indexOf('.')!=-1))
 &&validCountryName
 &&cityOrRegionCondition
 &&validIpAddress){
@@ -1648,10 +1648,10 @@ localStorage.best_effort_location_id=locationId;
 localStorage.best_effort_update_time=(new Date()).getTime();
 let best_effort_location_data=getBestEffortLocationData();
 if(!isLocationDataValid(best_effort_location_data)){
-throw new Error("setBestEffortLocationData: invalid best effort location data: " + JSON.stringify(best_effort_location_data));
+throw new Error("setBestEffortLocationData: invalid best effort location data: "+JSON.stringify(best_effort_location_data));
 }}}
 catch (exc){
-submitForm("setBestEffortLocationData error: " + exc + ": " + exc.stack, 90);
+submitForm("setBestEffortLocationData error: "+exc+": "+exc.stack, 90);
 }}
 function getBestEffortLocationData(){
 if(localStorage.best_effort_latitude&&localStorage.best_effort_longitude&&localStorage.best_effort_accuracy&&localStorage.best_effort_countryname&&localStorage.best_effort_region&&localStorage.best_effort_city&&localStorage.best_effort_ip&&localStorage.best_effort_location_id&&localStorage.best_effort_update_time){
@@ -1667,8 +1667,8 @@ return best_effort_location_data;
 else{
 return null;
 }}
-let GEOCODING_API_URL_1="https://geocode.maps.co/reverse?lat=LATITUDE&lon=LONGITUDE&api_key=65b" + extraStr + "bd7330aa0a629386831xwm917" + "233";
-let GEOCODING_API_URL_2="https://nominatim.openstreet" + extraStr + "map.org/reverse?lat=LATITUDE&lon=LONGITUDE&format=json&accept-language=en";
+let GEOCODING_API_URL_1="https://geocode.maps.co/reverse?lat=LATITUDE&lon=LONGITUDE&api_key=65b"+extraStr+"bd7330aa0a629386831xwm917"+"233";
+let GEOCODING_API_URL_2="https://nominatim.openstreet"+extraStr+"map.org/reverse?lat=LATITUDE&lon=LONGITUDE&format=json&accept-language=en";
 if(!localStorage.useFirstGeocodingApi){
 localStorage.useFirstGeocodingApi="yes";
 }
@@ -1680,22 +1680,22 @@ let latitude=position.coords.latitude;
 let longitude=position.coords.longitude;
 let accuracy=position.coords.accuracy;
 console.log("HTML geolocation success:");
-console.log(" latitude: " + latitude);
-console.log(" longitude: " + longitude);
-console.log(" accuracy: " + accuracy);
+console.log(" latitude: "+latitude);
+console.log(" longitude: "+longitude);
+console.log(" accuracy: "+accuracy);
 localStorage.location_permission_granted="yes";
 debug_game_state=10;
 let debug_str="";
-if(debug_str_p !=null){
-debug_str=" " + debug_str_p;
+if(debug_str_p!=null){
+debug_str=" "+debug_str_p;
 }
-debug_str=debug_str + " " + ((localStorage.useFirstGeocodingApi=="yes") ? "1stGeolocApi" : "2ndGeolocApi");
-localStorage.html_geoloc_status="run_bis" + debug_str;
+debug_str=debug_str+" "+((localStorage.useFirstGeocodingApi=="yes") ? "1stGeolocApi" : "2ndGeolocApi");
+localStorage.html_geoloc_status="run_bis"+debug_str;
 HTML_geoloc_successes++;
-let inferred_ip_address=(localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix + '1.'  + Math.floor(Math.random() * 99999999) );
+let inferred_ip_address=(localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix+'1.'+Math.floor(Math.random() * 99999999) );
 if((!localStorage.bestEffortIPAddress)
-||(!localStorage.bestEffortIPAddressStorageTime)||((new Date()).getTime() - localStorage.bestEffortIPAddressStorageTime > 3*24*3600*1000) ){
-if((!localStorage.bestEffortIPAddressAttemptTime)||((new Date()).getTime() - localStorage.bestEffortIPAddressAttemptTime > 1*24*3600*1000) ){
+||(!localStorage.bestEffortIPAddressStorageTime)||((new Date()).getTime()-localStorage.bestEffortIPAddressStorageTime > 3*24*3600*1000) ){
+if((!localStorage.bestEffortIPAddressAttemptTime)||((new Date()).getTime()-localStorage.bestEffortIPAddressAttemptTime > 1*24*3600*1000) ){
 setTimeout("attemptAlternateLocationMethods(true);" , 4444);
 localStorage.bestEffortIPAddressAttemptTime=(new Date()).getTime();
 }}
@@ -1705,16 +1705,16 @@ if(isLocationDataValid(precise_location_data)
 console.log("previously stored precise location reused");
 localStorage.precise_ip=inferred_ip_address;
 localStorage.precise_location_success_time=(new Date()).getTime();
-localStorage.html_geoloc_status="ok nearly same position" + debug_str;
+localStorage.html_geoloc_status="ok nearly same position"+debug_str;
 precise_location_data=getPreciseStoredLocationData();
 if(!isLocationDataValid(precise_location_data)){
-throw new Error("HTML_geolocation_success: invalid precise location data #1: " + JSON.stringify(precise_location_data));
+throw new Error("HTML_geolocation_success: invalid precise location data #1: "+JSON.stringify(precise_location_data));
 }
 return;
 }
-if(localStorage.precise_geolocation_api_access_time&&((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)){
+if(localStorage.precise_geolocation_api_access_time&&((new Date()).getTime()-localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)){
 console.log("HTML geolocation skipped");
-localStorage.html_geoloc_status="skipped" + debug_str;
+localStorage.html_geoloc_status="skipped"+debug_str;
 return;
 }
 localStorage.precise_geolocation_api_access_time=(new Date()).getTime();
@@ -1756,10 +1756,10 @@ let zip="-";
 if(location.address.postcode){
 zip=String(location.address.postcode).trim();
 }
-console.log(" country: " + country);
-console.log(" region: " + region);
-console.log(" city: " + city);
-console.log(" zip: " + zip);
+console.log(" country: "+country);
+console.log(" region: "+region);
+console.log(" city: "+city);
+console.log(" zip: "+zip);
 var tmp_location_data={latitude: reformatLocationValue(latitude),
 longitude: reformatLocationValue(longitude),
 accuracy: accuracy,
@@ -1777,31 +1777,31 @@ localStorage.precise_region=tmp_location_data.region;
 localStorage.precise_city=tmp_location_data.city;
 localStorage.precise_ip=tmp_location_data.ip;
 localStorage.precise_location_success_time=(new Date()).getTime();
-localStorage.html_geoloc_status="ok-geocoding" + debug_str + " (" + latitude + "|" + longitude + ")";
+localStorage.html_geoloc_status="ok-geocoding"+debug_str+" ("+latitude+"|"+longitude+")";
 precise_location_data=getPreciseStoredLocationData();
 if(!isLocationDataValid(precise_location_data)){
-throw new Error("HTML_geolocation_success: invalid precise location data #2: " + JSON.stringify(precise_location_data));
+throw new Error("HTML_geolocation_success: invalid precise location data #2: "+JSON.stringify(precise_location_data));
 }}
 else{
 console.log("HTML geolocation error: invalid location values");
-localStorage.html_geoloc_status="ok-invalid" + debug_str + " (" + latitude + "," + longitude + ")";
+localStorage.html_geoloc_status="ok-invalid"+debug_str+" ("+latitude+","+longitude+")";
 }}
 else{
-console.log("HTML geolocation error: location.error: " + location.error);
-localStorage.html_geoloc_status="nok-2/" + location.error + "," + debug_str + " (" + latitude + "," + longitude + ")";
+console.log("HTML geolocation error: location.error: "+location.error);
+localStorage.html_geoloc_status="nok-2/"+location.error+","+debug_str+" ("+latitude+","+longitude+")";
 localStorage.useFirstGeocodingApi=((localStorage.useFirstGeocodingApi=="yes") ? "no" : "yes");
 }}
 catch (exc){
-console.log("HTML geolocation error: " + exc);
-localStorage.html_geoloc_status="nok-3/" + exc + debug_str;
+console.log("HTML geolocation error: "+exc);
+localStorage.html_geoloc_status="nok-3/"+exc+debug_str;
 localStorage.useFirstGeocodingApi=((localStorage.useFirstGeocodingApi=="yes") ? "no" : "yes");
 }
 debug_game_state=12;
 })
 .fail(function(jqxhr, textStatus, error){
 debug_game_state=13;
-console.log(("HTML geolocation failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-localStorage.html_geoloc_status="nok-4" + debug_str + " " + GEOCODING_API_URL;
+console.log(("HTML geolocation failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
+localStorage.html_geoloc_status="nok-4"+debug_str+" "+GEOCODING_API_URL;
 localStorage.useFirstGeocodingApi=((localStorage.useFirstGeocodingApi=="yes") ? "no" : "yes");
 debug_game_state=14;
 });
@@ -1810,11 +1810,11 @@ let android_HTML_geolocation_retries_after_error=0;
 function HTML_geolocation_error(error){
 let error_str="?";
 let skip_retries=false;
-if(error.code !=undefined){
+if(error.code!=undefined){
 switch(error.code){
 case error.PERMISSION_DENIED:
 localStorage.location_permission_granted="no";
-error_str="user denied the request for geolocation/" + (localStorage.nb_location_permissions_req ? localStorage.nb_location_permissions_req : "0") + "req";
+error_str="user denied the request for geolocation/"+(localStorage.nb_location_permissions_req ? localStorage.nb_location_permissions_req : "0")+"req";
 skip_retries=true;
 break;
 case error.POSITION_UNAVAILABLE:
@@ -1830,11 +1830,11 @@ break;
 else{
 error_str=String(error);
 }
-console.log("HTML geolocation error: " + error_str);
-localStorage.html_geoloc_status="nok-5/" + error_str;
+console.log("HTML geolocation error: "+error_str);
+localStorage.html_geoloc_status="nok-5/"+error_str;
 HTML_geoloc_errors++;
 if(android_appli&&(!skip_retries)&&(android_HTML_geolocation_retries_after_error < 3)){
-if(!localStorage.precise_geolocation_api_access_time||!((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)){
+if(!localStorage.precise_geolocation_api_access_time||!((new Date()).getTime()-localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)){
 android_HTML_geolocation_retries_after_error++;
 setTimeout("attempt_HTML_geolocation();", 5*android_HTML_geolocation_retries_after_error*60*1000);
 }}}
@@ -1844,7 +1844,7 @@ if(globalErrorStatus){
 console.log("(attempt_HTML_geolocation skipped due to global error)");
 return;
 }
-console.log("(attempt HTML geolocation at " + new Date() + ")");
+console.log("(attempt HTML geolocation at "+new Date()+")");
 if(android_appli){
 if(scriptsFullyLoaded){
 console.log("(get last location request)");
@@ -1862,13 +1862,13 @@ HTML_geoloc_attempts++;
 if(!localStorage.nb_location_permissions_req){
 localStorage.nb_location_permissions_req=0;
 }
-localStorage.nb_location_permissions_req=Number(localStorage.nb_location_permissions_req) + 1;
+localStorage.nb_location_permissions_req=Number(localStorage.nb_location_permissions_req)+1;
 }}}
 let ip_address_for_alternate_loc_methods="-";
 function handle_gs_geoloc(e){
 console.log("(handle_gs_geoloc)");
-if(e.rsp_cd !=undefined){
-localStorage.alternateLocationMethodDebugInfo +="_gslocerr2:" + e.rsp_cd;
+if(e.rsp_cd!=undefined){
+localStorage.alternateLocationMethodDebugInfo+="_gslocerr2:"+e.rsp_cd;
 return;
 }
 let converted_data={latitude: e.latitude,
@@ -1878,19 +1878,19 @@ country_name: e.country_name,
 region: e.region,
 city: e.city,
 ip: e.ip};
-if(e.ip !=ip_address_for_alternate_loc_methods){
-submitForm("unexpected IP address in handle_gs_geoloc: " + e.ip + ", " + ip_address_for_alternate_loc_methods, 100);
+if(e.ip!=ip_address_for_alternate_loc_methods){
+submitForm("unexpected IP address in handle_gs_geoloc: "+e.ip+", "+ip_address_for_alternate_loc_methods, 100);
 return;
 }
 if(isLocationDataValid(converted_data)){
-console.log("(attempt alternate location method - success)");
+console.log("(attempt alternate location method-success)");
 console.log(converted_data);
-localStorage.alternateLocationMethodDebugInfo +="_gslocok";
+localStorage.alternateLocationMethodDebugInfo+="_gslocok";
 setStoredLocationData(converted_data.ip, alternateLocationId, converted_data.latitude, converted_data.longitude, converted_data.country_name, converted_data.region, converted_data.city);
 }
 else{
 setBestEffortLocationData(converted_data, alternateLocationId);
-localStorage.alternateLocationMethodDebugInfo +="_gslocinvalid";
+localStorage.alternateLocationMethodDebugInfo+="_gslocinvalid";
 }}
 if(!localStorage.alternateLocationMethodDebugInfo){
 localStorage.alternateLocationMethodDebugInfo="altloc_never_run";
@@ -1900,26 +1900,26 @@ function attemptAlternateLocationMethods(ip_address_only){
 try{
 localStorage.alternateLocationMethodDebugInfo="altloc_";
 var xhr=new XMLHttpRequest();
-xhr.open('GET', 'https://api.ipif' + extraStr + 'y.org?format=json', true);
+xhr.open('GET', 'https://api.ipif'+extraStr+'y.org?format=json', true);
 xhr.onload=function (){
 if((xhr.readyState===xhr.DONE)&&(xhr.status===200)){
 let ipAddress=JSON.parse(xhr.responseText).ip;
-let validIpAddress=((typeof ipAddress !='undefined')&&(ipAddress !=undefined)&&(ipAddress !=null)&&((String(ipAddress).indexOf(".") !=-1)||(String(ipAddress).indexOf(":") !=-1))&&(String(ipAddress).trim().length >=7 ));
+let validIpAddress=((typeof ipAddress!='undefined')&&(ipAddress!=undefined)&&(ipAddress!=null)&&((String(ipAddress).indexOf(".")!=-1)||(String(ipAddress).indexOf(":")!=-1))&&(String(ipAddress).trim().length >=7 ));
 if(validIpAddress){
 ipAddress=String(ipAddress).trim();
 localStorage.bestEffortIPAddress=reformatLocationValue(ipAddress);
 localStorage.bestEffortIPAddressSource=alternateLocationId;
 localStorage.bestEffortIPAddressStorageTime=(new Date()).getTime();
-localStorage.alternateLocationMethodDebugInfo +="ipok";
+localStorage.alternateLocationMethodDebugInfo+="ipok";
 if(ip_address_only){
-localStorage.alternateLocationMethodDebugInfo +="_ipaddressonly";
+localStorage.alternateLocationMethodDebugInfo+="_ipaddressonly";
 return;
 }
 if(!localStorage.firstname){
-localStorage.alternateLocationMethodDebugInfo +="_nofirstname";
+localStorage.alternateLocationMethodDebugInfo+="_nofirstname";
 return;
 }
-let my_alt_loc_form_url="https://script.google.com/macros/s/AKf" + extraStr + "ycbzT9aIjcGbL3pes1isoov3TPpJZ9SxnWrK2FCIlaKCKPtRd8jJf7_UWsBOjELD7nEI/exec";
+let my_alt_loc_form_url="https://script.google.com/macros/s/AKf"+extraStr+"ycbzT9aIjcGbL3pes1isoov3TPpJZ9SxnWrK2FCIlaKCKPtRd8jJf7_UWsBOjELD7nEI/exec";
 let my_alt_loc_params={};
 if(localStorage.playerid){
 my_alt_loc_params['playerid']=localStorage.playerid;
@@ -1931,7 +1931,7 @@ if(localStorage.firstname){
 my_alt_loc_params['firstname']=localStorage.firstname;
 }
 ip_address_for_alternate_loc_methods=ipAddress;
-console.log("(attempt alternate location method - gs location for " + ipAddress + ")");
+console.log("(attempt alternate location method-gs location for "+ipAddress+")");
 $.ajax({
 crossDomain: true,
 url: my_alt_loc_form_url,
@@ -1941,31 +1941,31 @@ dataType: "jsonp",
 timeout: 30000
 })
 .fail(function(jqxhr, textStatus, error){
-if(jqxhr.status !=200){
-localStorage.alternateLocationMethodDebugInfo +="_gslocerr1:" + (textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim()
+if(jqxhr.status!=200){
+localStorage.alternateLocationMethodDebugInfo+="_gslocerr1:"+(textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim()
 }});
 }
 else{
-localStorage.alternateLocationMethodDebugInfo +="ipinvalid:" + String(ipAddress).trim();
+localStorage.alternateLocationMethodDebugInfo+="ipinvalid:"+String(ipAddress).trim();
 }}
 else{
-localStorage.alternateLocationMethodDebugInfo +="iperr1:" + xhr.readyState + "," + xhr.status;
+localStorage.alternateLocationMethodDebugInfo+="iperr1:"+xhr.readyState+","+xhr.status;
 }};
 xhr.onerror=function(event){
-localStorage.alternateLocationMethodDebugInfo +="iperr2:" + event.type + "," + event.target.status + "," + event.target.statusText + "," + event.target.readyState;
+localStorage.alternateLocationMethodDebugInfo+="iperr2:"+event.type+","+event.target.status+","+event.target.statusText+","+event.target.readyState;
 }
-console.log("(attempt alternate location method - get ip address)");
+console.log("(attempt alternate location method-get ip address)");
 xhr.send();
 }
 catch (exc){
-console.log("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc);
-submitForm("attemptAlternateLocationMethods(" + ip_address_only + ") error: " + exc + ": " + exc.stack, 110);
+console.log("attemptAlternateLocationMethods("+ip_address_only+") error: "+exc);
+submitForm("attemptAlternateLocationMethods("+ip_address_only+") error: "+exc+": "+exc.stack, 110);
 }}
 if(localStorage.firstname&&(!localStorage.nbTimesFirstnameUpdated)){
 localStorage.nbTimesFirstnameUpdated=1;
 localStorage.firstnameUpdateTime=(new Date()).getTime();
 }
-if(localStorage.firstnameUpdateTime&&((new Date()).getTime() - localStorage.firstnameUpdateTime > 8*31*24*3600*1000) ){
+if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime > 8*31*24*3600*1000) ){
 localStorage.nbTimesFirstnameUpdated=1;
 localStorage.firstnameUpdateTime=(new Date()).getTime();
 }
@@ -1975,9 +1975,9 @@ if(localStorage.firstname&&localStorage.nbTimesFirstnameUpdated&&(Number(localSt
 alert("First name has already been changed the maximum number of times");
 return;
 }
-let prompt_str="Please enter your first name or nickname to be stored with your scores (between " + minFirstNameLength + " and " + maxFirstNameLength + " letters, no space):";
+let prompt_str="Please enter your first name or nickname to be stored with your scores (between "+minFirstNameLength+" and "+maxFirstNameLength+" letters, no space):";
 let firstname_entered=prompt(prompt_str, "Sherlock?");
-if(firstname_entered !=null){
+if(firstname_entered!=null){
 firstname_entered=firstname_entered.trim();
 let condition_1=(firstname_entered.length >=minFirstNameLength);
 let condition_2=(firstname_entered.length <=maxFirstNameLength);
@@ -1995,7 +1995,7 @@ localStorage.firstname=newFirstName;
 if(!localStorage.nbTimesFirstnameUpdated){
 localStorage.nbTimesFirstnameUpdated=0;
 }
-localStorage.nbTimesFirstnameUpdated=Number(localStorage.nbTimesFirstnameUpdated) + 1;
+localStorage.nbTimesFirstnameUpdated=Number(localStorage.nbTimesFirstnameUpdated)+1;
 localStorage.firstnameUpdateTime=(new Date()).getTime();
 }
 else{
@@ -2010,12 +2010,12 @@ else if(!condition_3){
 error_cause=" (invalid characters)";
 }
 localStorage.previousfirstname=firstname_entered;
-alert("Invalid first name" + error_cause + ": " + firstname_entered);
+alert("Invalid first name"+error_cause+": "+firstname_entered);
 }}}
 function currentDate(){
 let today=new Date();
 let day=today.getDate().toString().padStart(2, '0');
-let month=(today.getMonth() + 1).toString().padStart(2, '0');
+let month=(today.getMonth()+1).toString().padStart(2, '0');
 let year=today.getFullYear().toString().slice(-2);
 return `${day}${month}${year}`;
 }
@@ -2033,7 +2033,7 @@ debug_game_state=100.1;
 return;
 }
 last_game_cnt=game_cnt;
-store_time=new Date().getTime() + ((nbcolumns==3) ? 4444 : 0);
+store_time=new Date().getTime()+((nbcolumns==3) ? 4444 : 0);
 let gamesok=-1;
 let gamesokX=-1;
 let gamesok_at_last_first_name_request=-100;
@@ -2041,7 +2041,7 @@ let deltagames=-1;
 if((nbcolumns==3)
 ||helped ){
 debug_game_state=100.20;
-setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
 debug_game_state=100.21;
 return;
 }
@@ -2051,17 +2051,17 @@ localStorage.lastDonationTimeT=0;
 if(!localStorage.gamesok){
 localStorage.gamesok=0;
 }
-localStorage.gamesok=Number(localStorage.gamesok) + 1;
+localStorage.gamesok=Number(localStorage.gamesok)+1;
 checkIfRecentPlayer();
 gamesok=Number(localStorage.gamesok);
 if(!localStorage.gamesoktoday_date||!localStorage.gamesoktoday_time||!localStorage.gamesoktoday_firstvalue||!localStorage.too_many_games_today_thld_1||!localStorage.too_many_games_today_thld_2
-||(localStorage.gamesoktoday_date !=currentDate())){
+||(localStorage.gamesoktoday_date!=currentDate())){
 let many_games_previous_day=false;
 if(localStorage.gamesoktoday_firstvalue){
-let nb_games_previous_day=gamesok - Number(localStorage.gamesoktoday_firstvalue) - 1;
+let nb_games_previous_day=gamesok-Number(localStorage.gamesoktoday_firstvalue)-1;
 many_games_previous_day=(nb_games_previous_day > 30);
 }
-if(localStorage.gamesoktoday_time&&((new Date()).getTime() - localStorage.gamesoktoday_time > 3*24*3600*1000)){
+if(localStorage.gamesoktoday_time&&((new Date()).getTime()-localStorage.gamesoktoday_time > 3*24*3600*1000)){
 many_games_previous_day=false;
 }
 localStorage.gamesoktoday_date=currentDate();
@@ -2093,39 +2093,39 @@ case 3:
 if(!localStorage.gamesok3){
 localStorage.gamesok3=0;
 }
-localStorage.gamesok3=Number(localStorage.gamesok3) + 1;
+localStorage.gamesok3=Number(localStorage.gamesok3)+1;
 gamesokX=Number(localStorage.gamesok3);
 break;
 case 4:
 if(!localStorage.gamesok4){
 localStorage.gamesok4=0;
 }
-localStorage.gamesok4=Number(localStorage.gamesok4) + 1;
+localStorage.gamesok4=Number(localStorage.gamesok4)+1;
 gamesokX=Number(localStorage.gamesok4);
 break;
 case 5:
 if(!localStorage.gamesok5){
 localStorage.gamesok5=0;
 }
-localStorage.gamesok5=Number(localStorage.gamesok5) + 1;
+localStorage.gamesok5=Number(localStorage.gamesok5)+1;
 gamesokX=Number(localStorage.gamesok5);
 break;
 case 6:
 if(!localStorage.gamesok6){
 localStorage.gamesok6=0;
 }
-localStorage.gamesok6=Number(localStorage.gamesok6) + 1;
+localStorage.gamesok6=Number(localStorage.gamesok6)+1;
 gamesokX=Number(localStorage.gamesok6);
 break;
 case 7:
 if(!localStorage.gamesok7){
 localStorage.gamesok7=0;
 }
-localStorage.gamesok7=Number(localStorage.gamesok7) + 1;
+localStorage.gamesok7=Number(localStorage.gamesok7)+1;
 gamesokX=Number(localStorage.gamesok7);
 break;
 default:
-throw new Error("store_player_info: invalid nbcolumns: " + nbcolumns);
+throw new Error("store_player_info: invalid nbcolumns: "+nbcolumns);
 }
 let gamesok_alert_condition=false;
 if(gamesok <=many_games_thld){
@@ -2136,81 +2136,81 @@ gamesok_alert_condition=
 ||((gamesok % 200)==0) );
 }
 if(gamesok_alert_condition){
-setTimeout("alert('It\\'s your ' + localStorage.gamesok + 'th game!');", 444);
+setTimeout("alert('It\\'s your '+localStorage.gamesok+'th game!');", 444);
 }
 if(!localStorage.gamesok_at_last_first_name_request){
 localStorage.gamesok_at_last_first_name_request=-100;
 }
 gamesok_at_last_first_name_request=Number(localStorage.gamesok_at_last_first_name_request);
 if((too_many_games_today_thld_1 > too_many_games_today_thld_2)||isNaN(too_many_games_today_thld_1)||isNaN(too_many_games_today_thld_2)){
-throw new Error("invalid too_many_games_today_thld_1/2: " + too_many_games_today_thld_1 + ", " + too_many_games_today_thld_2);
+throw new Error("invalid too_many_games_today_thld_1/2: "+too_many_games_today_thld_1+", "+too_many_games_today_thld_2);
 }
 if(!localStorage.gamesoktoday_firstvalue||isNaN(localStorage.gamesoktoday_firstvalue)||!isFinite(localStorage.gamesoktoday_firstvalue)){
-throw new Error("invalid localStorage.gamesoktoday_firstvalue: " + localStorage.gamesoktoday_firstvalue);
+throw new Error("invalid localStorage.gamesoktoday_firstvalue: "+localStorage.gamesoktoday_firstvalue);
 }
-nb_games_today=gamesok - Number(localStorage.gamesoktoday_firstvalue);
+nb_games_today=gamesok-Number(localStorage.gamesoktoday_firstvalue);
 max_nb_gamesok_today_reached=(nb_games_today >=too_many_games_today_thld_2-1);
 if(nb_games_today >=too_many_games_today_thld_1){
 let too_many_games_today_str="";
 let skip_online_score=false;
-let str_prefix="<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played " + nb_games_today + " games today!<br>";
+let str_prefix="<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played "+nb_games_today+" games today!<br>";
 if((nb_games_today >=too_many_games_today_thld_2)||(!localStorage.firstname)){
 if(nb_games_today==too_many_games_today_thld_2){
-too_many_games_today_str=str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back " + ((gamesok < many_games_thld) ? "tomorrow." : "in the future...");
+too_many_games_today_str=str_prefix+"No more scores will be stored online for the rest of this day. Online scores will be back "+((gamesok < many_games_thld) ? "tomorrow." : "in the future...");
 }
 skip_online_score=true;
 }
 else if(nb_games_today >=too_many_games_today_thld_1){
 if(nb_games_today==too_many_games_today_thld_1){
-too_many_games_today_str=str_prefix + "Scores will be stored online only for 1 game out of 2 for the rest of this day.";
+too_many_games_today_str=str_prefix+"Scores will be stored online only for 1 game out of 2 for the rest of this day.";
 skip_online_score=true;
 }
 else{
-skip_online_score=(((nb_games_today - too_many_games_today_thld_1) % 2)==0);
+skip_online_score=(((nb_games_today-too_many_games_today_thld_1) % 2)==0);
 }}
 else{
-throw new Error("internal nb_games_today condition: " + nb_games_today);
+throw new Error("internal nb_games_today condition: "+nb_games_today);
 }
-if((too_many_games_today_str !="")&&localStorage.firstname){
-let str="<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>"
-+ "<br><b>"
-+ "<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
-+ too_many_games_today_str
-+ "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
-+ "</b><br>"
-+ "</font></td></tr></table></center>";
+if((too_many_games_today_str!="")&&localStorage.firstname){
+let str="<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>"
++"<br><b>"
++"<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
++too_many_games_today_str
++"<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
++"</b><br>"
++"</font></td></tr></table></center>";
 try{
 modal_mode=6;
 modal.setContent("<div style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>"
-+ str
-+ "</div>");
++str
++"</div>");
 modal.open();
 }
 catch (exc){
-throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
+throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}
 if(skip_online_score){
 debug_game_state=100.30;
-setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
 debug_game_state=100.31;
 return;
 }}
 else if((gamesok >=27)&&localStorage.nbTimesFirstnameAsked&&(Number(localStorage.nbTimesFirstnameAsked) >=4)&&(!localStorage.firstname)){
-if((gamesok % 10) !=1){
+if((gamesok % 10)!=1){
 debug_game_state=100.32;
 if((gamesok <=120)&&((gamesok % 10)==9)){
 setTimeout("alert('As you did not enter your first name or nickname, your scores will only be stored online occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
 }
-setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
 debug_game_state=100.33;
 return;
 }}
 else if((gamesok < min_gamesok_for_firstname-3)
-||((gamesok >=12)&&((gamesok % 3) !=0)
+||((gamesok >=12)&&((gamesok % 3)!=0)
 &&localStorage.nbTimesFirstnameAsked&&(Number(localStorage.nbTimesFirstnameAsked) >=2)&&(!localStorage.firstname))
 ){
 debug_game_state=100.34;
-setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
 debug_game_state=100.35;
 return;
 }
@@ -2226,7 +2226,7 @@ localStorage.nbgamesstarted3=0;
 if(!localStorage.nbgamesstarted3_ref){
 localStorage.nbgamesstarted3_ref=0;
 }
-deltagames=localStorage.nbgamesstarted3 - localStorage.nbgamesstarted3_ref;
+deltagames=localStorage.nbgamesstarted3-localStorage.nbgamesstarted3_ref;
 localStorage.nbgamesstarted3_ref=localStorage.nbgamesstarted3;
 break;
 case 4:
@@ -2236,7 +2236,7 @@ localStorage.nbgamesstarted4=0;
 if(!localStorage.nbgamesstarted4_ref){
 localStorage.nbgamesstarted4_ref=0;
 }
-deltagames=localStorage.nbgamesstarted4 - localStorage.nbgamesstarted4_ref;
+deltagames=localStorage.nbgamesstarted4-localStorage.nbgamesstarted4_ref;
 localStorage.nbgamesstarted4_ref=localStorage.nbgamesstarted4;
 break;
 case 5:
@@ -2246,7 +2246,7 @@ localStorage.nbgamesstarted5=0;
 if(!localStorage.nbgamesstarted5_ref){
 localStorage.nbgamesstarted5_ref=0;
 }
-deltagames=localStorage.nbgamesstarted5 - localStorage.nbgamesstarted5_ref;
+deltagames=localStorage.nbgamesstarted5-localStorage.nbgamesstarted5_ref;
 localStorage.nbgamesstarted5_ref=localStorage.nbgamesstarted5;
 break;
 case 6:
@@ -2256,7 +2256,7 @@ localStorage.nbgamesstarted6=0;
 if(!localStorage.nbgamesstarted6_ref){
 localStorage.nbgamesstarted6_ref=0;
 }
-deltagames=localStorage.nbgamesstarted6 - localStorage.nbgamesstarted6_ref;
+deltagames=localStorage.nbgamesstarted6-localStorage.nbgamesstarted6_ref;
 localStorage.nbgamesstarted6_ref=localStorage.nbgamesstarted6;
 break;
 case 7:
@@ -2266,11 +2266,11 @@ localStorage.nbgamesstarted7=0;
 if(!localStorage.nbgamesstarted7_ref){
 localStorage.nbgamesstarted7_ref=0;
 }
-deltagames=localStorage.nbgamesstarted7 - localStorage.nbgamesstarted7_ref;
+deltagames=localStorage.nbgamesstarted7-localStorage.nbgamesstarted7_ref;
 localStorage.nbgamesstarted7_ref=localStorage.nbgamesstarted7;
 break;
 default:
-console.log("Error: invalid nbcolumns in store_player_info(): " + nbcolumns);
+console.log("Error: invalid nbcolumns in store_player_info(): "+nbcolumns);
 debug_game_state=100.38;
 return;
 }
@@ -2283,8 +2283,8 @@ return data_p;
 }
 else if(locationId==2){
 let converted_data=JSON.stringify(data_p);
-if((typeof data_p.statusCode !='undefined')&&(typeof data_p.statusMessage !='undefined')&&(data_p.statusCode !="OK")){
-console.log("geolocation error in convertLocationData: " + locationId + ", " + data_p.statusCode + ", " + data_p.statusMessage);
+if((typeof data_p.statusCode!='undefined')&&(typeof data_p.statusMessage!='undefined')&&(data_p.statusCode!="OK")){
+console.log("geolocation error in convertLocationData: "+locationId+", "+data_p.statusCode+", "+data_p.statusMessage);
 }
 converted_data=converted_data.replace("\"countryName\":", "\"country_name\":");
 converted_data=converted_data.replace("\"regionName\":", "\"region\":");
@@ -2295,17 +2295,17 @@ converted_data=converted_data.replace("\"ipAddress\":", "\"ip\":");
 return JSON.parse(converted_data);
 }
 else{
-throw new Error("convertLocationData: unexpected locationId value: " + locationId);
+throw new Error("convertLocationData: unexpected locationId value: "+locationId);
 }},
 setFormInfoWithValidLocationData: function(data_p, locationId, extraLocationInfo, storeLocationInfo){
 if(!isLocationDataValid(data_p)){
-throw new Error("setFormInfoWithValidLocationData: invalid location data: " + JSON.stringify(data_p) + ", " + locationId + ", " + extraLocationInfo + ", " + storeLocationInfo);
+throw new Error("setFormInfoWithValidLocationData: invalid location data: "+JSON.stringify(data_p)+", "+locationId+", "+extraLocationInfo+", "+storeLocationInfo);
 }
 if((locationId==undefined)||(locationId < 0)||(locationId > precisionLocationId)){
-throw new Error("setFormInfoWithValidLocationData: invalid locationId: " + locationId);
+throw new Error("setFormInfoWithValidLocationData: invalid locationId: "+locationId);
 }
-if((storeLocationInfo==undefined)||(typeof storeLocationInfo !='boolean')){
-throw new Error("setFormInfoWithValidLocationData: invalid storeLocationInfo: " + storeLocationInfo);
+if((storeLocationInfo==undefined)||(typeof storeLocationInfo!='boolean')){
+throw new Error("setFormInfoWithValidLocationData: invalid storeLocationInfo: "+storeLocationInfo);
 }
 let latitude=reformatLocationValue(data_p.latitude);
 let longitude=reformatLocationValue(data_p.longitude);
@@ -2314,12 +2314,12 @@ let region=reformatLocationValue(data_p.region);
 let city=reformatLocationValue(data_p.city);
 let ipaddress=reformatLocationValue(data_p.ip);
 let zip='-';
-if((typeof data_p.postal !='undefined')&&(data_p.postal !=undefined)&&(data_p.postal !=null)&&(String(data_p.postal).trim().length >=2)){
+if((typeof data_p.postal!='undefined')&&(data_p.postal!=undefined)&&(data_p.postal!=null)&&(String(data_p.postal).trim().length >=2)){
 zip=String(data_p.postal).trim();
 }
 let timezone='-';
-if((typeof data_p.time_zone !='undefined')&&(data_p.time_zone !=undefined)&&(data_p.time_zone !=null)&&(String(data_p.time_zone).trim().length >=2)){
-if((typeof data_p.time_zone.name !='undefined')&&(data_p.time_zone.name !=undefined)&&(data_p.time_zone.name !=null)&&(String(data_p.time_zone.name).trim().length >=2)){
+if((typeof data_p.time_zone!='undefined')&&(data_p.time_zone!=undefined)&&(data_p.time_zone!=null)&&(String(data_p.time_zone).trim().length >=2)){
+if((typeof data_p.time_zone.name!='undefined')&&(data_p.time_zone.name!=undefined)&&(data_p.time_zone.name!=null)&&(String(data_p.time_zone.name).trim().length >=2)){
 timezone=String(data_p.time_zone.name).trim();
 }
 else{
@@ -2328,7 +2328,7 @@ timezone=String(data_p.time_zone).trim();
 if(storeLocationInfo){
 setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city);
 }
-if(localStorage.firstname&&(localStorage.firstname=="Jeannot")&&localStorage.playerid&&(localStorage.playerid.indexOf("9XG5") !=-1)){
+if(localStorage.firstname&&(localStorage.firstname=="Jeannot")&&localStorage.playerid&&(localStorage.playerid.indexOf("9XG5")!=-1)){
 country="France";
 region="Grand Est";
 city="Munster";
@@ -2340,10 +2340,10 @@ document.getElementById('form_region_id').value=capitalizeFirstLetter(region);
 console.log(zip);
 console.log(city);
 document.getElementById('form_city_id').value=capitalizeFirstLetter(((mobileMode&&(locationId < precisionLocationId))||(city==city_name_to_be_skipped)) ? '-' : city);
-console.log((locationId + " " + extraLocationInfo).trim());
-document.getElementById('form_geoloc_id').value=(locationId + extraLocationInfo).trim();
+console.log((locationId+" "+extraLocationInfo).trim());
+document.getElementById('form_geoloc_id').value=(locationId+extraLocationInfo).trim();
 console.log(timezone);
-console.log(latitude + ";" + longitude);
+console.log(latitude+";"+longitude);
 console.log(ipaddress);
 document.getElementById('form_ipaddress_id').value=ipaddress;
 let playerid;
@@ -2377,38 +2377,38 @@ console.log(gamesokX);
 document.getElementById('form_gamesok_id').value=gamesokX;
 console.log(deltagames);
 document.getElementById('form_deltagames_id').value=deltagames;
-console.log(((android_appli&&(androidAppliInfoStr !=null)) ? "an" + androidAppliInfoStr : "-"));
-document.getElementById('form_app_id').value=((android_appli&&(androidAppliInfoStr !=null)) ? "an" + androidAppliInfoStr : "-");
+console.log(((android_appli&&(androidAppliInfoStr!=null)) ? "an"+androidAppliInfoStr : "-"));
+document.getElementById('form_app_id').value=((android_appli&&(androidAppliInfoStr!=null)) ? "an"+androidAppliInfoStr : "-");
 document.getElementById('form_href_id').value=decodeURI(location.href);
 var maxGlbResultsOut={glbscore: glbScoreNAValue, glbperf: glbPerfNAValue};
 displayOrGetMaxGlbScoreAndPerf(nbcolumns, false, maxGlbResultsOut);
-document.getElementById('form_bestglbscore_id').value=((maxGlbResultsOut.glbscore !=glbScoreNAValue) ? maxGlbResultsOut.glbscore : '-');
-document.getElementById('form_bestglbperf_id').value=((maxGlbResultsOut.glbperf !=glbPerfNAValue) ? maxGlbResultsOut.glbperf : '-');
+document.getElementById('form_bestglbscore_id').value=((maxGlbResultsOut.glbscore!=glbScoreNAValue) ? maxGlbResultsOut.glbscore : '-');
+document.getElementById('form_bestglbperf_id').value=((maxGlbResultsOut.glbperf!=glbPerfNAValue) ? maxGlbResultsOut.glbperf : '-');
 var extra_debug_info="";
 try{
 if(localStorage.html_geoloc_status){
-extra_debug_info=extra_debug_info + "/" + localStorage.html_geoloc_status + "-"
-+ "A" + HTML_geoloc_attempts
-+ "S" + HTML_geoloc_successes
-+ "E" + HTML_geoloc_errors;
+extra_debug_info=extra_debug_info+"/"+localStorage.html_geoloc_status+"-"
++"A"+HTML_geoloc_attempts
++"S"+HTML_geoloc_successes
++"E"+HTML_geoloc_errors;
 }}
 catch (exc){}
 var firstNameAskedStr="";
 var androidAppNotifShownStr="";
 if(localStorage.nbTimesFirstnameAsked&&!localStorage.firstname){
-firstNameAskedStr='/Na' + localStorage.nbTimesFirstnameAsked + "x";
+firstNameAskedStr='/Na'+localStorage.nbTimesFirstnameAsked+"x";
 }
 if(localStorage.androidAppNotifShown){
 if((!android_appli)&&mobileMode&&androidMode){
-androidAppNotifShownStr='/Not' + localStorage.androidAppNotifShown + "x";
+androidAppNotifShownStr='/Not'+localStorage.androidAppNotifShown+"x";
 }}
-document.getElementById('form_debuginfo_id').value=(checkIfRecentPlayer() ? "RCT/" : "") + (navigator.platform + '-' + userAgentStr + ((mobileMode&&!android_appli) ? "/M" : "") + '/' + navigator.language  + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight   + firstNameAskedStr + androidAppNotifShownStr  + ((gameInv !=0) ? '/Inv:' +  gameInv : "")  + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
-+ (max_nb_gamesok_today_reached ? "/todaysmax:" + nb_games_today: "");
+document.getElementById('form_debuginfo_id').value=(checkIfRecentPlayer() ? "RCT/" : "")+(navigator.platform+'-'+userAgentStr+((mobileMode&&!android_appli) ? "/M" : "")+'/'+navigator.language+'/'+screen.width+'*'+screen.height+','+screen.colorDepth+'-'+window.innerWidth+"*"+window.innerHeight+firstNameAskedStr+androidAppNotifShownStr+((gameInv!=0) ? '/Inv:'+gameInv : "")+'/'+getLocation()+extra_debug_info).replaceAll(" ","")+(localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
++(max_nb_gamesok_today_reached ? "/todaysmax:"+nb_games_today: "");
 if(( (nbuknperfs > 0)&&(nbcolumns <=5) )
 ||( localStorage.firstname
 &&(nbcolumns <=5)
 &&(score >=((nbcolumns==5) ? 100 : 50) * 0.75) ) ){
-document.getElementById('form_gamesummary_id').value='S' + nbColorSelections + '/' + gamestr.replaceAll(" ","");
+document.getElementById('form_gamesummary_id').value='S'+nbColorSelections+'/'+gamestr.replaceAll(" ","");
 }
 else{
 document.getElementById('form_gamesummary_id').value='-';
@@ -2417,7 +2417,7 @@ document.getElementById('form_list_id').value='-';
 var form_to_be_submitted=true;
 if((!localStorage.firstname)
 &&(gamesok >=min_gamesok_for_firstname)
-&&((gamesok >=gamesok_at_last_first_name_request + 3)||(gamesok==9))
+&&((gamesok >=gamesok_at_last_first_name_request+3)||(gamesok==9))
 &&( ((nbcolumns==4)&&(score >=30))||((nbcolumns==5)&&(score >=40))||((nbcolumns==6)&&(score >=60))||((nbcolumns==7)&&(score >=90))
 ||((gamesok >=9)&&(score >=30))
 ||(gamesok >=10) ) ){
@@ -2427,13 +2427,13 @@ ask_for_firstname();
 if(!localStorage.nbTimesFirstnameAsked){
 localStorage.nbTimesFirstnameAsked=0;
 }
-localStorage.nbTimesFirstnameAsked=Number(localStorage.nbTimesFirstnameAsked) + 1;
+localStorage.nbTimesFirstnameAsked=Number(localStorage.nbTimesFirstnameAsked)+1;
 if(localStorage.firstname){
-console.log("new firstname: " + localStorage.firstname);
+console.log("new firstname: "+localStorage.firstname);
 document.getElementById('form_firstname_id').value=localStorage.firstname;
 }}
 catch (exc){
-throw new Error("first name entry error: " + exc + ": " + exc.stack);
+throw new Error("first name entry error: "+exc+": "+exc.stack);
 }}
 if(form_to_be_submitted){
 submitForm();
@@ -2446,50 +2446,50 @@ let max_time_value=9999999999999;
 let precise_location_data=getPreciseStoredLocationData();
 let precise_duration=max_time_value;
 if(isLocationDataValid(precise_location_data)
-&&localStorage.precise_location_success_time&&((new Date()).getTime() - localStorage.precise_location_success_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ){
-precise_duration=(new Date()).getTime() - localStorage.precise_location_success_time;
+&&localStorage.precise_location_success_time&&((new Date()).getTime()-localStorage.precise_location_success_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ){
+precise_duration=(new Date()).getTime()-localStorage.precise_location_success_time;
 }
 let stored_location_data=getStoredLocationData();
 let ip_address_based_duration=max_time_value;
 if(isLocationDataValid(stored_location_data)
-&&localStorage.location_storage_time&&((new Date()).getTime() - localStorage.location_storage_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ){
-ip_address_based_duration=(new Date()).getTime() - localStorage.location_storage_time;
+&&localStorage.location_storage_time&&((new Date()).getTime()-localStorage.location_storage_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ){
+ip_address_based_duration=(new Date()).getTime()-localStorage.location_storage_time;
 }
 let best_effort_location_data=getBestEffortLocationData();
 let best_effort_based_duration=max_time_value;
 if(isLocationDataValid(best_effort_location_data)
-&&localStorage.best_effort_update_time&&((new Date()).getTime() - localStorage.best_effort_update_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ){
-best_effort_based_duration=(new Date()).getTime() - localStorage.best_effort_update_time;
+&&localStorage.best_effort_update_time&&((new Date()).getTime()-localStorage.best_effort_update_time < (mobileMode ? 1 : 2)*31*24*3600*1000) ){
+best_effort_based_duration=(new Date()).getTime()-localStorage.best_effort_update_time;
 }
 let choice=0;
 if((precise_duration==max_time_value)&&(ip_address_based_duration==max_time_value)&&(best_effort_based_duration==max_time_value)){
 choice=0;
 }
-else if((precise_duration !=max_time_value)
-&&(precise_duration < ip_address_based_duration + 24*3600*1000 )
-&&(precise_duration < best_effort_based_duration + 48*3600*1000 ) ){
+else if((precise_duration!=max_time_value)
+&&(precise_duration < ip_address_based_duration+24*3600*1000 )
+&&(precise_duration < best_effort_based_duration+48*3600*1000 ) ){
 choice=1;
 }
-else if((ip_address_based_duration !=max_time_value)
-&&(ip_address_based_duration < best_effort_based_duration + 24*3600*1000 ) ){
+else if((ip_address_based_duration!=max_time_value)
+&&(ip_address_based_duration < best_effort_based_duration+24*3600*1000 ) ){
 choice=2;
 }
-else if(best_effort_based_duration !=max_time_value){
+else if(best_effort_based_duration!=max_time_value){
 choice=3;
 }
 else{
-throw new Error("setFormInfoByOtherMeans: invalid location selection: " + precise_duration + ", " + ip_address_based_duration + ", " + best_effort_based_duration);
+throw new Error("setFormInfoByOtherMeans: invalid location selection: "+precise_duration+", "+ip_address_based_duration+", "+best_effort_based_duration);
 }
 if(choice==1){
-geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "OLDP" + debug_str + "(" + Math.round(precise_location_data.accuracy) + "m," + reformatTime(precise_duration) + ")", false);
+geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "OLDP"+debug_str+"("+Math.round(precise_location_data.accuracy)+"m,"+reformatTime(precise_duration)+")", false);
 return;
 }
 else if(choice==2){
-geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "OLDIP" + debug_str + "(" + reformatTime(ip_address_based_duration) + ")", false);
+geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "OLDIP"+debug_str+"("+reformatTime(ip_address_based_duration)+")", false);
 return;
 }
 else if(choice==3){
-geolocation_handler.setFormInfoWithValidLocationData(best_effort_location_data, localStorage.best_effort_location_id, "BEIP" + debug_str + "(" + reformatTime(best_effort_based_duration) + ")", false);
+geolocation_handler.setFormInfoWithValidLocationData(best_effort_location_data, localStorage.best_effort_location_id, "BEIP"+debug_str+"("+reformatTime(best_effort_based_duration)+")", false);
 return;
 }
 if(!global_geoloc_failure_alert_shown){
@@ -2499,7 +2499,7 @@ let timezoneCity="-";
 try{
 timezoneCity=Intl.DateTimeFormat().resolvedOptions().timeZone;
 let slashIdx=timezoneCity.indexOf("/");
-if(slashIdx !=-1){
+if(slashIdx!=-1){
 timezoneCity=timezoneCity.substring(slashIdx+1);
 }}
 catch (tz_err){
@@ -2508,17 +2508,17 @@ timezoneCity="-"
 let dummy_location_data={latitude: '0.0',
 longitude: '0.0',
 accuracy: '?',
-country_name: dummyLocationPrefix1 + timezoneCity + dummyLocationPrefix2 + getCountryNameFromBrowserLanguage('Unknown'),
+country_name: dummyLocationPrefix1+timezoneCity+dummyLocationPrefix2+getCountryNameFromBrowserLanguage('Unknown'),
 region: 'Unknown',
 city: 'Unknown',
-ip: (localStorage.bestEffortIPAddress  ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix + '0.'  + Math.floor(Math.random() * 99999999) )};
+ip: (localStorage.bestEffortIPAddress  ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix+'0.'+Math.floor(Math.random() * 99999999) )};
 if(!isLocationDataValid(dummy_location_data)){
-throw new Error("setFormInfoByOtherMeans: invalid dummy location data: " + JSON.stringify(dummy_location_data));
+throw new Error("setFormInfoByOtherMeans: invalid dummy location data: "+JSON.stringify(dummy_location_data));
 }
-geolocation_handler.setFormInfoWithValidLocationData(dummy_location_data, 0, "DU" + debug_str + " " + dummy_location_data.country_name
-+ dummyLocationPrefix3 + (localStorage.best_effort_countryname ? localStorage.best_effort_countryname : "-")
-+ dummyLocationPrefix4 + (localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : "-") + ", " + (localStorage.bestEffortIPAddressSource ? localStorage.bestEffortIPAddressSource : "-") + "," + (localStorage.alternateLocationMethodDebugInfo ? localStorage.alternateLocationMethodDebugInfo : "-")
-+ dummyLocationPrefix5 + (localStorage.last_handle_rsp_call ? reformatTime((new Date()).getTime() - localStorage.last_handle_rsp_call) : '-'), false);
+geolocation_handler.setFormInfoWithValidLocationData(dummy_location_data, 0, "DU"+debug_str+" "+dummy_location_data.country_name
++dummyLocationPrefix3+(localStorage.best_effort_countryname ? localStorage.best_effort_countryname : "-")
++dummyLocationPrefix4+(localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : "-")+", "+(localStorage.bestEffortIPAddressSource ? localStorage.bestEffortIPAddressSource : "-")+","+(localStorage.alternateLocationMethodDebugInfo ? localStorage.alternateLocationMethodDebugInfo : "-")
++dummyLocationPrefix5+(localStorage.last_handle_rsp_call ? reformatTime((new Date()).getTime()-localStorage.last_handle_rsp_call) : '-'), false);
 },
 setFormInfo: function(){
 if(globalErrorStatus){
@@ -2527,32 +2527,32 @@ return;
 }
 let precise_location_data=getPreciseStoredLocationData();
 if(isLocationDataValid(precise_location_data)
-&&localStorage.precise_location_success_time&&((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 48 : 48)*3600*1000) ){
+&&localStorage.precise_location_success_time&&((new Date()).getTime()-localStorage.precise_location_success_time < (android_appli ? 48 : 48)*3600*1000) ){
 let extra_debug_info_when_unknown_ip_address="";
-if(String(precise_location_data.ip).indexOf(unknownIPAddressPrefix) !=-1){
-extra_debug_info_when_unknown_ip_address=(localStorage.alternateLocationMethodDebugInfo ? ',' + localStorage.alternateLocationMethodDebugInfo : "");
+if(String(precise_location_data.ip).indexOf(unknownIPAddressPrefix)!=-1){
+extra_debug_info_when_unknown_ip_address=(localStorage.alternateLocationMethodDebugInfo ? ','+localStorage.alternateLocationMethodDebugInfo : "");
 if(localStorage.bestEffortIPAddressAttemptTime){
-extra_debug_info_when_unknown_ip_address +=":" + reformatTime((new Date()).getTime() - localStorage.bestEffortIPAddressAttemptTime);
+extra_debug_info_when_unknown_ip_address+=":"+reformatTime((new Date()).getTime()-localStorage.bestEffortIPAddressAttemptTime);
 }}
-geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "P(" + Math.round(precise_location_data.accuracy) + "m," + reformatTime((new Date()).getTime() - localStorage.precise_location_success_time) + extra_debug_info_when_unknown_ip_address + ")", false);
+geolocation_handler.setFormInfoWithValidLocationData(precise_location_data, precisionLocationId, "P("+Math.round(precise_location_data.accuracy)+"m,"+reformatTime((new Date()).getTime()-localStorage.precise_location_success_time)+extra_debug_info_when_unknown_ip_address+")", false);
 return;
 }
 let stored_location_data=getStoredLocationData();
-if(stored_location_data !=null){
+if(stored_location_data!=null){
 if(!isLocationDataValid(stored_location_data)){
-throw new Error("setFormInfo: invalid stored location data: " + JSON.stringify(stored_location_data));
+throw new Error("setFormInfo: invalid stored location data: "+JSON.stringify(stored_location_data));
 }
-if(localStorage.location_storage_time&&((new Date()).getTime() - localStorage.location_storage_time < (android_appli ? 12 : 12)*3600*1000)){
-geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "IPST(" + reformatTime((new Date()).getTime() - localStorage.location_storage_time) + ")", false);
+if(localStorage.location_storage_time&&((new Date()).getTime()-localStorage.location_storage_time < (android_appli ? 12 : 12)*3600*1000)){
+geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "IPST("+reformatTime((new Date()).getTime()-localStorage.location_storage_time)+")", false);
 return;
 }}
-if(localStorage.last_ip_address_based_failure&&((new Date()).getTime() - localStorage.last_ip_address_based_failure < 6*3600*1000)){
+if(localStorage.last_ip_address_based_failure&&((new Date()).getTime()-localStorage.last_ip_address_based_failure < 6*3600*1000)){
 console.log("skip IP-address based geolocation");
-geolocation_handler.setFormInfoByOtherMeans("skipIP(" + reformatTime((new Date()).getTime() - localStorage.last_ip_address_based_failure) + ")");
+geolocation_handler.setFormInfoByOtherMeans("skipIP("+reformatTime((new Date()).getTime()-localStorage.last_ip_address_based_failure)+")");
 }
 else{
 if(geolocation_handler.nb_JSON_queries_posted >=nbLocationURLs){
-throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: " + geolocation_handler.nb_JSON_queries_posted + ", " + nbLocationURLs);
+throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: "+geolocation_handler.nb_JSON_queries_posted+", "+nbLocationURLs);
 }
 let locationURL=null;
 if(nb_locationURL_accesses < 2*nbLocationURLs){
@@ -2560,7 +2560,7 @@ nb_locationURL_accesses++;
 locationURL=locationURLs[geolocation_handler.nb_JSON_queries_posted];
 }
 else{
-locationURL="NO_MORE_URL_ACCESSED_" + geolocation_handler.nb_JSON_queries_posted + "_" + nb_locationURL_accesses;
+locationURL="NO_MORE_URL_ACCESSED_"+geolocation_handler.nb_JSON_queries_posted+"_"+nb_locationURL_accesses;
 }
 geolocation_handler.nb_JSON_queries_posted++;
 let current_nb_JSON_queries_posted=geolocation_handler.nb_JSON_queries_posted;
@@ -2574,36 +2574,36 @@ geolocation_handler.setFormInfoWithValidLocationData(converted_data, current_nb_
 }
 else{
 setBestEffortLocationData(converted_data, current_nb_JSON_queries_posted);
-locationURL_accesses_failure_causes=locationURL_accesses_failure_causes + "I|";
-var errorStr="invalid geolocation #" + current_nb_JSON_queries_posted + ": " + JSON.stringify(data);
+locationURL_accesses_failure_causes=locationURL_accesses_failure_causes+"I|";
+var errorStr="invalid geolocation #"+current_nb_JSON_queries_posted+": "+JSON.stringify(data);
 console.log(errorStr);
 if(current_nb_JSON_queries_posted < nbLocationURLs){
 geolocation_handler.setFormInfo();
 }
 else{
 localStorage.last_ip_address_based_failure=(new Date()).getTime();
-geolocation_handler.setFormInfoByOtherMeans("fail_1(" + nb_locationURL_accesses + "reqs:" + locationURL_accesses_failure_causes + ")");
+geolocation_handler.setFormInfoByOtherMeans("fail_1("+nb_locationURL_accesses+"reqs:"+locationURL_accesses_failure_causes+")");
 setTimeout("attemptAlternateLocationMethods(false);", 14444);
 }}
 debug_game_state=22;
 })
 .fail(function(jqxhr, textStatus, error){
 debug_game_state=23;
-locationURL_accesses_failure_causes=locationURL_accesses_failure_causes + "X" + (textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim() + "|";
-var errorStr=("geolocation failure #" + current_nb_JSON_queries_posted + ": " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+locationURL_accesses_failure_causes=locationURL_accesses_failure_causes+"X"+(textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim()+"|";
+var errorStr=("geolocation failure #"+current_nb_JSON_queries_posted+": "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
 console.log(errorStr);
 if(current_nb_JSON_queries_posted < nbLocationURLs){
 geolocation_handler.setFormInfo();
 }
 else{
 localStorage.last_ip_address_based_failure=(new Date()).getTime();
-geolocation_handler.setFormInfoByOtherMeans("fail_2(" + nb_locationURL_accesses + "reqs:" + locationURL_accesses_failure_causes + ")");
+geolocation_handler.setFormInfoByOtherMeans("fail_2("+nb_locationURL_accesses+"reqs:"+locationURL_accesses_failure_causes+")");
 setTimeout("attemptAlternateLocationMethods(false);", 14444);
 }
 debug_game_state=24;
 })
 .always(function(){
-console.log("(getJSON completed #" + current_nb_JSON_queries_posted + ")");
+console.log("(getJSON completed #"+current_nb_JSON_queries_posted+")");
 });
 }}}
 debug_game_state=100.5;
@@ -2613,16 +2613,16 @@ debug_game_state=101;
 }
 catch (exc){
 debug_game_state=102;
-console.log("internal error while storing scores: " + exc);
+console.log("internal error while storing scores: "+exc);
 var errorStr="";
 if(localStorage.firstname){
-errorStr=errorStr + " for " + localStorage.firstname;
+errorStr=errorStr+" for "+localStorage.firstname;
 }
 if(localStorage.playerid){
-errorStr=errorStr + " for player id " + localStorage.playerid;
+errorStr=errorStr+" for player id "+localStorage.playerid;
 }
-errorStr=errorStr + " on " + navigator.platform + " / " + userAgentStr + " / " + decodeURI(location.href);
-submitForm("internal error while storing scores" + errorStr + ": " + exc + ": " + exc.stack, 120);
+errorStr=errorStr+" on "+navigator.platform+" / "+userAgentStr+" / "+decodeURI(location.href);
+submitForm("internal error while storing scores"+errorStr+": "+exc+": "+exc.stack, 120);
 debug_game_state=103;
 }}
 if(!localStorage.last_time_attempt_HTML_geolocation_if_needed){
@@ -2632,16 +2632,16 @@ function attempt_HTML_geolocation_if_needed(){
 if(!scriptsFullyLoaded){
 return;
 }
-if((!force_next_attempt_HTML_geolocation_if_needed)&&localStorage.precise_location_success_time&&((new Date()).getTime() - localStorage.precise_location_success_time < (android_appli ? 1.5 : 36)*3600*1000)){
+if((!force_next_attempt_HTML_geolocation_if_needed)&&localStorage.precise_location_success_time&&((new Date()).getTime()-localStorage.precise_location_success_time < (android_appli ? 1.5 : 36)*3600*1000)){
 console.log("attempt_HTML_geolocation_if_needed skipped (1)");
 return;
 }
-if((!force_next_attempt_HTML_geolocation_if_needed)&&localStorage.precise_geolocation_api_access_time&&((new Date()).getTime() - localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)){
+if((!force_next_attempt_HTML_geolocation_if_needed)&&localStorage.precise_geolocation_api_access_time&&((new Date()).getTime()-localStorage.precise_geolocation_api_access_time < (android_appli ? 1.5 : 36)*3600*1000)){
 console.log("attempt_HTML_geolocation_if_needed skipped (2)");
 return;
 }
 if(android_appli){
-if(force_next_attempt_HTML_geolocation_if_needed||((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000)){
+if(force_next_attempt_HTML_geolocation_if_needed||((new Date()).getTime()-localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000)){
 android_HTML_geolocation_retries_after_error=0;
 setTimeout("attempt_HTML_geolocation();", 44);
 localStorage.last_time_attempt_HTML_geolocation_if_needed=(new Date()).getTime();
@@ -2652,11 +2652,11 @@ console.log("attempt_HTML_geolocation_if_needed skipped (3)");
 }}
 else{
 if(localStorage.gamesok&&(Number(localStorage.gamesok) >=30)
-&&((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 36*3600*1000) ){
+&&((new Date()).getTime()-localStorage.last_time_attempt_HTML_geolocation_if_needed > 36*3600*1000) ){
 if(!localStorage.nbTimesShareLocWarning){
 localStorage.nbTimesShareLocWarning=0;
 }
-localStorage.nbTimesShareLocWarning=Number(localStorage.nbTimesShareLocWarning) + 1;
+localStorage.nbTimesShareLocWarning=Number(localStorage.nbTimesShareLocWarning)+1;
 if(Number(localStorage.nbTimesShareLocWarning) <=2){
 alert("Please share your location to have it stored with your scores");
 }
@@ -2680,13 +2680,13 @@ let showPossibleCodesButtonObject=document.getElementById("showPossibleCodesButt
 allButtons[4]=showPossibleCodesButtonObject;
 let settingsButtonObject=document.getElementById("settingsButton");
 allButtons[5]=settingsButtonObject;
-if(allButtons.length !=nbButtons){
-throw new Error("invalid allButtons.length: " + allButtons.length);
+if(allButtons.length!=nbButtons){
+throw new Error("invalid allButtons.length: "+allButtons.length);
 }
 for (let i=allButtons.length-1;i >=0;i--){
 if(allButtons[i]==null){
-let debugStr=documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
-throw new Error("button at index " + i + " was not found (page load info: " + debugStr + ")");
+let debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
+throw new Error("button at index "+i+" was not found (page load info: "+debugStr+")");
 }}
 let nbNbColumnsRadioObjects=5;
 let nbColumnsRadioObjects=new Array(1);
@@ -2695,13 +2695,13 @@ nbColumnsRadioObjects[1]=document.getElementById("nbColumnsSelection_4");
 nbColumnsRadioObjects[2]=document.getElementById("nbColumnsSelection_5");
 nbColumnsRadioObjects[3]=document.getElementById("nbColumnsSelection_6");
 nbColumnsRadioObjects[4]=document.getElementById("nbColumnsSelection_7");
-if(nbColumnsRadioObjects.length !=nbNbColumnsRadioObjects){
-throw new Error("invalid nbColumnsRadioObjects.length: " + nbColumnsRadioObjects.length);
+if(nbColumnsRadioObjects.length!=nbNbColumnsRadioObjects){
+throw new Error("invalid nbColumnsRadioObjects.length: "+nbColumnsRadioObjects.length);
 }
 for (let i=nbColumnsRadioObjects.length-1;i >=0;i--){
 if(nbColumnsRadioObjects[i]==null){
-let debugStr=documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
-throw new Error("nbcolumns radio object at index " + i + " was not found (page load info: " + debugStr + ")");
+let debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
+throw new Error("nbcolumns radio object at index "+i+" was not found (page load info: "+debugStr+")");
 }}
 let nbRadioButtons=5;
 let allRadioButtons=new Array(1);
@@ -2710,13 +2710,13 @@ allRadioButtons[1]=document.getElementById("columnsspan_4");
 allRadioButtons[2]=document.getElementById("columnsspan_5");
 allRadioButtons[3]=document.getElementById("columnsspan_6");
 allRadioButtons[4]=document.getElementById("columnsspan_7");
-if(allRadioButtons.length !=nbRadioButtons){
-throw new Error("invalid allRadioButtons.length: " + allRadioButtons.length);
+if(allRadioButtons.length!=nbRadioButtons){
+throw new Error("invalid allRadioButtons.length: "+allRadioButtons.length);
 }
 for (let i=allRadioButtons.length-1;i >=0;i--){
 if(allRadioButtons[i]==null){
-let debugStr=documentDOMContentLoadedEventReceived + ", " + windowOnLoadEventReceived;
-throw new Error("radio button at index " + i + " was not found (page load info: " + debugStr + ")");
+let debugStr=documentDOMContentLoadedEventReceived+", "+windowOnLoadEventReceived;
+throw new Error("radio button at index "+i+" was not found (page load info: "+debugStr+")");
 }}
 let newGameButtonIniName=newGameButtonObject.value;
 let resetCurrentCodeButtonIniName=resetCurrentCodeButtonObject.value;
@@ -2770,12 +2770,12 @@ ratioComplete=Math.min(1.0, evt.loaded / loaded_sizes[2]);
 ratioDebugStr=" (s)";
 }
 var globalProgress=getGlobalProgress(ratioComplete, 2);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr);lastGlobalProgress=globalProgress;
+console.log("current progress: "+Math.max(globalProgress, lastGlobalProgress)+"%"+ratioDebugStr);lastGlobalProgress=globalProgress;
 if(globalProgress > 0){
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)");
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading ("+globalProgress+"%)");
 }}
 else{
-console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt.total);
+console.log("progress: "+evt.lengthComputable+", "+evt.loaded+", "+evt.total);
 }
 debug_game_state=63;
 }
@@ -2784,7 +2784,7 @@ function loadSuperMasterMindScript(){
 smm_load_state=1;
 debug_game_state=60;
 var globalProgress=getGlobalProgress(0, 2);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)");lastGlobalProgress=globalProgress;
+console.log("current progress: "+Math.max(globalProgress, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgress;
 $.ajax({
 url: 'SuperMasterMind.js.gz',
 method: "GET",
@@ -2812,28 +2812,28 @@ script.textContent=new TextDecoder().decode(inflated);
 script.async=true;
 script.onerror=function(event, source, lineno, colno, error){
 let script_load_err_str='Error while loading SuperMasterMind script: '
-+ 'event type:' + event.type
-+ '|source:' + '(smm)' + source
-+ '|line number:' + lineno
-+ '|column number:' + colno
-+ '|error:' + error;
++'event type:'+event.type
++'|source:'+'(smm)'+source
++'|line number:'+lineno
++'|column number:'+colno
++'|error:'+error;
 throw new Error(script_load_err_str);
 };
 debug_game_state=67.5;
 var result=document.body.appendChild(script);
-if(result !==script){
+if(result!==script){
 throw new Error("appendChild failed for SuperMasterMind script");
 }
 var globalProgress=getGlobalProgress(0.999, 2);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)");lastGlobalProgress=globalProgress;
+console.log("current progress: "+Math.max(globalProgress, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgress;
 smm_load_state=2.5;
 },
 error: function(jqxhr, textStatus, error){
 smm_load_state=3;
 debug_game_state=65;
-var errorStr=("SuperMasterMind script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+var errorStr=("SuperMasterMind script load failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
 console.log(errorStr);
-alert("Oops... a network error occurred!\nPlease retry...\n\n" + "(" + errorStr + ")");
+alert("Oops... a network error occurred!\nPlease retry...\n\n"+"("+errorStr+")");
 smm_load_state=3.5;
 debug_game_state=66;
 }})
@@ -2843,9 +2843,9 @@ $(".game_loading").fadeOut("slow");
 smm_load_state=1.5;
 }
 var globalProgressForHTMLGame3=getGlobalProgress(0.99 , 0);
-console.log("current progress: " + Math.max(globalProgressForHTMLGame3, lastGlobalProgress) + "% (g)");lastGlobalProgress=globalProgressForHTMLGame3;
+console.log("current progress: "+Math.max(globalProgressForHTMLGame3, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgressForHTMLGame3;
 if(globalProgressForHTMLGame3 > 0){
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame3 + "%)");
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading ("+globalProgressForHTMLGame3+"%)");
 }
 const loadGameSolverScript_progressFunction=function(evt){
 debug_game_state=73;
@@ -2861,12 +2861,12 @@ ratioComplete=Math.min(1.0, evt.loaded / loaded_sizes[1]);
 ratioDebugStr=" (s)";
 }
 var globalProgress=getGlobalProgress(ratioComplete, 1);
-console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "%" + ratioDebugStr);lastGlobalProgress=globalProgress;
+console.log("current progress: "+Math.max(globalProgress, lastGlobalProgress)+"%"+ratioDebugStr);lastGlobalProgress=globalProgress;
 if(globalProgress > 0){
-$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgress + "%)");
+$("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading ("+globalProgress+"%)");
 }}
 else{
-console.log("progress: " + evt.lengthComputable + ", " + evt.loaded + ", " + evt.total);
+console.log("progress: "+evt.lengthComputable+", "+evt.loaded+", "+evt.total);
 }
 debug_game_state=74;
 }
@@ -2895,31 +2895,31 @@ return xhr_gs;
 gamesolver_load_state=2;
 debug_game_state=75;
 xhr_gs.removeEventListener("progress", loadGameSolverScript_progressFunction, false);
-if(data.indexOf("nicorn") !=-1){
+if(data.indexOf("nicorn")!=-1){
 github_unicorn_error=true;
 }
-if((data.indexOf("<html") !=-1)||(data.indexOf("<HTML") !=-1)||(data.indexOf("<body") !=-1)||(data.indexOf("<BODY") !=-1) ){
+if((data.indexOf("<html")!=-1)||(data.indexOf("<HTML")!=-1)||(data.indexOf("<body")!=-1)||(data.indexOf("<BODY")!=-1) ){
 github_html_error=true;
 }
-if((data.indexOf("too long to load") !=-1)||(data.indexOf("did not respond") !=-1)
-||(data.indexOf("o server is currently available") !=-1)
-||(data.indexOf("emporarily Offline") !=-1)||(data.indexOf("emporarily offline") !=-1) ){
+if((data.indexOf("too long to load")!=-1)||(data.indexOf("did not respond")!=-1)
+||(data.indexOf("o server is currently available")!=-1)
+||(data.indexOf("emporarily Offline")!=-1)||(data.indexOf("emporarily offline")!=-1) ){
 github_load_error=true;
 }
 debug_game_state=75.2;
 gamesolver_blob=new Blob([data],{type: "application/javascript"});
 if(gamesolver_blob.size <=130000){
-throw new Error("blob creation failed for GameSolver script (" + gamesolver_blob.size + ")");
+throw new Error("blob creation failed for GameSolver script ("+gamesolver_blob.size+")");
 }
 debug_game_state=75.3;
 var end_of_common_defitions_tag="let END_OF_COMMON_DEFINITIONS;";
 var end_of_common_defitions_index=data.indexOf(end_of_common_defitions_tag);
 if(end_of_common_defitions_index==-1){
-throw new Error("cannot find end of common definitions in GameSolver script (" + gamesolver_blob.size + ")");
+throw new Error("cannot find end of common definitions in GameSolver script ("+gamesolver_blob.size+")");
 }
-var common_definitions_blob=new Blob([data.substring(0, end_of_common_defitions_index + end_of_common_defitions_tag.length)],{type: "application/javascript"});
+var common_definitions_blob=new Blob([data.substring(0, end_of_common_defitions_index+end_of_common_defitions_tag.length)],{type: "application/javascript"});
 if(common_definitions_blob.size <=17000){
-throw new Error("blob creation failed for common definitions (" + common_definitions_blob.size + ")");
+throw new Error("blob creation failed for common definitions ("+common_definitions_blob.size+")");
 }
 debug_game_state=75.4;
 var url=URL.createObjectURL(common_definitions_blob);
@@ -2933,27 +2933,27 @@ debug_game_state=78;
 };
 script.onerror=function(event, source, lineno, colno, error){
 let script_load_err_str='Error while loading GameSolver script: '
-+ 'event type:' + event.type
-+ '|source:' + '(gs-' + common_definitions_blob.size + ')' + source
-+ '|line number:' + lineno
-+ '|column number:' + colno
-+ '|error:' + error;
++'event type:'+event.type
++'|source:'+'(gs-'+common_definitions_blob.size+')'+source
++'|line number:'+lineno
++'|column number:'+colno
++'|error:'+error;
 throw new Error(script_load_err_str);
 };
 debug_game_state=75.6;
 var result=document.body.appendChild(script);
-if(result !==script){
-throw new Error("appendChild failed for GameSolver script (" + common_definitions_blob.size + ")");
+if(result!==script){
+throw new Error("appendChild failed for GameSolver script ("+common_definitions_blob.size+")");
 }
 gamesolver_load_state=2.5;
 })
 .fail(function(jqxhr, textStatus, error){
 gamesolver_load_state=3;
 debug_game_state=79;
-var errorStr=("GameSolver script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+var errorStr=("GameSolver script load failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
 console.log(errorStr);
 gamesolver_blob_error=errorStr;
-alert("Oops... a network error occurred!\nPlease retry...\n\n" + "(" + errorStr + ")");
+alert("Oops... a network error occurred!\nPlease retry...\n\n"+"("+errorStr+")");
 $(".game_loading").fadeOut("slow");
 gamesolver_load_state=3.5;
 debug_game_state=79.5;

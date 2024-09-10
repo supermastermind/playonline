@@ -6,7 +6,7 @@ import subprocess
 # Usage: python compress_javascript_file.py
 
 # Compress a javascript file while keeping its behaviour
-def compress_javascript_file(source_file_path, target_file_path, all_optims):
+def compress_javascript_file(source_file_path, target_file_path):
     try:
 
         print(f"\nCompressing {source_file_path} into {target_file_path}...")
@@ -29,10 +29,9 @@ def compress_javascript_file(source_file_path, target_file_path, all_optims):
         content = re.sub(r'[ \t]*\|\|[ \t]*', '||', content, flags=re.DOTALL) # ||
         content = re.sub(r'[ \t]*&&[ \t]*', '&&', content, flags=re.DOTALL) # &&
 
-        if all_optims:
-            content = re.sub(r'[ \t]+!', '!', content, flags=re.DOTALL) # !
-            content = re.sub(r'[ \t]*\+[ \t]*', '+', content, flags=re.DOTALL) # +
-            content = re.sub(r'[ \t]*-[ \t]*', '-', content, flags=re.DOTALL) # -
+        content = re.sub(r'[ \t]+!', '!', content, flags=re.DOTALL) # !
+        content = re.sub(r'[ \t]*\+[ \t]*', '+', content, flags=re.DOTALL) # +
+        content = re.sub(r'[ \t]*-[ \t]*', '-', content, flags=re.DOTALL) # -
 
         content = re.sub(r'^[ \t\n]*', '', content, flags=re.DOTALL) # leading spaces 1
         content = re.sub(r'\n[ \t]+', '\n', content, flags=re.DOTALL) # leading spaces 2
@@ -53,9 +52,9 @@ def compress_javascript_file(source_file_path, target_file_path, all_optims):
         print("ERROR")
         print(traceback.format_exc())
 
-compress_javascript_file("SuperMasterMind_uncompressed.js", "SuperMasterMind.js", True)
-compress_javascript_file("GameSolver_uncompressed.js", "GameSolver.js", True)
-compress_javascript_file("game_uncompressed.html", "game.html", False)
+compress_javascript_file("SuperMasterMind_uncompressed.js", "SuperMasterMind.js")
+compress_javascript_file("GameSolver_uncompressed.js", "GameSolver.js")
+compress_javascript_file("game_uncompressed.html", "game.html")
 
 # Compress SuperMasterMind.js
 if os.path.isfile("SuperMasterMind.js.gz"):
