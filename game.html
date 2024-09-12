@@ -550,29 +550,30 @@ locationURLs[1]='https://api.ip'+extraStr+'infodb.com/v3/ip-city/?key=792'+extra
 </table>
 <iframe style='display:none;' name='my_frame'>Your browser does not support iframes!</iframe>
 <form  style='display:none;' id='my_form' target='my_frame' action='to_be_filled'>
-playerid: <input id='form_playerid_id' name='playerid' type='text' value='-' autocomplete='off'><br>
-firstname: <input id='form_firstname_id' name='firstname' type='text' value='-' autocomplete='off'><br>
-nbcolumns: <input id='form_nbcolumns_id' name='nbcolumns' type='text' value='-' autocomplete='off'><br>
-score: <input id='form_score_id' name='score' type='text' value='-' autocomplete='off'><br>
-attempts: <input id='form_attempts_id' name='attempts' type='text' value='-' autocomplete='off'><br>
-time: <input id='form_time_id' name='time' type='text' value='-' autocomplete='off'><br>
-perfs: <input id='form_perfs_id' name='perfs' type='text' value='-' autocomplete='off'><br>
-nbuknperfs: <input id='form_nbuknperfs_id' name='nbuknperfs' type='text' value='-' autocomplete='off'><br>
-help: <input id='form_help_id' name='help' type='text' value='-' autocomplete='off'><br>
-gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-' autocomplete='off'><br>
-deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-' autocomplete='off'><br>
-app: <input id='form_app_id' name='app' type='text' value='-' autocomplete='off'><br>
-country: <input id='form_country_id' name='country' type='text' value='-' autocomplete='off'><br>
-region: <input id='form_region_id' name='region' type='text' value='-' autocomplete='off'><br>
-city: <input id='form_city_id' name='city' type='text' value='-' autocomplete='off'><br>
-geoloc: <input id='form_geoloc_id' name='geoloc' type='text' value='-' autocomplete='off'><br>
-ipaddress: <input id='form_ipaddress_id' name='ipaddress' type='text' value='-' autocomplete='off'><br>
-href: <input id='form_href_id' name='href' type='text' value='-' autocomplete='off'><br>
-bestglbscore: <input id='form_bestglbscore_id' name='bestglbscore' type='text' value='-' autocomplete='off'><br>
-bestglbperf: <input id='form_bestglbperf_id' name='bestglbperf' type='text' value='-' autocomplete='off'><br>
-debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-' autocomplete='off'><br>
-gamesummary: <input id='form_gamesummary_id' name='gamesummary' type='text' value='-' autocomplete='off'><br>
-list: <input id='form_list_id' name='list' type='text' value='-'><br>
+playerid: <input id='form_playerid_id' name='playerid' type='text' value='-' autocomplete='off'>
+firstname: <input id='form_firstname_id' name='firstname' type='text' value='-' autocomplete='off'>
+nbcolumns: <input id='form_nbcolumns_id' name='nbcolumns' type='text' value='-' autocomplete='off'>
+score: <input id='form_score_id' name='score' type='text' value='-' autocomplete='off'>
+attempts: <input id='form_attempts_id' name='attempts' type='text' value='-' autocomplete='off'>
+time: <input id='form_time_id' name='time' type='text' value='-' autocomplete='off'>
+perfs: <input id='form_perfs_id' name='perfs' type='text' value='-' autocomplete='off'>
+nbuknperfs: <input id='form_nbuknperfs_id' name='nbuknperfs' type='text' value='-' autocomplete='off'>
+help: <input id='form_help_id' name='help' type='text' value='-' autocomplete='off'>
+gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-' autocomplete='off'>
+deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-' autocomplete='off'>
+app: <input id='form_app_id' name='app' type='text' value='-' autocomplete='off'>
+country: <input id='form_country_id' name='country' type='text' value='-' autocomplete='off'>
+region: <input id='form_region_id' name='region' type='text' value='-' autocomplete='off'>
+city: <input id='form_city_id' name='city' type='text' value='-' autocomplete='off'>
+geoloc: <input id='form_geoloc_id' name='geoloc' type='text' value='-' autocomplete='off'>
+ipaddress: <input id='form_ipaddress_id' name='ipaddress' type='text' value='-' autocomplete='off'>
+href: <input id='form_href_id' name='href' type='text' value='-' autocomplete='off'>
+bestglbscore: <input id='form_bestglbscore_id' name='bestglbscore' type='text' value='-' autocomplete='off'>
+bestglbperf: <input id='form_bestglbperf_id' name='bestglbperf' type='text' value='-' autocomplete='off'>
+debuginfo: <input id='form_debuginfo_id' name='debuginfo' type='text' value='-' autocomplete='off'>
+gamesummary: <input id='form_gamesummary_id' name='gamesummary' type='text' value='-' autocomplete='off'>
+ts: <input id='form_ts_id' name='ts' type='text' value='-' autocomplete='off'>
+list: <input id='form_list_id' name='list' type='text' value='-' autocomplete='off'>
 </form>
 <form style='display:none;' id='my_all_scripts_loaded_form' target='my_frame' action='https://ALL_SCRIPTS_LOADED'>
 </form>
@@ -609,7 +610,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v30.0N";
+let html_compatibility_game_version="v30.0P";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -943,7 +944,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0N: "+(localStorage.reloadForCompatibility_v300N ? localStorage.reloadForCompatibility_v300N : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0P: "+(localStorage.reloadForCompatibility_v300P ? localStorage.reloadForCompatibility_v300P : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userAgentStr+(android_appli ? "|"+classicalUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -2413,6 +2414,12 @@ document.getElementById('form_gamesummary_id').value='S'+nbColorSelections+'/'+g
 else{
 document.getElementById('form_gamesummary_id').value='-';
 }
+let timeshift=((new Date()).getTime()-(new Date(new Date().toLocaleString("en-US",{timeZone: "Europe/Paris"}))).getTime()) / (3600*1000);
+timeshift=Math.round(timeshift * 100) / 100;
+if(isNaN(timeshift)||!isFinite(timeshift)||(timeshift <-15)||(timeshift > 13)){
+throw new Error("invalid timeshift: "+timeshift);
+}
+document.getElementById('form_ts_id').value=timeshift;
 document.getElementById('form_list_id').value='-';
 var form_to_be_submitted=true;
 if((!localStorage.firstname)
