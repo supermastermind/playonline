@@ -2347,7 +2347,7 @@
             let newFirstName = capitalizeFirstLetters(firstname_entered);
             if (localStorage.firstname) {
               if (localStorage.firstname == newFirstName) {
-                alert("Your first name is the same as before (please note that upper case is only applied on first letters)");
+                alert("Your first name is the same as before (note: upper case is only applied to first letters)");
                 return;
               }
               localStorage.previousfirstname = localStorage.firstname;
