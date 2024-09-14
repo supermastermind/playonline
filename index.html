@@ -93,10 +93,10 @@
 
             <a name='Strategy'></a>
             <h2>Strategy evaluation: performances and scores</h2>
-            Behind the graphical game interface, the program is assisted by a calculator which will give you hints to find the optimal strategy.
+            Behind the graphical interface, the program is assisted by a calculator which will give you hints to find the optimal strategy.
             This calculator compares what you played to what the optimal strategy would have played. For each code played,
             it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
-            to this same average number when your code is played, and then displays the difference, called <b><font color=#CC0099>performance</font></b>, next to your code.<br>
+            to this same average number when your code is played, and then displays the difference next to your code, called <b><font color=#CC0099>performance</font></b>.<br>
             <hr style='height:0.5rem; visibility:hidden;' />
             For example:<br>
             <ul style='margin:0'>
@@ -107,6 +107,8 @@
               secret codes in 4 attempts on average, your code (followed by an optimal strategy) will reach them in 4.5 attempts on average.
               Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win the game instantly!
             </ul>
+            <hr style='height:0.5rem; visibility:hidden;' />
+            When you win, summing those performances over all the codes you played gives <b><font color=#CC0099>your global performance for this game</font></b>. It will be stored together with <b><font color=#CC0099>your score</font></b>, which on its side only depends on the number of attempts you took to find the secret code and the time you needed, which are much more subject to luck than your global performance.
             <hr style='height:0.5rem; visibility:hidden;' />
 
             <!-- OPTIMAL STRATEGY DETAILS -->
