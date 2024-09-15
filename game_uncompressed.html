@@ -732,7 +732,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0P"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0Q"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -793,7 +793,7 @@
         //     - second location permission denial may be the last one
         //     - "allow location just this time" will have to be requested again regularly
         var ask_location_permissions_if_needed_str_1 = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-        var ask_location_permissions_if_needed_str_2 = "console.log('(ask location permissions if needed - multiple requests)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
+        var ask_location_permissions_if_needed_str_2 = "console.log('(ask multiple location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
         setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (multiple_requests ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
         localStorage.ask_location_permissions_if_needed_date = (new Date()).getTime();
         if (!localStorage.nb_location_permissions_req) {
@@ -1159,7 +1159,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0P: " + (localStorage.reloadForCompatibility_v300P ? localStorage.reloadForCompatibility_v300P : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0Q: " + (localStorage.reloadForCompatibility_v300Q ? localStorage.reloadForCompatibility_v300Q : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
