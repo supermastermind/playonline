@@ -649,10 +649,10 @@ throw new Error("askAndroidLocationPermissionsIfNeeded error: "+android_appli);
 }
 let multiple_requests=(localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=3));
 if((!forcedMode)&&localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=1)){
-if(localStorage.gamesok&&(Number(localStorage.gamesok) < 30)){
+if(localStorage.gamesok&&(Number(localStorage.gamesok) <=30)){
 return;
 }
-if(Number(localStorage.nb_location_permissions_req) > 25){
+if(Number(localStorage.nb_location_permissions_req) > 20){
 return;
 }
 if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime()-localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))){

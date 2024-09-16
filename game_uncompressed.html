@@ -775,12 +775,12 @@
         if (!android_appli) {
             throw new Error("askAndroidLocationPermissionsIfNeeded error: " + android_appli);
         }
-        let multiple_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here
+        let multiple_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here / also covers the case of repetitive "allow location only this time"
         if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 1)) { // second or later location permission request
-            if (localStorage.gamesok && (Number(localStorage.gamesok) < 30)) { // (***) not reasked immediately
+            if (localStorage.gamesok && (Number(localStorage.gamesok) <= 30)) { // (***) not reasked immediately
               return;
             }
-            if (Number(localStorage.nb_location_permissions_req) > 25) {
+            if (Number(localStorage.nb_location_permissions_req) > 20) {
               return;
             }
             // Regular location permission requests and/or messages to grant location permission if above conditions are met
