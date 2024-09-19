@@ -2068,7 +2068,7 @@ many_games_previous_day=false;
 localStorage.gamesoktoday_date=currentDate();
 localStorage.gamesoktoday_time=(new Date()).getTime();
 localStorage.gamesoktoday_firstvalue=gamesok-1;
-let extra_reduction=( (gamesok >=125)
+let extra_reduction=( (gamesok >=75)
 &&localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=2)
 &&localStorage.location_permission_granted&&(localStorage.location_permission_granted=="no") );
 if(gamesok <=125){
