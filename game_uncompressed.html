@@ -732,7 +732,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0R"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0S"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1159,7 +1159,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0R: " + (localStorage.reloadForCompatibility_v300R ? localStorage.reloadForCompatibility_v300R : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0S: " + (localStorage.reloadForCompatibility_v300S ? localStorage.reloadForCompatibility_v300S : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2027,7 +2027,7 @@
           console.log("previously stored precise location reused");
           localStorage.precise_ip = inferred_ip_address;
           localStorage.precise_location_success_time = (new Date()).getTime();
-          localStorage.html_geoloc_status = "ok NRLSP" + debug_str;
+          localStorage.html_geoloc_status = "ok NRSP" + debug_str;
           precise_location_data = getPreciseStoredLocationData();
           if (!isLocationDataValid(precise_location_data)) {
             throw new Error("HTML_geolocation_success: invalid precise location data #1: " + JSON.stringify(precise_location_data));
