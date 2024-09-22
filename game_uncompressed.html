@@ -2867,10 +2867,7 @@
               }
               document.getElementById('form_debuginfo_id').value = (checkIfRecentPlayer() ? "RCT/" : "") + (navigator.platform + '-' + userAgentStr + ((mobileMode && !android_appli) ? "/M" : "") + '/' + navigator.language /* + guessUserId() + "/" + */ + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight /* + (modernDisplay ? 'Mod' : 'Leg' + legacyDisplayVariant) */ /* + ((nbcolumns == 5) ? '/' + precalculatedFileFetched : "") */ + firstNameAskedStr + androidAppNotifShownStr /* + '/L' + nb_locationURL_accesses */ + ((gameInv != 0) ? '/Inv:' +  gameInv : "") /* + '/Don' + (localStorage.nbDonationRequestsT ? localStorage.nbDonationRequestsT : '0') */ + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
                                                                    + (max_nb_gamesok_today_reached ? "/todaysmax:" + nb_games_today: "");
-              if ( ( (nbuknperfs > 0) && (nbcolumns <= 5) )
-                   || ( localStorage.firstname
-                        && (nbcolumns <= 5)
-                        && (score >= ((nbcolumns == 5) ? 100 : 50) * 0.75) ) ) {
+              if ((nbuknperfs > 0) && (nbcolumns <= 5)) {
                 document.getElementById('form_gamesummary_id').value = 'S' + nbColorSelections + '/' + gamestr.replaceAll(" ","");
               }
               else {
