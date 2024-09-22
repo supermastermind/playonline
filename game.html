@@ -1690,7 +1690,6 @@ let debug_str="";
 if(debug_str_p!=null){
 debug_str=" "+debug_str_p;
 }
-debug_str=debug_str+" "+((localStorage.useFirstGeocodingApi=="yes") ? "GAPI1" : "GAPI2");
 localStorage.html_geoloc_status="run_bis"+debug_str;
 HTML_geoloc_successes++;
 let inferred_ip_address=(localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix+'1.'+Math.floor(Math.random() * 99999999) );
@@ -1706,7 +1705,7 @@ if(isLocationDataValid(precise_location_data)
 console.log("previously stored precise location reused");
 localStorage.precise_ip=inferred_ip_address;
 localStorage.precise_location_success_time=(new Date()).getTime();
-localStorage.html_geoloc_status="ok NRSP"+debug_str;
+localStorage.html_geoloc_status="ok NRSL"+debug_str;
 precise_location_data=getPreciseStoredLocationData();
 if(!isLocationDataValid(precise_location_data)){
 throw new Error("HTML_geolocation_success: invalid precise location data #1: "+JSON.stringify(precise_location_data));
@@ -1720,7 +1719,7 @@ return;
 }
 localStorage.precise_geolocation_api_access_time=(new Date()).getTime();
 let GEOCODING_API_URL=((localStorage.useFirstGeocodingApi=="yes") ? GEOCODING_API_URL_1 : GEOCODING_API_URL_2);
-let GEOCODING_API_URL_INDEX=((localStorage.useFirstGeocodingApi=="yes") ? 1 : 2);
+debug_str=debug_str+" "+((localStorage.useFirstGeocodingApi=="yes") ? "API1" : "API2");
 GEOCODING_API_URL=GEOCODING_API_URL.replace("LATITUDE", latitude).replace("LONGITUDE", longitude);
 $.getJSON(GEOCODING_API_URL)
 .done(function(location){
@@ -1803,7 +1802,7 @@ debug_game_state=12;
 .fail(function(jqxhr, textStatus, error){
 debug_game_state=13;
 console.log(("HTML geolocation failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
-localStorage.html_geoloc_status="nok-4"+debug_str+"-"+GEOCODING_API_URL_INDEX;
+localStorage.html_geoloc_status="nok-4"+debug_str;
 localStorage.useFirstGeocodingApi=((localStorage.useFirstGeocodingApi=="yes") ? "no" : "yes");
 debug_game_state=14;
 });
