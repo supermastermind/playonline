@@ -2441,7 +2441,7 @@
             let extra_reduction = ( (gamesok >= 70)
                                     && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 2)
                                     && localStorage.location_permission_granted && (localStorage.location_permission_granted == "no") );
-            if (gamesok <= 120) {
+            if (gamesok <= 400) {
               localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 20); // (average: 25 or 20)
               localStorage.too_many_games_today_thld_2 = ((many_games_previous_day || extra_reduction) ? 25 : 30);
             }
