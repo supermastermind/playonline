@@ -780,11 +780,11 @@
             if (localStorage.gamesok && (Number(localStorage.gamesok) <= 30)) { // (***) not reasked immediately
               return;
             }
-            if (Number(localStorage.nb_location_permissions_req) > 20) {
+            if (Number(localStorage.nb_location_permissions_req) > 15) {
               return;
             }
             // Regular location permission requests and/or messages to grant location permission if above conditions are met
-            if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))) { // 48 hours (**) / 21 days if multiple requests
+            if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 31*24*3600*1000 : 48*3600*1000))) { // 48 hours (**) / 31 days if multiple requests
                 return;
             }
         }
