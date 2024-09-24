@@ -732,7 +732,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0S"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0T"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1159,7 +1159,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0S: " + (localStorage.reloadForCompatibility_v300S ? localStorage.reloadForCompatibility_v300S : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0T: " + (localStorage.reloadForCompatibility_v300T ? localStorage.reloadForCompatibility_v300T : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2445,13 +2445,13 @@
               localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 20); // (average: 25 or 20)
               localStorage.too_many_games_today_thld_2 = ((many_games_previous_day || extra_reduction) ? 25 : 30);
             }
-            else if (gamesok >= 2.5*many_games_thld) {
-              localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 0 : 10); // (average: 10 or far lower by skipping days)
-              localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 0 : 10);
+            else if (gamesok >= 2*many_games_thld) {
+              localStorage.too_many_games_today_thld_1 = (many_games_previous_day ? 10 : 15);
+              localStorage.too_many_games_today_thld_2 = (many_games_previous_day ? 10 : 15);
             }
             else if (gamesok >= many_games_thld) {
-              localStorage.too_many_games_today_thld_1 = (many_games_previous_day  ? 0 : (extra_reduction ? 10 : 15)); // (skipped or average: 15 or far lower by skipping days)
-              localStorage.too_many_games_today_thld_2 = (many_games_previous_day  ? 0 : (extra_reduction ? 10 : 15));
+              localStorage.too_many_games_today_thld_1 = 15;
+              localStorage.too_many_games_today_thld_2 = 15;
             }
             else {
               localStorage.too_many_games_today_thld_1 = ((many_games_previous_day || extra_reduction) ? 15 : 15); // (average: 20 or 15)
@@ -2533,7 +2533,7 @@
             let str_prefix = "<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played " + nb_games_today + " games today!<br>";
             if ((nb_games_today >= too_many_games_today_thld_2) || (!localStorage.firstname)) {
               if (nb_games_today == too_many_games_today_thld_2) {
-                too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back " + ((gamesok < many_games_thld) ? "tomorrow." : "in the future...");
+                too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back tomorrow.";
               }
               skip_online_score = true; // skip all calls towards google sheet today
             }
@@ -3194,7 +3194,7 @@
             }
             localStorage.nbTimesShareLocWarning = Number(localStorage.nbTimesShareLocWarning) + 1;
             if (Number(localStorage.nbTimesShareLocWarning) <= 2) { // 2 because may have been accepted at first location permission request
-              alert("Please share your location to have it stored with your scores");
+              alert("Please share your location to have it stored with your scores.\nLocation permissions are visible in your browser Settings menu.");
             }
             setTimeout("attempt_HTML_geolocation();", 44);
             localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
