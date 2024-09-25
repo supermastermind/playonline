@@ -652,10 +652,10 @@ if((!forcedMode)&&localStorage.nb_location_permissions_req&&(Number(localStorage
 if(localStorage.gamesok&&(Number(localStorage.gamesok) <=30)){
 return;
 }
-if(Number(localStorage.nb_location_permissions_req) > 15){
+if(Number(localStorage.nb_location_permissions_req) > 16){
 return;
 }
-if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime()-localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 31*24*3600*1000 : 48*3600*1000))){
+if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime()-localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))){
 return;
 }}
 var ask_location_permissions_if_needed_str_1="console.log('(ask location permissions if needed)');"
