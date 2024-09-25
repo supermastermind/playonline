@@ -647,7 +647,7 @@ function askAndroidLocationPermissionsIfNeeded(forcedMode){
 if(!android_appli){
 throw new Error("askAndroidLocationPermissionsIfNeeded error: "+android_appli);
 }
-let multiple_requests=(localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=3));
+let several_requests=(localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=3));
 if((!forcedMode)&&localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=1)){
 if(localStorage.gamesok&&(Number(localStorage.gamesok) <=30)){
 return;
@@ -655,12 +655,12 @@ return;
 if(Number(localStorage.nb_location_permissions_req) > 16){
 return;
 }
-if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime()-localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))){
+if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime()-localStorage.ask_location_permissions_if_needed_date < (several_requests ? 21*24*3600*1000 : 48*3600*1000))){
 return;
 }}
 var ask_location_permissions_if_needed_str_1="console.log('(ask location permissions if needed)');"
 var ask_location_permissions_if_needed_str_2="console.log('(ask multiple location permissions if needed)');"
-setTimeout("force_next_attempt_HTML_geolocation_if_needed=true;"+(multiple_requests ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
+setTimeout("force_next_attempt_HTML_geolocation_if_needed=true;"+(localStorage.nb_location_permissions_req ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
 localStorage.ask_location_permissions_if_needed_date=(new Date()).getTime();
 if(!localStorage.nb_location_permissions_req){
 localStorage.nb_location_permissions_req=0;

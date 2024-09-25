@@ -775,7 +775,7 @@
         if (!android_appli) {
             throw new Error("askAndroidLocationPermissionsIfNeeded error: " + android_appli);
         }
-        let multiple_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here / also covers the case of repetitive "allow location only this time"
+        let several_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here / also covers the case of repetitive "allow location only this time"
         if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 1)) { // second or later location permission request
             if (localStorage.gamesok && (Number(localStorage.gamesok) <= 30)) { // (***) not reasked immediately
               return;
@@ -784,7 +784,7 @@
               return;
             }
             // Regular location permission requests and/or messages to grant location permission if above conditions are met
-            if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (multiple_requests ? 21*24*3600*1000 : 48*3600*1000))) { // 48 hours (**) / 31 days if multiple requests
+            if (localStorage.ask_location_permissions_if_needed_date && ((new Date()).getTime() - localStorage.ask_location_permissions_if_needed_date < (several_requests ? 21*24*3600*1000 : 48*3600*1000))) { // 48 hours (**) / 21 days if multiple requests
                 return;
             }
         }
@@ -794,7 +794,7 @@
         //     - "allow location just this time" will have to be requested again regularly
         var ask_location_permissions_if_needed_str_1 = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
         var ask_location_permissions_if_needed_str_2 = "console.log('(ask multiple location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-        setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (multiple_requests ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
+        setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (localStorage.nb_location_permissions_req ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
         localStorage.ask_location_permissions_if_needed_date = (new Date()).getTime();
         if (!localStorage.nb_location_permissions_req) {
             localStorage.nb_location_permissions_req = 0;
