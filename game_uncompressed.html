@@ -780,7 +780,7 @@
             if (localStorage.gamesok && (Number(localStorage.gamesok) <= 30)) { // (***) not reasked immediately
               return;
             }
-            if (Number(localStorage.nb_location_permissions_req) > 16) {
+            if (Number(localStorage.nb_location_permissions_req) > 10) {
               return;
             }
             // Regular location permission requests and/or messages to grant location permission if above conditions are met
@@ -2160,7 +2160,7 @@
           }
         }
         else { // android app call
-          error_str = String(error);
+          error_str = String(error) + "/" + (localStorage.nb_location_permissions_req ? localStorage.nb_location_permissions_req : "0") + "req";
         }
         console.log("HTML geolocation error: " + error_str);
         localStorage.html_geoloc_status = "nok-5/" + error_str;

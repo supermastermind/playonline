@@ -652,7 +652,7 @@ if((!forcedMode)&&localStorage.nb_location_permissions_req&&(Number(localStorage
 if(localStorage.gamesok&&(Number(localStorage.gamesok) <=30)){
 return;
 }
-if(Number(localStorage.nb_location_permissions_req) > 16){
+if(Number(localStorage.nb_location_permissions_req) > 10){
 return;
 }
 if(localStorage.ask_location_permissions_if_needed_date&&((new Date()).getTime()-localStorage.ask_location_permissions_if_needed_date < (several_requests ? 21*24*3600*1000 : 48*3600*1000))){
@@ -1829,7 +1829,7 @@ error_str="LERROR";
 break;
 }}
 else{
-error_str=String(error);
+error_str=String(error)+"/"+(localStorage.nb_location_permissions_req ? localStorage.nb_location_permissions_req : "0")+"req";
 }
 console.log("HTML geolocation error: "+error_str);
 localStorage.html_geoloc_status="nok-5/"+error_str;
