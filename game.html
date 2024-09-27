@@ -610,7 +610,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v30.0T";
+let html_compatibility_game_version="v30.0U";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -649,7 +649,7 @@ throw new Error("askAndroidLocationPermissionsIfNeeded error: "+android_appli);
 }
 let several_requests=(localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=3));
 if((!forcedMode)&&localStorage.nb_location_permissions_req&&(Number(localStorage.nb_location_permissions_req) >=1)){
-if(localStorage.gamesok&&(Number(localStorage.gamesok) <=30)){
+if(localStorage.gamesok&&(Number(localStorage.gamesok) < 50)){
 return;
 }
 if(Number(localStorage.nb_location_permissions_req) > 10){
@@ -683,7 +683,7 @@ beforeClose: function(){
 console.log('(modal beforeClose)');
 if(modal_mode==2){
 setTimeout("showPossibleCodesButtonClick(false,-2, true);", 444);
-if(android_appli&&localStorage.gamesok&&(Number(localStorage.gamesok) >=min_gamesok_for_firstname-2)){
+if(android_appli&&localStorage.firstname){
 askAndroidLocationPermissionsIfNeeded(false);
 }
 modal_mode=-1;
@@ -944,7 +944,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0T: "+(localStorage.reloadForCompatibility_v300T ? localStorage.reloadForCompatibility_v300T : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0U: "+(localStorage.reloadForCompatibility_v300U ? localStorage.reloadForCompatibility_v300U : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userAgentStr+(android_appli ? "|"+classicalUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon

@@ -732,7 +732,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0T"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0U"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -777,7 +777,7 @@
         }
         let several_requests = (localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 3)); // second location permission denial may be the last one => 3 > 2 used here / also covers the case of repetitive "allow location only this time"
         if ((!forcedMode) && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 1)) { // second or later location permission request
-            if (localStorage.gamesok && (Number(localStorage.gamesok) <= 30)) { // (***) not reasked immediately
+            if (localStorage.gamesok && (Number(localStorage.gamesok) < 50)) { // (***) not reasked immediately
               return;
             }
             if (Number(localStorage.nb_location_permissions_req) > 10) {
@@ -821,7 +821,7 @@
             if (modal_mode == 2) {
               setTimeout("showPossibleCodesButtonClick(false, -2, true);", 444);
 
-              if (android_appli && localStorage.gamesok && (Number(localStorage.gamesok) >= min_gamesok_for_firstname-2)) {
+              if (android_appli && localStorage.firstname) { // first name entered, so first interest for sharing results shown
                 askAndroidLocationPermissionsIfNeeded(false);
               }
 
@@ -1159,7 +1159,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0T: " + (localStorage.reloadForCompatibility_v300T ? localStorage.reloadForCompatibility_v300T : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0U: " + (localStorage.reloadForCompatibility_v300U ? localStorage.reloadForCompatibility_v300U : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2504,7 +2504,7 @@
           let gamesok_alert_condition = false;
           if (gamesok <= many_games_thld) {
             gamesok_alert_condition =
-              ( (gamesok == 50) || (gamesok == 150)
+              ( (gamesok == 50) /* (***) */ || (gamesok == 150)
                 || (gamesok == 111) || (gamesok == 222) || (gamesok == 333) || (gamesok == 444) || (gamesok == 555) || (gamesok == 777) || (gamesok == 888) || (gamesok == 999)
                 || ((gamesok <= 1000) && ((gamesok % 100) == 0))
                 || ((gamesok % 200) == 0) );
