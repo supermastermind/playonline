@@ -732,7 +732,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.0U"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v30.0V"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -794,12 +794,12 @@
         //     - "allow location just this time" will have to be requested again regularly
         var ask_location_permissions_if_needed_str_1 = "console.log('(ask location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
         var ask_location_permissions_if_needed_str_2 = "console.log('(ask multiple location permissions if needed)');" // !WARNING! -> this console text will be read by the android app so shall not be modified
-        setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + (localStorage.nb_location_permissions_req ? ask_location_permissions_if_needed_str_2 : ask_location_permissions_if_needed_str_1), 1000);
         localStorage.ask_location_permissions_if_needed_date = (new Date()).getTime();
         if (!localStorage.nb_location_permissions_req) {
             localStorage.nb_location_permissions_req = 0;
         }
         localStorage.nb_location_permissions_req = Number(localStorage.nb_location_permissions_req) + 1;
+        setTimeout("force_next_attempt_HTML_geolocation_if_needed = true;" + ((localStorage.nb_location_permissions_req == 1) ? ask_location_permissions_if_needed_str_1 : ask_location_permissions_if_needed_str_2), 1000);
       }
 
       var modal = new tingle.modal({
@@ -1159,7 +1159,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0U: " + (localStorage.reloadForCompatibility_v300U ? localStorage.reloadForCompatibility_v300U : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.0V: " + (localStorage.reloadForCompatibility_v300V ? localStorage.reloadForCompatibility_v300V : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userAgentStr + (android_appli ? "|" + classicalUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -2141,7 +2141,7 @@
       function HTML_geolocation_error(error) { // CALLED BY ANDROID APP (with string parameter)
         let error_str = "?";
         let skip_retries = false;
-        if (error.code != undefined) {
+        if (error.code != undefined) { // not android app call
           switch(error.code) {
             case error.PERMISSION_DENIED: // user denied the request for geolocation
               localStorage.location_permission_granted = "no";
@@ -2160,6 +2160,9 @@
           }
         }
         else { // android app call
+          if (String(error).toLowerCase().indexOf("not granted") != -1) { // not granted voluntarily or on previous error/exception
+            localStorage.location_permission_granted = "no";
+          }
           error_str = String(error) + "/" + (localStorage.nb_location_permissions_req ? localStorage.nb_location_permissions_req : "0") + "req";
         }
         console.log("HTML geolocation error: " + error_str);
@@ -2438,7 +2441,7 @@
             localStorage.gamesoktoday_time = (new Date()).getTime();
             localStorage.gamesoktoday_firstvalue = gamesok-1;
             // No interest for sharing results 1/2
-            let extra_reduction = ( (gamesok >= 50)
+            let extra_reduction = ( (gamesok >= 50) // (***)
                                     && localStorage.nb_location_permissions_req && (Number(localStorage.nb_location_permissions_req) >= 2)
                                     && localStorage.location_permission_granted && (localStorage.location_permission_granted == "no") );
             if (gamesok <= 400) {
@@ -3174,7 +3177,10 @@
           return;
         }
         if (android_appli) {
-          if (force_next_attempt_HTML_geolocation_if_needed || ((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000)) { // geolocation refresh after 1.5 hour on user action
+          // (*) Android location permission requests and location requests are NOT DONE AT THE SAME MOMENT => use force_next_attempt_HTML_geolocation_if_needed
+          if ( force_next_attempt_HTML_geolocation_if_needed
+               || (((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000) && localStorage.nb_location_permissions_req) // geolocation refresh after 1.5 hour on user action
+             ) {
             android_HTML_geolocation_retries_after_error = 0;
             setTimeout("attempt_HTML_geolocation();", 44);
             localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
