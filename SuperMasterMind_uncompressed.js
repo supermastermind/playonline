@@ -1703,10 +1703,6 @@ function show_message(specific_str = "", android_stars_mode = false, forceStr = 
     catch (exc) {
       throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
     }
-    if (!localStorage.androidAppNotifShown) {
-      localStorage.androidAppNotifShown = 0;
-    }
-    localStorage.androidAppNotifShown = Number(localStorage.androidAppNotifShown) + 1;
     last_dialog_gamesok = (localStorage.gamesok ? localStorage.gamesok : -1);
   }
 }
@@ -2081,7 +2077,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_firstname - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
-  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", ((mobileMode && (game_cnt <= 2)) ? 1111 : 1111)); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 1111); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 444);
@@ -4964,7 +4960,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
       }
       if (modernDisplay) {
         displayString(getColorToDisplay("?"), x_cell, y_cell, 2,
-                      foregd_color, (mobileMode ? "#EEEEEE" : "#D0D0D0"), ctx, true, displayColorMode, 0, false, 0);
+                      foregd_color, "#FFFFFF", ctx, true, displayColorMode, 0, false, 0);
       }
       else {
         currentCodeColorMode = ((currentAttemptNumber <= 1) ? 3 : 1);
@@ -4975,7 +4971,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
     }
     else {
       displayString(getColorToDisplay(""), x_cell, y_cell, 2,
-                    darkGray, (modernDisplay ? (mobileMode ? "#EEEEEE" : "#D0D0D0") : averageColor(legacy_backgroundColor_base_color, "#FFFFFF", 0.95)), ctx, true, displayColorMode, 0, false, 0);
+                    darkGray, (modernDisplay ? "#FFFFFF" : averageColor(legacy_backgroundColor_base_color, "#FFFFFF", 0.95)), ctx, true, displayColorMode, 0, false, 0);
     }
   }
   if (handleCurrentCodeColorMode) {

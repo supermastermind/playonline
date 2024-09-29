@@ -2398,15 +2398,10 @@ extra_debug_info=extra_debug_info+"/"+localStorage.html_geoloc_status+"-"
 }}
 catch (exc){}
 var firstNameAskedStr="";
-var androidAppNotifShownStr="";
 if(localStorage.nbTimesFirstnameAsked&&!localStorage.firstname){
 firstNameAskedStr='/Na'+localStorage.nbTimesFirstnameAsked+"x";
 }
-if(localStorage.androidAppNotifShown){
-if((!android_appli)&&mobileMode&&androidMode){
-androidAppNotifShownStr='/Not'+localStorage.androidAppNotifShown+"x";
-}}
-document.getElementById('form_debuginfo_id').value=(checkIfRecentPlayer() ? "RCT/" : "")+(navigator.platform+'-'+userAgentStr+((mobileMode&&!android_appli) ? "/M" : "")+'/'+navigator.language+'/'+screen.width+'*'+screen.height+','+screen.colorDepth+'-'+window.innerWidth+"*"+window.innerHeight+firstNameAskedStr+androidAppNotifShownStr+((gameInv!=0) ? '/Inv:'+gameInv : "")+'/'+getLocation()+extra_debug_info).replaceAll(" ","")+(localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
+document.getElementById('form_debuginfo_id').value=(checkIfRecentPlayer() ? "RCT/" : "")+(navigator.platform+'-'+userAgentStr+((mobileMode&&!android_appli) ? "/M" : "")+'/'+navigator.language+'/'+screen.width+'*'+screen.height+','+screen.colorDepth+'-'+window.innerWidth+"*"+window.innerHeight+firstNameAskedStr+((gameInv!=0) ? '/Inv:'+gameInv : "")+'/'+getLocation()+extra_debug_info).replaceAll(" ","")+(localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
 +(max_nb_gamesok_today_reached ? "/todaysmax:"+nb_games_today: "");
 if((nbuknperfs > 0)&&(nbcolumns <=5)){
 document.getElementById('form_gamesummary_id').value='S'+nbColorSelections+'/'+gamestr.replaceAll(" ","");
