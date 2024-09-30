@@ -600,7 +600,7 @@ function handlePrompt() {
     askAndroidLocationPermissionsIfNeeded(true); // forced mode
   }
   else if (mode == 777) {
-    alert("888");
+    alert("777");
   }
   else if (String(mode) == "000") {
     throw new Error("toto");
@@ -5324,6 +5324,9 @@ canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);
+canvas.addEventListener('dblclick', (event) => {
+    event.preventDefault();
+});
 
 // Welcome message at very first game on android app
 // Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit

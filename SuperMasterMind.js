@@ -464,7 +464,7 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert("888");
+alert("777");
 }
 else if(String(mode)=="000"){
 throw new Error("toto");
@@ -4242,6 +4242,9 @@ canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);
+canvas.addEventListener('dblclick', (event)=>{
+event.preventDefault();
+});
 if((!localStorage.gamesok)||(Number(localStorage.gamesok) < min_gamesok_for_firstname)){
 let welcome_str=
 "<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td>\
