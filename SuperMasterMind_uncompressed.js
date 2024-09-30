@@ -600,7 +600,7 @@ function handlePrompt() {
     askAndroidLocationPermissionsIfNeeded(true); // forced mode
   }
   else if (mode == 777) {
-    alert("888");
+    alert("777");
   }
   else if (String(mode) == "000") {
     throw new Error("toto");
@@ -1472,9 +1472,13 @@ function handleTouchStartOrMouseDownEvent(x, y) {
 
 }
 
+let lastTouchStartTime = 0;
 function touchStart(e) {
+  let touchStartTime = new Date().getTime();
+  let touchStartTimeDelta = touchStartTime - lastTouchStartTime;
+  lastTouchStartTime = touchStartTime;
   try {
-    if (e.touches.length > 1) {
+    if ((e.touches.length > 1) || (touchStartTimeDelta < 500)) {
       event.preventDefault();
     }
   } catch (exc) {}
@@ -3001,10 +3005,10 @@ function draw_graphic_bis() {
         allButtons[i].style.border = borderStr2;
       }
       for (let i = 0; i < allButtons.length; i++) {
-        allButtons[i].style.fontSize = (CompressedDisplayMode ? "3.2vh" : "2.7vh"); // proportional to viewport height
+        allButtons[i].style.fontSize = (CompressedDisplayMode ? "3.2vh" : "2.7vh");
       }
       for (let i = 0; i < allRadioButtons.length; i++) {
-        allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "3.8vh" : "3.5vh"); // proportional to viewport height
+        allRadioButtons[i].style.fontSize = (CompressedDisplayMode ? "3.8vh" : "3.5vh");
       }
 
       current_innerWidth = window.innerWidth;

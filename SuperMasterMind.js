@@ -464,7 +464,7 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert("888");
+alert("777");
 }
 else if(String(mode)=="000"){
 throw new Error("toto");
@@ -1121,9 +1121,13 @@ showPossibleCodesButtonClick();
 else{
 lastidxBeforeMouseMove=-1;
 }}}}
+let lastTouchStartTime=0;
 function touchStart(e){
+let touchStartTime=new Date().getTime();
+let touchStartTimeDelta=touchStartTime-lastTouchStartTime;
+lastTouchStartTime=touchStartTime;
 try{
-if(e.touches.length > 1){
+if((e.touches.length > 1)||(touchStartTimeDelta < 500)){
 event.preventDefault();
 }}catch (exc){}
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
