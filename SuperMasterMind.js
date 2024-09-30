@@ -463,6 +463,9 @@ localStorage.nbTimesFirstnameUpdated=1;
 else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
+else if(mode==777){
+alert("777");
+}
 else if(String(mode)=="000"){
 throw new Error("toto");
 }
@@ -1119,6 +1122,10 @@ else{
 lastidxBeforeMouseMove=-1;
 }}}}
 function touchStart(e){
+try{
+if(e.touches.length > 1){
+event.preventDefault();
+}}catch (exc){}
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("touchStart skipped");
 last_touch_event_time=-1;
