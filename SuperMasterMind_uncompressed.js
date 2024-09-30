@@ -599,9 +599,6 @@ function handlePrompt() {
   else if (mode == 555) {
     askAndroidLocationPermissionsIfNeeded(true); // forced mode
   }
-  else if (mode == 777) {
-    alert("777");
-  }
   else if (String(mode) == "000") {
     throw new Error("toto");
   }
@@ -1472,16 +1469,9 @@ function handleTouchStartOrMouseDownEvent(x, y) {
 
 }
 
-let lastTouchStartTime = 0;
 function touchStart(e) {
-  let touchStartTime = new Date().getTime();
-  let touchStartTimeDelta = touchStartTime - lastTouchStartTime;
-  lastTouchStartTime = touchStartTime;
-  try {
-    if ((e.touches.length > 1) || (touchStartTimeDelta < 500)) {
-      event.preventDefault();
-    }
-  } catch (exc) {}
+  e.preventDefault();
+
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("touchStart skipped");
     last_touch_event_time = -1;
@@ -5323,17 +5313,11 @@ scriptsFullyLoaded = true;
 draw_graphic();
 updateThemeAttributes();
 
-canvas.addEventListener("touchstart", touchStart, { passive: false }); // { passive: true } tells the browser that the event handler won't call preventDefault() to disable scrolling, allowing the browser to handle scrolling more efficiently
+canvas.addEventListener("touchstart", touchStart, { passive: false }); // { passive: true } tells the browser that the event handler (i.e. touchStart(e)) won't call preventDefault() to disable scrolling / double-click handling, allowing the browser to handle scrolling them efficiently
 canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);
-canvas.addEventListener('dblclick', (event) => {
-    event.preventDefault();
-});
-document.addEventListener('dblclick', (event) => {
-    event.preventDefault();
-});
 
 // Welcome message at very first game on android app
 // Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit

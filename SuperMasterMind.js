@@ -463,9 +463,6 @@ localStorage.nbTimesFirstnameUpdated=1;
 else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
-else if(mode==777){
-alert("777");
-}
 else if(String(mode)=="000"){
 throw new Error("toto");
 }
@@ -1121,15 +1118,8 @@ showPossibleCodesButtonClick();
 else{
 lastidxBeforeMouseMove=-1;
 }}}}
-let lastTouchStartTime=0;
 function touchStart(e){
-let touchStartTime=new Date().getTime();
-let touchStartTimeDelta=touchStartTime-lastTouchStartTime;
-lastTouchStartTime=touchStartTime;
-try{
-if((e.touches.length > 1)||(touchStartTimeDelta < 500)){
-event.preventDefault();
-}}catch (exc){}
+e.preventDefault();
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("touchStart skipped");
 last_touch_event_time=-1;
@@ -4246,12 +4236,6 @@ canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);
-canvas.addEventListener('dblclick', (event)=>{
-event.preventDefault();
-});
-document.addEventListener('dblclick', (event)=>{
-event.preventDefault();
-});
 if((!localStorage.gamesok)||(Number(localStorage.gamesok) < min_gamesok_for_firstname)){
 let welcome_str=
 "<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td>\
