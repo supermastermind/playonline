@@ -600,7 +600,7 @@ function handlePrompt() {
     askAndroidLocationPermissionsIfNeeded(true); // forced mode
   }
   else if (mode == 777) {
-    alert("777");
+    alert("888");
   }
   else if (String(mode) == "000") {
     throw new Error("toto");
@@ -5325,6 +5325,9 @@ canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
 canvas.addEventListener("mousemove", mouseMove, false);
 canvas.addEventListener('dblclick', (event) => {
+    event.preventDefault();
+});
+document.addEventListener('dblclick', (event) => {
     event.preventDefault();
 });
 
