@@ -464,7 +464,7 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert("777");
+alert("888");
 }
 else if(String(mode)=="000"){
 throw new Error("toto");
@@ -4237,7 +4237,7 @@ debug_game_state=68.5;
 scriptsFullyLoaded=true;
 draw_graphic();
 updateThemeAttributes();
-canvas.addEventListener("touchstart", touchStart,{passive: true});
+canvas.addEventListener("touchstart", touchStart,{passive: false});
 canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);

@@ -600,7 +600,7 @@ function handlePrompt() {
     askAndroidLocationPermissionsIfNeeded(true); // forced mode
   }
   else if (mode == 777) {
-    alert("777");
+    alert("888");
   }
   else if (String(mode) == "000") {
     throw new Error("toto");
@@ -5319,7 +5319,7 @@ scriptsFullyLoaded = true;
 draw_graphic();
 updateThemeAttributes();
 
-canvas.addEventListener("touchstart", touchStart, { passive: true }); // { passive: true } tells the browser that the event handler won't call preventDefault() to disable scrolling, allowing the browser to handle scrolling more efficiently
+canvas.addEventListener("touchstart", touchStart, { passive: false }); // { passive: true } tells the browser that the event handler won't call preventDefault() to disable scrolling, allowing the browser to handle scrolling more efficiently
 canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);
