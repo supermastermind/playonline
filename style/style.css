@@ -1,5 +1,6 @@
 html /* (see viewport meta tags for smartphones in the textual html pages) */ 
 { height: 100%;
+  touch-action: manipulation;
   font-size: 11px; } /* e.g. ok (relatively big font) for 360 */
 
 @media (min-width : 600px) {
@@ -28,7 +29,8 @@ body
 { font-family: Trebuchet MS;
   font-size: 1rem;
   background-position: left top;
-  color: #000000; }
+  color: #000000; 
+  touch-action: manipulation; }
 
 table tr td
 {
