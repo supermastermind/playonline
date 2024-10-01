@@ -464,7 +464,7 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert(userAgentStr+"||"+navigator.userAgent+"||"+mobileMode+","+androidMode+","+android_appli);
+alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileMode+","+androidMode+","+android_appli);
 }
 else if(String(mode)=="000"){
 throw new Error("toto");
