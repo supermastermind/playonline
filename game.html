@@ -75,6 +75,7 @@ text-decoration: none;
 font-weight: 900;
 cursor: pointer;
 -webkit-backface-visibility: visible;
+outline: none;
 }
 .disabled{
 opacity: 0.3;
@@ -502,7 +503,7 @@ locationURLs[1]='https://api.ip'+extraStr+'infodb.com/v3/ip-city/?key=792'+extra
 <table id='my_table' style='width:100%;height:100%;position:absolute;left:0;top:0;border:none;border-radius:0%;margin:0;padding:0;'>
 <tr>
 <td class='not_selectable' style='width:100%;height:1%;margin:0;padding:0;vertical-align:middle;text-align:center;border:none;white-space:nowrap;' id='buttons_td'>
-<input id='newGameButton' class='button disabled' type='button' value='New' title='Start a new game' onclick='this.blur();newGameButtonClick(0)' onfocus='this.blur()' disabled>
+<input id='newGameButton' class='button disabled' type='button' value='New' title='Start a new game' onclick='newGameButtonClick(0)' onfocus='this.blur()' disabled>
 <form action='' style='display:inline;vertical-align:middle;'>
 <label title='Very easy game'>
 <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_3' value="3" onclick='newGameButtonClick(3)'><span id='columnsspan_3' class='radio disabled' name='radio_name'>3</span>
@@ -520,11 +521,11 @@ locationURLs[1]='https://api.ip'+extraStr+'infodb.com/v3/ip-city/?key=792'+extra
 <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_7' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class='radio disabled' name='radio_name'>7</span>
 </label>
 </form>
-<input id='resetCurrentCodeButton' class='button disabled' type='button' value='Rst' title='Reset current code' ontouchstart='this.blur();if(checkButtonEvent(false)){resetCurrentCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){resetCurrentCodeButtonClick();}' onfocus='this.blur()' disabled>
-<input id='playRandomCodeButton' class='button disabled' type='button' value='Rnd' title='Play a random code' ontouchstart='this.blur();if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
-<input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color of the secret code' onclick='this.blur();revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-<input id='showPossibleCodesButton' class='button disabled' type='button' value='Codes' title='Show possible codes at each stage of the game (when game is over)' onclick='this.blur();showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
-<input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info & settings' onclick='this.blur();settingsButtonClick()' onfocus='this.blur()' disabled>
+<input id='resetCurrentCodeButton' class='button disabled' type='button' value='Rst' title='Reset current code' ontouchstart='if(checkButtonEvent(false)){resetCurrentCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){resetCurrentCodeButtonClick();}' onfocus='this.blur()' disabled>
+<input id='playRandomCodeButton' class='button disabled' type='button' value='Rnd' title='Play a random code' ontouchstart='if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
+<input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
+<input id='showPossibleCodesButton' class='button disabled' type='button' value='Codes' title='Show possible codes at each stage of the game (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
+<input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info & settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
 </td>
 </tr>
 <tr>
