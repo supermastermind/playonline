@@ -1445,7 +1445,7 @@ reloadAllContentsDistantlyIfNeeded();
 try{
 if((!android_appli)&&mobileMode&&androidMode
 &&( (!localStorage.gamesok&&(game_cnt==1))
-||(localStorage.gamesok&&((Number(localStorage.gamesok)==11)||(Number(localStorage.gamesok)==22)||(Number(localStorage.gamesok)==44)||(Number(localStorage.gamesok)==67)||(Number(localStorage.gamesok)==88)||(Number(localStorage.gamesok)==128)||(Number(localStorage.gamesok)==256))) )
+||(localStorage.gamesok&&((Number(localStorage.gamesok)==11)||(Number(localStorage.gamesok)==22)||(Number(localStorage.gamesok)==44)||(Number(localStorage.gamesok)==67)||(Number(localStorage.gamesok)==88)||(Number(localStorage.gamesok)==128)||(Number(localStorage.gamesok)==256)||(Number(localStorage.gamesok)==512))) )
 ){
 show_message();
 }
