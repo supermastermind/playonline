@@ -5313,7 +5313,7 @@ scriptsFullyLoaded = true;
 draw_graphic();
 updateThemeAttributes();
 
-canvas.addEventListener("touchstart", touchStart, { passive: false }); // { passive: true } tells the browser that the event handler (i.e. touchStart(e)) won't call preventDefault() to disable scrolling / double-click handling, allowing the browser to handle scrolling them efficiently
+canvas.addEventListener("touchstart", touchStart, { passive: false }); // { passive: true } would tell the browser that the event handler (i.e. touchStart(e)) won't call preventDefault() to disable scrolling / double-click handling, allowing the browser to handle them efficiently
 canvas.addEventListener("touchend", touchEnd, false);
 canvas.addEventListener("mousedown", mouseDown, false);
 canvas.addEventListener("mouseup", mouseUp, false);

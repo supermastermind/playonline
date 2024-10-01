@@ -599,6 +599,12 @@
       // - IPv6 (most of the time):
       locationURLs[1] = 'https://api.ip' + extraStr + 'infodb.com/v3/ip-city/?key=792' + extraStr + 'e8cda21ab40a7f5a349cddc79beb41ff95910c2ec0d05bfea593961e01c7a&format=json'; // (free key - returns most of the time an IPv6 address)
       // - IPV4 (backup): site not used because table updates seem less freqeuent than api.ipdata.co and because successful even when invalid IP address: locationURLs[X] = 'https://ip' + extraStr + 'info.io/json/?token=ca8' + extraStr + '32119df7bb5'; // (free key - returns always an IPv4 address by default, https://v6.ipinfo.io/json URL would have to be used for IPv6 as described in this page https://ipinfo.io/faq/article/34-ipv4-vs-ipv6)
+
+      function preventDefaultTouchStart(e) {
+        e.preventDefault();
+      }
+      document.addEventListener("touchstart", preventDefaultTouchStart, { passive: false }); // { passive: true } would tell the browser that the event handler (i.e. preventDefaultTouchStart(e)) won't call preventDefault() to disable scrolling / double-click handling, allowing the browser to handle them efficiently
+
     </script>
 
     <link rel='stylesheet' type='text/css' href='lib/tingle-master/dist/tingle.min.css'>
