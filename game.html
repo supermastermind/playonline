@@ -234,6 +234,7 @@ color: #fff;
 -moz-user-select: none;
 -ms-user-select: none;
 user-select: none;
+touch-action: manipulation;
 }
 .game_aborted
 {position: fixed;
@@ -253,6 +254,7 @@ color: #fff;
 -moz-user-select: none;
 -ms-user-select: none;
 user-select: none;
+touch-action: manipulation;
 }
 *{
 touch-action: manipulation;
@@ -613,7 +615,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v30.0V";
+let html_compatibility_game_version="v30.0W";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -947,7 +949,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0V: "+(localStorage.reloadForCompatibility_v300V ? localStorage.reloadForCompatibility_v300V : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0W: "+(localStorage.reloadForCompatibility_v300W ? localStorage.reloadForCompatibility_v300W : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userAgentStr+(android_appli ? "|"+classicalUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
