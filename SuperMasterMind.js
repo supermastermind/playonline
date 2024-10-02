@@ -1466,10 +1466,6 @@ let paypalStr=
 Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 show_message("", false, "<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"+paypalStr);
 localStorage.lastDonationTimeT=(new Date()).getTime();
-if(!localStorage.nbDonationRequestsT){
-localStorage.nbDonationRequestsT=0;
-}
-localStorage.nbDonationRequestsT=Number(localStorage.nbDonationRequestsT)+1;
 }}
 catch (tmp_exc){}
 main_graph_update_needed=true;
