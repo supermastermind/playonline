@@ -4214,18 +4214,6 @@ else if(equivalentIdeaFlag&&(tick_width > 0)&&(!globalPerfDisplayIfOptimal)){
 displayString("\uD83D\uDCA1", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell+(android_appli ? 0 : 0.065), tick_width,
 "#FFBF00", backgroundColor, ctx, false);
 }}
-function fullObjToString(obj){
-try{
-let str='{';
-for (let p in obj){
-str+=p+':'+obj[p]+'\n';
-}
-str=str.trim().replaceAll("\n", "|")+"}";
-return str;
-}
-catch (exc){
-return "?";
-}}
 debug_game_state=68.5;
 scriptsFullyLoaded=true;
 draw_graphic();

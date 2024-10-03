@@ -5286,22 +5286,6 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
 
 }
 
-function fullObjToString(obj) { // for debug only
-  try {
-    let str = '{';
-    for (let p in obj) {
-      // if (obj.hasOwnProperty(p)) { // Note: this condition can be commented for (plenty of) more fields
-        str += p + ':' + obj[p] + '\n';
-      // }
-    }
-    str = str.trim().replaceAll("\n", "|") + "}";
-    return str;
-  }
-  catch (exc) {
-    return "?";
-  }
-}
-
 // *************************************************************************
 // Draw graphic
 // *************************************************************************
