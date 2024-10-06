@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.0W"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.0X"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v300W) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v300X) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v300W = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v300X = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -556,7 +556,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0W: " + (localStorage.reloadForCompatibility_v300W ? localStorage.reloadForCompatibility_v300W : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0X: " + (localStorage.reloadForCompatibility_v300X ? localStorage.reloadForCompatibility_v300X : "not done"), 210);
 
       // Alert
       // *****
@@ -1639,25 +1639,25 @@ function playAColor(color, column) {
   }
 }
 
-let previousNbColumns = -1;
+if (!localStorage.previousNbColumns) {
+  localStorage.previousNbColumns = defaultNbColumns;
+}
 function getNbColumnsSelected() {
   // Check if a radio button is checked
   for (let i = 0; i < nbColumnsRadioObjects.length; i++) {
     if (nbColumnsRadioObjects[i].checked) {
-     previousNbColumns = parseInt(nbColumnsRadioObjects[i].value);
-     return previousNbColumns;
+     localStorage.previousNbColumns = parseInt(nbColumnsRadioObjects[i].value);
+     return Number(localStorage.previousNbColumns);
     }
   }
-  // No radio button checked
-  if (previousNbColumns == -1) { // First default setting
-    nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].checked = "checked";
-    previousNbColumns = parseInt(nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].value);
-    return previousNbColumns;
+  // No radio button checked (entered at game reload)
+  if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 70)
+       && (Number(localStorage.previousNbColumns) >= 5)
+       && (Math.floor(Math.random()*5) == 0) /* (20% of game reloads) */ ) {
+    localStorage.previousNbColumns = Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
   }
-  else { // Keep current setting
-    nbColumnsRadioObjects[previousNbColumns-nbMinColumns].checked = "checked";
-    return previousNbColumns;
-  }
+  nbColumnsRadioObjects[Number(localStorage.previousNbColumns)-nbMinColumns].checked = "checked";
+  return Number(localStorage.previousNbColumns);
 }
 
 function show_message(specific_str = "", android_stars_mode = false, forceStr = "") {

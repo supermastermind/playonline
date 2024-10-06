@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v30.0W";
+let smm_compatibility_version="v30.0X";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v300W)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v300X)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v300W="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v300X="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -432,7 +432,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0W: "+(localStorage.reloadForCompatibility_v300W ? localStorage.reloadForCompatibility_v300W : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v30.0X: "+(localStorage.reloadForCompatibility_v300X ? localStorage.reloadForCompatibility_v300X : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -1255,22 +1255,23 @@ return;
 currentCode=newCurrentCode;
 draw_graphic();
 }}
-let previousNbColumns=-1;
+if(!localStorage.previousNbColumns){
+localStorage.previousNbColumns=defaultNbColumns;
+}
 function getNbColumnsSelected(){
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 if(nbColumnsRadioObjects[i].checked){
-previousNbColumns=parseInt(nbColumnsRadioObjects[i].value);
-return previousNbColumns;
+localStorage.previousNbColumns=parseInt(nbColumnsRadioObjects[i].value);
+return Number(localStorage.previousNbColumns);
 }}
-if(previousNbColumns==-1){
-nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].checked="checked";
-previousNbColumns=parseInt(nbColumnsRadioObjects[defaultNbColumns-nbMinColumns].value);
-return previousNbColumns;
+if(localStorage.gamesok&&(Number(localStorage.gamesok) >=70)
+&&(Number(localStorage.previousNbColumns) >=5)
+&&(Math.floor(Math.random()*5)==0)  ){
+localStorage.previousNbColumns=Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
 }
-else{
-nbColumnsRadioObjects[previousNbColumns-nbMinColumns].checked="checked";
-return previousNbColumns;
-}}
+nbColumnsRadioObjects[Number(localStorage.previousNbColumns)-nbMinColumns].checked="checked";
+return Number(localStorage.previousNbColumns);
+}
 function show_message(specific_str="", android_stars_mode=false, forceStr=""){
 if(forceStr!=""){
 let str=
