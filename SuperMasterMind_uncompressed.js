@@ -602,6 +602,9 @@ function handlePrompt() {
   else if (mode == 777) {
     alert(userAgentStr + "||" + navigator.userAgent + "||" + navigator.platform + "||" + mobileMode + "," + androidMode + "," + android_appli);
   }
+  else if (mode == 888) {
+    localStorage.gamesok = 100;
+  }
   else if (String(mode) == "000") {
     throw new Error("toto");
   }
@@ -1642,6 +1645,9 @@ function playAColor(color, column) {
 if (!localStorage.previousNbColumns) {
   localStorage.previousNbColumns = defaultNbColumns;
 }
+if (!localStorage.nbGamesReloaded) {
+  localStorage.nbGamesReloaded = 0;
+}
 function getNbColumnsSelected() {
   // Check if a radio button is checked
   for (let i = 0; i < nbColumnsRadioObjects.length; i++) {
@@ -1651,10 +1657,13 @@ function getNbColumnsSelected() {
     }
   }
   // No radio button checked (entered at game reload)
-  if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 70)
-       && (Number(localStorage.previousNbColumns) >= 5)
-       && (Math.floor(Math.random()*5) == 0) /* (20% of game reloads) */ ) {
-    localStorage.previousNbColumns = Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
+  if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 60)
+       && (Number(localStorage.previousNbColumns) >= 5) ) { // propose games other than Super Master Mind
+    localStorage.nbGamesReloaded = Number(localStorage.nbGamesReloaded) + 1;
+    if (Number(localStorage.nbGamesReloaded) >= 4) {
+      localStorage.nbGamesReloaded = 0;
+      localStorage.previousNbColumns = Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
+    }
   }
   nbColumnsRadioObjects[Number(localStorage.previousNbColumns)-nbMinColumns].checked = "checked";
   return Number(localStorage.previousNbColumns);

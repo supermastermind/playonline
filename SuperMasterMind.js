@@ -466,6 +466,9 @@ askAndroidLocationPermissionsIfNeeded(true);
 else if(mode==777){
 alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileMode+","+androidMode+","+android_appli);
 }
+else if(mode==888){
+localStorage.gamesok=100;
+}
 else if(String(mode)=="000"){
 throw new Error("toto");
 }
@@ -1258,17 +1261,22 @@ draw_graphic();
 if(!localStorage.previousNbColumns){
 localStorage.previousNbColumns=defaultNbColumns;
 }
+if(!localStorage.nbGamesReloaded){
+localStorage.nbGamesReloaded=0;
+}
 function getNbColumnsSelected(){
 for (let i=0;i < nbColumnsRadioObjects.length;i++){
 if(nbColumnsRadioObjects[i].checked){
 localStorage.previousNbColumns=parseInt(nbColumnsRadioObjects[i].value);
 return Number(localStorage.previousNbColumns);
 }}
-if(localStorage.gamesok&&(Number(localStorage.gamesok) >=70)
-&&(Number(localStorage.previousNbColumns) >=5)
-&&(Math.floor(Math.random()*5)==0)  ){
+if(localStorage.gamesok&&(Number(localStorage.gamesok) >=60)
+&&(Number(localStorage.previousNbColumns) >=5) ){
+localStorage.nbGamesReloaded=Number(localStorage.nbGamesReloaded)+1;
+if(Number(localStorage.nbGamesReloaded) >=4){
+localStorage.nbGamesReloaded=0;
 localStorage.previousNbColumns=Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
-}
+}}
 nbColumnsRadioObjects[Number(localStorage.previousNbColumns)-nbMinColumns].checked="checked";
 return Number(localStorage.previousNbColumns);
 }
