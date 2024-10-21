@@ -1645,23 +1645,27 @@ function playAColor(color, column) {
 if (!localStorage.previousNbColumns) {
   localStorage.previousNbColumns = defaultNbColumns;
 }
-if (!localStorage.nbGamesReloaded) {
-  localStorage.nbGamesReloaded = 0;
+if (!localStorage.nbReloads) {
+  localStorage.nbReloads = 0;
 }
+let firstReload = true;
 function getNbColumnsSelected() {
   // Check if a radio button is checked
-  for (let i = 0; i < nbColumnsRadioObjects.length; i++) {
-    if (nbColumnsRadioObjects[i].checked) {
-     localStorage.previousNbColumns = parseInt(nbColumnsRadioObjects[i].value);
-     return Number(localStorage.previousNbColumns);
+  if (!firstReload) {
+    for (let i = 0; i < nbColumnsRadioObjects.length; i++) {
+      if (nbColumnsRadioObjects[i].checked) {
+       localStorage.previousNbColumns = parseInt(nbColumnsRadioObjects[i].value);
+       return Number(localStorage.previousNbColumns);
+      }
     }
   }
+  firstReload = false;
   // No radio button checked (entered at game reload)
   if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 60)
        && (Number(localStorage.previousNbColumns) >= 5) ) { // propose games other than Super Master Mind
-    localStorage.nbGamesReloaded = Number(localStorage.nbGamesReloaded) + 1;
-    if (Number(localStorage.nbGamesReloaded) >= 4) {
-      localStorage.nbGamesReloaded = 0;
+    localStorage.nbReloads = Number(localStorage.nbReloads) + 1;
+    if (Number(localStorage.nbReloads) >= 4) {
+      localStorage.nbReloads = 0;
       localStorage.previousNbColumns = Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
     }
   }
