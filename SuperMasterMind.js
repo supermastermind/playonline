@@ -389,7 +389,7 @@ return "(currentattempt:"+currentAttemptNumber
 function displayGUIError(GUIErrorStr, errStack){
 let completedGUIErrorStr=(GUIErrorStr+" "+getExtraDebugInfo()).trim();
 if(gameErrorCnt < 50){
-console.log("***** ERROR *****: "+completedGUIErrorStr+" / "+errStack+"\n");
+console.log("***** ERROR ***** ("+gameErrorCnt+"): "+completedGUIErrorStr+" / "+errStack+"\n");
 console.log("Stack:");
 let stack=new Error().stack;
 console.log(stack);
@@ -3034,6 +3034,9 @@ if(!gameOnGoing()){
 let totalTimeInMilliSeconds=stopTime-startTime
 +((gameInv!=0) ? 1000 : 0);
 let totalTimeInSeconds=Math.floor(totalTimeInMilliSeconds/1000);
+if(totalTimeInSeconds < 0){
+throw new Error("negative diff: "+startTime+", "+stopTime+", "+(new Date()));
+}
 let timeInHours=Math.floor(totalTimeInSeconds/3600);
 let timeInSecondsWithinHour=(totalTimeInSeconds-timeInHours*3600);
 let timeInMinutes=Math.floor(timeInSecondsWithinHour/60);

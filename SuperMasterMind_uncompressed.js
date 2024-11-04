@@ -507,7 +507,7 @@ function displayGUIError(GUIErrorStr, errStack) {
   // ***********************************
 
   if (gameErrorCnt < 50) {
-    console.log("***** ERROR *****: " + completedGUIErrorStr + " / " + errStack + "\n");
+    console.log("***** ERROR ***** (" + gameErrorCnt + "): " + completedGUIErrorStr + " / " + errStack + "\n");
     console.log("Stack:");
     let stack = new Error().stack;
     console.log(stack);
@@ -3839,6 +3839,9 @@ function draw_graphic_bis() {
           let totalTimeInMilliSeconds = stopTime - startTime
                                         + ((gameInv != 0) ? 1000 : 0); // make duration realistic after attempt inversion - actual last-game duration ignored to compensate for the disturbance: constant extra 1 second always considered
           let totalTimeInSeconds = Math.floor(totalTimeInMilliSeconds/1000);
+          if (totalTimeInSeconds < 0) { // shall never happen, even if winter/summer time shift or timezone change
+            throw new Error("negative diff: " + startTime + ", " + stopTime + ", " + (new Date()));
+          }
 
           let timeInHours = Math.floor(totalTimeInSeconds/3600);
           let timeInSecondsWithinHour = (totalTimeInSeconds - timeInHours*3600); // (range: [0;3599]
