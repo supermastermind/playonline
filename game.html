@@ -367,7 +367,8 @@ globalErrorStatus=true;
 }
 var oldBrowserVersion=false;
 if(chromeMode&&(classicalUserAgentStr!="")){
-if(classicalUserAgentStr.indexOf("Chrome/79.")!=-1){
+if((!String.prototype.repeat)
+||(classicalUserAgentStr.indexOf("Chrome/79.")!=-1) ){
 oldBrowserVersion=true;
 alert("Your Chrome browser version is old, please update it to avoid errors");
 }}
@@ -596,7 +597,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v30.0X";
+let html_compatibility_game_version="v30.0Y";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -719,6 +720,12 @@ String.prototype.replaceAll=function(search, replacement){
 let target=this;
 return target.replace(new RegExp(search, 'g'), replacement);
 };
+if(!String.prototype.padStart){
+String.prototype.padStart=function(targetLength, startChar){
+let len=this.length;
+let n=Math.max(targetLength-len,0);
+return startChar.repeat(n)+this;
+}}
 function replaceAllElementsInStruct(struct, search, replacement){
 for (let element in struct){
 if(typeof struct[element]==="string"){
@@ -930,7 +937,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0X: "+(localStorage.reloadForCompatibility_v300X ? localStorage.reloadForCompatibility_v300X : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.0Y: "+(localStorage.reloadForCompatibility_v300Y ? localStorage.reloadForCompatibility_v300Y : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userAgentStr+(android_appli ? "|"+classicalUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon

@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.0X"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.0Y"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v300X) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v300Y) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v300X = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v300Y = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -556,7 +556,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0X: " + (localStorage.reloadForCompatibility_v300X ? localStorage.reloadForCompatibility_v300X : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0Y: " + (localStorage.reloadForCompatibility_v300Y ? localStorage.reloadForCompatibility_v300Y : "not done"), 210);
 
       // Alert
       // *****
