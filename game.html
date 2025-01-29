@@ -2527,12 +2527,14 @@ if(geolocation_handler.nb_JSON_queries_posted >=nbLocationURLs){
 throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: "+geolocation_handler.nb_JSON_queries_posted+", "+nbLocationURLs);
 }
 let locationURL=null;
+let skip_distant_accesses=false;
 if(nb_locationURL_accesses < 2*nbLocationURLs){
 nb_locationURL_accesses++;
 locationURL=locationURLs[geolocation_handler.nb_JSON_queries_posted];
 }
 else{
 locationURL="NO_MORE_URL_ACCESSED_"+geolocation_handler.nb_JSON_queries_posted+"_"+nb_locationURL_accesses;
+skip_distant_accesses=true;
 }
 geolocation_handler.nb_JSON_queries_posted++;
 let current_nb_JSON_queries_posted=geolocation_handler.nb_JSON_queries_posted;
@@ -2555,8 +2557,9 @@ geolocation_handler.setFormInfo();
 else{
 localStorage.last_ip_address_based_failure=(new Date()).getTime();
 geolocation_handler.setFormInfoByOtherMeans("fail_1("+nb_locationURL_accesses+"reqs:"+locationURL_accesses_failure_causes+")");
+if(!skip_distant_accesses){
 setTimeout("attemptAlternateLocationMethods(false);", 14444);
-}}
+}}}
 debug_game_state=22;
 })
 .fail(function(jqxhr, textStatus, error){
@@ -2570,8 +2573,9 @@ geolocation_handler.setFormInfo();
 else{
 localStorage.last_ip_address_based_failure=(new Date()).getTime();
 geolocation_handler.setFormInfoByOtherMeans("fail_2("+nb_locationURL_accesses+"reqs:"+locationURL_accesses_failure_causes+")");
+if(!skip_distant_accesses){
 setTimeout("attemptAlternateLocationMethods(false);", 14444);
-}
+}}
 debug_game_state=24;
 })
 .always(function(){

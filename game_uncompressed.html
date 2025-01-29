@@ -3038,12 +3038,14 @@
                   throw new Error("setFormInfo: inconsistent nb_JSON_queries_posted value: " + geolocation_handler.nb_JSON_queries_posted + ", " + nbLocationURLs);
                 }
                 let locationURL = null;
+                let skip_distant_accesses = false;
                 if (nb_locationURL_accesses < 2*nbLocationURLs) { // Defense to avoid too many requests
                   nb_locationURL_accesses++;
                   locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
                 }
                 else {
                   locationURL = "NO_MORE_URL_ACCESSED_" + geolocation_handler.nb_JSON_queries_posted + "_" + nb_locationURL_accesses;
+                  skip_distant_accesses = true;
                 }
 
                 geolocation_handler.nb_JSON_queries_posted++;
@@ -3067,8 +3069,10 @@
                     else {
                       localStorage.last_ip_address_based_failure = (new Date()).getTime();
                       geolocation_handler.setFormInfoByOtherMeans("fail_1(" + nb_locationURL_accesses + "reqs:" + locationURL_accesses_failure_causes + ")");
-                      // Attempt alternate distant location methods (results will only be used for next scores to simplify), with the same defenses/timing as IP-address based geolocation
-                      setTimeout("attemptAlternateLocationMethods(false);", 14444);
+                      if (!skip_distant_accesses) {
+                        // Attempt alternate distant location methods (results will only be used for next scores to simplify), with the same defenses/timing as IP-address based geolocation
+                        setTimeout("attemptAlternateLocationMethods(false);", 14444);
+                      }
                     }
                   }
                   debug_game_state = 22;
@@ -3084,8 +3088,10 @@
                   else {
                     localStorage.last_ip_address_based_failure = (new Date()).getTime();
                     geolocation_handler.setFormInfoByOtherMeans("fail_2(" + nb_locationURL_accesses + "reqs:" + locationURL_accesses_failure_causes + ")");
-                    // Attempt alternate distant location methods (results will only be used for next scores to simplify), with the same defenses/timing as IP-address based geolocation
-                    setTimeout("attemptAlternateLocationMethods(false);", 14444);
+                    if (!skip_distant_accesses) {
+                      // Attempt alternate distant location methods (results will only be used for next scores to simplify), with the same defenses/timing as IP-address based geolocation
+                      setTimeout("attemptAlternateLocationMethods(false);", 14444);
+                    }
                   }
                   debug_game_state = 24;
                 })
