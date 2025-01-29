@@ -3028,7 +3028,7 @@
               // IP-address based geolocation: fetch location data from distant sites
               // ********************************************************************
 
-              if (localStorage.last_ip_address_based_failure && ((new Date()).getTime() - localStorage.last_ip_address_based_failure < 8*3600*1000)) { // 8 hours
+              if (localStorage.last_ip_address_based_failure && ((new Date()).getTime() - localStorage.last_ip_address_based_failure < 10*3600*1000)) { // 10 hours
                 // Do not make any further distant attempt for the moment
                 console.log("skip IP-address based geolocation");
                 geolocation_handler.setFormInfoByOtherMeans("skipIP(" + reformatTime((new Date()).getTime() - localStorage.last_ip_address_based_failure) + ")");

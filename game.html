@@ -2518,7 +2518,7 @@ if(localStorage.location_storage_time&&((new Date()).getTime()-localStorage.loca
 geolocation_handler.setFormInfoWithValidLocationData(stored_location_data, localStorage.location_id, "IPST("+reformatTime((new Date()).getTime()-localStorage.location_storage_time)+")", false);
 return;
 }}
-if(localStorage.last_ip_address_based_failure&&((new Date()).getTime()-localStorage.last_ip_address_based_failure < 8*3600*1000)){
+if(localStorage.last_ip_address_based_failure&&((new Date()).getTime()-localStorage.last_ip_address_based_failure < 10*3600*1000)){
 console.log("skip IP-address based geolocation");
 geolocation_handler.setFormInfoByOtherMeans("skipIP("+reformatTime((new Date()).getTime()-localStorage.last_ip_address_based_failure)+")");
 }
