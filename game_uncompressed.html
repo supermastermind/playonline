@@ -3039,7 +3039,7 @@
                 }
                 let locationURL = null;
                 let skip_distant_accesses = false;
-                if (nb_locationURL_accesses < 2*nbLocationURLs) { // Defense to avoid too many requests
+                if (nb_locationURL_accesses < 2*nbLocationURLs) { // Defense to avoid too many requests (nb_locationURL_accesses not put in localStorage to simplify)
                   nb_locationURL_accesses++;
                   locationURL = locationURLs[geolocation_handler.nb_JSON_queries_posted];
                 }
