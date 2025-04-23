@@ -59,6 +59,8 @@ compress_javascript_file("game_uncompressed.html", "game.html")
 # Compress SuperMasterMind.js
 if os.path.isfile("SuperMasterMind.js.gz"):
     os.remove("SuperMasterMind.js.gz")
-# "C:\Program Files\7-Zip\7z.exe" a -tgzip SuperMasterMind.js.gz SuperMasterMind.js
-cmd = [r"C:\Program Files\7-Zip\7z.exe", "a", "SuperMasterMind.js.gz", "SuperMasterMind.js", "-tgzip"]
+# Windows version: # "C:\Program Files\7-Zip\7z.exe" a -tgzip SuperMasterMind.js.gz SuperMasterMind.js
+# Windows version: cmd = [r"C:\Program Files\7-Zip\7z.exe", "a", "SuperMasterMind.js.gz", "SuperMasterMind.js", "-tgzip"]
+# Linux version: gzip SuperMasterMind.js
+cmd = ["gzip", "SuperMasterMind.js"]
 subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()

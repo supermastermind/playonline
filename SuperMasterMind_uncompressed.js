@@ -4814,7 +4814,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
     if (drawInBubble) {
       let delta_x = font_width_1char*0.50;
       let delta_y = 3;
-      drawBubble(ctx, x_0_for_drawBubble - delta_x, y_0_next - delta_y, str_width + 2*delta_x, y_0 - y_0_next + 2*delta_y, Math.floor(str_height/1.5), foregroundColor, getLineWidth(window.innerHeight, 1), bottomRightBubble);
+      drawBubble(ctx, x_0_for_drawBubble - delta_x, y_0_next - delta_y, str_width + 2*delta_x, y_0 - y_0_next + 2*delta_y, Math.floor(str_height/0.9), foregroundColor, getLineWidth(window.innerHeight, 1), bottomRightBubble);
     }
 
     ctx.lineWidth = lineWidthIni;
