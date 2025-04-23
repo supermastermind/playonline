@@ -575,9 +575,6 @@ welcome_str="Bienvenue";
 catch (exc){}
 if(localStorage.firstname&&localStorage.playerid){
 let kdo_str="";
-if((localStorage.firstname=="Jeannot")&&(localStorage.playerid.indexOf("9XG5")!=-1)){
-kdo_str="<br><img src='img/Kdo.png' align='left' class='kdo' style='width:7.7%;margin:0.5% 0 0 1.0%;border-radius:40%'>";
-}
 document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;"+welcome_str+" <b><font color=yellow>"+localStorage.firstname+"</font></b>!</span></font>"+"<span id='kdo_id'>"+kdo_str+"</span>");
 setTimeout(function(){
 $("#welcome_id").fadeOut().empty();
@@ -904,6 +901,9 @@ if(message.indexOf("webkitExitFullScreen")!=-1){
 return;
 }
 if(message.indexOf("_AutofillCallbackHandler")!=-1){
+return;
+}
+if(message.indexOf("redeclaration of const hideMyLocation")!=-1){
 return;
 }
 if(message.indexOf("undefined is not an object (evaluating 'a.L')")!=-1){
@@ -2301,11 +2301,6 @@ timezone=String(data_p.time_zone).trim();
 }}
 if(storeLocationInfo){
 setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city);
-}
-if(localStorage.firstname&&(localStorage.firstname=="Jeannot")&&localStorage.playerid&&(localStorage.playerid.indexOf("9XG5")!=-1)){
-country="France";
-region="Grand Est";
-city="Munster";
 }
 console.log(country);
 document.getElementById('form_country_id').value=capitalizeFirstLetter(country);
