@@ -62,5 +62,5 @@ if os.path.isfile("SuperMasterMind.js.gz"):
 # Windows version: # "C:\Program Files\7-Zip\7z.exe" a -tgzip SuperMasterMind.js.gz SuperMasterMind.js
 # Windows version: cmd = [r"C:\Program Files\7-Zip\7z.exe", "a", "SuperMasterMind.js.gz", "SuperMasterMind.js", "-tgzip"]
 # Linux version: gzip SuperMasterMind.js
-cmd = ["gzip", "SuperMasterMind.js"]
+cmd = ["gzip", "-k", "SuperMasterMind.js"]
 subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()

@@ -1006,13 +1006,11 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
 
       if (gameOnGoing() && (currentAttemptNumber > 1)) { // (condition duplicated)
 
-        if (localStorage.firstname && (nbColumns >= 5)) { // (condition duplicated)
-          if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
-            var rsp = confirm("Do you really want to abort current game?");
-            if (!rsp) {
-              nbNewGameEventsCancelled++;
-              return; // Cancel or "x" (close) button
-            }
+        if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
+          var rsp = confirm("Do you really want to abort current game?");
+          if (!rsp) {
+            nbNewGameEventsCancelled++;
+            return; // Cancel or "x" (close) button
           }
         }
         nbOnGoingGamesAborted++;
