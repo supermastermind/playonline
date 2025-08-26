@@ -60,7 +60,7 @@
             <h1>Super Master Mind</h1>
             Play Super Master Mind and evaluate your strategy!
             <hr style="height:0.5rem; visibility:hidden;" />
-            During the game, each of your attempts is compared to what the optimal strategy would have played, which may help you to progress.<br>
+            During the game, each of your attempts is compared to what the optimal strategy would have played, which can help you to progress.<br>
             At each attempt, the number of possible codes is displayed, and the lists of possible codes are shown at game end.<br>
             Several displays (with colors or numbers) and modes (from 3 to 7 columns and from 5 to 10 colors/numbers) are possible.<br>
             Game scores are stored online to rank players and follow their progression.
@@ -68,32 +68,33 @@
             <a href="img/SMM_game_example_1_portrait.png"><img src="img/SMM_game_example_1_portrait.png" style="width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:0.5rem;border-radius:2%"></a>
             <a href="img/SMM_game_example_2_portrait.png"><img src="img/SMM_game_example_2_portrait.png" style="width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:0.5rem;border-radius:2%"></a>
             <hr style="height:0.5rem; visibility:hidden;" />
-            <b><font style='font-size:111%'>On your smartphone: </font><a href='https://play.google.com/store/apps/details?id=supermastermind.github.io' onfocus='this.blur()'><font style='font-size:111%'>play with the android&nbsp;app</font></a></b><br>
+            <font style='font-size:111%'>Play on your smartphone by </font><b><a href='https://play.google.com/store/apps/details?id=supermastermind.github.io' onfocus='this.blur()'><font style='font-size:111%'>installing the Android&nbsp;app</font></a></b><br>
             <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io'>
               <img alt='Get it on Google Play' style='width:11.0rem;margin-top:0.5rem;margin-bottom:0' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='width:5.5rem;margin-top:0.5rem;margin-bottom:0;border-radius:7%' src='img/Playstore_icon.png'/>
             </a>
             <hr style="height:0.5rem; visibility:hidden;" />
-            <b><font style='font-size:111%'>On your PC: </font><a href='game.html' onfocus='this.blur()'><font style='font-size:111%'>play in your browser</font></a></b><br>
+            <font style='font-size:111%'>or directly on your computer </font><b><a href='game.html' onfocus='this.blur()'><font style='font-size:111%'>using your browser</font></a></b><font style='font-size:111%'>.</font><br>
 
             <a name='game_rules'></a>
             <h2>Game rules</h2>
-            The goal of Super Master Mind is to find out a secret code of 5 colors chosen randomly among 8 (with duplicate colors allowed).<br>
-            The player makes successive attempts, and each code played is given pegs:<br>
+            The goal of Super Master Mind is to discover a secret code made up of 5 colors, randomly selected from a pool of 8, with duplicate colors allowed.<br>
+            The player makes successive attempts to guess the secret code. After each attempt, feedback is provided using pegs:<br>
             <ul style='margin:0'>
-            <li style='list-style-type:disc'>a black peg <small><small>&#x26ab;</small></small> indicates the existence of a correct color in a correct position,</li>
-            <li style='list-style-type:disc'>a white peg <small><small>&#x26aa;</small></small> indicates the existence of a correct color in a wrong position.</li>
+            <li style='list-style-type:disc'>a black peg <small><small>&#x26ab;</small></small> indicates a correct color in a correct position,</li>
+            <li style='list-style-type:disc'>a white peg <small><small>&#x26aa;</small></small> indicates a correct color in a wrong position.</li>
             </ul>
-            Only the total numbers of black pegs and of white pegs are given (without column information).<br>
-            The game is won when 5 black pegs are got (secret code discovered) or lost when the maximum number of attempts is reached.
+            Only the total numbers of black pegs and of white pegs are shown (no information is given about which positions they refer to).<br>
+            The game is won when the player receives 5 black pegs (meaning the secret code has been correctly guessed), or lost when the maximum number of attempts is reached.
             <hr style="height:0.5rem; visibility:hidden;" />
-            For Master Mind, the rules are the same with a secret code of 4 colors chosen randomly among 6, and more generally M among N for other code breaker games.<br>
+            In the classic Master Mind version, the rules are the same, but the secret code consists of 4 colors chosen from 6. More generally, code breaker games follow the format M out of N, where M is the code length and N is the number of available colors.<br>
 
             <h2>How to play?</h2>
             <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;background-color:#FFFFFF;padding-top:0.5rem;padding-bottom:0.5rem;padding-left:1.5rem;padding-right:1.5rem;margin-top:0.5rem;margin-right:0.5rem;border-radius:2%'><small>click to enlarge</small></a>
 
             <a name='Strategy'></a>
             <h2>Strategy evaluation: performances and scores</h2>
-            Behind the graphical interface, the program is assisted by a calculator which will give you hints to find the optimal strategy.
+            Behind the graphical interface, the program is assisted by a calculator which provides hints to help you understand the optimal strategy.
+            <hr style='height:0.5rem; visibility:hidden;' />
             This calculator compares what you played to what the optimal strategy would have played. For each code played,
             it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
             to this same average number when your code is played, and then displays the difference next to your code, called <b><font color=#CC0099>performance</font></b>.<br>
@@ -101,14 +102,15 @@
             For example:<br>
             <ul style='margin:0'>
               <li style='list-style-type:disc'><b>0.00</b> means that what you played was optimal: no difference between your code and the optimal code(s),</li>
-              <li style='list-style-type:disc'><b><font color=#F00000>-1.00</font></b> means that what you played was useless: 1 attempt was lost on average, thus -1,</li>
-              <li style='list-style-type:disc'><b><font color=#F00000>-0.50</font></b> means that what you played was not optimal: you lost <sup>1</sup>&frasl;<sub>2</sub> attempt on average
+              <li style='list-style-type:disc'><b><font color=#F00000>-1.00</font></b> means that what you played was useless: 1 attempt was lost on average, hence -1,</li>
+              <li style='list-style-type:disc'><b><font color=#F00000>-0.50</font></b> means that what you played was not optimal: you lost 0.5 attempt on average
               to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches
               secret codes in 4 attempts on average, your code (followed by an optimal strategy) will reach them in 4.5 attempts on average.
-              Of course, if you are lucky, this inefficient code may be the secret code, in which case you will win the game instantly!
+              Of course, if you are lucky, your inefficient code might turn out to be the secret code, meaning you would win instantly!&nbsp;&#x1F609;
             </ul>
             <hr style='height:0.5rem; visibility:hidden;' />
-            When you win, summing those performances over all the codes you played gives <b><font color=#CC0099>your global performance for this game</font></b>. It will be stored together with <b><font color=#CC0099>your score</font></b>, which on its side only depends on the number of attempts you took to find the secret code and the time you needed, so is much more subject to luck than your global performance.
+            When you win, summing those performances over all the codes you played gives your <b><font color=#CC0099>global performance for this game</font></b>.<br>
+            It will be stored alongside your <b><font color=#CC0099>score for this game</font></b>, which on its side only depends on the number of attempts you took to find the secret code and the time you needed, <b>so is much more subject to luck than your <font color=#CC0099>global performance for this game</font></b>.
             <hr style='height:0.5rem; visibility:hidden;' />
 
             <!-- OPTIMAL STRATEGY DETAILS -->
