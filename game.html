@@ -1950,7 +1950,7 @@ if(localStorage.firstname&&localStorage.nbTimesFirstnameUpdated&&(Number(localSt
 alert("First name has already been changed the maximum number of times");
 return;
 }
-let prompt_str="Please enter your first name or nickname to be stored with your scores (between "+minFirstNameLength+" and "+maxFirstNameLength+" letters, no space):";
+let prompt_str="Please enter your first name or nickname to be stored with your scores (between "+minFirstNameLength+" and "+maxFirstNameLength+" letters):";
 let firstname_entered=prompt(prompt_str, "Sherlock?");
 if(firstname_entered!=null){
 firstname_entered=firstname_entered.trim();

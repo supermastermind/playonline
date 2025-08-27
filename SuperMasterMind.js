@@ -1004,7 +1004,7 @@ let game_rules_str=
 +change_first_name_str
 +"<b>More info:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <b><a href='index.html'>Main&nbsp;page</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a><br><a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='contact_info.html'>Contact&nbsp;page</a></b>\
-</font></td></tr></table></center><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>";
+</font></td></tr></table></center><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 try{
 gameRulesDisplayed=true;
 modal_mode=3;
