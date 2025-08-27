@@ -963,13 +963,13 @@ return;
 }
 if(!settingsButtonObject.disabled){
 let display_form_str=
-"<b>SELECT DISPLAY MODE:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
+"<b>Select display mode:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
 <option value='1'"+((!modernDisplay)&&(legacyDisplayVariant!=1) ? " selected" : "")+">numbers / classical display</option>\
 <option value='2'"+((!modernDisplay)&&(legacyDisplayVariant==1) ? " selected" : "")+">colors only / classical display</option>\
 <option value='3'"+(modernDisplay ? " selected" : "")+">numbers / light display</option>\
 </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
-let change_first_name_title_str="<b>CHANGE FIRST NAME:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>";
+let change_first_name_title_str="<b>Change first name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 let change_first_name_str="";
 if(localStorage.firstname){
 if(!(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstnameUpdated) >=nbMaxTimesFirstnameChanged))){
@@ -994,15 +994,17 @@ change_first_name_title_str
 +"<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 }
 let game_rules_str=
-"<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
-<br><b>HOW TO PLAY?</b><hr style='height:0.50vh;padding:0;margin:0;visibility:hidden;'>\
-<a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'></a>"
-+"For more details, go to <b><a href='index.html#game_rules'>Game&nbsp;rules</a></b><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>"
+"<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:2.0vh;color:black'>\
+<hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>\
+<b>Game rules:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+<b><a href='index.html#game_rules'>See this page</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
+<b>How to play?</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+<a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'></a>"
 +display_form_str
 +change_first_name_str
-+"<b>MORE INFO:</b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
-<b><a href='index.html'>Main&nbsp;page</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a> |&nbsp;<a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='"+android_app_url+"'>Android</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
-</font></td></tr></table></center><hr style='height:2.00vh;padding:0;margin:0;visibility:hidden;'>";
++"<b>More info:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+<b><a href='index.html'>Main&nbsp;page</a> |&nbsp;<a href='optimal_strategy.html'>Optimal&nbsp;strategy</a><br><a href='screenshots.html'>Game&nbsp;examples</a> |&nbsp;<a href='contact_info.html'>Contact&nbsp;page</a></b>\
+</font></td></tr></table></center><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>";
 try{
 gameRulesDisplayed=true;
 modal_mode=3;
@@ -1504,12 +1506,12 @@ break;
 case 6:
 nbColors=Math.min(nbMaxColors, nominalGameNbColors+1);
 nbMaxAttempts=nominalGameNbMaxAttempts+1;
-document.title="Mega Master Mind";
+document.title="Advanced Master Mind";
 break;
 case 7:
 nbColors=Math.min(nbMaxColors, nominalGameNbColors+2);
 nbMaxAttempts=nominalGameNbMaxAttempts+2;
-document.title="Ultra Master Mind";
+document.title="Ultimate Master Mind";
 break;
 default:
 throw new Error("invalid selection of number of columns: "+nbColumns+" (1)");
