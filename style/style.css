@@ -26,19 +26,19 @@ html /* (see viewport meta tags for smartphones in the textual html pages) */
 
 body
 { font-family: Trebuchet MS;
-  font-size: 1rem;
+  font-size: 1.1rem;
   background-position: left top;
   color: #000000; }
 
 table tr td
 {
   font-family: Trebuchet MS;
-  font-size: 1rem; }
+  font-size: 1.1rem; }
 
 table tr td a
 {
   font-family: Trebuchet MS;
-  font-size: 1rem; }
+  font-size: 1.1rem; }
   
 img
 { border: 0; }
@@ -57,13 +57,13 @@ h2
 { font-size: 130% }
 
 h3
-{ font-size: 130% }
+{ font-size: 110% }
 
 a
 { outline: none;
   text-decoration: underline;
   color: #A4AA04;
-  font-size: 1rem; }
+  font-size: 1.1rem; }
 
 ul
 { list-style-position: outside; }
@@ -78,14 +78,14 @@ ul li
   text-align: center; }
 
 #header h1
-{ font-size: 1.4rem;
+{ font-size: 1.5rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:0.5rem;
   margin-top:1.0rem; }
 
 #header h2
-{ font-size: 1.15rem;
+{ font-size: 1.25rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:0.25rem;
@@ -95,11 +95,11 @@ ul li
 { margin: 0 0 0 1%; } /* top right bottom left */
 
 ul#menu
-{ font-size: 1.0rem;
+{ font-size: 1.1rem;
   font-weight: bold; }
 
 ul#menu li
-{ font-size: 1.0rem;
+{ font-size: 1.1rem;
   float: left;
   padding: 0;
   list-style: none;
@@ -108,7 +108,7 @@ ul#menu li
 
 ul#menu li a
 { 
-  font-size: 1.0rem;
+  font-size: 1.1rem;
   float: left;
   padding: 0.5rem 0.5rem 0.5rem 0.5rem; /* top right bottom left */
   text-align: center;
@@ -120,7 +120,7 @@ ul#menu li.selected a, ul#menu li.selected a:hover
 { background: #FFFFFF;
   color: #0000A8; 
   border: 2px solid #0000A8;
-  font-size: 115% }
+  font-size: 110% }
 
 ul#menu li a:hover
 { /* color: #FF00FF; */ }
