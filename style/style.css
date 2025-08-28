@@ -110,7 +110,7 @@ ul#menu li a
 { 
   font-size: 1.1rem;
   float: left;
-  padding: 0.5rem 0.5rem 0.5rem 0.5rem; /* top right bottom left */
+  padding: 0.5rem 0.3rem 0.5rem 0.3rem; /* top right bottom left */
   text-align: center;
   color: #000;
   text-decoration: none;
@@ -120,7 +120,7 @@ ul#menu li.selected a, ul#menu li.selected a:hover
 { background: #FFFFFF;
   color: #0000A8; 
   border: 2px solid #0000A8;
-  font-size: 110% }
+  font-size: 100% }
 
 ul#menu li a:hover
 { /* color: #FF00FF; */ }
