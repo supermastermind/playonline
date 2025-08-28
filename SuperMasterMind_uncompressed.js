@@ -1890,12 +1890,12 @@ function resetGameAttributes(nbColumnsSelected) {
       show_message();
     }
     else if ( android_appli && localStorage.firstname && localStorage.gamesok && ((Number(localStorage.gamesok) == 30) || (Number(localStorage.gamesok) == 80) || (Number(localStorage.gamesok) == 160) || (Number(localStorage.gamesok) == 305) || (Number(localStorage.gamesok) == 505)) ) {
-      show_message("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
+      show_message("<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put some stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
     }
     else if ( localStorage.firstname && localStorage.gamesok && (Number(localStorage.gamesok) >= 55) && (nbGamesPlayedAndWon >= 1)
-              && localStorage.lastDonationTimeT && ((new Date()).getTime() - localStorage.lastDonationTimeT > 21*24*60*60*1000 /* (3 weeks) */) ) {
+              && localStorage.lastDonationTimeT && ((new Date()).getTime() - localStorage.lastDonationTimeT > 30*24*60*60*1000 /* (1 month) */) ) {
       let paypalStr =
-        "If you like this game, you&nbsp;can&nbsp;donate\
+        "Countless hours, zero price. If this game brought you joy, a small donation goes a long way&nbsp;&#x1F496;\
         <hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
         <a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F9EE2A483RT9J&source=url'>\
         <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>"

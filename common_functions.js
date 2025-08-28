@@ -8,30 +8,30 @@ function write_menu(selected_idx) {
   switch (selected_idx) {
     case 1:
       str = str + "\
-              <li><a href='index.html'>&#127922;&#x2009;Game</a></li>\
-              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Optimal strategy</a></li>\
-              <li class='selected'><a href='screenshots.html'><b>&#x1F5BC;&#xFE0F;&#x2009;Screenshots</b></a></li>\
+              <li><a href='index.html'>&#127922;&#x2009;Let's play</a></li>\
+              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Strategy</a></li>\
+              <li class='selected'><a href='screenshots.html'><b>&#x1F5BC;&#xFE0F;&#x2009;Game examples</b></a></li>\
               <li><a href='contact_info.html'>&#x1F4E7;&#x2009;Contact</a></li>";
       break;
     case 2:
       str = str + "\
-              <li><a href='index.html'>&#127922;&#x2009;Game</a></li>\
-              <li class='selected'><a href='optimal_strategy.html'><b>&#x1F9E9;&#x2009;Optimal strategy</b></a></li>\
-              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Screenshots</a></li>\
+              <li><a href='index.html'>&#127922;&#x2009;Let's play</a></li>\
+              <li class='selected'><a href='optimal_strategy.html'><b>&#x1F9E9;&#x2009;Strategy</b></a></li>\
+              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Game examples</a></li>\
               <li><a href='contact_info.html'>&#x1F4E7;&#x2009;Contact</a></li>";
       break;
     case 3:
       str = str + "\
-              <li><a href='index.html'>&#127922;&#x2009;Game</a></li>\
-              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Optimal strategy</a></li>\
-              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Screenshots</a></li>\
+              <li><a href='index.html'>&#127922;&#x2009;Let's play</a></li>\
+              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Strategy</a></li>\
+              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Game examples</a></li>\
               <li class='selected'><a href='contact_info.html'><b>&#x1F4E7;&#x2009;Contact</b></a></li>";
       break;
     default:
       str = str + "\
-              <li class='selected'><a href='index.html'><b>&#127922;&#x2009;Game</b></a></li>\
-              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Optimal strategy</a></li>\
-              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Screenshots</a></li>\
+              <li class='selected'><a href='index.html'><b>&#127922;&#x2009;Let's play</b></a></li>\
+              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Strategy</a></li>\
+              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Game examples</a></li>\
               <li><a href='contact_info.html'>&#x1F4E7;&#x2009;Contact</a></li>";
   }
   str = str + "\
@@ -65,7 +65,7 @@ function write_optimal_strategy_details_1() {
   var str = "<div>" + optimal_strategy_descr + "In some situations, playing an impossible code may be better than playing the best possible code(s). This could be called a &quot;useful mistake&quot;. "
             + "This will result in a strictly positive performance for this code (e.g. <b><font color=#008200>+0.25</font></b>). If you get such a positive performance (voluntarily), you are good!&nbsp;&#x1F914;"
             + "<hr style='height:0.5rem; visibility:hidden;' />"
-            + "For more details: <a href=optimal_strategy.html><b>Optimal strategy</b></a></div>";
+            + "For more details: <a href=optimal_strategy.html><b>Strategy</b></a></div>";
   document.write(str);
 }
 
