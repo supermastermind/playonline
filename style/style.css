@@ -1,6 +1,5 @@
 html /* (see viewport meta tags for smartphones in the textual html pages) */ 
-{ height: 100%;
-  font-size: 12px; }
+{ height: 100%; } /* => use default browser's font-size, so do not hardcode it to a value like font-size: 16px; */
 
 *
 { margin: 0;
@@ -8,19 +7,19 @@ html /* (see viewport meta tags for smartphones in the textual html pages) */
 
 body
 { font-family: Trebuchet MS;
-  font-size: 1.15rem;
+  font-size: 1.0rem;
   background-position: left top;
   color: #000000; }
 
 table tr td
 {
   font-family: Trebuchet MS;
-  font-size: 1.15rem; }
+  font-size: 1.0rem; }
 
 table tr td a
 {
   font-family: Trebuchet MS;
-  font-size: 1.15rem; }
+  font-size: 1.0rem; }
   
 img
 { border: 0; }
@@ -45,7 +44,7 @@ a
 { outline: none;
   text-decoration: underline;
   color: #A4AA04;
-  font-size: 1.15rem; }
+  font-size: 1.0rem; }
 
 ul
 { list-style-position: outside; }
@@ -60,14 +59,14 @@ ul li
   text-align: center; }
 
 #header h1
-{ font-size: 1.5rem;
+{ font-size: 1.30rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:0.5rem;
   margin-top:1.0rem; }
 
 #header h2
-{ font-size: 1.25rem;
+{ font-size: 1.15rem;
   font-weight: normal;
   text-decoration: none; 
   margin-bottom:0.25rem;
@@ -77,11 +76,11 @@ ul li
 { margin: 0 0 0 1%; } /* top right bottom left */
 
 ul#menu
-{ font-size: 1.15rem;
+{ font-size: 1.0rem;
   font-weight: bold; }
 
 ul#menu li
-{ font-size: 1.15rem;
+{ font-size: 1.0rem;
   float: left;
   padding: 0;
   list-style: none;
@@ -90,9 +89,9 @@ ul#menu li
 
 ul#menu li a
 { 
-  font-size: 1.15rem;
+  font-size: 1.0rem;
   float: left;
-  padding: 0.5rem 0.3rem 0.5rem 0.3rem; /* top right bottom left */
+  padding: 0.5rem 0.4rem 0.5rem 0.4rem; /* top right bottom left */
   text-align: center;
   color: #000;
   text-decoration: none;
@@ -102,7 +101,7 @@ ul#menu li.selected a, ul#menu li.selected a:hover
 { background: #FFFFFF;
   color: #0000A8; 
   border: 2px solid #0000A8;
-  font-size: 100% }
+  font-size: 120% }
 
 ul#menu li a:hover
 { /* color: #FF00FF; */ }
@@ -126,7 +125,7 @@ ul#menu li a:hover
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   background-color: #FFF3F3;
   border: 1px solid #000000;  
-  font-size: 1.0rem; } 
+  font-size: 0.9rem; } 
 
 .sidebar ul
 { list-style-position: outside; }
@@ -134,10 +133,10 @@ ul#menu li a:hover
 .sidebar li
 { list-style: none; 
   padding: 0; 
-  font-size: 1.0rem; }  
+  font-size: 0.9rem; }  
 
 .sidebar ul li a
-{ font-size: 1.0rem; }  
+{ font-size: 0.9rem; }  
 
 .sidebar li a, .sidebar li a:hover
 { padding: 0 0 0 25px;
@@ -168,7 +167,7 @@ ul#menu li a:hover
   left: 0;
   background: rgba(0, 0, 0, 0.6);
   z-index:11111;
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   text-align: center;
   padding-top: 25.0vh;
   color: #fff;
