@@ -8,31 +8,31 @@ function write_menu(selected_idx) {
   switch (selected_idx) {
     case 1:
       str = str + "\
-              <li><a href='index.html'>&#127922;&#x2009;Let's play</a></li>\
-              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Strategy</a></li>\
-              <li class='selected'><a href='screenshots.html'><b>&#x1F5BC;&#xFE0F;&#x2009;Games</b></a></li>\
-              <li><a href='contact_info.html'>&#x1F4E7;&#x2009;Contact</a></li>";
+              <li><a href='index.html'>Let's play</a></li>\
+              <li><a href='optimal_strategy.html'>Strategy</a></li>\
+              <li class='selected'><a href='screenshots.html'><b>Games</b></a></li>\
+              <li><a href='contact_info.html'>Contact</a></li>";
       break;
     case 2:
       str = str + "\
-              <li><a href='index.html'>&#127922;&#x2009;Let's play</a></li>\
-              <li class='selected'><a href='optimal_strategy.html'><b>&#x1F9E9;&#x2009;Strategy</b></a></li>\
-              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Games</a></li>\
-              <li><a href='contact_info.html'>&#x1F4E7;&#x2009;Contact</a></li>";
+              <li><a href='index.html'>Let's play</a></li>\
+              <li class='selected'><a href='optimal_strategy.html'><b>Strategy</b></a></li>\
+              <li><a href='screenshots.html'>Games</a></li>\
+              <li><a href='contact_info.html'>Contact</a></li>";
       break;
     case 3:
       str = str + "\
-              <li><a href='index.html'>&#127922;&#x2009;Let's play</a></li>\
-              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Strategy</a></li>\
-              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Games</a></li>\
-              <li class='selected'><a href='contact_info.html'><b>&#x1F4E7;&#x2009;Contact</b></a></li>";
+              <li><a href='index.html'>Let's play</a></li>\
+              <li><a href='optimal_strategy.html'>Strategy</a></li>\
+              <li><a href='screenshots.html'>Games</a></li>\
+              <li class='selected'><a href='contact_info.html'><b>Contact</b></a></li>";
       break;
     default:
       str = str + "\
-              <li class='selected'><a href='index.html'><b>&#127922;&#x2009;Let's play</b></a></li>\
-              <li><a href='optimal_strategy.html'>&#x1F9E9;&#x2009;Strategy</a></li>\
-              <li><a href='screenshots.html'>&#x1F5BC;&#xFE0F;&#x2009;Games</a></li>\
-              <li><a href='contact_info.html'>&#x1F4E7;&#x2009;Contact</a></li>";
+              <li class='selected'><a href='index.html'><b>Let's play</b></a></li>\
+              <li><a href='optimal_strategy.html'>Strategy</a></li>\
+              <li><a href='screenshots.html'>Games</a></li>\
+              <li><a href='contact_info.html'>Contact</a></li>";
   }
   str = str + "\
         </ul>\
