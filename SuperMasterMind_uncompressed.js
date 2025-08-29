@@ -3723,7 +3723,7 @@ function draw_graphic_bis() {
                                                        lightGray, "", ctx, 0, true)) {
             if ((optimal_width == 0) || !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                                        lightGray, "", ctx, false, true, 0, true, 1)) {
-              if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+              if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "nb" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                                     lightGray, "", ctx, false, true, 0, true, 1)) {
                 res_header1 = true;
               }
@@ -3771,7 +3771,7 @@ function draw_graphic_bis() {
                                lightGray, "", ctx, 0, true)) {
             if ((optimal_width == 0) || !displayString("\u2009" /* (thin space) */ + "codes" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                lightGray, "", ctx, false, true, 0, true, 1)) {
-              if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "#" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+              if ((tick_width > 0) && displayString("\u2009" /* (thin space) */ + "nb" + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
                                                     lightGray, "", ctx, false, true, 0, true, 1)) {
                 res_header1 = true;
               }

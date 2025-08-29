@@ -2945,7 +2945,7 @@ if((optimal_width==0)||!display2Strings("number", "   "+"of codes"+"   ", attemp
 lightGray, "", ctx, 0, true)){
 if((optimal_width==0)||!displayString("\u2009"+"codes"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
-if((tick_width > 0)&&displayString("\u2009"+"#"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+if((tick_width > 0)&&displayString("\u2009"+"nb"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
 res_header1=true;
 }}
@@ -2985,7 +2985,7 @@ if((optimal_width==0)||!display2Strings("number", "   "+"of codes"+"   ", attemp
 lightGray, "", ctx, 0, true)){
 if((optimal_width==0)||!displayString("\u2009"+"codes"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
-if((tick_width > 0)&&displayString("\u2009"+"#"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
+if((tick_width > 0)&&displayString("\u2009"+"nb"+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay, nb_possible_codes_width,
 lightGray, "", ctx, false, true, 0, true, 1)){
 res_header1=true;
 }}
