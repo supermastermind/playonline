@@ -3482,7 +3482,7 @@ showPossibleCodesButtonObject.className="button";
 }
 else{
 showPossibleCodesButtonAlreadyBlinked=true;
-showPossibleCodesButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_brown" : "_orange") : "button blinking"+(modernDisplay ? "_brown" : "_orange"));
+showPossibleCodesButtonObject.className="button fast_blinking"+(modernDisplay ? "_brown" : "_orange");
 }}}
 if(CompressedDisplayMode){
 if(showPossibleCodesMode){
@@ -3547,7 +3547,7 @@ if((!revealSecretColorButtonAlreadyBlinked)
 ||(currentAttemptNumber==nbMaxAttempts-1)
 ||at_least_one_useless_code_played ) ){
 revealSecretColorButtonAlreadyBlinked=true;
-revealSecretColorButtonObject.className=(androidMode ? "button fast_blinking"+(modernDisplay ? "_brown" : "_orange") : "button blinking"+(modernDisplay ? "_brown" : "_orange"));
+revealSecretColorButtonObject.className="button fast_blinking"+(modernDisplay ? "_brown" : "_orange");
 }}
 resetCurrentCodeButtonObject.disabled=!(gameOnGoing()&&(currentCode!=sCodeRevealed));
 if(resetCurrentCodeButtonObject.disabled){
