@@ -1,44 +1,26 @@
 html /* (see viewport meta tags for smartphones in the textual html pages) */ 
 { height: 100%;
-  font-size: 11px; } /* e.g. ok (relatively big font) for 360 */
+  font-size: 1.15rem; } /* e.g. ok (relatively big font) for 360 */
 
-@media (min-width : 600px) {
-  html
-  { height: 100%;
-    font-size: 12px; }
-}  
- 
-@media (min-width : 1000px) {
-  html
-  { height: 100%;
-    font-size: 14px; }
-}  
-  
-@media (min-width : 1400px) { /* e.g. ok for 1536 or 1680 */
-  html
-  { height: 100%;
-    font-size: 16px; }
-}
-  
 *
 { margin: 0;
   padding: 0; }
 
 body
 { font-family: Trebuchet MS;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   background-position: left top;
   color: #000000; }
 
 table tr td
 {
   font-family: Trebuchet MS;
-  font-size: 1.1rem; }
+  font-size: 1.15rem; }
 
 table tr td a
 {
   font-family: Trebuchet MS;
-  font-size: 1.1rem; }
+  font-size: 1.15rem; }
   
 img
 { border: 0; }
@@ -63,7 +45,7 @@ a
 { outline: none;
   text-decoration: underline;
   color: #A4AA04;
-  font-size: 1.1rem; }
+  font-size: 1.15rem; }
 
 ul
 { list-style-position: outside; }
@@ -95,11 +77,11 @@ ul li
 { margin: 0 0 0 1%; } /* top right bottom left */
 
 ul#menu
-{ font-size: 1.1rem;
+{ font-size: 1.15rem;
   font-weight: bold; }
 
 ul#menu li
-{ font-size: 1.1rem;
+{ font-size: 1.15rem;
   float: left;
   padding: 0;
   list-style: none;
@@ -108,7 +90,7 @@ ul#menu li
 
 ul#menu li a
 { 
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   float: left;
   padding: 0.5rem 0.3rem 0.5rem 0.3rem; /* top right bottom left */
   text-align: center;
@@ -144,7 +126,7 @@ ul#menu li a:hover
   padding: 1vh 1vw 1vh 1vw; /* top right bottom left */
   background-color: #FFF3F3;
   border: 1px solid #000000;  
-  font-size: 0.85rem; } 
+  font-size: 1.0rem; } 
 
 .sidebar ul
 { list-style-position: outside; }
@@ -152,10 +134,10 @@ ul#menu li a:hover
 .sidebar li
 { list-style: none; 
   padding: 0; 
-  font-size: 0.85rem; }  
+  font-size: 1.0rem; }  
 
 .sidebar ul li a
-{ font-size: 0.85rem; }  
+{ font-size: 1.0rem; }  
 
 .sidebar li a, .sidebar li a:hover
 { padding: 0 0 0 25px;
