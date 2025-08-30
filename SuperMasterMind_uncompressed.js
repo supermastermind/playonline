@@ -4397,7 +4397,7 @@ function draw_graphic_bis() {
           }
           else {
             showPossibleCodesButtonAlreadyBlinked = true;
-            showPossibleCodesButtonObject.className = "button fast_blinking" + (modernDisplay ? "_brown" : "_orange");
+            showPossibleCodesButtonObject.className = "button fast_blinking_brown";
           }
         }
       }
@@ -4489,7 +4489,7 @@ function draw_graphic_bis() {
                 || (currentAttemptNumber == nbMaxAttempts-1) /* (last but one attempt) */
                 || at_least_one_useless_code_played ) ) { /* (useless attempt(s)) */
             revealSecretColorButtonAlreadyBlinked = true;
-            revealSecretColorButtonObject.className = "button fast_blinking" + (modernDisplay ? "_brown" : "_orange");
+            revealSecretColorButtonObject.className = "button fast_blinking_brown";
       }
     }
 

@@ -83,24 +83,6 @@ outline: none;
 opacity: 0.3;
 cursor: not-allowed;
 }
-@-webkit-keyframes glowing_orange{
-0%{background-color: white;}
-20%{background-color: white;}
-33%{background-color: orange;}
-47%{background-color: white;}
-60%{background-color: orange;}
-73%{background-color: white;}
-87%{background-color: orange;}
-100%{background-color: white;}}
-@keyframes glowing_orange{
-0%{background-color: white;}
-20%{background-color: white;}
-33%{background-color: orange;}
-47%{background-color: white;}
-60%{background-color: orange;}
-73%{background-color: white;}
-87%{background-color: orange;}
-100%{background-color: white;}}
 @-webkit-keyframes glowing_brown{
 0%{background-color: white;}
 20%{background-color: white;}
@@ -119,18 +101,11 @@ cursor: not-allowed;
 73%{background-color: white;}
 87%{background-color: #5F340E;}
 100%{background-color: white;}}
-.fast_blinking_orange{
--webkit-animation-name: glowing_orange;
--webkit-animation-duration: 2.75s;
-animation-name: glowing_orange;
-animation-duration: 2.75s;
--webkit-backface-visibility: hidden;
-}
 .fast_blinking_brown{
 -webkit-animation-name: glowing_brown;
--webkit-animation-duration: 2.75s;
+-webkit-animation-duration: 3s;
 animation-name: glowing_brown;
-animation-duration: 2.75s;
+animation-duration: 3s;
 -webkit-backface-visibility: hidden;
 }
 @-webkit-keyframes kdo_anim{
@@ -1378,9 +1353,6 @@ function handle_rsp(e){
 console.log("(handle_rsp)");
 localStorage.last_handle_rsp_call=(new Date()).getTime();
 var score_display_time=4444;
-if(mobileMode){
-score_display_time=4444;
-}
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
 score_display_time=score_display_time * 2+3000;
 }
@@ -2002,7 +1974,7 @@ let deltagames=-1;
 if((nbcolumns==3)
 ||helped ){
 debug_game_state=100.20;
-setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 3000);
 debug_game_state=100.21;
 return;
 }

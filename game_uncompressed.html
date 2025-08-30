@@ -107,29 +107,6 @@
       }
 
       /* Safari 4.0 - 8.0 */
-      @-webkit-keyframes glowing_orange {
-        0%   {background-color: white;}
-        20%  {background-color: white;}
-        33%  {background-color: orange;}
-        47%  {background-color: white;}
-        60%  {background-color: orange;}
-        73%  {background-color: white;}
-        87%  {background-color: orange;}
-        100% {background-color: white;}
-      }
-      /* Standard syntax */
-      @keyframes glowing_orange {
-        0%   {background-color: white;}
-        20%  {background-color: white;}
-        33%  {background-color: orange;}
-        47%  {background-color: white;}
-        60%  {background-color: orange;}
-        73%  {background-color: white;}
-        87%  {background-color: orange;}
-        100% {background-color: white;}
-      }
-
-      /* Safari 4.0 - 8.0 */
       @-webkit-keyframes glowing_brown {
         0%   {background-color: white;}
         20%  {background-color: white;}
@@ -152,19 +129,11 @@
         100% {background-color: white;}
       }
 
-      .fast_blinking_orange {
-        -webkit-animation-name: glowing_orange; /* Safari 4.0 - 8.0 */
-        -webkit-animation-duration: 2.75s; /* Safari 4.0 - 8.0 */
-        animation-name: glowing_orange;
-        animation-duration: 2.75s;
-        -webkit-backface-visibility: hidden;
-       }
-
       .fast_blinking_brown {
         -webkit-animation-name: glowing_brown; /* Safari 4.0 - 8.0 */
-        -webkit-animation-duration: 2.75s; /* Safari 4.0 - 8.0 */
+        -webkit-animation-duration: 3s; /* Safari 4.0 - 8.0 */
         animation-name: glowing_brown;
-        animation-duration: 2.75s;
+        animation-duration: 3s;
         -webkit-backface-visibility: hidden;
        }
 
@@ -1653,9 +1622,6 @@
         localStorage.last_handle_rsp_call = (new Date()).getTime();
 
         var score_display_time = 4444; // (see blinking time)
-        if (mobileMode) {
-          score_display_time = 4444; // (see blinking time)
-        }
         if (last_game_was_short && (nbGamesPlayedAndWon >= 2) && localStorage.gamesok && (Number(localStorage.gamesok) >= 10)) {
           score_display_time = score_display_time * 2 + 3000; // extra time when short games
         }
@@ -2370,7 +2336,7 @@
           if ( (nbcolumns == 3) // very easy games
                || helped ) { // games with help
             debug_game_state = 100.20;
-            setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+            setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3000); // (see blinking time)
             debug_game_state = 100.21;
             return; // Do not store scores any longer for very easy games and games with help, to reduce google sheet load [peaks for very easy games]
           }
