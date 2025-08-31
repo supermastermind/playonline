@@ -5065,7 +5065,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
       // ctx.fill();
       let lineWidthIni = ctx.lineWidth;
       ctx.lineWidth = circleBorderWidth;
-      ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), myTableObject.style.backgroundColor, (modernDisplay ? 0.10 : 0.20));
+      ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), myTableObject.style.backgroundColor, (modernDisplay ? 0.075 : 0.20));
       ctx.stroke();
       ctx.lineWidth = lineWidthIni;
     }
