@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.0Y"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.1A"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v300Y) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v301A) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v300Y = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v301A = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -304,12 +304,14 @@ let specialColorTable =
 if (localStorage.modernDisplayApplied) {
   modernDisplay = (localStorage.modernDisplayApplied == "true");
 }
-if (localStorage.legacyDisplayVariant) {
-  legacyDisplayVariant = ((localStorage.legacyDisplayVariant == "1") ? 1 : 0);
+if (localStorage.displayVariantApplied) {
+  displayVariant = ((localStorage.displayVariantApplied == "1") ? 1 : 0);
 }
-let legacy_backgroundColor_base_color = "#5F340E"; // "#7F4613";// "#894B0F";// "#694927";
+let legacy_backgroundColor_base_color = "#5F340E";
+let modern_backgroundColor_base_color = "#E3E3E3";
 let modernBaseColor = "#000000";
 let modernBaseColor2 = legacy_backgroundColor_base_color;
+let modernGameTableColor = "#D0D0D0";
 let highlightColor;
 let lightGray;
 let darkGray;
@@ -340,7 +342,7 @@ function updateHoverBackgroundColor(newColor) {
 }
 
 function updateThemeAttributes() {
-  myTableObject.style.backgroundColor = (modernDisplay ? "#E3E3E3" : legacy_backgroundColor_base_color);
+  myTableObject.style.backgroundColor = (modernDisplay ? modern_backgroundColor_base_color : legacy_backgroundColor_base_color);
   canvas_cell.style.border = canvas_cell.style.border.replace((modernDisplay ? " black" : " " + modernBaseColor), (modernDisplay ? " " + modernBaseColor : " black"));
   for (let i = 0; i < allButtons.length; i++) {
     allButtons[i].style.border = allButtons[i].style.border.replace((modernDisplay ? " black" : " " + modernBaseColor), (modernDisplay ? " " + modernBaseColor: " black"));
@@ -556,7 +558,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.0Y: " + (localStorage.reloadForCompatibility_v300Y ? localStorage.reloadForCompatibility_v300Y : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.1A: " + (localStorage.reloadForCompatibility_v301A ? localStorage.reloadForCompatibility_v301A : "not done"), 210);
 
       // Alert
       // *****
@@ -1241,21 +1243,25 @@ function handleDisplayModeSelectionChange() {
     switch (value) {
         case "1":
             modernDisplay = false;
-            legacyDisplayVariant = 0;
+            displayVariant = 0;
             break;
         case "2":
             modernDisplay = false;
-            legacyDisplayVariant = 1;
+            displayVariant = 1;
             break;
         case "3":
             modernDisplay = true;
-            legacyDisplayVariant = 0;
+            displayVariant = 0;
+            break;
+        case "4":
+            modernDisplay = true;
+            displayVariant = 1;
             break;
         default:
             throw new Error("invalid value selected for display mode: " + value);
     }
     localStorage.modernDisplayApplied = modernDisplay;
-    localStorage.legacyDisplayVariant = legacyDisplayVariant;
+    localStorage.displayVariantApplied = displayVariant;
 
     updateThemeAttributes();
     main_graph_update_needed = true;
@@ -1271,9 +1277,10 @@ settingsButtonClick = function() { // (override temporary definition)
     let display_form_str =
       "<b>Select display mode:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
        <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
-         <option value='1'" + ((!modernDisplay) && (legacyDisplayVariant != 1) ? " selected" : "") + ">numbers / classical display</option>\
-         <option value='2'" + ((!modernDisplay) && (legacyDisplayVariant == 1) ? " selected" : "") + ">colors only / classical display</option>\
-         <option value='3'" + (modernDisplay ? " selected" : "") + ">numbers / light display</option>\
+         <option value='1'" + ((!modernDisplay) && (displayVariant != 1) ? " selected" : "") + ">classical display / numbers</option>\
+         <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">classical display / colors</option>\
+         <option value='3'" + (modernDisplay && (displayVariant != 1) ? " selected" : "") + ">light display / numbers</option>\
+         <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">light display / colors</option>\
        </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 
     let change_first_name_title_str = "<b>Change first name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
@@ -3282,7 +3289,7 @@ function draw_graphic_bis() {
       let x_0, y_0, x_1, y_1;
 
       if (modernDisplay) {
-        ctx.fillStyle = (mobileMode ? "#FFFFFF" : myTableObject.style.backgroundColor);
+        ctx.fillStyle = myTableObject.style.backgroundColor;
         ctx.fillRect(0, 0, current_width, current_height);
       }
       else {
@@ -3380,7 +3387,7 @@ function draw_graphic_bis() {
       x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
       y_1 = get_y_pixel(y_min);
       if (modernDisplay) {
-        ctx.fillStyle = (mobileMode ? "#EEEEEE" : "#D0D0D0");
+        ctx.fillStyle = modernGameTableColor;
         ctx.fillRect(x_0, y_0, x_1-x_0, y_1-y_0);
       }
 
@@ -4714,7 +4721,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
           else {
             ctx.strokeStyle = darkGray;
           }
-          if ((!modernDisplay) && (legacyDisplayVariant == 1)) { // legacy display variant 1
+          if (displayVariant == 1) {
             let radius = Math.min(x_0_next - x_0, y_0 - y_0_next)/2.5;
             ctx.beginPath();
             ctx.arc(Math.floor((x_0 + x_0_next + 1)/2), // center x
@@ -4761,7 +4768,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
         ctx.lineTo(x_0_next - 2, y_0 - 2);
         ctx.stroke();  // Draw it
 
-        if (!((!modernDisplay) && (legacyDisplayVariant == 1))) { // NOT legacy display variant 1
+        if (displayVariant != 1) {
             if (backgroundColor == "") { // N.A. background
               displayGUIError("displayString error: N.A. background #2", new Error().stack);
             }
@@ -4884,7 +4891,7 @@ function averageColor(color1_p, color2_p, color1Coef) {
 }
 
 function getColorToDisplay(color) {
-  if ((!modernDisplay) && (legacyDisplayVariant == 1)) { // legacy display variant 1
+  if (displayVariant == 1) {
     return "";
   }
   return color;
@@ -4900,13 +4907,13 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
     let foregroundColor = foregroundColorTable[color-1];
     let backgroundColor = backgroundColorTable[color-1];
     if (disabledColor) {
-      if ((!modernDisplay) && (legacyDisplayVariant == 0)) { // legacy display variant 0
+      if (displayVariant == 0) {
         foregroundColor = averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.15);
         backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
         currentCodeColorMode = 4;
         handleCurrentCodeColorMode = true;
       }
-      else if ((!modernDisplay) && (legacyDisplayVariant == 1)) { // legacy display variant 1
+      else if (displayVariant == 1) {
         foregroundColor = averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.10);
         backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.10);
         currentCodeColorMode = 4;
@@ -4948,7 +4955,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
       }
       if (modernDisplay) {
         displayString(getColorToDisplay("?"), x_cell, y_cell, 2,
-                      foregd_color, "#FFFFFF", ctx, true, displayColorMode, 0, false, 0);
+                      foregd_color, modern_backgroundColor_base_color, ctx, true, displayColorMode, 0, false, 0);
       }
       else {
         currentCodeColorMode = ((currentAttemptNumber <= 1) ? 3 : 1);
@@ -4959,7 +4966,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
     }
     else {
       displayString(getColorToDisplay(""), x_cell, y_cell, 2,
-                    darkGray, (modernDisplay ? "#FFFFFF" : averageColor(legacy_backgroundColor_base_color, "#FFFFFF", 0.95)), ctx, true, displayColorMode, 0, false, 0);
+                    darkGray, (modernDisplay ? modernGameTableColor : legacy_backgroundColor_base_color), ctx, true, displayColorMode, 0, false, 0);
     }
   }
   if (handleCurrentCodeColorMode) {
