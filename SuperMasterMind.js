@@ -973,8 +973,8 @@ let display_form_str=
 <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
 <option value='1'"+((!modernDisplay)&&(displayVariant!=1) ? " selected" : "")+">classical display / numbers</option>\
 <option value='2'"+((!modernDisplay)&&(displayVariant==1) ? " selected" : "")+">classical display / colors</option>\
-<option value='3'"+(modernDisplay&&(displayVariant!=1) ? " selected" : "")+">light display / numbers</option>\
-<option value='4'"+(modernDisplay&&(displayVariant==1) ? " selected" : "")+">light display / colors</option>\
+<option value='3'"+(modernDisplay&&(displayVariant!=1) ? " selected" : "")+">modern display / numbers</option>\
+<option value='4'"+(modernDisplay&&(displayVariant==1) ? " selected" : "")+">modern display / colors</option>\
 </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 let change_first_name_title_str="<b>Change first name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 let change_first_name_str="";
@@ -3900,15 +3900,11 @@ backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColo
 currentCodeColorMode=4;
 handleCurrentCodeColorMode=true;
 }
-else if(displayVariant==1){
+else{
 foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.10);
 backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.10);
 currentCodeColorMode=4;
 handleCurrentCodeColorMode=true;
-}
-else{
-foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.15);
-backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
 }}
 if(highlight_selected_text_param){
 backgroundColor=averageColor(foregroundColor, backgroundColor, 0.33);
