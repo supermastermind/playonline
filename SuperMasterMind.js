@@ -971,8 +971,8 @@ if(!settingsButtonObject.disabled){
 let display_form_str=
 "<b>Select display mode:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
-<option value='1'"+((!modernDisplay)&&(displayVariant!=1) ? " selected" : "")+">classical display / numbers</option>\
-<option value='2'"+((!modernDisplay)&&(displayVariant==1) ? " selected" : "")+">classical display / colors</option>\
+<option value='1'"+((!modernDisplay)&&(displayVariant!=1) ? " selected" : "")+">classic display / numbers</option>\
+<option value='2'"+((!modernDisplay)&&(displayVariant==1) ? " selected" : "")+">classic display / colors</option>\
 <option value='3'"+(modernDisplay&&(displayVariant!=1) ? " selected" : "")+">modern display / numbers</option>\
 <option value='4'"+(modernDisplay&&(displayVariant==1) ? " selected" : "")+">modern display / colors</option>\
 </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
