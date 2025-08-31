@@ -3050,9 +3050,6 @@ function draw_graphic_bis() {
         let borderStr3 = lineWidth + "px solid " + radioColor;
         allRadioButtons[i].style.color = radioColor;
         allRadioButtons[i].style.border = borderStr3;
-        // previous version for not compressed mode:
-        // allRadioButtons[i].style.color = (modernDisplay ? modernBaseColor : "orange");
-        // allRadioButtons[i].style.border = 'none';
       }
       else {
         allRadioButtons[i].style.color = "black";
@@ -3433,7 +3430,7 @@ function draw_graphic_bis() {
         if (gameWon) {
           if (attempt_nb_to_display == currentAttemptNumber-1) {
             displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                          (modernDisplay ? darkGray : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
+                          (modernDisplay ? modernBaseColor2 : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
           }
           else {
             displayString(attempt_nb_str_to_display, 0, attempt, str_width,
@@ -3445,13 +3442,9 @@ function draw_graphic_bis() {
             displayString(attempt_nb_str_to_display, 0, attempt, str_width,
                           redColor, backgroundColor, ctx, false, true, 0, true, 0);
           }
-          else if (attempt_nb_to_display+1 == nbMaxAttempts) { // last but one attempt
-            displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                          redColor, backgroundColor, ctx, false, true, 0, true, 0);
-          }
           else {
             displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                          (modernDisplay ? modernBaseColor : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
+                          (modernDisplay ? modernBaseColor2 : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
           }
         }
         else {
@@ -3602,13 +3595,13 @@ function draw_graphic_bis() {
           let statsColor;
 
           if (currentAttemptNumber == 1) {
-            statsColor = (modernDisplay ? modernBaseColor : "orange");
+            statsColor = (modernDisplay ? modernBaseColor2 : "orange");
           }
           else if (gameWon && (i == currentAttemptNumber-1)) {
-            statsColor = (modernDisplay ? darkGray : lightGray);
+            statsColor = lightGray;
           }
           else if (i == currentAttemptNumber) {
-            statsColor = (modernDisplay ? darkGray : "orange");
+            statsColor = (modernDisplay ? modernBaseColor2 : "orange");
           }
           else {
             statsColor = lightGray;
@@ -3811,11 +3804,11 @@ function draw_graphic_bis() {
         if (scode_height > 0) {
           ctx.font = basic_bold_font;
           if (!displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
-                             (modernDisplay || (currentAttemptNumber == 1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 2, true, 0)) {
+                             (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 2, true, 0)) {
             if (!displayString("\u2009Code\u2009", attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
-                               (modernDisplay || (currentAttemptNumber == 1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 0, true, 0)) {
+                               (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0)) {
               displayString("\u2009\u2B50\u2009" /* star */, attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
-                           (modernDisplay || (currentAttemptNumber == 1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 0, true, 0);
+                           (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0);
             }
           }
           if (gameOnGoing()) {
@@ -4078,20 +4071,20 @@ function draw_graphic_bis() {
           if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 1) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes >= 1) ) {
             let x_delta = 0.80;
             if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                               (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                               (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
               if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                                 (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
+                                 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
                 if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                   (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
+                                   (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
                   if (mobileMode) {
                     if ((nbColumns >= 4) && (nbColumns <= 7) && (currentAttemptNumber == 1)) {
                       displayString("Tap!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
-                                    (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
+                                    (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
                     }
                   }
                   else {
                     displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                  (modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
+                                  (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
                   }
                 }
               }
@@ -4205,7 +4198,7 @@ function draw_graphic_bis() {
               if ((!atLeastOneAttemptSelection) && (!CompressedDisplayMode) && (transition_height >= 1)) {
                 ctx.font = small_bold_font;
                 displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(70*(nbColumns+1))/100,
-                              (modernDisplay ? "#4B0082" /* purple */ : "orange"), "", ctx, false, true, 0, true, 0);
+                              (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0);
               }
             }
           } // (res)
@@ -4466,16 +4459,13 @@ function draw_graphic_bis() {
       else if ((currentAttemptNumber == 1) && (nbOfStatsFilled_NbPossibleCodes >= 1)) {
         currentCodeColorMode = 2;
       }
-      else if (!modernDisplay) {
+      else {
         if (currentCode == 0) {
           currentCodeColorMode = 2;
         }
         else {
           currentCodeColorMode = 3;
         }
-      }
-      else {
-        currentCodeColorMode = 1;
       }
       displayCode(currentCode, currentAttemptNumber-1, ctx, false, true);
       currentCodeColorMode = -1;
@@ -4508,7 +4498,7 @@ function draw_graphic_bis() {
       if ((color_being_selected == -1) || (column_of_color_being_selected == -1) || (last_color_being_selected_time == 0)) {
         throw new Error("invalid set of color_being_selected values: " + color_being_selected + ", " + column_of_color_being_selected + ", " + last_color_being_selected_time);
       }
-      ctx.strokeStyle = (modernDisplay ? lightGray : backgroundColorTable[color_being_selected-1]);
+      ctx.strokeStyle = backgroundColorTable[color_being_selected-1];
       let x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
       let y_0 = get_y_pixel(y_min+y_step*((currentCode == 0) ? currentAttemptNumber - 1: currentAttemptNumber));
       let x_1 = x_0;
@@ -4732,7 +4722,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
             ctx.strokeStyle = ((modernDisplay || !CompressedDisplayMode) ? lightGray : darkGray);
           }
           else if (currentCodeColorMode == 2) {
-            ctx.strokeStyle = (modernDisplay ? modernBaseColor : "orange");
+            ctx.strokeStyle = (modernDisplay ? modernBaseColor2 : "orange");
           }
           else if (currentCodeColorMode == 3) {
             ctx.strokeStyle = darkGray;

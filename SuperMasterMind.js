@@ -2722,7 +2722,7 @@ let attempt_nb_str_to_display=String(attempt_nb_to_display);
 if(gameWon){
 if(attempt_nb_to_display==currentAttemptNumber-1){
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-(modernDisplay ? darkGray : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
+(modernDisplay ? modernBaseColor2 : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
 }
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
@@ -2733,13 +2733,9 @@ if(attempt_nb_to_display==nbMaxAttempts){
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0);
 }
-else if(attempt_nb_to_display+1==nbMaxAttempts){
-displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-redColor, backgroundColor, ctx, false, true, 0, true, 0);
-}
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-(modernDisplay ? modernBaseColor : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
+(modernDisplay ? modernBaseColor2 : "orange"), backgroundColor, ctx, false, true, 0, true, 0);
 }}
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
@@ -2855,13 +2851,13 @@ backgroundColor=highlightColor;
 if((optimal_width > 0)||(i==currentAttemptNumber)||((i==nbOfStatsFilled_NbPossibleCodes)&&(nbOfStatsFilled_NbPossibleCodes > nbOfStatsFilled_Perfs+1))||(!performancesDisplayed[i-1]) ){
 let statsColor;
 if(currentAttemptNumber==1){
-statsColor=(modernDisplay ? modernBaseColor : "orange");
+statsColor=(modernDisplay ? modernBaseColor2 : "orange");
 }
 else if(gameWon&&(i==currentAttemptNumber-1)){
-statsColor=(modernDisplay ? darkGray : lightGray);
+statsColor=lightGray;
 }
 else if(i==currentAttemptNumber){
-statsColor=(modernDisplay ? darkGray : "orange");
+statsColor=(modernDisplay ? modernBaseColor2 : "orange");
 }
 else{
 statsColor=lightGray;
@@ -3015,11 +3011,11 @@ ctx.fillStyle=darkGray;
 if(scode_height > 0){
 ctx.font=basic_bold_font;
 if(!displayString("Secret code "+"\u2009" , 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
-(modernDisplay||(currentAttemptNumber==1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 2, true, 0)){
+(modernDisplay||(currentAttemptNumber==1) ? darkGray : "orange"), "", ctx, false, true, 2, true, 0)){
 if(!displayString("\u2009Code\u2009", attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
-(modernDisplay||(currentAttemptNumber==1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 0, true, 0)){
+(modernDisplay||(currentAttemptNumber==1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0)){
 displayString("\u2009\u2B50\u2009" , attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
-(modernDisplay||(currentAttemptNumber==1) ? darkGray : (gameOnGoing() ? "orange" : "orange")), "", ctx, false, true, 0, true, 0);
+(modernDisplay||(currentAttemptNumber==1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0);
 }}
 if(gameOnGoing()){
 if(!dsCode){
@@ -3235,19 +3231,19 @@ ctx.font=medium_bold_font;
 if((nbGamesPlayedAndWon==0)&&gameOnGoing()&&((currentAttemptNumber <=1)||(nbColorSelections < nbColumns))&&(nbOfStatsFilled_NbPossibleCodes >=1) ){
 let x_delta=0.80;
 if(!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-(modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 1, true, 0, false, true, true )){
+(modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true )){
 if(!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-(modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 1, true, 0, false, true, true )){
+(modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true )){
 if(!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-(modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 2, true, 0, false, true, false )){
+(modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 2, true, 0, false, true, false )){
 if(mobileMode){
 if((nbColumns >=4)&&(nbColumns <=7)&&(currentAttemptNumber==1)){
 displayString("Tap!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
-(modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
+(modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
 }}
 else{
 displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-(modernDisplay ? modernBaseColor : "orange"), "", ctx, false, true, 2, true, 0, false, true, false );
+(modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 2, true, 0, false, true, false );
 }}}}}}
 catch (err_help){}}
 else{
@@ -3335,7 +3331,7 @@ darkGray, "", ctx, false, true, 0, true, 0);
 if((!atLeastOneAttemptSelection)&&(!CompressedDisplayMode)&&(transition_height >=1)){
 ctx.font=small_bold_font;
 displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt_nb_width+(70*(nbColumns+1))/100,
-(modernDisplay ? "#4B0082"  : "orange"), "", ctx, false, true, 0, true, 0);
+(modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0);
 }}}}
 else{
 displayGUIError("invalid currentPossibleCodeShown: "+currentPossibleCodeShown, new Error().stack);
@@ -3527,16 +3523,13 @@ currentCodeColorMode=1;
 else if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes >=1)){
 currentCodeColorMode=2;
 }
-else if(!modernDisplay){
+else{
 if(currentCode==0){
 currentCodeColorMode=2;
 }
 else{
 currentCodeColorMode=3;
 }}
-else{
-currentCodeColorMode=1;
-}
 displayCode(currentCode, currentAttemptNumber-1, ctx, false, true);
 currentCodeColorMode=-1;
 if((!revealSecretColorButtonAlreadyBlinked)
@@ -3560,7 +3553,7 @@ if(selected_color_and_column_arrow_to_be_shown()!=-1){
 if((color_being_selected==-1)||(column_of_color_being_selected==-1)||(last_color_being_selected_time==0)){
 throw new Error("invalid set of color_being_selected values: "+color_being_selected+", "+column_of_color_being_selected+", "+last_color_being_selected_time);
 }
-ctx.strokeStyle=(modernDisplay ? lightGray : backgroundColorTable[color_being_selected-1]);
+ctx.strokeStyle=backgroundColorTable[color_being_selected-1];
 let x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
 let y_0=get_y_pixel(y_min+y_step*((currentCode==0) ? currentAttemptNumber-1: currentAttemptNumber));
 let x_1=x_0;
@@ -3740,7 +3733,7 @@ if(currentCodeColorMode==1){
 ctx.strokeStyle=((modernDisplay||!CompressedDisplayMode) ? lightGray : darkGray);
 }
 else if(currentCodeColorMode==2){
-ctx.strokeStyle=(modernDisplay ? modernBaseColor : "orange");
+ctx.strokeStyle=(modernDisplay ? modernBaseColor2 : "orange");
 }
 else if(currentCodeColorMode==3){
 ctx.strokeStyle=darkGray;
