@@ -3027,26 +3027,7 @@ function draw_graphic_bis() {
 
     for (let i = 0; i < allRadioButtons.length; i++) {
       if (nbColumnsSelected == nbMinColumns+i) {
-        let radioColor;
-        switch (i) {
-          case 0:
-            radioColor = blueColor;
-            break;
-          case 1:
-            radioColor = greenColor;
-            break;
-          case 2:
-            radioColor = "orange";
-            break;
-          case 3:
-            radioColor = purpleColor;
-            break;
-          case 4:
-            radioColor = cyanColor;
-            break;
-          default:
-            radioColor = "orange";
-        }
+        let radioColor = (modernDisplay ? modernBaseColor2 : "orange");
         let borderStr3 = lineWidth + "px solid " + radioColor;
         allRadioButtons[i].style.color = radioColor;
         allRadioButtons[i].style.border = borderStr3;
@@ -5084,7 +5065,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
       // ctx.fill();
       let lineWidthIni = ctx.lineWidth;
       ctx.lineWidth = circleBorderWidth;
-      ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), myTableObject.style.backgroundColor, (modernDisplay ? 0.20 : 0.20));
+      ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), myTableObject.style.backgroundColor, (modernDisplay ? 0.10 : 0.20));
       ctx.stroke();
       ctx.lineWidth = lineWidthIni;
     }
