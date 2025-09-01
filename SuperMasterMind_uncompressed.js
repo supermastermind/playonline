@@ -1753,7 +1753,7 @@ function updateGameSizes() {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?3.2:((nbColumns==6)?3.2:3.2));
     optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?3.0:0);
-    tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.45:0);
+    tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.4:0);
 
     if (!gameOnGoing() || dsCode) {
       transition_height = 0.4;
@@ -2958,7 +2958,7 @@ function draw_graphic_bis() {
           if (CompressedDisplayMode) {
             resetCurrentCodeButtonObject.value = "\u2718";
             playRandomCodeButtonObject.value = "\uD83C\uDFB2";
-            revealSecretColorButtonObject.value = "\uD83E\uDDED";
+            revealSecretColorButtonObject.value = "\uFF1F";
             showPossibleCodesButtonObject.value = showPossibleCodesButtonCompressedName;
             myTableObject.style.width = "100%";
             myTableObject.style.height = "100%";
