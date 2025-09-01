@@ -1161,7 +1161,7 @@ class OptimizedArrayInternalList {
 
 // **********************************************************************************************************
 // OptimizedArrayList class: "ArrayList" of non-null integers optimized in terms of performances and memory.
-// A classical use case of this class is the handling of a memory buffer whose size is significantly flexible
+// A classic use case of this class is the handling of a memory buffer whose size is significantly flexible
 // (dynamic memory allocation instead of static allocation).
 // **********************************************************************************************************
 let nb_max_internal_lists = 100; // (100 means a 1% memory allocation flexibility)
@@ -2738,15 +2738,15 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
             skip_cur_code = true;
           }
           else if ( !((precalculation_mode_mark_first_2_codes_at_depth2.nbBlacks >= 4) && all_four_blacks)
-                    && !((nbCodes >= 700) && (codeHandler.nbDifferentColors(cur_code) == 1)) ) { // a few classical very inefficient impossible codes
+                    && !((nbCodes >= 700) && (codeHandler.nbDifferentColors(cur_code) == 1)) ) { // a few classic very inefficient impossible codes
             skip_cur_code = true;
           }
         }
         else {
-          // Precalculation optimization (2/3): skip impossible current code if acceptable (a few classical impossible codes are kept for better coverage)
+          // Precalculation optimization (2/3): skip impossible current code if acceptable (a few classic impossible codes are kept for better coverage)
           if ( (next_cur_game_idx == 2) && (nbCodes <= nbCodesForPrecalculationThreshold) // (below threshold)
-               && !((nbCodes >= 700) && four_blacks) // a few classical very inefficient impossible codes (1 of 2)
-               && !((nbCodes >= 700) && (codeHandler.nbDifferentColors(cur_code) == 1)) ) { // a few classical very inefficient impossible codes (2 of 2)
+               && !((nbCodes >= 700) && four_blacks) // a few classic very inefficient impossible codes (1 of 2)
+               && !((nbCodes >= 700) && (codeHandler.nbDifferentColors(cur_code) == 1)) ) { // a few classic very inefficient impossible codes (2 of 2)
             skip_cur_code = true;
           }
           if ( (next_cur_game_idx == 2) && (nbCodes > nbCodesForPrecalculationThreshold) // (above threshold)
@@ -2861,7 +2861,7 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
       }
       else if ( (next_cur_game_idx == depth2or3)
                 && (next_cur_game_idx == 3) // only applied in case we exclusively focus on updating depth-3 precalculations, i.e. if depth2or3=3. Depth-2 precalculations will then be erroneous and shall be ignored.
-                && (!precalculation_mode) ) { // skip all classical depth-3 cases where number of possibles code is low
+                && (!precalculation_mode) ) { // skip all classic depth-3 cases where number of possibles code is low
         continue; // skip current code
       }
       */
@@ -4050,7 +4050,7 @@ function handleMessage(data) {
     let best_global_performance = PerformanceNA;
     let code_played_relative_perf = PerformanceNA;
     let relative_perf_evaluation_done = false;
-    let classical_useless_code = false; // "classical" useless code (number of possible codes unchanged after the attempt)
+    let classic_useless_code = false; // "classic" useless code (number of possible codes unchanged after the attempt)
     equivalentPossibleCode = 0; // empty code
 
     // a) Useless code
@@ -4061,7 +4061,7 @@ function handleMessage(data) {
       best_global_performance = PerformanceUNKNOWN;
       code_played_relative_perf = -1.00;
       relative_perf_evaluation_done = true;
-      classical_useless_code = true;
+      classic_useless_code = true;
     }
 
     // b) Useful code
@@ -4409,7 +4409,7 @@ function handleMessage(data) {
     // B.2) Update GUI
     // ***************
 
-    self.postMessage({'rsp_type': 'CODE_PLAYED_PERFORMANCE', 'relative_perf_p': code_played_relative_perf, 'best_global_performance_p': best_global_performance, 'relative_perf_evaluation_done_p': relative_perf_evaluation_done, 'classical_useless_code_p': classical_useless_code, 'code_p': codesPlayed[curAttemptNumber-1], 'attempt_nb': curAttemptNumber, 'game_id': game_id});
+    self.postMessage({'rsp_type': 'CODE_PLAYED_PERFORMANCE', 'relative_perf_p': code_played_relative_perf, 'best_global_performance_p': best_global_performance, 'relative_perf_evaluation_done_p': relative_perf_evaluation_done, 'classic_useless_code_p': classic_useless_code, 'code_p': codesPlayed[curAttemptNumber-1], 'attempt_nb': curAttemptNumber, 'game_id': game_id});
 
     // ************************************************
     // C.1) Organize performances of all possible codes

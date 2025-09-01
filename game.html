@@ -227,12 +227,12 @@ touch-action: manipulation;
 <script src='lib/tingle-master/dist/tingle.min.js'></script>
 <script>
 var lastGlobalProgress=0;
-var classicalUserAgentStr="";
+var classicUserAgentStr="";
 var userAgentToHandle=navigator.userAgent;
 var firefoxModeIdx=userAgentToHandle.toUpperCase().search("FIREFOX/");
 var firefoxMode=((firefoxModeIdx!=-1)&&(userAgentToHandle.toUpperCase().search("SEAMONKEY/")==-1));
 if(firefoxMode){
-classicalUserAgentStr=userAgentToHandle.substring(firefoxModeIdx);
+classicUserAgentStr=userAgentToHandle.substring(firefoxModeIdx);
 }
 var edgeModeIdx=userAgentToHandle.toUpperCase().search("EDG/");
 if(edgeModeIdx==-1){
@@ -240,7 +240,7 @@ edgeModeIdx=userAgentToHandle.toUpperCase().search("EDGE/");
 }
 var edgeMode=((!firefoxMode)&&(edgeModeIdx!=-1));
 if(edgeMode){
-classicalUserAgentStr=userAgentToHandle.substring(edgeModeIdx);
+classicUserAgentStr=userAgentToHandle.substring(edgeModeIdx);
 }
 var operaModeIdx=userAgentToHandle.toUpperCase().search("OPR/");
 if(operaModeIdx==-1){
@@ -248,7 +248,7 @@ operaModeIdx=userAgentToHandle.toUpperCase().search("OPERA/");
 }
 var operaMode=((!firefoxMode)&&(!edgeMode)&&(operaModeIdx!=-1));
 if(operaMode){
-classicalUserAgentStr=userAgentToHandle.substring(operaModeIdx);
+classicUserAgentStr=userAgentToHandle.substring(operaModeIdx);
 }
 var chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROME/");
 if(chromeModeIdx==-1){
@@ -256,15 +256,15 @@ chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROMIUM/");
 }
 var chromeMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(chromeModeIdx!=-1));
 if(chromeMode){
-classicalUserAgentStr=userAgentToHandle.substring(chromeModeIdx);
-var nextSpaceIdx=classicalUserAgentStr.indexOf(" ");
+classicUserAgentStr=userAgentToHandle.substring(chromeModeIdx);
+var nextSpaceIdx=classicUserAgentStr.indexOf(" ");
 if(nextSpaceIdx!=-1){
-classicalUserAgentStr=classicalUserAgentStr.substring(0, nextSpaceIdx);
+classicUserAgentStr=classicUserAgentStr.substring(0, nextSpaceIdx);
 }}
 var safariModeIdx=userAgentToHandle.toUpperCase().search("SAFARI/");
 var safariMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!chromeMode)&&(safariModeIdx!=-1));
 if(safariMode){
-classicalUserAgentStr=userAgentToHandle.substring(safariModeIdx);
+classicUserAgentStr=userAgentToHandle.substring(safariModeIdx);
 }
 var userAgentStr="";
 var androidAppliInfoStr=null;
@@ -312,8 +312,8 @@ localStorage.playerid=playerIdStr2;
 userAgentStr=userAgentStr+"/"+versionNameStr+"/"+versionCodeStr;
 }
 if(!android_appli){
-if(classicalUserAgentStr!=""){
-userAgentStr=classicalUserAgentStr;
+if(classicUserAgentStr!=""){
+userAgentStr=classicUserAgentStr;
 }
 else{
 userAgentStr=userAgentStr+navigator.userAgent.replaceAll("AppleWebKit","AppleWK").replaceAll("Mozilla","Moz").replaceAll("Windows", "Win").replaceAll("/","").replaceAll(" ","");
@@ -327,9 +327,9 @@ window.stop();
 globalErrorStatus=true;
 }
 var oldBrowserVersion=false;
-if(chromeMode&&(classicalUserAgentStr!="")){
+if(chromeMode&&(classicUserAgentStr!="")){
 if((!String.prototype.repeat)
-||(classicalUserAgentStr.indexOf("Chrome/79.")!=-1) ){
+||(classicUserAgentStr.indexOf("Chrome/79.")!=-1) ){
 oldBrowserVersion=true;
 alert("Your Chrome browser version is old, please update it to avoid errors");
 }}
@@ -555,7 +555,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v30.1A";
+let html_compatibility_game_version="v30.1B";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -898,9 +898,9 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.1A: "+(localStorage.reloadForCompatibility_v301A ? localStorage.reloadForCompatibility_v301A : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.1B: "+(localStorage.reloadForCompatibility_v301B ? localStorage.reloadForCompatibility_v301B : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
-+err_str+" in "+userAgentStr+(android_appli ? "|"+classicalUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
++err_str+" in "+userAgentStr+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
 +"|game:"+debug_game_state
 +"|smm:"+smm_load_state+","+debug_smm_state

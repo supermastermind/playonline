@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v30.1A"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
+let smm_compatibility_version = "v30.1B"; // !WARNING! -> value to be aligned with version in game.html => search "v30" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v301A) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v301B) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v301A = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v301B = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -84,9 +84,9 @@ debug_smm_state = 20;
 // Main game variables
 // *******************
 
-let nominalGameNbColumns = 5; // classical Super Master Mind game
-let nominalGameNbColors = 8; // classical Super Master Mind game
-let nominalGameNbMaxAttempts = 12; // classical Super Master Mind game
+let nominalGameNbColumns = 5;
+let nominalGameNbColors = 8;
+let nominalGameNbMaxAttempts = 12;
 
 let defaultNbColumns = 5;
 
@@ -121,7 +121,7 @@ let obviouslyImpossibleColors;
 let relative_performances_of_codes_played;
 let global_best_performances;
 let relativePerformancesEvaluationDone;
-let classicalUselessCode;
+let classicUselessCode;
 let performancesDisplayed;
 let possibleCodesLists;
 let possibleCodesListsSizes;
@@ -558,7 +558,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.1A: " + (localStorage.reloadForCompatibility_v301A ? localStorage.reloadForCompatibility_v301A : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v30.1B: " + (localStorage.reloadForCompatibility_v301B ? localStorage.reloadForCompatibility_v301B : "not done"), 210);
 
       // Alert
       // *****
@@ -870,10 +870,10 @@ function onGameSolverMsg(e) {
       }
       let relative_perf_evaluation_done_p = Boolean(data.relative_perf_evaluation_done_p);
 
-      if (data.classical_useless_code_p == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: classical_useless_code_p is undefined", new Error().stack);
+      if (data.classic_useless_code_p == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: classic_useless_code_p is undefined", new Error().stack);
       }
-      let classical_useless_code_p = Boolean(data.classical_useless_code_p);
+      let classic_useless_code_p = Boolean(data.classic_useless_code_p);
 
       if (data.code_p == undefined) {
         displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined", new Error().stack);
@@ -896,7 +896,7 @@ function onGameSolverMsg(e) {
         displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
       }
 
-      writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classical_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id);
+      writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id);
 
     }
 
@@ -1275,12 +1275,12 @@ settingsButtonClick = function() { // (override temporary definition)
   }
   if (!settingsButtonObject.disabled) {
     let display_form_str =
-      "<b>Select display mode:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+      "<b>Select theme:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
        <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
-         <option value='1'" + ((!modernDisplay) && (displayVariant != 1) ? " selected" : "") + ">classic display / numbers</option>\
-         <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">classic display / colors</option>\
-         <option value='3'" + (modernDisplay && (displayVariant != 1) ? " selected" : "") + ">modern display / numbers</option>\
-         <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">modern display / colors</option>\
+         <option value='1'" + ((!modernDisplay) && (displayVariant != 1) ? " selected" : "") + ">classic theme / numbers</option>\
+         <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">classic theme / colors only</option>\
+         <option value='3'" + (modernDisplay && (displayVariant != 1) ? " selected" : "") + ">light theme / numbers</option>\
+         <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">light theme / colors only</option>\
        </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 
     let change_first_name_title_str = "<b>Change first name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
@@ -2004,9 +2004,9 @@ function resetGameAttributes(nbColumnsSelected) {
   for (i = 0; i < nbMaxAttempts; i++) {
     relativePerformancesEvaluationDone[i] = false;
   }
-  classicalUselessCode = new Array(nbMaxAttempts);
+  classicUselessCode = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
-    classicalUselessCode[i] = false;
+    classicUselessCode[i] = false;
   }
   performancesDisplayed = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
@@ -2152,7 +2152,7 @@ function checkArraySizes() {
   if (relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)", new Error().stack);}
   if (global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)", new Error().stack);}
   if (relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)", new Error().stack);}
-  if (classicalUselessCode.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)", new Error().stack);}
+  if (classicUselessCode.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)", new Error().stack);}
   if (performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)", new Error().stack);}
   if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (16)", new Error().stack);}
   if (globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (17)", new Error().stack);}
@@ -2316,7 +2316,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
                      ((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
                      && (smmCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
                      && (smmCodeHandler.nbDifferentColors(codesPlayed[2]) >= 2)) )
-                // classical simplistic ways of playing (involving the case where the same 5 colors are replayed in a different order): attempt inversion is acceptable/understandable
+                // classic simplistic ways of playing (involving the case where the same 5 colors are replayed in a different order): attempt inversion is acceptable/understandable
                 && smmCodeHandler.sameColorsReused(codesPlayed[0], codesPlayed[1]) // (obviously strongly correlated codes + simplistic way of playing when codes are played in this order)
                 && (nbOfPossibleCodes[2] > 2600) // inefficient way of playing + code nearly never assessed
                 && ( ((mark_tmp1.nbBlacks + mark_tmp1.nbWhites == 5) && (mark_tmp2a.nbBlacks + mark_tmp2a.nbWhites == 5) && (3*marks[2].nbBlacks + marks[2].nbWhites >= 3*marks[1].nbBlacks + marks[1].nbWhites + 3))
@@ -2348,7 +2348,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
 }
 
 // Code performances
-function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classical_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id) {
+function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id) {
   if (game_id != game_cnt) { // ignore other threads
     console.log("writePerformanceOfCodePlayed() call ignored: " + game_id + ", " + game_cnt);
     return false;
@@ -2357,7 +2357,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
        || (relative_perf_p == PerformanceNA)
        || (relative_perf_evaluation_done_p && (relative_perf_p == PerformanceUNKNOWN))
        || (((relative_perf_p <= -1.00) && (relative_perf_p != PerformanceUNKNOWN)) /* useless code */ && (!relative_perf_evaluation_done_p))
-       || (classical_useless_code_p && (relative_perf_p != -1.00))
+       || (classic_useless_code_p && (relative_perf_p != -1.00))
        || ((best_global_performance_p <= 0.01) && (best_global_performance_p != PerformanceUNKNOWN))
        || (best_global_performance_p == PerformanceNA)
        || (code_p != codesPlayed[attempt_nb-1])
@@ -2367,8 +2367,8 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
        || (relative_performances_of_codes_played[attempt_nb-1] != PerformanceNA /* initial value */)
        || (global_best_performances[attempt_nb-1] != PerformanceNA /* initial value */)
        || (relativePerformancesEvaluationDone[attempt_nb-1] /* initial value */)
-       || (classicalUselessCode[attempt_nb-1] /* initial value */) ) {
-    displayGUIError("invalid perfs (" + attempt_nb + ", " + nbOfStatsFilled_Perfs + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + relative_perf_p + ", " + best_global_performance_p + ", " + relative_perf_evaluation_done_p + ", " + classical_useless_code_p + ", " + code_p + ", " + attempt_nb + ")", new Error().stack);
+       || (classicUselessCode[attempt_nb-1] /* initial value */) ) {
+    displayGUIError("invalid perfs (" + attempt_nb + ", " + nbOfStatsFilled_Perfs + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + relative_perf_p + ", " + best_global_performance_p + ", " + relative_perf_evaluation_done_p + ", " + classic_useless_code_p + ", " + code_p + ", " + attempt_nb + ")", new Error().stack);
     return false;
   }
   relative_performances_of_codes_played[attempt_nb-1] = relative_perf_p; // may be known or unknown
@@ -2384,7 +2384,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
     at_least_one_useless_code_played = true;
   }
   relativePerformancesEvaluationDone[attempt_nb-1] = relative_perf_evaluation_done_p;
-  classicalUselessCode[attempt_nb-1] = classical_useless_code_p;
+  classicUselessCode[attempt_nb-1] = classic_useless_code_p;
   nbOfStatsFilled_Perfs = attempt_nb;
 
   main_graph_update_needed = true;
@@ -3519,7 +3519,7 @@ function draw_graphic_bis() {
 
         if (i < currentAttemptNumber) {
           // Relative performance was filled and may be known or unknown
-          displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), showPossibleCodesMode, false, PerformanceNA, ctx, false, false, classicalUselessCode[i-1]);
+          displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), showPossibleCodesMode, false, PerformanceNA, ctx, false, false, classicUselessCode[i-1]);
           if ( relativePerformancesEvaluationDone[i-1]
                && (relative_performances_of_codes_played[i-1] != PerformanceUNKNOWN)
                && (relative_performances_of_codes_played[i-1] <= PerformanceLOW) ) {
@@ -5136,7 +5136,7 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomR
   }
 }
 
-function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag, equivalentIdeaFlag, isClassicalUselessCode) {
+function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag, equivalentIdeaFlag, isClassicUselessCode) {
 
   let performance = Math.round(perf * 100.0) / 100.0; // 0.01 precision
   let optimalglobalperformance = Math.round(optimalGlobalPerf * 100.0) / 100.0; // 0.01 precision
@@ -5172,12 +5172,12 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
                   lightGray, backgroundColor, ctx, false);
   }
   else if (performance != PerformanceNA) {
-    if (performance <= -1.00) { // "classical" useless code (number of possible codes unchanged after the attempt) or "pseudo-useless/more-than-useless" code
+    if (performance <= -1.00) { // "classic" useless code (number of possible codes unchanged after the attempt) or "pseudo-useless/more-than-useless" code
       let color;
       let nb_of_decimals;
-      if (isClassicalUselessCode) { // "classical" useless code
+      if (isClassicUselessCode) { // "classic" useless code
         if ((performance != -1.00) || (perf != -1.00)) {
-          throw new Error("internal error in displayPerf (1): " + performance + ', ' + perf + ', ' + isClassicalUselessCode);
+          throw new Error("internal error in displayPerf (1): " + performance + ', ' + perf + ', ' + isClassicUselessCode);
         }
         color = redColor;
         nb_of_decimals = 1; // no need of more decimals to display exact value -1.0 / display is clearer with 1 decimal only
@@ -5186,11 +5186,11 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
         color = "#4B0082"; // purple to highlight those very particular cases
         nb_of_decimals = 2;
       }
-      if (!(isClassicalUselessCode && displayString(" useless" + isPossible_str + " ", x_cell, y_cell, cell_width,
+      if (!(isClassicUselessCode && displayString(" useless" + isPossible_str + " ", x_cell, y_cell, cell_width,
                                                     color, backgroundColor, ctx, false, true, 0, true, 0))) {
         if (!displayString("\u2009" + performance.toFixed(nb_of_decimals).replaceAll(",",".") + isPossible_str + "\u2009", x_cell, y_cell, cell_width,
                            color, backgroundColor, ctx, false, true, 0, true, 0)) {
-          if (!(isClassicalUselessCode && displayString(" useless ", x_cell, y_cell, cell_width,
+          if (!(isClassicUselessCode && displayString(" useless ", x_cell, y_cell, cell_width,
                                                         color, backgroundColor, ctx, false, true, 0, true, 0))) {
             if (!displayString("\u200A" + performance.toFixed(nb_of_decimals).replaceAll(",",".") + "\u200A", x_cell, y_cell, cell_width,
                                color, backgroundColor, ctx, false, true, 0, true, 0)) {

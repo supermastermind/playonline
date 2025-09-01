@@ -2750,13 +2750,13 @@ self.postMessage({'rsp_type': 'NB_POSSIBLE_CODES', 'nbOfPossibleCodes_p': nextNb
 let best_global_performance=PerformanceNA;
 let code_played_relative_perf=PerformanceNA;
 let relative_perf_evaluation_done=false;
-let classical_useless_code=false;
+let classic_useless_code=false;
 equivalentPossibleCode=0;
 if((nextNbOfPossibleCodes==previousNbOfPossibleCodes)&&(!gameWon)){
 best_global_performance=PerformanceUNKNOWN;
 code_played_relative_perf=-1.00;
 relative_perf_evaluation_done=true;
-classical_useless_code=true;
+classic_useless_code=true;
 }
 else{
 let precalculated_cur_game_or_code=-1;
@@ -3028,7 +3028,7 @@ throw new Error("NEW_ATTEMPT phase / best_global_performance is NA");
 if(code_played_relative_perf==PerformanceNA){
 throw new Error("NEW_ATTEMPT phase / code_played_relative_perf is NA");
 }
-self.postMessage({'rsp_type': 'CODE_PLAYED_PERFORMANCE', 'relative_perf_p': code_played_relative_perf, 'best_global_performance_p': best_global_performance, 'relative_perf_evaluation_done_p': relative_perf_evaluation_done, 'classical_useless_code_p': classical_useless_code, 'code_p': codesPlayed[curAttemptNumber-1], 'attempt_nb': curAttemptNumber, 'game_id': game_id});
+self.postMessage({'rsp_type': 'CODE_PLAYED_PERFORMANCE', 'relative_perf_p': code_played_relative_perf, 'best_global_performance_p': best_global_performance, 'relative_perf_evaluation_done_p': relative_perf_evaluation_done, 'classic_useless_code_p': classic_useless_code, 'code_p': codesPlayed[curAttemptNumber-1], 'attempt_nb': curAttemptNumber, 'game_id': game_id});
 if(nbMaxPossibleCodesShown > nbOfCodesForSystematicEvaluation){
 throw new Error("NEW_ATTEMPT phase / inconsistent numbers of listed codes: "+nbMaxPossibleCodesShown+" > "+nbOfCodesForSystematicEvaluation);
 }
