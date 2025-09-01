@@ -2312,7 +2312,7 @@ allRadioButtons[i].textContent=nbMinColumns+i;
 if(CompressedDisplayMode){
 resetCurrentCodeButtonObject.value="\u2718";
 playRandomCodeButtonObject.value="\uD83C\uDFB2";
-revealSecretColorButtonObject.value="\uFF1F";
+revealSecretColorButtonObject.value="?";
 showPossibleCodesButtonObject.value=showPossibleCodesButtonCompressedName;
 myTableObject.style.width="100%";
 myTableObject.style.height="100%";
