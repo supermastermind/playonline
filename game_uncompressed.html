@@ -579,10 +579,10 @@
             <input type="radio" name='nbColumnsSelection' id='nbColumnsSelection_7' value="7" onclick='newGameButtonClick(7)'><span id='columnsspan_7' class='radio disabled' name='radio_name'>7</span>
             </label>
           </form>
-          <input id='resetCurrentCodeButton' class='button disabled' type='button' value='Rst' title='Reset current code' ontouchstart='if(checkButtonEvent(false)){resetCurrentCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){resetCurrentCodeButtonClick();}' onfocus='this.blur()' disabled>
-          <input id='playRandomCodeButton' class='button disabled' type='button' value='Rnd' title='Play a random code' ontouchstart='if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
-          <input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-          <input id='showPossibleCodesButton' class='button disabled' type='button' value='Codes' title='Show possible codes at each stage of the game (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
+          <input id='resetCurrentCodeButton' class='button disabled' type='button' value='&#x2718;' title='Reset current code' ontouchstart='if(checkButtonEvent(false)){resetCurrentCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){resetCurrentCodeButtonClick();}' onfocus='this.blur()' disabled>
+          <input id='playRandomCodeButton' class='button disabled' type='button' value='&#x1F3B2;' title='Play a random code' ontouchstart='if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
+          <input id='revealSecretColorButton' class='button disabled' type='button' value='&#x1F9ED;' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
+          <input id='showPossibleCodesButton' class='button disabled' type='button' value='&#x1F50E;' title='Show possible codes at each stage of the game (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
           <input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info & settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
         </td>
       </tr>
@@ -3200,8 +3200,8 @@
       let playRandomCodeButtonIniName = playRandomCodeButtonObject.value;
       let revealSecretColorButtonIniName = revealSecretColorButtonObject.value;
       let showPossibleCodesButtonIniName = showPossibleCodesButtonObject.value;
-      let showPossibleCodesButtonCompressedName = "\ud83d\udc40";
-      let showPossibleCodesButtonBackToGameName = "Back";
+      let showPossibleCodesButtonCompressedName = "\ud83d\udd0e";
+      let showPossibleCodesButtonBackToGameName = "\u25c0";
       let showPossibleCodesButtonBackToGameCompressedName = "\u25c0";
 
       let myTableObject = document.getElementById("my_table");

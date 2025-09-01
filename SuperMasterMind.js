@@ -232,7 +232,7 @@ displayVariant=((localStorage.displayVariantApplied=="1") ? 1 : 0);
 let legacy_backgroundColor_base_color="#5F340E";
 let modern_backgroundColor_base_color="#E3E3E3";
 let modernBaseColor="#000000";
-let modernBaseColor2=legacy_backgroundColor_base_color;
+let modernBaseColor2="#000000";
 let modernGameTableColor="#D0D0D0";
 let highlightColor;
 let lightGray;
@@ -261,7 +261,7 @@ allButtons[i].style.border=allButtons[i].style.border.replace((modernDisplay ? "
 highlightColor="#FFFF00";
 setLightGray();
 darkGray="#000000";
-updateHoverBackgroundColor(modernDisplay ? modernBaseColor2 : "orange");
+updateHoverBackgroundColor(modernDisplay ? legacy_backgroundColor_base_color : "orange");
 }
 updateThemeAttributes();
 let currentCodeColorMode=-1;
@@ -1350,7 +1350,7 @@ else{
 attempt_nb_width=0;
 nb_possible_codes_width=((nbColumns>=7)?3.2:((nbColumns==6)?3.2:3.2));
 optimal_width=(((!gameOnGoing())||showPossibleCodesMode)?3.0:0);
-tick_width=(((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.35:0);
+tick_width=(((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.4:0);
 if(!gameOnGoing()||dsCode){
 transition_height=0.4;
 scode_height=1;
@@ -2312,7 +2312,7 @@ allRadioButtons[i].textContent=nbMinColumns+i;
 if(CompressedDisplayMode){
 resetCurrentCodeButtonObject.value="\u2718";
 playRandomCodeButtonObject.value="\uD83C\uDFB2";
-revealSecretColorButtonObject.value="?";
+revealSecretColorButtonObject.value="\uD83E\uDDED";
 showPossibleCodesButtonObject.value=showPossibleCodesButtonCompressedName;
 myTableObject.style.width="100%";
 myTableObject.style.height="100%";
@@ -2376,7 +2376,7 @@ canvas.height=height;
 }
 for (let i=0;i < allRadioButtons.length;i++){
 if(nbColumnsSelected==nbMinColumns+i){
-let radioColor=(modernDisplay ? modernBaseColor2 : "orange");
+let radioColor=(modernDisplay ? legacy_backgroundColor_base_color : "orange");
 let borderStr3=lineWidth+"px solid "+radioColor;
 allRadioButtons[i].style.color=radioColor;
 allRadioButtons[i].style.border=borderStr3;
