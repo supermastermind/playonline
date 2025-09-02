@@ -2279,7 +2279,9 @@ if(localStorage.firstname){
 firstname=localStorage.firstname;
 }
 if(!localStorage.playerid){
-throw new Error("undefined playerid");
+localStorage.removeItem('firstname');
+localStorage.gamesok=-10;
+throw new Error("undefined playerid for "+firstname);
 }
 playerid=localStorage.playerid;
 console.log(playerid);

@@ -2735,7 +2735,10 @@
                 firstname = localStorage.firstname;
               }
               if (!localStorage.playerid) {
-                throw new Error("undefined playerid");
+                // this rare error may happen if ever the browser deleted its stored local data by itself or due to some extensions while the window was open
+                localStorage.removeItem('firstname'); // defense
+                localStorage.gamesok = -10; // defense
+                throw new Error("undefined playerid for " + firstname);
               }
               playerid = localStorage.playerid;
 
