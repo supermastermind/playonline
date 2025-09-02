@@ -2940,14 +2940,8 @@ function draw_graphic_bis() {
       let borderStr1 = borderWidth1 + (modernDisplay ? "px solid " + modernBaseColor : "px solid black");
       let borderStr2 = lineWidth + (modernDisplay ? "px solid " + modernBaseColor: "px solid black");
 
-      if (mobileMode && androidMode) {  // It is not possible to change the \u2714 and \u2716 character color on Android/Chrome
-        tickChar = "\u2713"; /* (check mark/tick) */
-        crossChar = "\u2715"; /* (cross) */
-      }
-      else {
-        tickChar = "\u2714"; /* (check mark/tick) */
-        crossChar = "\u2716"; /* (cross) */
-      }
+      tickChar = "\u2714"; /* (check mark/tick) */
+      crossChar = "\u2716"; /* (cross) */
 
       if (!htmlObjectsAlreadySet || CompressedDisplayModeHasChanged) {
 
