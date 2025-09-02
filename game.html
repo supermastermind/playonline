@@ -352,6 +352,7 @@ if(!localStorage.playerid){
 let id=makeid()+"-"+formatDate(new Date());
 localStorage.playerid=id;
 }
+var playerIdForThisSession=localStorage.playerid;
 var unknownIPAddressPrefix='0.0.0';
 var generalTableWidthStr="44%";
 var rulesTableWidthStr="44%";
@@ -2281,7 +2282,7 @@ firstname=localStorage.firstname;
 if(!localStorage.playerid){
 localStorage.removeItem('firstname');
 localStorage.gamesok=-10;
-throw new Error("undefined playerid for "+firstname);
+throw new Error("undefined playerid ("+firstname+", "+playerIdForThisSession+")");
 }
 playerid=localStorage.playerid;
 console.log(playerid);

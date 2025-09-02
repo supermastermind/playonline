@@ -416,6 +416,7 @@
         let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android app)
         localStorage.playerid = id;
       }
+      var playerIdForThisSession = localStorage.playerid;
 
       var unknownIPAddressPrefix = '0.0.0'; // (Note: checked by GS SCRIPT)
       var generalTableWidthStr = "44%";
@@ -2738,7 +2739,7 @@
                 // this rare error may happen if ever the browser deleted its stored local data by itself or due to some extensions while the window was open
                 localStorage.removeItem('firstname'); // localStorage.firstname / defense
                 localStorage.gamesok = -10; // defense
-                throw new Error("undefined playerid for " + firstname);
+                throw new Error("undefined playerid (" + firstname + ", " + playerIdForThisSession + ")");
               }
               playerid = localStorage.playerid;
 
