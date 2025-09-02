@@ -2266,6 +2266,8 @@ try{
 ctx.imageSmoothingEnabled=true;
 ctx.globalAlpha=1;
 ctx.setTransform(1,0,0,1,0,0);
+const dpr=window.devicePixelRatio||1;
+ctx.scale(dpr, dpr);
 let nbColumnsSelected=getNbColumnsSelected();
 if((nbColumnsSelected < 0)||(nbColumnsSelected > nbMaxColumns) ){
 displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected, new Error().stack);
@@ -2370,9 +2372,13 @@ current_innerHeight=window.innerHeight;
 refLineWidth=getLineWidth(window.innerHeight, 1);
 let width=canvas_cell.clientWidth-Math.ceil(borderWidth1);
 let height=canvas_cell.clientHeight-Math.ceil(borderWidth1);
+canvas.style.width=`${width}px`;
+canvas.style.height=`${height}px`;
+canvas.width=width * dpr;
+canvas.height=height * dpr;
+ctx.setTransform(1,0,0,1,0,0);
+ctx.scale(dpr, dpr);
 updateAttributesWidthAndHeightValues(width, height);
-canvas.width=width;
-canvas.height=height;
 }
 for (let i=0;i < allRadioButtons.length;i++){
 if(nbColumnsSelected==nbMinColumns+i){

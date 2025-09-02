@@ -2901,7 +2901,9 @@ function draw_graphic_bis() {
 
     ctx.imageSmoothingEnabled = true;
     ctx.globalAlpha = 1;
-    ctx.setTransform(1,0,0,1,0,0); // resets the canvas current transform to the identity matrix
+    ctx.setTransform(1,0,0,1,0,0); // Reset any previous transformations to the identity matrix
+    const dpr = window.devicePixelRatio || 1;
+    ctx.scale(dpr, dpr); // Apply scaling for high-DPI rendering
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
@@ -3027,9 +3029,14 @@ function draw_graphic_bis() {
       // Set canvas size
       let width = canvas_cell.clientWidth - Math.ceil(borderWidth1);
       let height = canvas_cell.clientHeight - Math.ceil(borderWidth1);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      canvas.width = width * dpr;   
+      canvas.height = height * dpr;
+      ctx.setTransform(1,0,0,1,0,0); // Reset any previous transformations to the identity matrix
+      ctx.scale(dpr, dpr);
+      
       updateAttributesWidthAndHeightValues(width, height);
-      canvas.width = width;
-      canvas.height = height;
     } // resize detected
 
     for (let i = 0; i < allRadioButtons.length; i++) {
