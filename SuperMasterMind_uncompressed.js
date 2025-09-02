@@ -2940,8 +2940,14 @@ function draw_graphic_bis() {
       let borderStr1 = borderWidth1 + (modernDisplay ? "px solid " + modernBaseColor : "px solid black");
       let borderStr2 = lineWidth + (modernDisplay ? "px solid " + modernBaseColor: "px solid black");
 
-      tickChar = "\u2714"; /* (check mark/tick) */
-      crossChar = "\u2716"; /* (cross) */
+      if (mobileMode && androidMode) {  // Less thick characters
+        tickChar = "\u2713"; /* (check mark/tick) */
+        crossChar = "\u2715"; /* (cross) */
+      }
+      else {
+        tickChar = "\u2714"; /* (check mark/tick) */
+        crossChar = "\u2716"; /* (cross) */
+      }
 
       if (!htmlObjectsAlreadySet || CompressedDisplayModeHasChanged) {
 
@@ -3625,23 +3631,14 @@ function draw_graphic_bis() {
             }
           }
           else { // code is not possible
-            if (i <= 2) {
-              if (!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                                 redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
-                displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                              redColor, backgroundColor, ctx, false, true, 0, true, 0); // (may be thinner than crossChar)
-              }
-            }
-            else {
-              if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                                 redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
-                if ((nbColumns <= 4) || !displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                                                       redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
-                  if (!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                                     redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
-                    displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                                  redColor, backgroundColor, ctx, false, true, 0, true, 0); // (may be thinner than crossChar)
-                  }
+            if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                               redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
+              if ((nbColumns <= 4) || !displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                                     redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
+                if (!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                   redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
+                  displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                redColor, backgroundColor, ctx, false, true, 0, true, 0); // (may be thinner than crossChar)
                 }
               }
             }

@@ -2297,8 +2297,14 @@ updateGameSizes();
 let borderWidth1=(CompressedDisplayMode ? 0 : lineWidth);
 let borderStr1=borderWidth1+(modernDisplay ? "px solid "+modernBaseColor : "px solid black");
 let borderStr2=lineWidth+(modernDisplay ? "px solid "+modernBaseColor: "px solid black");
+if(mobileMode&&androidMode){
+tickChar="\u2713";
+crossChar="\u2715";
+}
+else{
 tickChar="\u2714";
 crossChar="\u2716";
+}
 if(!htmlObjectsAlreadySet||CompressedDisplayModeHasChanged){
 for (let i=0;i < allRadioButtons.length;i++){
 allRadioButtons[i].textContent=nbMinColumns+i;
@@ -2872,13 +2878,6 @@ displayString("Y", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possib
 greenColor, backgroundColor, ctx, false, true, 0, true, 0);
 }}
 else{
-if(i <=2){
-if(!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-redColor, backgroundColor, ctx, false, true, 0, true, 0)){
-displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-redColor, backgroundColor, ctx, false, true, 0, true, 0);
-}}
-else{
 if(!displayString("\u2009"+crossChar+"\u2009"+isPossible+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 if((nbColumns <=4)||!displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
@@ -2887,7 +2886,7 @@ if(!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0);
-}}}}}}}
+}}}}}}
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 1);
 ctx.strokeStyle=darkGray;
