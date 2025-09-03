@@ -254,7 +254,10 @@ var samsungBrowserModeIdx=userAgentToHandle.toUpperCase().search("SAMSUNGBROWSER
 var samsungBrowserMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(samsungBrowserModeIdx!=-1));
 if(samsungBrowserMode){
 classicUserAgentStr=userAgentToHandle.substring(samsungBrowserModeIdx);
-}
+var nextSpaceIdx=classicUserAgentStr.indexOf(" ");
+if(nextSpaceIdx!=-1){
+classicUserAgentStr=classicUserAgentStr.substring(0, nextSpaceIdx);
+}}
 var chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROME/");
 if(chromeModeIdx==-1){
 chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROMIUM/");
@@ -909,7 +912,7 @@ extra_debug_info="-";
 }
 submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.1B: "+(localStorage.reloadForCompatibility_v301B ? localStorage.reloadForCompatibility_v301B : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
-+err_str+" in "+userAgentStr+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
++err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
 +"|game:"+debug_game_state
 +"|smm:"+smm_load_state+","+debug_smm_state
@@ -948,7 +951,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** "+errormsg+" ***** ("+html_compatibility_game_version+"): event: "+evt+"|"+evt_str+" / reason: "+evt.reason+" / promise: "+evt.promise+"|"+evt_promise_str+" | cause: "+cause+" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon+"|"+debug_game_state+"|"+debug_on_resize_or_unload+" for "+extra_debug_info+" in "+userAgentStr, 40);
+submitForm("***** "+errormsg+" ***** ("+html_compatibility_game_version+"): event: "+evt+"|"+evt_str+" / reason: "+evt.reason+" / promise: "+evt.promise+"|"+evt_promise_str+" | cause: "+cause+" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon+"|"+debug_game_state+"|"+debug_on_resize_or_unload+" for "+extra_debug_info+" in "+navigator.userAgent, 40);
 }
 window.onmessageerror=function(evt){
 game_event_onerrors(evt, "GAME MESSAGE ERROR", "onmessageerror");
@@ -2561,7 +2564,7 @@ errorStr=errorStr+" for "+localStorage.firstname;
 if(localStorage.playerid){
 errorStr=errorStr+" for player id "+localStorage.playerid;
 }
-errorStr=errorStr+" on "+navigator.platform+" / "+userAgentStr+" / "+decodeURI(location.href);
+errorStr=errorStr+" on "+navigator.platform+" / "+navigator.userAgent+" / "+decodeURI(location.href);
 submitForm("internal error while storing scores"+errorStr+": "+exc+": "+exc.stack, 120);
 debug_game_state=103;
 }}
