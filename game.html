@@ -352,7 +352,10 @@ if(!localStorage.playerid){
 let id=makeid()+"-"+formatDate(new Date());
 localStorage.playerid=id;
 }
-var playerIdForThisSession=localStorage.playerid;
+var playerIdForThisSession="NA";
+if(localStorage.playerid){
+playerIdForThisSession=localStorage.playerid;
+}
 var unknownIPAddressPrefix='0.0.0';
 var generalTableWidthStr="44%";
 var rulesTableWidthStr="44%";

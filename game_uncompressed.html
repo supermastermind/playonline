@@ -416,7 +416,10 @@
         let id = makeid() + "-" + formatDate(new Date()); // (versus "_ddMMyy" in android app)
         localStorage.playerid = id;
       }
-      var playerIdForThisSession = localStorage.playerid;
+      var playerIdForThisSession = "NA";
+      if (localStorage.playerid) {
+        playerIdForThisSession = localStorage.playerid;
+      }
 
       var unknownIPAddressPrefix = '0.0.0'; // (Note: checked by GS SCRIPT)
       var generalTableWidthStr = "44%";
