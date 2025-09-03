@@ -446,6 +446,9 @@ submitForm("internal error at error form submission: "+exc+" for submitted error
 globalErrorCnt++;
 }
 function onGameSolverError(e){
+if(safariMode&&(e.message==undefined)&&(e.lineno==undefined)&&(e.filename==undefined)){
+return;
+}
 displayGUIError("gameSolver error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
 }
 function onGameSolverMessageError(e){
@@ -2629,6 +2632,7 @@ let y_cell_delta=get_y_pixel(y_min)-get_y_pixel(y_min+y_step);
 font_size=min_font_size;
 let last_valid_font_size=font_size;
 let font_tmp="bold "+font_size+"px "+fontFamily;
+let ctx_font_ini=ctx.font;
 ctx.font=font_tmp;
 let font_width_1char=ctx.measureText("X").width;
 let font_height=font_size;
@@ -2656,6 +2660,7 @@ star_font_width_1char=ctx.measureText("\u2B50").width;
 star_font_height=star_font_size;
 }
 star_font_size=Math.min(last_valid_star_font_size, font_size);
+ctx.font=ctx_font_ini;
 font_array__str_height=null;
 font_array__empty_space_before_str=null;
 font_array__str_height=new Array(0);
@@ -3652,7 +3657,9 @@ if(line_found){
 break;
 }}
 if((first_non_transparent_line==-1)||(last_non_transparent_line==-1)){
+if(!safariMode||!mobileMode||androidMode){
 displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: "+(first_non_transparent_line==-1)+", "+(last_non_transparent_line==-1), new Error().stack);
+}
 first_non_transparent_line=0;
 last_non_transparent_line=Math.round((height-1) * default_font_height_factor);
 }
@@ -3687,12 +3694,16 @@ ctx_font_str="bold "+ctx_font_str.trim();
 str_height=font_array__str_height[ctx_font_str];
 }
 if(str_height==undefined){
+if(!safariMode||!mobileMode||androidMode){
 displayGUIError("displayString: str_height not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(font_array__str_height), new Error().stack);
+}
 str_height=parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor;
 }}
 let empty_space_before_str=font_array__empty_space_before_str[ctx_font_str];
 if(empty_space_before_str==undefined){
+if(!safariMode||!mobileMode||androidMode){
 displayGUIError("displayString: empty_space_before_str not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(font_array__empty_space_before_str), new Error().stack);
+}
 empty_space_before_str=0;
 }
 let font_width_1char=ctx.measureText("X").width;

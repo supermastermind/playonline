@@ -250,11 +250,16 @@ var operaMode=((!firefoxMode)&&(!edgeMode)&&(operaModeIdx!=-1));
 if(operaMode){
 classicUserAgentStr=userAgentToHandle.substring(operaModeIdx);
 }
+var samsungBrowserModeIdx=userAgentToHandle.toUpperCase().search("SAMSUNGBROWSER/");
+var samsungBrowserMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(samsungBrowserModeIdx!=-1));
+if(samsungBrowserMode){
+classicUserAgentStr=userAgentToHandle.substring(samsungBrowserModeIdx);
+}
 var chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROME/");
 if(chromeModeIdx==-1){
 chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROMIUM/");
 }
-var chromeMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(chromeModeIdx!=-1));
+var chromeMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!samsungBrowserMode)&&(chromeModeIdx!=-1));
 if(chromeMode){
 classicUserAgentStr=userAgentToHandle.substring(chromeModeIdx);
 var nextSpaceIdx=classicUserAgentStr.indexOf(" ");
@@ -262,7 +267,7 @@ if(nextSpaceIdx!=-1){
 classicUserAgentStr=classicUserAgentStr.substring(0, nextSpaceIdx);
 }}
 var safariModeIdx=userAgentToHandle.toUpperCase().search("SAFARI/");
-var safariMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!chromeMode)&&(safariModeIdx!=-1));
+var safariMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!samsungBrowserMode)&&(!chromeMode)&&(safariModeIdx!=-1));
 if(safariMode){
 classicUserAgentStr=userAgentToHandle.substring(safariModeIdx);
 }
@@ -492,8 +497,8 @@ locationURLs[1]='https://api.ip'+extraStr+'infodb.com/v3/ip-city/?key=792'+extra
 <input id='resetCurrentCodeButton' class='button disabled' type='button' value='&#x2718;' title='Reset current code' ontouchstart='if(checkButtonEvent(false)){resetCurrentCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){resetCurrentCodeButtonClick();}' onfocus='this.blur()' disabled>
 <input id='playRandomCodeButton' class='button disabled' type='button' value='&#x1F3B2;' title='Play a random code' ontouchstart='if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
 <input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
-<input id='showPossibleCodesButton' class='button disabled' type='button' value='&#x1F50E;' title='Show possible codes at each stage of the game (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
-<input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info & settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
+<input id='showPossibleCodesButton' class='button disabled' type='button' value='&#x1F50E;' title='Show possible codes at each attempt (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
+<input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info and settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
 </td>
 </tr>
 <tr>
@@ -874,7 +879,7 @@ return;
 if(message.indexOf("undefined is not an object (evaluating 'a.L')")!=-1){
 return;
 }
-if(safariMode&&(message.indexOf("Script error.")!=-1)&&(url=="")&&(lineNo==0)&&(columnNo==0)&&(error==null)){
+if((message.indexOf("Script error.")!=-1)&&(url=="")&&(lineNo==0)&&(columnNo==0)&&(error==null)){
 return;
 }}
 catch (error){}
