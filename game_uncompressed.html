@@ -895,7 +895,7 @@
 
         let handle_stats_final_retry_str = "";
         let handle_stats_final_retry_conditional_str = "";
-        let key = Math.floor(Math.random()*9999999999+1).toString(32);
+        let key = makeid();
         let my_params = {};
         if (formStr == "") { // Nominal case
           var nbColumns_in_form = document.getElementById('form_nbcolumns_id').value;
