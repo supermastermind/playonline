@@ -12,26 +12,28 @@ pageLoadStartTime=new Date();
 try{
 eval('"use strict";class foo{};let test_let_inst=1;var fction_with_optional_args=function(p=true){return p};fction_with_optional_args();');
 }catch (err){
-var errorMsg="Your browser cannot run this game. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
+var errorMsg="Your browser cannot run this game. This game can be run with the last versions of Chrome, Firefox, Edge, Safari... Update your browser if necessary.";
 throw new Error(errorMsg);
 }
 if(typeof(Worker)=="undefined"){
-var workerErrorMsg="Your browser cannot run this game because it does not support Web workers. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
+var workerErrorMsg="Your browser cannot run this game because it does not support Web workers. This game can be run with the last versions of Chrome, Firefox, Edge, Safari... Update your browser if necessary.";
 throw new Error(workerErrorMsg);
 }
 var storageErrorMet=true;
 try{
 if(typeof(Storage)!=='undefined'){
-localStorage.removeItem('test_storage_ok');
+localStorage.setItem("test_storage_ok", "abc 000");
+if(localStorage.getItem("test_storage_ok")&&(localStorage.getItem("test_storage_ok")=="abc 000")){
+localStorage.removeItem("test_storage_ok");
 if(!localStorage.test_storage_ok){
-localStorage.test_storage_ok="abc";
-if(localStorage.test_storage_ok=="abc"){
+localStorage.test_storage_ok="abc 123";
+if(localStorage.test_storage_ok&&(localStorage.test_storage_ok=="abc 123")){
 storageErrorMet=false;
-}}}}
+}}}}}
 catch (exc){
 }
 if(storageErrorMet){
-var storageErrorMsg="Your browser cannot run this game because it cannot store local data. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
+var storageErrorMsg="Your browser cannot run this game because it cannot store local data. This game can be run with the last versions of Chrome, Firefox, Edge, Safari... Update your browser if necessary and disable private/incognito mode.";
 throw new Error(storageErrorMsg);
 }}
 catch (exc){
@@ -2294,7 +2296,7 @@ if(!localStorage.playerid){
 localStorage.removeItem('firstname');
 localStorage.gamesok=-10;
 if((!android_appli)&&safariMode){
-alert("Your browser cleared cookies/site data, which prevents online scores");
+alert("Scores require your browser not to clear cookies/site data or be in private/incognito mode");
 return;
 }
 else{

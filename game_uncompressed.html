@@ -23,23 +23,26 @@
           eval('"use strict"; class foo {}; let test_let_inst = 1; var fction_with_optional_args = function(p = true) {return p}; fction_with_optional_args();');
         } catch (err) {
           // Note: Internet Explorer does not support classes and functions with optional arguments. And old versions of Safari (< 10) will fail on the "let" instruction (error tested on Safari 9.1).
-          var errorMsg = "Your browser cannot run this game. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
+          var errorMsg = "Your browser cannot run this game. This game can be run with the last versions of Chrome, Firefox, Edge, Safari... Update your browser if necessary.";
           // alert(errorMsg);
           throw new Error(errorMsg);
         }
         if (typeof(Worker) == "undefined") {
-          var workerErrorMsg = "Your browser cannot run this game because it does not support Web workers. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
+          var workerErrorMsg = "Your browser cannot run this game because it does not support Web workers. This game can be run with the last versions of Chrome, Firefox, Edge, Safari... Update your browser if necessary.";
           // alert(workerErrorMsg);
           throw new Error(workerErrorMsg);
         }
         var storageErrorMet = true;
         try {
           if (typeof(Storage) !== 'undefined') {
-            localStorage.removeItem('test_storage_ok'); // localStorage.test_storage_ok
-            if (!localStorage.test_storage_ok) {
-              localStorage.test_storage_ok = "abc";
-              if (localStorage.test_storage_ok == "abc") {
-                storageErrorMet = false;
+            localStorage.setItem("test_storage_ok", "abc 000"); // 1st setting method
+            if (localStorage.getItem("test_storage_ok") && (localStorage.getItem("test_storage_ok") == "abc 000")) {
+              localStorage.removeItem("test_storage_ok"); // localStorage.test_storage_ok
+              if (!localStorage.test_storage_ok) {
+                localStorage.test_storage_ok = "abc 123";  // 2nd setting method with dot notation
+                if (localStorage.test_storage_ok && (localStorage.test_storage_ok == "abc 123")) {
+                  storageErrorMet = false;
+                }
               }
             }
           }
@@ -48,7 +51,7 @@
         }
         if (storageErrorMet) {
           // Note: such an error occurs for Edge run locally
-          var storageErrorMsg = "Your browser cannot run this game because it cannot store local data. This game can be run with the last versions of Chrome, Firefox, Edge, Safari: update your browser if necessary.";
+          var storageErrorMsg = "Your browser cannot run this game because it cannot store local data. This game can be run with the last versions of Chrome, Firefox, Edge, Safari... Update your browser if necessary and disable private/incognito mode.";
           // alert(storageErrorMsg);
           throw new Error(storageErrorMsg);
         }
@@ -2752,8 +2755,10 @@
                 // this rare error may happen if ever the browser deleted its stored local data by itself or due to some extensions while the window was open
                 localStorage.removeItem('firstname'); // localStorage.firstname / defense
                 localStorage.gamesok = -10; // defense
-                if ((!android_appli) && safariMode) { // error observed for Safari
-                  alert("Your browser cleared cookies/site data, which prevents online scores");
+                // error observed for Safari: Safari (especially on iOS) is notorious for its unpredictable localStorage behaviour,
+                // it can interfere with localStorage even during a session
+                if ((!android_appli) && safariMode) {
+                  alert("Scores require your browser not to clear cookies/site data or be in private/incognito mode"); // (same warning as in GS SCRIPT)
                   return; // form submission skipped
                 }
                 else {
