@@ -1115,7 +1115,7 @@ revealSecretColorButtonClick = function() { // (override temporary definition)
         return; // Cancel or "x" (close) button
       }
     }
-    if (nbEmptyColors <= 2) {
+    if (nbEmptyColors <= 3) {
       displayGUIError("too many revealed colors: " + nbEmptyColors, new Error().stack);
     }
     else {
@@ -3188,34 +3188,36 @@ function draw_graphic_bis() {
           nbGamesPlayed++;
           nbGamesPlayedAndWon++;
           setLightGray(); // clearer stats
-          switch (nbColumns) {
-            case 3:
-              if (localStorage.nbgamesstarted3_ref) {
-                localStorage.nbgamesstarted3_ref = Number(localStorage.nbgamesstarted3_ref) + 1;
-              }
-              break;
-            case 4:
-              if (localStorage.nbgamesstarted4_ref) {
-                localStorage.nbgamesstarted4_ref = Number(localStorage.nbgamesstarted4_ref) + 1;
-              }
-              break;
-            case 5:
-              if (localStorage.nbgamesstarted5_ref) {
-                localStorage.nbgamesstarted5_ref = Number(localStorage.nbgamesstarted5_ref) + 1;
-              }
-              break;
-            case 6:
-              if (localStorage.nbgamesstarted6_ref) {
-                localStorage.nbgamesstarted6_ref = Number(localStorage.nbgamesstarted6_ref) + 1;
-              }
-              break;
-            case 7:
-              if (localStorage.nbgamesstarted7_ref) {
-                localStorage.nbgamesstarted7_ref = Number(localStorage.nbgamesstarted7_ref) + 1;
-              }
-              break;
-            default:
-              throw new Error("inconsistent nbColumns value: " + nbColumns);
+          if (!(smmCodeHandler.nbEmptyColors(sCodeRevealed) < nbColumns)) { // not helped
+            switch (nbColumns) {
+              case 3:
+                if (localStorage.nbgamesstarted3_ref) {
+                  localStorage.nbgamesstarted3_ref = Number(localStorage.nbgamesstarted3_ref) + 1;
+                }
+                break;
+              case 4:
+                if (localStorage.nbgamesstarted4_ref) {
+                  localStorage.nbgamesstarted4_ref = Number(localStorage.nbgamesstarted4_ref) + 1;
+                }
+                break;
+              case 5:
+                if (localStorage.nbgamesstarted5_ref) {
+                  localStorage.nbgamesstarted5_ref = Number(localStorage.nbgamesstarted5_ref) + 1;
+                }
+                break;
+              case 6:
+                if (localStorage.nbgamesstarted6_ref) {
+                  localStorage.nbgamesstarted6_ref = Number(localStorage.nbgamesstarted6_ref) + 1;
+                }
+                break;
+              case 7:
+                if (localStorage.nbgamesstarted7_ref) {
+                  localStorage.nbgamesstarted7_ref = Number(localStorage.nbgamesstarted7_ref) + 1;
+                }
+                break;
+              default:
+                throw new Error("inconsistent nbColumns value: " + nbColumns);
+            }
           }
         }
         else {
@@ -4360,7 +4362,7 @@ function draw_graphic_bis() {
 
       let nbColorsRevealed = nbColumns - smmCodeHandler.nbEmptyColors(sCodeRevealed);
       let revealSecretColorButtonObjectIniState = revealSecretColorButtonObject.disabled;
-      revealSecretColorButtonObject.disabled = !(gameOnGoing() && (nbColumns >= 4) && (currentAttemptNumber >= 3) && (nbColorsRevealed < nbColumns-2));
+      revealSecretColorButtonObject.disabled = !(gameOnGoing() && (nbColumns >= 4) && (currentAttemptNumber >= 3) && (nbColorsRevealed < nbColumns-3));
       if (revealSecretColorButtonObject.disabled != revealSecretColorButtonObjectIniState) { // transition
         if (revealSecretColorButtonObject.disabled) {
           revealSecretColorButtonObject.className = "button disabled";

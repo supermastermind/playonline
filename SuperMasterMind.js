@@ -830,7 +830,7 @@ var rsp=confirm("Do you want to reveal a color of the secret code? If so, your s
 if(!rsp){
 return;
 }}
-if(nbEmptyColors <=2){
+if(nbEmptyColors <=3){
 displayGUIError("too many revealed colors: "+nbEmptyColors, new Error().stack);
 }
 else{
@@ -2518,6 +2518,7 @@ gameWon=true;
 nbGamesPlayed++;
 nbGamesPlayedAndWon++;
 setLightGray();
+if(!(smmCodeHandler.nbEmptyColors(sCodeRevealed) < nbColumns)){
 switch (nbColumns){
 case 3:
 if(localStorage.nbgamesstarted3_ref){
@@ -2546,7 +2547,7 @@ localStorage.nbgamesstarted7_ref=Number(localStorage.nbgamesstarted7_ref)+1;
 break;
 default:
 throw new Error("inconsistent nbColumns value: "+nbColumns);
-}}
+}}}
 else{
 currentAttemptNumber++;
 if(currentAttemptNumber==nbMaxAttempts+1){
@@ -3450,7 +3451,7 @@ playRandomCodeButtonObject.className="button";
 }
 let nbColorsRevealed=nbColumns-smmCodeHandler.nbEmptyColors(sCodeRevealed);
 let revealSecretColorButtonObjectIniState=revealSecretColorButtonObject.disabled;
-revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns >=4)&&(currentAttemptNumber >=3)&&(nbColorsRevealed < nbColumns-2));
+revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns >=4)&&(currentAttemptNumber >=3)&&(nbColorsRevealed < nbColumns-3));
 if(revealSecretColorButtonObject.disabled!=revealSecretColorButtonObjectIniState){
 if(revealSecretColorButtonObject.disabled){
 revealSecretColorButtonObject.className="button disabled";
