@@ -826,12 +826,13 @@ if((!revealSecretColorButtonObject.disabled)
 let nbEmptyColors=smmCodeHandler.nbEmptyColors(sCodeRevealed);
 let nbColorsRevealed=nbColumns-nbEmptyColors;
 if(nbColorsRevealed==0){
-var rsp=confirm("Do you want to reveal a color of the secret code? If so, your score will not be stored online");
+var rsp=confirm("Do you want to reveal a color of the secret code?"
++(localStorage.firstname ? " If so, your score will not be stored online." : ""));
 if(!rsp){
 return;
 }}
-if(nbEmptyColors <=3){
-displayGUIError("too many revealed colors: "+nbEmptyColors, new Error().stack);
+if(nbColorsRevealed > ((nbColumns <=4) ? 0 : 1)){
+displayGUIError("too many revealed colors: "+nbColorsRevealed, new Error().stack);
 }
 else{
 let revealedColorIdx=Math.floor(Math.random() * nbEmptyColors);
@@ -3451,7 +3452,7 @@ playRandomCodeButtonObject.className="button";
 }
 let nbColorsRevealed=nbColumns-smmCodeHandler.nbEmptyColors(sCodeRevealed);
 let revealSecretColorButtonObjectIniState=revealSecretColorButtonObject.disabled;
-revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns >=4)&&(currentAttemptNumber >=3)&&(nbColorsRevealed < nbColumns-3));
+revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns >=4)&&(currentAttemptNumber >=((nbColumns <=5) ? 3 : 4))&&(nbColorsRevealed <=((nbColumns <=4) ? 0 : 1)));
 if(revealSecretColorButtonObject.disabled!=revealSecretColorButtonObjectIniState){
 if(revealSecretColorButtonObject.disabled){
 revealSecretColorButtonObject.className="button disabled";
