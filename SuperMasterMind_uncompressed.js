@@ -1293,7 +1293,7 @@ settingsButtonClick = function() { // (override temporary definition)
     let change_first_name_str = "";
     if (localStorage.firstname) {
       if (!(localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged))) {
-        if (localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime < 1*24*3600*1000) ) { // 1 day
+        if (localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime < 1.5*24*3600*1000) ) { // 1.5 day
               change_first_name_str =
                 change_first_name_title_str
                 + "Will be available later"

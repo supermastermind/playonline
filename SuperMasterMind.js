@@ -985,7 +985,7 @@ let change_first_name_title_str="<b>Change first name:</b><hr style='height:0.25
 let change_first_name_str="";
 if(localStorage.firstname){
 if(!(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstnameUpdated) >=nbMaxTimesFirstnameChanged))){
-if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime < 1*24*3600*1000) ){
+if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime < 1.5*24*3600*1000) ){
 change_first_name_str=
 change_first_name_title_str
 +"Will be available later"
