@@ -2270,7 +2270,7 @@
         localStorage.nbTimesFirstnameUpdated = 1;
         localStorage.firstnameUpdateTime = (new Date()).getTime();
       }
-      if ( localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime > 5*31*24*3600*1000) ) { // 5 months
+      if ( localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime > 6*31*24*3600*1000) ) { // 6 months
         localStorage.nbTimesFirstnameUpdated = 1;
         localStorage.firstnameUpdateTime = (new Date()).getTime();
       }

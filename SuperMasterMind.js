@@ -985,7 +985,7 @@ let change_first_name_title_str="<b>Change first name:</b><hr style='height:0.25
 let change_first_name_str="";
 if(localStorage.firstname){
 if(!(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstnameUpdated) >=nbMaxTimesFirstnameChanged))){
-if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime < 5*24*3600*1000) ){
+if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime < 1*24*3600*1000) ){
 change_first_name_str=
 change_first_name_title_str
 +"Will be available later"
@@ -3460,7 +3460,7 @@ playRandomCodeButtonObject.className="button";
 }
 let nbColorsRevealed=nbColumns-smmCodeHandler.nbEmptyColors(sCodeRevealed);
 let revealSecretColorButtonObjectIniState=revealSecretColorButtonObject.disabled;
-revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns >=4)&&(currentAttemptNumber >=((nbColumns <=5) ? 3 : 4))&&(nbColorsRevealed <=((nbColumns <=4) ? 0 : 1)));
+revealSecretColorButtonObject.disabled=!(gameOnGoing()&&(nbColumns >=4)&&(currentAttemptNumber >=((nbColumns <=4) ? 3 : nbColumns-2))&&(nbColorsRevealed <=((nbColumns <=4) ? 0 : 1)));
 if(revealSecretColorButtonObject.disabled!=revealSecretColorButtonObjectIniState){
 if(revealSecretColorButtonObject.disabled){
 revealSecretColorButtonObject.className="button disabled";
