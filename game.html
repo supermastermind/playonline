@@ -1912,7 +1912,7 @@ if(localStorage.firstname&&(!localStorage.nbTimesFirstnameUpdated)){
 localStorage.nbTimesFirstnameUpdated=1;
 localStorage.firstnameUpdateTime=(new Date()).getTime();
 }
-if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime > 8*31*24*3600*1000) ){
+if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime > 6*31*24*3600*1000) ){
 localStorage.nbTimesFirstnameUpdated=1;
 localStorage.firstnameUpdateTime=(new Date()).getTime();
 }

@@ -1278,6 +1278,7 @@ settingsButtonClick = function() { // (override temporary definition)
     console.log("settingsButtonClick skipped");
     return;
   }
+  var end_separator_str = "<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
   if (!settingsButtonObject.disabled) {
     let display_form_str =
       "<b>Select theme:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
@@ -1286,12 +1287,19 @@ settingsButtonClick = function() { // (override temporary definition)
          <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">classic theme / colors only</option>\
          <option value='3'" + (modernDisplay && (displayVariant != 1) ? " selected" : "") + ">light theme / numbers</option>\
          <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">light theme / colors only</option>\
-       </select><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
+       </select>" + end_separator_str;
 
     let change_first_name_title_str = "<b>Change first name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
     let change_first_name_str = "";
     if (localStorage.firstname) {
       if (!(localStorage.nbTimesFirstnameUpdated && (Number(localStorage.nbTimesFirstnameUpdated) >= nbMaxTimesFirstnameChanged))) {
+        if (localStorage.firstnameUpdateTime && ((new Date()).getTime() - localStorage.firstnameUpdateTime < 5*24*3600*1000) ) { // 5 days
+              change_first_name_str =
+                change_first_name_title_str
+                + "Will be available later"
+                + end_separator_str;
+        }
+        else {
           let nb_first_name_changes_left_str = "";
           if (localStorage.nbTimesFirstnameUpdated) {
             let diff = nbMaxTimesFirstnameChanged - Number(localStorage.nbTimesFirstnameUpdated);
@@ -1305,14 +1313,15 @@ settingsButtonClick = function() { // (override temporary definition)
           change_first_name_str =
             change_first_name_title_str
             + "<a onclick='ask_for_firstname();modal.close();'>Change " + localStorage.firstname + nb_first_name_changes_left_str
-            + "</a><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
+            + "</a>" + end_separator_str;
+        }
       }
     }
-    else if (!localStorage.nbTimesFirstnameAsked && localStorage.gamesok && (Number(localStorage.gamesok) >= min_gamesok_for_firstname-3) && (Number(localStorage.gamesok) <= 3*min_gamesok_for_firstname)) {
+    else if ((!localStorage.nbTimesFirstnameAsked) || (Number(localStorage.nbTimesFirstnameAsked) <= 1)) {
           change_first_name_str =
             change_first_name_title_str
             + "Will be available after more wins"
-            + "<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
+            + end_separator_str;
     }
 
     let game_rules_str =
@@ -1326,7 +1335,7 @@ settingsButtonClick = function() { // (override temporary definition)
       + change_first_name_str
       + "<b>More information:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
          <b><a href='index.html'>Main&nbsp;page</a> |&nbsp;<a href='optimal_strategy.html'>Strategy</a><br><a href='screenshots.html'>Games</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
-         </font></td></tr></table></center><hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
+         </font></td></tr></table></center>" + end_separator_str;
 
     try {
       gameRulesDisplayed = true;
