@@ -1088,7 +1088,7 @@ function displayRandomCodesHintIfNeeded() {
   if (randomCodesHintToBeDisplayed) {
     if (localStorage.gamesok) {
       if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % ((Number(localStorage.gamesok) <= 400) ? 50 : 80)) == 0) ) {
-        alert("A little fun?\nClick on the \"" + playRandomCodeButtonObject.value + "\" button to play your first few codes randomly");
+        alert("A little fun?\nClick on the " + playRandomCodeButtonObject.value + " button to play your first few codes randomly");
         randomCodesHintToBeDisplayed = false;
       }
     }
@@ -1096,7 +1096,7 @@ function displayRandomCodesHintIfNeeded() {
 }
 
 function displayRevealSecretColorHintIfNeeded() {
-  alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button to reveal a color");
+  alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button to reveal a color of the secret code");
 }
 
 revealSecretColorButtonClick = function() { // (override temporary definition)
