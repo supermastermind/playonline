@@ -1670,7 +1670,10 @@ debug_game_state=11;
 try{
 if(location.error==undefined){
 let country="-";
-if(location.address.country){
+if(location.address.country_code&&(String(location.address.country_code).trim().length==2)){
+country=String(location.address.country_code).trim();
+}
+else if(location.address.country){
 country=String(location.address.country).trim();
 }
 let region="-";
@@ -2225,6 +2228,10 @@ var geolocation_handler={
 nb_JSON_queries_posted: 0,
 convertLocationData: function(data_p, locationId){
 if(locationId==1){
+var country_code_str=String(data_p.country_code).trim();
+if(country_code_str.length==2){
+data_p.country_name=country_code_str;
+}
 return data_p;
 }
 else if(locationId==2){
@@ -2232,7 +2239,7 @@ let converted_data=JSON.stringify(data_p);
 if((typeof data_p.statusCode!='undefined')&&(typeof data_p.statusMessage!='undefined')&&(data_p.statusCode!="OK")){
 console.log("geolocation error in convertLocationData: "+locationId+", "+data_p.statusCode+", "+data_p.statusMessage);
 }
-converted_data=converted_data.replace("\"countryName\":", "\"country_name\":");
+converted_data=converted_data.replace("\"countryCode\":", "\"country_name\":");
 converted_data=converted_data.replace("\"regionName\":", "\"region\":");
 converted_data=converted_data.replace("\"zipCode\":", "\"postal\":");
 converted_data=converted_data.replace("\"cityName\":", "\"city\":");

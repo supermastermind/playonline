@@ -1992,7 +1992,10 @@
             // location.error and other below location.x field checks are valid for both geocode and nominatim JSON syntaxes => no localStorage.useFirstGeocodingApi checks are needed
             if (location.error == undefined) { // geocoding API success
               let country = "-";
-              if (location.address.country) {
+              if (location.address.country_code && (String(location.address.country_code).trim().length == 2)) { // a country is precisely defined by its code (country name can have variants)
+                country = String(location.address.country_code).trim();
+              }
+              else if (location.address.country) { // (defense)
                 country = String(location.address.country).trim();
               }
               let region = "-"; // invalid value by default
@@ -2616,6 +2619,11 @@
             convertLocationData: function(data_p, locationId) {
 
               if (locationId == 1) {
+                var country_code_str = String(data_p.country_code).trim();
+                if (country_code_str.length == 2) { // (defense)
+                  data_p.country_name = country_code_str; // a country is precisely defined by its code (country name can have variants)
+                } 
+                // else: keep data_p.country_name unchanged
                 return data_p;
               }
               else if (locationId == 2) {
@@ -2653,8 +2661,8 @@
 
                 // latitude -> latitude
                 // longitude -> longitude
-                // countryName -> country_name
-                converted_data = converted_data.replace("\"countryName\":", "\"country_name\":");
+                // countryCode -> country_name
+                converted_data = converted_data.replace("\"countryCode\":", "\"country_name\":"); // a country is precisely defined by its code (country name can have variants)
                 // regionName -> region
                 converted_data = converted_data.replace("\"regionName\":", "\"region\":");
                 // zipCode -> postal
