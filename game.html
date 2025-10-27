@@ -569,7 +569,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v31.00";
+let html_compatibility_game_version="v31.01";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -912,7 +912,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v31.00: "+(localStorage.reloadForCompatibility_v3100 ? localStorage.reloadForCompatibility_v3100 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v31.01: "+(localStorage.reloadForCompatibility_v3101 ? localStorage.reloadForCompatibility_v3101 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -2344,7 +2344,9 @@ extra_debug_info=extra_debug_info+"/"+localStorage.html_geoloc_status+"-"
 +"A"+HTML_geoloc_attempts
 +"S"+HTML_geoloc_successes
 +"E"+HTML_geoloc_errors;
-}}
+}
+extra_debug_info=extra_debug_info+"/"+((typeof WebAssembly==="object") ? "WAok" : "WAko")
+}
 catch (exc){}
 var firstNameAskedStr="";
 if(localStorage.nbTimesFirstnameAsked&&!localStorage.firstname){
