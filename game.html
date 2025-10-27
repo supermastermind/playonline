@@ -569,7 +569,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v31.01";
+let html_compatibility_game_version="v32.00";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -912,7 +912,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v31.01: "+(localStorage.reloadForCompatibility_v3101 ? localStorage.reloadForCompatibility_v3101 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v32.00: "+(localStorage.reloadForCompatibility_v3200 ? localStorage.reloadForCompatibility_v3200 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1310,6 +1310,7 @@ rsp_rankings_str=rsp_rankings_str.replaceAll("<table>", "<table id='score_table'
 rsp_rankings_str=rsp_rankings_str.replaceAll("<tr>", "<tr style='font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str=rsp_rankings_str.replace(/<tr([A-Za-z0-9]+)>/g, "<tr style='background-color:#$1;font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str=rsp_rankings_str.replace(/<hr([A-Za-z0-9.]+)>/g, "<hr style='height:$1vh;padding:0;margin:0;visibility:hidden;'>");
+rsp_rankings_str=rsp_rankings_str.replace(/<CC=([A-Z][A-Z])>/g, "<img src=flags/$1.png onerror=this.style.display='none' style='height: 1em;vertical-align: middle;'>");
 rsp_rankings_str=rsp_rankings_str.replaceAll("width:TABLE_WIDTH", "width:"+scoresTableWidthStr);
 var header_font_size="2.7vh";
 var header_font_size_for_img="3.2vh";
