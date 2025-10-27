@@ -1555,7 +1555,7 @@ localStorage.location_id=locationId;
 localStorage.location_storage_time=(new Date()).getTime();
 }
 function getStoredLocationData(){
-if(localStorage.latitude&&localStorage.longitude&&localStorage.accuracy&&localStorage.countryname&&localStorage.region&&localStorage.city&&localStorage.ip&&localStorage.location_id&&localStorage.location_storage_time){
+if(localStorage.latitude&&localStorage.longitude&&localStorage.accuracy&&localStorage.countryname&&(String(localStorage.countryname).length==2)&&localStorage.region&&localStorage.city&&localStorage.ip&&localStorage.location_id&&localStorage.location_storage_time){
 let stored_location_data={latitude: localStorage.latitude,
 longitude: localStorage.longitude,
 accuracy: localStorage.accuracy,

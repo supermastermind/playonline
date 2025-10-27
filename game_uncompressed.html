@@ -1855,7 +1855,7 @@
       }
 
       function getStoredLocationData() {
-        if (localStorage.latitude && localStorage.longitude && localStorage.accuracy && localStorage.countryname && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id && localStorage.location_storage_time) { // (condition duplicated)
+        if (localStorage.latitude && localStorage.longitude && localStorage.accuracy && localStorage.countryname && (String(localStorage.countryname).length == 2) /* 2-letter country code */ && localStorage.region && localStorage.city && localStorage.ip && localStorage.location_id && localStorage.location_storage_time) { // (condition duplicated)
           let stored_location_data = { latitude: localStorage.latitude,
                                        longitude: localStorage.longitude,
                                        accuracy: localStorage.accuracy,
