@@ -619,7 +619,7 @@
       time: <input id='form_time_id' name='time' type='text' value='-' autocomplete='off'>
       perfs: <input id='form_perfs_id' name='perfs' type='text' value='-' autocomplete='off'>
       nbuknperfs: <input id='form_nbuknperfs_id' name='nbuknperfs' type='text' value='-' autocomplete='off'>
-      help: <input id='form_help_id' name='help' type='text' value='-' autocomplete='off'>
+      info: <input id='form_info_id' name='info' type='text' value='-' autocomplete='off'>
 
       gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-' autocomplete='off'>
       deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-' autocomplete='off'>
@@ -688,7 +688,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v30.1C"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v30" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v31.00"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v31" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1126,7 +1126,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v30.1C: " + (localStorage.reloadForCompatibility_v301C ? localStorage.reloadForCompatibility_v301C : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v31.00: " + (localStorage.reloadForCompatibility_v3100 ? localStorage.reloadForCompatibility_v3100 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + navigator.userAgent + (android_appli ? "|" + classicUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -1296,10 +1296,11 @@
           browserlanguage = browserlanguage.substring(dashIdx+1);
         }
         browserlanguage = browserlanguage.toUpperCase().trim();
-        if (browserlanguage.length >= 2) { // all country name abbreviations are 2 characters long
+        if (browserlanguage.length == 2) { // 2-letter country code
           return browserlanguage;
         }
         else {
+          submitForm("getCountryNameFromBrowserLanguage error: " + navigator.language, 45);
           return defaultCountryName;
         }
       }
@@ -1801,7 +1802,7 @@
           return false;
         }
         let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && ((String(data_p.ip).indexOf(".") != -1) || (String(data_p.ip).indexOf(":") != -1)) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)); // (condition duplicated - covers IPv4 and IPv6)
-        let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && (data_p.country_name.length >= 2) /* covers country name abbreviations which are 2 characters long */);
+        let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && ((data_p.country_name.length == 2) /* 2-letter country code */ || (data_p.country_name.indexOf(dummyLocationPrefix1) == 0)));
         let cityOrRegionCondition;
         if (!check_region_instead_of_city) {
           // Note: city may be known whereas region is not
@@ -1992,11 +1993,11 @@
             // location.error and other below location.x field checks are valid for both geocode and nominatim JSON syntaxes => no localStorage.useFirstGeocodingApi checks are needed
             if (location.error == undefined) { // geocoding API success
               let country = "-";
-              if (location.address.country_code && (String(location.address.country_code).trim().length == 2)) { // a country is precisely defined by its code (country name can have variants)
+              if (location.address.country_code && (String(location.address.country_code).trim().length == 2)) { // a country is precisely defined by its 2-letter country code (country name can have variants)
                 country = String(location.address.country_code).trim();
               }
-              else if (location.address.country) { // (defense)
-                country = String(location.address.country).trim();
+              else {
+                throw new Error("HTML_geolocation_success: invalid country code: " + String(location.address.country_code) + ", " + String(location.address.country));
               }
               let region = "-"; // invalid value by default
               if (location.address.state) { // (can be best known than county)
@@ -2335,7 +2336,7 @@
       var global_geoloc_failure_alert_shown = false;
       var nb_games_today = 0;
       var max_nb_gamesok_today_reached = false;
-      function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, helpstr, gamestr, short_game) {
+      function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, infostr, gamestr, short_game) {
         debug_game_state = 100;
         let many_games_thld = 2000;
         last_game_was_short = short_game; // (simplified setting without buffering)
@@ -2619,11 +2620,7 @@
             convertLocationData: function(data_p, locationId) {
 
               if (locationId == 1) {
-                var country_code_str = String(data_p.country_code).trim();
-                if (country_code_str.length == 2) { // (defense)
-                  data_p.country_name = country_code_str; // a country is precisely defined by its code (country name can have variants)
-                } 
-                // else: keep data_p.country_name unchanged
+                data_p.country_name = String(data_p.country_code).trim(); // a country is precisely defined by its 2-letter country code (country name can have variants)
                 return data_p;
               }
               else if (locationId == 2) {
@@ -2662,7 +2659,7 @@
                 // latitude -> latitude
                 // longitude -> longitude
                 // countryCode -> country_name
-                converted_data = converted_data.replace("\"countryCode\":", "\"country_name\":"); // a country is precisely defined by its code (country name can have variants)
+                converted_data = converted_data.replace("\"countryCode\":", "\"country_name\":"); // a country is precisely defined by its 2-letter country code (country name can have variants)
                 // regionName -> region
                 converted_data = converted_data.replace("\"regionName\":", "\"region\":");
                 // zipCode -> postal
@@ -2725,20 +2722,11 @@
                 setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city);
               }
 
-              // On-the-fly updates
-              // ******************
-
-              /* if (localStorage.firstname && (localStorage.firstname == "Jeannot") && localStorage.playerid && (localStorage.playerid.indexOf("9XG5") != -1)) {
-                country = "France";
-                region = "Grand Est";
-                city = "Munster";
-              } */
-
               // Set location form fields
               // ************************
 
               console.log(country);
-              document.getElementById('form_country_id').value = capitalizeFirstLetter(country);
+              document.getElementById('form_country_id').value = country;
               console.log(region);
               document.getElementById('form_region_id').value = capitalizeFirstLetter(region);
               console.log(zip);
@@ -2791,8 +2779,8 @@
               document.getElementById('form_perfs_id').value = perfs;
               console.log(nbuknperfs);
               document.getElementById('form_nbuknperfs_id').value = nbuknperfs;
-              console.log(helpstr);
-              document.getElementById('form_help_id').value = helpstr;
+              console.log(infostr);
+              document.getElementById('form_info_id').value = infostr;
               console.log(gamesokX);
               document.getElementById('form_gamesok_id').value = gamesokX;
               console.log(deltagames);

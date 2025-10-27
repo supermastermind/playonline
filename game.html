@@ -520,7 +520,7 @@ attempts: <input id='form_attempts_id' name='attempts' type='text' value='-' aut
 time: <input id='form_time_id' name='time' type='text' value='-' autocomplete='off'>
 perfs: <input id='form_perfs_id' name='perfs' type='text' value='-' autocomplete='off'>
 nbuknperfs: <input id='form_nbuknperfs_id' name='nbuknperfs' type='text' value='-' autocomplete='off'>
-help: <input id='form_help_id' name='help' type='text' value='-' autocomplete='off'>
+info: <input id='form_info_id' name='info' type='text' value='-' autocomplete='off'>
 gamesok: <input id='form_gamesok_id' name='gamesok' type='text' value='-' autocomplete='off'>
 deltagames: <input id='form_deltagames_id' name='deltagames' type='text' value='-' autocomplete='off'>
 app: <input id='form_app_id' name='app' type='text' value='-' autocomplete='off'>
@@ -569,7 +569,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v30.1C";
+let html_compatibility_game_version="v31.00";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -912,7 +912,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v30.1C: "+(localStorage.reloadForCompatibility_v301C ? localStorage.reloadForCompatibility_v301C : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v31.00: "+(localStorage.reloadForCompatibility_v3100 ? localStorage.reloadForCompatibility_v3100 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1062,10 +1062,11 @@ if(dashIdx!=-1){
 browserlanguage=browserlanguage.substring(dashIdx+1);
 }
 browserlanguage=browserlanguage.toUpperCase().trim();
-if(browserlanguage.length >=2){
+if(browserlanguage.length==2){
 return browserlanguage;
 }
 else{
+submitForm("getCountryNameFromBrowserLanguage error: "+navigator.language, 45);
 return defaultCountryName;
 }}
 function isCorrect(str){
@@ -1507,7 +1508,7 @@ if((typeof data_p=='undefined')||(data_p==undefined)||(data_p==null)){
 return false;
 }
 let validIpAddress=((typeof data_p.ip!='undefined')&&(data_p.ip!=undefined)&&(data_p.ip!=null)&&((String(data_p.ip).indexOf(".")!=-1)||(String(data_p.ip).indexOf(":")!=-1))&&(String(data_p.ip).trim().length >=7 ));
-let validCountryName=((typeof data_p.country_name!='undefined')&&(data_p.country_name!=undefined)&&(data_p.country_name!=null)&&(data_p.country_name.length >=2) );
+let validCountryName=((typeof data_p.country_name!='undefined')&&(data_p.country_name!=undefined)&&(data_p.country_name!=null)&&((data_p.country_name.length==2)||(data_p.country_name.indexOf(dummyLocationPrefix1)==0)));
 let cityOrRegionCondition;
 if(!check_region_instead_of_city){
 cityOrRegionCondition=((typeof data_p.city!='undefined')&&(data_p.city!=undefined)&&(data_p.city!=null)&&(data_p.city.length >=2)&&(reformatLocationValue(data_p.city)!="-")&&(reformatLocationValue(data_p.city).toLowerCase()!="city")&&(reformatLocationValue(data_p.city).toLowerCase()!="ville")&&(reformatLocationValue(data_p.city).toLowerCase()!="undefined"));
@@ -1673,8 +1674,8 @@ let country="-";
 if(location.address.country_code&&(String(location.address.country_code).trim().length==2)){
 country=String(location.address.country_code).trim();
 }
-else if(location.address.country){
-country=String(location.address.country).trim();
+else{
+throw new Error("HTML_geolocation_success: invalid country code: "+String(location.address.country_code)+", "+String(location.address.country));
 }
 let region="-";
 if(location.address.state){
@@ -1973,7 +1974,7 @@ var last_game_cnt=-1;
 var global_geoloc_failure_alert_shown=false;
 var nb_games_today=0;
 var max_nb_gamesok_today_reached=false;
-function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, helpstr, gamestr, short_game){
+function store_player_info(game_cnt, nbcolumns, score, attempts, timestr, perfs, nbuknperfs, helped, infostr, gamestr, short_game){
 debug_game_state=100;
 let many_games_thld=2000;
 last_game_was_short=short_game;
@@ -2228,10 +2229,7 @@ var geolocation_handler={
 nb_JSON_queries_posted: 0,
 convertLocationData: function(data_p, locationId){
 if(locationId==1){
-var country_code_str=String(data_p.country_code).trim();
-if(country_code_str.length==2){
-data_p.country_name=country_code_str;
-}
+data_p.country_name=String(data_p.country_code).trim();
 return data_p;
 }
 else if(locationId==2){
@@ -2282,7 +2280,7 @@ if(storeLocationInfo){
 setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city);
 }
 console.log(country);
-document.getElementById('form_country_id').value=capitalizeFirstLetter(country);
+document.getElementById('form_country_id').value=country;
 console.log(region);
 document.getElementById('form_region_id').value=capitalizeFirstLetter(region);
 console.log(zip);
@@ -2326,8 +2324,8 @@ console.log(perfs);
 document.getElementById('form_perfs_id').value=perfs;
 console.log(nbuknperfs);
 document.getElementById('form_nbuknperfs_id').value=nbuknperfs;
-console.log(helpstr);
-document.getElementById('form_help_id').value=helpstr;
+console.log(infostr);
+document.getElementById('form_info_id').value=infostr;
 console.log(gamesokX);
 document.getElementById('form_gamesok_id').value=gamesokX;
 console.log(deltagames);
