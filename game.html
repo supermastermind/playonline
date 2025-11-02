@@ -1849,7 +1849,7 @@ localStorage.alternateLocationMethodDebugInfo="altloc_never_run";
 var xhr_loc;
 function attemptAlternateLocationMethods(ip_address_only){
 try{
-if(localStorage.bestEffortIPAddressAttemptTime&&((new Date()).getTime()-localStorage.bestEffortIPAddressAttemptTime < 2*24*3600*1000) ){
+if(localStorage.bestEffortIPAddressAttemptTime&&((new Date()).getTime()-localStorage.bestEffortIPAddressAttemptTime < ((ip_address_only ? 2 : 3)*24*3600*1000)) ){
 console.log("attemptAlternateLocationMethods skipped");
 return;
 }
