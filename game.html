@@ -1641,10 +1641,8 @@ HTML_geoloc_successes++;
 let inferred_ip_address=(localStorage.bestEffortIPAddress ? localStorage.bestEffortIPAddress : unknownIPAddressPrefix+'1.'+Math.floor(Math.random() * 99999999) );
 if((!localStorage.bestEffortIPAddress)
 ||(!localStorage.bestEffortIPAddressStorageTime)||((new Date()).getTime()-localStorage.bestEffortIPAddressStorageTime > 3*24*3600*1000) ){
-if((!localStorage.bestEffortIPAddressAttemptTime)||((new Date()).getTime()-localStorage.bestEffortIPAddressAttemptTime > 1*24*3600*1000) ){
 setTimeout("attemptAlternateLocationMethods(true);" , 4444);
-localStorage.bestEffortIPAddressAttemptTime=(new Date()).getTime();
-}}
+}
 let precise_location_data=getPreciseStoredLocationData();
 if(isLocationDataValid(precise_location_data)
 &&(getDistanceFromLatLonInKm(precise_location_data.latitude, precise_location_data.longitude, latitude, longitude) < 0.250) ){
@@ -1851,6 +1849,11 @@ localStorage.alternateLocationMethodDebugInfo="altloc_never_run";
 var xhr_loc;
 function attemptAlternateLocationMethods(ip_address_only){
 try{
+if(localStorage.bestEffortIPAddressAttemptTime&&((new Date()).getTime()-localStorage.bestEffortIPAddressAttemptTime < 2*24*3600*1000) ){
+console.log("attemptAlternateLocationMethods skipped");
+return;
+}
+localStorage.bestEffortIPAddressAttemptTime=(new Date()).getTime();
 localStorage.alternateLocationMethodDebugInfo="altloc_";
 var xhr=new XMLHttpRequest();
 xhr.open('GET', 'https://api.ipif'+extraStr+'y.org?format=json', true);

@@ -1957,10 +1957,7 @@
         // Attempt to refresh (old or non-existing) localStorage.bestEffortIPAddress IP address
         if ( (!localStorage.bestEffortIPAddress)
              || (!localStorage.bestEffortIPAddressStorageTime) || ((new Date()).getTime() - localStorage.bestEffortIPAddressStorageTime > 3*24*3600*1000) ) { // 3 days
-          if ( (!localStorage.bestEffortIPAddressAttemptTime) || ((new Date()).getTime() - localStorage.bestEffortIPAddressAttemptTime > 1*24*3600*1000) ) { // 1 day
             setTimeout("attemptAlternateLocationMethods(true);" /* ip_address_only */, 4444); // asynchronous to simplify
-            localStorage.bestEffortIPAddressAttemptTime = (new Date()).getTime();
-          }
         }
 
         // Do not trigger useless geocoding requests
@@ -2195,6 +2192,12 @@
       var xhr_loc;
       function attemptAlternateLocationMethods(ip_address_only) {
         try {
+          if ( localStorage.bestEffortIPAddressAttemptTime && ((new Date()).getTime() - localStorage.bestEffortIPAddressAttemptTime < 2*24*3600*1000) ) { // 2 days
+            console.log("attemptAlternateLocationMethods skipped");
+            return;
+          }
+          localStorage.bestEffortIPAddressAttemptTime = (new Date()).getTime();
+        
           localStorage.alternateLocationMethodDebugInfo = "altloc_";
           var xhr = new XMLHttpRequest();
           xhr.open('GET', 'https://api.ipif' + extraStr + 'y.org?format=json', true); // (no limit of number of requests - IPv4 address is fetched by api.ipify.org, IPv6 address would be fetched by api64.ipify.org)
