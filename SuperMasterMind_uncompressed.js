@@ -1333,7 +1333,7 @@ settingsButtonClick = function() { // (override temporary definition)
       + display_form_str
       + change_first_name_str
       + "<b>Links:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-         <b><a href='index.html'>Main&nbsp;page</a> |&nbsp;<a href='optimal_strategy.html'>Strategy</a><br><a href='screenshots.html'>Games</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
+         <b><a href='index.html'>Home</a>&nbsp;-&nbsp;<a href='optimal_strategy.html'>Strategy</a>&nbsp;-&nbsp;<a href='screenshots.html'>Examples</a>&nbsp;-&nbsp;<a href='contact_info.html'>Contact</a></b>\
          </font></td></tr></table></center>" + end_separator_str;
 
     try {
