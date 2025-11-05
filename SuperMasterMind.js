@@ -974,14 +974,14 @@ return;
 var end_separator_str="<hr style='height:1.25vh;padding:0;margin:0;visibility:hidden;'>";
 if(!settingsButtonObject.disabled){
 let display_form_str=
-"<b>Select theme:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+"<b>Theme:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
 <option value='1'"+((!modernDisplay)&&(displayVariant!=1) ? " selected" : "")+">classic theme / numbers</option>\
 <option value='2'"+((!modernDisplay)&&(displayVariant==1) ? " selected" : "")+">classic theme / colors only</option>\
 <option value='3'"+(modernDisplay&&(displayVariant!=1) ? " selected" : "")+">light theme / numbers</option>\
 <option value='4'"+(modernDisplay&&(displayVariant==1) ? " selected" : "")+">light theme / colors only</option>\
 </select>"+end_separator_str;
-let change_first_name_title_str="<b>Change first name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
+let change_first_name_title_str="<b>First name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 let change_first_name_str="";
 if(localStorage.firstname){
 if(!(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstnameUpdated) >=nbMaxTimesFirstnameChanged))){
@@ -1015,13 +1015,12 @@ change_first_name_title_str
 let game_rules_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:2.0vh;color:black'>\
 <hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>\
-<b>Game rules:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-<b><a href='index.html#game_rules'>See this page</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
 <b>How to play?</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+<b><a href='index.html#game_rules'>See game rules</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'></a>"
 +display_form_str
 +change_first_name_str
-+"<b>More information:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
++"<b>Links:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <b><a href='index.html'>Main&nbsp;page</a> |&nbsp;<a href='optimal_strategy.html'>Strategy</a><br><a href='screenshots.html'>Games</a> |&nbsp;<a href='contact_info.html'>Contact</a></b>\
 </font></td></tr></table></center>"+end_separator_str;
 try{
