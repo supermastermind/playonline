@@ -3385,7 +3385,7 @@ function draw_graphic_bis() {
       font_array__str_height[medium_bold_font_2] = str_meas_out.str_height;
       font_array__empty_space_before_str[medium_bold_font_2] = str_meas_out.empty_space_before_str;
 
-      medium_bold_font_3 = "bold " + Math.max(Math.floor(font_size/1.2), min_font_size) + "px " + fontFamily;
+      medium_bold_font_3 = "bold " + Math.max(Math.floor(font_size/1.1), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", medium_bold_font_3, str_meas_out);
       font_array__str_height[medium_bold_font_3] = str_meas_out.str_height;
       font_array__empty_space_before_str[medium_bold_font_3] = str_meas_out.empty_space_before_str;
