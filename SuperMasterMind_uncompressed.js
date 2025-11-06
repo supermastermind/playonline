@@ -1088,7 +1088,7 @@ function displayRandomCodesHintIfNeeded() {
   if (randomCodesHintToBeDisplayed) {
     if (localStorage.gamesok) {
       if ( (Number(localStorage.gamesok) >= 100) && ((Number(localStorage.gamesok) % ((Number(localStorage.gamesok) <= 400) ? 50 : 80)) == 0) ) {
-        alert("A little fun?\nClick on the " + playRandomCodeButtonObject.value + " button to play your first few codes randomly");
+        alert("Ready for some fun? Press " + playRandomCodeButtonObject.value + " and let the random codes surprise you!");
         randomCodesHintToBeDisplayed = false;
       }
     }
@@ -1096,7 +1096,7 @@ function displayRandomCodesHintIfNeeded() {
 }
 
 function displayRevealSecretColorHintIfNeeded() {
-  alert("Need some help?\nClick on the \"" + revealSecretColorButtonObject.value + "\" button to reveal a color of the secret code");
+  alert("Need a hint? Press button \"" + revealSecretColorButtonObject.value + "\" to reveal a color from the secret code");
 }
 
 revealSecretColorButtonClick = function() { // (override temporary definition)
@@ -1110,7 +1110,7 @@ revealSecretColorButtonClick = function() { // (override temporary definition)
     let nbEmptyColors = smmCodeHandler.nbEmptyColors(sCodeRevealed);
     let nbColorsRevealed = nbColumns - nbEmptyColors;
     if (nbColorsRevealed == 0) {
-      var rsp = confirm("Do you want to reveal a color of the secret code?" 
+      var rsp = confirm("Do you want to reveal a color from the secret code?" 
                         + (localStorage.firstname ? " If so, your score will not be stored online." : ""));
       if (!rsp) {
         return; // Cancel or "x" (close) button
@@ -4962,7 +4962,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
   else {
     if (secretCodeCase) {
       let foregd_color = (modernDisplay ? darkGray : lightGray);
-      if (currentAttemptNumber <= 1) { // a little fun
+      if (currentAttemptNumber <= 1) {
         if (color_cnt >= nbColors) {
           color_cnt = 0;
         }
@@ -5110,7 +5110,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     worst_mark_alert_already_displayed = true;
     nb_worst_mark_alert_displayed++;
     reset_color_being_selected();draw_graphic();
-    setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. Those colors were therefore grayed.');", 111);
+    setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. As a result, those colors have been grayed out.');", 111);
   }
 
 }

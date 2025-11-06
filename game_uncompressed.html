@@ -598,7 +598,7 @@
           </form>
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='&#x2718;' title='Reset current code' ontouchstart='if(checkButtonEvent(false)){resetCurrentCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){resetCurrentCodeButtonClick();}' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='&#x1F3B2;' title='Play a random code' ontouchstart='if(checkButtonEvent(false)){playRandomCodeButtonClick();}' onmousedown='if(checkButtonEvent(true)){playRandomCodeButtonClick();}' onfocus='this.blur()' disabled>
-          <input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color of the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
+          <input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color from the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
           <input id='showPossibleCodesButton' class='button disabled' type='button' value='&#x1F50E;' title='Show possible codes at each attempt (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
           <input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info and settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
         </td>
@@ -1803,7 +1803,7 @@
         if ((typeof data_p == 'undefined') || (data_p == undefined) ||  (data_p == null)) { // (condition duplicated)
           return false;
         }
-        let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && ((String(data_p.ip).indexOf(".") != -1) || (String(data_p.ip).indexOf(":") != -1)) && (String(data_p.ip).trim().length >= 7 /* 0.0.0.0 */)); // (condition duplicated - covers IPv4 and IPv6)
+        let validIpAddress = ((typeof data_p.ip != 'undefined') && (data_p.ip != undefined) && (data_p.ip != null) && ((String(data_p.ip).indexOf(".") != -1) || (String(data_p.ip).indexOf(":") != -1)) && (String(data_p.ip).trim().length > 7 /* X.X.X.X */)); // (condition duplicated - covers IPv4 and IPv6)
         let validCountryName = ((typeof data_p.country_name != 'undefined') && (data_p.country_name != undefined) && (data_p.country_name != null) && ((data_p.country_name.length == 2) /* 2-letter country code */ || (data_p.country_name.indexOf(dummyLocationPrefix1) == 0)));
         let cityOrRegionCondition;
         if (!check_region_instead_of_city) {
@@ -2205,7 +2205,7 @@
               if ((xhr.readyState === xhr.DONE) && (xhr.status === 200)) {
 
                 let ipAddress = JSON.parse(xhr.responseText).ip;
-                let validIpAddress = ((typeof ipAddress != 'undefined') && (ipAddress != undefined) && (ipAddress != null) && ((String(ipAddress).indexOf(".") != -1) || (String(ipAddress).indexOf(":") != -1)) && (String(ipAddress).trim().length >= 7 /* 0.0.0.0 */)); // (condition duplicated - covers IPv4 and IPv6)
+                let validIpAddress = ((typeof ipAddress != 'undefined') && (ipAddress != undefined) && (ipAddress != null) && ((String(ipAddress).indexOf(".") != -1) || (String(ipAddress).indexOf(":") != -1)) && (String(ipAddress).trim().length > 7 /* X.X.X.X */)); // (condition duplicated - covers IPv4 and IPv6)
                 if (validIpAddress) {
 
                   ipAddress = String(ipAddress).trim();
