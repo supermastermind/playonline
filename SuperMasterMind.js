@@ -2310,14 +2310,6 @@ updateGameSizes();
 let borderWidth1=(CompressedDisplayMode ? 0 : lineWidth);
 let borderStr1=borderWidth1+(modernDisplay ? "px solid "+modernBaseColor : "px solid black");
 let borderStr2=lineWidth+(modernDisplay ? "px solid "+modernBaseColor: "px solid black");
-if(mobileMode&&androidMode){
-tickChar="\u2713";
-crossChar="\u2715";
-}
-else{
-tickChar="\u2714";
-crossChar="\u2716";
-}
 if(!htmlObjectsAlreadySet||CompressedDisplayModeHasChanged){
 for (let i=0;i < allRadioButtons.length;i++){
 allRadioButtons[i].textContent=nbMinColumns+i;
