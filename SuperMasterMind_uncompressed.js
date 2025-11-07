@@ -1770,7 +1770,7 @@ function updateGameSizes() {
       tick_width = 1.5;
     }
     else if (!gameOnGoing()) {
-      tick_width = ((nbColumns<=4) ? 1.7 : 1.5);
+      tick_width = ((nbColumns<=4) ? 1.7 : 1.55);
     }
     else if (nbColumns<=4) {
       tick_width = 1.7;
