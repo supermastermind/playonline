@@ -4725,6 +4725,10 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   // let y_pixel = Math.round(y_0 + (y_0_next - y_0 - str_height)/2);
   let y_pixel = Math.max(Math.round(y_0_next + (y_0 - y_0_next - str_height)/2 - empty_space_before_str), 0);
 
+  if (str_p == crossChar) {
+    y_pixel = y_pixel - str_height/20;
+  }
+  
   if ( (!displayIfEnoughRoom) || (x_0_next - x_0 - str_width >= 0) ) {
     if (!ignoreRanges) {
       if (backgroundColor != "") { // not N.A. background
