@@ -1361,11 +1361,14 @@ else{
 attempt_nb_width=0;
 nb_possible_codes_width=((nbColumns>=7)?3.2:((nbColumns==6)?3.2:3.2));
 optimal_width=(((!gameOnGoing())||showPossibleCodesMode)?3.0:0);
-if((!gameOnGoing())||showPossibleCodesMode){
+if(showPossibleCodesMode){
 tick_width=1.5;
 }
+else if(!gameOnGoing()){
+tick_width=((nbColumns<=4) ? 1.65 : 1.5);
+}
 else if(nbColumns<=4){
-tick_width=1.6;
+tick_width=1.65;
 }
 else{
 tick_width=0;
