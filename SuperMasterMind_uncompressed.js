@@ -3657,8 +3657,8 @@ function draw_graphic_bis() {
             ctx.font = medium_bold_font_3;
             if (!displayString("\u2009" /* (thin space) */ + crossChar + "\u2009" /* (thin space) */ + isPossible + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                               redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
-              if ((nbColumns <= 4) || (i <= 2) || !displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
-                                                    redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
+              if ((nbColumns <= 4) || !displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
+                                                     redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
                 if (!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                                   redColor, backgroundColor, ctx, false, true, 0, true, 0)) {
                   displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
@@ -4725,7 +4725,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   // let y_pixel = Math.round(y_0 + (y_0_next - y_0 - str_height)/2);
   let y_pixel = Math.max(Math.round(y_0_next + (y_0 - y_0_next - str_height)/2 - empty_space_before_str), 0);
 
-  if (str_p == crossChar) {
+  if ((str_p == crossChar) || (str_p == tickChar)) {
     y_pixel = y_pixel - str_height/20;
   }
   
