@@ -1365,10 +1365,10 @@ if(showPossibleCodesMode){
 tick_width=1.5;
 }
 else if(!gameOnGoing()){
-tick_width=((nbColumns<=4) ? 1.65 : 1.5);
+tick_width=((nbColumns<=4) ? 1.7 : 1.5);
 }
 else if(nbColumns<=4){
-tick_width=1.65;
+tick_width=1.7;
 }
 else{
 tick_width=0;
