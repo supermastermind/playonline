@@ -274,7 +274,6 @@ let font_array__empty_space_before_str=new Array(0);
 let basic_bold_font=defaultFont;
 let medium_bold_font=defaultFont;
 let medium_bold_font_2=defaultFont;
-let medium_bold_font_3=defaultFont;
 let stats_bold_font=defaultFont;
 let font_size=min_font_size;
 let star_font_size=min_font_size;
@@ -2679,10 +2678,6 @@ medium_bold_font_2="bold "+Math.max(Math.floor(font_size/1.4), min_font_size)+"p
 measurePreciseTextHeight("0", medium_bold_font_2, str_meas_out);
 font_array__str_height[medium_bold_font_2]=str_meas_out.str_height;
 font_array__empty_space_before_str[medium_bold_font_2]=str_meas_out.empty_space_before_str;
-medium_bold_font_3="bold "+Math.max(Math.floor(font_size/1.1), min_font_size)+"px "+fontFamily;
-measurePreciseTextHeight("0", medium_bold_font_3, str_meas_out);
-font_array__str_height[medium_bold_font_3]=str_meas_out.str_height;
-font_array__empty_space_before_str[medium_bold_font_3]=str_meas_out.empty_space_before_str;
 if(!showPossibleCodesMode){
 stats_bold_font="bold "+Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
 }
@@ -2889,16 +2884,12 @@ lightGray, backgroundColor, ctx, false);
 ctx.font=basic_bold_font;
 }
 else if(0==isPossible){
-ctx.font=medium_bold_font_3;
 if(!displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 greenColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("Y", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 greenColor, backgroundColor, ctx, false, true, 0, true, 0);
-}
-ctx.font=basic_bold_font;
-}
+}}
 else{
-ctx.font=medium_bold_font_3;
 if(!displayString("\u2009"+crossChar+"\u2009"+isPossible+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 if((nbColumns <=4)||!displayString(isPossible, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
@@ -2907,9 +2898,7 @@ if(!displayString(crossChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2
 redColor, backgroundColor, ctx, false, true, 0, true, 0)){
 displayString("N", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 redColor, backgroundColor, ctx, false, true, 0, true, 0);
-}}}
-ctx.font=basic_bold_font;
-}}}
+}}}}}}
 let lineWidthIni=ctx.lineWidth;
 ctx.lineWidth=getLineWidth(window.innerHeight, 1);
 ctx.strokeStyle=darkGray;
@@ -3734,9 +3723,6 @@ y_0=Math.max(get_y_pixel(y_min+y_step*y_cell)-str_height * 1.6-Math.round(str_he
 y_0_next=Math.max(y_0-str_height, 0);
 }
 let y_pixel=Math.max(Math.round(y_0_next+(y_0-y_0_next-str_height)/2-empty_space_before_str), 0);
-if((str_p==crossChar)||(str_p==tickChar)){
-y_pixel=y_pixel-str_height/20;
-}
 if((!displayIfEnoughRoom)||(x_0_next-x_0-str_width >=0) ){
 if(!ignoreRanges){
 if(backgroundColor!=""){
