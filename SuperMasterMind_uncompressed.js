@@ -1766,7 +1766,15 @@ function updateGameSizes() {
     attempt_nb_width = 0;
     nb_possible_codes_width = ((nbColumns>=7)?3.2:((nbColumns==6)?3.2:3.2));
     optimal_width = (((!gameOnGoing())||showPossibleCodesMode)?3.0:0);
-    tick_width = (((nbColumns<=4)||(!gameOnGoing())||showPossibleCodesMode)?1.5:0);
+    if ((!gameOnGoing()) || showPossibleCodesMode) {
+      tick_width = 1.5;
+    }
+    else if (nbColumns<=4) {
+      tick_width = 1.6;
+    }
+    else {
+      tick_width = 0;
+    }
 
     if (!gameOnGoing() || dsCode) {
       transition_height = 0.4;
