@@ -1295,7 +1295,7 @@ firstReload=false;
 if(localStorage.gamesok&&(Number(localStorage.gamesok) >=60)
 &&(Number(localStorage.previousNbColumns) >=5) ){
 localStorage.nbReloads=Number(localStorage.nbReloads)+1;
-if(Number(localStorage.nbReloads) >=4){
+if(Number(localStorage.nbReloads) >=10){
 localStorage.nbReloads=0;
 localStorage.previousNbColumns=Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
 }}
@@ -3167,16 +3167,20 @@ victoryStr="\u2009You won!\u2009";
 victoryStr2="\u2009Win!\u2009";
 victoryStr3="Win!";
 }
-displayString("\u{1F3C6}" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
+if(nbColors >=7){
+displayString("\u{1F3C6}" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+2, nb_possible_codes_width+optimal_width+tick_width,
 "orange", "", ctx, false, true, 0, true, 0);
-if(!displayString(victoryStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+}
+if(!displayString(victoryStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
 greenColor, "", ctx, false, true, 0, true, 0)){
-if(!displayString(victoryStr2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+if(!displayString(victoryStr2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
 greenColor, "", ctx, false, true, 0, true, 0)){
-displayString(victoryStr3, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+displayString(victoryStr3, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
 greenColor, "", ctx, false, true, 0, false, 0);
 }}
 if(allPerformancesFilled()){
+displayString("\u2009\u{1F914}\u2009"+(currentAttemptNumber-1), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
+darkGray, "", ctx, false, true, 0, false, 0);
 if(!displayString("\u2009"+"\u23F0\u2009"+timeStr+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 darkGray, "", ctx, false, true, 0, true, 0)){
 if(!displayString("\u2009"+"\u23F0\u200A"+timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u200A" )+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
@@ -3202,7 +3206,7 @@ displayString(rounded_score+ptsStr, attempt_nb_width+(70*(nbColumns+1))/100+nbCo
 darkGray, "", ctx, false, true, 0, false, 0);
 }}
 else{
-if(!displayString("\u2009"+"Please wait..."+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+if(!displayString("\u2009"+"Please wait..."+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
 lightGray, "", ctx, false, true, 0, true, 0)){
 displayString("\u231B" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
 lightGray, "", ctx, false, true, 0, false, 0);

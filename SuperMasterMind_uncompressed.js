@@ -1684,7 +1684,7 @@ function getNbColumnsSelected() {
   if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 60)
        && (Number(localStorage.previousNbColumns) >= 5) ) { // propose games other than Super Master Mind
     localStorage.nbReloads = Number(localStorage.nbReloads) + 1;
-    if (Number(localStorage.nbReloads) >= 4) {
+    if (Number(localStorage.nbReloads) >= 10) {
       localStorage.nbReloads = 0;
       localStorage.previousNbColumns = Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
     }
@@ -3989,17 +3989,22 @@ function draw_graphic_bis() {
             }
 
             // (code duplicated:)
-            displayString("\u{1F3C6}" /* trophy */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
-                          "orange", "", ctx, false, true, 0, true, 0);
-            if (!displayString(victoryStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+            if (nbColors >= 7) {
+              displayString("\u{1F3C6}" /* trophy */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+2, nb_possible_codes_width+optimal_width+tick_width,
+                            "orange", "", ctx, false, true, 0, true, 0);
+            }
+            if (!displayString(victoryStr, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
                                greenColor, "", ctx, false, true, 0, true, 0)) {
-              if (!displayString(victoryStr2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+              if (!displayString(victoryStr2, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
                                  greenColor, "", ctx, false, true, 0, true, 0)) {
-                displayString(victoryStr3, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2, nb_possible_codes_width+optimal_width+tick_width,
+                displayString(victoryStr3, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+1, nb_possible_codes_width+optimal_width+tick_width,
                               greenColor, "", ctx, false, true, 0, false, 0);
               }
             }
             if (allPerformancesFilled()) {
+              displayString("\u2009\u{1F914}\u2009" /* thinking face */ + (currentAttemptNumber-1), attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
+                            darkGray, "", ctx, false, true, 0, false, 0);
+              
               if (!displayString("\u2009" /* (thin space) */ + "\u23F0\u2009" /* (alarm clock) */ + timeStr + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                                  darkGray, "", ctx, false, true, 0, true, 0)) {
                 if (!displayString("\u2009" /* (thin space) */ + "\u23F0\u200A" /* (alarm clock) */ + timeStr.replaceAll(" min","m").replaceAll(" s","s").replaceAll(" ","\u200A" /* (hair space) */) + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
@@ -4029,7 +4034,7 @@ function draw_graphic_bis() {
               }
             }
             else {
-              if (!displayString("\u2009" /* (thin space) */ + "Please wait..." + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+              if (!displayString("\u2009" /* (thin space) */ + "Please wait..." + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
                                  lightGray, "", ctx, false, true, 0, true, 0)) {
                 displayString("\u231B" /* hourglass */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
                               lightGray, "", ctx, false, true, 0, false, 0);
