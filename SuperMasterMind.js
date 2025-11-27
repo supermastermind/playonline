@@ -3208,7 +3208,7 @@ darkGray, "", ctx, false, true, 0, false, 0);
 else{
 if(!displayString("\u2009"+"Please wait..."+"\u2009" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
 lightGray, "", ctx, false, true, 0, true, 0)){
-displayString("\u231B" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+displayString("\u231B" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
 lightGray, "", ctx, false, true, 0, false, 0);
 }}}
 else if(currentAttemptNumber==nbMaxAttemptsToDisplay+1){

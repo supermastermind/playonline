@@ -4036,7 +4036,7 @@ function draw_graphic_bis() {
             else {
               if (!displayString("\u2009" /* (thin space) */ + "Please wait..." + "\u2009" /* (thin space) */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
                                  lightGray, "", ctx, false, true, 0, true, 0)) {
-                displayString("\u231B" /* hourglass */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2-1, nb_possible_codes_width+optimal_width+tick_width,
+                displayString("\u231B" /* hourglass */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+0, nb_possible_codes_width+optimal_width+tick_width,
                               lightGray, "", ctx, false, true, 0, false, 0);
               }
             }
