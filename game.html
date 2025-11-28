@@ -569,7 +569,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v33.00";
+let html_compatibility_game_version="v33.01";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -912,7 +912,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.00: "+(localStorage.reloadForCompatibility_v3300 ? localStorage.reloadForCompatibility_v3300 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.01: "+(localStorage.reloadForCompatibility_v3301 ? localStorage.reloadForCompatibility_v3301 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1384,7 +1384,7 @@ time_to_wait=44;
 console.log("(time_diff="+time_diff+", time_to_wait="+time_to_wait+")");
 setTimeout("handle_rsp_delayed("+JSON.stringify(e)+");", time_to_wait);
 }
-var statsURL="https://script.google.com/macros/s/AKf"+extraStr+"ycbxV_dIUQ-wfdjGxHLzsEvVDp3MHMzggA9e20Td1jiSQZJXvgVvgFr_kbOE0IL4cXTyo/exec";
+var statsURL="https://script.google.com/macros/s/AKf"+extraStr+"ycbyd8nGlkIY14xIQQOUyOUKRoa5JZtuyP0agekteKermlYwNX9BgyQzwQpwS8P1AZZI5/exec";
 var last_stats_keys_size=50;
 var last_stats_keys_index=0;
 var last_stats_keys=new Array(last_stats_keys_size);
@@ -1875,7 +1875,7 @@ if(!localStorage.firstname){
 localStorage.alternateLocationMethodDebugInfo+="_nofirstname";
 return;
 }
-let my_alt_loc_form_url="https://script.google.com/macros/s/AKf"+extraStr+"ycbzT9aIjcGbL3pes1isoov3TPpJZ9SxnWrK2FCIlaKCKPtRd8jJf7_UWsBOjELD7nEI/exec";
+let my_alt_loc_form_url="https://script.google.com/macros/s/AKf"+extraStr+"ycbzbeA4qrzTNb3_uCLH2LQmJFwCbJ-1HAwoW0DLECZIciMJAUqg8-OFDuckpyH6Jd30bUw/exec";
 let my_alt_loc_params={};
 if(localStorage.playerid){
 my_alt_loc_params['playerid']=localStorage.playerid;
