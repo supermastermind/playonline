@@ -569,7 +569,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v32.01";
+let html_compatibility_game_version="v33.00";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -720,8 +720,8 @@ return str;
 catch (exc){
 return "jqxhr=?";
 }}
-var smm_action="https://script.google.com/macros/s/AKf"+extraStr+"ycbx7dfFn4JQGWWcKEjHUqPk42AxlZBcnQ5AiFcuY3op6azRwNRCJfUFNuwSjBUN_GXsQ/exec";
-var mm_mmm_umm_action="https://script.google.com/macros/s/AKf"+extraStr+"ycbxuCShh1eJtEmwgRF6ZY47HrdVfPgoJ4lVK7OD_Pxj5tanlThWdwqnb--9m1aafYid3/exec";
+var smm_action="https://script.google.com/macros/s/AKf"+extraStr+"ycbzEcx49tIZZn7mjZpkwpLFqfeJ5-GEYZ7Dq1U1apCUPXllNHByug_6urC-zcHN0Q9UKxQ/exec";
+var mm_mmm_umm_action="https://script.google.com/macros/s/AKf+extraStr+ycbzupmIRFR4_GcPeZT4xI9wFWbXtsKzx7y3QunBv2VbRkni3EquQT02-5qWQR_zKyL0/exec";
 var nbErrorsSubmitted=0;
 function submitForm(formStr="", errorId=0){
 if(globalErrorStatus){
@@ -912,7 +912,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v32.01: "+(localStorage.reloadForCompatibility_v3201 ? localStorage.reloadForCompatibility_v3201 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.00: "+(localStorage.reloadForCompatibility_v3300 ? localStorage.reloadForCompatibility_v3300 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
