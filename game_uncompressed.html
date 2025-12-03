@@ -979,7 +979,7 @@
           data: my_params,
           method: "GET",
           dataType: "jsonp",
-          timeout: 30000 // 30 seconds
+          timeout: 45000 // 45 seconds
         })
         .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
           if (formStr == "") { // Nominal case
@@ -994,7 +994,7 @@
                   data: my_params,
                   method: "GET",
                   dataType: "jsonp",
-                  timeout: 30000 // 30 seconds
+                  timeout: 45000 // 45 seconds
                 })
                 .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
                   try {
