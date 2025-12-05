@@ -1349,6 +1349,9 @@ throw new Error("handle_rsp_delayed error: "+exc+": "+exc.stack);
 debug_game_state=81;
 }
 var last_game_was_short=false;
+var last_rsp_keys_size=20;
+var last_rsp_keys_index=0;
+var last_rsp_keys=new Array(last_rsp_keys_size);
 function handle_rsp(e){
 console.log("(handle_rsp)");
 localStorage.last_handle_rsp_call=(new Date()).getTime();
@@ -1357,6 +1360,17 @@ if((my_params!={})&&(my_params['k']!=undefined)
 console.log("(cancel form resubmission)");
 my_params={};
 }
+if(e.key!=undefined){
+for (var i=0;i < last_rsp_keys_size;i++){
+if(last_rsp_keys[i]==e.key){
+console.log("handle_rsp skipped (duplicate key)");
+return;
+}}
+last_rsp_keys[last_rsp_keys_index]=e.key;
+last_rsp_keys_index++;
+if(last_rsp_keys_index >=last_rsp_keys_size){
+last_rsp_keys_index=0;
+}}
 var score_display_time=4444;
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
 score_display_time=score_display_time * 2+3000;
@@ -1373,7 +1387,7 @@ console.log("(time_diff="+time_diff+", time_to_wait="+time_to_wait+")");
 setTimeout("handle_rsp_delayed("+JSON.stringify(e)+");", time_to_wait);
 }
 var statsURL="https://script.google.com/macros/s/AKf"+extraStr+"ycbyd8nGlkIY14xIQQOUyOUKRoa5JZtuyP0agekteKermlYwNX9BgyQzwQpwS8P1AZZI5/exec";
-var last_stats_keys_size=50;
+var last_stats_keys_size=20;
 var last_stats_keys_index=0;
 var last_stats_keys=new Array(last_stats_keys_size);
 for (var i=0;i < last_stats_keys_size;i++){

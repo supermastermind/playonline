@@ -1617,6 +1617,9 @@
         debug_game_state = 81;
       }
       var last_game_was_short = false;
+      var last_rsp_keys_size = 20;
+      var last_rsp_keys_index = 0;
+      var last_rsp_keys = new Array(last_rsp_keys_size);
       function handle_rsp(e) { // CALLED BY GS SCRIPT
         console.log("(handle_rsp)");
         localStorage.last_handle_rsp_call = (new Date()).getTime();
@@ -1625,6 +1628,21 @@
              && ((e.key == undefined) || (e.key == my_params['k'])) ) {
           console.log("(cancel form resubmission)");
           my_params = {}; // cancel form resubmission (only ony my_params variable for all keys to simplify)
+        }
+
+        if (e.key != undefined) {
+          // Check that rsp was not already handled
+          for (var i = 0; i < last_rsp_keys_size; i++) {
+            if (last_rsp_keys[i] == e.key) {
+              console.log("handle_rsp skipped (duplicate key)");
+              return; // skip handle_rsp
+            }
+          }
+          last_rsp_keys[last_rsp_keys_index] = e.key;
+          last_rsp_keys_index++;
+          if (last_rsp_keys_index >= last_rsp_keys_size) {
+            last_rsp_keys_index = 0;
+          }
         }
 
         var score_display_time = 4444; // (see blinking time)
@@ -1645,7 +1663,7 @@
       }
 
       var statsURL = "https://script.google.com/macros/s/AKf" + extraStr + "ycbyd8nGlkIY14xIQQOUyOUKRoa5JZtuyP0agekteKermlYwNX9BgyQzwQpwS8P1AZZI5/exec";
-      var last_stats_keys_size = 50;
+      var last_stats_keys_size = 20;
       var last_stats_keys_index = 0;
       var last_stats_keys = new Array(last_stats_keys_size);
       for (var i = 0; i < last_stats_keys_size; i++) {
