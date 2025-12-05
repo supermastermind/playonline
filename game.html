@@ -394,7 +394,6 @@ var displayVariant=0;
 var HTML_geoloc_attempts=0;
 var HTML_geoloc_successes=0;
 var HTML_geoloc_errors=0;
-var last_valid_handle_stats_final_retry_str="";
 var gamesolver_blob=null;
 var gamesolver_blob_error="no_error";
 var checkButtonEvent=function(mouseEvent){
@@ -426,13 +425,9 @@ console.log("settingsButtonClick function not defined yet");
 if(!localStorage.firstgamegeoloc){
 localStorage.firstgamegeoloc="fa";
 }
-var beforeunload_case=false;
 $(window).on('beforeunload', function(){
 try{
 debug_on_resize_or_unload=1;
-if(last_valid_handle_stats_final_retry_str!=""){
-eval("console.log('stats handled on unload');"+"beforeunload_case=true;"+last_valid_handle_stats_final_retry_str+"beforeunload_case=false;");
-}
 if(!android_appli){
 if(gameOnGoing()&&(currentAttemptNumber > 1)){
 if(localStorage.firstname&&(typeof nbColumns!=='undefined')&&(nbColumns >=5)){
@@ -569,7 +564,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v33.01";
+let html_compatibility_game_version="v33.02";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -723,6 +718,26 @@ return "jqxhr=?";
 var smm_action="https://script.google.com/macros/s/AKf"+extraStr+"ycbzEcx49tIZZn7mjZpkwpLFqfeJ5-GEYZ7Dq1U1apCUPXllNHByug_6urC-zcHN0Q9UKxQ/exec";
 var mm_mmm_umm_action="https://script.google.com/macros/s/AKf"+extraStr+"ycbzupmIRFR4_GcPeZT4xI9wFWbXtsKzx7y3QunBv2VbRkni3EquQT02-5qWQR_zKyL0/exec";
 var nbErrorsSubmitted=0;
+var my_params={};
+function reSubmitForm(my_form_url, key){
+if(my_params['k']==undefined){
+console.log("form resubmission not needed");
+return;
+}
+if((my_params['k']!=key)){
+console.log("form resubmission cancelled: "+my_params['k']+", "+key);
+return;
+}
+console.log("(resubmit form)");
+my_params['retr']='Y';
+$.ajax({
+crossDomain: true,
+url: my_form_url,
+data: my_params,
+method: "GET",
+dataType: "jsonp"
+});
+}
 function submitForm(formStr="", errorId=0){
 if(globalErrorStatus){
 console.log("(submitForm skipped due to global error)");
@@ -731,21 +746,25 @@ return;
 if(localStorage.skip){
 return;
 }
-let handle_stats_final_retry_str="";
-let handle_stats_final_retry_conditional_str="";
+let resubmit_time=30000;
 let key=makeid();
-let my_params={};
+my_params={};
 if(formStr==""){
 var nbColumns_in_form=document.getElementById('form_nbcolumns_id').value;
 var form_list_in_form=document.getElementById('form_list_id').value;
 if(form_list_in_form=='-'){
 switch (String(nbColumns_in_form)){
+case "4":
+resubmit_time=30000;
+document.getElementById("my_form").action=mm_mmm_umm_action;
+break;
 case "5":
+resubmit_time=40000;
 document.getElementById("my_form").action=smm_action;
 break;
-case "4":
 case "6":
 case "7":
+resubmit_time=50000;
 document.getElementById("my_form").action=mm_mmm_umm_action;
 break;
 default:
@@ -767,20 +786,12 @@ my_params['compressrsp']=abbreviateScores;
 }
 if(mobileMode){
 my_params['mobilemode']=mobileMode;
-}
-if(form_list_in_form=='-'){
-handle_stats_final_retry_str="handle_stats_bis("+nbColumns_in_form+", 99, 99, 'N', '"+document.getElementById('form_playerid_id').value+"', '"+key+"', "+"'Y2');";
-last_valid_handle_stats_final_retry_str=handle_stats_final_retry_str;
-handle_stats_final_retry_conditional_str="if(window.navigator.onLine){"+handle_stats_final_retry_str+"}else{console.log('stats form submission skipped (nw)');}";
-setTimeout(handle_stats_final_retry_conditional_str, 60000);
-setTimeout(handle_stats_final_retry_str, 120000);
 }}
 else{
 nbErrorsSubmitted++;
 if(nbErrorsSubmitted > 4){
 return;
 }
-document.getElementById('form_nbcolumns_id').value="N.A.";
 document.getElementById("my_form").action=(((currentGameNbColumns==-1)||(currentGameNbColumns==5)) ? smm_action : mm_mmm_umm_action);
 my_params['form_str']="(error id: "+errorId+") "+formStr;
 }
@@ -791,43 +802,15 @@ replaceAllElementsInStruct(my_params, "\n", " ");
 replaceAllElementsInStruct(my_params, "\r", "");
 replaceAllElementsInStruct(my_params, "\t", " ");
 let my_form_url=document.getElementById("my_form").action;
+setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time);
 console.log("(submit form"+((formStr=="") ? "" : " for a specific case")+")");
 $.ajax({
 crossDomain: true,
 url: my_form_url,
 data: my_params,
 method: "GET",
-dataType: "jsonp",
-timeout: 40000
-})
-.fail(function(jqxhr, textStatus, error){
-if(formStr==""){
-try{
-if(jqxhr.status!=200){
-console.log(("form submission failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
-my_params['retr']='Y';
-$.ajax({
-crossDomain: true,
-url: my_form_url,
-data: my_params,
-method: "GET",
-dataType: "jsonp",
-timeout: 30000
-})
-.fail(function(jqxhr, textStatus, error){
-try{
-if(jqxhr.status!=200){
-console.log(("form submission retry failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
-if(handle_stats_final_retry_conditional_str!=""){
-setTimeout(handle_stats_final_retry_conditional_str, 20000);
-}}}
-catch (exc){
-console.log(("form submission retry failure (abnormal case): "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
-}});
-}}
-catch (exc){
-console.log(("form submission failure (abnormal case): "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim());
-}}});
+dataType: "jsonp"
+});
 }
 function submitError(errorStr){
 try{
@@ -912,7 +895,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.01: "+(localStorage.reloadForCompatibility_v3301 ? localStorage.reloadForCompatibility_v3301 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.02: "+(localStorage.reloadForCompatibility_v3302 ? localStorage.reloadForCompatibility_v3302 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1369,6 +1352,11 @@ var last_game_was_short=false;
 function handle_rsp(e){
 console.log("(handle_rsp)");
 localStorage.last_handle_rsp_call=(new Date()).getTime();
+if((my_params!={})&&(my_params['k']!=undefined)
+&&((e.key==undefined)||(e.key==my_params['k'])) ){
+console.log("(cancel form resubmission)");
+my_params={};
+}
 var score_display_time=4444;
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
 score_display_time=score_display_time * 2+3000;
@@ -1401,7 +1389,7 @@ return;
 }
 if(((nbColumns_p!="4")&&(nbColumns_p!="5")&&(nbColumns_p!="6")&&(nbColumns_p!="7"))
 ||((applyTimes_p!="N")&&(applyTimes_p!="Y"))
-||((retr_p!="N")&&(retr_p!="Y")&&(retr_p!="Y2")) ){
+||((retr_p!="N")&&(retr_p!="Y")) ){
 submitForm("handle_stats_bis error (wrong parameters): "+nbColumns_p+", "+totalTime_p+", "+calcTime_p+", "
 +applyTimes_p+", "+pId_p+", "+key_p+", "+retr_p+", last_idx: "+last_stats_keys_index, 70);
 console.log("stats form submission skipped (wrong parameters)");
@@ -1430,24 +1418,13 @@ my_stats_params['retr']=retr_p;
 replaceAllElementsInStruct(my_stats_params, "\n", " ");
 replaceAllElementsInStruct(my_stats_params, "\r", "");
 replaceAllElementsInStruct(my_stats_params, "\t", " ");
-if(!beforeunload_case){
 $.ajax({
 crossDomain: true,
 url: my_stats_form_url,
 data: my_stats_params,
 method: 'GET',
-dataType: 'jsonp',
-timeout: 30000
+dataType: 'jsonp'
 });
-}
-else{
-if(retr_p!="Y2"){
-submitForm("internal error when setting localStorage.pendingStats: "+retr_p, 80);
-}
-localStorage.pendingStats="handle_stats_bis("+nbColumns_p+", "+totalTime_p+", "+calcTime_p+", '"+applyTimes_p+"', '"+pId_p+"', '"+key_p+"', '"+retr_p+"');"
-}}
-if(localStorage.pendingStats){
-setTimeout("console.log('pending stats handled');"+localStorage.pendingStats+"localStorage.removeItem('pendingStats');", 4444);
 }
 var globalProgressForHTMLGame2=getGlobalProgress(0.75 , 0);
 console.log("current progress: "+Math.max(globalProgressForHTMLGame2, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgressForHTMLGame2;
@@ -1888,18 +1865,14 @@ my_alt_loc_params['firstname']=localStorage.firstname;
 }
 ip_address_for_alternate_loc_methods=ipAddress;
 console.log("(attempt alternate location method-gs location for "+ipAddress+")");
+localStorage.alternateLocationMethodDebugInfo+="_run";
 $.ajax({
 crossDomain: true,
 url: my_alt_loc_form_url,
 data: my_alt_loc_params,
 method: "GET",
-dataType: "jsonp",
-timeout: 30000
-})
-.fail(function(jqxhr, textStatus, error){
-if(jqxhr.status!=200){
-localStorage.alternateLocationMethodDebugInfo+="_gslocerr1:"+(textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim()
-}});
+dataType: "jsonp"
+});
 }
 else{
 localStorage.alternateLocationMethodDebugInfo+="ipinvalid:"+String(ipAddress).trim();

@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v33.01";
+let smm_compatibility_version="v33.02";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3301)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3302)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3301="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3302="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -434,7 +434,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.01: "+(localStorage.reloadForCompatibility_v3301 ? localStorage.reloadForCompatibility_v3301 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.02: "+(localStorage.reloadForCompatibility_v3302 ? localStorage.reloadForCompatibility_v3302 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -2088,11 +2088,10 @@ extra_precalculated_str="";
 return res;
 }
 function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, mark_str_2, code_1, code_2){
-let ontheflytimeout=30000;
 if(gamesolver_buffered_msg_status==0){
 gamesolver_buffered_msg_status=1;
 gamesolver_buffered_msg_action_str="if((game_cnt=="+game_cnt+")&&(gamesolver_buffered_msg_status!=2)){try{let precalculated_games=get_and_check_extra_precalculated_str();if(gameSolver!==undefined){gameSolver.postMessage({'smm_buffer_messages': 'no', 'smm_req_type': 'DEBUFFER', 'precalculated_games': precalculated_games, 'game_id': "+game_cnt+"});}}catch(err){}gamesolver_buffered_msg_status=2;}";
-setTimeout(gamesolver_buffered_msg_action_str, Math.floor(ontheflytimeout*1.1));
+setTimeout(gamesolver_buffered_msg_action_str, 30000);
 }
 let precalculated_games_jsscriptname=determine_smm_jscriptname(code_str_1, mark_str_1, code_str_2, mark_str_2, code_1, code_2);
 console.log("(fetch precalculated games in "+precalculated_games_jsscriptname+")");
@@ -2101,8 +2100,7 @@ jQuery.ajax({
 crossDomain: true,
 url: "precalculated_games/"+precalculated_games_jsscriptname,
 method: "GET",
-dataType: "jsonp",
-timeout: ontheflytimeout
+dataType: "jsonp"
 })
 .done(function(location){
 debug_game_state=69.15;

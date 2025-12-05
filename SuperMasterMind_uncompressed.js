@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v33.01"; // !WARNING! -> value to be aligned with version in game.html => search "v33" for all occurrences in this script and game.html
+let smm_compatibility_version = "v33.02"; // !WARNING! -> value to be aligned with version in game.html => search "v33" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3301) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3302) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3301 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3302 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -558,7 +558,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v33.01: " + (localStorage.reloadForCompatibility_v3301 ? localStorage.reloadForCompatibility_v3301 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v33.02: " + (localStorage.reloadForCompatibility_v3302 ? localStorage.reloadForCompatibility_v3302 : "not done"), 210);
 
       // Alert
       // *****
@@ -1013,7 +1013,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
       if (gameOnGoing() && (currentAttemptNumber > 1)) { // (condition duplicated)
 
         if (nbNewGameEventsCancelled <= 2) { // Avoid repetitive or endless (in Firefox for example) cancellations
-          var rsp = confirm("Do you really want to abort current game?");
+          var rsp = confirm("Do you really want to abort current game?"); // (code duplicated)
           if (!rsp) {
             nbNewGameEventsCancelled++;
             return; // Cancel or "x" (close) button
@@ -2641,12 +2641,11 @@ function get_and_check_extra_precalculated_str() {
 
 function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, mark_str_2, code_1, code_2) {
 
-  let ontheflytimeout = 30000;
   if (gamesolver_buffered_msg_status == 0) {
     gamesolver_buffered_msg_status = 1;
     // Defensive behaviour (should never be entered): always trigger debuffering after a certain time to avoid any game blockage
     gamesolver_buffered_msg_action_str = "if ((game_cnt == " + game_cnt + ") && (gamesolver_buffered_msg_status != 2)) {try{ let precalculated_games = get_and_check_extra_precalculated_str(); if (gameSolver !== undefined) {gameSolver.postMessage({'smm_buffer_messages': 'no', 'smm_req_type': 'DEBUFFER', 'precalculated_games': precalculated_games, 'game_id': " + game_cnt + "});}} catch(err){} gamesolver_buffered_msg_status = 2;}";
-    setTimeout(gamesolver_buffered_msg_action_str, Math.floor(ontheflytimeout*1.1));
+    setTimeout(gamesolver_buffered_msg_action_str, 30000); // 30 seconds
   }
 
   let precalculated_games_jsscriptname = determine_smm_jscriptname(code_str_1, mark_str_1, code_str_2, mark_str_2, code_1, code_2);
@@ -2656,8 +2655,8 @@ function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, 
     crossDomain: true,
     url: "precalculated_games/" + precalculated_games_jsscriptname, // => if this .js script exists, extra_precalculated_str will be updated by it
     method: "GET",
-    dataType: "jsonp",
-    timeout: ontheflytimeout
+    dataType: "jsonp" // Note: in case of jsonp in jQuery, the timeout option is useless and fail() function is essentially useless 
+                      //       => fail() function is however useful in this particular case
   })
   .done(function(location) { // seems never entered
     debug_game_state = 69.15;
@@ -2669,7 +2668,7 @@ function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, 
     if (typeof precalculatedFileFetched !== 'undefined') {precalculatedFileFetched = jqxhr.status;}
     // Trigger debuffering immediately
     setTimeout(gamesolver_buffered_msg_action_str, 44); // (as shifted in time, may be run in a next game with a different game_id, which will have no effect as game_id is checked)
-    if (jqxhr.status != 200) { // Note: covers the 404 status which corresponds to the error "Loading failed for the <script> with source https://..."
+    if (jqxhr.status != 200) { // Note: covers ERR_FILE_NOT_FOUND case
       debug_game_state = 69.3;
       console.log(("precalculated games fetch failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
     }
