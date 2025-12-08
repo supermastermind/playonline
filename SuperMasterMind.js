@@ -4073,7 +4073,7 @@ if((mark.nbBlacks+mark.nbWhites==0)&&((!localStorage.gamesok)||(Number(localStor
 worst_mark_alert_already_displayed=true;
 nb_worst_mark_alert_displayed++;
 reset_color_being_selected();draw_graphic();
-setTimeout("alert('You got no black and white pegs for this code, which means none of its colors are in the secret code. As a result, those colors have been grayed out.');", 111);
+setTimeout("alert('This code received no black or white pegs, so none of its colors are in the secret code. Those colors have been grayed out.');", 111);
 }}
 function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomRightBubble)
 {
