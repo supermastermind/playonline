@@ -988,7 +988,7 @@ if(!(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstname
 if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime < 1.5*24*3600*1000) ){
 change_first_name_str=
 change_first_name_title_str
-+"Will be available later"
++"change will be possible later"
 +end_separator_str;
 }
 else{
@@ -1003,20 +1003,20 @@ nb_first_name_changes_left_str=" (last change left)";
 }}
 change_first_name_str=
 change_first_name_title_str
-+"<a onclick='ask_for_firstname();modal.close();'>Change "+localStorage.firstname+nb_first_name_changes_left_str
++"<a onclick='ask_for_firstname();modal.close();'>change "+localStorage.firstname+nb_first_name_changes_left_str
 +"</a>"+end_separator_str;
 }}}
 else if((!localStorage.nbTimesFirstnameAsked)||(Number(localStorage.nbTimesFirstnameAsked) <=1)){
 change_first_name_str=
 change_first_name_title_str
-+"Will be available after more wins"
++"will be asked after more wins"
 +end_separator_str;
 }
 let game_rules_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:2.0vh;color:black'>\
 <hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>\
-<b>How to play?</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-<b><a href='index.html#game_rules'>See game rules</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
+<b>Usage:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
+<b>See <a href='index.html#game_rules'>Game rules</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'></a>"
 +display_form_str
 +change_first_name_str
@@ -1292,7 +1292,7 @@ localStorage.previousNbColumns=parseInt(nbColumnsRadioObjects[i].value);
 return Number(localStorage.previousNbColumns);
 }}}
 firstReload=false;
-if(localStorage.gamesok&&(Number(localStorage.gamesok) >=60)
+if(localStorage.gamesok&&(Number(localStorage.gamesok) >=50)
 &&(Number(localStorage.previousNbColumns) >=5) ){
 localStorage.nbReloads=Number(localStorage.nbReloads)+1;
 if(Number(localStorage.nbReloads) >=10){
