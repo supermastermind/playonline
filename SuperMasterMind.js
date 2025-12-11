@@ -1015,8 +1015,7 @@ change_first_name_title_str
 let game_rules_str=
 "<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:2.0vh;color:black'>\
 <hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>\
-<b>Gameplay instructions:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
-see <b><a href='index.html#game_rules'>Game rules</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
+See <b><a href='index.html#game_rules'>Game rules</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'></a>"
 +display_form_str
 +change_first_name_str
