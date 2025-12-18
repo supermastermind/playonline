@@ -85,7 +85,9 @@
         border-radius: 1.5%;
         position: fixed;
       }
-      /* *** Classes for button styling using CSS *** */
+
+      * { -webkit-tap-highlight-color: transparent; }
+
       .button {
         font-family: Verdana, Geneva, sans-serif;
         background-color: white;
@@ -101,7 +103,7 @@
         cursor: pointer;
         -webkit-backface-visibility: visible;
       }
-      .button:focus {
+      .button:focus, .button:active {
         outline: none; // removes the default focus outline
       }
       .disabled {
