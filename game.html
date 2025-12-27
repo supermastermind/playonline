@@ -2217,6 +2217,9 @@ console.log("Error: invalid nbcolumns in store_player_info(): "+nbcolumns);
 debug_game_state=100.38;
 return;
 }
+if(deltagames < 0){
+deltagames=30;
+}
 debug_game_state=100.4;
 var geolocation_handler={
 nb_JSON_queries_posted: 0,
