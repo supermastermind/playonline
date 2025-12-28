@@ -421,7 +421,7 @@
 
       function makeid() {
         let text = "";
-        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
         for (let i = 0; i < 6; i++) {
           text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
@@ -2749,7 +2749,7 @@
                 localStorage.removeItem('firstname'); // localStorage.firstname / defense
                 localStorage.gamesok = -10; // defense
                 // error observed for Safari: Safari (especially on iOS) is notorious for its unpredictable localStorage behaviour,
-                // it can interfere with localStorage even during a session
+                // it can interfere with localStorage even during a session - Error also observed for Chrome in 12/2025
                 if ((!android_appli) && safariMode) {
                   alert("Site data was cleared! For online scores, ensure your browser does not clear cookies/site data and is not in private/incognito mode."); // (same warning as in GS SCRIPT)
                   return; // form submission skipped
