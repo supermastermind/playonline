@@ -3909,8 +3909,8 @@ if(color!=emptyColor){
 let foregroundColor=foregroundColorTable[color-1];
 let backgroundColor=backgroundColorTable[color-1];
 if(disabledColor){
-foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.45);
-backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.45);
+foregroundColor=averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.40);
+backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.40);
 currentCodeColorMode=4;
 handleCurrentCodeColorMode=true;
 }
