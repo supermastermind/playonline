@@ -2841,7 +2841,7 @@ function drawRoundedRectBis(ctx, x, y, width, height, radius) {
   ctx.quadraticCurveTo(x, y, x + radius, y);
 }
 
-function drawRoundedRect(ctx, x, y, width, height, radius, fill) {
+function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient) {
   if (fill) {
     const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
     gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.60));
@@ -2849,7 +2849,9 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill) {
     gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
 
     drawRoundedRectBis(ctx, x, y, width, height, radius);
-    ctx.fillStyle = gradient;
+    if (apply_gradient) {
+      ctx.fillStyle = gradient;
+    }
     ctx.fill();
     ctx.stroke(); // draw border using ctx.lineWidth
   }
@@ -3675,7 +3677,7 @@ function draw_graphic_bis() {
       x_1 = get_x_pixel(x_max) - refLineWidth + 1;
       y_1 = get_y_pixel(y_min);
       let radius = Math.min(x_1 - x_0, y_1 - y_0)/(CompressedDisplayMode ? 40.0 : 40.0);
-      drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, radius, false);
+      drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, radius, false, false);
       ctx.lineWidth = lineWidthIni;
 
       let HintsThreshold = 5;
@@ -4725,6 +4727,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
       if (backgroundColor != "") { // not N.A. background
         ctx.fillStyle = backgroundColor;
         if (fillRoundedRectangle) {
+          let apply_gradient = true;
           if (currentCodeColorMode == 1) {
             ctx.strokeStyle = ((modernDisplay || !CompressedDisplayMode) ? lightGray : darkGray);
           }
@@ -4736,6 +4739,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
           }
           else if (currentCodeColorMode == 4) {
             ctx.strokeStyle = averageColor(darkGray, myTableObject.style.backgroundColor, 0.20);
+            apply_gradient = false;
           }
           else {
             ctx.strokeStyle = darkGray;
@@ -4752,13 +4756,15 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
                     Math.floor((y_0 + y_0_next + 1)/2), // center y
                     radius, // radius
                     0, 2 * Math.PI, false); // starting and ending angles + clockwise
-            ctx.fillStyle = gradient;
+            if (apply_gradient) {
+              ctx.fillStyle = gradient;
+            }
             ctx.fill();
             ctx.stroke(); // draw border using ctx.lineWidth
           }
           else {
             let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 2.6 : 2.6);
-            drawRoundedRect(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, radius, true);
+            drawRoundedRect(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, radius, true, apply_gradient);
           }
         }
         else {
