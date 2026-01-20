@@ -1683,7 +1683,7 @@ function getNbColumnsSelected() {
   if ( localStorage.gamesok && (Number(localStorage.gamesok) >= 50)
        && (Number(localStorage.previousNbColumns) >= 5) ) { // propose games other than Super Master Mind
     localStorage.nbReloads = Number(localStorage.nbReloads) + 1;
-    if (Number(localStorage.nbReloads) >= 10) {
+    if (Number(localStorage.nbReloads) >= 12) {
       localStorage.nbReloads = 0;
       localStorage.previousNbColumns = Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
     }
@@ -2828,38 +2828,34 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
   ctx.lineWidth = lineWidthIni;
 }
 
-function drawRoundedRect(ctx, x, y, width, height, radius, fill, stroke) {
-  if (typeof stroke === 'undefined') {
-    stroke = true;
-  }
-  if (typeof radius === 'undefined') {
-    radius = 5;
-  }
-  if (typeof radius === 'number') {
-    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+function drawRoundedRectBis(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+}
+
+function drawRoundedRect(ctx, x, y, width, height, radius, fill) {
+  if (fill) {
+    const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
+    gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.60));
+    gradient.addColorStop(0.50 * height / width, ctx.fillStyle);
+    gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
+
+    drawRoundedRectBis(ctx, x, y, width, height, radius);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.stroke(); // draw border using ctx.lineWidth
   }
   else {
-    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-    for (var side in defaultRadius) {
-      radius[side] = radius[side] || defaultRadius[side];
-    }
-  }
-  ctx.beginPath();
-  ctx.moveTo(x + radius.tl, y);
-  ctx.lineTo(x + width - radius.tr, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-  ctx.lineTo(x + width, y + height - radius.br);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-  ctx.lineTo(x + radius.bl, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-  ctx.lineTo(x, y + radius.tl);
-  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-  ctx.closePath();
-  if (fill) {
-    ctx.fill();
-  }
-  if (stroke) {
-    ctx.stroke();
+    drawRoundedRectBis(ctx, x, y, width, height, radius);
+    ctx.stroke(); // draw border using ctx.lineWidth
   }
 }
 
@@ -3681,12 +3677,7 @@ function draw_graphic_bis() {
       x_1 = get_x_pixel(x_max) - refLineWidth + 1;
       y_1 = get_y_pixel(y_min);
       let radius = Math.min(x_1 - x_0, y_1 - y_0)/(CompressedDisplayMode ? 40.0 : 40.0);
-      drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, {
-        tl: radius,
-        tr: radius,
-        bl: radius,
-        br: radius
-      }, false, true);
+      drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, radius, false);
       ctx.lineWidth = lineWidthIni;
 
       let HintsThreshold = 5;
@@ -4752,23 +4743,24 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
             ctx.strokeStyle = darkGray;
           }
           if (displayVariant == 1) {
+            const gradient = ctx.createLinearGradient(x_0, y_0_next, x_0_next, y_0);
+            gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.40));
+            gradient.addColorStop(0.50, ctx.fillStyle);
+            gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.70));
+
             let radius = Math.min(x_0_next - x_0, y_0 - y_0_next)/2.5;
             ctx.beginPath();
             ctx.arc(Math.floor((x_0 + x_0_next + 1)/2), // center x
                     Math.floor((y_0 + y_0_next + 1)/2), // center y
                     radius, // radius
                     0, 2 * Math.PI, false); // starting and ending angles + clockwise
+            ctx.fillStyle = gradient;
             ctx.fill();
-            ctx.stroke();
+            ctx.stroke(); // draw border using ctx.lineWidth
           }
           else {
             let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 2.6 : 2.6);
-            drawRoundedRect(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, {
-              tl: radius,
-              tr: radius,
-              bl: radius,
-              br: radius
-            }, true, true);
+            drawRoundedRect(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, radius, true);
           }
         }
         else {
@@ -4937,21 +4929,13 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
     let foregroundColor = foregroundColorTable[color-1];
     let backgroundColor = backgroundColorTable[color-1];
     if (disabledColor) {
-      if (displayVariant == 0) {
-        foregroundColor = averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.15);
-        backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.15);
-        currentCodeColorMode = 4;
-        handleCurrentCodeColorMode = true;
-      }
-      else {
-        foregroundColor = averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.10);
-        backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.10);
-        currentCodeColorMode = 4;
-        handleCurrentCodeColorMode = true;
-      }
+      foregroundColor = averageColor(foregroundColor, myTableObject.style.backgroundColor, 0.45);
+      backgroundColor = averageColor(backgroundColor, myTableObject.style.backgroundColor, 0.45);
+      currentCodeColorMode = 4;
+      handleCurrentCodeColorMode = true;
     }
     if (highlight_selected_text_param) {
-      backgroundColor = averageColor(foregroundColor, backgroundColor, 0.33);
+      backgroundColor = averageColor(foregroundColor, backgroundColor, 0.50);
     }
     if (color < 10) {
       displayString(getColorToDisplay(color), x_cell, y_cell, 2,
@@ -4991,8 +4975,10 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
       }
     }
     else {
-      displayString(getColorToDisplay(""), x_cell, y_cell, 2,
-                    darkGray, (modernDisplay ? modernGameTableColor : legacy_backgroundColor_base_color), ctx, true, displayColorMode, 0, false, 0);
+      if (displayVariant == 0) {
+        displayString(getColorToDisplay(""), x_cell, y_cell, 2,
+                      darkGray, (modernDisplay ? modernGameTableColor : legacy_backgroundColor_base_color), ctx, true, displayColorMode, 0, false, 0);
+      }
     }
   }
   if (handleCurrentCodeColorMode) {
