@@ -2388,10 +2388,8 @@ updateAttributesWidthAndHeightValues(width, height);
 }
 for (let i=0;i < allRadioButtons.length;i++){
 if(nbColumnsSelected==nbMinColumns+i){
-let radioColor=(modernDisplay ? legacy_backgroundColor_base_color : "orange");
-let borderStr3=lineWidth+"px solid "+radioColor;
-allRadioButtons[i].style.color=radioColor;
-allRadioButtons[i].style.border=borderStr3;
+allRadioButtons[i].style.color="black";
+allRadioButtons[i].style.border=lineWidth+"px solid black";
 }
 else{
 allRadioButtons[i].style.color="black";
