@@ -469,7 +469,7 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileMode+","+androidMode+","+android_appli+"||"+nbColorSelections);
+alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileMode+","+androidMode+","+android_appli);
 }
 else if(mode==888){
 localStorage.gamesok=100;
@@ -1662,7 +1662,7 @@ debug_mode=localStorage.debug_mode;
 gameSolverInitMsgContents={'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok)||(Number(localStorage.gamesok) < min_gamesok_for_firstname-1), 'game_id': game_cnt, 'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
-setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", 1111);
+setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((game_cnt <=1)&&android_appli ? 2222: 1111));
 if(randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();", 444);
 }
@@ -2264,6 +2264,8 @@ updateGameSizes();
 draw_graphic_bis();
 }}
 var main_ctx=null;
+var last_draw_color_selection_condition_1=false;
+var last_draw_color_selection_condition_2=false;
 function draw_graphic_bis(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("draw_graphic_bis skipped");
@@ -2607,6 +2609,14 @@ throw new Error("invalid game_id_for_initGameSolver value at next attempt: "+gam
 if(selected_color_and_column_arrow_previously_shown!=selected_color_and_column_arrow_to_be_shown()){
 main_graph_update_needed=true;
 }
+let draw_color_selection_condition_1=(nbGamesPlayedAndWon==0)&&gameOnGoing()&&(currentAttemptNumber <=2)&&(nbColorSelections < 3)&&(nbOfStatsFilled_NbPossibleCodes >=1);
+let draw_color_selection_condition_2=(currentAttemptNumber==1)&&(nbColorSelections==0);
+if((draw_color_selection_condition_1!=last_draw_color_selection_condition_1)
+||(draw_color_selection_condition_2!=last_draw_color_selection_condition_2) ){
+main_graph_update_needed=true;
+}
+last_draw_color_selection_condition_1=draw_color_selection_condition_1;
+last_draw_color_selection_condition_2=draw_color_selection_condition_2;
 let nbMaxAttemptsToDisplay=((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) : currentAttemptNumber-1);
 if(main_graph_update_needed){
 let x_0, y_0, x_1, y_1;
@@ -3225,13 +3235,13 @@ ctx.font=basic_bold_font;
 ctx.fillStyle=darkGray;
 try{
 ctx.font=medium_bold_font;
-if((nbGamesPlayedAndWon==0)&&gameOnGoing()&&(currentAttemptNumber <=2)&&(nbColorSelections < 3)&&(nbOfStatsFilled_NbPossibleCodes >=1) ){
+if(draw_color_selection_condition_1){
 let x_delta=0.80;
 if(!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.0*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-2.0*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true )){
 if(displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true )){
-if((currentAttemptNumber==1)&&(nbColorSelections==0)){
+if(draw_color_selection_condition_2){
 displayString("Your code is here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
 }}
