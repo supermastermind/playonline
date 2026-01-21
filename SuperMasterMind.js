@@ -469,7 +469,7 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileMode+","+androidMode+","+android_appli);
+alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileMode+","+androidMode+","+android_appli+"||"+nbColorSelections);
 }
 else if(mode==888){
 localStorage.gamesok=100;
