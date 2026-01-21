@@ -1662,7 +1662,7 @@ debug_mode=localStorage.debug_mode;
 gameSolverInitMsgContents={'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok)||(Number(localStorage.gamesok) < min_gamesok_for_firstname-1), 'game_id': game_cnt, 'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
-setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((game_cnt <=1)&&android_appli ? 2222: 1111));
+setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((game_cnt <=1)&&android_appli ? 2000: 1111));
 if(randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();", 444);
 }
@@ -3237,7 +3237,7 @@ try{
 ctx.font=medium_bold_font;
 if(draw_color_selection_condition_1){
 let x_delta=0.80;
-if(!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.0*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-2.0*x_delta,
+if(!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+0.75*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-1.5*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true )){
 if(displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true )){
@@ -3248,6 +3248,11 @@ displayString("Your code is here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75
 else{
 displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true );
+}}
+else{
+if(draw_color_selection_condition_2){
+displayString("Your code is here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
+(modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
 }}}}
 catch (err_help){}}
 else{
@@ -3771,6 +3776,9 @@ if(apply_gradient){
 ctx.fillStyle=gradient;
 }
 ctx.fill();
+if(str==""){
+ctx.strokeStyle=backgroundColor;
+}
 ctx.stroke();
 }
 else{
@@ -3962,10 +3970,9 @@ foregd_color, legacy_backgroundColor_base_color, ctx, true, displayColorMode, 0,
 currentCodeColorMode=-1;
 }}
 else{
-if(displayVariant==0){
 displayString(getColorToDisplay(""), x_cell, y_cell, 2,
 darkGray, (modernDisplay ? modernGameTableColor : legacy_backgroundColor_base_color), ctx, true, displayColorMode, 0, false, 0);
-}}}
+}}
 if(handleCurrentCodeColorMode){
 currentCodeColorMode=-1;
 }}
