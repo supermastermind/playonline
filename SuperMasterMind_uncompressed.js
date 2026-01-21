@@ -4069,25 +4069,20 @@ function draw_graphic_bis() {
 
         try {
           ctx.font = medium_bold_font;
-          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && ((currentAttemptNumber <= 1) || (nbColorSelections < nbColumns)) && (nbOfStatsFilled_NbPossibleCodes >= 1) ) {
+          if ( (nbGamesPlayedAndWon == 0) && gameOnGoing() && (currentAttemptNumber <= 2) && (nbColorSelections < 3) && (nbOfStatsFilled_NbPossibleCodes >= 1) ) {
             let x_delta = 0.80;
-            if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
+            if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.0*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.0*x_delta,
                                (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-              if (!displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+1.35*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-2.70*x_delta,
-                                 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-                if (!displayString("Select me!", x_delta*0.90, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                   (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */)) {
-                  if (mobileMode) {
-                    if ((nbColumns >= 4) && (nbColumns <= 7) && (currentAttemptNumber == 1)) {
-                      displayString("Tap!", x_delta*0.25, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-0.35*x_delta,
-                                    (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false /* bottom-left bubble */);
-                    }
-                  }
-                  else {
-                    displayString("Click!", x_delta*0.80, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, attempt_nb_width+(70*(nbColumns+1))/100-2.00*x_delta,
-                                  (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 2, true, 0, false, true, false /* bottom-left bubble */);
-                  }
+              if (displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
+                                (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true /* bottom-right bubble */)) {            
+                if ((currentAttemptNumber == 1) && (nbColorSelections == 0)) {
+                  displayString("Your code is here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
+                                (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false /* top-left bubble */);
                 }
+              }
+              else {
+                displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
+                              (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true /* bottom-right bubble */);
               }
             }
           }
@@ -5132,25 +5127,27 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomR
     ctx.quadraticCurveTo(x, b, x, b-radius);
     ctx.lineTo(x, y+radius);
     ctx.quadraticCurveTo(x, y, x+radius, y);
+    ctx.closePath();
     ctx.stroke();
     ctx.lineWidth = lineWidthIni;
   }
-  else { // bottom-left bubble
+  else { // top-left bubble
     ctx.beginPath();
     ctx.strokeStyle = foregroundColor;
     let lineWidthIni = ctx.lineWidth;
     ctx.lineWidth = lineWidth;
-    ctx.moveTo(r-radius*2, y);
-    ctx.lineTo(r-radius/2, y-1.0*radius);
-    ctx.lineTo(r-radius, y);
-    ctx.quadraticCurveTo(r, y, r, y+radius);
-    ctx.lineTo(r, y+h-radius);
-    ctx.quadraticCurveTo(r, b, r-radius, b);
-    ctx.lineTo(x+radius, b);
-    ctx.quadraticCurveTo(x, b, x, b-radius);
-    ctx.lineTo(x, y+radius);
-    ctx.quadraticCurveTo(x, y, x+radius, y);
-    ctx.lineTo(r-radius*2, y);
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(r - radius, y);
+    ctx.quadraticCurveTo(r, y, r, y + radius);
+    ctx.lineTo(r, y + h - radius);
+    ctx.quadraticCurveTo(r, b, r - radius, b);
+    ctx.lineTo(r - radius / 2, b + radius);
+    ctx.lineTo(r - radius * 2, b);
+    ctx.lineTo(x + radius, b);
+    ctx.quadraticCurveTo(x, b, x, b - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
     ctx.stroke();
     ctx.lineWidth = lineWidthIni;
   }
