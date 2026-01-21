@@ -4772,7 +4772,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
               ctx.fillStyle = gradient;
             }
             ctx.fill();
-            if (str == "") {
+            if (! backgroundColorTable.includes(backgroundColor)) {
               ctx.strokeStyle = backgroundColor;
             }
             ctx.stroke(); // draw border using ctx.lineWidth

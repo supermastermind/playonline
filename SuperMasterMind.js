@@ -3776,7 +3776,7 @@ if(apply_gradient){
 ctx.fillStyle=gradient;
 }
 ctx.fill();
-if(str==""){
+if(! backgroundColorTable.includes(backgroundColor)){
 ctx.strokeStyle=backgroundColor;
 }
 ctx.stroke();
