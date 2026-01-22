@@ -366,6 +366,7 @@ let max_font_size = 700;
 let font_array__str_height = new Array(0);
 let font_array__empty_space_before_str = new Array(0);
 let basic_bold_font = defaultFont;
+let code_bold_font = defaultFont;
 let medium_bold_font = defaultFont;
 let medium_bold_font_2 = defaultFont;
 let stats_bold_font = defaultFont;
@@ -3397,6 +3398,16 @@ function draw_graphic_bis() {
       font_array__str_height[basic_bold_font] = str_meas_out.str_height;
       font_array__empty_space_before_str[basic_bold_font] = str_meas_out.empty_space_before_str;
 
+      if (android_appli) { // zoom effect on android appli
+        code_bold_font = "bold " + Math.round(font_size*1.1) + "px " + fontFamily;
+        measurePreciseTextHeight("0", code_bold_font, str_meas_out);
+        font_array__str_height[code_bold_font] = str_meas_out.str_height;
+        font_array__empty_space_before_str[code_bold_font] = str_meas_out.empty_space_before_str;
+      }
+      else {
+        code_bold_font = basic_bold_font;
+      }
+
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
       font_array__str_height[medium_bold_font] = str_meas_out.str_height;
@@ -3525,11 +3536,13 @@ function draw_graphic_bis() {
       // Draw codes played and associated marks
       // **************************************
 
+      ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
+      for (let i = 1; i < currentAttemptNumber; i++) {
+        displayCode(codesPlayed[i-1], i-1, ctx, false, gameOnGoing());
+      }
+
       ctx.font = basic_bold_font;
       for (let i = 1; i < currentAttemptNumber; i++) {
-
-        displayCode(codesPlayed[i-1], i-1, ctx, false, gameOnGoing());
-
         let backgroundColor = "";
         if (i == currentPossibleCodeShown) {
           backgroundColor = highlightColor;
@@ -3537,7 +3550,7 @@ function draw_graphic_bis() {
         displayMark(marks[i-1], i-1, backgroundColor, ctx);
 
       }
-
+      
       // Draw stats
       // **********
 
@@ -3825,6 +3838,7 @@ function draw_graphic_bis() {
                            (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0);
             }
           }
+          ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
           if (gameOnGoing()) {
             if (!dsCode) {
               displayCode(sCodeRevealed, nbMaxAttemptsToDisplay+transition_height, ctx, true, false);
@@ -3837,6 +3851,7 @@ function draw_graphic_bis() {
             displayCode(smmCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_height, ctx);
           }
         }
+        ctx.font = basic_bold_font;
 
         // Display game over status
         // ************************
@@ -3997,7 +4012,7 @@ function draw_graphic_bis() {
               victoryStr3 = "Win!";
             }
 
-            // (code duplicated:)
+            ctx.font = basic_bold_font;
             if (nbColors >= 7) {
               displayString("\u{1F3C6}" /* trophy */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+nbColors/2+2, nb_possible_codes_width+optimal_width+tick_width,
                             "orange", "", ctx, false, true, 0, true, 0);
@@ -4300,7 +4315,7 @@ function draw_graphic_bis() {
           // Display code
           let code = possibleCodesLists[currentPossibleCodeShown-1][codeidx_with_ratio];
           let y_cell = nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1-codeidx;
-          ctx.font = basic_bold_font;
+          ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
           displayCode(code, y_cell, ctx);
 
           // Display performances
@@ -4455,7 +4470,7 @@ function draw_graphic_bis() {
         ctx.fillStyle = "";
       }
 
-      ctx.font = basic_bold_font;
+      ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
       for (let color = 0; color < nbColors; color++) {
         for (let col = 0; col < nbColumns; col++) {
           color_selection_code = smmCodeHandler.setColor(color_selection_code, color+1, col+1);
@@ -4468,7 +4483,7 @@ function draw_graphic_bis() {
     // *******************************************
 
     if (gameOnGoing()) { // playing phase
-      ctx.font = basic_bold_font;
+      ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
       currentCodeColorMode = -1;
       if (currentAttemptNumber > 1) { // (redraws first code on top of drawRoundedRect pixels)
         displayCode(codesPlayed[0], 0, ctx, false, true);
