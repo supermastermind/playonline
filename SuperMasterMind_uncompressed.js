@@ -611,6 +611,13 @@ function handlePrompt() {
   else if (mode == 888) {
     localStorage.gamesok = 100;
   }
+  else if (String(mode).indexOf("fontFamily=") == 0) {
+    fontFamily = String(mode).substring(11);
+    main_graph_update_needed = true;
+    updateGameSizes();
+    draw_graphic();
+
+  }
   else if (String(mode) == "000") {
     throw new Error("toto");
   }
