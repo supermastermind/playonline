@@ -265,7 +265,7 @@ updateHoverBackgroundColor(modernDisplay ? legacy_backgroundColor_base_color : "
 }
 updateThemeAttributes();
 let currentCodeColorMode=-1;
-let fontFamily="Verdana, Geneva, sans-serif";
+let fontFamily="Verdana, sans-serif";
 let defaultFont="10px "+fontFamily;
 let min_font_size=7;
 let max_font_size=700;

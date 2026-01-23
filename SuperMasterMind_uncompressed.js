@@ -359,7 +359,7 @@ let currentCodeColorMode = -1;
 // Fonts
 // *****
 
-let fontFamily = "Verdana, Geneva, sans-serif";
+let fontFamily = "Verdana, sans-serif";
 let defaultFont = "10px " + fontFamily;
 let min_font_size = 7; // (font size below 7 may not be easily readable in canvas)
 let max_font_size = 700;
