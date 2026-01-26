@@ -1363,14 +1363,16 @@ function is_there_a_color_being_selected() {
   return ((color_being_selected != -1) && (column_of_color_being_selected != -1) && (new Date().getTime() - last_color_being_selected_time < 1000)); // 1 second
 }
 
-let arrow_shown_thld_1 = 2; // (shall be <= arrow_shown_thld_2)
-let arrow_shown_thld_2 = 2;
+let arrow_shown_thld = 2;
+function arrow_regular_cond() {
+  return ( (!localStorage.gamesok) || (Number(localStorage.gamesok) <= 1) // very recent player
+           || ( ((!localStorage.arrow_shown_date) || (localStorage.arrow_shown_date != currentDate()))
+                && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == 0))) )
+         );
+}
 function selected_color_and_column_arrow_to_be_shown() {
-   let regular_cond = ( ((!localStorage.arrow_shown_date) || (localStorage.arrow_shown_date != currentDate()))
-                        && ((currentAttemptNumber <= arrow_shown_thld_1) || ((currentAttemptNumber == arrow_shown_thld_1+1) && (currentCode == 0))) );
-   if ( ( (!localStorage.gamesok) || (Number(localStorage.gamesok) <= 1) // very recent player
-          || regular_cond )
-        && gameOnGoing() && ((currentAttemptNumber <= arrow_shown_thld_2) || ((currentAttemptNumber == arrow_shown_thld_2+1) && (currentCode == 0)))
+   if ( arrow_regular_cond()
+        && gameOnGoing() && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == 0)))
         && is_there_a_color_being_selected() ) {
      return column_of_color_being_selected * 100 + color_being_selected;
    }
@@ -3306,8 +3308,8 @@ function draw_graphic_bis() {
       main_graph_update_needed = true;
     }
 
-    let draw_color_selection_condition_1 = (nbGamesPlayedAndWon == 0) && gameOnGoing() && (currentAttemptNumber <= 2) && (nbColorSelections < 3) && (nbOfStatsFilled_NbPossibleCodes >= 1);
-    let draw_color_selection_condition_2 = (currentAttemptNumber == 1) && (nbColorSelections == 0); // subcase of draw_color_selection_condition_1
+    let draw_color_selection_condition_1 = arrow_regular_cond() && gameOnGoing() && (currentAttemptNumber <= 2) && (nbColorSelections < 3) && (nbOfStatsFilled_NbPossibleCodes >= 1);
+    let draw_color_selection_condition_2 = draw_color_selection_condition_1 && (currentAttemptNumber == 1) && (nbColorSelections == 0);
     if ( (draw_color_selection_condition_1 != last_draw_color_selection_condition_1)
          || (draw_color_selection_condition_2 != last_draw_color_selection_condition_2) ) {
       main_graph_update_needed = true;
@@ -4103,26 +4105,21 @@ function draw_graphic_bis() {
         try {
           ctx.font = medium_bold_font;
           if (draw_color_selection_condition_1) {
+            let select_colors_displayed = false;
             let x_delta = 0.80;
-            if (!displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+0.75*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.5*x_delta,
+            if (!displayString("Select colors", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+0.75*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5, +nb_possible_codes_width+optimal_width+tick_width-1.5*x_delta,
                                (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 1, true, 0, false, true, true /* bottom-right bubble */)) {
-              if (displayString("Select colors here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
-                                (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true /* bottom-right bubble */)) {            
-                if (draw_color_selection_condition_2) {
-                  displayString("Your code is here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
-                                (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false /* top-left bubble */);
-                }
-              }
-              else {
-                displayString("Select colors!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
-                              (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true /* bottom-right bubble */);
+              if (displayString("Select colors", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, nbMaxAttemptsToDisplay-1.75, nbColumns*2-1.5*x_delta,
+                                 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, true /* bottom-right bubble */)) {
+                  select_colors_displayed = true;
               }
             }
             else {
-              if (draw_color_selection_condition_2) {
-                displayString("Your code is here!", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
-                              (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false /* top-left bubble */);
-              }
+              select_colors_displayed = true;
+            }
+            if (draw_color_selection_condition_2 && select_colors_displayed) {
+              displayString("Your code", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
+                            (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false /* top-left bubble */);
             }
           }
         }
@@ -4543,7 +4540,7 @@ function draw_graphic_bis() {
       drawArrow(ctx, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
     }
     selected_color_and_column_arrow_previously_shown = selected_color_and_column_arrow_to_be_shown();
-    if ((currentAttemptNumber == arrow_shown_thld_1+1) && (currentCode != 0)) {
+    if ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode != 0)) {
       localStorage.arrow_shown_date = currentDate();
     }
 
