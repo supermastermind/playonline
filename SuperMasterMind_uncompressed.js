@@ -3397,14 +3397,14 @@ function draw_graphic_bis() {
 
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
       measurePreciseTextHeight("0", basic_bold_font, str_meas_out);
-      font_array__str_height[basic_bold_font] = str_meas_out.str_height;
-      font_array__empty_space_before_str[basic_bold_font] = str_meas_out.empty_space_before_str;
+      font_array__str_height[basic_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       if (android_appli) { // zoom effect on android appli
         code_bold_font = "bold " + Math.round(font_size*1.1) + "px " + fontFamily;
         measurePreciseTextHeight("0", code_bold_font, str_meas_out);
-        font_array__str_height[code_bold_font] = str_meas_out.str_height;
-        font_array__empty_space_before_str[code_bold_font] = str_meas_out.empty_space_before_str;
+        font_array__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+        font_array__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
       }
       else {
         code_bold_font = basic_bold_font;
@@ -3412,13 +3412,13 @@ function draw_graphic_bis() {
 
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
-      font_array__str_height[medium_bold_font] = str_meas_out.str_height;
-      font_array__empty_space_before_str[medium_bold_font] = str_meas_out.empty_space_before_str;
+      font_array__str_height[medium_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array__empty_space_before_str[medium_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       medium_bold_font_2 = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", medium_bold_font_2, str_meas_out);
-      font_array__str_height[medium_bold_font_2] = str_meas_out.str_height;
-      font_array__empty_space_before_str[medium_bold_font_2] = str_meas_out.empty_space_before_str;
+      font_array__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
       
       if (!showPossibleCodesMode) {
         stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
@@ -3427,8 +3427,8 @@ function draw_graphic_bis() {
         stats_bold_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily;
       }
       measurePreciseTextHeight("0", stats_bold_font, str_meas_out);
-      font_array__str_height[stats_bold_font] = str_meas_out.str_height;
-      font_array__empty_space_before_str[stats_bold_font] = str_meas_out.empty_space_before_str;
+      font_array__str_height[stats_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array__empty_space_before_str[stats_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       // Draw main game table
       // ********************
@@ -4711,11 +4711,11 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   let y_0_next;
   let str_width = ctx.measureText(str).width;
   let ctx_font_str = ctx.font;
-  let str_height = font_array__str_height[ctx_font_str];
+  let str_height = font_array__str_height[ctx_font_str.replaceAll(" ","")];
   if (str_height == undefined) {
     if ((safariMode || ((!android_appli) && mobileMode && (!androidMode))) && (ctx_font_str.indexOf("bold") == -1)) { // Known Safari bug: "bold" prefix may disappear
       ctx_font_str = "bold " + ctx_font_str.trim(); // add "bold" prefix manually
-      str_height = font_array__str_height[ctx_font_str];
+      str_height = font_array__str_height[ctx_font_str.replaceAll(" ","")];
     }
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if (str_height == undefined) {
@@ -4725,7 +4725,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
       str_height = parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor; // (defense)
     }
   }
-  let empty_space_before_str = font_array__empty_space_before_str[ctx_font_str];
+  let empty_space_before_str = font_array__empty_space_before_str[ctx_font_str.replaceAll(" ","")];
   // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
   if (empty_space_before_str == undefined) {
     if (!safariMode || !mobileMode || androidMode) {
