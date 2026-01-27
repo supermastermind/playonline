@@ -2693,7 +2693,7 @@ measurePreciseTextHeight("0", basic_bold_font, str_meas_out);
 font_array__str_height[basic_bold_font.replaceAll(" ","")]=str_meas_out.str_height;
 font_array__empty_space_before_str[basic_bold_font.replaceAll(" ","")]=str_meas_out.empty_space_before_str;
 if(android_appli){
-code_bold_font="bold "+Math.round(font_size*1.1)+"px "+fontFamily;
+code_bold_font="bold "+Math.round(font_size*((nbColors < 10) ? 1.1 : 1.05))+"px "+fontFamily;
 measurePreciseTextHeight("0", code_bold_font, str_meas_out);
 font_array__str_height[code_bold_font.replaceAll(" ","")]=str_meas_out.str_height;
 font_array__empty_space_before_str[code_bold_font.replaceAll(" ","")]=str_meas_out.empty_space_before_str;
