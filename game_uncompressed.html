@@ -3146,7 +3146,7 @@
             }
             localStorage.nbTimesShareLocWarning = Number(localStorage.nbTimesShareLocWarning) + 1;
             if (Number(localStorage.nbTimesShareLocWarning) <= 2) { // 2 because may have been accepted at first location permission request
-              alert("Please share your location to have it stored with your scores.\nLocation permissions are visible in your browser Settings menu.");
+              alert("Please share your location so it can be stored along with your scores. Location permissions are visible in your browser Settings menu.");
             }
             setTimeout("attempt_HTML_geolocation();", 44);
             localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();

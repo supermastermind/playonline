@@ -3962,12 +3962,9 @@ displayString(getColorToDisplay(color), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
 }
 else{
-let res=displayString(getColorToDisplay("\u2009"+color+"\u2009" ), x_cell, y_cell, 2,
-foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, true, 0);
-if(!res){
 displayString(getColorToDisplay("\u272D"), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
-}}}
+}}
 else{
 if(secretCodeCase){
 let foregd_color=(modernDisplay ? darkGray : lightGray);

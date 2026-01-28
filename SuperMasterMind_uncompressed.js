@@ -4980,12 +4980,8 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
                     foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
     }
     else {
-      let res = displayString(getColorToDisplay("\u2009" /* (thin space) */ + color + "\u2009" /* (thin space) */), x_cell, y_cell, 2,
-                              foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, true, 0);
-      if (!res) {
-        displayString(getColorToDisplay("\u272D"), x_cell, y_cell, 2,
-                      foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
-      }
+      displayString(getColorToDisplay("\u272D"), x_cell, y_cell, 2,
+                    foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
     }
   }
   else {
