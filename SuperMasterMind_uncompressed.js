@@ -3401,7 +3401,7 @@ function draw_graphic_bis() {
       font_array__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       if (android_appli) { // zoom effect on android appli
-        code_bold_font = "bold " + Math.round(font_size*((nbColors < 10) ? 1.1 : 1.05)) + "px " + fontFamily;
+        code_bold_font = "bold " + Math.round(font_size*1.1) + "px " + fontFamily;
         measurePreciseTextHeight("0", code_bold_font, str_meas_out);
         font_array__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
         font_array__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
@@ -4980,10 +4980,10 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
                     foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
     }
     else {
-      let res = displayString(getColorToDisplay(color), x_cell, y_cell, 2,
+      let res = displayString(getColorToDisplay("\u2009" /* (thin space) */ + color + "\u2009" /* (thin space) */), x_cell, y_cell, 2,
                               foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, true, 0);
       if (!res) {
-        displayString(getColorToDisplay(color-10), x_cell, y_cell, 2,
+        displayString(getColorToDisplay("\u272D"), x_cell, y_cell, 2,
                       foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
       }
     }
