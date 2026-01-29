@@ -293,6 +293,7 @@ let specialStrTable =
     "\u23F0", // alarm clock
     "\u231B"  // hourglass
   ];
+let outlinedStar = "\u272D";
 
 let specialColorTable =
   [
@@ -364,7 +365,9 @@ let defaultFont = "10px " + fontFamily;
 let min_font_size = 7; // (font size below 7 may not be easily readable in canvas)
 let max_font_size = 700;
 let font_array__str_height = new Array(0);
+let font_array_small_char__str_height = new Array(0);
 let font_array__empty_space_before_str = new Array(0);
+let font_array_small_char__empty_space_before_str = new Array(0);
 let basic_bold_font = defaultFont;
 let code_bold_font = defaultFont;
 let medium_bold_font = defaultFont;
@@ -3391,20 +3394,30 @@ function draw_graphic_bis() {
 
       ctx.font = ctx_font_ini;
       font_array__str_height = null;
+      font_array_small_char__str_height = null;
       font_array__empty_space_before_str = null;
+      font_array_small_char__empty_space_before_str = null;
       font_array__str_height = new Array(0);
+      font_array_small_char__str_height = new Array(0);
       font_array__empty_space_before_str = new Array(0);
+      font_array_small_char__empty_space_before_str = new Array(0);
 
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
       measurePreciseTextHeight("0", basic_bold_font, str_meas_out);
       font_array__str_height[basic_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
       font_array__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight(outlinedStar, basic_bold_font, str_meas_out);
+      font_array_small_char__str_height[basic_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array_small_char__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       if (android_appli) { // zoom effect on android appli
         code_bold_font = "bold " + Math.round(font_size*1.1) + "px " + fontFamily;
         measurePreciseTextHeight("0", code_bold_font, str_meas_out);
         font_array__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
         font_array__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+        measurePreciseTextHeight(outlinedStar, code_bold_font, str_meas_out);
+        font_array_small_char__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+        font_array_small_char__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
       }
       else {
         code_bold_font = basic_bold_font;
@@ -3414,12 +3427,18 @@ function draw_graphic_bis() {
       measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
       font_array__str_height[medium_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
       font_array__empty_space_before_str[medium_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight(outlinedStar, medium_bold_font, str_meas_out);
+      font_array_small_char__str_height[medium_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array_small_char__empty_space_before_str[medium_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       medium_bold_font_2 = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", medium_bold_font_2, str_meas_out);
       font_array__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.str_height;
       font_array__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-      
+      measurePreciseTextHeight(outlinedStar, medium_bold_font_2, str_meas_out);
+      font_array_small_char__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array_small_char__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+
       if (!showPossibleCodesMode) {
         stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       }
@@ -3429,6 +3448,9 @@ function draw_graphic_bis() {
       measurePreciseTextHeight("0", stats_bold_font, str_meas_out);
       font_array__str_height[stats_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
       font_array__empty_space_before_str[stats_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight(outlinedStar, stats_bold_font, str_meas_out);
+      font_array_small_char__str_height[stats_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array_small_char__empty_space_before_str[stats_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       // Draw main game table
       // ********************
@@ -4711,25 +4733,37 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   let y_0_next;
   let str_width = ctx.measureText(str).width;
   let ctx_font_str = ctx.font;
-  let str_height = font_array__str_height[ctx_font_str.replaceAll(" ","")];
+  
+  let arr_str_height = null;
+  let arr_empty_space_before_str = null;
+  if (str != outlinedStar) {
+    arr_str_height = font_array__str_height;
+    arr_empty_space_before_str = font_array__empty_space_before_str;
+  }
+  else {
+    arr_str_height = font_array_small_char__str_height;
+    arr_empty_space_before_str = font_array_small_char__empty_space_before_str;
+  }
+
+  let str_height = arr_str_height[ctx_font_str.replaceAll(" ","")];
   if (str_height == undefined) {
     if ((safariMode || ((!android_appli) && mobileMode && (!androidMode))) && (ctx_font_str.indexOf("bold") == -1)) { // Known Safari bug: "bold" prefix may disappear
       ctx_font_str = "bold " + ctx_font_str.trim(); // add "bold" prefix manually
-      str_height = font_array__str_height[ctx_font_str.replaceAll(" ","")];
+      str_height = arr_str_height[ctx_font_str.replaceAll(" ","")];
     }
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if (str_height == undefined) {
       if (!safariMode || !mobileMode || androidMode) {
-        displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(font_array__str_height), new Error().stack);
+        displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_str_height), new Error().stack);
       }
       str_height = parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor; // (defense)
     }
   }
-  let empty_space_before_str = font_array__empty_space_before_str[ctx_font_str.replaceAll(" ","")];
+  let empty_space_before_str = arr_empty_space_before_str[ctx_font_str.replaceAll(" ","")];
   // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
   if (empty_space_before_str == undefined) {
     if (!safariMode || !mobileMode || androidMode) {
-      displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(font_array__empty_space_before_str), new Error().stack);
+      displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_empty_space_before_str), new Error().stack);
     }
     empty_space_before_str = 0; // (defense)
   }
@@ -4980,7 +5014,7 @@ function displayColor(color, x_cell, y_cell, ctx, secretCodeCase, displayColorMo
                     foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
     }
     else {
-      displayString(getColorToDisplay("\u272D"), x_cell, y_cell, 2,
+      displayString(getColorToDisplay(outlinedStar), x_cell, y_cell, 2,
                     foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
     }
   }
