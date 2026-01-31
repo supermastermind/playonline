@@ -2534,7 +2534,7 @@ currentCode=-1;
 gameWon=true;
 nbGamesPlayed++;
 nbGamesPlayedAndWon++;
-setTimeout("triggerVictoryAnimation();", 100);
+setTimeout("triggerVictoryAnimation();", 10);
 setLightGray();
 if(!(smmCodeHandler.nbEmptyColors(sCodeRevealed) < nbColumns)){
 switch (nbColumns){
