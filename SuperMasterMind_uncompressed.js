@@ -3207,7 +3207,7 @@ function draw_graphic_bis() {
           gameWon = true;
           nbGamesPlayed++;
           nbGamesPlayedAndWon++;
-          setTimeout("triggerVictoryAnimation();", 150);
+          setTimeout("triggerVictoryAnimation();", 100);
           setLightGray(); // clearer stats
           if (!(smmCodeHandler.nbEmptyColors(sCodeRevealed) < nbColumns)) { // not helped
             switch (nbColumns) {
