@@ -275,6 +275,26 @@
       * {
         touch-action: manipulation; /* prevent zooming and other default touch behaviours for all elements */
       }
+
+      /* Victory animation */
+      #victoryOverlay {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        top:0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.0);
+        z-index:222222;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      #victoryOverlay.show {
+        opacity: 1;
+      }
     </style>
 
     <script src='lib/jquery-3.7.1.min.js'></script>
@@ -569,6 +589,10 @@
     <div id="game_aborted_id" class="game_aborted" style='display:none;' onclick="gameAbortionEnd()">
       <!-- (text will be overridden dynamically) -->
     </div>
+    <div id="victoryOverlay">
+      <img src='img/trophy.png' style='height:10.0vh;'>
+      <canvas id="fireCanvas" style='position:absolute;inset:0;'></canvas>
+    </div>
 
     <!-- HTML controls and canvas -->
 
@@ -685,7 +709,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v33.02"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v33.03"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1109,7 +1133,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.02: " + (localStorage.reloadForCompatibility_v3302 ? localStorage.reloadForCompatibility_v3302 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.03: " + (localStorage.reloadForCompatibility_v3303 ? localStorage.reloadForCompatibility_v3303 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + navigator.userAgent + (android_appli ? "|" + classicUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -3498,6 +3522,70 @@
         debug_game_state = 79.5;
       });
       gamesolver_load_state = 1.5;
+      
+      // Firework particle system
+      function firework(x, y) {
+        let size_coef = window.innerHeight / 600;
+        const particles = [];
+        for (let i = 0; i < 60; i++) {
+          particles.push({
+            x,
+            y,
+            angle: Math.random() * Math.PI * 2,
+            speed: Math.random() * 4 + 2,
+            size: Math.ceil((Math.random() * 3 + 1) * size_coef),
+            life: 30 + Math.random() * 20,
+            color: `hsl(${Math.random() * 360}, 100%, 60%)`
+          });
+        }
+
+        return particles;
+      }
+
+      let activeParticles = [];
+
+      function animate() {
+        let canvas_victory = document.getElementById("fireCanvas");
+        canvas_victory.width = window.innerWidth;
+        canvas_victory.height = window.innerHeight;
+        let ctx = canvas_victory.getContext("2d");
+        ctx.clearRect(0, 0, canvas_victory.width, canvas_victory.height);
+
+        activeParticles.forEach((p, index) => {
+          p.x += Math.cos(p.angle) * p.speed;
+          p.y += Math.sin(p.angle) * p.speed;
+          p.life--;
+
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (p.life <= 0) activeParticles.splice(index, 1);
+        });
+
+        if (activeParticles.length > 0) {
+          requestAnimationFrame(animate);
+        }
+      }
+
+      function triggerFireworks() {
+        const x = window.innerWidth / 2;
+        const y = window.innerHeight / 2;
+        activeParticles.push(...firework(x, y));
+        animate();
+      }
+      
+      function triggerVictoryAnimation() {
+        let overlay = document.getElementById("victoryOverlay");
+        overlay.classList.add("show");
+        triggerFireworks();
+
+        setTimeout(() => {
+          overlay.classList.remove("show");
+        }, 1600);
+      }
+      gamesolver_load_state = 1.7;
     </script>
 
   </body>
