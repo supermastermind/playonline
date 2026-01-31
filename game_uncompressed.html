@@ -3524,7 +3524,7 @@
       gamesolver_load_state = 1.5;
 
       // Firework particle system
-      let animation_time = 1400; // 1.4 second
+      let animation_time = 1500; // 1.5 second
       function firework(x, y) {
         let size_coef = window.innerHeight / 600;
         const particles = [];
@@ -3590,7 +3590,7 @@
 
         setTimeout(() => {
           overlay.classList.remove("show");
-        }, animation_time);
+        }, animation_time + 250);
       }
       gamesolver_load_state = 1.7;
     </script>

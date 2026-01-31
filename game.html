@@ -2937,7 +2937,7 @@ gamesolver_load_state=3.5;
 debug_game_state=79.5;
 });
 gamesolver_load_state=1.5;
-let animation_time=1400;
+let animation_time=1500;
 function firework(x, y){
 let size_coef=window.innerHeight / 600;
 const particles=[];
@@ -2987,7 +2987,7 @@ overlay.classList.add("show");
 triggerFireworks();
 setTimeout(()=>{
 overlay.classList.remove("show");
-}, animation_time);
+}, animation_time+250);
 }
 gamesolver_load_state=1.7;
 </script>
