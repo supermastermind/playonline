@@ -2229,12 +2229,19 @@ ctx.quadraticCurveTo(x, y+height, x, y+height-radius);
 ctx.lineTo(x, y+radius);
 ctx.quadraticCurveTo(x, y, x+radius, y);
 }
-function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient){
+function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_p){
+let apply_gradient=apply_gradient_p;
 if(fill){
-const gradient=ctx.createLinearGradient(x, y, x+width, y+height);
+let gradient;
+try{
+gradient=ctx.createLinearGradient(x, y, x+width, y+height);
 gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.60));
 gradient.addColorStop(0.50 * height / width, ctx.fillStyle);
 gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
+}
+catch (err){
+apply_gradient=false;
+}
 drawRoundedRectBis(ctx, x, y, width, height, radius);
 if(apply_gradient){
 ctx.fillStyle=gradient;
@@ -3817,10 +3824,16 @@ else{
 ctx.strokeStyle=darkGray;
 }
 if(displayVariant==1){
-const gradient=ctx.createLinearGradient(x_0, y_0_next, x_0_next, y_0);
+let gradient;
+try{
+gradient=ctx.createLinearGradient(x_0, y_0_next, x_0_next, y_0);
 gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.40));
 gradient.addColorStop(0.50, ctx.fillStyle);
 gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.70));
+}
+catch (err){
+apply_gradient=false;
+}
 let radius=Math.min(x_0_next-x_0, y_0-y_0_next)/2.5;
 ctx.beginPath();
 ctx.arc(Math.floor((x_0+x_0_next+1)/2),
