@@ -1202,7 +1202,8 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
                && (relative_performances_of_codes_played[i] != -1.00) // not a useless code
                && (relative_performances_of_codes_played[i] != PerformanceUNKNOWN)
                && (relative_performances_of_codes_played[i] != PerformanceNA)
-               && (relative_performances_of_codes_played[i] <= not_so_good_perf) ) { // code played was not so good
+               && (relative_performances_of_codes_played[i] <= not_so_good_perf) // code played was not so good
+               && localStorage.firstname ) { // in first games, demo mode => interesting_attempt_idx_bis
             if (relative_performances_of_codes_played[i] < lowest_significant_relative_performance) {
               lowest_significant_relative_performance = relative_performances_of_codes_played[i];
               interesting_attempt_idx = i;
