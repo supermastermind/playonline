@@ -2376,7 +2376,7 @@
           if ( (nbcolumns == 3) // very easy games
                || helped ) { // games with help
             debug_game_state = 100.20;
-            setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3000); // (see blinking time)
+            setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3500); // (see blinking time)
             debug_game_state = 100.21;
             return; // Do not store scores any longer for very easy games and games with help, to reduce google sheet load [peaks for very easy games]
           }
@@ -2538,7 +2538,7 @@
             }
             if (skip_online_score) {
               debug_game_state = 100.30;
-              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3500);
               debug_game_state = 100.31;
               return;
             }
@@ -2551,7 +2551,7 @@
               if ((gamesok <= 120) && ((gamesok % 10) == 9)) { // 9 (instead of 0) avoids conflicts with other dialogs
                 setTimeout("alert('As you did not enter your first name or nickname, your scores will only be stored online occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
               }
-              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+              setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3500);
               debug_game_state = 100.33;
               return;
             }
@@ -2563,7 +2563,7 @@
                         && localStorage.nbTimesFirstnameAsked && (Number(localStorage.nbTimesFirstnameAsked) >= 2) && (!localStorage.firstname))
                   ) {
             debug_game_state = 100.34;
-            setTimeout("showPossibleCodesButtonClick(false, -2, true);", 2444);
+            setTimeout("showPossibleCodesButtonClick(false, -2, true);", 3500);
             debug_game_state = 100.35;
             return;
           }

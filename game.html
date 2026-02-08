@@ -2008,7 +2008,7 @@ let deltagames=-1;
 if((nbcolumns==3)
 ||helped ){
 debug_game_state=100.20;
-setTimeout("showPossibleCodesButtonClick(false,-2, true);", 3000);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 3500);
 debug_game_state=100.21;
 return;
 }
@@ -2157,7 +2157,7 @@ throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}
 if(skip_online_score){
 debug_game_state=100.30;
-setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 3500);
 debug_game_state=100.31;
 return;
 }}
@@ -2167,7 +2167,7 @@ debug_game_state=100.32;
 if((gamesok <=120)&&((gamesok % 10)==9)){
 setTimeout("alert('As you did not enter your first name or nickname, your scores will only be stored online occasionally. And your total scores and performances after consecutive wins will not be calculated.');", 444);
 }
-setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 3500);
 debug_game_state=100.33;
 return;
 }}
@@ -2176,7 +2176,7 @@ else if((gamesok < min_gamesok_for_firstname-3)
 &&localStorage.nbTimesFirstnameAsked&&(Number(localStorage.nbTimesFirstnameAsked) >=2)&&(!localStorage.firstname))
 ){
 debug_game_state=100.34;
-setTimeout("showPossibleCodesButtonClick(false,-2, true);", 2444);
+setTimeout("showPossibleCodesButtonClick(false,-2, true);", 3500);
 debug_game_state=100.35;
 return;
 }

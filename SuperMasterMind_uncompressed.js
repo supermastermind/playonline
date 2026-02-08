@@ -4233,9 +4233,9 @@ function draw_graphic_bis() {
                                    darkGray, "", ctx, false, true, 0, true, 0)) {
                   if (!displayString("+\u2009" + "1" + "\u2009code\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                      darkGray, "", ctx, false, true, 0, true, 0)) {
-                    if (!displayString("+\u2009" + "1" + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
+                    if (!displayString("+" + "1" + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                        darkGray, "", ctx, false, true, 0, true, 0)) {
-                      displayString("\u2009" + "1" + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
+                      displayString(offset_str, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                     darkGray, "", ctx, false, true, 0, true, 0);
                     }
                   }
@@ -4246,7 +4246,7 @@ function draw_graphic_bis() {
                                   darkGray, "", ctx, false, true, 0, true, 0)) {
                   if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009codes\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                      darkGray, "", ctx, false, true, 0, true, 0)) {
-                    if (!displayString("+\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
+                    if (!displayString("+" + (nbOfCodes-nbOfCodesListed) + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                        darkGray, "", ctx, false, true, 0, true, 0)) {
                       if(!displayString("\u2009" + (nbOfCodes-nbOfCodesListed) + "\u2009" + offset_str + "\u2009", 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                                         darkGray, "", ctx, false, true, 0, true, 0)) {
