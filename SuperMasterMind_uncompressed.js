@@ -1958,31 +1958,27 @@ function resetGameAttributes(nbColumnsSelected) {
   if (typeof currentGameNbColumns !== 'undefined') {
     currentGameNbColumns = nbColumns;
   }
+  document.title = "Code breaker";
   switch (nbColumns) {
     case 3:
       nbColors = Math.max(nbMinColors, nominalGameNbColors - 3);
       nbMaxAttempts = nominalGameNbMaxAttempts - 4;
-      document.title = "Very easy game";
       break;
     case 4:
       nbColors = Math.max(nbMinColors, nominalGameNbColors - 2);
       nbMaxAttempts = nominalGameNbMaxAttempts - 4;
-      document.title = "Master Mind";
       break;
     case 5: // nominalGameNbColumns
       nbColors = nominalGameNbColors;
       nbMaxAttempts = nominalGameNbMaxAttempts;
-      document.title = "Super Master Mind";
       break;
     case 6:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 1);
       nbMaxAttempts = nominalGameNbMaxAttempts + 1;
-      document.title = "Advanced Master Mind";
       break;
     case 7:
       nbColors = Math.min(nbMaxColors, nominalGameNbColors + 2);
       nbMaxAttempts = nominalGameNbMaxAttempts + 2;
-      document.title = "Ultimate Master Mind";
       break;
     default:
       throw new Error("invalid selection of number of columns: " + nbColumns + " (1)");
@@ -3864,11 +3860,8 @@ function draw_graphic_bis() {
           ctx.font = basic_bold_font;
           if (!displayString("Secret code " + "\u2009" /* (thin space) */, 0, nbMaxAttemptsToDisplay+transition_height, attempt_nb_width+(70*(nbColumns+1))/100,
                              (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 2, true, 0)) {
-            if (!displayString("\u2009Code\u2009", attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
-                               (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0)) {
-              displayString("\u2009\u2B50\u2009" /* star */, attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
-                           (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0);
-            }
+            displayString("\u2009\u2B50\u2009" /* star */, attempt_nb_width, nbMaxAttemptsToDisplay+transition_height, (70*(nbColumns+1))/100,
+                          (modernDisplay || (currentAttemptNumber == 1) ? darkGray : "orange"), "", ctx, false, true, 0, true, 0);
           }
           ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
           if (gameOnGoing()) {
@@ -4175,6 +4168,7 @@ function draw_graphic_bis() {
         }
         if ( (currentPossibleCodeShown >= 1) && (currentPossibleCodeShown <= nbMaxAttempts) && (nbOfCodes>=1) ) {
 
+          let nb_only = false;
           ctx.font = basic_bold_font;
           if (nbOfCodes == 1) {
             res = displayString("1 possible code ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
@@ -4185,6 +4179,7 @@ function draw_graphic_bis() {
               if (!res) {
                 res = displayString("1", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                     darkGray, "", ctx, false, true, 0, true, 0);
+                nb_only = res;
               }
             }
           }
@@ -4197,6 +4192,7 @@ function draw_graphic_bis() {
               if (!res) {
                 res = displayString(String(nbOfCodes), 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1, attempt_nb_width+(70*(nbColumns+1))/100,
                                     darkGray, "", ctx, false, true, 0, true, 0);
+                nb_only = res;
               }
             }
           }
@@ -4215,8 +4211,14 @@ function draw_graphic_bis() {
               currentPossibleCodeShownStr = currentPossibleCodeShown + "th";
           }
           if (res) {
-            displayString("at " + currentPossibleCodeShownStr + " attempt  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2, attempt_nb_width+(70*(nbColumns+1))/100,
-                          darkGray, "", ctx, false, true, 0, true, 0);
+            if (nb_only) {
+              displayString(((nbOfCodes == 1) ? "code" : "codes"), 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2, attempt_nb_width+(70*(nbColumns+1))/100,
+                            darkGray, "", ctx, false, true, 0, true, 0);
+            }
+            else {
+              displayString("at " + currentPossibleCodeShownStr + " attempt  ", 0, nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-2, attempt_nb_width+(70*(nbColumns+1))/100,
+                            darkGray, "", ctx, false, true, 0, true, 0);
+            }
             if (nbOfCodesListed < nbOfCodes) {
               ctx.font = basic_bold_font;
               let offset_str;
@@ -4447,7 +4449,7 @@ function draw_graphic_bis() {
           showPossibleCodesButtonObject.className = "button disabled";
         }
         else {
-          if (showPossibleCodesButtonAlreadyBlinked) {
+          if (showPossibleCodesButtonAlreadyBlinked || gameWon) {
             showPossibleCodesButtonObject.className = "button";
           }
           else {
