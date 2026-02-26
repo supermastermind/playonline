@@ -2626,7 +2626,7 @@ throw new Error("invalid game_id_for_initGameSolver value at next attempt: "+gam
 if(selected_color_and_column_arrow_previously_shown!=selected_color_and_column_arrow_to_be_shown()){
 main_graph_update_needed=true;
 }
-let draw_color_selection_condition_1=arrow_regular_cond()&&gameOnGoing()&&(currentAttemptNumber <=2)&&(nbColorSelections < 3)&&(nbOfStatsFilled_NbPossibleCodes >=1);
+let draw_color_selection_condition_1=arrow_regular_cond()&&gameOnGoing()&&(currentAttemptNumber <=2)&&(nbColorSelections < 2)&&(nbOfStatsFilled_NbPossibleCodes >=1);
 let draw_color_selection_condition_2=draw_color_selection_condition_1&&(currentAttemptNumber==1)&&(nbColorSelections==0);
 if((draw_color_selection_condition_1!=last_draw_color_selection_condition_1)
 ||(draw_color_selection_condition_2!=last_draw_color_selection_condition_2) ){

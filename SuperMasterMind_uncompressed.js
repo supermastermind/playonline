@@ -3315,7 +3315,7 @@ function draw_graphic_bis() {
       main_graph_update_needed = true;
     }
 
-    let draw_color_selection_condition_1 = arrow_regular_cond() && gameOnGoing() && (currentAttemptNumber <= 2) && (nbColorSelections < 3) && (nbOfStatsFilled_NbPossibleCodes >= 1);
+    let draw_color_selection_condition_1 = arrow_regular_cond() && gameOnGoing() && (currentAttemptNumber <= 2) && (nbColorSelections < 2) && (nbOfStatsFilled_NbPossibleCodes >= 1);
     let draw_color_selection_condition_2 = draw_color_selection_condition_1 && (currentAttemptNumber == 1) && (nbColorSelections == 0);
     if ( (draw_color_selection_condition_1 != last_draw_color_selection_condition_1)
          || (draw_color_selection_condition_2 != last_draw_color_selection_condition_2) ) {
