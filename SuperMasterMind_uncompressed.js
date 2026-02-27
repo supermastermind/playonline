@@ -229,6 +229,7 @@ let column_of_color_being_selected = -1;
 let last_color_being_selected_time = 0;
 let selected_color_and_column_arrow_previously_shown = -1;
 let highlight_selected_text_param = false; // (saves a function parameter)
+let draw_shadow = false; // (saves a function parameter)
 
 let attempt_nb_width = 2;
 let nb_possible_codes_width = 5;
@@ -2853,6 +2854,16 @@ function drawRoundedRectBis(ctx, x, y, width, height, radius) {
 
 function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_p) {
   let apply_gradient = apply_gradient_p;
+
+  if (draw_shadow) {
+    // Save context to ensure shadow settings don't bleed into other drawings
+    ctx.save();
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+    ctx.shadowOffsetX = ctx.lineWidth*2.5; // Moves shadow to the right
+    ctx.shadowOffsetY = ctx.lineWidth*2.5;  // Moves shadow to the bottom
+  }
+
   if (fill) {
     let gradient;
     try {
@@ -2869,11 +2880,21 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
       ctx.fillStyle = gradient;
     }
     ctx.fill();
+
+    if (draw_shadow) {
+      // Disable shadow before stroking to avoid a "double shadow" effect on the border
+      ctx.shadowColor = "transparent";
+    }
     ctx.stroke(); // draw border using ctx.lineWidth
   }
   else {
     drawRoundedRectBis(ctx, x, y, width, height, radius);
     ctx.stroke(); // draw border using ctx.lineWidth
+  }
+  
+  if (draw_shadow) {
+    // Restore the context to reset shadow properties for the next object
+    ctx.restore();
   }
 }
 
@@ -3334,6 +3355,8 @@ function draw_graphic_bis() {
 
       let x_0, y_0, x_1, y_1;
 
+      draw_shadow = true; // shadow only drawn at first display to avoid a "double shadow" effect
+
       if (modernDisplay) {
         ctx.fillStyle = myTableObject.style.backgroundColor;
         ctx.fillRect(0, 0, current_width, current_height);
@@ -3565,7 +3588,7 @@ function draw_graphic_bis() {
       // **************************************
 
       ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
-      for (let i = 1; i < currentAttemptNumber; i++) {
+      for (let i = currentAttemptNumber-1; i >= 1; i--) {
         displayCode(codesPlayed[i-1], i-1, ctx, false, gameOnGoing());
       }
 
@@ -4500,7 +4523,7 @@ function draw_graphic_bis() {
       }
 
       ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
-      for (let color = 0; color < nbColors; color++) {
+      for (let color = nbColors-1; color >= 0; color--) {
         for (let col = 0; col < nbColumns; col++) {
           color_selection_code = smmCodeHandler.setColor(color_selection_code, color+1, col+1);
         }
@@ -4510,6 +4533,8 @@ function draw_graphic_bis() {
 
     // Display current code and remaining settings
     // *******************************************
+
+    draw_shadow = false;
 
     if (gameOnGoing()) { // playing phase
       ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
@@ -4589,6 +4614,8 @@ function draw_graphic_bis() {
     draw_exception = true;
     displayGUIError("draw error: " + err, err.stack);
   }
+
+  draw_shadow = false;
 
 }
 
@@ -4881,7 +4908,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
             if (backgroundColor == "") { // N.A. background
               displayGUIError("displayString error: N.A. background #2", new Error().stack);
             }
-            ctx.fillStyle = backgroundColor;
+            ctx.fillStyle = averageColor(backgroundColor, "#000000", 0.9);
             let half_hidding_rect_width = Math.max(8*(x_0_next - x_0)/100, str_width/2+2);
             ctx.fillRect(x_0 + (x_0_next - x_0)/2 - half_hidding_rect_width, y_0_next + 3, 2*half_hidding_rect_width+2, y_0 - y_0_next - 4);
         }

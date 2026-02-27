@@ -164,6 +164,7 @@ let column_of_color_being_selected=-1;
 let last_color_being_selected_time=0;
 let selected_color_and_column_arrow_previously_shown=-1;
 let highlight_selected_text_param=false;
+let draw_shadow=false;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
 let optimal_width=4;
@@ -2227,6 +2228,13 @@ ctx.quadraticCurveTo(x, y, x+radius, y);
 }
 function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_p){
 let apply_gradient=apply_gradient_p;
+if(draw_shadow){
+ctx.save();
+ctx.shadowBlur=6;
+ctx.shadowColor="rgba(0, 0, 0, 0.8)";
+ctx.shadowOffsetX=ctx.lineWidth*2.5;
+ctx.shadowOffsetY=ctx.lineWidth*2.5;
+}
 if(fill){
 let gradient;
 try{
@@ -2243,11 +2251,17 @@ if(apply_gradient){
 ctx.fillStyle=gradient;
 }
 ctx.fill();
+if(draw_shadow){
+ctx.shadowColor="transparent";
+}
 ctx.stroke();
 }
 else{
 drawRoundedRectBis(ctx, x, y, width, height, radius);
 ctx.stroke();
+}
+if(draw_shadow){
+ctx.restore();
 }}
 function drawArrow(ctx, fromX, fromY, toX, toY, width){
 const headlen=width*1.75;
@@ -2637,6 +2651,7 @@ last_draw_color_selection_condition_2=draw_color_selection_condition_2;
 let nbMaxAttemptsToDisplay=((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) : currentAttemptNumber-1);
 if(main_graph_update_needed){
 let x_0, y_0, x_1, y_1;
+draw_shadow=true;
 if(modernDisplay){
 ctx.fillStyle=myTableObject.style.backgroundColor;
 ctx.fillRect(0, 0, current_width, current_height);
@@ -2837,7 +2852,7 @@ if(x_1!=get_x_pixel(x_max)){
 drawLine(ctx, x_0, y_0, x_1, y_1);
 }
 ctx.font=(showPossibleCodesMode ? basic_bold_font : code_bold_font);
-for (let i=1;i < currentAttemptNumber;i++){
+for (let i=currentAttemptNumber-1;i >=1;i--){
 displayCode(codesPlayed[i-1], i-1, ctx, false, gameOnGoing());
 }
 ctx.font=basic_bold_font;
@@ -3569,12 +3584,13 @@ else{
 ctx.fillStyle="";
 }
 ctx.font=(showPossibleCodesMode ? basic_bold_font : code_bold_font);
-for (let color=0;color < nbColors;color++){
+for (let color=nbColors-1;color >=0;color--){
 for (let col=0;col < nbColumns;col++){
 color_selection_code=smmCodeHandler.setColor(color_selection_code, color+1, col+1);
 }
 displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
 }}
+draw_shadow=false;
 if(gameOnGoing()){
 ctx.font=(showPossibleCodesMode ? basic_bold_font : code_bold_font);
 currentCodeColorMode=-1;
@@ -3640,7 +3656,9 @@ setTimeout("displayRevealSecretColorHintIfNeeded();", 44);
 catch (err){
 draw_exception=true;
 displayGUIError("draw error: "+err, err.stack);
-}}
+}
+draw_shadow=false;
+}
 function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_width, str_height){
 ctx.textAlign="start";
 ctx.textBaseline="top";
@@ -3883,7 +3901,7 @@ if(displayVariant!=1){
 if(backgroundColor==""){
 displayGUIError("displayString error: N.A. background #2", new Error().stack);
 }
-ctx.fillStyle=backgroundColor;
+ctx.fillStyle=averageColor(backgroundColor, "#000000", 0.9);
 let half_hidding_rect_width=Math.max(8*(x_0_next-x_0)/100, str_width/2+2);
 ctx.fillRect(x_0+(x_0_next-x_0)/2-half_hidding_rect_width, y_0_next+3, 2*half_hidding_rect_width+2, y_0-y_0_next-4);
 }}
