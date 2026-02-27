@@ -2860,8 +2860,8 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
     ctx.save();
     ctx.shadowBlur = 6;
     ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
-    ctx.shadowOffsetX = ctx.lineWidth*2.5; // Moves shadow to the right
-    ctx.shadowOffsetY = ctx.lineWidth*2.5;  // Moves shadow to the bottom
+    ctx.shadowOffsetX = width*0.065; // Moves shadow to the right
+    ctx.shadowOffsetY = height*0.065;  // Moves shadow to the bottom
   }
 
   if (fill) {

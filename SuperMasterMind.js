@@ -2232,8 +2232,8 @@ if(draw_shadow){
 ctx.save();
 ctx.shadowBlur=6;
 ctx.shadowColor="rgba(0, 0, 0, 0.8)";
-ctx.shadowOffsetX=ctx.lineWidth*2.5;
-ctx.shadowOffsetY=ctx.lineWidth*2.5;
+ctx.shadowOffsetX=width*0.065;
+ctx.shadowOffsetY=height*0.065;
 }
 if(fill){
 let gradient;
