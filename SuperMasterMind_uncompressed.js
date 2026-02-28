@@ -2858,10 +2858,17 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
   if (draw_shadow) {
     // Save context to ensure shadow settings don't bleed into other drawings
     ctx.save();
-    ctx.shadowBlur = 6;
-    ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+    const dpr = window.devicePixelRatio || 1;
+
+    // 1. Scale the BLUR (important for Gaussian thickness). Clamp it to 15 to prevent high-DPI Android lag/glitches
+    ctx.shadowBlur = Math.min(6 * dpr, 15); 
+
+    // 2. DO NOT multiply offsets by dpr here. Since you used ctx.scale(), the engine already did it.
     ctx.shadowOffsetX = width*0.065; // Moves shadow to the right
     ctx.shadowOffsetY = height*0.065;  // Moves shadow to the bottom
+
+    // 3. Keep alpha soft for better mobile blending (<= 0.4)
+    ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
   }
 
   if (fill) {
@@ -2882,6 +2889,10 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
     ctx.fill();
 
     if (draw_shadow) {
+      if (android_appli) {
+        ctx.fill();
+        ctx.fill(); // triple fill to have a darker shadow
+      }
       // Disable shadow before stroking to avoid a "double shadow" effect on the border
       ctx.shadowColor = "transparent";
     }
@@ -3751,6 +3762,8 @@ function draw_graphic_bis() {
         }
       }
 
+      draw_shadow = false;
+      
       let lineWidthIni = ctx.lineWidth;
       ctx.lineWidth = getLineWidth(window.innerHeight, 1); // getGridLineWidth(window.innerHeight);
       ctx.strokeStyle = darkGray;
@@ -3762,6 +3775,8 @@ function draw_graphic_bis() {
       drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, radius, false, false);
       ctx.lineWidth = lineWidthIni;
 
+      draw_shadow = true;
+      
       let HintsThreshold = 5;
       if (!showPossibleCodesMode) {
 
