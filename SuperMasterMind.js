@@ -164,7 +164,6 @@ let column_of_color_being_selected=-1;
 let last_color_being_selected_time=0;
 let selected_color_and_column_arrow_previously_shown=-1;
 let highlight_selected_text_param=false;
-let draw_shadow=false;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
 let optimal_width=4;
@@ -2228,13 +2227,6 @@ ctx.quadraticCurveTo(x, y, x+radius, y);
 }
 function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_p){
 let apply_gradient=apply_gradient_p;
-if(draw_shadow){
-ctx.save();
-ctx.shadowBlur=6;
-ctx.shadowColor="rgba(0, 0, 0, 0.8)";
-ctx.shadowOffsetX=width*0.065;
-ctx.shadowOffsetY=height*0.065;
-}
 if(fill){
 let gradient;
 try{
@@ -2251,17 +2243,11 @@ if(apply_gradient){
 ctx.fillStyle=gradient;
 }
 ctx.fill();
-if(draw_shadow){
-ctx.shadowColor="transparent";
-}
 ctx.stroke();
 }
 else{
 drawRoundedRectBis(ctx, x, y, width, height, radius);
 ctx.stroke();
-}
-if(draw_shadow){
-ctx.restore();
 }}
 function drawArrow(ctx, fromX, fromY, toX, toY, width){
 const headlen=width*1.75;
@@ -2651,7 +2637,6 @@ last_draw_color_selection_condition_2=draw_color_selection_condition_2;
 let nbMaxAttemptsToDisplay=((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) : currentAttemptNumber-1);
 if(main_graph_update_needed){
 let x_0, y_0, x_1, y_1;
-draw_shadow=true;
 if(modernDisplay){
 ctx.fillStyle=myTableObject.style.backgroundColor;
 ctx.fillRect(0, 0, current_width, current_height);
@@ -3590,7 +3575,6 @@ color_selection_code=smmCodeHandler.setColor(color_selection_code, color+1, col+
 }
 displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
 }}
-draw_shadow=false;
 if(gameOnGoing()){
 ctx.font=(showPossibleCodesMode ? basic_bold_font : code_bold_font);
 currentCodeColorMode=-1;
@@ -3656,9 +3640,7 @@ setTimeout("displayRevealSecretColorHintIfNeeded();", 44);
 catch (err){
 draw_exception=true;
 displayGUIError("draw error: "+err, err.stack);
-}
-draw_shadow=false;
-}
+}}
 function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_width, str_height){
 ctx.textAlign="start";
 ctx.textBaseline="top";

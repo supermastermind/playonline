@@ -229,7 +229,6 @@ let column_of_color_being_selected = -1;
 let last_color_being_selected_time = 0;
 let selected_color_and_column_arrow_previously_shown = -1;
 let highlight_selected_text_param = false; // (saves a function parameter)
-let draw_shadow = false; // (saves a function parameter)
 
 let attempt_nb_width = 2;
 let nb_possible_codes_width = 5;
@@ -2854,23 +2853,6 @@ function drawRoundedRectBis(ctx, x, y, width, height, radius) {
 
 function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_p) {
   let apply_gradient = apply_gradient_p;
-
-  if (draw_shadow) {
-    // Save context to ensure shadow settings don't bleed into other drawings
-    ctx.save();
-    const dpr = window.devicePixelRatio || 1;
-
-    // 1. Scale the BLUR (important for Gaussian thickness). Clamp it to 15 to prevent high-DPI Android lag/glitches
-    ctx.shadowBlur = Math.min(6 * dpr, 15); 
-
-    // 2. DO NOT multiply offsets by dpr here. Since you used ctx.scale(), the engine already did it.
-    ctx.shadowOffsetX = width*0.065; // Moves shadow to the right
-    ctx.shadowOffsetY = height*0.065;  // Moves shadow to the bottom
-
-    // 3. Keep alpha soft for better mobile blending (<= 0.4)
-    ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
-  }
-
   if (fill) {
     let gradient;
     try {
@@ -2887,25 +2869,11 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
       ctx.fillStyle = gradient;
     }
     ctx.fill();
-
-    if (draw_shadow) {
-      if (android_appli) {
-        ctx.fill();
-        ctx.fill(); // triple fill to have a darker shadow
-      }
-      // Disable shadow before stroking to avoid a "double shadow" effect on the border
-      ctx.shadowColor = "transparent";
-    }
     ctx.stroke(); // draw border using ctx.lineWidth
   }
   else {
     drawRoundedRectBis(ctx, x, y, width, height, radius);
     ctx.stroke(); // draw border using ctx.lineWidth
-  }
-  
-  if (draw_shadow) {
-    // Restore the context to reset shadow properties for the next object
-    ctx.restore();
   }
 }
 
@@ -3366,8 +3334,6 @@ function draw_graphic_bis() {
 
       let x_0, y_0, x_1, y_1;
 
-      draw_shadow = true; // shadow only drawn at first display to avoid a "double shadow" effect
-
       if (modernDisplay) {
         ctx.fillStyle = myTableObject.style.backgroundColor;
         ctx.fillRect(0, 0, current_width, current_height);
@@ -3762,8 +3728,6 @@ function draw_graphic_bis() {
         }
       }
 
-      draw_shadow = false;
-      
       let lineWidthIni = ctx.lineWidth;
       ctx.lineWidth = getLineWidth(window.innerHeight, 1); // getGridLineWidth(window.innerHeight);
       ctx.strokeStyle = darkGray;
@@ -3775,8 +3739,6 @@ function draw_graphic_bis() {
       drawRoundedRect(ctx, x_0, y_0, x_1 - x_0, y_1 - y_0, radius, false, false);
       ctx.lineWidth = lineWidthIni;
 
-      draw_shadow = true;
-      
       let HintsThreshold = 5;
       if (!showPossibleCodesMode) {
 
@@ -4549,8 +4511,6 @@ function draw_graphic_bis() {
     // Display current code and remaining settings
     // *******************************************
 
-    draw_shadow = false;
-
     if (gameOnGoing()) { // playing phase
       ctx.font = (showPossibleCodesMode ? basic_bold_font : code_bold_font);
       currentCodeColorMode = -1;
@@ -4629,8 +4589,6 @@ function draw_graphic_bis() {
     draw_exception = true;
     displayGUIError("draw error: " + err, err.stack);
   }
-
-  draw_shadow = false;
 
 }
 
