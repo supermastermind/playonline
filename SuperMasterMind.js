@@ -2230,8 +2230,8 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
 let apply_gradient=apply_gradient_p;
 if(fill){
 if(draw_shadow&&!modernDisplay){
-const shadowOffsetX=width*0.05;
-const shadowOffsetY=height*0.05;
+const shadowOffsetX=width*0.07;
+const shadowOffsetY=height*0.07;
 const shadowOpacity=averageColor(legacy_backgroundColor_base_color, "#000000", 0.60);
 ctx.save();
 ctx.fillStyle=shadowOpacity;
