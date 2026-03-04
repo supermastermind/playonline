@@ -2857,8 +2857,8 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
     let gradient;
     try {
       gradient = ctx.createLinearGradient(x, y, x + width, y + height);
-      gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.60));
-      gradient.addColorStop(0.50 * height / width, ctx.fillStyle);
+      gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.00));
+      gradient.addColorStop(0.275 * height / width, ctx.fillStyle);
       gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
     }
     catch (err) { // error observed on Safari: Failed to execute 'addColorStop' on 'CanvasGradient': The provided value (-0.125) is outside the range (0.0, 1.0)
@@ -4823,9 +4823,9 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
             let gradient;
             try {
               gradient = ctx.createLinearGradient(x_0, y_0_next, x_0_next, y_0);
-              gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.40));
+              gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.00));
               gradient.addColorStop(0.50, ctx.fillStyle);
-              gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.70));
+              gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
             }
             catch (err) { // error observed on Safari: Failed to execute 'addColorStop' on 'CanvasGradient': The provided value (-0.125) is outside the range (0.0, 1.0)
               apply_gradient = false;

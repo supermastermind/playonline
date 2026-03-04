@@ -2231,8 +2231,8 @@ if(fill){
 let gradient;
 try{
 gradient=ctx.createLinearGradient(x, y, x+width, y+height);
-gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.60));
-gradient.addColorStop(0.50 * height / width, ctx.fillStyle);
+gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.00));
+gradient.addColorStop(0.275 * height / width, ctx.fillStyle);
 gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
 }
 catch (err){
@@ -3830,9 +3830,9 @@ if(displayVariant==1){
 let gradient;
 try{
 gradient=ctx.createLinearGradient(x_0, y_0_next, x_0_next, y_0);
-gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.40));
+gradient.addColorStop(0, averageColor(ctx.fillStyle, "#FFFFFF", 0.00));
 gradient.addColorStop(0.50, ctx.fillStyle);
-gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.70));
+gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
 }
 catch (err){
 apply_gradient=false;
