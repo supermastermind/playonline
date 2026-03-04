@@ -163,7 +163,7 @@ let color_being_selected=-1;
 let column_of_color_being_selected=-1;
 let last_color_being_selected_time=0;
 let selected_color_and_column_arrow_previously_shown=-1;
-let highlight_selected_text_param=false;
+let draw_shadow=false;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
 let optimal_width=4;
@@ -2224,10 +2224,21 @@ ctx.lineTo(x+radius, y+height);
 ctx.quadraticCurveTo(x, y+height, x, y+height-radius);
 ctx.lineTo(x, y+radius);
 ctx.quadraticCurveTo(x, y, x+radius, y);
+ctx.closePath();
 }
 function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_p){
 let apply_gradient=apply_gradient_p;
 if(fill){
+if(draw_shadow&&!modernDisplay){
+const shadowOffsetX=width*0.05;
+const shadowOffsetY=height*0.05;
+const shadowOpacity=averageColor(legacy_backgroundColor_base_color, "#000000", 0.60);
+ctx.save();
+ctx.fillStyle=shadowOpacity;
+drawRoundedRectBis(ctx, x+shadowOffsetX, y+shadowOffsetY, width, height, radius);
+ctx.fill();
+ctx.restore();
+}
 let gradient;
 try{
 gradient=ctx.createLinearGradient(x, y, x+width, y+height);
@@ -3300,7 +3311,23 @@ if(draw_color_selection_condition_2&&select_colors_displayed){
 displayString("Your code", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
 }}}
-catch (err_help){}}
+catch (err_help){}
+if(font_size!=min_font_size){
+ctx.fillStyle=darkGray;
+}
+else{
+ctx.fillStyle="";
+}
+ctx.font=code_bold_font;
+draw_shadow=true;
+for (let color=nbColors-1;color >=0;color--){
+for (let col=0;col < nbColumns;col++){
+color_selection_code=smmCodeHandler.setColor(color_selection_code, color+1, col+1);
+}
+displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
+}
+draw_shadow=false;
+}
 else{
 let nbOfCodes=nbOfPossibleCodes[currentPossibleCodeShown-1];
 let nbOfCodesListed;
@@ -3561,20 +3588,6 @@ showPossibleCodesButtonObject.value=showPossibleCodesButtonIniName;
 checkArraySizes();
 main_graph_update_needed=false;
 }
-if(!showPossibleCodesMode){
-if(font_size!=min_font_size){
-ctx.fillStyle=darkGray;
-}
-else{
-ctx.fillStyle="";
-}
-ctx.font=(showPossibleCodesMode ? basic_bold_font : code_bold_font);
-for (let color=nbColors-1;color >=0;color--){
-for (let col=0;col < nbColumns;col++){
-color_selection_code=smmCodeHandler.setColor(color_selection_code, color+1, col+1);
-}
-displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
-}}
 if(gameOnGoing()){
 ctx.font=(showPossibleCodesMode ? basic_bold_font : code_bold_font);
 currentCodeColorMode=-1;
@@ -4004,9 +4017,6 @@ backgroundColor=averageColor(backgroundColor, myTableObject.style.backgroundColo
 currentCodeColorMode=4;
 handleCurrentCodeColorMode=true;
 }
-if(highlight_selected_text_param){
-backgroundColor=averageColor(foregroundColor, backgroundColor, 0.50);
-}
 if(color < 10){
 displayString(getColorToDisplay(color), x_cell, y_cell, 2,
 foregroundColor, backgroundColor, ctx, true, displayColorMode, 0, false, 0);
@@ -4047,9 +4057,7 @@ currentCodeColorMode=-1;
 function displayCode(code, y_cell, ctx, secretCodeCase=false, checkDisabledColors=false, check_highlight_text=false){
 for (let col=0;col < nbColumns;col++){
 let color=smmCodeHandler.getColor(code, col+1);
-highlight_selected_text_param=(check_highlight_text&&gameOnGoing()&&is_there_a_color_being_selected()&&(color==color_being_selected)&&(col+1==column_of_color_being_selected));
 displayColor(color, attempt_nb_width+(70*(nbColumns+1))/100+col*2, y_cell, ctx, secretCodeCase, true, (checkDisabledColors ? obviouslyImpossibleColors[color] : false));
-highlight_selected_text_param=false;
 }}
 function displayMark(mark, y_cell, backgroundColor, ctx){
 let x_0=get_x_pixel(x_min+x_step*attempt_nb_width);
