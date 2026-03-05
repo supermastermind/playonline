@@ -1367,16 +1367,14 @@ function is_there_a_color_being_selected() {
   return ((color_being_selected != -1) && (column_of_color_being_selected != -1) && (new Date().getTime() - last_color_being_selected_time < 1000)); // 1 second
 }
 
-let arrow_shown_thld = 2;
+let arrow_shown_thld = 1;
 function arrow_regular_cond() {
-  return ( (!localStorage.gamesok) || (Number(localStorage.gamesok) <= 1) // very recent player
-           || ( ((!localStorage.arrow_shown_date) || (localStorage.arrow_shown_date != currentDate()))
-                && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == 0))) )
-         );
+  return ( ((!localStorage.arrow_shown_date) || (localStorage.arrow_shown_date != currentDate()))
+           && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == 0))) );
 }
 function selected_color_and_column_arrow_to_be_shown() {
    if ( arrow_regular_cond()
-        && gameOnGoing() && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == 0)))
+        && gameOnGoing()
         && is_there_a_color_being_selected() ) {
      return column_of_color_being_selected * 100 + color_being_selected;
    }
@@ -2858,10 +2856,16 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
 
     // 1) Draw bottom right shadow manually
 
-    if (draw_shadow && !modernDisplay) {
+    if (draw_shadow) {
       const shadowOffsetX = width*0.07;
       const shadowOffsetY = height*0.07;
-      const shadowOpacity = averageColor(legacy_backgroundColor_base_color, "#000000", 0.60);
+      let shadowOpacity;
+      if (modernDisplay) {
+        shadowOpacity = averageColor(legacy_backgroundColor_base_color, "#000000", 0.80); // better display than by using modern_backgroundColor_base_color
+      }
+      else {
+        shadowOpacity = averageColor(legacy_backgroundColor_base_color, "#000000", 0.60);
+      }
       ctx.save();
       ctx.fillStyle = shadowOpacity;
       drawRoundedRectBis(ctx, x + shadowOffsetX, y + shadowOffsetY, width, height, radius);
@@ -3332,8 +3336,8 @@ function draw_graphic_bis() {
       main_graph_update_needed = true;
     }
 
-    let draw_color_selection_condition_1 = arrow_regular_cond() && gameOnGoing() && (currentAttemptNumber <= 2) && (nbColorSelections < 2) && (nbOfStatsFilled_NbPossibleCodes >= 1);
-    let draw_color_selection_condition_2 = draw_color_selection_condition_1 && (currentAttemptNumber == 1) && (nbColorSelections == 0);
+    let draw_color_selection_condition_1 = arrow_regular_cond() && gameOnGoing() && (currentAttemptNumber == 1) && (nbColorSelections < 2) && (nbOfStatsFilled_NbPossibleCodes >= 1);
+    let draw_color_selection_condition_2 = draw_color_selection_condition_1 && (nbColorSelections == 0);
     if ( (draw_color_selection_condition_1 != last_draw_color_selection_condition_1)
          || (draw_color_selection_condition_2 != last_draw_color_selection_condition_2) ) {
       main_graph_update_needed = true;
@@ -3351,27 +3355,23 @@ function draw_graphic_bis() {
 
       let x_0, y_0, x_1, y_1;
 
-      if (modernDisplay) {
-        ctx.fillStyle = myTableObject.style.backgroundColor;
-        ctx.fillRect(0, 0, current_width, current_height);
+      let x_attempts_0;
+      let x_attempts_1;
+      x_attempts_0 = get_x_pixel(x_min);
+      if (attempt_nb_width > 0) {
+        x_attempts_1 = get_x_pixel(x_min+x_step*attempt_nb_width);
       }
       else {
-        let x_attempts_0;
-        let x_attempts_1;
-        x_attempts_0 = get_x_pixel(x_min);
-        if (attempt_nb_width > 0) {
-          x_attempts_1 = get_x_pixel(x_min+x_step*attempt_nb_width);
-        }
-        else {
-          x_attempts_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
-        }
-        let lineaire = ctx.createLinearGradient(x_attempts_0, 25, x_attempts_1, 25);
-        lineaire.addColorStop(0, legacy_backgroundColor_base_color);
-        lineaire.addColorStop(0.5, ((gameWon || (currentAttemptNumber == 1)) ? '#BB7702' : legacy_backgroundColor_base_color)); // orange // '#885000' '#996602'
-        lineaire.addColorStop(1, legacy_backgroundColor_base_color);
-        ctx.fillStyle = lineaire;
-        ctx.fillRect(0, 0, current_width, current_height);
+        x_attempts_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
       }
+      let gradient_width = x_attempts_1 - x_attempts_0;
+      let lineaire = ctx.createLinearGradient(x_attempts_0 + gradient_width / 5, 25, x_attempts_1 - gradient_width / 5, 25);
+      let color_to_consider = (modernDisplay ? myTableObject.style.backgroundColor : legacy_backgroundColor_base_color);
+      lineaire.addColorStop(0, color_to_consider);
+      lineaire.addColorStop(0.5, ((gameWon || (currentAttemptNumber == 1)) ? (modernDisplay ? "#FFFFFF" : '#BB7702') : color_to_consider));
+      lineaire.addColorStop(1, color_to_consider);
+      ctx.fillStyle = lineaire;
+      ctx.fillRect(0, 0, current_width, current_height);
 
       // ***************
       // Adapt font size
@@ -3903,7 +3903,7 @@ function draw_graphic_bis() {
           let totalTimeInMilliSeconds = stopTime - startTime
                                         + ((gameInv != 0) ? 1000 : 0); // make duration realistic after attempt inversion - actual last-game duration ignored to compensate for the disturbance: constant extra 1 second always considered
           let totalTimeInSeconds = Math.floor(totalTimeInMilliSeconds/1000);
-          if (totalTimeInSeconds < 0) { // shall never happen, even if winter/summer time shift or timezone change
+          if (totalTimeInSeconds < 0) { // shall never happen, even if winter/summer time shift or timezone change - could happen if ever the day changes by -1 (after Pacific cross?) due to a browser or OS bug? Observed values (with android app - android 14): stopTime - startTime = -23.97h => 7-columns game likely of 93 seconds.
             throw new Error("negative diff: " + startTime + ", " + stopTime + ", " + (new Date()));
           }
 
@@ -4574,7 +4574,7 @@ function draw_graphic_bis() {
       if ((color_being_selected == -1) || (column_of_color_being_selected == -1) || (last_color_being_selected_time == 0)) {
         throw new Error("invalid set of color_being_selected values: " + color_being_selected + ", " + column_of_color_being_selected + ", " + last_color_being_selected_time);
       }
-      ctx.strokeStyle = backgroundColorTable[color_being_selected-1];
+      ctx.strokeStyle = averageColor(backgroundColorTable[color_being_selected-1], (modernDisplay ? modern_backgroundColor_base_color : legacy_backgroundColor_base_color), 0.75);
       let x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
       let y_0 = get_y_pixel(y_min+y_step*((currentCode == 0) ? currentAttemptNumber - 1: currentAttemptNumber));
       let x_1 = x_0;
@@ -4584,7 +4584,7 @@ function draw_graphic_bis() {
       drawArrow(ctx, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
     }
     selected_color_and_column_arrow_previously_shown = selected_color_and_column_arrow_to_be_shown();
-    if ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode != 0)) {
+    if ((currentAttemptNumber == arrow_shown_thld+3) && (currentCode != 0)) {
       localStorage.arrow_shown_date = currentDate();
     }
 
