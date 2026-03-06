@@ -2260,13 +2260,15 @@ ctx.fillStyle=gradient;
 }
 ctx.fill();
 ctx.stroke();
+if(!modernDisplay){
 ctx.stroke();
-}
+}}
 else{
 drawRoundedRectBis(ctx, x, y, width, height, radius);
 ctx.stroke();
+if(!modernDisplay){
 ctx.stroke();
-}}
+}}}
 function drawArrow(ctx, fromX, fromY, toX, toY, width){
 const headlen=width*1.75;
 const dx=toX-fromX;
@@ -4178,7 +4180,9 @@ ctx.lineTo(x, y+radius);
 ctx.quadraticCurveTo(x, y, x+radius, y);
 ctx.closePath();
 ctx.stroke();
+if(!modernDisplay){
 ctx.stroke();
+}
 ctx.lineWidth=lineWidthIni;
 }
 else{
@@ -4199,7 +4203,9 @@ ctx.lineTo(x, y+radius);
 ctx.quadraticCurveTo(x, y, x+radius, y);
 ctx.closePath();
 ctx.stroke();
+if(!modernDisplay){
 ctx.stroke();
+}
 ctx.lineWidth=lineWidthIni;
 }}
 function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag, equivalentIdeaFlag, isClassicUselessCode){
