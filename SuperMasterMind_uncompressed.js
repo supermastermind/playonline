@@ -2891,10 +2891,12 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
     }
     ctx.fill();
     ctx.stroke(); // draw border using ctx.lineWidth
+    ctx.stroke(); // canvas strokes accumulate visually => accumulate by repeating the call (no other means proposed by canvas)
   }
   else {
     drawRoundedRectBis(ctx, x, y, width, height, radius);
     ctx.stroke(); // draw border using ctx.lineWidth
+    ctx.stroke(); // canvas strokes accumulate visually => accumulate by repeating the call (no other means proposed by canvas)
   }
 }
 

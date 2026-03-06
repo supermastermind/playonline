@@ -2259,9 +2259,11 @@ ctx.fillStyle=gradient;
 }
 ctx.fill();
 ctx.stroke();
+ctx.stroke();
 }
 else{
 drawRoundedRectBis(ctx, x, y, width, height, radius);
+ctx.stroke();
 ctx.stroke();
 }}
 function drawArrow(ctx, fromX, fromY, toX, toY, width){
