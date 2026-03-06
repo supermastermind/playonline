@@ -2209,6 +2209,7 @@ ctx.beginPath();
 ctx.moveTo(x_0+0.5,y_0+0.5);
 ctx.lineTo(x_1+0.5,y_1+0.5);
 ctx.stroke();
+ctx.stroke();
 ctx.lineWidth=lineWidthIni;
 }
 function drawRoundedRectBis(ctx, x, y, width, height, radius){
@@ -3894,6 +3895,7 @@ ctx.lineTo(x_0_next-2, y_0_next+2);
 ctx.moveTo(x_0+2, y_0_next+2);
 ctx.lineTo(x_0_next-2, y_0-2);
 ctx.stroke();
+ctx.stroke();
 if(displayVariant!=1){
 if(backgroundColor==""){
 displayGUIError("displayString error: N.A. background #2", new Error().stack);
@@ -4176,6 +4178,7 @@ ctx.lineTo(x, y+radius);
 ctx.quadraticCurveTo(x, y, x+radius, y);
 ctx.closePath();
 ctx.stroke();
+ctx.stroke();
 ctx.lineWidth=lineWidthIni;
 }
 else{
@@ -4195,6 +4198,7 @@ ctx.quadraticCurveTo(x, b, x, b-radius);
 ctx.lineTo(x, y+radius);
 ctx.quadraticCurveTo(x, y, x+radius, y);
 ctx.closePath();
+ctx.stroke();
 ctx.stroke();
 ctx.lineWidth=lineWidthIni;
 }}

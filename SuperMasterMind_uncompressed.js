@@ -2833,6 +2833,7 @@ function drawLineWithPath(ctx, x_0, y_0, x_1, y_1) {
   ctx.moveTo(x_0+0.5,y_0+0.5);
   ctx.lineTo(x_1+0.5,y_1+0.5);
   ctx.stroke();
+  ctx.stroke(); // canvas strokes accumulate visually => accumulate by repeating the call (no other means proposed by canvas)
   ctx.lineWidth = lineWidthIni;
 }
 
@@ -4857,7 +4858,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
             if (! backgroundColorTable.includes(backgroundColor)) {
               ctx.strokeStyle = backgroundColor;
             }
-            ctx.stroke(); // draw border using ctx.lineWidth
+            ctx.stroke(); // draw border using ctx.lineWidth (only one stroke)
           }
           else {
             let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 2.6 : 2.6);
@@ -4889,7 +4890,8 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
         ctx.lineTo(x_0_next - 2, y_0_next + 2);
         ctx.moveTo(x_0 + 2, y_0_next + 2);
         ctx.lineTo(x_0_next - 2, y_0 - 2);
-        ctx.stroke();  // Draw it
+        ctx.stroke(); // draw it
+        ctx.stroke(); // canvas strokes accumulate visually => accumulate by repeating the call (no other means proposed by canvas)
 
         if (displayVariant != 1) {
             if (backgroundColor == "") { // N.A. background
@@ -5140,7 +5142,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     let lineWidthIni = ctx.lineWidth;
     ctx.lineWidth = circleBorderWidth;
     ctx.strokeStyle = "black";
-    ctx.stroke();
+    ctx.stroke(); // (only one stroke)
     ctx.lineWidth = lineWidthIni;
   }
 
@@ -5157,7 +5159,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
     let lineWidthIni = ctx.lineWidth;
     ctx.lineWidth = circleBorderWidth;
     ctx.strokeStyle = (modernDisplay ? "black" : whiteBckg);
-    ctx.stroke();
+    ctx.stroke(); // (only one stroke)
     ctx.lineWidth = lineWidthIni;
   }
 
@@ -5175,7 +5177,7 @@ function displayMark(mark, y_cell, backgroundColor, ctx) {
       let lineWidthIni = ctx.lineWidth;
       ctx.lineWidth = circleBorderWidth;
       ctx.strokeStyle = averageColor((modernDisplay ? "#000000" : "#FFFFFF"), myTableObject.style.backgroundColor, (modernDisplay ? 0.075 : 0.20));
-      ctx.stroke();
+      ctx.stroke(); // (only one stroke)
       ctx.lineWidth = lineWidthIni;
     }
   }
@@ -5220,6 +5222,7 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomR
     ctx.quadraticCurveTo(x, y, x+radius, y);
     ctx.closePath();
     ctx.stroke();
+    ctx.stroke(); // canvas strokes accumulate visually => accumulate by repeating the call (no other means proposed by canvas)
     ctx.lineWidth = lineWidthIni;
   }
   else { // top-left bubble
@@ -5240,6 +5243,7 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomR
     ctx.quadraticCurveTo(x, y, x + radius, y);
     ctx.closePath();
     ctx.stroke();
+    ctx.stroke(); // canvas strokes accumulate visually => accumulate by repeating the call (no other means proposed by canvas)
     ctx.lineWidth = lineWidthIni;
   }
 }
