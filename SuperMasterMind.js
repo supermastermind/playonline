@@ -240,7 +240,7 @@ let lightGray;
 let darkGray;
 function setLightGray(){
 lightGray=(modernDisplay ? "#909090" : "#9B7B5B");
-if(!gameOnGoing()&&(!modernDisplay)){
+if((!gameOnGoing()||(currentAttemptNumber==1))&&(!modernDisplay)){
 lightGray=darkGray;
 }}
 let lastHoverColor="";
@@ -2596,12 +2596,13 @@ if(currentAttemptNumber==nbMaxAttempts+1){
 currentCode=-1;
 stopTime=(new Date()).getTime();
 nbGamesPlayed++;
-setLightGray();
 }
 else{
 last_but_one_attempt_event=(currentAttemptNumber==nbMaxAttempts-1);
 currentCode=sCodeRevealed;
-}}
+}
+setLightGray();
+}
 updateGameSizes();
 main_graph_update_needed=true;
 let nbMaxAttemptsForEndOfGame;
@@ -2813,7 +2814,7 @@ displayString(attempt_nb_str_to_display, 0, attempt, str_width,
 }}
 else{
 displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-(((currentAttemptNumber==1)&&!modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
+lightGray, backgroundColor, ctx, false, true, 0, true, 0);
 }}
 ctx.fillStyle=darkGray;
 x_0=get_x_pixel(x_min+x_step*attempt_nb_width);

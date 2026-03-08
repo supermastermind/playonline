@@ -319,7 +319,7 @@ let darkGray;
 
 function setLightGray() {
   lightGray = (modernDisplay ? "#909090" : "#9B7B5B");
-  if (!gameOnGoing() && (!modernDisplay)) {
+  if ((!gameOnGoing() || (currentAttemptNumber == 1)) && (!modernDisplay)) {
     lightGray = darkGray; // clearer stats
   }
 }
@@ -3278,12 +3278,12 @@ function draw_graphic_bis() {
             currentCode = -1;
             stopTime = (new Date()).getTime(); // time in milliseconds
             nbGamesPlayed++;
-            setLightGray(); // clearer stats
           }
           else {
             last_but_one_attempt_event = (currentAttemptNumber == nbMaxAttempts-1); /* (last but one attempt) */
             currentCode = sCodeRevealed;
           }
+          setLightGray(); // clearer stats
         }
         updateGameSizes();
         main_graph_update_needed = true;
@@ -3538,7 +3538,7 @@ function draw_graphic_bis() {
         }
         else {
           displayString(attempt_nb_str_to_display, 0, attempt, str_width,
-                        (((currentAttemptNumber == 1) && !modernDisplay) ? darkGray : lightGray), backgroundColor, ctx, false, true, 0, true, 0);
+                        lightGray, backgroundColor, ctx, false, true, 0, true, 0);
         }
       }
 
