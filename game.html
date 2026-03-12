@@ -568,8 +568,7 @@ welcome_str="Bienvenue";
 }}
 catch (exc){}
 if(localStorage.firstname&&localStorage.playerid){
-let kdo_str="";
-document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;"+welcome_str+" <b><font color=yellow>"+localStorage.firstname+"</font></b>!</span></font>"+"<span id='kdo_id'>"+kdo_str+"</span>");
+document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;"+welcome_str+" <b><font color=yellow>"+localStorage.firstname+"</font></b>!</span></font>"+"<span id='kdo_id'>"+"</span>");
 setTimeout(function(){
 $("#welcome_id").fadeOut().empty();
 }, 60000);

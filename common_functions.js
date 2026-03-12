@@ -10,28 +10,28 @@ function write_menu(selected_idx) {
       str = str + "\
               <li><a href='index.html'>Home</a></li>\
               <li><a href='optimal_strategy.html'>Strategy</a></li>\
-              <li class='selected'><a href='screenshots.html'><b>Examples</b></a></li>\
+              <li class='selected'><a href='screenshots.html'><b>Screenshots</b></a></li>\
               <li><a href='contact_info.html'>Contact</a></li>";
       break;
     case 2:
       str = str + "\
               <li><a href='index.html'>Home</a></li>\
               <li class='selected'><a href='optimal_strategy.html'><b>Strategy</b></a></li>\
-              <li><a href='screenshots.html'>Examples</a></li>\
+              <li><a href='screenshots.html'>Screenshots</a></li>\
               <li><a href='contact_info.html'>Contact</a></li>";
       break;
     case 3:
       str = str + "\
               <li><a href='index.html'>Home</a></li>\
               <li><a href='optimal_strategy.html'>Strategy</a></li>\
-              <li><a href='screenshots.html'>Examples</a></li>\
+              <li><a href='screenshots.html'>Screenshots</a></li>\
               <li class='selected'><a href='contact_info.html'><b>Contact</b></a></li>";
       break;
     default:
       str = str + "\
               <li class='selected'><a href='index.html'><b>Home</b></a></li>\
               <li><a href='optimal_strategy.html'>Strategy</a></li>\
-              <li><a href='screenshots.html'>Examples</a></li>\
+              <li><a href='screenshots.html'>Screenshots</a></li>\
               <li><a href='contact_info.html'>Contact</a></li>";
   }
   str = str + "\
