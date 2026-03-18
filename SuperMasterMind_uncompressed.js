@@ -4728,7 +4728,7 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if ((first_non_transparent_line == -1) || (last_non_transparent_line == -1)) {
       if (!safariMode || !mobileMode || androidMode) { // duplicated condition
-      let errStack = new Error().stack;
+        let errStack = new Error().stack;
         if (errStack.indexOf("injectedScript") == -1) { // duplicated condition
           displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), errStack);
         }
