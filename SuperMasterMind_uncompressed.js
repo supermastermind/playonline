@@ -4727,8 +4727,11 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
 
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if ((first_non_transparent_line == -1) || (last_non_transparent_line == -1)) {
-      if (!safariMode || !mobileMode || androidMode) {
-        displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), new Error().stack);
+      if (!safariMode || !mobileMode || androidMode) { // duplicated condition
+      let errStack = new Error().stack;
+        if (errStack.indexOf("injectedScript") == -1) { // duplicated condition
+          displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), errStack);
+        }
       }
       first_non_transparent_line = 0; // (defense)
       last_non_transparent_line = Math.round((height-1) * default_font_height_factor); // (defense)
@@ -4782,8 +4785,11 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
     }
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if (str_height == undefined) {
-      if (!safariMode || !mobileMode || androidMode) {
-        displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_str_height), new Error().stack);
+      if (!safariMode || !mobileMode || androidMode) { // duplicated condition
+        let errStack = new Error().stack;
+        if (errStack.indexOf("injectedScript") == -1) { // duplicated condition
+          displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_str_height), errStack);
+        }
       }
       str_height = parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor; // (defense)
     }
@@ -4791,8 +4797,11 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   let empty_space_before_str = arr_empty_space_before_str[ctx_font_str.replaceAll(" ","")];
   // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
   if (empty_space_before_str == undefined) {
-    if (!safariMode || !mobileMode || androidMode) {
-      displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_empty_space_before_str), new Error().stack);
+    if (!safariMode || !mobileMode || androidMode) { // duplicated condition
+      let errStack = new Error().stack;
+      if (errStack.indexOf("injectedScript") == -1) { // duplicated condition
+        displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_empty_space_before_str), errStack);
+      }
     }
     empty_space_before_str = 0; // (defense)
   }
