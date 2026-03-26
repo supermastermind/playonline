@@ -431,11 +431,22 @@
         }
       }
 
+      // Mobile and android check 1/2
       if ( (/Mobi/i.test(navigator.userAgent)) || (/Android/i.test(navigator.userAgent)) // (mobile device check 1/3)
            || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Lumia|PlayBook|BB10|Tablet|Opera Mobi|Opera Mini/i.test(navigator.userAgent)) // (mobile device check 2/3)
            || android_appli ) { // (mobile device check 3/3)
         mobileMode = true;
         if (/Android/i.test(navigator.userAgent) || android_appli) {
+          androidMode = true;
+        }
+      }
+
+      // Mobile and android check 2/2 (more modern check but only supported on some browsers - Note: it does not mean the device is on Wi‑Fi or cellular, even if it's likely)
+      if (navigator.userAgentData) {
+        if (navigator.userAgentData.mobile) { // mobile‑class device, typically a phone or small tablet
+          mobileMode = true;
+        }
+        if (navigator.userAgentData.platform === "Android") {
           androidMode = true;
         }
       }
@@ -978,9 +989,6 @@
           }
           if (abbreviateScores) {
             my_params['compressrsp'] = abbreviateScores;
-          }
-          if (mobileMode) {
-            my_params['mobilemode'] = mobileMode;
           }
         }
         else { // Specific error case

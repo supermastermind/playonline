@@ -370,6 +370,13 @@ mobileMode=true;
 if(/Android/i.test(navigator.userAgent)||android_appli){
 androidMode=true;
 }}
+if(navigator.userAgentData){
+if(navigator.userAgentData.mobile){
+mobileMode=true;
+}
+if(navigator.userAgentData.platform==="Android"){
+androidMode=true;
+}}
 function makeid(){
 let text="";
 let possible="ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
@@ -806,9 +813,6 @@ my_params[element.name]=element.value;
 }
 if(abbreviateScores){
 my_params['compressrsp']=abbreviateScores;
-}
-if(mobileMode){
-my_params['mobilemode']=mobileMode;
 }}
 else{
 nbErrorsSubmitted++;
