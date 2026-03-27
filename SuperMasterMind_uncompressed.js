@@ -363,7 +363,7 @@ let currentCodeColorMode = -1;
 let fontFamily = "Verdana, sans-serif";
 let defaultFont = "10px " + fontFamily;
 let min_font_size = 7; // (font size below 7 may not be easily readable in canvas)
-let max_font_size = 700;
+let max_font_size = 1000;
 let font_array__str_height = new Array(0);
 let font_array_small_char__str_height = new Array(0);
 let font_array__empty_space_before_str = new Array(0);
@@ -1923,8 +1923,8 @@ function resetGameAttributes(nbColumnsSelected) {
 
   try {
     if ( (!android_appli) && mobileMode && androidMode
-                 && ( (!localStorage.gamesok && (game_cnt == 1)) // very first game played
-                      || (localStorage.gamesok && ((Number(localStorage.gamesok) == 11) || (Number(localStorage.gamesok) == 22) || (Number(localStorage.gamesok) == 44) || (Number(localStorage.gamesok) == 67) || (Number(localStorage.gamesok) == 88) || (Number(localStorage.gamesok) == 128) || (Number(localStorage.gamesok) == 256) || (Number(localStorage.gamesok) == 512))) )
+          && ( (!localStorage.gamesok && (game_cnt == 1)) // very first game played
+              || (localStorage.gamesok && ((Number(localStorage.gamesok) == 11) || (Number(localStorage.gamesok) == 22) || (Number(localStorage.gamesok) == 44) || (Number(localStorage.gamesok) == 67) || (Number(localStorage.gamesok) == 88) || (Number(localStorage.gamesok) == 128) || (Number(localStorage.gamesok) == 256) || (Number(localStorage.gamesok) == 512))) )
        ) {
       show_message();
     }
@@ -5432,5 +5432,6 @@ if ((!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_f
     throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
   }
 }
+
 debug_game_state = 69;
 debug_smm_state = 100;
