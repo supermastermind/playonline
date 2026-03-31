@@ -77,14 +77,6 @@
         overflow-x: hidden; /* Hide horizontal scrollbar */
         overflow-y: hidden; /* Hide vertical scrollbar */
       }
-      #my_canvas {
-        margin: 0;
-        padding: 0;
-        background: transparent;
-        border: none;
-        border-radius: 1.5%;
-        position: fixed;
-      }
 
       * { -webkit-tap-highlight-color: transparent; }
 
@@ -276,14 +268,18 @@
         touch-action: manipulation; /* prevent zooming and other default touch behaviours for all elements */
       }
 
-      /* Victory animation */
-      #victoryOverlay {
+      .my_canvas,
+      .animation_overlay
+      { margin: 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: 1.5%;
         position: fixed;
-        height: 100%;
-        width: 100%;
-        top:0;
-        left: 0;
-        background: rgba(0, 0, 0, 0.0);
+      }
+
+      /* animation_overlay additional styles */
+      .animation_overlay {
         z-index:222222;
         display: flex;
         align-items: center;
@@ -292,7 +288,7 @@
         pointer-events: none;
         transition: opacity 0.25s ease;
       }
-      #victoryOverlay.show {
+      .animation_overlay.show {
         opacity: 1;
       }
     </style>
@@ -600,7 +596,8 @@
     <div id="game_aborted_id" class="game_aborted" style='display:none;' onclick="gameAbortionEnd()">
       <!-- (text will be overridden dynamically) -->
     </div>
-    <div id="victoryOverlay">
+
+    <div class="animation_overlay" id="victoriDivId">
       <img src='img/trophy.png' style='height:10.0vh;'>
       <canvas id="fireCanvas" style='position:absolute;inset:0;'></canvas>
     </div>
@@ -636,7 +633,30 @@
         </td>
       </tr>
       <tr>
-        <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell'><canvas id='my_canvas'><font color=red>Error: HTML canvas are not supported!</font></canvas></td>
+        <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell_id'>
+          <canvas class='my_canvas' id='my_canvas_id'><font color=red>Error: HTML canvas are not supported!</font></canvas>
+          <div class="animation_overlay" id="selectionDiv_1">
+            <canvas id="selectionCanvas_1"></canvas>
+          </div>
+          <div class="animation_overlay" id="selectionDiv_2">
+            <canvas id="selectionCanvas_2"></canvas>
+          </div>
+          <div class="animation_overlay" id="selectionDiv_3">
+            <canvas id="selectionCanvas_3"></canvas>
+          </div>
+          <div class="animation_overlay" id="selectionDiv_4">
+            <canvas id="selectionCanvas_4"></canvas>
+          </div>
+          <div class="animation_overlay" id="selectionDiv_5">
+            <canvas id="selectionCanvas_5"></canvas>
+          </div>
+          <div class="animation_overlay" id="selectionDiv_6">
+            <canvas id="selectionCanvas_6"></canvas>
+          </div>
+          <div class="animation_overlay" id="selectionDiv_7"> <!-- nbMaxColumns == 7 -->
+            <canvas id="selectionCanvas_7"></canvas>
+          </div>
+        </td>
       </tr>
     </table>
 
@@ -716,7 +736,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v33.03"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v33.04"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1137,7 +1157,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.03: " + (localStorage.reloadForCompatibility_v3303 ? localStorage.reloadForCompatibility_v3303 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.04: " + (localStorage.reloadForCompatibility_v3304 ? localStorage.reloadForCompatibility_v3304 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + navigator.userAgent + (android_appli ? "|" + classicUserAgentStr : "") + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -3284,14 +3304,14 @@
         throw new Error("game_aborted_id was not found");
       }
 
-      let canvas = document.getElementById("my_canvas");
+      let canvas = document.getElementById("my_canvas_id");
       if (canvas == null) {
-        throw new Error("my_canvas was not found");
+        throw new Error("my_canvas_id was not found");
       }
 
-      let canvas_cell = document.getElementById("my_canvas_cell");
+      let canvas_cell = document.getElementById("my_canvas_cell_id");
       if (canvas_cell == null) {
-        throw new Error("my_canvas_cell was not found");
+        throw new Error("my_canvas_cell_id was not found");
       }
 
       let img1Object = document.getElementById("img_1"); // may be null, optional picture
@@ -3300,6 +3320,44 @@
       let traceObject = document.getElementById("traces_id");
       if (traceObject == null) {
         throw new Error("traces_id was not found");
+      }
+
+      // ********************
+      // Selection animations
+      // ********************
+
+      function fadeOutCanvas(column_selected, duration) {
+        const overlay = document.getElementById("selectionDiv_" + column_selected);
+
+        // If an animation is already running, cancel it
+        if (overlay._fadeFrame) {
+          cancelAnimationFrame(overlay._fadeFrame);
+        }
+
+        overlay.classList.add("show");
+        overlay.style.opacity = 1;
+
+        const start = performance.now();
+
+        function animate(now) {
+          const progress = (now - start) / duration;
+
+          if (progress >= 1) {
+            overlay.style.opacity = 0;
+            overlay._fadeFrame = null; // mark animation as finished
+            return;
+          }
+
+          // Fade from 1 to 0 after threshold
+          const thld = 0.25;
+          if (progress >= thld) {
+            overlay.style.opacity = (1 - progress) / (1 - thld);
+          }
+
+          overlay._fadeFrame = requestAnimationFrame(animate);
+        }
+
+        overlay._fadeFrame = requestAnimationFrame(animate);
       }
 
       // ************************
@@ -3366,7 +3424,7 @@
       }
 
       function triggerVictoryAnimation() {
-        let overlay = document.getElementById("victoryOverlay");
+        let overlay = document.getElementById("victoriDivId");
         overlay.classList.add("show");
         triggerFireworks();
 

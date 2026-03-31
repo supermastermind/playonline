@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v33.03";
+let smm_compatibility_version="v33.04";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3303)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3304)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3303="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3304="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -161,8 +161,6 @@ let x_step=1.0;
 let y_step=1.0;
 let color_being_selected=-1;
 let column_of_color_being_selected=-1;
-let last_color_being_selected_time=0;
-let selected_color_and_column_arrow_previously_shown=-1;
 let draw_shadow=false;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
@@ -438,7 +436,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.03: "+(localStorage.reloadForCompatibility_v3303 ? localStorage.reloadForCompatibility_v3303 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.04: "+(localStorage.reloadForCompatibility_v3304 ? localStorage.reloadForCompatibility_v3304 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -1044,26 +1042,14 @@ modal.open();
 catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}}
-function is_there_a_color_being_selected(){
-return ((color_being_selected!=-1)&&(column_of_color_being_selected!=-1)&&(new Date().getTime()-last_color_being_selected_time < 1000));
-}
-let arrow_shown_thld=1;
+let arrow_shown_thld=2;
 function arrow_regular_cond(){
-return ( ((!localStorage.arrow_shown_date)||(localStorage.arrow_shown_date!=currentDate()))
+return ( ((!localStorage.arrow_shown_date)||(localStorage.arrow_shown_date!=currentDate())||(!localStorage.gamesok)||(Number(localStorage.gamesok) <=1))
 &&((currentAttemptNumber <=arrow_shown_thld)||((currentAttemptNumber==arrow_shown_thld+1)&&(currentCode==0))) );
-}
-function selected_color_and_column_arrow_to_be_shown(){
-if(arrow_regular_cond()
-&&gameOnGoing()
-&&is_there_a_color_being_selected() ){
-return column_of_color_being_selected * 100+color_being_selected;
-}
-return-1;
 }
 function reset_color_being_selected(){
 color_being_selected=-1;
 column_of_color_being_selected=-1;
-last_color_being_selected_time=0;
 }
 function handleTouchStartOrMouseDownEvent(x, y){
 let event_x_min, event_x_max, event_y_min, event_y_max;
@@ -1094,13 +1080,11 @@ if((mouse_y > y_0+refLineWidth)&&(mouse_y < y_1-refLineWidth)){
 colorSelected=true;
 color_being_selected=color+1;
 column_of_color_being_selected=column+1;
-last_color_being_selected_time=new Date().getTime();
 playAColor(color+1, column+1);
 nbColorSelections++;
 break;
 }}
 if(!colorSelected){
-reset_color_being_selected();
 playAColor(emptyColor, column+1);
 }
 draw_graphic();
@@ -1190,9 +1174,7 @@ function mouseUp(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("mouseUp skipped");
 return;
-}
-setTimeout("reset_color_being_selected();draw_graphic();", (gameOnGoing()&&is_there_a_color_being_selected() ? 100 : 1));
-}
+}}
 function mouseMove(e){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("mouseMove skipped");
@@ -2269,7 +2251,7 @@ ctx.stroke();
 if(!modernDisplay){
 ctx.stroke();
 }}}
-function drawArrow(ctx, fromX, fromY, toX, toY, width){
+function drawArrow(ctx, column_selected, fromX, fromY, toX, toY, width){
 const headlen=width*1.75;
 const dx=toX-fromX;
 const dy=toY-fromY;
@@ -2286,6 +2268,7 @@ ctx.lineTo(toX-headlen * Math.cos(angle-Math.PI / 6), toY-headlen * Math.sin(ang
 ctx.moveTo(toX, toY);
 ctx.lineTo(toX-headlen * Math.cos(angle+Math.PI / 6), toY-headlen * Math.sin(angle+Math.PI / 6));
 ctx.stroke();
+fadeOutCanvas(column_selected, 950);
 }
 function draw_graphic(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
@@ -2300,8 +2283,7 @@ updateGameSizes();
 draw_graphic_bis();
 }}
 var main_ctx=null;
-var last_draw_color_selection_condition_1=false;
-var last_draw_color_selection_condition_2=false;
+var last_draw_color_selection_condition=false;
 function draw_graphic_bis(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("draw_graphic_bis skipped");
@@ -2644,17 +2626,11 @@ throw new Error("undefined gameSolver ("+currentAttemptNumber+")");
 else{
 throw new Error("invalid game_id_for_initGameSolver value at next attempt: "+game_id_for_initGameSolver);
 }}}}
-if(selected_color_and_column_arrow_previously_shown!=selected_color_and_column_arrow_to_be_shown()){
+let draw_color_selection_condition=arrow_regular_cond()&&gameOnGoing()&&(currentAttemptNumber==1)&&(nbColorSelections < 2)&&(nbOfStatsFilled_NbPossibleCodes >=1);
+if(draw_color_selection_condition!=last_draw_color_selection_condition){
 main_graph_update_needed=true;
 }
-let draw_color_selection_condition_1=arrow_regular_cond()&&gameOnGoing()&&(currentAttemptNumber==1)&&(nbColorSelections < 2)&&(nbOfStatsFilled_NbPossibleCodes >=1);
-let draw_color_selection_condition_2=draw_color_selection_condition_1&&(nbColorSelections==0);
-if((draw_color_selection_condition_1!=last_draw_color_selection_condition_1)
-||(draw_color_selection_condition_2!=last_draw_color_selection_condition_2) ){
-main_graph_update_needed=true;
-}
-last_draw_color_selection_condition_1=draw_color_selection_condition_1;
-last_draw_color_selection_condition_2=draw_color_selection_condition_2;
+last_draw_color_selection_condition=draw_color_selection_condition;
 let nbMaxAttemptsToDisplay=((!showPossibleCodesMode) ? nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0) : currentAttemptNumber-1);
 if(main_graph_update_needed){
 let x_0, y_0, x_1, y_1;
@@ -3301,7 +3277,7 @@ ctx.font=basic_bold_font;
 ctx.fillStyle=darkGray;
 try{
 ctx.font=medium_bold_font;
-if(draw_color_selection_condition_1){
+if(draw_color_selection_condition){
 let select_colors_displayed=false;
 let x_delta=0.80;
 if(!displayString("Select colors", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+0.75*x_delta, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+Math.floor(nbColors/2)-0.5,+nb_possible_codes_width+optimal_width+tick_width-1.5*x_delta,
@@ -3313,7 +3289,7 @@ select_colors_displayed=true;
 else{
 select_colors_displayed=true;
 }
-if(draw_color_selection_condition_2&&select_colors_displayed){
+if(select_colors_displayed){
 displayString("Your code", attempt_nb_width+(70*(nbColumns+1))/100+0.75*x_delta, 1.75, nbColumns*2-1.5*x_delta,
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0, false, true, false );
 }}}
@@ -3632,21 +3608,35 @@ resetCurrentCodeButtonObject.className="button disabled";
 else{
 resetCurrentCodeButtonObject.className="button";
 }
-if(selected_color_and_column_arrow_to_be_shown()!=-1){
-if((color_being_selected==-1)||(column_of_color_being_selected==-1)||(last_color_being_selected_time==0)){
-throw new Error("invalid set of color_being_selected values: "+color_being_selected+", "+column_of_color_being_selected+", "+last_color_being_selected_time);
-}
-ctx.strokeStyle=averageColor(backgroundColorTable[color_being_selected-1], (modernDisplay ? modern_backgroundColor_base_color : legacy_backgroundColor_base_color), 0.75);
+if((color_being_selected!=-1)&&(column_of_color_being_selected!=-1)){
 let x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
 let y_0=get_y_pixel(y_min+y_step*((currentCode==0) ? currentAttemptNumber-1: currentAttemptNumber));
 let x_1=x_0;
 let y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 let arrow_width_ratio=((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
 let arrow_width=(get_x_pixel(x_min+x_step)-get_x_pixel(x_min)) * arrow_width_ratio;
-drawArrow(ctx, x_1, y_1+1.35 * arrow_width, x_0, y_0-1.35 * arrow_width, arrow_width);
+if((column_of_color_being_selected < 1)||(column_of_color_being_selected > nbMaxColumns)){
+throw new Error("drawArrow: invalid column_of_color_being_selected: "+column_of_color_being_selected);
 }
-selected_color_and_column_arrow_previously_shown=selected_color_and_column_arrow_to_be_shown();
-if((currentAttemptNumber==arrow_shown_thld+3)&&(currentCode!=0)){
+let animation_canvas=document.getElementById("selectionCanvas_"+column_of_color_being_selected);
+let animation_ctx=animation_canvas.getContext("2d");
+animation_ctx.imageSmoothingEnabled=true;
+animation_ctx.globalAlpha=1;
+animation_canvas.style.width=canvas.style.width;
+animation_canvas.style.height=canvas.style.height;
+animation_canvas.width=canvas.width;
+animation_canvas.height=canvas.height;
+animation_ctx.setTransform(1,0,0,1,0,0);
+animation_ctx.scale(dpr, dpr);
+animation_ctx.fillStyle="rgba(0, 0, 0, 0)";
+animation_ctx.fillRect(0, 0, animation_canvas.width, animation_canvas.height);
+animation_ctx.strokeStyle=backgroundColorTable[color_being_selected-1];
+if(arrow_regular_cond()){
+drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1+1.35 * arrow_width, x_0, y_0-1.35 * arrow_width, arrow_width);
+}
+reset_color_being_selected();
+}
+if((currentAttemptNumber==arrow_shown_thld+2)&&(currentCode!=0)){
 localStorage.arrow_shown_date=currentDate();
 }
 if(last_but_one_attempt_event
@@ -4156,7 +4146,7 @@ drawLineWithPath(ctx, x_0, y_0_next_bis, x_0_next, y_0_bis);
 if((mark.nbBlacks+mark.nbWhites==0)&&((!localStorage.gamesok)||(Number(localStorage.gamesok) <=30))&&(!worst_mark_alert_already_displayed)&&(nb_worst_mark_alert_displayed<=2)){
 worst_mark_alert_already_displayed=true;
 nb_worst_mark_alert_displayed++;
-reset_color_being_selected();draw_graphic();
+draw_graphic();
 setTimeout("alert('This code received no black or white pegs, so none of its colors are in the secret code. Those colors have been grayed out.');", 111);
 }}
 function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomRightBubble)
