@@ -476,6 +476,9 @@ alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileM
 else if(mode==888){
 localStorage.gamesok=100;
 }
+else if(mode==999){
+localStorage.arrow_shown_date=0;
+}
 else if(String(mode).indexOf("fontFamily=")==0){
 fontFamily=String(mode).substring(11);
 main_graph_update_needed=true;
@@ -3616,7 +3619,7 @@ let y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 let arrow_width_ratio=((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
 let arrow_width=(get_x_pixel(x_min+x_step)-get_x_pixel(x_min)) * arrow_width_ratio;
 if((column_of_color_being_selected < 1)||(column_of_color_being_selected > nbMaxColumns)){
-throw new Error("drawArrow: invalid column_of_color_being_selected: "+column_of_color_being_selected);
+throw new Error("invalid column_of_color_being_selected: "+column_of_color_being_selected);
 }
 let animation_canvas=document.getElementById("selectionCanvas_"+column_of_color_being_selected);
 let animation_ctx=animation_canvas.getContext("2d");
