@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v33.04";
+let smm_compatibility_version="v33.05";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3304)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3305)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3304="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3305="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -424,7 +424,7 @@ errorStr=errorStr+" with gameSolver config "+gameSolverConfigDbg;
 }
 let strGame="";
 try{
-errorStr=errorStr+" on "+navigator.platform+" / "+navigator.userAgent+" / "+decodeURI(location.href);
+errorStr=errorStr+" in "+userInfoStr+" / "+decodeURI(location.href);
 for (let i=1;i < currentAttemptNumber;i++){
 strGame=strGame+smmCodeHandler.markToString(marks[i-1])+" "+smmCodeHandler.codeToString(codesPlayed[i-1])+" ("+nbOfPossibleCodes[i-1]
 +"|"+(Math.round(relative_performances_of_codes_played[i-1] * 100.0) / 100.0).toFixed(2)+") ";
@@ -436,7 +436,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.04: "+(localStorage.reloadForCompatibility_v3304 ? localStorage.reloadForCompatibility_v3304 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.05: "+(localStorage.reloadForCompatibility_v3305 ? localStorage.reloadForCompatibility_v3305 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -471,7 +471,7 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert(userAgentStr+"||"+navigator.userAgent+"||"+navigator.platform+"||"+mobileMode+","+androidMode+","+android_appli);
+alert(userInfoStr);
 }
 else if(mode==888){
 localStorage.gamesok=100;

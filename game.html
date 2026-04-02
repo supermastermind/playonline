@@ -246,67 +246,18 @@ opacity: 1;
 <script src='lib/tingle-master/dist/tingle.min.js'></script>
 <script>
 var lastGlobalProgress=0;
-var classicUserAgentStr="";
-var userAgentToHandle=navigator.userAgent;
-var firefoxModeIdx=userAgentToHandle.toUpperCase().search("FIREFOX/");
-var firefoxMode=((firefoxModeIdx!=-1)&&(userAgentToHandle.toUpperCase().search("SEAMONKEY/")==-1));
-if(firefoxMode){
-classicUserAgentStr=userAgentToHandle.substring(firefoxModeIdx);
-}
-var edgeModeIdx=userAgentToHandle.toUpperCase().search("EDG/");
-if(edgeModeIdx==-1){
-edgeModeIdx=userAgentToHandle.toUpperCase().search("EDGE/");
-}
-var edgeMode=((!firefoxMode)&&(edgeModeIdx!=-1));
-if(edgeMode){
-classicUserAgentStr=userAgentToHandle.substring(edgeModeIdx);
-}
-var operaModeIdx=userAgentToHandle.toUpperCase().search("OPR/");
-if(operaModeIdx==-1){
-operaModeIdx=userAgentToHandle.toUpperCase().search("OPERA/");
-}
-var operaMode=((!firefoxMode)&&(!edgeMode)&&(operaModeIdx!=-1));
-if(operaMode){
-classicUserAgentStr=userAgentToHandle.substring(operaModeIdx);
-}
-var samsungBrowserModeIdx=userAgentToHandle.toUpperCase().search("SAMSUNGBROWSER/");
-var samsungBrowserMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(samsungBrowserModeIdx!=-1));
-if(samsungBrowserMode){
-classicUserAgentStr=userAgentToHandle.substring(samsungBrowserModeIdx);
-var nextSpaceIdx=classicUserAgentStr.indexOf(" ");
-if(nextSpaceIdx!=-1){
-classicUserAgentStr=classicUserAgentStr.substring(0, nextSpaceIdx);
-}}
-var chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROME/");
-if(chromeModeIdx==-1){
-chromeModeIdx=userAgentToHandle.toUpperCase().search("CHROMIUM/");
-}
-var chromeMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!samsungBrowserMode)&&(chromeModeIdx!=-1));
-if(chromeMode){
-classicUserAgentStr=userAgentToHandle.substring(chromeModeIdx);
-var nextSpaceIdx=classicUserAgentStr.indexOf(" ");
-if(nextSpaceIdx!=-1){
-classicUserAgentStr=classicUserAgentStr.substring(0, nextSpaceIdx);
-}}
-var safariModeIdx=userAgentToHandle.toUpperCase().search("SAFARI/");
-var safariMode=((!firefoxMode)&&(!edgeMode)&&(!operaMode)&&(!samsungBrowserMode)&&(!chromeMode)&&(safariModeIdx!=-1));
-if(safariMode){
-classicUserAgentStr=userAgentToHandle.substring(safariModeIdx);
-}
-var userAgentStr="";
+var appInfoStr="";
 var androidAppliInfoStr=null;
 var android_appli=false;
 var versionNameStr="?";
 var versionCodeStr="?";
 var versionCodeInt=-1;
 var scriptsFullyLoaded=false;
-var mobileMode=false;
-var androidMode=false;
 var smm=(decodeURI(location.href).indexOf('https://supermastermind.github.io/playonline/game.html')!=-1);
 try{
 androidAppliInfoStr=new URL(decodeURI(location.href)).searchParams.get("android_appli");
 if(androidAppliInfoStr!=null){
-userAgentStr="sdk"+androidAppliInfoStr;
+appInfoStr="sdk"+androidAppliInfoStr;
 android_appli=true;
 try{
 versionNameStr=new URL(decodeURI(location.href)).searchParams.get("version_name");
@@ -336,16 +287,9 @@ if(playerIdStr2!=null){
 if(!localStorage.playerid){
 localStorage.playerid=playerIdStr2;
 }}}catch (err_versioning){}
-userAgentStr=userAgentStr+"/"+versionNameStr+"/"+versionCodeStr;
-}
-if(!android_appli){
-if(classicUserAgentStr!=""){
-userAgentStr=classicUserAgentStr;
-}
-else{
-userAgentStr=userAgentStr+navigator.userAgent.replaceAll("AppleWebKit","AppleWK").replaceAll("Mozilla","Moz").replaceAll("Windows", "Win").replaceAll("/","").replaceAll(" ","");
-}}}catch (err){
-userAgentStr="??? "+navigator.userAgent;
+appInfoStr=appInfoStr+"/"+versionNameStr+"/"+versionCodeStr;
+}}catch (err){
+appInfoStr="???";
 }
 if(android_appli&&((versionCodeInt==-1)||(versionCodeInt <=34))){
 var versionCodeErrorMsg="Your app version is "+((versionCodeInt==-1) ? "invalid" : "very old")+". Please install the last update of the app from Play Store.";
@@ -353,13 +297,8 @@ alert(versionCodeErrorMsg);
 window.stop();
 globalErrorStatus=true;
 }
-var oldBrowserVersion=false;
-if(chromeMode&&(classicUserAgentStr!="")){
-if((!String.prototype.repeat)
-||(classicUserAgentStr.indexOf("Chrome/79.")!=-1) ){
-oldBrowserVersion=true;
-alert("Your Chrome browser version is old, please update it to avoid errors");
-}}
+var mobileMode=false;
+var androidMode=false;
 if((/Mobi/i.test(navigator.userAgent))||(/Android/i.test(navigator.userAgent))
 ||(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Windows Phone|Lumia|PlayBook|BB10|Tablet|Opera Mobi|Opera Mini/i.test(navigator.userAgent))
 ||android_appli ){
@@ -374,6 +313,176 @@ mobileMode=true;
 if(navigator.userAgentData.platform==="Android"){
 androidMode=true;
 }}
+let detectedOS=
+navigator.userAgentData?.platform?.trim()||
+navigator.platform||
+"";
+if(/Android/i.test(detectedOS)){
+androidMode=true;
+}
+if(!detectedOS){
+const ua=navigator.userAgent;
+if(/iPhone|iPad|iPod/i.test(ua)){
+detectedOS="~iOS";
+}
+else if(/Android/i.test(ua)){
+detectedOS="~Android";
+androidMode=true;
+}
+else if(/CrOS/i.test(ua)){
+detectedOS="~ChromeOS";
+}
+else if(/Windows/i.test(ua)){
+detectedOS="~Windows";
+}
+else if(/Mac OS X|Macintosh/i.test(ua)){
+if("ontouchstart" in window){
+detectedOS="~iOS";
+}
+else{
+detectedOS="~macOS";
+}}
+else if(/Linux/i.test(ua)){
+detectedOS="~Linux";
+}}
+var firefoxMode=false;
+var edgeMode=false;
+var operaMode=false;
+var samsungBrowserMode=false;
+var chromeMode=false;
+var braveMode=false;
+var safariMode=false;
+var detectedBrowser="";
+var detectedVersion="";
+var ua=navigator.userAgent;
+var uaUp=ua.toUpperCase();
+if(navigator.userAgentData&&
+navigator.userAgentData.brands&&
+navigator.userAgentData.brands.length > 0){
+var brands=navigator.userAgentData.brands;
+var findBrand=function (name){
+for (var i=0;i < brands.length;i++){
+if(brands[i].brand.toUpperCase().indexOf(name.toUpperCase())!==-1){
+return brands[i];
+}}
+return null;
+};
+if(navigator.brave&&(typeof navigator.brave.isBrave==="function")){
+braveMode=true;
+var cb=findBrand("CHROMIUM");
+detectedBrowser="Brave";
+detectedVersion=cb ? cb.version : "unknown";
+}else if(findBrand("MICROSOFT EDGE")){
+edgeMode=true;
+detectedBrowser="Edge";
+detectedVersion=findBrand("MICROSOFT EDGE").version;
+}else if(findBrand("OPERA")){
+operaMode=true;
+detectedBrowser="Opera";
+detectedVersion=findBrand("OPERA").version;
+}else if(findBrand("SAMSUNG INTERNET")){
+samsungBrowserMode=true;
+detectedBrowser="SamsungBrowser";
+detectedVersion=findBrand("SAMSUNG INTERNET").version;
+}else if(findBrand("GOOGLE CHROME")){
+chromeMode=true;
+detectedBrowser="Chrome";
+detectedVersion=findBrand("GOOGLE CHROME").version;
+}else if(findBrand("CHROMIUM")){
+chromeMode=true;
+detectedBrowser="Chromium";
+detectedVersion=findBrand("CHROMIUM").version;
+}}else{
+var idx;
+var extractToken=function (startIdx){
+var token=ua.substring(startIdx);
+var spaceIdx=token.indexOf(" ");
+return (spaceIdx!==-1) ? token.substring(0, spaceIdx) : token;
+};
+var splitToken=function (token){
+var slashIdx=token.indexOf("/");
+if(slashIdx!==-1){
+return [token.substring(0, slashIdx), token.substring(slashIdx+1)];
+}
+return [token, "unknown"];
+};
+idx=uaUp.indexOf("FIREFOX/");
+if(idx===-1) idx=uaUp.indexOf("FXIOS/");
+if((idx!==-1)&&(uaUp.indexOf("SEAMONKEY/")===-1)){
+firefoxMode=true;
+var parts=splitToken(extractToken(idx));
+detectedBrowser="Firefox";
+detectedVersion=parts[1];
+}
+if(!firefoxMode&&navigator.brave&&(typeof navigator.brave.isBrave==="function")){
+braveMode=true;
+idx=uaUp.indexOf("CHROME/");
+if(idx===-1) idx=uaUp.indexOf("CHROMIUM/");
+detectedBrowser="~Brave";
+detectedVersion=(idx!==-1) ? splitToken(extractToken(idx))[1] : "unknown";
+}
+if(!firefoxMode&&!braveMode){
+idx=uaUp.indexOf("EDG/");
+if(idx===-1) idx=uaUp.indexOf("EDGE/");
+if(idx===-1) idx=uaUp.indexOf("EDGIOS/");
+if(idx!==-1){
+edgeMode=true;
+var parts=splitToken(extractToken(idx));
+detectedBrowser="~Edge";
+detectedVersion=parts[1];
+}}
+if(!firefoxMode&&!braveMode&&!edgeMode){
+idx=uaUp.indexOf("OPR/");
+if(idx===-1) idx=uaUp.indexOf("OPERA/");
+if(idx===-1) idx=uaUp.indexOf("OPT/");
+if(idx===-1) idx=uaUp.indexOf("OPX/");
+if(idx!==-1){
+operaMode=true;
+var parts=splitToken(extractToken(idx));
+detectedBrowser="~Opera";
+detectedVersion=parts[1];
+}}
+if(!firefoxMode&&!braveMode&&!edgeMode&&!operaMode){
+idx=uaUp.indexOf("SAMSUNGBROWSER/");
+if(idx!==-1){
+samsungBrowserMode=true;
+var parts=splitToken(extractToken(idx));
+detectedBrowser="~SamsungBrowser";
+detectedVersion=parts[1];
+}}
+if(!firefoxMode&&!braveMode&&!edgeMode&&!operaMode&&!samsungBrowserMode){
+idx=uaUp.indexOf("CHROME/");
+if(idx===-1) idx=uaUp.indexOf("CHROMIUM/");
+if(idx===-1) idx=uaUp.indexOf("CRIOS/");
+if(idx!==-1){
+chromeMode=true;
+var parts=splitToken(extractToken(idx));
+detectedBrowser="~"+parts[0];
+detectedVersion=parts[1];
+}}
+if(!firefoxMode&&!braveMode&&!edgeMode&&!operaMode&&!samsungBrowserMode&&!chromeMode){
+idx=uaUp.indexOf("SAFARI/");
+if(idx!==-1){
+safariMode=true;
+detectedBrowser="Safari";
+var verIdx=uaUp.indexOf("VERSION/");
+detectedVersion=(verIdx!==-1) ? splitToken(extractToken(verIdx))[1] : splitToken(extractToken(idx))[1];
+}}}
+if(!braveMode&&(uaUp.indexOf("BRAVE/")!=-1)){
+firefoxMode=false;
+edgeMode=false;
+operaMode=false;
+samsungBrowserMode=false;
+chromeMode=false;
+braveMode=true;
+safariMode=false;
+detectedBrowser="~~Brave";
+detectedVersion="-";
+}
+if(!detectedBrowser){
+detectedBrowser="unknown mode for userAgent: "+navigator.userAgent;
+}
+var userInfoStr=((appInfoStr!="") ? appInfoStr+"/" : "")+detectedBrowser+"/"+detectedVersion+" ("+detectedOS+(mobileMode ? " mobile": " fixed")+(androidMode ? " android": "")+")";
 function makeid(){
 let text="";
 let possible="ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
@@ -614,7 +723,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v33.04";
+let html_compatibility_game_version="v33.05";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -935,16 +1044,16 @@ extra_debug_info=extra_debug_info+" gamesolver_blob:"+gamesolver_blob_error+"|"+
 }
 catch (exc){}
 try{
-extra_debug_info=extra_debug_info+" "+getMemoryUsage()+(oldBrowserVersion ? " oldbrowser" : "");
+extra_debug_info=extra_debug_info+" "+getMemoryUsage();
 }
 catch (exc){}
 extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.04: "+(localStorage.reloadForCompatibility_v3304 ? localStorage.reloadForCompatibility_v3304 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.05: "+(localStorage.reloadForCompatibility_v3305 ? localStorage.reloadForCompatibility_v3305 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
-+err_str+" in "+navigator.userAgent+(android_appli ? "|"+classicUserAgentStr : "")+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
++err_str+" in "+userInfoStr+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
 +"|game:"+debug_game_state
 +"|smm:"+smm_load_state+","+debug_smm_state
@@ -983,7 +1092,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** "+errormsg+" ***** ("+html_compatibility_game_version+"): event: "+evt+"|"+evt_str+" / reason: "+evt.reason+" / promise: "+evt.promise+"|"+evt_promise_str+" | cause: "+cause+" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon+"|"+debug_game_state+"|"+debug_on_resize_or_unload+" for "+extra_debug_info+" in "+navigator.userAgent, 40);
+submitForm("***** "+errormsg+" ***** ("+html_compatibility_game_version+"): event: "+evt+"|"+evt_str+" / reason: "+evt.reason+" / promise: "+evt.promise+"|"+evt_promise_str+" | cause: "+cause+" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon+"|"+debug_game_state+"|"+debug_on_resize_or_unload+" for "+extra_debug_info+" in "+userInfoStr, 40);
 }
 window.onmessageerror=function(evt){
 game_event_onerrors(evt, "GAME MESSAGE ERROR", "onmessageerror");
@@ -2402,7 +2511,7 @@ modeStr+="/MO";
 if(androidMode){
 modeStr+="/MA";
 }}
-document.getElementById('form_debuginfo_id').value=(navigator.platform+'-'+userAgentStr+modeStr+'/'+navigator.language+'/'+screen.width+'*'+screen.height+','+screen.colorDepth+'-'+window.innerWidth+"*"+window.innerHeight+firstNameAskedStr+((gameInv!=0) ? '/Inv:'+gameInv : "")+'/'+getLocation()+extra_debug_info).replaceAll(" ","")+(localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
+document.getElementById('form_debuginfo_id').value=(userInfoStr+modeStr+'/'+navigator.language+'/'+screen.width+'*'+screen.height+','+screen.colorDepth+'-'+window.innerWidth+"*"+window.innerHeight+firstNameAskedStr+((gameInv!=0) ? '/Inv:'+gameInv : "")+'/'+getLocation()+extra_debug_info).replaceAll(" ","")+(localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
 +(max_nb_gamesok_today_reached ? "/todaysmax:"+nb_games_today: "");
 if((nbuknperfs > 0)&&(nbcolumns <=5)){
 document.getElementById('form_gamesummary_id').value='S'+nbColorSelections+'/'+gamestr.replaceAll(" ","");
@@ -2628,7 +2737,7 @@ errorStr=errorStr+" for "+localStorage.firstname;
 if(localStorage.playerid){
 errorStr=errorStr+" for player id "+localStorage.playerid;
 }
-errorStr=errorStr+" on "+navigator.platform+" / "+navigator.userAgent+" / "+decodeURI(location.href);
+errorStr=errorStr+" in "+userInfoStr+" / "+decodeURI(location.href);
 submitForm("internal error while storing scores"+errorStr+": "+exc+": "+exc.stack, 120);
 debug_game_state=103;
 }}
