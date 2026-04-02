@@ -471,7 +471,14 @@ else if(mode==555){
 askAndroidLocationPermissionsIfNeeded(true);
 }
 else if(mode==777){
-alert(userInfoStr);
+let str;
+if(navigator.userAgentData){
+str="|||"+navigator.userAgentData.mobile;
+}
+else{
+str="|||navigator.userAgentData does not exist";
+}
+alert(userInfoStr+"|||"+navigator.userAgent+str);
 }
 else if(mode==888){
 localStorage.gamesok=100;
@@ -1290,7 +1297,7 @@ firstReload=false;
 if(localStorage.gamesok&&(Number(localStorage.gamesok) >=50)
 &&(Number(localStorage.previousNbColumns) >=5) ){
 localStorage.nbReloads=Number(localStorage.nbReloads)+1;
-if(Number(localStorage.nbReloads) >=12){
+if(Number(localStorage.nbReloads) >=15){
 localStorage.nbReloads=0;
 localStorage.previousNbColumns=Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
 }}
