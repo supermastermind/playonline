@@ -1,4 +1,4 @@
-// // ***************************************************
+// ***************************************************
 // ********** Main Super Master Mind script **********
 // ***************************************************
 
@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v33.05"; // !WARNING! -> value to be aligned with version in game.html => search "v33" for all occurrences in this script and game.html
+let smm_compatibility_version = "v33.06"; // !WARNING! -> value to be aligned with version in game.html => search "v33" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3305) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3306) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3305 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3306 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -226,7 +226,7 @@ let y_step = 1.0; // N.A.
 
 let color_being_selected = -1;
 let column_of_color_being_selected = -1;
-let draw_shadow = false; // (saves a function parameter)
+let draw_shadow = 0; // (saves a function parameter)
 
 let attempt_nb_width = 2;
 let nb_possible_codes_width = 5;
@@ -368,6 +368,7 @@ let font_array__empty_space_before_str = new Array(0);
 let font_array_small_char__empty_space_before_str = new Array(0);
 let basic_bold_font = defaultFont;
 let code_bold_font = defaultFont;
+let big_code_bold_font = defaultFont;
 let medium_bold_font = defaultFont;
 let medium_bold_font_2 = defaultFont;
 let stats_bold_font = defaultFont;
@@ -379,7 +380,6 @@ let default_font_height_factor = 0.83;
 // ****************
 
 let main_graph_update_needed = true;
-let color_selection_code = 0;
 let color_cnt = 1;
 
 let tickChar = "\u2714"; /* (check mark/tick) */
@@ -560,7 +560,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v33.05: " + (localStorage.reloadForCompatibility_v3305 ? localStorage.reloadForCompatibility_v3305 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v33.06: " + (localStorage.reloadForCompatibility_v3306 ? localStorage.reloadForCompatibility_v3306 : "not done"), 210);
 
       // Alert
       // *****
@@ -961,12 +961,14 @@ function onGameSolverMsg(e) {
 // Event-related functions
 // ***********************
 
-function newGameButtonClick_delayed() {
+function newGameButtonClick_delayed(skip_transition_effect = false) {
   // Transition effect 1/2
-  try {
-    $(pageTransitionObject).fadeIn("fast");
-  }
-  catch (exc) {
+  if (!skip_transition_effect) {
+    try {
+      $(pageTransitionObject).fadeIn("fast");
+    }
+    catch (exc) {
+    }
   }
 
   // Debug values
@@ -984,10 +986,12 @@ function newGameButtonClick_delayed() {
   draw_graphic();
 
   // Transition effect 2/2
-  try {
-    $(pageTransitionObject).fadeOut("fast");
-  }
-  catch (exc) {
+  if (!skip_transition_effect) {
+    try {
+      $(pageTransitionObject).fadeOut("fast");
+    }
+    catch (exc) {
+    }
   }
 }
 
@@ -1020,7 +1024,7 @@ checkButtonEvent = function(mouseEvent) { // (override temporary definition)
   }
 }
 
-newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
+newGameButtonClick = function(nbColumns_p, skip_transition_effect = false) { // (override temporary definition)
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("newGameButtonClick skipped");
     return;
@@ -1041,7 +1045,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
         nbOnGoingGamesAborted++;
 
         if (nbColumns == 3) {
-          setTimeout("dsCode = false; newGameButtonClick_delayed();", 2500);
+          setTimeout("dsCode = false; newGameButtonClick_delayed(" + skip_transition_effect + ");", 2500);
         }
         else {
           let game_aborted_str = "<b>Current game was aborted"
@@ -1065,7 +1069,7 @@ newGameButtonClick = function(nbColumns_p) { // (override temporary definition)
 
       }
       else {
-        newGameButtonClick_delayed();
+        newGameButtonClick_delayed(skip_transition_effect);
       }
 
     }
@@ -1258,13 +1262,19 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
   }
 }
 
-function handleDisplayModeSelectionChange() {
-    var displayModeSelectObject = document.getElementById('displayModeSelect');
-    if (displayModeSelectObject == null) {
-      throw new Error("displayModeSelect was not found");
+function handleDisplayModeSelectionChange(forcedValue = "0") {
+    var value;
+    if (forcedValue == "0") {
+      var displayModeSelectObject = document.getElementById('displayModeSelect');
+      if (displayModeSelectObject == null) {
+        throw new Error("displayModeSelect was not found");
+      }
+      value = displayModeSelectObject.value;
+      console.log("display mode changed: " + value);
     }
-    var value = displayModeSelectObject.value;
-    console.log("display mode changed: " + value);
+    else {
+      value = forcedValue;
+    }
     switch (value) {
         case "1":
             modernDisplay = false;
@@ -2121,7 +2131,7 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverInitMsgContents = {'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_firstname - 1), 'game_id': game_cnt, 'debug_mode': debug_mode};
   gameSolverConfigDbg = JSON.stringify(gameSolverInitMsgContents);
   game_id_for_gameSolverConfig = game_cnt;
-  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", ((game_cnt <= 1) && android_appli ? 2000: 1111)); // delay number of possible codes display (better than a "blocking while loop" till time has elapsed)
+  setTimeout("postInitMessageToGameSolver(" + game_id_for_gameSolverConfig + ");", 1700); // delay number of possible codes display
 
   if (randomCodesHintToBeDisplayed) {
     setTimeout("displayRandomCodesHintIfNeeded();", 444);
@@ -2849,7 +2859,7 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
 
     // 1) Draw bottom right shadow manually
 
-    if (draw_shadow) {
+    if (draw_shadow == 1) { // nominal shadow
       const shadowOffsetX = width*0.07;
       const shadowOffsetY = height*0.07;
       let shadowOpacity;
@@ -2865,6 +2875,12 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
       ctx.fill();
       ctx.restore();
     }
+    else if (draw_shadow == 2) { // highlight mode
+      const shadowOffsetX = width*0.14;
+      const shadowOffsetY = height*0.12;
+      drawRoundedRectBis(ctx, x - shadowOffsetX, y - shadowOffsetY, width + 2*shadowOffsetX, height + 2*shadowOffsetY, radius);
+      ctx.fill();
+    }
 
     // 2) Draw main rectangle
 
@@ -2878,7 +2894,9 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
     catch (err) { // error observed on Safari: Failed to execute 'addColorStop' on 'CanvasGradient': The provided value (-0.125) is outside the range (0.0, 1.0)
       apply_gradient = false;
     }
-    drawRoundedRectBis(ctx, x, y, width, height, radius);
+    if (draw_shadow != 2) {
+      drawRoundedRectBis(ctx, x, y, width, height, radius);
+    }
     if (apply_gradient) {
       ctx.fillStyle = gradient;
     }
@@ -2919,8 +2937,6 @@ function drawArrow(ctx, column_selected, fromX, fromY, toX, toY, width) {
     ctx.moveTo(toX, toY);
     ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
     ctx.stroke();
-    
-    fadeOutCanvas(column_selected, 950);
 }
 
 function draw_graphic() {
@@ -3436,6 +3452,14 @@ function draw_graphic_bis() {
       else {
         code_bold_font = basic_bold_font;
       }
+
+      big_code_bold_font = "bold " + Math.round(font_size*1.4) + "px " + fontFamily;
+      measurePreciseTextHeight("0", big_code_bold_font, str_meas_out);
+      font_array__str_height[big_code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array__empty_space_before_str[big_code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight(outlinedStar, big_code_bold_font, str_meas_out);
+      font_array_small_char__str_height[big_code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
+      font_array_small_char__empty_space_before_str[big_code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
 
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
       measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
@@ -4166,14 +4190,15 @@ function draw_graphic_bis() {
         }
 
         ctx.font = code_bold_font;
-        draw_shadow = true;
+        draw_shadow = 1;
         for (let color = nbColors-1; color >= 0; color--) {
+          let color_selection_code = 0;
           for (let col = 0; col < nbColumns; col++) {
             color_selection_code = smmCodeHandler.setColor(color_selection_code, color+1, col+1);
           }
           displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
         }
-        draw_shadow = false;
+        draw_shadow = 0;
 
       }
 
@@ -4592,13 +4617,18 @@ function draw_graphic_bis() {
 
       // Display selected colors
       animation_ctx.strokeStyle = backgroundColorTable[color_being_selected-1];
-      // XXXTBC
 
       // Display arrow if needed
       if (arrow_regular_cond()) {
         drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
       }
-      
+
+      draw_shadow = 2;
+      animation_ctx.font = big_code_bold_font;
+      displayColor(color_being_selected, attempt_nb_width+(70*(nbColumns+1))/100+(column_of_color_being_selected-1)*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color_being_selected-1, animation_ctx, false, true, false);
+      draw_shadow = 0
+
+      fadeOutCanvas(column_of_color_being_selected, 950);
       reset_color_being_selected();
     }
     if ((currentAttemptNumber == arrow_shown_thld+3) && (currentCode != 0)) {
@@ -4863,6 +4893,9 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
               apply_gradient = false;
             }
             let radius = Math.min(x_0_next - x_0, y_0 - y_0_next)/2.5;
+            if (draw_shadow == 2) { // highlight mode
+              radius = radius * 1.3;
+            }
             ctx.beginPath();
             ctx.arc(Math.floor((x_0 + x_0_next + 1)/2), // center x
                     Math.floor((y_0 + y_0_next + 1)/2), // center y

@@ -679,7 +679,7 @@
         console.log("checkButtonEvent(" + mouseEvent + ") function not defined yet");
         return (!mouseEvent); // guarantee proper android app behaviour
       }
-      var newGameButtonClick = function(nbColumns_p) {
+      var newGameButtonClick = function(nbColumns_p, skip_transition_effect = false) {
         console.log("newGameButtonClick(" + nbColumns_p + ") function not defined yet");
       }
       var gameOnGoing = function() {
@@ -911,7 +911,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v33.05"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v33.06"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1009,7 +1009,18 @@
             }
 
             else if (modal_mode == 5) {
-              newGameButtonClick(5);
+
+              if (localStorage.modernDisplayApplied && localStorage.displayVariantApplied
+                  && (localStorage.modernDisplayApplied == "false") && (localStorage.displayVariantApplied == "0")) {
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"4\");}catch(error){}", 555);
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"3\");}catch(error){}", 555*2);
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"2\");}catch(error){}", 555*3);
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"1\");}catch(error){}", 555*4);
+              }
+              else {
+                newGameButtonClick(0);
+              }
+
               modal_mode = -1;
               return true; // close the modal
             }
@@ -1341,7 +1352,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.05: " + (localStorage.reloadForCompatibility_v3305 ? localStorage.reloadForCompatibility_v3305 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.06: " + (localStorage.reloadForCompatibility_v3306 ? localStorage.reloadForCompatibility_v3306 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userInfoStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon

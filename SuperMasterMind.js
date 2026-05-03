@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v33.05";
+let smm_compatibility_version="v33.06";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3305)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3306)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3305="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3306="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -161,7 +161,7 @@ let x_step=1.0;
 let y_step=1.0;
 let color_being_selected=-1;
 let column_of_color_being_selected=-1;
-let draw_shadow=false;
+let draw_shadow=0;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
 let optimal_width=4;
@@ -274,6 +274,7 @@ let font_array__empty_space_before_str=new Array(0);
 let font_array_small_char__empty_space_before_str=new Array(0);
 let basic_bold_font=defaultFont;
 let code_bold_font=defaultFont;
+let big_code_bold_font=defaultFont;
 let medium_bold_font=defaultFont;
 let medium_bold_font_2=defaultFont;
 let stats_bold_font=defaultFont;
@@ -281,7 +282,6 @@ let font_size=min_font_size;
 let star_font_size=min_font_size;
 let default_font_height_factor=0.83;
 let main_graph_update_needed=true;
-let color_selection_code=0;
 let color_cnt=1;
 let tickChar="\u2714";
 let crossChar="\u2716";
@@ -436,7 +436,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.05: "+(localStorage.reloadForCompatibility_v3305 ? localStorage.reloadForCompatibility_v3305 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.06: "+(localStorage.reloadForCompatibility_v3306 ? localStorage.reloadForCompatibility_v3306 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -716,12 +716,13 @@ return;
 catch (exc){
 displayGUIError("onGameSolverMsg error: "+exc, exc.stack);
 }}
-function newGameButtonClick_delayed(){
+function newGameButtonClick_delayed(skip_transition_effect=false){
+if(!skip_transition_effect){
 try{
 $(pageTransitionObject).fadeIn("fast");
 }
 catch (exc){
-}
+}}
 if(currentAttemptNumber-1!=nbOfStatsFilled_Perfs){
 nbGamesAbortedWithOnGoingWorker++;
 lastGameWasAbortedWithOnGoingWorker=true;
@@ -733,11 +734,12 @@ newGameEvent=true;
 nbNewGameEvents++;
 updateGameSizes();
 draw_graphic();
+if(!skip_transition_effect){
 try{
 $(pageTransitionObject).fadeOut("fast");
 }
 catch (exc){
-}}
+}}}
 function gameAbortionEnd(){
 $(gameAbortedObject).fadeOut(200);
 dsCode=false;
@@ -760,7 +762,7 @@ else{
 last_touch_button_event_time=(new Date()).getTime();
 return true;
 }}}
-newGameButtonClick=function(nbColumns_p){
+newGameButtonClick=function(nbColumns_p, skip_transition_effect=false){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("newGameButtonClick skipped");
 return;
@@ -777,7 +779,7 @@ return;
 }}
 nbOnGoingGamesAborted++;
 if(nbColumns==3){
-setTimeout("dsCode=false;newGameButtonClick_delayed();", 2500);
+setTimeout("dsCode=false;newGameButtonClick_delayed("+skip_transition_effect+");", 2500);
 }
 else{
 let game_aborted_str="<b>Current game was aborted"
@@ -796,7 +798,7 @@ updateGameSizes();
 draw_graphic();
 }
 else{
-newGameButtonClick_delayed();
+newGameButtonClick_delayed(skip_transition_effect);
 }}}}
 resetCurrentCodeButtonClick=function(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
@@ -952,13 +954,19 @@ let initialCurrentPossibleCodeShown=currentPossibleCodeShown;
 for (let i=1;i <=initialCurrentPossibleCodeShown;i++){
 setTimeout("try{if(showPossibleCodesMode&&!showPossibleCodesButtonObject.disabled&&(game_cnt=="+game_cnt+")){currentPossibleCodeShown="+i+";updateGameSizes();draw_graphic();}}catch(possible_error){}", 444*i);
 }}}}
-function handleDisplayModeSelectionChange(){
+function handleDisplayModeSelectionChange(forcedValue="0"){
+var value;
+if(forcedValue=="0"){
 var displayModeSelectObject=document.getElementById('displayModeSelect');
 if(displayModeSelectObject==null){
 throw new Error("displayModeSelect was not found");
 }
-var value=displayModeSelectObject.value;
+value=displayModeSelectObject.value;
 console.log("display mode changed: "+value);
+}
+else{
+value=forcedValue;
+}
 switch (value){
 case "1":
 modernDisplay=false;
@@ -1661,7 +1669,7 @@ debug_mode=localStorage.debug_mode;
 gameSolverInitMsgContents={'smm_buffer_messages': 'no', 'smm_req_type': 'INIT', 'nbColumns': nbColumns, 'nbColors': nbColors, 'nbMaxAttempts': nbMaxAttempts, 'nbMaxPossibleCodesShown': nbMaxPossibleCodesShown, 'first_session_game': first_session_game, 'beginner_mode': (!localStorage.gamesok)||(Number(localStorage.gamesok) < min_gamesok_for_firstname-1), 'game_id': game_cnt, 'debug_mode': debug_mode};
 gameSolverConfigDbg=JSON.stringify(gameSolverInitMsgContents);
 game_id_for_gameSolverConfig=game_cnt;
-setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", ((game_cnt <=1)&&android_appli ? 2000: 1111));
+setTimeout("postInitMessageToGameSolver("+game_id_for_gameSolverConfig+");", 1700);
 if(randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();", 444);
 }
@@ -2220,7 +2228,7 @@ ctx.closePath();
 function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_p){
 let apply_gradient=apply_gradient_p;
 if(fill){
-if(draw_shadow){
+if(draw_shadow==1){
 const shadowOffsetX=width*0.07;
 const shadowOffsetY=height*0.07;
 let shadowOpacity;
@@ -2236,6 +2244,12 @@ drawRoundedRectBis(ctx, x+shadowOffsetX, y+shadowOffsetY, width, height, radius)
 ctx.fill();
 ctx.restore();
 }
+else if(draw_shadow==2){
+const shadowOffsetX=width*0.14;
+const shadowOffsetY=height*0.12;
+drawRoundedRectBis(ctx, x-shadowOffsetX, y-shadowOffsetY, width+2*shadowOffsetX, height+2*shadowOffsetY, radius);
+ctx.fill();
+}
 let gradient;
 try{
 gradient=ctx.createLinearGradient(x, y, x+width, y+height);
@@ -2246,7 +2260,9 @@ gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
 catch (err){
 apply_gradient=false;
 }
+if(draw_shadow!=2){
 drawRoundedRectBis(ctx, x, y, width, height, radius);
+}
 if(apply_gradient){
 ctx.fillStyle=gradient;
 }
@@ -2278,7 +2294,6 @@ ctx.lineTo(toX-headlen * Math.cos(angle-Math.PI / 6), toY-headlen * Math.sin(ang
 ctx.moveTo(toX, toY);
 ctx.lineTo(toX-headlen * Math.cos(angle+Math.PI / 6), toY-headlen * Math.sin(angle+Math.PI / 6));
 ctx.stroke();
-fadeOutCanvas(column_selected, 950);
 }
 function draw_graphic(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
@@ -2722,6 +2737,13 @@ font_array_small_char__empty_space_before_str[code_bold_font.replaceAll(" ","")]
 else{
 code_bold_font=basic_bold_font;
 }
+big_code_bold_font="bold "+Math.round(font_size*1.4)+"px "+fontFamily;
+measurePreciseTextHeight("0", big_code_bold_font, str_meas_out);
+font_array__str_height[big_code_bold_font.replaceAll(" ","")]=str_meas_out.str_height;
+font_array__empty_space_before_str[big_code_bold_font.replaceAll(" ","")]=str_meas_out.empty_space_before_str;
+measurePreciseTextHeight(outlinedStar, big_code_bold_font, str_meas_out);
+font_array_small_char__str_height[big_code_bold_font.replaceAll(" ","")]=str_meas_out.str_height;
+font_array_small_char__empty_space_before_str[big_code_bold_font.replaceAll(" ","")]=str_meas_out.empty_space_before_str;
 medium_bold_font="bold "+Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
 measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
 font_array__str_height[medium_bold_font.replaceAll(" ","")]=str_meas_out.str_height;
@@ -3311,14 +3333,15 @@ else{
 ctx.fillStyle="";
 }
 ctx.font=code_bold_font;
-draw_shadow=true;
+draw_shadow=1;
 for (let color=nbColors-1;color >=0;color--){
+let color_selection_code=0;
 for (let col=0;col < nbColumns;col++){
 color_selection_code=smmCodeHandler.setColor(color_selection_code, color+1, col+1);
 }
 displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
 }
-draw_shadow=false;
+draw_shadow=0;
 }
 else{
 let nbOfCodes=nbOfPossibleCodes[currentPossibleCodeShown-1];
@@ -3644,6 +3667,11 @@ animation_ctx.strokeStyle=backgroundColorTable[color_being_selected-1];
 if(arrow_regular_cond()){
 drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1+1.35 * arrow_width, x_0, y_0-1.35 * arrow_width, arrow_width);
 }
+draw_shadow=2;
+animation_ctx.font=big_code_bold_font;
+displayColor(color_being_selected, attempt_nb_width+(70*(nbColumns+1))/100+(column_of_color_being_selected-1)*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color_being_selected-1, animation_ctx, false, true, false);
+draw_shadow=0
+fadeOutCanvas(column_of_color_being_selected, 950);
 reset_color_being_selected();
 }
 if((currentAttemptNumber==arrow_shown_thld+3)&&(currentCode!=0)){
@@ -3857,6 +3885,9 @@ catch (err){
 apply_gradient=false;
 }
 let radius=Math.min(x_0_next-x_0, y_0-y_0_next)/2.5;
+if(draw_shadow==2){
+radius=radius * 1.3;
+}
 ctx.beginPath();
 ctx.arc(Math.floor((x_0+x_0_next+1)/2),
 Math.floor((y_0+y_0_next+1)/2),
