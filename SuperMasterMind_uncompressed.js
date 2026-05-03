@@ -1,4 +1,4 @@
-// ***************************************************
+// // ***************************************************
 // ********** Main Super Master Mind script **********
 // ***************************************************
 
@@ -4601,7 +4601,7 @@ function draw_graphic_bis() {
       
       reset_color_being_selected();
     }
-    if ((currentAttemptNumber == arrow_shown_thld+2) && (currentCode != 0)) {
+    if ((currentAttemptNumber == arrow_shown_thld+3) && (currentCode != 0)) {
       localStorage.arrow_shown_date = currentDate();
     }
 

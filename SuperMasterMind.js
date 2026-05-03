@@ -3646,7 +3646,7 @@ drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1+1.35 * arrow_w
 }
 reset_color_being_selected();
 }
-if((currentAttemptNumber==arrow_shown_thld+2)&&(currentCode!=0)){
+if((currentAttemptNumber==arrow_shown_thld+3)&&(currentCode!=0)){
 localStorage.arrow_shown_date=currentDate();
 }
 if(last_but_one_attempt_event
