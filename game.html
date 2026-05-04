@@ -2088,7 +2088,7 @@ if(localStorage.firstname&&localStorage.nbTimesFirstnameUpdated&&(Number(localSt
 alert("First name has already been changed the maximum number of times");
 return;
 }
-let prompt_str="Please enter your first name or nickname to be stored with your scores (between "+minFirstNameLength+" and "+maxFirstNameLength+" letters):";
+let prompt_str="Please enter your nickname to be stored with your future scores (from "+minFirstNameLength+" to "+maxFirstNameLength+" letters):";
 let firstname_entered=prompt(prompt_str, "Sherlock?");
 if(firstname_entered!=null){
 firstname_entered=firstname_entered.trim();
@@ -2790,7 +2790,7 @@ localStorage.nbTimesShareLocWarning=0;
 }
 localStorage.nbTimesShareLocWarning=Number(localStorage.nbTimesShareLocWarning)+1;
 if(Number(localStorage.nbTimesShareLocWarning) <=2){
-alert("Please share your location so it can be stored along with your scores. Location permissions are visible in your browser Settings menu.");
+alert("Please share your location so it can be stored along with your future scores. Location permissions are visible in your browser Settings menu.");
 }
 setTimeout("attempt_HTML_geolocation();", 44);
 localStorage.last_time_attempt_HTML_geolocation_if_needed=(new Date()).getTime();
