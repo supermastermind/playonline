@@ -1012,10 +1012,10 @@
 
               if (!localStorage.modernDisplayApplied || !localStorage.displayVariantApplied
                   || ((localStorage.modernDisplayApplied == "false") && (localStorage.displayVariantApplied == "0")) ) {
-                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"2\");}catch(error){}", 444);
-                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"4\");}catch(error){}", 444*2);
-                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"3\");}catch(error){}", 444*3);
-                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"1\");}catch(error){}", 444*4);
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"2\");}catch(error){}", 222);
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"4\");}catch(error){}", 222+444*1);
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"3\");}catch(error){}", 222+444*2);
+                setTimeout("try{newGameButtonClick(0, true); handleDisplayModeSelectionChange(\"1\");}catch(error){}", 222+444*3);
               }
               else {
                 newGameButtonClick(0);
