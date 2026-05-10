@@ -275,6 +275,7 @@ let font_array_small_char__empty_space_before_str=new Array(0);
 let basic_bold_font=defaultFont;
 let code_bold_font=defaultFont;
 let big_code_bold_font=defaultFont;
+let big_code_bold_font_2=defaultFont;
 let medium_bold_font=defaultFont;
 let medium_bold_font_2=defaultFont;
 let stats_bold_font=defaultFont;
@@ -1063,7 +1064,7 @@ throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 let arrow_shown_thld=2;
 function arrow_regular_cond(){
 return ( ((!localStorage.arrow_shown_date)||(localStorage.arrow_shown_date!=currentDate())||(!localStorage.gamesok)||(Number(localStorage.gamesok) <=1))
-&&((currentAttemptNumber <=arrow_shown_thld)||((currentAttemptNumber==arrow_shown_thld+1)&&(currentCode==0))) );
+&&((currentAttemptNumber <=arrow_shown_thld)||((currentAttemptNumber==arrow_shown_thld+1)&&(currentCode==sCodeRevealed))) );
 }
 function reset_color_being_selected(){
 color_being_selected=-1;
@@ -2244,9 +2245,9 @@ drawRoundedRectBis(ctx, x+shadowOffsetX, y+shadowOffsetY, width, height, radius)
 ctx.fill();
 ctx.restore();
 }
-else if(draw_shadow==2){
-const shadowOffsetX=width*0.14;
-const shadowOffsetY=height*0.12;
+else if(draw_shadow >=2){
+const shadowOffsetX=width * ((draw_shadow==2) ? 0.14: 0.04);
+const shadowOffsetY=height * ((draw_shadow==2) ? 0.12 : 0.03);
 drawRoundedRectBis(ctx, x-shadowOffsetX, y-shadowOffsetY, width+2*shadowOffsetX, height+2*shadowOffsetY, radius);
 ctx.fill();
 }
@@ -2260,7 +2261,7 @@ gradient.addColorStop(1, averageColor(ctx.fillStyle, "#000000", 0.80));
 catch (err){
 apply_gradient=false;
 }
-if(draw_shadow!=2){
+if(draw_shadow < 2){
 drawRoundedRectBis(ctx, x, y, width, height, radius);
 }
 if(apply_gradient){
@@ -2744,6 +2745,13 @@ font_array__empty_space_before_str[big_code_bold_font.replaceAll(" ","")]=str_me
 measurePreciseTextHeight(outlinedStar, big_code_bold_font, str_meas_out);
 font_array_small_char__str_height[big_code_bold_font.replaceAll(" ","")]=str_meas_out.str_height;
 font_array_small_char__empty_space_before_str[big_code_bold_font.replaceAll(" ","")]=str_meas_out.empty_space_before_str;
+big_code_bold_font_2="bold "+Math.round(font_size*1.25)+"px "+fontFamily;
+measurePreciseTextHeight("0", big_code_bold_font_2, str_meas_out);
+font_array__str_height[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out.str_height;
+font_array__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out.empty_space_before_str;
+measurePreciseTextHeight(outlinedStar, big_code_bold_font_2, str_meas_out);
+font_array_small_char__str_height[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out.str_height;
+font_array_small_char__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out.empty_space_before_str;
 medium_bold_font="bold "+Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
 measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
 font_array__str_height[medium_bold_font.replaceAll(" ","")]=str_meas_out.str_height;
@@ -3616,7 +3624,7 @@ else if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes >=1)){
 currentCodeColorMode=2;
 }
 else{
-if(currentCode==0){
+if(currentCode==sCodeRevealed){
 currentCodeColorMode=2;
 }
 else{
@@ -3641,9 +3649,9 @@ resetCurrentCodeButtonObject.className="button disabled";
 else{
 resetCurrentCodeButtonObject.className="button";
 }
-if((color_being_selected!=-1)&&(column_of_color_being_selected!=-1)){
+if(gameOnGoing()&&(color_being_selected!=-1)&&(column_of_color_being_selected!=-1)){
 let x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
-let y_0=get_y_pixel(y_min+y_step*((currentCode==0) ? currentAttemptNumber-1: currentAttemptNumber));
+let y_0=get_y_pixel(y_min+y_step*((currentCode==sCodeRevealed) ? currentAttemptNumber-1: currentAttemptNumber));
 let x_1=x_0;
 let y_1=get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
 let arrow_width_ratio=((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
@@ -3669,8 +3677,13 @@ drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1+1.35 * arrow_w
 }
 draw_shadow=2;
 animation_ctx.font=big_code_bold_font;
-displayColor(color_being_selected, attempt_nb_width+(70*(nbColumns+1))/100+(column_of_color_being_selected-1)*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color_being_selected-1, animation_ctx, false, true, false);
-draw_shadow=0
+displayColor(color_being_selected, attempt_nb_width+(70*(nbColumns+1))/100+(column_of_color_being_selected-1)*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color_being_selected-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
+if(currentCode!=sCodeRevealed){
+draw_shadow=3;
+animation_ctx.font=big_code_bold_font_2;
+displayColor(color_being_selected, attempt_nb_width+(70*(nbColumns+1))/100+(column_of_color_being_selected-1)*2, currentAttemptNumber-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
+}
+draw_shadow=0;
 fadeOutCanvas(column_of_color_being_selected, 950);
 reset_color_being_selected();
 }
@@ -3885,8 +3898,8 @@ catch (err){
 apply_gradient=false;
 }
 let radius=Math.min(x_0_next-x_0, y_0-y_0_next)/2.5;
-if(draw_shadow==2){
-radius=radius * 1.3;
+if(draw_shadow >=2){
+radius=radius * ((draw_shadow==2) ? 1.2 : 1.08);
 }
 ctx.beginPath();
 ctx.arc(Math.floor((x_0+x_0_next+1)/2),
