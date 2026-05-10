@@ -3617,10 +3617,10 @@ currentCodeColorMode=-1;
 if(currentAttemptNumber > 1){
 displayCode(codesPlayed[0], 0, ctx, false, true);
 }
-if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes==0)&&(currentCode==0)){
+if((currentAttemptNumber==1)&&(currentCode==0)&&(nbOfStatsFilled_NbPossibleCodes==0) ){
 currentCodeColorMode=1;
 }
-else if((currentAttemptNumber==1)&&(nbOfStatsFilled_NbPossibleCodes >=1)){
+else if((currentAttemptNumber==1)&&(currentCode==0)){
 currentCodeColorMode=2;
 }
 else{
