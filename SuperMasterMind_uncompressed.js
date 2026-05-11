@@ -1383,6 +1383,7 @@ settingsButtonClick = function() { // (override temporary definition)
 }
 
 let arrow_shown_thld = 2;
+let arrow_shown_color_selections_thld = 2;
 function arrow_regular_cond() {
   return ( ((!localStorage.arrow_shown_date) || (localStorage.arrow_shown_date != currentDate()) || (!localStorage.gamesok) || (Number(localStorage.gamesok) <= 1))
            && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == sCodeRevealed))) );
@@ -4628,7 +4629,7 @@ function draw_graphic_bis() {
       animation_ctx.strokeStyle = backgroundColorTable[color_being_selected-1];
 
       // Display arrow if needed
-      if (arrow_regular_cond()) {
+      if (arrow_regular_cond() && (nbColorSelections <= arrow_shown_color_selections_thld)) {
         drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
       }
 
@@ -4646,7 +4647,7 @@ function draw_graphic_bis() {
       reset_color_being_selected();
     }
 
-    if ((currentAttemptNumber == arrow_shown_thld+3) && (currentCode != 0)) {
+    if ((currentAttemptNumber >= arrow_shown_thld+2) && (currentCode != 0) && (nbColorSelections > arrow_shown_color_selections_thld)) {
       localStorage.arrow_shown_date = currentDate();
     }
 

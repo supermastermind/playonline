@@ -1062,6 +1062,7 @@ catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}}
 let arrow_shown_thld=2;
+let arrow_shown_color_selections_thld=2;
 function arrow_regular_cond(){
 return ( ((!localStorage.arrow_shown_date)||(localStorage.arrow_shown_date!=currentDate())||(!localStorage.gamesok)||(Number(localStorage.gamesok) <=1))
 &&((currentAttemptNumber <=arrow_shown_thld)||((currentAttemptNumber==arrow_shown_thld+1)&&(currentCode==sCodeRevealed))) );
@@ -3672,7 +3673,7 @@ animation_ctx.scale(dpr, dpr);
 animation_ctx.fillStyle="rgba(0, 0, 0, 0)";
 animation_ctx.fillRect(0, 0, animation_canvas.width, animation_canvas.height);
 animation_ctx.strokeStyle=backgroundColorTable[color_being_selected-1];
-if(arrow_regular_cond()){
+if(arrow_regular_cond()&&(nbColorSelections <=arrow_shown_color_selections_thld)){
 drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1+1.35 * arrow_width, x_0, y_0-1.35 * arrow_width, arrow_width);
 }
 draw_shadow=2;
@@ -3687,7 +3688,7 @@ draw_shadow=0;
 fadeOutCanvas(column_of_color_being_selected, 950);
 reset_color_being_selected();
 }
-if((currentAttemptNumber==arrow_shown_thld+3)&&(currentCode!=0)){
+if((currentAttemptNumber >=arrow_shown_thld+2)&&(currentCode!=0)&&(nbColorSelections > arrow_shown_color_selections_thld)){
 localStorage.arrow_shown_date=currentDate();
 }
 if(last_but_one_attempt_event
