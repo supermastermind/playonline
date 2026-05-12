@@ -1062,7 +1062,6 @@ catch (exc){
 throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}}
 let arrow_shown_thld=2;
-let arrow_shown_color_selections_thld=2;
 function arrow_regular_cond(){
 return ( ((!localStorage.arrow_shown_date)||(localStorage.arrow_shown_date!=currentDate())||(!localStorage.gamesok)||(Number(localStorage.gamesok) <=1))
 &&((currentAttemptNumber <=arrow_shown_thld)||((currentAttemptNumber==arrow_shown_thld+1)&&(currentCode==sCodeRevealed))) );
@@ -3650,6 +3649,7 @@ resetCurrentCodeButtonObject.className="button disabled";
 else{
 resetCurrentCodeButtonObject.className="button";
 }
+let arrow_shown_color_selections_thld=nbColumns-1;
 if(gameOnGoing()&&(color_being_selected!=-1)&&(column_of_color_being_selected!=-1)){
 let x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
 let y_0=get_y_pixel(y_min+y_step*((currentCode==sCodeRevealed) ? currentAttemptNumber-1: currentAttemptNumber));
@@ -3688,7 +3688,7 @@ draw_shadow=0;
 fadeOutCanvas(column_of_color_being_selected, 950);
 reset_color_being_selected();
 }
-if((currentAttemptNumber >=arrow_shown_thld+2)&&(currentCode!=0)&&(nbColorSelections > arrow_shown_color_selections_thld)){
+if((currentAttemptNumber >=arrow_shown_thld+2)&&(currentCode!=sCodeRevealed)&&(nbColorSelections > arrow_shown_color_selections_thld)){
 localStorage.arrow_shown_date=currentDate();
 }
 if(last_but_one_attempt_event
