@@ -1382,7 +1382,7 @@ settingsButtonClick = function() { // (override temporary definition)
   }
 }
 
-let arrow_shown_thld = 2;
+let arrow_shown_thld = 1;
 function arrow_regular_cond() {
   return ( ((!localStorage.arrow_shown_date) || (localStorage.arrow_shown_date != currentDate()) || (!localStorage.gamesok) || (Number(localStorage.gamesok) <= 1))
            && ((currentAttemptNumber <= arrow_shown_thld) || ((currentAttemptNumber == arrow_shown_thld+1) && (currentCode == sCodeRevealed))) );
@@ -4597,7 +4597,6 @@ function draw_graphic_bis() {
     // Trigger selection animations
     // ****************************
 
-    let arrow_shown_color_selections_thld = nbColumns-1;
     if (gameOnGoing() && (color_being_selected != -1) && (column_of_color_being_selected != -1)) {
       let x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
       let y_0 = get_y_pixel(y_min+y_step*((currentCode == sCodeRevealed) ? currentAttemptNumber - 1: currentAttemptNumber));
@@ -4629,7 +4628,7 @@ function draw_graphic_bis() {
       animation_ctx.strokeStyle = backgroundColorTable[color_being_selected-1];
 
       // Display arrow if needed
-      if (arrow_regular_cond() && (nbColorSelections <= arrow_shown_color_selections_thld)) {
+      if (arrow_regular_cond()) {
         drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
       }
 
@@ -4647,7 +4646,7 @@ function draw_graphic_bis() {
       reset_color_being_selected();
     }
 
-    if ((currentAttemptNumber >= arrow_shown_thld+2) && (currentCode != sCodeRevealed) && (nbColorSelections > arrow_shown_color_selections_thld)) {
+    if ((currentAttemptNumber >= arrow_shown_thld+3) && (currentCode != sCodeRevealed) && (nbColorSelections > 7)) {
       localStorage.arrow_shown_date = currentDate();
     }
 
