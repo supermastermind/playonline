@@ -2877,7 +2877,7 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fill, apply_gradient_
       ctx.restore();
     }
     else if (draw_shadow >= 2) { // highlight mode
-      const shadowOffsetX = width * ((draw_shadow == 2) ? 0.14: 0.07);
+      const shadowOffsetX = width * ((draw_shadow == 2) ? ((android_appli && (nbColumns >= 6)) ? 0.18 : 0.14) : 0.07);
       const shadowOffsetY = height * ((draw_shadow == 2) ? 0.12 : 0.04);
       drawRoundedRectBis(ctx, x - shadowOffsetX, y - shadowOffsetY, width + 2*shadowOffsetX, height + 2*shadowOffsetY, radius);
       ctx.fill();
@@ -4909,7 +4909,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
             }
             let radius = Math.min(x_0_next - x_0, y_0 - y_0_next)/2.5;
             if (draw_shadow >= 2) { // highlight mode
-              radius = radius * ((draw_shadow == 2) ? 1.2 : 1.1);
+              radius = radius * ((draw_shadow == 2) ? ((android_appli && (nbColumns >= 6)) ? 1.3 : 1.2) : 1.1);
             }
             ctx.beginPath();
             ctx.arc(Math.floor((x_0 + x_0_next + 1)/2), // center x

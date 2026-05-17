@@ -1035,8 +1035,8 @@ return;
 if((message.indexOf("Script error.")!=-1)&&(url=="")&&(lineNo==0)&&(columnNo==0)&&(error==null)){
 return;
 }
-if(braveMode&&
-((message.indexOf("__firefox__")!=-1)
+if((safariMode||braveMode)
+&&((message.indexOf("__firefox__")!=-1)
 ||(message.indexOf("window.")!=-1)) ){
 return;
 }}
