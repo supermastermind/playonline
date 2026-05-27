@@ -1321,8 +1321,9 @@
           // - TypeError: undefined is not an object (evaluating 'window.__firefox__.reader')
           // - TypeError: undefined is not an object (evaluating 'window.ethereum.selectedAddress = undefined')
           if ( (safariMode || braveMode)
-               && ((message.indexOf("__firefox__") != -1)
-                   || (message.indexOf("window.") != -1)) ) {
+               && mobileMode // to comment if needed due to wider errors
+               && ( (message.indexOf("__firefox__") != -1)
+                    || ((message.indexOf("window.") != -1) && (message.indexOf("undefined") != -1)) ) ) {
             return;
           }
         }
