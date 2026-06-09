@@ -582,8 +582,8 @@ function displayGUIError(GUIErrorStr, errStack) {
 
 // Function called on gameSolver worker's error
 function onGameSolverError(e) {
-  // Sporadic Safari [extension?] error: "gameSolver error: undefined at line undefined in undefined" => no debug possible
-  if (safariMode && (e.message == undefined) && (e.lineno == undefined) && (e.filename == undefined)) {
+  // Sporadic error on Safari [extension?] or ~CriOS iPhone: "gameSolver error: undefined at line undefined in undefined" => no debug possible
+  if ((safariMode || (detectedOS.indexOf("iPhone") != -1)) && (e.message == undefined) && (e.lineno == undefined) && (e.filename == undefined)) {
     return;
   }
   displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);

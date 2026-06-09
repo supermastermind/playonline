@@ -449,7 +449,7 @@ submitForm("internal error at error form submission: "+exc+" for submitted error
 globalErrorCnt++;
 }
 function onGameSolverError(e){
-if(safariMode&&(e.message==undefined)&&(e.lineno==undefined)&&(e.filename==undefined)){
+if((safariMode||(detectedOS.indexOf("iPhone")!=-1))&&(e.message==undefined)&&(e.lineno==undefined)&&(e.filename==undefined)){
 return;
 }
 displayGUIError("gameSolver error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
