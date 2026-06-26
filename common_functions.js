@@ -63,12 +63,12 @@ var optimal_strategy_descr = "The optimal strategy is determined using a recursi
 
 function write_optimal_strategy_details_1() {
   var str = "<div>" + optimal_strategy_descr + "In some situations, playing an impossible code may be better than playing the best possible code(s). This could be called a &quot;useful mistake&quot;. "
-            + "This will result in a strictly positive performance for this code (e.g. <b><font color=#008200>+0.25</font></b>). If you get such a positive performance (voluntarily), you are good!&nbsp;&#x1F914;"
+            + "This will result in a strictly positive performance for this code (e.g. <b><span style='color:#008200'>+0.25</span></b>). If you get such a positive performance (voluntarily), you are good!&nbsp;&#x1F914;"
             + "<hr style='height:0.5rem; visibility:hidden;' />"
             + "For more details: <a href=optimal_strategy.html><b>Strategy</b></a></div>";
   document.write(str);
 }
 
 function write_optimal_strategy_details_2() {
-  document.write(optimal_strategy_descr + "This strategy could thus be called the <b><font color=#CC0099>optimal logical strategy</font></b>. It is implemented in the <a href=index.html>online game</a> and <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io'>Android app</a>.<hr style='height:0.75vh; visibility:hidden;' />Other strategies exist in which \"any code\" can be played at each stage of the game, that's to say both possible and impossible codes. Mathematically optimal strategies are among them, but processing times to fully evaluate them can be very long, especially for 5-columns/8-colors and more complex games. They offer slightly better statistics than the <b><font color=#CC0099>optimal logical strategy</font></b>. Some comparison is made in this page.");
+  document.write(optimal_strategy_descr + "This strategy could thus be called the <b><span style='color:#CC0099'>optimal logical strategy</span></b>. It is implemented in the <a href=index.html>online game</a> and <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io'>Android app</a>.<hr style='height:0.75vh; visibility:hidden;' />Other strategies exist in which \"any code\" can be played at each stage of the game, that's to say both possible and impossible codes. Mathematically optimal strategies are among them, but processing times to fully evaluate them can be very long, especially for 5-columns/8-colors and more complex games. They offer slightly better statistics than the <b><span style='color:#CC0099'>optimal logical strategy</span></b>. Some comparison is made in this page.");
 }

@@ -71,12 +71,12 @@
             <a href="img/SMM_game_example_1_portrait.png"><img src="img/SMM_game_example_1_portrait.png" style="width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:0.5rem;border-radius:2%"></a>
             <a href="img/SMM_game_example_2_portrait.png"><img src="img/SMM_game_example_2_portrait.png" style="width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;margin-top:0.5rem;border-radius:2%"></a>
             <hr style="height:0.5rem; visibility:hidden;" />
-            <font style='font-size:111%'>Play on your smartphone (in available countries) with </font><b><a href='https://play.google.com/store/apps/details?id=supermastermind.github.io' onfocus='this.blur()'><font style='font-size:111%'>the Android&nbsp;app</font></a></b><br>
+            <span style='font-size:111%'>Play on your smartphone (in available countries) with </span><b><a href='https://play.google.com/store/apps/details?id=supermastermind.github.io' onfocus='this.blur()'><span style='font-size:111%'>the Android&nbsp;app</span></a></b><br>
             <a href='https://play.google.com/store/apps/details?id=supermastermind.github.io'>
               <img alt='Get it on Google Play' style='width:11.0rem;margin-top:0.5rem;margin-bottom:0' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='width:5.5rem;margin-top:0.5rem;margin-bottom:0;border-radius:15%' src='img/Playstore_icon.png'/>
             </a>
             <hr style="height:0.5rem; visibility:hidden;" />
-            <font style='font-size:111%'>or in </font><b><a href='game.html' onfocus='this.blur()'><font style='font-size:111%'>your browser</font></a></b>.<br>
+            <span style='font-size:111%'>or in </span><b><a href='game.html' onfocus='this.blur()'><span style='font-size:111%'>your browser</span></a></b>.<br>
             <hr style="height:0.5rem; visibility:hidden;" />
             Please note that the app is no longer available in the US Google Play Store.<br>
 
@@ -86,8 +86,8 @@
             The player makes successive attempts to guess the secret code.<br>
             After each attempt, feedback is provided using pegs:<br>
             <ul style='margin:0'>
-            <li style='list-style-type:disc'>a black peg <small><small>&#x26ab;</small></small> indicates a correct color in a correct position,</li>
-            <li style='list-style-type:disc'>a white peg <small><small>&#x26aa;</small></small> indicates a correct color in a wrong position.</li>
+            <li style='list-style-type:disc'>a black peg <span style='font-size:smaller'><span style='font-size:smaller'>&#x26ab;</span></span> indicates a correct color in a correct position,</li>
+            <li style='list-style-type:disc'>a white peg <span style='font-size:smaller'><span style='font-size:smaller'>&#x26aa;</span></span> indicates a correct color in a wrong position.</li>
             </ul>
             Only the total numbers of black pegs and of white pegs are shown (no information is given about which positions they refer to).<br>
             The game is won when the player receives 5 black pegs (meaning the secret code has been correctly guessed), or lost when the maximum number of attempts is reached.
@@ -95,7 +95,7 @@
             In variants, code breaker games follow the format M out of N, where M is the code length and N is the number of available colors.<br>
 
             <h2>How to play?</h2>
-            <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;background-color:#FFFFFF;padding-top:0.5rem;padding-bottom:0.5rem;padding-left:1.5rem;padding-right:1.5rem;margin-top:0.5rem;margin-right:0.5rem;border-radius:2%'><small>click to enlarge</small></a>
+            <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:30%;border-color:#AAAAAA;border-style:solid;border-width:thin;background-color:#FFFFFF;padding-top:0.5rem;padding-bottom:0.5rem;padding-left:1.5rem;padding-right:1.5rem;margin-top:0.5rem;margin-right:0.5rem;border-radius:2%'><span style='font-size:smaller'>click to enlarge</span></a>
 
             <a name='Strategy'></a>
             <h2>Strategy evaluation: scores and performances</h2>
@@ -103,23 +103,23 @@
             <hr style='height:0.5rem; visibility:hidden;' />
             This calculator compares what you played to what the optimal strategy would have played. For each code played,
             it compares "the average number of attempts to find secret codes" which is reachable when an optimal code is played
-            to this same average number when your code is played, and then displays the difference next to your code, called <b><font color=#CC0099>performance</font></b>.<br>
+            to this same average number when your code is played, and then displays the difference next to your code, called <b><span style='color:#CC0099'>performance</span></b>.<br>
             <hr style='height:0.5rem; visibility:hidden;' />
             For example:<br>
             <ul style='margin:0'>
               <li style='list-style-type:disc'><b>0.00</b> means that what you played was optimal: no difference between your code and the optimal code(s),</li>
-              <li style='list-style-type:disc'><b><font color=#F00000>-1.00</font></b> means that what you played was useless: 1 attempt was lost on average, hence -1,</li>
-              <li style='list-style-type:disc'><b><font color=#F00000>-0.50</font></b> means that what you played was not optimal: you lost 0.5 attempt on average
+              <li style='list-style-type:disc'><b><span style='color:#F00000'>-1.00</span></b> means that what you played was useless: 1 attempt was lost on average, hence -1,</li>
+              <li style='list-style-type:disc'><b><span style='color:#F00000'>-0.50</span></b> means that what you played was not optimal: you lost 0.5 attempt on average
               to reach secret codes in comparison to an optimal code. That means that if the optimal strategy reaches
               secret codes in 4 attempts on average, your code (followed by an optimal strategy) will reach them in 4.5 attempts on average.
               Of course, if you are lucky, your inefficient code might turn out to be the secret code, meaning you would win instantly!
             </ul>
             <hr style='height:0.5rem; visibility:hidden;' />
-            When you win, summing those performances over all the codes you played gives your <b><font color=#CC0099>global performance</font></b> for this game.
+            When you win, summing those performances over all the codes you played gives your <b><span style='color:#CC0099'>global performance</span></b> for this game.
             <hr style='height:0.5rem; visibility:hidden;' />
-            Your <b><font color=#CC0099>score</font></b> for this game is also calculated, based solely on the number of attempts it took you to find the secret code and the time you needed. As a general rule, this <b><font color=#CC0099>score</font></b> is <b>more influenced by luck than your <font color=#CC0099>global performance</font></b>, which better reflects how well you played this game.
+            Your <b><span style='color:#CC0099'>score</span></b> for this game is also calculated, based solely on the number of attempts it took you to find the secret code and the time you needed. As a general rule, this <b><span style='color:#CC0099'>score</span></b> is <b>more influenced by luck than your <span style='color:#CC0099'>global performance</span></b>, which better reflects how well you played this game.
             <hr style='height:0.5rem; visibility:hidden;' />
-            Online scoreboards display both values (<b><font color=#CC0099>score</font></b> and <b><font color=#CC0099>global performance</font></b>) for each game, as well as cumulative totals for sets of 5 consecutive games, to rank players.
+            Online scoreboards display both values (<b><span style='color:#CC0099'>score</span></b> and <b><span style='color:#CC0099'>global performance</span></b>) for each game, as well as cumulative totals for sets of 5 consecutive games, to rank players.
             <hr style='height:0.5rem; visibility:hidden;' />
 
             <!-- OPTIMAL STRATEGY DETAILS -->

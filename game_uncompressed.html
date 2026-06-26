@@ -96,7 +96,7 @@
         -webkit-backface-visibility: visible;
       }
       .button:focus, .button:active {
-        outline: none; // removes the default focus outline
+        outline: none; /* removes the default focus outline */
       }
       .disabled {
           opacity: 0.3;
@@ -733,7 +733,7 @@
         if (month.length < 2) {
           month = '0' + month;
         }
-        let year = String(date.getYear()-100);
+        let year = String(date.getFullYear()).substring(2);
         return String(day + month + year);
       }
 
@@ -806,7 +806,7 @@
       </tr>
       <tr>
         <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell_id'>
-          <canvas class='my_canvas' id='my_canvas_id'><font color=red>Error: HTML canvas are not supported!</font></canvas>
+          <canvas class='my_canvas' id='my_canvas_id'><span style='color:red'>Error: HTML canvas are not supported!</span></canvas>
           <div class="animation_overlay" id="selectionDiv_1">
             <canvas id="selectionCanvas_1" style='position:absolute;inset:0;'></canvas>
           </div>
@@ -884,7 +884,7 @@
         }
         catch (exc) {}
         if (localStorage.firstname && localStorage.playerid) {
-          document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><font color=yellow>" + localStorage.firstname + "</font></b>!</span></font>" + "<span id='kdo_id'>" + "</span>");
+          document.write("<span style='color:#DDDDDD'><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><span style='color:yellow'>" + localStorage.firstname + "</span></b>!</span></span>" + "<span id='kdo_id'>" + "</span>");
           setTimeout(function() {
             $("#welcome_id").fadeOut().empty();
           }, 60000);
@@ -908,7 +908,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v33.07"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v33.08"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1350,7 +1350,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.07: " + (localStorage.reloadForCompatibility_v3307 ? localStorage.reloadForCompatibility_v3307 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.08: " + (localStorage.reloadForCompatibility_v3308 ? localStorage.reloadForCompatibility_v3308 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userInfoStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -1811,9 +1811,9 @@
             rsp_rankings_str = rsp_rankings_str.replaceAll("<td>", "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied
             rsp_rankings_str = rsp_rankings_str.replace(/[\[]/g, "<td style='vertical-align:middle;border:0;margin:0;padding:" + padding_str + ";text-align:center;font-weight:bold;'>"); // actual <td> syntax is applied: "[" -> "<td ...>" / case without background image
             rsp_rankings_str = rsp_rankings_str.replace(/[\]]/g, "</td>"); // actual </td> syntax is applied: "]" -> "</td>"
-            rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<small>"); // "<s>" -> "<small>"
-            rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</small>"); // "</s>" -> "</small>"
-            rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>"); // apply color change on numbers of assessed attempts
+            rsp_rankings_str = rsp_rankings_str.replaceAll("<s>", "<span style='font-size:smaller'>"); // "<s>" -> "<span style='font-size:smaller'> " // old "<small>"
+            rsp_rankings_str = rsp_rankings_str.replaceAll("</s>", "</span>"); // "</s>" -> </span> // old "</small>"
+            rsp_rankings_str = rsp_rankings_str.replace(/(\([0-9]+\))/g, "<span style='color:#555555'>$1</span>"); // apply color change on numbers of assessed attempts
             rsp_rankings_str = rsp_rankings_str.replace(/(<tr((?!<td).)*<td style=\')/g, "$1border-radius:0.8vh 0 0 0.8vh;"); // make left borders round  ("?!" means "does not contain")
             rsp_rankings_str = rsp_rankings_str.replace(/(<td style=\')(((?!<td).)*<\/tr)/g, "$1border-radius:0 0.8vh 0.8vh 0;$2"); // make right borders round ("?!" means "does not contain")
             rsp_rankings_str = rsp_rankings_str.replace("HISTORY_SIZE", glbScoreAndPerfHistorySize);
@@ -2713,7 +2713,7 @@
           if (nb_games_today >= too_many_games_today_thld_1) {
             let too_many_games_today_str = "";
             let skip_online_score = false;
-            let str_prefix = "<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played " + nb_games_today + " games today!<br>";
+            let str_prefix = "<span style='font-size:larger'><span style='font-size:larger'>&#x1F3C3;&#x1F3C3;&#x1F3C3;</span></span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played " + nb_games_today + " games today!<br>";
             if ((nb_games_today >= too_many_games_today_thld_2) || (!localStorage.firstname)) {
               if (nb_games_today == too_many_games_today_thld_2) {
                 too_many_games_today_str = str_prefix + "No more scores will be stored online for the rest of this day. Online scores will be back tomorrow.";
@@ -2733,13 +2733,13 @@
               throw new Error("internal nb_games_today condition: " + nb_games_today);
             }
             if ((too_many_games_today_str != "") && localStorage.firstname) {
-              let str = "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>"
+              let str = "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>"
                         + "<br><b>"
-                        + "<font color=#C900A1>Hi " + localStorage.firstname + "</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
+                        + "<span style='color:#C900A1'>Hi " + localStorage.firstname + "</span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
                         + too_many_games_today_str
                         + "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
                         + "</b><br>"
-                        + "</font></td></tr></table></center>";
+                        + "</span></td></tr></table></center>";
               try {
                 modal_mode = 6;
                 // set modal content

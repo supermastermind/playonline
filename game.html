@@ -581,7 +581,7 @@ let month=String(date.getMonth()+1);
 if(month.length < 2){
 month='0'+month;
 }
-let year=String(date.getYear()-100);
+let year=String(date.getFullYear()).substring(2);
 return String(day+month+year);
 }
 var min_gamesok_for_firstname=7;
@@ -637,7 +637,7 @@ locationURLs[1]='https://api.ip'+extraStr+'infodb.com/v3/ip-city/?key=792'+extra
 </tr>
 <tr>
 <td style='width:100%;margin:0;padding:0;vertical-align:top;align:left;text-align:left;border:none;border-radius:1.5%;' id='my_canvas_cell_id'>
-<canvas class='my_canvas' id='my_canvas_id'><font color=red>Error: HTML canvas are not supported!</font></canvas>
+<canvas class='my_canvas' id='my_canvas_id'><span style='color:red'>Error: HTML canvas are not supported!</span></canvas>
 <div class="animation_overlay" id="selectionDiv_1">
 <canvas id="selectionCanvas_1" style='position:absolute;inset:0;'></canvas>
 </div>
@@ -701,7 +701,7 @@ welcome_str="Bienvenue";
 }}
 catch (exc){}
 if(localStorage.firstname&&localStorage.playerid){
-document.write("<font color=#DDDDDD><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;"+welcome_str+" <b><font color=yellow>"+localStorage.firstname+"</font></b>!</span></font>"+"<span id='kdo_id'>"+"</span>");
+document.write("<span style='color:#DDDDDD'><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;"+welcome_str+" <b><span style='color:yellow'>"+localStorage.firstname+"</span></b>!</span></span>"+"<span id='kdo_id'>"+"</span>");
 setTimeout(function(){
 $("#welcome_id").fadeOut().empty();
 }, 60000);
@@ -720,7 +720,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v33.07";
+let html_compatibility_game_version="v33.08";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -1063,7 +1063,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.07: "+(localStorage.reloadForCompatibility_v3307 ? localStorage.reloadForCompatibility_v3307 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.08: "+(localStorage.reloadForCompatibility_v3308 ? localStorage.reloadForCompatibility_v3308 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userInfoStr+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1478,9 +1478,9 @@ let padding_str="0.3vh 0 0.3vh 0";
 rsp_rankings_str=rsp_rankings_str.replaceAll("<td>", "<td style='vertical-align:middle;border:0;margin:0;padding:"+padding_str+";text-align:center;font-weight:bold;'>");
 rsp_rankings_str=rsp_rankings_str.replace(/[\[]/g, "<td style='vertical-align:middle;border:0;margin:0;padding:"+padding_str+";text-align:center;font-weight:bold;'>");
 rsp_rankings_str=rsp_rankings_str.replace(/[\]]/g, "</td>");
-rsp_rankings_str=rsp_rankings_str.replaceAll("<s>", "<small>");
-rsp_rankings_str=rsp_rankings_str.replaceAll("</s>", "</small>");
-rsp_rankings_str=rsp_rankings_str.replace(/(\([0-9]+\))/g, "<font color=#555555>$1</font>");
+rsp_rankings_str=rsp_rankings_str.replaceAll("<s>", "<span style='font-size:smaller'>");
+rsp_rankings_str=rsp_rankings_str.replaceAll("</s>", "</span>");
+rsp_rankings_str=rsp_rankings_str.replace(/(\([0-9]+\))/g, "<span style='color:#555555'>$1</span>");
 rsp_rankings_str=rsp_rankings_str.replace(/(<tr((?!<td).)*<td style=\')/g, "$1border-radius:0.8vh 0 0 0.8vh;");
 rsp_rankings_str=rsp_rankings_str.replace(/(<td style=\')(((?!<td).)*<\/tr)/g, "$1border-radius:0 0.8vh 0.8vh 0;$2");
 rsp_rankings_str=rsp_rankings_str.replace("HISTORY_SIZE", glbScoreAndPerfHistorySize);
@@ -2263,7 +2263,7 @@ max_nb_gamesok_today_reached=(nb_games_today >=too_many_games_today_thld_2-1);
 if(nb_games_today >=too_many_games_today_thld_1){
 let too_many_games_today_str="";
 let skip_online_score=false;
-let str_prefix="<big><big>&#x1F3C3;&#x1F3C3;&#x1F3C3;</big></big><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played "+nb_games_today+" games today!<br>";
+let str_prefix="<span style='font-size:larger'><span style='font-size:larger'>&#x1F3C3;&#x1F3C3;&#x1F3C3;</span></span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>You have already played "+nb_games_today+" games today!<br>";
 if((nb_games_today >=too_many_games_today_thld_2)||(!localStorage.firstname)){
 if(nb_games_today==too_many_games_today_thld_2){
 too_many_games_today_str=str_prefix+"No more scores will be stored online for the rest of this day. Online scores will be back tomorrow.";
@@ -2282,13 +2282,13 @@ else{
 throw new Error("internal nb_games_today condition: "+nb_games_today);
 }
 if((too_many_games_today_str!="")&&localStorage.firstname){
-let str="<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>"
+let str="<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>"
 +"<br><b>"
-+"<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
++"<span style='color:#C900A1'>Hi "+localStorage.firstname+"</span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
 +too_many_games_today_str
 +"<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
 +"</b><br>"
-+"</font></td></tr></table></center>";
++"</span></td></tr></table></center>";
 try{
 modal_mode=6;
 modal.setContent("<div style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>"

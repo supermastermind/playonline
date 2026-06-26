@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v33.07";
+let smm_compatibility_version="v33.08";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3307)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3308)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3307="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3308="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -434,7 +434,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.07: "+(localStorage.reloadForCompatibility_v3307 ? localStorage.reloadForCompatibility_v3307 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.08: "+(localStorage.reloadForCompatibility_v3308 ? localStorage.reloadForCompatibility_v3308 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -1021,7 +1021,7 @@ change_first_name_title_str
 +end_separator_str;
 }
 let game_rules_str=
-"<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:2.0vh;color:black'>\
+"<center><table style='width:"+rulesTableWidthStr+";'><tr style='text-align:center;'><td><span style='font-size:2.0vh;color:black'>\
 <hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>\
 See <b><a href='index.html#game_rules'>Game rules</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
 <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'></a>"
@@ -1029,7 +1029,7 @@ See <b><a href='index.html#game_rules'>Game rules</a></b><hr style='height:0.75v
 +change_first_name_str
 +"<b>Links:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <b><a href='index.html'>Home</a>&nbsp;-&nbsp;<a href='optimal_strategy.html'>Strategy</a>&nbsp;-&nbsp;<a href='screenshots.html'>Screenshots</a>&nbsp;-&nbsp;<a href='contact_info.html'>Contact</a></b>\
-</font></td></tr></table></center>"+end_separator_str;
+</span></td></tr></table></center>"+end_separator_str;
 try{
 gameRulesDisplayed=true;
 modal_mode=3;
@@ -1248,7 +1248,7 @@ firstReload=false;
 if(localStorage.gamesok&&(Number(localStorage.gamesok) >=50)
 &&(Number(localStorage.previousNbColumns) >=5) ){
 localStorage.nbReloads=Number(localStorage.nbReloads)+1;
-if(Number(localStorage.nbReloads) >=15){
+if(Number(localStorage.nbReloads) >=20){
 localStorage.nbReloads=0;
 localStorage.previousNbColumns=Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
 }}
@@ -1258,9 +1258,9 @@ return Number(localStorage.previousNbColumns);
 function show_message(specific_str="", android_stars_mode=false, forceStr=""){
 if(forceStr!=""){
 let str=
-"<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
+"<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>\
 <br><b>"+forceStr+"</b><br>\
-</font></td></tr></table></center>";
+</span></td></tr></table></center>";
 try{
 modal_mode=4;
 modal.setContent("<div style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>"
@@ -1284,10 +1284,10 @@ str2=" on your smartphone";
 }
 let str=((specific_str=="") ? ("For "+str1+",&nbsp;install the android app"+str2+"!") : specific_str);
 let play_store_app_str=
-"<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><font style='font-size:1.75vh;color:black'>\
+"<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>\
 <br><b>"+str+"</b><br>\
 <a href='"+android_app_url+"'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh;border-radius:15%' src='img/Playstore_icon.png'/><br></a>\
-</font></td></tr></table></center>";
+</span></td></tr></table></center>";
 try{
 modal_mode=4;
 modal.setContent("<div style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>"
@@ -1448,7 +1448,7 @@ else if((!android_appli)&&(!mobileMode)&&localStorage.gamesok&&(Number(localStor
 show_message();
 }
 else if(android_appli&&localStorage.firstname&&localStorage.gamesok&&((Number(localStorage.gamesok)==30)||(Number(localStorage.gamesok)==80)||(Number(localStorage.gamesok)==160)||(Number(localStorage.gamesok)==305)||(Number(localStorage.gamesok)==505)) ){
-show_message("<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put some stars<br><big>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</big><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
+show_message("<span style='color:#C900A1'>Hi "+localStorage.firstname+"</span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>If you like this game,<br>put some stars<br><span style='font-size:larger'>&#x2b50;&#x2b50;&#x2b50;&#x2b50;&#x2b50;</span><br>and positive comments<br>on&nbsp;Google&nbsp;Play<hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>", true);
 }
 else if(localStorage.firstname&&localStorage.gamesok&&(Number(localStorage.gamesok) >=55)&&(nbGamesPlayedAndWon >=1)
 &&localStorage.lastDonationTimeT&&((new Date()).getTime()-localStorage.lastDonationTimeT > 30*24*60*60*1000 ) ){
@@ -1459,7 +1459,7 @@ let paypalStr=
 <img alt='Donate with Paypal' style='height:6vh;margin-top:1.0vh;margin-bottom:1.0vh' src='img/paypal-donate-button.png'></a><br>"
 +"<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 Thanks for your support!<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
-show_message("", false, "<font color=#C900A1>Hi "+localStorage.firstname+"</font><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"+paypalStr);
+show_message("", false, "<span style='color:#C900A1'>Hi "+localStorage.firstname+"</span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"+paypalStr);
 localStorage.lastDonationTimeT=(new Date()).getTime();
 }}
 catch (tmp_exc){}
