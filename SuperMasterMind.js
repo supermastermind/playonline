@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v33.06";
+let smm_compatibility_version="v33.07";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3306)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3307)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3306="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3307="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -63,13 +63,10 @@ let nbMinPossibleCodesShown=-1;
 let nbMaxPossibleCodesShown=-1;
 let nbPossibleCodesShown=-1;
 let currentPossibleCodeShown=-1;
-let disableMouseMoveEffects=false;
+let disablePointerMoveEffects=false;
 let atLeastOneAttemptSelection=false;
-let currentPossibleCodeShownBeforeMouseMove=-1;
-let lastidxBeforeMouseMove=-1;
-let last_mouse_button_event_time=-1;
-let last_touch_button_event_time=-1;
-let last_touch_event_time=-1;
+let currentPossibleCodeShownBeforePointerMove=-1;
+let lastidxBeforePointerMove=-1;
 let currentCode=-1;
 let codesPlayed;
 let marks;
@@ -437,7 +434,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.06: "+(localStorage.reloadForCompatibility_v3306 ? localStorage.reloadForCompatibility_v3306 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v33.07: "+(localStorage.reloadForCompatibility_v3307 ? localStorage.reloadForCompatibility_v3307 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -479,7 +476,7 @@ str="|||"+navigator.userAgentData.mobile;
 else{
 str="|||navigator.userAgentData does not exist";
 }
-alert(userInfoStr+"|||"+navigator.userAgent+str);
+alert(userInfoStr+"|||"+navigator.userAgent+str+"|||"+smm_compatibility_version);
 }
 else if(mode==888){
 localStorage.gamesok=100;
@@ -746,23 +743,6 @@ $(gameAbortedObject).fadeOut(200);
 dsCode=false;
 newGameButtonClick_delayed();
 }
-checkButtonEvent=function(mouseEvent){
-if(mouseEvent){
-if((new Date()).getTime()-last_touch_button_event_time < 1000){
-return false;
-}
-else{
-last_mouse_button_event_time=(new Date()).getTime();
-return true;
-}}
-else{
-if((new Date()).getTime()-last_mouse_button_event_time < 1000){
-return false;
-}
-else{
-last_touch_button_event_time=(new Date()).getTime();
-return true;
-}}}
 newGameButtonClick=function(nbColumns_p, skip_transition_effect=false){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("newGameButtonClick skipped");
@@ -883,7 +863,7 @@ showPossibleCodesMode=true;
 }
 else if(invertMode){
 showPossibleCodesMode=!showPossibleCodesMode;
-disableMouseMoveEffects=false;
+disablePointerMoveEffects=false;
 }
 if(!showPossibleCodesMode){
 nbPossibleCodesShown=-1;
@@ -938,7 +918,7 @@ else{
 currentPossibleCodeShown=newPossibleCodeShown;
 }}
 if(!transientMode){
-currentPossibleCodeShownBeforeMouseMove=currentPossibleCodeShown;
+currentPossibleCodeShownBeforePointerMove=currentPossibleCodeShown;
 }
 updateGameSizes();
 if(!animated_mode){
@@ -1070,32 +1050,34 @@ function reset_color_being_selected(){
 color_being_selected=-1;
 column_of_color_being_selected=-1;
 }
-function handleTouchStartOrMouseDownEvent(x, y){
-let event_x_min, event_x_max, event_y_min, event_y_max;
-let rect=canvas.getBoundingClientRect();
-let mouse_x=Math.ceil(x-rect.left);
-let mouse_y=Math.ceil(y-rect.top);
-if(dsCode){
+function pointerDown(e){
+e.preventDefault();
+if((gamesolver_blob==null)||!scriptsFullyLoaded||dsCode){
+console.log("pointerDown skipped");
 return;
 }
-else if(gameOnGoing()){
+let event_x_min, event_x_max, event_y_min, event_y_max;
+let rect=canvas.getBoundingClientRect();
+let pointer_x=Math.ceil(e.clientX-rect.left);
+let pointer_y=Math.ceil(e.clientY-rect.top);
+if(gameOnGoing()){
 event_x_min=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 event_x_max=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
 event_y_min=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+nbColors));
 event_y_max=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
-if((mouse_x > event_x_min)&&(mouse_x < event_x_max)
-&&(mouse_y > event_y_min)&&(mouse_y < event_y_max) ){
+if((pointer_x > event_x_min)&&(pointer_x < event_x_max)
+&&(pointer_y > event_y_min)&&(pointer_y < event_y_max) ){
 try{
 for (let column=0;column < nbColumns;column++){
 let x_0, y_0, x_1, y_1;
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
 x_1=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
-if((mouse_x > x_0+refLineWidth)&&(mouse_x < x_1-refLineWidth)){
+if((pointer_x > x_0+refLineWidth)&&(pointer_x < x_1-refLineWidth)){
 let colorSelected=false;
 for (let color=0;color < nbColors;color++){
 y_0=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+(color+1)));
 y_1=get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+color));
-if((mouse_y > y_0+refLineWidth)&&(mouse_y < y_1-refLineWidth)){
+if((pointer_y > y_0+refLineWidth)&&(pointer_y < y_1-refLineWidth)){
 colorSelected=true;
 color_being_selected=color+1;
 column_of_color_being_selected=column+1;
@@ -1110,7 +1092,7 @@ draw_graphic();
 break;
 }}}
 catch (exc){
-displayGUIError("mouseReleased: "+exc, exc.stack);
+displayGUIError("pointerDown: "+exc, exc.stack);
 }}}
 else if((!gameOnGoing())&&allPossibleCodesFilled()){
 if(!showPossibleCodesMode){
@@ -1120,14 +1102,14 @@ else{
 event_y_min=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 }
 event_y_max=get_y_pixel(y_min+y_step*0);
-if((mouse_y > event_y_min)&&(mouse_y < event_y_max) ){
-lastidxBeforeMouseMove=-1;
+if((pointer_y > event_y_min)&&(pointer_y < event_y_max) ){
+lastidxBeforePointerMove=-1;
 for (let idx=0;idx < currentAttemptNumber-1;idx++){
 let y_0=get_y_pixel(y_min+y_step*(idx+1));
 let y_1=get_y_pixel(y_min+y_step*(idx));
-if((mouse_y > y_0)&&(mouse_y < y_1)){
+if((pointer_y > y_0)&&(pointer_y < y_1)){
 showPossibleCodesOffsetMode=false;
-disableMouseMoveEffects=true;
+disablePointerMoveEffects=true;
 if(showPossibleCodesMode){
 atLeastOneAttemptSelection=true;
 }
@@ -1136,13 +1118,13 @@ break;
 }}}
 else{
 if(showPossibleCodesMode){
-disableMouseMoveEffects=false;
+disablePointerMoveEffects=false;
 let x_0_half_display=get_x_pixel(x_min);
 let x_1_half_display=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
 let y_0_half_display=get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75));
 let y_1_half_display=get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2));
-if((mouse_x > x_0_half_display)&&(mouse_x < x_1_half_display)
-&&(mouse_y > y_0_half_display)&&(mouse_y < y_1_half_display) ){
+if((pointer_x > x_0_half_display)&&(pointer_x < x_1_half_display)
+&&(pointer_y > y_0_half_display)&&(pointer_y < y_1_half_display) ){
 atLeastOneAttemptSelection=true;
 showPossibleCodesOffsetMode=!showPossibleCodesOffsetMode;
 main_graph_update_needed=true;
@@ -1150,94 +1132,54 @@ draw_graphic();
 }
 else{
 showPossibleCodesOffsetMode=false;
-lastidxBeforeMouseMove=-1;
+lastidxBeforePointerMove=-1;
 showPossibleCodesButtonClick();
 }}
 else{
-lastidxBeforeMouseMove=-1;
+lastidxBeforePointerMove=-1;
 }}}}
-function touchStart(e){
+function pointerMove(e){
 e.preventDefault();
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
-console.log("touchStart skipped");
-last_touch_event_time=-1;
-return;
-}
-if((e==undefined)||(e.touches==undefined)||(e.touches[0]==undefined)||(e.touches[0].clientX==undefined)||(e.touches[0].clientY==undefined)){
-console.log("touchStart skipped #2");
-last_touch_event_time=-1;
-return;
-}
-last_touch_event_time=(new Date()).getTime();
-handleTouchStartOrMouseDownEvent(e.touches[0].clientX, e.touches[0].clientY);
-}
-function touchEnd(){
-if((gamesolver_blob==null)||!scriptsFullyLoaded){
-console.log("touchEnd skipped");
-return;
-}
-last_touch_event_time=(new Date()).getTime();
-mouseUp();
-}
-function mouseDown(e){
-if((gamesolver_blob==null)||!scriptsFullyLoaded){
-console.log("mouseDown skipped");
-return;
-}
-if((new Date()).getTime()-last_touch_event_time < 1000){
-return;
-}
-handleTouchStartOrMouseDownEvent(e.clientX, e.clientY);
-}
-function mouseUp(){
-if((gamesolver_blob==null)||!scriptsFullyLoaded){
-console.log("mouseUp skipped");
-return;
-}}
-function mouseMove(e){
-if((gamesolver_blob==null)||!scriptsFullyLoaded){
-console.log("mouseMove skipped");
-return;
-}
-if((new Date()).getTime()-last_touch_event_time < 1000){
+console.log("pointerMove skipped");
 return;
 }
 if(!showPossibleCodesMode){
 return;
 }
-else if((!gameOnGoing())&&allPossibleCodesFilled()){
+if((!gameOnGoing())&&allPossibleCodesFilled()){
 let event_x_min, event_x_max, event_y_min, event_y_max;
 let rect=canvas.getBoundingClientRect();
-let mouse_x=e.clientX-rect.left-2.0;
-let mouse_y=e.clientY-rect.top-2.0;
+let pointer_x=e.clientX-rect.left-2.0;
+let pointer_y=e.clientY-rect.top-2.0;
 event_x_min=get_x_pixel(x_min);
 event_x_max=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
 event_y_min=get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 event_y_max=get_y_pixel(y_min+y_step*0);
-if(mouse_y < event_y_min){
-disableMouseMoveEffects=false;
+if(pointer_y < event_y_min){
+disablePointerMoveEffects=false;
 }
-if(disableMouseMoveEffects){
+if(disablePointerMoveEffects){
 return;
 }
-if((mouse_x > event_x_min)&&(mouse_x < event_x_max)
-&&(mouse_y > event_y_min)&&(mouse_y < event_y_max) ){
+if((pointer_x > event_x_min)&&(pointer_x < event_x_max)
+&&(pointer_y > event_y_min)&&(pointer_y < event_y_max) ){
 for (let idx=0;idx < currentAttemptNumber-1;idx++){
 let y_0=get_y_pixel(y_min+y_step*(idx+1));
 let y_1=get_y_pixel(y_min+y_step*(idx));
-if((mouse_y > y_0)&&(mouse_y < y_1)){
-if(lastidxBeforeMouseMove!=idx+1){
+if((pointer_y > y_0)&&(pointer_y < y_1)){
+if(lastidxBeforePointerMove!=idx+1){
 showPossibleCodesOffsetMode=false;
 showPossibleCodesButtonClick(false, idx+1, false, true);
-lastidxBeforeMouseMove=idx+1;
+lastidxBeforePointerMove=idx+1;
 }
 break;
 }}}
 else{
-if(lastidxBeforeMouseMove!=currentPossibleCodeShownBeforeMouseMove){
+if(lastidxBeforePointerMove!=currentPossibleCodeShownBeforePointerMove){
 showPossibleCodesOffsetMode=false;
-showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforeMouseMove, false, true);
-lastidxBeforeMouseMove=currentPossibleCodeShownBeforeMouseMove;
+showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforePointerMove, false, true);
+lastidxBeforePointerMove=currentPossibleCodeShownBeforePointerMove;
 }}}}
 let promptSequenceIndex=0;
 function playAColor(color, column){
@@ -1565,7 +1507,7 @@ throw new Error("inconsistent nbMinPossibleCodesShown and nbMaxPossibleCodesShow
 }
 nbPossibleCodesShown=-1;
 currentPossibleCodeShown=-1;
-disableMouseMoveEffects=false;
+disablePointerMoveEffects=false;
 nbColorSelections=0;
 currentCode=0;
 codesPlayed=new Array(nbMaxAttempts);
@@ -4373,11 +4315,8 @@ debug_game_state=68.5;
 scriptsFullyLoaded=true;
 draw_graphic();
 updateThemeAttributes();
-canvas.addEventListener("touchstart", touchStart,{passive: false});
-canvas.addEventListener("touchend", touchEnd, false);
-canvas.addEventListener("mousedown", mouseDown, false);
-canvas.addEventListener("mouseup", mouseUp, false);
-canvas.addEventListener("mousemove", mouseMove, false);
+canvas.addEventListener("pointerdown", pointerDown, false);
+canvas.addEventListener("pointermove", pointerMove, false);
 if((!localStorage.gamesok)||(Number(localStorage.gamesok) < min_gamesok_for_firstname)){
 let welcome_str=
 "<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td>\

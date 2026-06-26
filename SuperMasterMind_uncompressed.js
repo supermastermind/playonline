@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v33.06"; // !WARNING! -> value to be aligned with version in game.html => search "v33" for all occurrences in this script and game.html
+let smm_compatibility_version = "v33.07"; // !WARNING! -> value to be aligned with version in game.html => search "v33" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3306) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3307) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3306 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3307 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -102,13 +102,10 @@ let nbMinPossibleCodesShown = -1; // N.A.
 let nbMaxPossibleCodesShown = -1; // N.A.
 let nbPossibleCodesShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
 let currentPossibleCodeShown = -1; // N.A. (only valid if showPossibleCodesMode is true)
-let disableMouseMoveEffects = false;
+let disablePointerMoveEffects = false;
 let atLeastOneAttemptSelection = false;
-let currentPossibleCodeShownBeforeMouseMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
-let lastidxBeforeMouseMove = -1;
-let last_mouse_button_event_time = -1;
-let last_touch_button_event_time = -1;
-let last_touch_event_time = -1;
+let currentPossibleCodeShownBeforePointerMove = -1; // N.A. (only valid if showPossibleCodesMode is true)
+let lastidxBeforePointerMove = -1;
 
 let currentCode = -1;
 let codesPlayed;
@@ -561,7 +558,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v33.06: " + (localStorage.reloadForCompatibility_v3306 ? localStorage.reloadForCompatibility_v3306 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v33.07: " + (localStorage.reloadForCompatibility_v3307 ? localStorage.reloadForCompatibility_v3307 : "not done"), 210);
 
       // Alert
       // *****
@@ -616,7 +613,7 @@ function handlePrompt() {
     else {
       str = "|||navigator.userAgentData does not exist";
     }
-    alert(userInfoStr + "|||" + navigator.userAgent + str);
+    alert(userInfoStr + "|||" + navigator.userAgent + str + "|||" + smm_compatibility_version);
   }
   else if (mode == 888) {
     localStorage.gamesok = 100;
@@ -1002,29 +999,6 @@ function gameAbortionEnd() {
   newGameButtonClick_delayed();
 }
 
-checkButtonEvent = function(mouseEvent) { // (override temporary definition)
-  if (mouseEvent) { // mouse event
-    if ((new Date()).getTime() - last_touch_button_event_time < 1000) {
-      // console.log("checkButtonEvent for mouse event skipped");
-      return false;
-    }
-    else {
-      last_mouse_button_event_time = (new Date()).getTime();
-      return true;
-    }
-  }
-  else { // touchpad event
-    if ((new Date()).getTime() - last_mouse_button_event_time < 1000) {
-      // console.log("checkButtonEvent for touchpad event skipped");
-      return false;
-    }
-    else {
-      last_touch_button_event_time = (new Date()).getTime();
-      return true;
-    }
-  }
-}
-
 newGameButtonClick = function(nbColumns_p, skip_transition_effect = false) { // (override temporary definition)
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("newGameButtonClick skipped");
@@ -1179,7 +1153,7 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
     }
     else if (invertMode) {
       showPossibleCodesMode = !showPossibleCodesMode;
-      disableMouseMoveEffects = false;
+      disablePointerMoveEffects = false;
     }
     if (!showPossibleCodesMode) {
       nbPossibleCodesShown = -1;
@@ -1237,7 +1211,7 @@ showPossibleCodesButtonClick = function(invertMode = true, newPossibleCodeShown 
       }
     }
     if (!transientMode) {
-      currentPossibleCodeShownBeforeMouseMove = currentPossibleCodeShown;
+      currentPossibleCodeShownBeforePointerMove = currentPossibleCodeShown;
     }
     updateGameSizes();
     if (!animated_mode) {
@@ -1393,40 +1367,44 @@ function reset_color_being_selected() {
   column_of_color_being_selected = -1;
 }
 
-function handleTouchStartOrMouseDownEvent(x, y) {
-  let event_x_min, event_x_max, event_y_min, event_y_max;
-  let rect = canvas.getBoundingClientRect();
-  let mouse_x = Math.ceil(x - rect.left);
-  let mouse_y = Math.ceil(y - rect.top);
-  if (dsCode) {
+function pointerDown(e) {
+  e.preventDefault();
+
+  if ((gamesolver_blob == null) || !scriptsFullyLoaded || dsCode) {
+    console.log("pointerDown skipped");
     return;
   }
+
+  let event_x_min, event_x_max, event_y_min, event_y_max;
+  let rect = canvas.getBoundingClientRect();
+  let pointer_x = Math.ceil(e.clientX - rect.left);
+  let pointer_y = Math.ceil(e.clientY - rect.top);
 
   // ***************
   // Color selection
   // ***************
 
-  else if (gameOnGoing()) {
+  if (gameOnGoing()) {
 
     event_x_min = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
     event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2));
     event_y_min = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+nbColors));
     event_y_max = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
 
-    if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
-         && (mouse_y > event_y_min) && (mouse_y < event_y_max) ) {
+    if ( (pointer_x > event_x_min) && (pointer_x < event_x_max)
+         && (pointer_y > event_y_min) && (pointer_y < event_y_max) ) {
 
       try {
         for (let column = 0; column < nbColumns; column++) {
           let x_0, y_0, x_1, y_1;
           x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column*2));
           x_1 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+(column+1)*2));
-          if ((mouse_x > x_0 + refLineWidth) && (mouse_x < x_1 - refLineWidth)) { // margin for ambiguous clicks
+          if ((pointer_x > x_0 + refLineWidth) && (pointer_x < x_1 - refLineWidth)) { // margin for ambiguous clicks
             let colorSelected = false;
             for (let color = 0; color < nbColors; color++) {
               y_0 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+(color+1)));
               y_1 = get_y_pixel(y_min+y_step*(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)+transition_height+scode_height+transition_height+color));
-              if ((mouse_y > y_0 + refLineWidth) && (mouse_y < y_1 - refLineWidth)) { // margin for ambiguous clicks
+              if ((pointer_y > y_0 + refLineWidth) && (pointer_y < y_1 - refLineWidth)) { // margin for ambiguous clicks
                 colorSelected = true;
                 color_being_selected = color+1;
                 column_of_color_being_selected = column+1;
@@ -1444,7 +1422,7 @@ function handleTouchStartOrMouseDownEvent(x, y) {
         }
       }
       catch (exc) {
-        displayGUIError("mouseReleased: " + exc, exc.stack);
+        displayGUIError("pointerDown: " + exc, exc.stack);
       }
 
     }
@@ -1465,14 +1443,14 @@ function handleTouchStartOrMouseDownEvent(x, y) {
     }
     event_y_max = get_y_pixel(y_min+y_step*0);
 
-    if ( (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (below code duplicated)
-      lastidxBeforeMouseMove = -1;
+    if ( (pointer_y > event_y_min) && (pointer_y < event_y_max) ) { // (below code duplicated)
+      lastidxBeforePointerMove = -1;
       for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
         let y_0 = get_y_pixel(y_min+y_step*(idx+1));
         let y_1 = get_y_pixel(y_min+y_step*(idx));
-        if ((mouse_y > y_0) && (mouse_y < y_1)) {
+        if ((pointer_y > y_0) && (pointer_y < y_1)) {
           showPossibleCodesOffsetMode = false;
-          disableMouseMoveEffects = true;
+          disablePointerMoveEffects = true;
           if (showPossibleCodesMode) {
             atLeastOneAttemptSelection = true;
           }
@@ -1483,13 +1461,13 @@ function handleTouchStartOrMouseDownEvent(x, y) {
     }
     else {
       if (showPossibleCodesMode) {
-        disableMouseMoveEffects = false;
+        disablePointerMoveEffects = false;
         let x_0_half_display = get_x_pixel(x_min);
         let x_1_half_display = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100));
         let y_0_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height+1+0.75/* (margin) */));
         let y_1_half_display = get_y_pixel(y_min+y_step*(currentAttemptNumber-1+transition_height/2/* (margin) */));
-        if ( (mouse_x > x_0_half_display) && (mouse_x < x_1_half_display)
-             && (mouse_y > y_0_half_display) && (mouse_y < y_1_half_display) ) { // (half display - always tested to simplify)
+        if ( (pointer_x > x_0_half_display) && (pointer_x < x_1_half_display)
+             && (pointer_y > y_0_half_display) && (pointer_y < y_1_half_display) ) { // (half display - always tested to simplify)
           atLeastOneAttemptSelection = true;
           showPossibleCodesOffsetMode = !showPossibleCodesOffsetMode;
           main_graph_update_needed = true;
@@ -1497,12 +1475,12 @@ function handleTouchStartOrMouseDownEvent(x, y) {
         }
         else { // (other zones)
           showPossibleCodesOffsetMode = false;
-          lastidxBeforeMouseMove = -1;
+          lastidxBeforePointerMove = -1;
           showPossibleCodesButtonClick();
         }
       }
       else {
-        lastidxBeforeMouseMove = -1;
+        lastidxBeforePointerMove = -1;
       }
     }
 
@@ -1510,110 +1488,57 @@ function handleTouchStartOrMouseDownEvent(x, y) {
 
 }
 
-function touchStart(e) {
+function pointerMove(e) {
   e.preventDefault();
 
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
-    console.log("touchStart skipped");
-    last_touch_event_time = -1;
-    return;
-  }
-
-  if ((e == undefined) || (e.touches == undefined) || (e.touches[0] == undefined) || (e.touches[0].clientX == undefined) || (e.touches[0].clientY == undefined)) {
-    console.log("touchStart skipped #2");
-    last_touch_event_time = -1;
-    return;
-  }
-
-  last_touch_event_time = (new Date()).getTime();
-  handleTouchStartOrMouseDownEvent(e.touches[0].clientX, e.touches[0].clientY);
-}
-
-function touchEnd() {
-  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
-    console.log("touchEnd skipped");
-    return;
-  }
-  last_touch_event_time = (new Date()).getTime();
-  mouseUp();
-}
-
-function mouseDown(e) {
-  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
-    console.log("mouseDown skipped");
-    return;
-  }
-
-  // Detect redundant/conflictual events: touchstart event followed by mousedown event
-  if ((new Date()).getTime() - last_touch_event_time < 1000) { // (condition duplicated)
-    // console.log("mouseDown skipped #2");
-    return;
-  }
-
-  handleTouchStartOrMouseDownEvent(e.clientX, e.clientY);
-}
-
-function mouseUp() {
-  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
-    console.log("mouseUp skipped");
-    return;
-  }
-}
-
-function mouseMove(e) {
-  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
-    console.log("mouseMove skipped");
-    return;
-  }
-  // Detect redundant/conflictual events: touchstart event followed by mousemove event
-  if ((new Date()).getTime() - last_touch_event_time < 1000) { // (condition duplicated)
-    // console.log("mouseMove skipped #2");
+    console.log("pointerMove skipped");
     return;
   }
 
   if (!showPossibleCodesMode) {
     return;
   }
-  else if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
+  if ((!gameOnGoing()) && allPossibleCodesFilled()) { // (condition duplicated)
 
     let event_x_min, event_x_max, event_y_min, event_y_max;
     let rect = canvas.getBoundingClientRect();
-    let mouse_x = e.clientX - rect.left - 2.0 /* (correction) */;
-    let mouse_y = e.clientY - rect.top - 2.0 /* (correction) */;
+    let pointer_x = e.clientX - rect.left - 2.0 /* (correction) */;
+    let pointer_y = e.clientY - rect.top - 2.0 /* (correction) */;
 
     event_x_min = get_x_pixel(x_min);
     event_x_max = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width+tick_width));
     event_y_min = get_y_pixel(y_min+y_step*(currentAttemptNumber-1));
     event_y_max = get_y_pixel(y_min+y_step*0);
 
-    if (mouse_y < event_y_min) {
-      disableMouseMoveEffects = false;
+    if (pointer_y < event_y_min) {
+      disablePointerMoveEffects = false;
     }
 
-    if (disableMouseMoveEffects) {
+    if (disablePointerMoveEffects) {
       return;
     }
 
-    if ( (mouse_x > event_x_min) && (mouse_x < event_x_max)
-          && (mouse_y > event_y_min) && (mouse_y < event_y_max) ) { // (below code duplicated)
+    if ( (pointer_x > event_x_min) && (pointer_x < event_x_max)
+          && (pointer_y > event_y_min) && (pointer_y < event_y_max) ) { // (below code duplicated)
       for (let idx = 0; idx < currentAttemptNumber-1; idx++) {
         let y_0 = get_y_pixel(y_min+y_step*(idx+1));
         let y_1 = get_y_pixel(y_min+y_step*(idx));
-        if ((mouse_y > y_0) && (mouse_y < y_1)) {
-          if (lastidxBeforeMouseMove != idx+1) {
+        if ((pointer_y > y_0) && (pointer_y < y_1)) {
+          if (lastidxBeforePointerMove != idx+1) {
             showPossibleCodesOffsetMode = false;
             showPossibleCodesButtonClick(false, idx+1, false, true);
-            lastidxBeforeMouseMove = idx+1;
+            lastidxBeforePointerMove = idx+1;
           }
           break;
         }
       }
     }
     else { // (other zones)
-      if (lastidxBeforeMouseMove != currentPossibleCodeShownBeforeMouseMove) {
+      if (lastidxBeforePointerMove != currentPossibleCodeShownBeforePointerMove) {
         showPossibleCodesOffsetMode = false;
-        showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforeMouseMove, false, true);
-        lastidxBeforeMouseMove = currentPossibleCodeShownBeforeMouseMove;
+        showPossibleCodesButtonClick(false, currentPossibleCodeShownBeforePointerMove, false, true);
+        lastidxBeforePointerMove = currentPossibleCodeShownBeforePointerMove;
       }
     }
 
@@ -1999,7 +1924,7 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   nbPossibleCodesShown = -1;
   currentPossibleCodeShown = -1;
-  disableMouseMoveEffects = false;
+  disablePointerMoveEffects = false;
 
   nbColorSelections = 0;
   currentCode = 0;
@@ -5467,11 +5392,8 @@ scriptsFullyLoaded = true;
 draw_graphic();
 updateThemeAttributes();
 
-canvas.addEventListener("touchstart", touchStart, { passive: false }); // { passive: true } would tell the browser that the event handler (i.e. touchStart(e)) won't call preventDefault() to disable scrolling / double-click handling, allowing the browser to handle them efficiently
-canvas.addEventListener("touchend", touchEnd, false);
-canvas.addEventListener("mousedown", mouseDown, false);
-canvas.addEventListener("mouseup", mouseUp, false);
-canvas.addEventListener("mousemove", mouseMove, false);
+canvas.addEventListener("pointerdown", pointerDown, false);
+canvas.addEventListener("pointermove", pointerMove, false);
 
 // Welcome message at very first game on android app
 // Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit
