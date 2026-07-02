@@ -518,7 +518,6 @@ var github_unicorn_error=false;
 var github_html_error=false;
 var github_load_error=false;
 var gameInv=0;
-var precalculatedFileFetched="init";
 var gamesolver_load_state=-1;
 var gamesolver_load_start_time=-1;
 var smm_load_state=-1;
@@ -694,21 +693,6 @@ list: <input id='form_list_id' name='list' type='text' value='-' autocomplete='o
 <p id='traces_id' style='color:#AAAAAA;'></p>
 <p style='text-align:right'>
 <script>
-let welcome_str="Welcome";
-try{
-if((navigator.language=="fr")||(navigator.language.indexOf("fr-")==0)){
-welcome_str="Bienvenue";
-}}
-catch (exc){}
-if(localStorage.firstname&&localStorage.playerid){
-document.write("<span style='color:#DDDDDD'><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;"+welcome_str+" <b><span style='color:yellow'>"+localStorage.firstname+"</span></b>!</span></span>"+"<span id='kdo_id'>"+"</span>");
-setTimeout(function(){
-$("#welcome_id").fadeOut().empty();
-}, 60000);
-setTimeout(function(){
-$("#kdo_id").fadeOut().empty();
-}, 60000);
-}
 var eoy_date=new Date();
 var m=eoy_date.getMonth();
 var d=eoy_date.getDate();
@@ -720,7 +704,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v33.08";
+let html_compatibility_game_version="v34.00";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -744,7 +728,7 @@ alert(exc);
 else{
 lastKeyCheck=false;
 }};
-$.ajaxSetup({
+jQuery.ajaxSetup({
 timeout: 90000,
 cache: false
 });
@@ -894,13 +878,20 @@ console.log("form resubmission cancelled: "+my_params['k']+", "+key);
 return;
 }
 console.log("(resubmit form)");
-my_params['retr']='Y';
-$.ajax({
-crossDomain: true,
+jQuery.ajax({
 url: my_form_url,
 data: my_params,
 method: "GET",
-dataType: "jsonp"
+dataType: "json",
+timeout: 70000,
+cache: false
+})
+.done(function(data){
+handle_rsp(data);
+})
+.fail(function(jqxhr, textStatus, error){
+var errorStr=("reSubmitForm failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
+console.log(errorStr);
 });
 }
 function submitForm(formStr="", errorId=0){
@@ -928,6 +919,9 @@ resubmit_time=40000;
 document.getElementById("my_form").action=smm_action;
 break;
 case "6":
+resubmit_time=45000;
+document.getElementById("my_form").action=mm_mmm_umm_action;
+break;
 case "7":
 resubmit_time=50000;
 document.getElementById("my_form").action=mm_mmm_umm_action;
@@ -951,7 +945,7 @@ my_params['compressrsp']=abbreviateScores;
 }}
 else{
 nbErrorsSubmitted++;
-if(nbErrorsSubmitted > 4){
+if(nbErrorsSubmitted > 3){
 return;
 }
 document.getElementById("my_form").action=(((currentGameNbColumns==-1)||(currentGameNbColumns==5)) ? smm_action : mm_mmm_umm_action);
@@ -959,19 +953,30 @@ my_params['form_str']="(error id: "+errorId+") "+formStr;
 }
 my_params['k']=key;
 my_params['v']=html_compatibility_game_version;
-my_params['retr']='N';
 replaceAllElementsInStruct(my_params, "\n", " ");
 replaceAllElementsInStruct(my_params, "\r", "");
 replaceAllElementsInStruct(my_params, "\t", " ");
 let my_form_url=document.getElementById("my_form").action;
+setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*3/10);
+setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*4/10);
+setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*5/10);
+setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*9/10);
 setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time);
 console.log("(submit form"+((formStr=="") ? "" : " for a specific case")+")");
-$.ajax({
-crossDomain: true,
+jQuery.ajax({
 url: my_form_url,
 data: my_params,
 method: "GET",
-dataType: "jsonp"
+dataType: "json",
+timeout: 90000,
+cache: false
+})
+.done(function(data){
+handle_rsp(data);
+})
+.fail(function(jqxhr, textStatus, error){
+var errorStr=("submitForm failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
+console.log(errorStr);
 });
 }
 function submitError(errorStr){
@@ -1063,7 +1068,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v33.08: "+(localStorage.reloadForCompatibility_v3308 ? localStorage.reloadForCompatibility_v3308 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v34.00: "+(localStorage.reloadForCompatibility_v3400 ? localStorage.reloadForCompatibility_v3400 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userInfoStr+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1458,7 +1463,11 @@ rsp_rankings_str=rsp_rankings_str.replaceAll("<2>", "&#x2234;");
 rsp_rankings_str=rsp_rankings_str.replaceAll("<3>", "&#x2009;");
 rsp_rankings_str=rsp_rankings_str.replaceAll("<4>", "\uD83C\uDFB2");
 rsp_rankings_str=rsp_rankings_str.replaceAll("<5>", "&nbsp;");
-rsp_rankings_str=rsp_rankings_str.replaceAll("<table>", "<table id='score_table' style='border:0;padding:0;border-collapse:collapse;width:TABLE_WIDTH;'>");
+rsp_rankings_str=rsp_rankings_str.replaceAll("<6>", "</span>");
+rsp_rankings_str=rsp_rankings_str.replace(/<s([A-Z0-9]+)>/g, "<span style='color:#$1'>");
+rsp_rankings_str=rsp_rankings_str.replaceAll("<c>","<div style='text-align:center'>");
+rsp_rankings_str=rsp_rankings_str.replaceAll("</c>","</div>");
+rsp_rankings_str=rsp_rankings_str.replaceAll("<table>", "<table id='score_table' style='margin-left:auto;margin-right:auto;border:0;padding:0;border-collapse:collapse;width:TABLE_WIDTH;'>");
 rsp_rankings_str=rsp_rankings_str.replaceAll("<tr>", "<tr style='font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str=rsp_rankings_str.replace(/<tr([A-Za-z0-9]+)>/g, "<tr style='background-color:#$1;font-size:FTZ;white-space:nowrap'>");
 rsp_rankings_str=rsp_rankings_str.replace(/<hr([A-Za-z0-9.]+)>/g, "<hr style='height:$1vh;padding:0;margin:0;visibility:hidden;'>");
@@ -1502,15 +1511,8 @@ catch (exc){
 throw new Error("modal error ("+modal_mode+"): "+exc+": "+exc.stack);
 }}
 else{
-if((e==undefined)||(e==null)){
-console.log('rsp_cd: ?');
-}
-else if(typeof e.rsp_cd!=='undefined'){
-console.log('rsp_cd: '+JSON.stringify(e.rsp_cd));
-}
-else{
-console.log('rsp_cd: ?');
-}}}
+console.log('handle_rsp_delayed error');
+}}
 catch (exc){
 throw new Error("handle_rsp_delayed error: "+exc+": "+exc.stack);
 }
@@ -1520,15 +1522,30 @@ var last_game_was_short=false;
 var last_rsp_keys_size=20;
 var last_rsp_keys_index=0;
 var last_rsp_keys=new Array(last_rsp_keys_size);
+var handle_rsp_error_met=false;
 function handle_rsp(e){
-console.log("(handle_rsp)");
 localStorage.last_handle_rsp_call=(new Date()).getTime();
+if(e.skip=="Y"){
+localStorage.skip='Y';
+return;
+}
+if((e.key==undefined)
+||((e.nbColumns!="4")&&(e.nbColumns!="5")&&(e.nbColumns!="6")&&(e.nbColumns!="7"))
+||(e.totalTime==undefined)||(e.debugTime==undefined) ){
+if(!handle_rsp_error_met){
+console.log("handle_rsp skipped (wrong parameters)");
+submitForm("handle_rsp error (wrong parameters): "+e.key+", "+e.nbColumns+", "+e.totalTime+", "+e.debugTime, 70);
+my_params={};
+handle_rsp_error_met=true;
+}
+return;
+}
+console.log("(handle_rsp-time: "+e.totalTime+"s)");
 if((my_params!={})&&(my_params['k']!=undefined)
-&&((e.key==undefined)||(e.key==my_params['k'])) ){
-console.log("(cancel form resubmission)");
+&&(e.key==my_params['k']) ){
+console.log("(cancel form resubmissions)");
 my_params={};
 }
-if(e.key!=undefined){
 for (var i=0;i < last_rsp_keys_size;i++){
 if(last_rsp_keys[i]==e.key){
 console.log("handle_rsp skipped (duplicate key)");
@@ -1538,7 +1555,7 @@ last_rsp_keys[last_rsp_keys_index]=e.key;
 last_rsp_keys_index++;
 if(last_rsp_keys_index >=last_rsp_keys_size){
 last_rsp_keys_index=0;
-}}
+}
 var score_display_time=4444;
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
 score_display_time=score_display_time * 2+3000;
@@ -1551,61 +1568,28 @@ time_to_wait=score_display_time-time_diff;
 else{
 time_to_wait=44;
 }
-console.log("(time_diff="+time_diff+", time_to_wait="+time_to_wait+")");
 setTimeout("handle_rsp_delayed("+JSON.stringify(e)+");", time_to_wait);
+setTimeout("handle_stats("+e.nbColumns+", "+e.totalTime+", "+e.debugTime+")", 4);
 }
 var statsURL="https://script.google.com/macros/s/AKf"+extraStr+"ycbyd8nGlkIY14xIQQOUyOUKRoa5JZtuyP0agekteKermlYwNX9BgyQzwQpwS8P1AZZI5/exec";
-var last_stats_keys_size=20;
-var last_stats_keys_index=0;
-var last_stats_keys=new Array(last_stats_keys_size);
-for (var i=0;i < last_stats_keys_size;i++){
-last_stats_keys[i]="__init_stats_key__";
-}
-function handle_stats(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p){
-setTimeout("handle_stats_bis("+nbColumns_p+", "+totalTime_p+", "+calcTime_p+", '"+applyTimes_p+"', '"+pId_p+"', '"+key_p+"', '"+retr_p+"');", 44);
-}
-function handle_stats_bis(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p){
-if(globalErrorStatus){
-console.log("(handle_stats_bis skipped due to global error)");
-return;
-}
-if(((nbColumns_p!="4")&&(nbColumns_p!="5")&&(nbColumns_p!="6")&&(nbColumns_p!="7"))
-||((applyTimes_p!="N")&&(applyTimes_p!="Y"))
-||((retr_p!="N")&&(retr_p!="Y")) ){
-submitForm("handle_stats_bis error (wrong parameters): "+nbColumns_p+", "+totalTime_p+", "+calcTime_p+", "
-+applyTimes_p+", "+pId_p+", "+key_p+", "+retr_p+", last_idx: "+last_stats_keys_index, 70);
-console.log("stats form submission skipped (wrong parameters)");
-return;
-}
-for (var i=0;i < last_stats_keys_size;i++){
-if(last_stats_keys[i]==key_p){
-console.log("stats form submission skipped (duplicate key)");
-return;
-}}
-last_stats_keys[last_stats_keys_index]=key_p;
-last_stats_keys_index++;
-if(last_stats_keys_index >=last_stats_keys_size){
-last_stats_keys_index=0;
-}
+function handle_stats(nbColumns_p, totalTime_p, debugTime_p){
 var my_stats_form_url=statsURL;
 var my_stats_params={};
 my_stats_params['col']=nbColumns_p;
-my_stats_params['tottime']=totalTime_p;
-my_stats_params['calctime']=calcTime_p;
-my_stats_params['applytimes']=applyTimes_p;
-my_stats_params['pid']=pId_p;
+my_stats_params['totalTime']=totalTime_p;
+my_stats_params['debugTime']=debugTime_p;
 my_stats_params['loc']=getLocation();
 my_stats_params['v']=html_compatibility_game_version;
-my_stats_params['retr']=retr_p;
 replaceAllElementsInStruct(my_stats_params, "\n", " ");
 replaceAllElementsInStruct(my_stats_params, "\r", "");
 replaceAllElementsInStruct(my_stats_params, "\t", " ");
-$.ajax({
-crossDomain: true,
+jQuery.ajax({
 url: my_stats_form_url,
 data: my_stats_params,
 method: 'GET',
-dataType: 'jsonp'
+dataType: 'json',
+timeout: 90000,
+cache: false
 });
 }
 var globalProgressForHTMLGame2=getGlobalProgress(0.75 , 0);
@@ -1824,7 +1808,13 @@ localStorage.precise_geolocation_api_access_time=(new Date()).getTime();
 let GEOCODING_API_URL=((localStorage.useFirstGeocodingApi=="yes") ? GEOCODING_API_URL_1 : GEOCODING_API_URL_2);
 debug_str=debug_str+" "+((localStorage.useFirstGeocodingApi=="yes") ? "API1" : "API2");
 GEOCODING_API_URL=GEOCODING_API_URL.replace("LATITUDE", latitude).replace("LONGITUDE", longitude);
-$.getJSON(GEOCODING_API_URL)
+jQuery.ajax({
+url: GEOCODING_API_URL,
+method: "GET",
+dataType: "json",
+timeout: 90000,
+cache: false
+})
 .done(function(location){
 debug_game_state=11;
 try{
@@ -2036,9 +2026,6 @@ return;
 }
 let my_alt_loc_form_url="https://script.google.com/macros/s/AKf"+extraStr+"ycbzbeA4qrzTNb3_uCLH2LQmJFwCbJ-1HAwoW0DLECZIciMJAUqg8-OFDuckpyH6Jd30bUw/exec";
 let my_alt_loc_params={};
-if(localStorage.playerid){
-my_alt_loc_params['playerid']=localStorage.playerid;
-}
 my_alt_loc_params['ipaddress']=ipAddress;
 my_alt_loc_params['loc']=getLocation();
 my_alt_loc_params['v']=html_compatibility_game_version;
@@ -2048,12 +2035,20 @@ my_alt_loc_params['firstname']=localStorage.firstname;
 ip_address_for_alternate_loc_methods=ipAddress;
 console.log("(attempt alternate location method-gs location for "+ipAddress+")");
 localStorage.alternateLocationMethodDebugInfo+="_run";
-$.ajax({
-crossDomain: true,
+jQuery.ajax({
 url: my_alt_loc_form_url,
 data: my_alt_loc_params,
 method: "GET",
-dataType: "jsonp"
+dataType: "json",
+timeout: 90000,
+cache: false
+})
+.done(function(data){
+handle_gs_geoloc(data);
+})
+.fail(function(jqxhr, textStatus, error){
+var errorStr=("alternate geoloc failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
+console.log(errorStr);
 });
 }
 else{
@@ -2282,13 +2277,13 @@ else{
 throw new Error("internal nb_games_today condition: "+nb_games_today);
 }
 if((too_many_games_today_str!="")&&localStorage.firstname){
-let str="<center><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>"
+let str="<div style='display:flex;justify-content:center'><table style='width:"+generalTableWidthStr+";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>"
 +"<br><b>"
 +"<span style='color:#C900A1'>Hi "+localStorage.firstname+"</span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
 +too_many_games_today_str
 +"<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
 +"</b><br>"
-+"</span></td></tr></table></center>";
++"</span></td></tr></table></div>";
 try{
 modal_mode=6;
 modal.setContent("<div style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>"
@@ -2691,7 +2686,13 @@ skip_distant_accesses=true;
 geolocation_handler.nb_JSON_queries_posted++;
 let current_nb_JSON_queries_posted=geolocation_handler.nb_JSON_queries_posted;
 debug_game_state=20;
-$.getJSON(locationURL)
+jQuery.ajax({
+url: locationURL,
+method: "GET",
+dataType: "json",
+timeout: 90000,
+cache: false
+})
 .done(function(data){
 debug_game_state=21;
 let converted_data=geolocation_handler.convertLocationData(data, current_nb_JSON_queries_posted);
@@ -2729,9 +2730,6 @@ if(!skip_distant_accesses){
 setTimeout("attemptAlternateLocationMethods(false);", 14444);
 }}
 debug_game_state=24;
-})
-.always(function(){
-console.log("(getJSON completed #"+current_nb_JSON_queries_posted+")");
 });
 }}}
 debug_game_state=100.5;
@@ -2773,7 +2771,7 @@ if(force_next_attempt_HTML_geolocation_if_needed
 ||(((new Date()).getTime()-localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000)&&localStorage.nb_location_permissions_req)
 ){
 android_HTML_geolocation_retries_after_error=0;
-setTimeout("attempt_HTML_geolocation();", 44);
+setTimeout("attempt_HTML_geolocation();", 4);
 localStorage.last_time_attempt_HTML_geolocation_if_needed=(new Date()).getTime();
 force_next_attempt_HTML_geolocation_if_needed=false;
 }
@@ -2790,7 +2788,7 @@ localStorage.nbTimesShareLocWarning=Number(localStorage.nbTimesShareLocWarning)+
 if(Number(localStorage.nbTimesShareLocWarning) <=2){
 alert("Please share your location so it can be stored along with your future scores. Location permissions are visible in your browser Settings menu.");
 }
-setTimeout("attempt_HTML_geolocation();", 44);
+setTimeout("attempt_HTML_geolocation();", 4);
 localStorage.last_time_attempt_HTML_geolocation_if_needed=(new Date()).getTime();
 }
 else{
@@ -2990,7 +2988,7 @@ smm_load_state=1;
 debug_game_state=60;
 var globalProgress=getGlobalProgress(0, 2);
 console.log("current progress: "+Math.max(globalProgress, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgress;
-$.ajax({
+jQuery.ajax({
 url: 'SuperMasterMind.js.gz',
 method: "GET",
 dataType: 'binary',
@@ -3079,7 +3077,7 @@ debug_game_state=70;
 gamesolver_load_state=1;
 gamesolver_load_start_time=(new Date()).getTime();
 var xhr_gs=new XMLHttpRequest();
-$.ajax({
+jQuery.ajax({
 url: "GameSolver.js",
 method: "GET",
 dataType: 'text',
@@ -3132,7 +3130,7 @@ var script=document.createElement('script');
 script.src=url;
 script.async=false;
 script.onload=function(){
-setTimeout("loadSuperMasterMindScript();", 44);
+setTimeout("loadSuperMasterMindScript();", 4);
 gamesolver_load_state=2.55;
 debug_game_state=78;
 };

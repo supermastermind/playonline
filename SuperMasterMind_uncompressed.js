@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v33.08"; // !WARNING! -> value to be aligned with version in game.html => search "v33" for all occurrences in this script and game.html
+let smm_compatibility_version = "v34.00"; // !WARNING! -> value to be aligned with version in game.html => search "v34" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -48,18 +48,18 @@ function reloadAllContentsDistantly() {
       href = href.substring(0, params_idx);
     }
     // Trick the browser into thinking that the URL is different from the cached one, and force it to request the latest version of the HTML file from the server
-    // => game.html will be reloaded distantly, and javascript scripts will also be reloaded distantly because AJAX cache is disabled
+    // => game.html will be reloaded distantly, and javascript scripts will also be reloaded distantly because Ajax cache is disabled
     window.location.href = href + "?tmp=" + currentDateAndTime();
   }
 }
 
 // Check if current script version is different from game.html version:
-// script version could only be more recent as AJAX cache is disabled
-if ((!localStorage.reloadForCompatibility_v3308) && (html_compatibility_game_version != smm_compatibility_version)) {
+// script version could only be more recent as Ajax cache is disabled
+if ((!localStorage.reloadForCompatibility_v3400) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3308 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3400 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -331,7 +331,7 @@ function updateHoverBackgroundColor(newColor) {
       style.innerHTML = `.button:hover { background-color: ${newColor}; color: white; }`;
 
       // Append the new style element to the head of the document
-      document.head.appendChild(style);
+      document.head.appendChild(style); // execute script - appendChild() is a widely supported method
       lastHoverColor = newColor;
     }
   }
@@ -558,7 +558,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v33.08: " + (localStorage.reloadForCompatibility_v3308 ? localStorage.reloadForCompatibility_v3308 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v34.00: " + (localStorage.reloadForCompatibility_v3400 ? localStorage.reloadForCompatibility_v3400 : "not done"), 210);
 
       // Alert
       // *****
@@ -1330,7 +1330,7 @@ settingsButtonClick = function() { // (override temporary definition)
     }
 
     let game_rules_str =
-      "<center><table style='width:" + rulesTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:2.0vh;color:black'>\
+      "<div style='display:flex;justify-content:center'><table style='width:" + rulesTableWidthStr + "'><tr style='text-align:center;'><td><span style='font-size:2.0vh;color:black'>\
       <hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'>\
       See <b><a href='index.html#game_rules'>Game rules</a></b><hr style='height:0.75vh;padding:0;margin:0;visibility:hidden;'>\
       <a href='img/SuperMasterMind_rules.png'><img src='img/SuperMasterMind_rules.png' style='width:100%;margin-top:0;margin-bottom:0'><hr style='height:0.5vh;padding:0;margin:0;visibility:hidden;'></a>"
@@ -1338,7 +1338,7 @@ settingsButtonClick = function() { // (override temporary definition)
       + change_first_name_str
       + "<b>Links:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
          <b><a href='index.html'>Home</a>&nbsp;-&nbsp;<a href='optimal_strategy.html'>Strategy</a>&nbsp;-&nbsp;<a href='screenshots.html'>Screenshots</a>&nbsp;-&nbsp;<a href='contact_info.html'>Contact</a></b>\
-         </span></td></tr></table></center>" + end_separator_str;
+         </span></td></tr></table></div>" + end_separator_str;
 
     try {
       gameRulesDisplayed = true;
@@ -1635,9 +1635,9 @@ function getNbColumnsSelected() {
 function show_message(specific_str = "", android_stars_mode = false, forceStr = "") {
   if (forceStr != "") {
     let str =
-      "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>\
+      "<div style='display:flex;justify-content:center'><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>\
       <br><b>" + forceStr + "</b><br>\
-      </span></td></tr></table></center>";
+      </span></td></tr></table></div>";
     try {
       modal_mode = 4;
       // set modal content
@@ -1664,10 +1664,10 @@ function show_message(specific_str = "", android_stars_mode = false, forceStr = 
     }
     let str = ((specific_str == "") ? ("For " + str1 + ",&nbsp;install the android app" + str2 + "!") : specific_str);
     let play_store_app_str =
-      "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>\
+      "<div style='display:flex;justify-content:center'><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>\
       <br><b>" + str + "</b><br>\
       <a href='" + android_app_url + "'><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/><img alt='Get it on Google Play' style='height:11vh;margin-top:1.5vh;margin-bottom:1.5vh;border-radius:15%' src='img/Playstore_icon.png'/><br></a>\
-      </span></td></tr></table></center>";
+      </span></td></tr></table></div>";
     try {
       modal_mode = 4;
       // set modal content
@@ -1825,7 +1825,6 @@ function resetGameAttributes(nbColumnsSelected) {
     game_cnt = 1;
   }
   worst_mark_alert_already_displayed = false;
-  if (typeof precalculatedFileFetched !== 'undefined') {precalculatedFileFetched = "ok";}
 
   // Clear gameSolver worker if necessary
   gameSolverDbg = 0;
@@ -2070,14 +2069,14 @@ function resetGameAttributes(nbColumnsSelected) {
     // sCode = next_scode;
     // gameInv = next_gameinvid;
     // Impact of attempt inversion on game duration will be taken into at game end
-    // setTimeout("playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");updateAndStoreNbGamesStarted(-1);", 44);
+    // setTimeout("playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");updateAndStoreNbGamesStarted(-1);", 4);
   }
   else if ((next_code1 != 0) && (next_code2 != 0) && (next_code3 != 0) && (next_scode != 0)) {
     worst_mark_alert_already_displayed = true; // (avoid multiple alerts)
     sCode = next_scode;
     gameInv = next_gameinvid;
     // Impact of attempt inversion on game duration will be taken into at game end
-    setTimeout("sCodeRevealed=" + next_scoderevealed + ";playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");playACodeAutomatically(" + next_code3 + ");updateAndStoreNbGamesStarted(-1);", 44);
+    setTimeout("sCodeRevealed=" + next_scoderevealed + ";playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");playACodeAutomatically(" + next_code3 + ");updateAndStoreNbGamesStarted(-1);", 4);
   }
   else {
     gameInv = 0;
@@ -2586,31 +2585,22 @@ function completePrecalculatedGamesOnTheFly(code_str_1, mark_str_1, code_str_2, 
   let precalculated_games_jsscriptname = determine_smm_jscriptname(code_str_1, mark_str_1, code_str_2, mark_str_2, code_1, code_2);
   console.log("(fetch precalculated games in " + precalculated_games_jsscriptname + ")");
   debug_game_state = 69.1;
-  jQuery.ajax({
-    crossDomain: true,
-    url: "precalculated_games/" + precalculated_games_jsscriptname, // => if this .js script exists, extra_precalculated_str will be updated by it
-    method: "GET",
-    dataType: "jsonp" // Note: in case of jsonp in jQuery, the timeout option is useless and fail() function is essentially useless 
-                      //       => fail() function is however useful in this particular case
-  })
-  .done(function(location) { // seems never entered
-    debug_game_state = 69.15;
-    // Trigger debuffering immediately
-    setTimeout(gamesolver_buffered_msg_action_str, 44); // (as shifted in time, may be run in a next game with a different game_id, which will have no effect as game_id is checked)
-  })
-  .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+
+  let script = document.createElement('script');
+  script.src = "precalculated_games/" + precalculated_games_jsscriptname, // if this .js script exists, extra_precalculated_str will be updated by it
+  script.async = false;
+  script.onload = function() { // .js script exists and was succesfully loaded
     debug_game_state = 69.2;
-    if (typeof precalculatedFileFetched !== 'undefined') {precalculatedFileFetched = jqxhr.status;}
-    // Trigger debuffering immediately
-    setTimeout(gamesolver_buffered_msg_action_str, 44); // (as shifted in time, may be run in a next game with a different game_id, which will have no effect as game_id is checked)
-    if (jqxhr.status != 200) { // Note: covers ERR_FILE_NOT_FOUND case
-      debug_game_state = 69.3;
-      console.log(("precalculated games fetch failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim());
-    }
-    else { // else: systematic parse error (with 200 status) is ignored
-      debug_game_state = 69.4;
-    }
-  });
+    setTimeout(gamesolver_buffered_msg_action_str, 4); // (as shifted in time, may be run in a next game with a different game_id, which will have no effect as game_id is checked)
+  };
+  script.onerror = function(event, source, lineno, colno, error) { // .js script does not exist or was not succesfully loaded
+    debug_game_state = 69.3;
+    setTimeout(gamesolver_buffered_msg_action_str, 4); // (as shifted in time, may be run in a next game with a different game_id, which will have no effect as game_id is checked)
+  };
+  var result = document.head.appendChild(script); // execute script - appendChild() is a widely supported method
+  if (result !== script) {
+      throw new Error("appendChild failed for script " + precalculated_games_jsscriptname);
+  }
 
 }
 
@@ -4583,7 +4573,7 @@ function draw_graphic_bis() {
          && (gameOnGoing())
          && !(revealSecretColorButtonObject.disabled)
          && (sCodeRevealed == 0) ) {
-      setTimeout("displayRevealSecretColorHintIfNeeded();", 44);
+      setTimeout("displayRevealSecretColorHintIfNeeded();", 4);
     }
 
   }
@@ -5399,9 +5389,9 @@ canvas.addEventListener("pointermove", pointerMove, false);
 // Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit
 if ((!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_firstname)) { // recent player
   let welcome_str =
-    "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td>\
+    "<div style='display:flex;justify-content:center'><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td>\
     <img alt='welcome!' src='img/" + (android_appli ? "Welcome_android_app.png" : "Welcome_browser.png") + "' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;'>\
-    </td></tr></table></center>";
+    </td></tr></table></div>";
   try {
     modal_mode = 5;
     // set modal content

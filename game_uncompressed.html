@@ -659,7 +659,6 @@
       var github_html_error = false;
       var github_load_error = false;
       var gameInv = 0;
-      var precalculatedFileFetched = "init";
       var gamesolver_load_state = -1;
       var gamesolver_load_start_time = -1;
       var smm_load_state = -1;
@@ -876,23 +875,6 @@
 
     <p style='text-align:right'>
       <script>
-        let welcome_str = "Welcome";
-        try {
-          if ((navigator.language == "fr") || (navigator.language.indexOf("fr-") == 0)) { // covers "fr", "fr-FR", "fr-BE", "fr-CA", "fr-CH", "fr-LU"
-            welcome_str = "Bienvenue";
-          }
-        }
-        catch (exc) {}
-        if (localStorage.firstname && localStorage.playerid) {
-          document.write("<span style='color:#DDDDDD'><span id='welcome_id' style='float:left;'>&nbsp;&nbsp;" + welcome_str + " <b><span style='color:yellow'>" + localStorage.firstname + "</span></b>!</span></span>" + "<span id='kdo_id'>" + "</span>");
-          setTimeout(function() {
-            $("#welcome_id").fadeOut().empty();
-          }, 60000);
-          setTimeout(function() {
-            $("#kdo_id").fadeOut().empty();
-          }, 60000);
-        }
-
         var eoy_date = new Date();
         var m = eoy_date.getMonth();
         var d = eoy_date.getDate();
@@ -908,7 +890,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v33.08"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v33" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v34.00"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v34" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -935,9 +917,9 @@
         }
       };
 
-      // Global AJAX settings
-      $.ajaxSetup({
-        timeout: 90000, // 90 seconds by default
+      // Default Ajax settings
+      jQuery.ajaxSetup({
+        timeout: 90000, // 90 seconds
         cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
       });
 
@@ -1130,13 +1112,20 @@
 
         // Resubmit form
         console.log("(resubmit form)");
-        my_params['retr'] = 'Y';
-        $.ajax({
-          crossDomain: true,
+        jQuery.ajax({
           url: my_form_url,
           data: my_params,
           method: "GET",
-          dataType: "jsonp" // Note: in case of jsonp in jQuery, the timeout option is useless and fail() function is essentially useless
+          dataType: "json",
+          timeout: 70000, // 70 seconds
+          cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
+        })
+        .done(function(data) { // Success case
+          handle_rsp(data);
+        })
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          var errorStr = ("reSubmitForm failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+          console.log(errorStr);
         });
       }
 
@@ -1168,6 +1157,9 @@
                 document.getElementById("my_form").action = smm_action;
                 break;
               case "6":
+                resubmit_time = 45000; // 45 seconds
+                document.getElementById("my_form").action = mm_mmm_umm_action;
+                break;
               case "7":
                 resubmit_time = 50000; // 50 seconds
                 document.getElementById("my_form").action = mm_mmm_umm_action;
@@ -1196,7 +1188,7 @@
         }
         else { // Specific error case
           nbErrorsSubmitted++;
-          if (nbErrorsSubmitted > 4) {
+          if (nbErrorsSubmitted > 3) {
             return;
           }
           document.getElementById("my_form").action = (((currentGameNbColumns == -1) || (currentGameNbColumns == 5)) ? smm_action : mm_mmm_umm_action);
@@ -1205,7 +1197,6 @@
         }
         my_params['k'] = key;
         my_params['v'] = html_compatibility_game_version;
-        my_params['retr'] = 'N';
 
         // Avoid request blocking by Chrome for the following reason:
         // "Resource requests whose URLs contained both removed whitespace (`\n`, `\r`, `\t`) characters and less-than characters (`<`) are blocked.
@@ -1217,22 +1208,31 @@
         // replaceAllElementsInStruct(my_params, "<", "_");
         // replaceAllElementsInStruct(my_params, ">", "_"); // (symmetrical replace applied)
 
-        // Program form resubmission in case it is needed, typically due to temporary network error
+        // Program form resubmissions in case they are needed, typically due to temporary (mobile) network errors or due to sporadic google sheet errors (404 observed)
         let my_form_url = document.getElementById("my_form").action;
+        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*3/10);
+        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*4/10);
+        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*5/10);
+        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*9/10);
         setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time);
 
         // Submit form
         console.log("(submit form" + ((formStr == "") ? "" : " for a specific case") + ")");
-        $.ajax({
-          crossDomain: true,
+        jQuery.ajax({
           url: my_form_url,
           data: my_params,
           method: "GET",
-          dataType: "jsonp" // Note: in case of jsonp in jQuery, the timeout option is useless and fail() function is essentially useless
+          dataType: "json",
+          timeout: 90000, // 90 seconds
+          cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
+        })
+        .done(function(data) { // Success case
+          handle_rsp(data);
+        })
+        .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+          var errorStr = ("submitForm failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+          console.log(errorStr);
         });
-
-        // document.getElementById('my_form').submit();
-        // $("#my_form").submit();
       }
 
       function submitError(errorStr) { // CALLED BY ANDROID APP
@@ -1350,7 +1350,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v33.08: " + (localStorage.reloadForCompatibility_v3308 ? localStorage.reloadForCompatibility_v3308 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v34.00: " + (localStorage.reloadForCompatibility_v3400 ? localStorage.reloadForCompatibility_v3400 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userInfoStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -1790,7 +1790,11 @@
             rsp_rankings_str = rsp_rankings_str.replaceAll("<3>", "&#x2009;"); // special character 3 (thin space)
             rsp_rankings_str = rsp_rankings_str.replaceAll("<4>", "\uD83C\uDFB2"); // special character 4 (random play)
             rsp_rankings_str = rsp_rankings_str.replaceAll("<5>", "&nbsp;"); // special character 5 (space)
-            rsp_rankings_str = rsp_rankings_str.replaceAll("<table>", "<table id='score_table' style='border:0;padding:0;border-collapse:collapse;width:TABLE_WIDTH;'>");
+            rsp_rankings_str = rsp_rankings_str.replaceAll("<6>", "</span>"); // </span>
+            rsp_rankings_str = rsp_rankings_str.replace(/<s([A-Z0-9]+)>/g, "<span style='color:#$1'>"); // <span> - Rk: does not impact <sup> tag
+            rsp_rankings_str = rsp_rankings_str.replaceAll("<c>","<div style='text-align:center'>"); // horizonral centering - Rk: <center>...</center> is deprecated
+            rsp_rankings_str = rsp_rankings_str.replaceAll("</c>","</div>");
+            rsp_rankings_str = rsp_rankings_str.replaceAll("<table>", "<table id='score_table' style='margin-left:auto;margin-right:auto;border:0;padding:0;border-collapse:collapse;width:TABLE_WIDTH;'>");
             rsp_rankings_str = rsp_rankings_str.replaceAll("<tr>", "<tr style='font-size:FTZ;white-space:nowrap'>");
             rsp_rankings_str = rsp_rankings_str.replace(/<tr([A-Za-z0-9]+)>/g, "<tr style='background-color:#$1;font-size:FTZ;white-space:nowrap'>");
             rsp_rankings_str = rsp_rankings_str.replace(/<hr([A-Za-z0-9.]+)>/g, "<hr style='height:$1vh;padding:0;margin:0;visibility:hidden;'>");
@@ -1842,17 +1846,10 @@
             catch (exc) {
               throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
             }
+
           }
           else {
-            if ((e == undefined) || (e == null)) {
-              console.log('rsp_cd: ?');
-            }
-            else if (typeof e.rsp_cd !== 'undefined') {
-              console.log('rsp_cd: ' + JSON.stringify(e.rsp_cd));
-            }
-            else {
-              console.log('rsp_cd: ?');
-            }
+             console.log('handle_rsp_delayed error');
           }
         }
         catch (exc) {
@@ -1864,29 +1861,46 @@
       var last_rsp_keys_size = 20;
       var last_rsp_keys_index = 0;
       var last_rsp_keys = new Array(last_rsp_keys_size);
-      function handle_rsp(e) { // CALLED BY GS SCRIPT
-        console.log("(handle_rsp)");
+      var handle_rsp_error_met = false;
+      function handle_rsp(e) {
         localStorage.last_handle_rsp_call = (new Date()).getTime();
 
-        if ( (my_params != {}) && (my_params['k'] != undefined) 
-             && ((e.key == undefined) || (e.key == my_params['k'])) ) {
-          console.log("(cancel form resubmission)");
-          my_params = {}; // cancel form resubmission (only ony my_params variable for all keys to simplify)
+        if (e.skip == "Y") {
+            localStorage.skip = 'Y';
+            return;
         }
 
-        if (e.key != undefined) {
-          // Check that rsp was not already handled
-          for (var i = 0; i < last_rsp_keys_size; i++) {
-            if (last_rsp_keys[i] == e.key) {
-              console.log("handle_rsp skipped (duplicate key)");
-              return; // skip handle_rsp
-            }
+        // Check parameters
+        if ( (e.key == undefined)
+             || ((e.nbColumns != "4") && (e.nbColumns != "5") && (e.nbColumns != "6") && (e.nbColumns != "7"))
+             || (e.totalTime == undefined) || (e.debugTime == undefined) ) {
+          if (!handle_rsp_error_met) {
+            console.log("handle_rsp skipped (wrong parameters)");
+            submitForm("handle_rsp error (wrong parameters): " + e.key + ", " + e.nbColumns + ", " + e.totalTime + ", " + e.debugTime, 70);
+            my_params = {}; // cancel form resubmissions (only one my_params variable for all keys to simplify)
+            handle_rsp_error_met = true;
           }
-          last_rsp_keys[last_rsp_keys_index] = e.key;
-          last_rsp_keys_index++;
-          if (last_rsp_keys_index >= last_rsp_keys_size) {
-            last_rsp_keys_index = 0;
+          return; // skip handle_rsp
+        }
+        console.log("(handle_rsp - time: " + e.totalTime + "s)");
+
+        if ( (my_params != {}) && (my_params['k'] != undefined) // my_params filled
+             && (e.key == my_params['k']) ) {
+          console.log("(cancel form resubmissions)");
+          my_params = {}; // cancel form resubmissions (only one my_params variable for all keys to simplify)
+        }
+
+        // Check that rsp was not already handled
+        for (var i = 0; i < last_rsp_keys_size; i++) {
+          if (last_rsp_keys[i] == e.key) {
+            console.log("handle_rsp skipped (duplicate key)");
+            return; // skip handle_rsp
           }
+        }
+        last_rsp_keys[last_rsp_keys_index] = e.key;
+        last_rsp_keys_index++;
+        if (last_rsp_keys_index >= last_rsp_keys_size) {
+          last_rsp_keys_index = 0;
         }
 
         var score_display_time = 4444; // (see blinking time)
@@ -1902,74 +1916,31 @@
         else {
           time_to_wait = 44; // (no time to wait, form submission was long enough)
         }
-        console.log("(time_diff=" + time_diff + ", time_to_wait=" + time_to_wait + ")");
         setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
+        setTimeout("handle_stats(" + e.nbColumns + ", " + e.totalTime + ", " + e.debugTime + ")", 4);
       }
 
       var statsURL = "https://script.google.com/macros/s/AKf" + extraStr + "ycbyd8nGlkIY14xIQQOUyOUKRoa5JZtuyP0agekteKermlYwNX9BgyQzwQpwS8P1AZZI5/exec";
-      var last_stats_keys_size = 20;
-      var last_stats_keys_index = 0;
-      var last_stats_keys = new Array(last_stats_keys_size);
-      for (var i = 0; i < last_stats_keys_size; i++) {
-        last_stats_keys[i] = "__init_stats_key__";
-      }
-      function handle_stats(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p) { // CALLED BY GS SCRIPT (N or Y)
-        setTimeout("handle_stats_bis(" + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", '" + applyTimes_p + "', '" + pId_p + "', '" + key_p + "', '" + retr_p + "');", 44);
-      }
-      function handle_stats_bis(nbColumns_p, totalTime_p, calcTime_p, applyTimes_p, pId_p, key_p, retr_p) {
-
-        // console.log("handle_stats_bis: " + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", " + applyTimes_p + ", " + pId_p + ", " + key_p + ", " + retr_p);
-        if (globalErrorStatus) { // skip handle_stats_bis when a basic global error occurred
-          console.log("(handle_stats_bis skipped due to global error)");
-          return;
-        }
-
-        // Check parameters
-        if ( ((nbColumns_p != "4") && (nbColumns_p != "5") && (nbColumns_p != "6") && (nbColumns_p != "7"))
-             || ((applyTimes_p != "N") && (applyTimes_p != "Y"))
-             || ((retr_p != "N") && (retr_p != "Y")) ) {
-              submitForm("handle_stats_bis error (wrong parameters): " + nbColumns_p + ", " + totalTime_p + ", " + calcTime_p + ", "
-                         + applyTimes_p + ", " + pId_p + ", " + key_p  + ", " + retr_p + ", last_idx: " + last_stats_keys_index, 70);
-              console.log("stats form submission skipped (wrong parameters)");
-              return; // skip stats update
-        }
-
-        // Check that stats were not already taken into account
-        for (var i = 0; i < last_stats_keys_size; i++) {
-          if (last_stats_keys[i] == key_p) {
-            console.log("stats form submission skipped (duplicate key)");
-            return; // skip stats update
-          }
-        }
-        last_stats_keys[last_stats_keys_index] = key_p;
-        last_stats_keys_index++;
-        if (last_stats_keys_index >= last_stats_keys_size) {
-          last_stats_keys_index = 0;
-        }
-
+      function handle_stats(nbColumns_p, totalTime_p, debugTime_p) {
         var my_stats_form_url = statsURL;
         var my_stats_params = {};
         my_stats_params['col'] = nbColumns_p;
-        my_stats_params['tottime'] = totalTime_p;
-        my_stats_params['calctime'] = calcTime_p;
-        my_stats_params['applytimes'] = applyTimes_p;
-        my_stats_params['pid'] = pId_p;
+        my_stats_params['totalTime'] = totalTime_p;
+        my_stats_params['debugTime'] = debugTime_p;
         my_stats_params['loc'] = getLocation();
         my_stats_params['v'] = html_compatibility_game_version;
-        my_stats_params['retr'] = retr_p; // --> stats on retries
-        /* ... my_stats_params['key'] = key_p */
         // (See reasons above in this file)
         replaceAllElementsInStruct(my_stats_params, "\n", " "); // (duplicated code)
         replaceAllElementsInStruct(my_stats_params, "\r", ""); // (duplicated code)
         replaceAllElementsInStruct(my_stats_params, "\t", " "); // (duplicated code)
-        $.ajax({
-          crossDomain: true,
+        jQuery.ajax({
           url: my_stats_form_url,
           data: my_stats_params,
           method: 'GET',
-          dataType: 'jsonp' // Note: in case of jsonp in jQuery, the timeout option is useless and fail() function is essentially useless
-        });
-
+          dataType: 'json',
+          timeout: 90000, // 90 seconds
+          cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
+        }); // result not checked to simplify
       }
 
       var globalProgressForHTMLGame2 = getGlobalProgress(0.75 /* (rough value) */, 0);
@@ -2221,7 +2192,13 @@
         let GEOCODING_API_URL = ((localStorage.useFirstGeocodingApi == "yes") ? GEOCODING_API_URL_1 : GEOCODING_API_URL_2);
         debug_str = debug_str + " " + ((localStorage.useFirstGeocodingApi == "yes") ? "API1" : "API2");
         GEOCODING_API_URL = GEOCODING_API_URL.replace("LATITUDE", latitude).replace("LONGITUDE", longitude);
-        $.getJSON(GEOCODING_API_URL)
+        jQuery.ajax({
+          url: GEOCODING_API_URL,
+          method: "GET",
+          dataType: "json",
+          timeout: 90000, // 90 seconds
+          cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
+        })
         .done(function(location) {
           debug_game_state = 11;
           try {
@@ -2391,7 +2368,7 @@
       }
 
       let ip_address_for_alternate_loc_methods = "-";
-      function handle_gs_geoloc(e) { // CALLED BY GS SCRIPT
+      function handle_gs_geoloc(e) {
         console.log("(handle_gs_geoloc)");
 
         if (e.rsp_cd != undefined) { // rsp_cd means error
@@ -2461,9 +2438,6 @@
 
                   let my_alt_loc_form_url = "https://script.google.com/macros/s/AKf" + extraStr + "ycbzbeA4qrzTNb3_uCLH2LQmJFwCbJ-1HAwoW0DLECZIciMJAUqg8-OFDuckpyH6Jd30bUw/exec";
                   let my_alt_loc_params = {};
-                  if (localStorage.playerid) {
-                    my_alt_loc_params['playerid'] = localStorage.playerid;
-                  }
                   my_alt_loc_params['ipaddress'] = ipAddress;
                   my_alt_loc_params['loc'] = getLocation();
                   my_alt_loc_params['v'] = html_compatibility_game_version;
@@ -2476,13 +2450,21 @@
                   // Submit form
                   console.log("(attempt alternate location method - gs location for " + ipAddress + ")");
                   localStorage.alternateLocationMethodDebugInfo += "_run";
-                  $.ajax({
-                    crossDomain: true,
+                  jQuery.ajax({
                     url: my_alt_loc_form_url,
                     data: my_alt_loc_params,
                     method: "GET",
-                    dataType: "jsonp" // Note: in case of jsonp in jQuery, the timeout option is useless and fail() function is essentially useless
-                  });
+                    dataType: "json",
+                    timeout: 90000, // 90 seconds
+                    cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
+                  })
+                 .done(function(data) { // Success case
+                   handle_gs_geoloc(data);
+                 })
+                 .fail(function(jqxhr, textStatus, error) { // (jqxhr: XMLHTTPRequest)
+                   var errorStr = ("alternate geoloc failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
+                   console.log(errorStr);
+                 });
 
                 }
                 else {
@@ -2733,13 +2715,13 @@
               throw new Error("internal nb_games_today condition: " + nb_games_today);
             }
             if ((too_many_games_today_str != "") && localStorage.firstname) {
-              let str = "<center><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>"
+              let str = "<div style='display:flex;justify-content:center'><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td><span style='font-size:1.75vh;color:black'>"
                         + "<br><b>"
                         + "<span style='color:#C900A1'>Hi " + localStorage.firstname + "</span><hr style='height:1.0vh;padding:0;margin:0;visibility:hidden;'>"
                         + too_many_games_today_str
                         + "<hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>"
                         + "</b><br>"
-                        + "</span></td></tr></table></center>";
+                        + "</span></td></tr></table></div>";
               try {
                 modal_mode = 6;
                 // set modal content
@@ -3280,7 +3262,13 @@
                 geolocation_handler.nb_JSON_queries_posted++;
                 let current_nb_JSON_queries_posted = geolocation_handler.nb_JSON_queries_posted;
                 debug_game_state = 20;
-                $.getJSON(locationURL)
+                jQuery.ajax({
+                  url: locationURL,
+                  method: "GET",
+                  dataType: "json",
+                  timeout: 90000, // 90 seconds
+                  cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
+                })
                 .done(function(data) { // Success case
                   debug_game_state = 21;
                   let converted_data = geolocation_handler.convertLocationData(data, current_nb_JSON_queries_posted);
@@ -3323,9 +3311,6 @@
                     }
                   }
                   debug_game_state = 24;
-                })
-                .always(function() {
-                  console.log("(getJSON completed #" + current_nb_JSON_queries_posted + ")");
                 });
               }
 
@@ -3378,7 +3363,7 @@
                || (((new Date()).getTime() - localStorage.last_time_attempt_HTML_geolocation_if_needed > 1.5*3600*1000) && localStorage.nb_location_permissions_req) // geolocation refresh after 1.5 hour on user action
              ) {
             android_HTML_geolocation_retries_after_error = 0;
-            setTimeout("attempt_HTML_geolocation();", 44);
+            setTimeout("attempt_HTML_geolocation();", 4);
             localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
             force_next_attempt_HTML_geolocation_if_needed = false;
           }
@@ -3398,7 +3383,7 @@
             if (Number(localStorage.nbTimesShareLocWarning) <= 2) { // 2 because may have been accepted at first location permission request
               alert("Please share your location so it can be stored along with your future scores. Location permissions are visible in your browser Settings menu.");
             }
-            setTimeout("attempt_HTML_geolocation();", 44);
+            setTimeout("attempt_HTML_geolocation();", 4);
             localStorage.last_time_attempt_HTML_geolocation_if_needed = (new Date()).getTime();
           }
           else {
@@ -3662,7 +3647,7 @@
         debug_game_state = 60;
         var globalProgress = getGlobalProgress(0, 2);
         console.log("current progress: " + Math.max(globalProgress, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgress; // !WARNING! -> this console text will be read by the android app so shall not be modified
-        $.ajax({
+        jQuery.ajax({
             url: 'SuperMasterMind.js.gz', // SuperMasterMind.js compressed with gzip
             method: "GET",
             dataType: 'binary',
@@ -3699,7 +3684,7 @@
                   throw new Error(script_load_err_str);
                 };
                 debug_game_state = 67.5;
-                var result = document.body.appendChild(script); // execute SuperMasterMind script
+                var result = document.body.appendChild(script); // execute SuperMasterMind script - appendChild() is a widely supported method
                 if (result !== script) {
                     throw new Error("appendChild failed for SuperMasterMind script");
                 }
@@ -3761,7 +3746,7 @@
       gamesolver_load_state = 1;
       gamesolver_load_start_time = (new Date()).getTime();
       var xhr_gs = new XMLHttpRequest();
-      $.ajax({
+      jQuery.ajax({
         url: "GameSolver.js",
         method: "GET",
         dataType: 'text',
@@ -3826,7 +3811,7 @@
         script.async = false;
         script.onload = function() {
           // Super Master Mind script is only loaded once GameSolver script has been loaded successfully
-          setTimeout("loadSuperMasterMindScript();", 44);
+          setTimeout("loadSuperMasterMindScript();", 4);
           gamesolver_load_state = 2.55;
           debug_game_state = 78;
         };
@@ -3840,7 +3825,7 @@
           throw new Error(script_load_err_str);
         };
         debug_game_state = 75.6;
-        var result = document.body.appendChild(script);
+        var result = document.body.appendChild(script); // execute script - appendChild() is a widely supported method
         if (result !== script) {
             throw new Error("appendChild failed for GameSolver script (" + common_definitions_blob.size + ")");
         }
