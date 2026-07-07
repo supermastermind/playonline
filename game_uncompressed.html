@@ -890,7 +890,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v34.00"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v34" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v35.00"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v35" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1101,11 +1101,11 @@
       var nbErrorsSubmitted = 0;
       var my_params = {}; // object containing parameters
       function reSubmitForm(my_form_url, key) {
-        if (my_params['k'] == undefined) {
-          console.log("form resubmission not needed");
+        if (my_params['k'] == undefined) { // my_params not filled
+          console.log("(form resubmission not needed)");
           return;
         }
-        if ((my_params['k'] != key)) {
+        if (my_params['k'] != key) {
           console.log("form resubmission cancelled: " + my_params['k'] + ", " + key);
           return;
         }
@@ -1139,7 +1139,7 @@
           return;
         }
 
-        let resubmit_time = 30000; // 30 seconds
+        let resubmit_time = 30000; // 30 seconds (not too short to avoid useless resubmissions)
         let key = makeid();
         my_params = {};
         if (formStr == "") { // Nominal case
@@ -1149,15 +1149,15 @@
           if (form_list_in_form == '-') {
             switch (String(nbColumns_in_form)) {
               case "4":
-                resubmit_time = 30000; // 30 seconds (not less than 30 seconds to avoid useless resubmissions)
+                resubmit_time = 30000; // 30 seconds (not too short to avoid useless resubmissions)
                 document.getElementById("my_form").action = mm_mmm_umm_action;
                 break;
               case "5":
-                resubmit_time = 40000; // 40 seconds
+                resubmit_time = 45000; // 45 seconds
                 document.getElementById("my_form").action = smm_action;
                 break;
               case "6":
-                resubmit_time = 45000; // 45 seconds
+                resubmit_time = 47000; // 47 seconds
                 document.getElementById("my_form").action = mm_mmm_umm_action;
                 break;
               case "7":
@@ -1210,11 +1210,18 @@
 
         // Program form resubmissions in case they are needed, typically due to temporary (mobile) network errors or due to sporadic google sheet errors (404 observed)
         let my_form_url = document.getElementById("my_form").action;
-        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*3/10);
-        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*4/10);
-        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*5/10);
-        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*9/10);
-        setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time);
+        if (formStr == "") { // Nominal case - key handled in google sheet => form resubmissions are allowed
+          if (resubmit_time >= 40000) {
+              setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*3/10); // not too long for playability, not too short to avoid useless resubmissions
+          }
+          setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*4/10);
+          setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*5/10);
+          setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*9/10);
+          setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time);
+        }
+        else { // Specific error case - key not handled in google sheet => only one form resubmission
+          setTimeout("reSubmitForm(\"" + my_form_url + "\",\"" + my_params['k'] + "\")", resubmit_time*3/10);
+        }
 
         // Submit form
         console.log("(submit form" + ((formStr == "") ? "" : " for a specific case") + ")");
@@ -1350,7 +1357,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v34.00: " + (localStorage.reloadForCompatibility_v3400 ? localStorage.reloadForCompatibility_v3400 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v35.00: " + (localStorage.reloadForCompatibility_v3500 ? localStorage.reloadForCompatibility_v3500 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userInfoStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -1601,6 +1608,8 @@
              || (str.toLowerCase().indexOf('master-m') != -1)
              || (str.toLowerCase().indexOf('supermas') != -1)
              || (str.toLowerCase().indexOf('super-mas') != -1)
+             || (str.toLowerCase().indexOf('android') != -1)
+             || (str.toLowerCase().indexOf('androïd') != -1)
              || (str.toLowerCase().indexOf('yvpj') != -1)
              || (str.toLowerCase() == "super")
              || (str.toLowerCase() == "master")
@@ -1640,7 +1649,7 @@
       function storeGlbScoreAndPerf(nbColumns_p, glb_score, glb_perf) {
         try {
             // Check parameters
-            if ((nbColumns_p != 3) && (nbColumns_p != 4) && (nbColumns_p != 5) && (nbColumns_p != 6) && (nbColumns_p != 7)) {
+            if ((nbColumns_p != 4) && (nbColumns_p != 5) && (nbColumns_p != 6) && (nbColumns_p != 7)) {
                 throw new Error("invalid nbColumns_p: " + nbColumns_p);
             }
             var valid_glb_score = (glb_score != '-');
@@ -1767,13 +1776,8 @@
       function handle_rsp_delayed(e) {
         debug_game_state = 80;
         try {
-          if ( (e !== undefined) && (e != null)
-               && (typeof e.rsp_cd == 'undefined') // rsp_cd means error
-               && (typeof e.rankings !== 'undefined') && (e.rankings.length > 10)
-               && (typeof e.nbcolumns !== 'undefined') && (typeof e.globalScore !== 'undefined') && (typeof e.globalPerf !== 'undefined') ) {
-
-            if (e.nbcolumns != "NA") {
-                storeGlbScoreAndPerf(e.nbcolumns, e.globalScore, e.globalPerf);
+            if (e.res == "ok") {
+                storeGlbScoreAndPerf(e.nbColumns, e.globalScore, e.globalPerf);
             }
 
             var rsp_rankings_str = JSON.stringify(e.rankings).replaceAll("^\"|\"$", ""); // (suppress leading and ending double quotes)
@@ -1846,11 +1850,6 @@
             catch (exc) {
               throw new Error("modal error (" + modal_mode + "): " + exc + ": " + exc.stack);
             }
-
-          }
-          else {
-             console.log('handle_rsp_delayed error');
-          }
         }
         catch (exc) {
           throw new Error("handle_rsp_delayed error: " + exc + ": " + exc.stack);
@@ -1870,37 +1869,54 @@
             return;
         }
 
-        // Check parameters
-        if ( (e.key == undefined)
-             || ((e.nbColumns != "4") && (e.nbColumns != "5") && (e.nbColumns != "6") && (e.nbColumns != "7"))
-             || (e.totalTime == undefined) || (e.debugTime == undefined) ) {
+        console.log("(handle_rsp, time: " + (e.totalTime != undefined ? e.totalTime : "?") + "s)");
+
+        if ( (e == null) || (e == undefined) || (e.key == undefined) ) {
           if (!handle_rsp_error_met) {
-            console.log("handle_rsp skipped (wrong parameters)");
-            submitForm("handle_rsp error (wrong parameters): " + e.key + ", " + e.nbColumns + ", " + e.totalTime + ", " + e.debugTime, 70);
-            my_params = {}; // cancel form resubmissions (only one my_params variable for all keys to simplify)
+            submitForm("handle_rsp error (undefined paremeters)", 70);
+            my_params = {}; // cancel form resubmissions after above submitForm call (only one my_params variable for all keys to simplify)
             handle_rsp_error_met = true;
           }
-          return; // skip handle_rsp
+          return;
         }
-        console.log("(handle_rsp - time: " + e.totalTime + "s)");
 
-        if ( (my_params != {}) && (my_params['k'] != undefined) // my_params filled
+        if ( (my_params['k'] != undefined) // my_params filled
              && (e.key == my_params['k']) ) {
           console.log("(cancel form resubmissions)");
           my_params = {}; // cancel form resubmissions (only one my_params variable for all keys to simplify)
+        }
+
+        // Specific error case => no more handling needed (even for key)
+        if (e.res == undefined) {
+          return;
         }
 
         // Check that rsp was not already handled
         for (var i = 0; i < last_rsp_keys_size; i++) {
           if (last_rsp_keys[i] == e.key) {
             console.log("handle_rsp skipped (duplicate key)");
-            return; // skip handle_rsp
+            return;
           }
         }
         last_rsp_keys[last_rsp_keys_index] = e.key;
         last_rsp_keys_index++;
         if (last_rsp_keys_index >= last_rsp_keys_size) {
           last_rsp_keys_index = 0;
+        }
+
+        if ( ((e.res != "ok") && (e.res != "list"))
+             || (e.rsp_cd != undefined) // rsp_cd means error
+             || (e.nbColumns == undefined)
+             || (e.rankings == undefined) || (e.rankings.length < 10)
+             || (e.globalScore == undefined) || (e.globalPerf == undefined)
+             || (e.totalTime == undefined) || (e.debugTime == undefined) ) {
+          if (!handle_rsp_error_met) {
+            console.log("handle_rsp error (wrong parameters)");
+            submitForm("handle_rsp error (wrong parameters): " + e.key + ", " + e.rsp_cd + ", " + e.res + ", " + e.nbColumns + ", " + e.globalScore + ", " + e.totalTime, 80);
+            my_params = {}; // cancel form resubmissions after above submitForm call (only one my_params variable for all keys to simplify)
+            handle_rsp_error_met = true;
+          }
+          return;
         }
 
         var score_display_time = 4444; // (see blinking time)
@@ -1916,8 +1932,11 @@
         else {
           time_to_wait = 44; // (no time to wait, form submission was long enough)
         }
-        setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait);
-        setTimeout("handle_stats(" + e.nbColumns + ", " + e.totalTime + ", " + e.debugTime + ")", 4);
+
+        setTimeout("handle_rsp_delayed(" + JSON.stringify(e) + ");", time_to_wait); // done for e.res == "ok" or "list"
+        if (e.res == "ok") {
+          setTimeout("handle_stats(" + e.nbColumns + ", " + e.totalTime + ", " + e.debugTime + ")", 4);
+        }
       }
 
       var statsURL = "https://script.google.com/macros/s/AKf" + extraStr + "ycbyd8nGlkIY14xIQQOUyOUKRoa5JZtuyP0agekteKermlYwNX9BgyQzwQpwS8P1AZZI5/exec";
@@ -1940,7 +1959,7 @@
           dataType: 'json',
           timeout: 90000, // 90 seconds
           cache: false // no cache (see https://api.jquery.com/jQuery.ajax/)
-        }); // result not checked to simplify
+        }); // no resubmissions ((mobile) network was operational at parent handle_rsp() call) and result not checked to simplify
       }
 
       var globalProgressForHTMLGame2 = getGlobalProgress(0.75 /* (rough value) */, 0);
@@ -2565,7 +2584,7 @@
             return;
           }
           last_game_cnt = game_cnt;
-          store_time = new Date().getTime() + ((nbcolumns == 3) ? 4444 /* (slow down pace) */: 0);
+          store_time = new Date().getTime();
 
           let gamesok = -1;
           let gamesokX = -1;

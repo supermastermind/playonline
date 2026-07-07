@@ -704,7 +704,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v34.00";
+let html_compatibility_game_version="v35.00";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -870,10 +870,10 @@ var nbErrorsSubmitted=0;
 var my_params={};
 function reSubmitForm(my_form_url, key){
 if(my_params['k']==undefined){
-console.log("form resubmission not needed");
+console.log("(form resubmission not needed)");
 return;
 }
-if((my_params['k']!=key)){
+if(my_params['k']!=key){
 console.log("form resubmission cancelled: "+my_params['k']+", "+key);
 return;
 }
@@ -915,11 +915,11 @@ resubmit_time=30000;
 document.getElementById("my_form").action=mm_mmm_umm_action;
 break;
 case "5":
-resubmit_time=40000;
+resubmit_time=45000;
 document.getElementById("my_form").action=smm_action;
 break;
 case "6":
-resubmit_time=45000;
+resubmit_time=47000;
 document.getElementById("my_form").action=mm_mmm_umm_action;
 break;
 case "7":
@@ -957,11 +957,18 @@ replaceAllElementsInStruct(my_params, "\n", " ");
 replaceAllElementsInStruct(my_params, "\r", "");
 replaceAllElementsInStruct(my_params, "\t", " ");
 let my_form_url=document.getElementById("my_form").action;
+if(formStr==""){
+if(resubmit_time >=40000){
 setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*3/10);
+}
 setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*4/10);
 setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*5/10);
 setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*9/10);
 setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time);
+}
+else{
+setTimeout("reSubmitForm(\""+my_form_url+"\",\""+my_params['k']+"\")", resubmit_time*3/10);
+}
 console.log("(submit form"+((formStr=="") ? "" : " for a specific case")+")");
 jQuery.ajax({
 url: my_form_url,
@@ -1068,7 +1075,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v34.00: "+(localStorage.reloadForCompatibility_v3400 ? localStorage.reloadForCompatibility_v3400 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v35.00: "+(localStorage.reloadForCompatibility_v3500 ? localStorage.reloadForCompatibility_v3500 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userInfoStr+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1297,6 +1304,8 @@ if((str.length < minFirstNameLength)
 ||(str.toLowerCase().indexOf('master-m')!=-1)
 ||(str.toLowerCase().indexOf('supermas')!=-1)
 ||(str.toLowerCase().indexOf('super-mas')!=-1)
+||(str.toLowerCase().indexOf('android')!=-1)
+||(str.toLowerCase().indexOf('androïd')!=-1)
 ||(str.toLowerCase().indexOf('yvpj')!=-1)
 ||(str.toLowerCase()=="super")
 ||(str.toLowerCase()=="master")
@@ -1333,7 +1342,7 @@ return glbScoreAndPerfHistoryArrayNamePrefix+"_"+nbColumns_p+"cols";
 }
 function storeGlbScoreAndPerf(nbColumns_p, glb_score, glb_perf){
 try{
-if((nbColumns_p!=3)&&(nbColumns_p!=4)&&(nbColumns_p!=5)&&(nbColumns_p!=6)&&(nbColumns_p!=7)){
+if((nbColumns_p!=4)&&(nbColumns_p!=5)&&(nbColumns_p!=6)&&(nbColumns_p!=7)){
 throw new Error("invalid nbColumns_p: "+nbColumns_p);
 }
 var valid_glb_score=(glb_score!='-');
@@ -1445,12 +1454,8 @@ trophy_image_height=trophy_image.height;
 function handle_rsp_delayed(e){
 debug_game_state=80;
 try{
-if((e!==undefined)&&(e!=null)
-&&(typeof e.rsp_cd=='undefined')
-&&(typeof e.rankings!=='undefined')&&(e.rankings.length > 10)
-&&(typeof e.nbcolumns!=='undefined')&&(typeof e.globalScore!=='undefined')&&(typeof e.globalPerf!=='undefined') ){
-if(e.nbcolumns!="NA"){
-storeGlbScoreAndPerf(e.nbcolumns, e.globalScore, e.globalPerf);
+if(e.res=="ok"){
+storeGlbScoreAndPerf(e.nbColumns, e.globalScore, e.globalPerf);
 }
 var rsp_rankings_str=JSON.stringify(e.rankings).replaceAll("^\"|\"$", "");
 if(rsp_rankings_str.indexOf("</tr>")==-1){
@@ -1510,9 +1515,6 @@ trophy_img_2.src="img/trophy.png";
 catch (exc){
 throw new Error("modal error ("+modal_mode+"): "+exc+": "+exc.stack);
 }}
-else{
-console.log('handle_rsp_delayed error');
-}}
 catch (exc){
 throw new Error("handle_rsp_delayed error: "+exc+": "+exc.stack);
 }
@@ -1529,22 +1531,22 @@ if(e.skip=="Y"){
 localStorage.skip='Y';
 return;
 }
-if((e.key==undefined)
-||((e.nbColumns!="4")&&(e.nbColumns!="5")&&(e.nbColumns!="6")&&(e.nbColumns!="7"))
-||(e.totalTime==undefined)||(e.debugTime==undefined) ){
+console.log("(handle_rsp, time: "+(e.totalTime!=undefined ? e.totalTime : "?")+"s)");
+if((e==null)||(e==undefined)||(e.key==undefined) ){
 if(!handle_rsp_error_met){
-console.log("handle_rsp skipped (wrong parameters)");
-submitForm("handle_rsp error (wrong parameters): "+e.key+", "+e.nbColumns+", "+e.totalTime+", "+e.debugTime, 70);
+submitForm("handle_rsp error (undefined paremeters)", 70);
 my_params={};
 handle_rsp_error_met=true;
 }
 return;
 }
-console.log("(handle_rsp-time: "+e.totalTime+"s)");
-if((my_params!={})&&(my_params['k']!=undefined)
+if((my_params['k']!=undefined)
 &&(e.key==my_params['k']) ){
 console.log("(cancel form resubmissions)");
 my_params={};
+}
+if(e.res==undefined){
+return;
 }
 for (var i=0;i < last_rsp_keys_size;i++){
 if(last_rsp_keys[i]==e.key){
@@ -1555,6 +1557,20 @@ last_rsp_keys[last_rsp_keys_index]=e.key;
 last_rsp_keys_index++;
 if(last_rsp_keys_index >=last_rsp_keys_size){
 last_rsp_keys_index=0;
+}
+if(((e.res!="ok")&&(e.res!="list"))
+||(e.rsp_cd!=undefined)
+||(e.nbColumns==undefined)
+||(e.rankings==undefined)||(e.rankings.length < 10)
+||(e.globalScore==undefined)||(e.globalPerf==undefined)
+||(e.totalTime==undefined)||(e.debugTime==undefined) ){
+if(!handle_rsp_error_met){
+console.log("handle_rsp error (wrong parameters)");
+submitForm("handle_rsp error (wrong parameters): "+e.key+", "+e.rsp_cd+", "+e.res+", "+e.nbColumns+", "+e.globalScore+", "+e.totalTime, 80);
+my_params={};
+handle_rsp_error_met=true;
+}
+return;
 }
 var score_display_time=4444;
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
@@ -1569,8 +1585,9 @@ else{
 time_to_wait=44;
 }
 setTimeout("handle_rsp_delayed("+JSON.stringify(e)+");", time_to_wait);
+if(e.res=="ok"){
 setTimeout("handle_stats("+e.nbColumns+", "+e.totalTime+", "+e.debugTime+")", 4);
-}
+}}
 var statsURL="https://script.google.com/macros/s/AKf"+extraStr+"ycbyd8nGlkIY14xIQQOUyOUKRoa5JZtuyP0agekteKermlYwNX9BgyQzwQpwS8P1AZZI5/exec";
 function handle_stats(nbColumns_p, totalTime_p, debugTime_p){
 var my_stats_form_url=statsURL;
@@ -2139,7 +2156,7 @@ debug_game_state=100.1;
 return;
 }
 last_game_cnt=game_cnt;
-store_time=new Date().getTime()+((nbcolumns==3) ? 4444 : 0);
+store_time=new Date().getTime();
 let gamesok=-1;
 let gamesokX=-1;
 let gamesok_at_last_first_name_request=-100;
