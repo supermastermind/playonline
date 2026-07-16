@@ -3476,7 +3476,7 @@ else{
 newGameButtonObject.disabled=false;
 newGameButtonObject.className="button";
 if(CompressedDisplayMode){
-newGameButtonObject.value="\u2795\uFE0E";
+newGameButtonObject.value="+";
 }
 else{
 newGameButtonObject.value=newGameButtonIniName;
