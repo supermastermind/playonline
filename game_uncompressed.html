@@ -798,7 +798,7 @@
           </form>
           <input id='resetCurrentCodeButton' class='button disabled' type='button' value='&#x2718;' title='Reset current code' onpointerdown='resetCurrentCodeButtonClick();' onfocus='this.blur()' disabled>
           <input id='playRandomCodeButton' class='button disabled' type='button' value='&#x1F3B2;' title='Play a random code' onpointerdown='playRandomCodeButtonClick();' onfocus='this.blur()' disabled>
-          <input id='revealSecretColorButton' class='button disabled' type='button' value='?' title='Reveal a color from the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
+          <input id='revealSecretColorButton' class='button disabled' type='button' value='&#x2728;' title='Reveal a color from the secret code' onclick='revealSecretColorButtonClick()' onfocus='this.blur()' disabled>
           <input id='showPossibleCodesButton' class='button disabled' type='button' value='&#x1F50E;' title='Show possible codes at each attempt (when game is over)' onclick='showPossibleCodesButtonClick()' onfocus='this.blur()' disabled>
           <input id='settingsButton' class='button disabled' type='button' value='&#9776;' title='Info and settings' onclick='settingsButtonClick()' onfocus='this.blur()' disabled>
         </td>
@@ -890,7 +890,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v35.00"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v35" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v35.01"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v35" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1243,23 +1243,7 @@
       }
 
       function submitError(errorStr) { // CALLED BY ANDROID APP
-        try {
-            submitForm("error submitted by android app: " + String(errorStr), 10);
-        }
-        catch (exc) {
-            submitForm("submitError() handling error", 20);
-        }
-      }
-
-      function getMemoryUsage() {
-        let res = "memory usage:";
-        try {
-          res = res + String(performance.memory.usedJSHeapSize) /* used */ + "|" + String(performance.memory.totalJSHeapSize) /* allocated, >= used */ + "|" + String (performance.memory.jsHeapSizeLimit) /* maximum heap size */;
-        }
-        catch (exc) { // always fails in Firefox
-          res = res + "unknown";
-        }
-        return res;
+        submitForm("error submitted by android app: " + String(errorStr), 10);
       }
 
       // Temporary error handling (from this point in this file to simplify / will be overwritten later)
@@ -1349,15 +1333,11 @@
           extra_debug_info = extra_debug_info + " gamesolver_blob:" + gamesolver_blob_error + "|" + ((gamesolver_blob != null) ? gamesolver_blob.size : "null gamesolver_blob");
         }
         catch (exc) {}
-        try {
-          extra_debug_info = extra_debug_info + " " + getMemoryUsage();
-        }
-        catch (exc) {}
         extra_debug_info = extra_debug_info.trim();
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v35.00: " + (localStorage.reloadForCompatibility_v3500 ? localStorage.reloadForCompatibility_v3500 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v35.01: " + (localStorage.reloadForCompatibility_v3501 ? localStorage.reloadForCompatibility_v3501 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userInfoStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
