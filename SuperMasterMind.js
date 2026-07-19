@@ -1465,9 +1465,7 @@ catch (tmp_exc){}
 main_graph_update_needed=true;
 smmCodeHandler=null;
 nbColumns=nbColumnsSelected;
-if(typeof currentGameNbColumns!=='undefined'){
 currentGameNbColumns=nbColumns;
-}
 document.title="Code breaker";
 switch (nbColumns){
 case 3:
@@ -3650,7 +3648,7 @@ return;
 }}
 ctx.fillStyle=foregroundColor;
 if((str=="\u{1F3C6}" )
-&&(typeof trophy_image_loaded!=='undefined')&&trophy_image_loaded&&(trophy_image_width!=-1)&&(trophy_image_height!=-1) ){
+&&trophy_image_loaded&&(trophy_image_width!=-1)&&(trophy_image_height!=-1) ){
 var reduction_factor=1.0;
 var new_str_width=str_width * reduction_factor;
 var new_str_height=new_str_width * trophy_image_height / trophy_image_width;
