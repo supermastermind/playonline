@@ -1172,15 +1172,10 @@ return 'P2';
 default:
 return 'P3';
 }}
-function nbVowels(str)
-{
-var vowel_list='aeiouyAEIOUY';
-var vowel_count=0;
-for (var i=0;i < str.length;i++){
-if(vowel_list.indexOf(str[i])!==-1){
-vowel_count++;
-}}
-return vowel_count;
+function nbVowels(str){
+const cleanStr=str.normalize("NFD");
+const matches=cleanStr.match(/[aeiouy]/gi);
+return matches ? matches.length : 0;
 }
 function getCountryNameFromBrowserLanguage(defaultCountryName){
 let browserlanguage=navigator.language;
