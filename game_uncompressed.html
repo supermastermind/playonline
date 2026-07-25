@@ -1471,8 +1471,7 @@
       }
 
       function nbVowels(str) {
-        // Matches standard vowels (A, E, I, O, U, Y) plus any Unicode accented characters (\p{Diacritic})
-        // 'g' = global search, 'i' = case-insensitive, 'u' = unicode mode enabled
+        // Matches standard vowels (A, E, I, O, U, Y) plus any unicode accented characters
         const cleanStr = str.normalize("NFD");
         const matches = cleanStr.match(/[aeiouy]/gi);
         return matches ? matches.length : 0;
