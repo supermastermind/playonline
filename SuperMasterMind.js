@@ -989,11 +989,11 @@ let display_form_str=
 <option value='3'"+(modernDisplay&&(displayVariant!=1) ? " selected" : "")+">light theme / numbers</option>\
 <option value='4'"+(modernDisplay&&(displayVariant==1) ? " selected" : "")+">light theme / colors only</option>\
 </select>"+end_separator_str;
-let change_first_name_title_str="<b>First name:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
+let change_first_name_title_str="<b>Nickname:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 let change_first_name_str="";
 if(localStorage.firstname){
 if(!(localStorage.nbTimesFirstnameUpdated&&(Number(localStorage.nbTimesFirstnameUpdated) >=nbMaxTimesFirstnameChanged))){
-if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime < 1.5*24*3600*1000) ){
+if(localStorage.firstnameUpdateTime&&((new Date()).getTime()-localStorage.firstnameUpdateTime < 1.0*24*3600*1000) ){
 change_first_name_str=
 change_first_name_title_str
 +"change will be possible later"
