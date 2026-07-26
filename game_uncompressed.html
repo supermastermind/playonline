@@ -1494,7 +1494,7 @@
       }
 
       function isCorrect(str) {
-        const has6PlusConsonants = (s) => /[b-df-hj-np-tv-xz]{6,}/i.test(s);
+        const has5PlusConsonants = (s) => /[b-df-hj-np-tv-xz]{5,}/i.test(s);
         if ( (str.length < minFirstNameLength)
              || (str.length > maxFirstNameLength)
              || (str.toLowerCase().indexOf('sherl') != -1) // (Sherlock)
@@ -1585,7 +1585,7 @@
              || (str.toLowerCase().indexOf('--') != -1)
              || (str.toLowerCase().indexOf('_') != -1)
              || (nbVowels(str) == 0)
-             || ((nbVowels(str) <= 1) && ((str.length >= 8) || has6PlusConsonants(str)))
+             || ((nbVowels(str) <= 1) && ((str.length >= 8) || has5PlusConsonants(str)))
              || ((nbVowels(str) == str.length) && (str.length >= 5)) ) {
           return false;
         }
