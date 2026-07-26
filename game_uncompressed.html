@@ -1587,7 +1587,7 @@
              || (str.toLowerCase().indexOf('_') != -1)
              || (nbVowels(str) == 0)
              || ((nbVowels(str) <= 1) && (str.length >= 7))
-             || (nbVowels(str) == str.length) ) {
+             || ((nbVowels(str) == str.length) && (str.length >= 5)) ) {
           return false;
         }
         return true;
