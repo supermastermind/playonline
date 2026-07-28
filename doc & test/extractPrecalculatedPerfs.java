@@ -21,7 +21,7 @@ public class extractPrecalculatedPerfs {
   // ***********
 
   private static String[] file_table =
-    // NEW PERFS 5 - FILES IN WHICH INVERT DIMS
+    // NEW PERFS 7 - FILES IN WHICH INVERT DIMS
     {
       "FINAL_RESULTS_11111_270_1300_2s_plus_depth3only_270_1300_2.7sec.txt",
       "FINAL_RESULTS_11112_FROM_PERFS5_270_1300_2s_plus_depth3only_270_1300_4.4sec.txt",
