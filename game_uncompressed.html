@@ -2505,16 +2505,16 @@
           else {
             let error_cause = "";
             if (!condition_1) {
-              error_cause = " (too short)";
+              error_cause = "too short";
             }
             else if (!condition_2) {
-              error_cause = " (too long)";
+              error_cause = "too long";
             }
             else if (!condition_3) {
-              error_cause = " (invalid characters: only letters are allowed, no other characters like figures, spaces, special characters...)";
+              error_cause = "only letters are allowed, no other characters like figures, spaces or special characters";
             }
             localStorage.previousfirstname = firstname_entered;
-            alert("Invalid nickname" + error_cause + ": " + firstname_entered);
+            alert("Invalid nickname: " + error_cause + "\n(" + firstname_entered + ")");
           }
         }
       }
