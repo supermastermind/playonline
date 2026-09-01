@@ -658,7 +658,6 @@
       var github_unicorn_error = false;
       var github_html_error = false;
       var github_load_error = false;
-      var gameInv = 0;
       var gamesolver_load_state = -1;
       var gamesolver_load_start_time = -1;
       var smm_load_state = -1;
@@ -872,7 +871,7 @@
 
     <script>
 
-      let html_compatibility_game_version = "v35.01"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v35" for all occurrences in this file and this script
+      let html_compatibility_game_version = "v35.02"; // !WARNING! -> value to be aligned with version in SuperMasterMind.js => search "v35" for all occurrences in this file and this script
       let current_smm_compatibility_version = "not filled yet";
       let modeAlreadySelected = false;
       let lastKeyCheck = false;
@@ -1319,7 +1318,7 @@
         if (extra_debug_info == "") {
           extra_debug_info = "-";
         }
-        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v35.01: " + (localStorage.reloadForCompatibility_v3501 ? localStorage.reloadForCompatibility_v3501 : "not done") + "): "
+        submitForm("***** GAME ERROR ***** (game: " + html_compatibility_game_version + ", smm: " + current_smm_compatibility_version + ", alignment for v35.02: " + (localStorage.reloadForCompatibility_v3502 ? localStorage.reloadForCompatibility_v3502 : "not done") + "): "
                    + (github_unicorn_error ? "github unicorn error - " : "") + (github_html_error ? "github html error - " : "") + (github_load_error ? "github load error - " : "")
                    + err_str + " in " + userInfoStr + " (start time:" + pageLoadStartTime + "/error time:" + new Date() + ")"
                    + " / debug: " + nbGamesPlayed + "|" + nbGamesPlayedAndWon
@@ -3017,7 +3016,7 @@
                   modeStr += "/MA";
                 }
               }
-              document.getElementById('form_debuginfo_id').value = (userInfoStr + modeStr + '/' + navigator.language + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight + firstNameAskedStr + ((gameInv != 0) ? '/Inv:' +  gameInv : "") + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
+              document.getElementById('form_debuginfo_id').value = (userInfoStr + modeStr + '/' + navigator.language + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight + firstNameAskedStr + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
                                                                    + (max_nb_gamesok_today_reached ? "/todaysmax:" + nb_games_today: "");
               if ((nbuknperfs > 0) && (nbcolumns <= 5)) {
                 document.getElementById('form_gamesummary_id').value = 'S' + nbColorSelections + '/' + gamestr.replaceAll(" ","");

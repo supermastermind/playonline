@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v35.01";
+let smm_compatibility_version="v35.02";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3501)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3502)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3501="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3502="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -125,12 +125,6 @@ let game_id_for_gameSolverConfig=-1;
 let game_id_for_initGameSolver=-1;
 let gamesolver_buffered_msg_status=0;
 let gamesolver_buffered_msg_action_str="";
-let next_code1=0;
-let next_code2=0;
-let next_code3=0;
-let next_scode=0;
-let next_scoderevealed=0;
-let next_gameinvid=0;
 let isWorkerAlive=-2;
 let workerCreationTime=-1;
 let workerTerminationTime=-1;
@@ -434,7 +428,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v35.01: "+(localStorage.reloadForCompatibility_v3501 ? localStorage.reloadForCompatibility_v3501 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v35.02: "+(localStorage.reloadForCompatibility_v3502 ? localStorage.reloadForCompatibility_v3502 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -1614,24 +1608,6 @@ if(randomCodesHintToBeDisplayed){
 setTimeout("displayRandomCodesHintIfNeeded();", 444);
 }
 gameSolverDbg=8;
-if((next_code1!=0)&&(next_code2!=0)&&(next_code3==0)&&(next_scode!=0)){
-throw new Error("unexpected null next_code3");
-}
-else if((next_code1!=0)&&(next_code2!=0)&&(next_code3!=0)&&(next_scode!=0)){
-worst_mark_alert_already_displayed=true;
-sCode=next_scode;
-gameInv=next_gameinvid;
-setTimeout("sCodeRevealed="+next_scoderevealed+";playACodeAutomatically("+next_code1+");playACodeAutomatically("+next_code2+");playACodeAutomatically("+next_code3+");updateAndStoreNbGamesStarted(-1);", 4);
-}
-else{
-gameInv=0;
-}
-next_code1=0;
-next_code2=0;
-next_code3=0;
-next_scode=0;
-next_scoderevealed=0;
-next_gameinvid=0;
 reset_color_being_selected();
 }
 function checkArraySizes(){
@@ -1718,101 +1694,6 @@ return false;
 nbOfStatsFilled_NbPossibleCodes=attempt_nb;
 main_graph_update_needed=true;
 draw_graphic();
-if((nbColumns==5)&&(attempt_nb==4)&&(currentAttemptNumber==4)&&gameOnGoing()&&(nbOfPossibleCodes[2] >=700) ){
-let mark_tmp1={nbBlacks:0, nbWhites:0};
-let mark_tmp2a={nbBlacks:0, nbWhites:0};
-let mark_tmp2b={nbBlacks:0, nbWhites:0};
-smmCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp1);
-smmCodeHandler.fillMark(codesPlayed[0], codesPlayed[2], mark_tmp2a);
-smmCodeHandler.fillMark(codesPlayed[1], codesPlayed[2], mark_tmp2b);
-if((!smmCodeHandler.marksEqual(mark_tmp2a, marks[0])||!smmCodeHandler.marksEqual(mark_tmp2b, marks[1]))
-&&!((mark_tmp1.nbBlacks==4)&&(mark_tmp2a.nbBlacks==4)&&(mark_tmp2b.nbBlacks==4)) ){
-if((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[1]) <=2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[2])==2) ){
-if(!((marks[1].nbBlacks==0)&&(marks[1].nbWhites==0))
-||((mark_tmp1.nbBlacks==0)&&(mark_tmp1.nbWhites==0)) ){
-console.log("invert game rows #1");
-next_code1=codesPlayed[1];
-next_code2=codesPlayed[0];
-next_code3=codesPlayed[2];
-next_scode=sCode;
-next_scoderevealed=sCodeRevealed;
-next_gameinvid=10;
-if(gameInv!=0){
-displayGUIError("unexpected gameInv loop (1): "+gameInv, new Error().stack);
-}
-else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
-}}
-else if(!((marks[2].nbBlacks==0)&&(marks[2].nbWhites==0))
-||((mark_tmp2a.nbBlacks==0)&&(mark_tmp2a.nbWhites==0)&&(mark_tmp2b.nbBlacks==0)&&(mark_tmp2b.nbWhites==0)) ){
-console.log("invert game rows #2");
-next_code1=codesPlayed[2];
-next_code2=codesPlayed[0];
-next_code3=codesPlayed[1];
-next_scode=sCode;
-next_scoderevealed=sCodeRevealed;
-next_gameinvid=20;
-if(gameInv!=0){
-displayGUIError("unexpected gameInv loop (2): "+gameInv, new Error().stack);
-}
-else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
-}}}
-else if((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[1])==1)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[2]) > 2) ){
-if(!((marks[2].nbBlacks==0)&&(marks[2].nbWhites==0))
-||((mark_tmp2b.nbBlacks==0)&&(mark_tmp2b.nbWhites==0)) ){
-console.log("invert game rows #3");
-next_code1=codesPlayed[0];
-next_code2=codesPlayed[2];
-next_code3=codesPlayed[1];
-next_scode=sCode;
-next_scoderevealed=sCodeRevealed;
-next_gameinvid=30;
-if(gameInv!=0){
-displayGUIError("unexpected gameInv loop (3): "+gameInv, new Error().stack);
-}
-else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
-}}}
-else if((gameInv==0)
-&&( ((smmCodeHandler.nbDifferentColors(codesPlayed[0]) >=2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[2]) > 2))
-||
-((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[1]) >=2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[2]) > 2))
-||
-((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
-&&(smmCodeHandler.nbDifferentColors(codesPlayed[2]) >=2)) )
-&&smmCodeHandler.sameColorsReused(codesPlayed[0], codesPlayed[1])
-&&(nbOfPossibleCodes[2] > 2600)
-&&( ((mark_tmp1.nbBlacks+mark_tmp1.nbWhites==5)&&(mark_tmp2a.nbBlacks+mark_tmp2a.nbWhites==5)&&(3*marks[2].nbBlacks+marks[2].nbWhites >=3*marks[1].nbBlacks+marks[1].nbWhites+3))
-||((mark_tmp1.nbBlacks+mark_tmp1.nbWhites==5)&&!smmCodeHandler.sameColorsReused(codesPlayed[0], codesPlayed[2]))
-||((mark_tmp1.nbBlacks+mark_tmp1.nbWhites <=4)&&!smmCodeHandler.sameColorsReused(codesPlayed[0], codesPlayed[2])
-&&(marks[1].nbBlacks==0)&&(marks[1].nbWhites <=2)&&((smmCodeHandler.nbDifferentColors(codesPlayed[1])==2)||(marks[1].nbWhites > 0))&&(3*marks[2].nbBlacks+marks[2].nbWhites >=3*marks[1].nbBlacks+marks[1].nbWhites+2))
-)
-){
-if(!((marks[2].nbBlacks==0)&&(marks[2].nbWhites==0))
-||((mark_tmp2b.nbBlacks==0)&&(mark_tmp2b.nbWhites==0)) ){
-console.log("invert game rows #4");
-next_code1=codesPlayed[0];
-next_code2=codesPlayed[2];
-next_code3=codesPlayed[1];
-next_scode=sCode;
-next_scoderevealed=sCodeRevealed;
-next_gameinvid=40;
-if(gameInv!=0){
-displayGUIError("unexpected gameInv loop (4): "+gameInv, new Error().stack);
-}
-else{
-setTimeout("if(currentAttemptNumber==4){newGameButtonClick_delayed();}", 14);
-}}}}}
 return true;
 }
 function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id){
@@ -3044,8 +2925,7 @@ displayCode(smmCodeHandler.convert(sCode), nbMaxAttemptsToDisplay+transition_hei
 }}
 ctx.font=basic_bold_font;
 if(!gameOnGoing()){
-let totalTimeInMilliSeconds=stopTime-startTime
-+((gameInv!=0) ? 1000 : 0);
+let totalTimeInMilliSeconds=stopTime-startTime;
 let totalTimeInSeconds=Math.floor(totalTimeInMilliSeconds/1000);
 if(totalTimeInSeconds < 0){
 throw new Error("negative diff: "+startTime+", "+stopTime+", "+(new Date()));

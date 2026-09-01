@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v35.01"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
+let smm_compatibility_version = "v35.02"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as Ajax cache is disabled
-if ((!localStorage.reloadForCompatibility_v3501) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3502) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3501 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3502 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -173,13 +173,6 @@ let game_id_for_gameSolverConfig = -1;
 let game_id_for_initGameSolver = -1;
 let gamesolver_buffered_msg_status = 0;
 let gamesolver_buffered_msg_action_str = "";
-
-let next_code1 = 0; // (empty code)
-let next_code2 = 0; // (empty code)
-let next_code3 = 0; // (empty code)
-let next_scode = 0; // (empty code)
-let next_scoderevealed = 0; // (empty code)
-let next_gameinvid = 0;
 
 let isWorkerAlive = -2; // (debug value)
 let workerCreationTime = -1; // (debug value)
@@ -558,7 +551,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.01: " + (localStorage.reloadForCompatibility_v3501 ? localStorage.reloadForCompatibility_v3501 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.02: " + (localStorage.reloadForCompatibility_v3502 ? localStorage.reloadForCompatibility_v3502 : "not done"), 210);
 
       // Alert
       // *****
@@ -2062,31 +2055,6 @@ function resetGameAttributes(nbColumnsSelected) {
   }
   gameSolverDbg = 8;
 
-  if ((next_code1 != 0) && (next_code2 != 0) && (next_code3 == 0) && (next_scode != 0)) {
-    throw new Error("unexpected null next_code3");
-    // worst_mark_alert_already_displayed = true; // (avoid multiple alerts)
-    // sCode = next_scode;
-    // gameInv = next_gameinvid;
-    // Impact of attempt inversion on game duration will be taken into at game end
-    // setTimeout("playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");updateAndStoreNbGamesStarted(-1);", 4);
-  }
-  else if ((next_code1 != 0) && (next_code2 != 0) && (next_code3 != 0) && (next_scode != 0)) {
-    worst_mark_alert_already_displayed = true; // (avoid multiple alerts)
-    sCode = next_scode;
-    gameInv = next_gameinvid;
-    // Impact of attempt inversion on game duration will be taken into at game end
-    setTimeout("sCodeRevealed=" + next_scoderevealed + ";playACodeAutomatically(" + next_code1 + ");playACodeAutomatically(" + next_code2 + ");playACodeAutomatically(" + next_code3 + ");updateAndStoreNbGamesStarted(-1);", 4);
-  }
-  else {
-    gameInv = 0;
-  }
-  next_code1 = 0; // (empty code)
-  next_code2 = 0; // (empty code)
-  next_code3 = 0; // (empty code)
-  next_scode = 0; // (empty code)
-  next_scoderevealed = 0; // (empty code)
-  next_gameinvid = 0;
-
   reset_color_being_selected();
 }
 
@@ -2193,114 +2161,6 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
   main_graph_update_needed = true;
   draw_graphic();
 
-  // [Likely] unknown performance at 3rd attempt of Super Master Mind game => invert some attempts
-  // Game row inversion could allow to better evaluate performances asymmetrically
-  // (Future improvement could make precalculations [more] symmetrical: not done to simplify)
-  if ( (nbColumns == 5) && (attempt_nb == 4) && (currentAttemptNumber == 4) && gameOnGoing() && (nbOfPossibleCodes[2] >= 700) ) {
-    let mark_tmp1 = {nbBlacks:0, nbWhites:0};
-    let mark_tmp2a = {nbBlacks:0, nbWhites:0};
-    let mark_tmp2b = {nbBlacks:0, nbWhites:0};
-    smmCodeHandler.fillMark(codesPlayed[0], codesPlayed[1], mark_tmp1);
-    smmCodeHandler.fillMark(codesPlayed[0], codesPlayed[2], mark_tmp2a);
-    smmCodeHandler.fillMark(codesPlayed[1], codesPlayed[2], mark_tmp2b);
-    if ( (!smmCodeHandler.marksEqual(mark_tmp2a, marks[0]) || !smmCodeHandler.marksEqual(mark_tmp2b, marks[1])) // Impossible 3rd code (possible codes are fully assessed)
-         && !((mark_tmp1.nbBlacks == 4) && (mark_tmp2a.nbBlacks == 4) && (mark_tmp2b.nbBlacks == 4)) ) { // (such codes are fully assessed))
-      if ( (smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-           && (smmCodeHandler.nbDifferentColors(codesPlayed[1]) <= 2)
-           && (smmCodeHandler.nbDifferentColors(codesPlayed[2]) == 2) ) { // code at 3rd attempt has 2 colors (11111-like codes are fully assessed)
-        if ( !((marks[1].nbBlacks == 0) && (marks[1].nbWhites == 0))
-             || ((mark_tmp1.nbBlacks == 0) && (mark_tmp1.nbWhites == 0)) ) { // worst mark condition avoiding obviously impossible color replay
-            console.log("invert game rows #1");
-            next_code1 = codesPlayed[1];
-            next_code2 = codesPlayed[0];
-            next_code3 = codesPlayed[2];
-            next_scode = sCode;
-            next_scoderevealed = sCodeRevealed;
-            next_gameinvid = 10;
-            if (gameInv != 0) { // defense against loops
-              displayGUIError("unexpected gameInv loop (1): " + gameInv, new Error().stack);
-            }
-            else {
-              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
-            }
-        }
-        else if ( !((marks[2].nbBlacks == 0) && (marks[2].nbWhites == 0))
-                  || ((mark_tmp2a.nbBlacks == 0) && (mark_tmp2a.nbWhites == 0) && (mark_tmp2b.nbBlacks == 0) && (mark_tmp2b.nbWhites == 0)) ) { // worst mark condition avoiding obviously impossible color replay
-            console.log("invert game rows #2");
-            next_code1 = codesPlayed[2];
-            next_code2 = codesPlayed[0];
-            next_code3 = codesPlayed[1];
-            next_scode = sCode;
-            next_scoderevealed = sCodeRevealed;
-            next_gameinvid = 20;
-            if (gameInv != 0) { // defense against loops
-              displayGUIError("unexpected gameInv loop (2): " + gameInv, new Error().stack);
-            }
-            else {
-              setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
-            }
-        }
-      }
-      else if ( (smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-                && (smmCodeHandler.nbDifferentColors(codesPlayed[1]) == 1)
-                && (smmCodeHandler.nbDifferentColors(codesPlayed[2]) > 2) ) {
-        if ( !((marks[2].nbBlacks == 0) && (marks[2].nbWhites == 0))
-             || ((mark_tmp2b.nbBlacks == 0) && (mark_tmp2b.nbWhites == 0)) ) { // worst mark condition avoiding obviously impossible color replay
-              console.log("invert game rows #3");
-              next_code1 = codesPlayed[0];
-              next_code2 = codesPlayed[2];
-              next_code3 = codesPlayed[1];
-              next_scode = sCode;
-              next_scoderevealed = sCodeRevealed;
-              next_gameinvid = 30;
-              if (gameInv != 0) { // defense against loops
-                displayGUIError("unexpected gameInv loop (3): " + gameInv, new Error().stack);
-              }
-              else {
-                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
-              }
-        }
-      }
-      else if ( (gameInv == 0)
-                && ( ((smmCodeHandler.nbDifferentColors(codesPlayed[0]) >= 2)
-                     && (smmCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
-                     && (smmCodeHandler.nbDifferentColors(codesPlayed[2]) > 2))
-                     ||
-                     ((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-                     && (smmCodeHandler.nbDifferentColors(codesPlayed[1]) >= 2)
-                     && (smmCodeHandler.nbDifferentColors(codesPlayed[2]) > 2))
-                     ||
-                     ((smmCodeHandler.nbDifferentColors(codesPlayed[0]) > 2)
-                     && (smmCodeHandler.nbDifferentColors(codesPlayed[1]) > 2)
-                     && (smmCodeHandler.nbDifferentColors(codesPlayed[2]) >= 2)) )
-                // classic simplistic ways of playing (involving the case where the same 5 colors are replayed in a different order): attempt inversion is acceptable/understandable
-                && smmCodeHandler.sameColorsReused(codesPlayed[0], codesPlayed[1]) // (obviously strongly correlated codes + simplistic way of playing when codes are played in this order)
-                && (nbOfPossibleCodes[2] > 2600) // inefficient way of playing + code nearly never assessed
-                && ( ((mark_tmp1.nbBlacks + mark_tmp1.nbWhites == 5) && (mark_tmp2a.nbBlacks + mark_tmp2a.nbWhites == 5) && (3*marks[2].nbBlacks + marks[2].nbWhites >= 3*marks[1].nbBlacks + marks[1].nbWhites + 3))
-                     || ((mark_tmp1.nbBlacks + mark_tmp1.nbWhites == 5) && !smmCodeHandler.sameColorsReused(codesPlayed[0], codesPlayed[2]))
-                     || ((mark_tmp1.nbBlacks + mark_tmp1.nbWhites <= 4) && !smmCodeHandler.sameColorsReused(codesPlayed[0], codesPlayed[2])
-                         && (marks[1].nbBlacks == 0) && (marks[1].nbWhites <= 2) && ((smmCodeHandler.nbDifferentColors(codesPlayed[1]) == 2) ||(marks[1].nbWhites > 0)) && (3*marks[2].nbBlacks + marks[2].nbWhites >= 3*marks[1].nbBlacks + marks[1].nbWhites + 2))
-                   )
-              ) {
-        if ( !((marks[2].nbBlacks == 0) && (marks[2].nbWhites == 0))
-             || ((mark_tmp2b.nbBlacks == 0) && (mark_tmp2b.nbWhites == 0)) ) { // worst mark condition avoiding obviously impossible color replay
-              console.log("invert game rows #4");
-              next_code1 = codesPlayed[0];
-              next_code2 = codesPlayed[2];
-              next_code3 = codesPlayed[1];
-              next_scode = sCode;
-              next_scoderevealed = sCodeRevealed;
-              next_gameinvid = 40;
-              if (gameInv != 0) { // defense against loops
-                displayGUIError("unexpected gameInv loop (4): " + gameInv, new Error().stack);
-              }
-              else {
-                setTimeout("if (currentAttemptNumber == 4) {newGameButtonClick_delayed();}", 14);
-              }
-        }
-      }
-    } // Impossible 3rd code & co
-  }
   return true;
 }
 
@@ -3840,8 +3700,7 @@ function draw_graphic_bis() {
 
         if (!gameOnGoing()) {
 
-          let totalTimeInMilliSeconds = stopTime - startTime
-                                        + ((gameInv != 0) ? 1000 : 0); // make duration realistic after attempt inversion - actual last-game duration ignored to compensate for the disturbance: constant extra 1 second always considered
+          let totalTimeInMilliSeconds = stopTime - startTime;
           let totalTimeInSeconds = Math.floor(totalTimeInMilliSeconds/1000);
           if (totalTimeInSeconds < 0) { // shall never happen, even if winter/summer time shift or timezone change - could happen if ever the day changes by -1 (after Pacific cross?) due to a browser or OS bug? Observed values (with android app - android 14): stopTime - startTime = -23.97h => 7-columns game likely of 93 seconds.
             throw new Error("negative diff: " + startTime + ", " + stopTime + ", " + (new Date()));
