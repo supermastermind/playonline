@@ -1,1 +1,1 @@
-See the "doc & test" folder for info about the generation of those files
+See folder "doc & test" for the generation of those files
