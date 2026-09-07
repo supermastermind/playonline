@@ -3016,7 +3016,7 @@
                   modeStr += "/MA";
                 }
               }
-              document.getElementById('form_debuginfo_id').value = (userInfoStr + modeStr + '/' + navigator.language + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight + firstNameAskedStr + '/' + getLocation() + extra_debug_info).replaceAll(" ","") + (localStorage.debugInfo2 ? localStorage.debugInfo2 : "")
+              document.getElementById('form_debuginfo_id').value = (userInfoStr + modeStr + '/' + navigator.language + '/' + screen.width + '*' + screen.height + ',' + screen.colorDepth + '-' + window.innerWidth + "*" + window.innerHeight + firstNameAskedStr + '/' + getLocation() + extra_debug_info).replaceAll(" ","")
                                                                    + (max_nb_gamesok_today_reached ? "/todaysmax:" + nb_games_today: "");
               if ((nbuknperfs > 0) && (nbcolumns <= 5)) {
                 document.getElementById('form_gamesummary_id').value = 'S' + nbColorSelections + '/' + gamestr.replaceAll(" ","");

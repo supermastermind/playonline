@@ -1221,6 +1221,33 @@ reset_color_being_selected();
 setTimeout("alert('This code only contains obviously impossible colors so is useless');", 111);
 return;
 }}
+if(smmCodeHandler.isFullAndValid(newCurrentCode)){
+if((nbColumns==5)&&(currentAttemptNumber==2)
+&&(smmCodeHandler.nbDifferentColors(codesPlayed[0])==2)&&(marks[0].nbBlacks==0)&&(marks[0].nbWhites==1) ){
+let nb_color1=0;
+let color1=0;
+let color2=0;
+for (let col=0;col < nbColumns;col++){
+let color=smmCodeHandler.getColor(codesPlayed[0], col+1);
+if(color1==0){
+color1=color;
+}
+else if((color2==0)&&(color!=color1)){
+color2=color;
+}
+if(color==color1){
+nb_color1++;
+}}
+let invertedCode=0;
+for (let col=0;col < nbColumns;col++){
+let color=smmCodeHandler.getColor(codesPlayed[0], col+1);
+invertedCode=smmCodeHandler.setColor(invertedCode, ((color==color1) ? color2 : color1), col+1);
+}
+if(((nb_color1==2)||(nb_color1==3))&&(newCurrentCode==invertedCode) ){
+reset_color_being_selected();
+setTimeout("alert('This code would bring no new information compared to the first code played');", 111);
+return;
+}}}
 currentCode=newCurrentCode;
 draw_graphic();
 }}

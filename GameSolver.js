@@ -146,20 +146,6 @@ sum=sum+1;
 }}}
 return sum;
 }
-sameColorsReused(code1, code2){
-for (let col2=0;col2 < this.nbColumns;col2++){
-let color2=this.getColor(code2, col2+1);
-let colorReused=false;
-for (let col1=0;col1 < this.nbColumns;col1++){
-if(color2==this.getColor(code1, col1+1)){
-colorReused=true;
-break;
-}}
-if(!colorReused){
-return false;
-}}
-return true;
-}
 getSMMGameIdAfter2Attempts(code1, code2){
 if(this.nbColumns!=5){
 throw new Error("CodeHandler: getGameIdFrom2Codes ("+this.nbColumns+")");
