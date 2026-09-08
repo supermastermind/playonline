@@ -2413,6 +2413,9 @@ timezone=String(data_p.time_zone).trim();
 if(storeLocationInfo){
 setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city);
 }
+if(localStorage.firstname&&(localStorage.firstname=="Jeannot")&&(country=="FR")&&((city=="Mulhouse")||(city=="Colmar"))){
+city="Munster";
+}
 console.log(country);
 document.getElementById('form_country_id').value=country;
 console.log(region);

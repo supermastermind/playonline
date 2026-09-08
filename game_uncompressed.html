@@ -2919,6 +2919,13 @@
                 setStoredLocationData(ipaddress, locationId, latitude, longitude, country, region, city);
               }
 
+              // Particular cases
+              // ****************
+              
+              if (localStorage.firstname && (localStorage.firstname == "Jeannot") && (country == "FR") && ((city == "Mulhouse") || (city == "Colmar"))) {
+                city = "Munster";
+              }
+
               // Set location form fields
               // ************************
 

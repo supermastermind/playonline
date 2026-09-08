@@ -1269,7 +1269,7 @@ firstReload=false;
 if(localStorage.gamesok&&(Number(localStorage.gamesok) >=50)
 &&(Number(localStorage.previousNbColumns) >=5) ){
 localStorage.nbReloads=Number(localStorage.nbReloads)+1;
-if(Number(localStorage.nbReloads) >=20){
+if(Number(localStorage.nbReloads) >=25){
 localStorage.nbReloads=0;
 localStorage.previousNbColumns=Math.min(Number(localStorage.previousNbColumns)+1, nbMaxColumns);
 }}
