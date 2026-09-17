@@ -3582,6 +3582,9 @@ if(!matches){
 throw new Error("measurePreciseTextHeight error: invalid font: "+font);
 }
 let font_size=parseInt(matches[1]);
+if(!Number.isInteger(font_size)||(font_size <=0)){
+throw new Error("measurePreciseTextHeight error: invalid font: "+font_size+" for font: "+font);
+}
 var height=font_size;
 var width=height*2;
 tmp_canvas.width=width;

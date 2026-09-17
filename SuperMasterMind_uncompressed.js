@@ -4529,6 +4529,10 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
     }
     let font_size = parseInt(matches[1]);
 
+    if (!Number.isInteger(font_size) || (font_size <= 0)) { // narrow down the causes of error: "InvalidStateError: The object is in an invalid state" at below call to tmp_ctx.getImageData
+      throw new Error("measurePreciseTextHeight error: invalid font: " + font_size + " for font: " + font);
+    }
+    
     // Create a temporary canvas
     var height = font_size;
     var width = height*2;
