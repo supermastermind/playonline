@@ -802,7 +802,7 @@ let nbOfCodesForSystematicEvaluation = -1;
 let nbOfCodesForSystematicEvaluation_AllCodesEvaluated = -1;
 let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
 
-let refNbCodesLimitForMarkOptimization = 500;
+let refNbCodesLimitForMarkOptimization = 600;
 let nbCodesLimitForMarkOptimization = -1;
 
 let initialNbClasses = -1;
