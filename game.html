@@ -2909,8 +2909,9 @@ if(activeParticles.length > 0){
 requestAnimationFrame(animate);
 }}
 function triggerFireworks(){
-const x=window.innerWidth / 2;
-const y=window.innerHeight / 2;
+const rect=animationCanvas.getBoundingClientRect();
+const x=rect.width / 2;
+const y=rect.height / 2;
 activeParticles.push(...firework(x, y));
 animate();
 }
