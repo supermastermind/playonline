@@ -3508,21 +3508,24 @@
       function animate() {
         const now = performance.now();
 
-        let canvas = document.getElementById("animationCanvas");
-        let ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+        let ctx = animationCanvas.getContext("2d");
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
+        ctx.restore();
+
         // 10.0vh equivalent in pixels <=> <img src='img/trophy.png' style='height:10.0vh;'>
         const targetHeight = window.innerHeight * 0.10;
 
+        const rect = animationCanvas.getBoundingClientRect();
         if (trophy_image.complete && trophy_image.naturalWidth > 0) {
           // Maintain aspect ratio
           const aspectRatio = trophy_image.naturalWidth / trophy_image.naturalHeight;
           const targetWidth = targetHeight * aspectRatio;
 
           // Centered coordinates
-          const x = (canvas.width - targetWidth) / 2;
-          const y = (canvas.height - targetHeight) / 2;
+          const x = (rect.width - targetWidth) / 2;
+          const y = (rect.height - targetHeight) / 2;
 
           ctx.drawImage(trophy_image, x, y, targetWidth, targetHeight);
         }
@@ -3557,9 +3560,11 @@
         triggerFireworks();
 
         setTimeout(() => {
-          let canvas = document.getElementById("animationCanvas");
-          let ctx = canvas.getContext("2d");
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          let ctx = animationCanvas.getContext("2d");
+          ctx.save();
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
+          ctx.restore();
         }, animation_time + 333);
       }
 

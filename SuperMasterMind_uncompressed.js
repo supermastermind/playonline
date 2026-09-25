@@ -4436,7 +4436,7 @@ function draw_graphic_bis() {
     // ***************************
 
     if (gameOnGoing() && (color_being_selected != -1) && (column_of_color_being_selected != -1)) {
-      fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, 1111);
+      fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, 950);
       reset_color_being_selected();
     }
     if (gameJustWon) {
