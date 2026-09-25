@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v35.02"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
+let smm_compatibility_version = "v35.03"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as Ajax cache is disabled
-if ((!localStorage.reloadForCompatibility_v3502) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3503) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3502 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3503 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -551,7 +551,7 @@ function displayGUIError(GUIErrorStr, errStack) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.02: " + (localStorage.reloadForCompatibility_v3502 ? localStorage.reloadForCompatibility_v3502 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.03: " + (localStorage.reloadForCompatibility_v3503 ? localStorage.reloadForCompatibility_v3503 : "not done"), 210);
 
       // Alert
       // *****
@@ -1051,13 +1051,6 @@ resetCurrentCodeButtonClick = function() { // (override temporary definition)
   }
   if (!resetCurrentCodeButtonObject.disabled) {
     currentCode = sCodeRevealed;
-    draw_graphic();
-  }
-}
-
-function playACodeAutomatically(code_p) {
-  if (currentAttemptNumber <= 3) {
-    currentCode = code_p;
     draw_graphic();
   }
 }
@@ -1623,7 +1616,6 @@ function playAColor(color, column) {
     }
 
     currentCode = newCurrentCode;
-    draw_graphic();
   }
 }
 
@@ -2762,31 +2754,53 @@ function draw_graphic() {
 }
 
 var main_ctx = null;
+var animation_ctx = null;
 var last_draw_color_selection_condition = false;
+var str_meas_out1 = {str_height:0, empty_space_before_str:0};
+var str_meas_out2 = {str_height:0, empty_space_before_str:0};
 function draw_graphic_bis() {
   if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
     console.log("draw_graphic_bis skipped");
     return;
   }
-  var main_ctx_was_null = false;
-  if (main_ctx == null) {
-    main_ctx = canvas.getContext("2d", { willReadFrequently: true });
-    main_ctx_was_null = true;
-  }
-  let ctx = main_ctx;
-
-  let res;
-  let draw_exception = false;
-
-  let last_but_one_attempt_event = false;
 
   try {
 
+    var main_ctx_was_null = false;
+    if (main_ctx == null) {
+      /* 
+      - A 2D canvas created with { willReadFrequently: false } (default) is usually stored in GPU memory.
+      - A 2D canvas created with { willReadFrequently: true } becomes fully CPU‑backed. Canvas backing store is moved to CPU memory (RAM) => higher RAM usage.
+        This eliminates GPU‑surface eviction (risk = 0%).
+        However, the canvas can still “disappear” due to compositor‑layer eviction, which is a different mechanism
+        (under heavy memory pressure or low-RAM Android conditions, the compositor tile memory / layer textures can still be evicted).
+        => it is possibly the issue of canvas disappearing suddenly observed for low RAM conditions ({ willReadFrequently: true } was used here and the issue disappeared when less RAM was consumed by GameSolver.js).
+      Using:
+        main_ctx = canvas.getContext("2d", { willReadFrequently: true }); 
+      is not recommended at all for the main drawing canvas because it:
+      - disables GPU acceleration
+      - increases CPU load
+      - increases compositor‑layer eviction risk (acc. to Copilot, Gemini does not agree)
+      - makes WebView more fragile under load
+      - reduces rendering performance
+      { willReadFrequently: true } is recommended ONLY for offscreen or helper canvases where frequent readbacks (getImageData(), toDataURL(), or toBlob()) occur.
+      */
+      main_ctx = canvas.getContext("2d");
+      main_ctx_was_null = true;
+    }
+    let ctx = main_ctx;
     ctx.imageSmoothingEnabled = true;
     ctx.globalAlpha = 1;
-    ctx.setTransform(1,0,0,1,0,0); // Reset any previous transformations to the identity matrix
-    const dpr = window.devicePixelRatio || 1;
-    ctx.scale(dpr, dpr); // Apply scaling for high-DPI rendering
+    
+    if (animation_ctx == null) {
+      animation_ctx = animationCanvas.getContext("2d");
+      animation_ctx.imageSmoothingEnabled = true;
+      animation_ctx.globalAlpha = 1;
+    }
+
+    let res;
+    let last_but_one_attempt_event = false;
+    let gameJustWon = false;
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
@@ -2798,6 +2812,7 @@ function draw_graphic_bis() {
     refLineWidth = getLineWidth(window.innerHeight, 1);
     if ( main_ctx_was_null // first drawing
          || (Math.abs(current_innerWidth - window.innerWidth) > 1) || (Math.abs(current_innerHeight - window.innerHeight) > 1) ) { // resize detected with +/-1 pixel tolerance margin
+
       var newCompressedDisplayMode;
       if (window.innerHeight >= window.innerWidth * 0.77) {
           newCompressedDisplayMode = true;
@@ -2900,17 +2915,41 @@ function draw_graphic_bis() {
       current_innerHeight = window.innerHeight;
       refLineWidth = getLineWidth(window.innerHeight, 1);
 
-      // Set canvas size
-      let width = canvas_cell.clientWidth - Math.ceil(borderWidth1);
-      let height = canvas_cell.clientHeight - Math.ceil(borderWidth1);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      canvas.width = width * dpr;   
-      canvas.height = height * dpr;
-      ctx.setTransform(1,0,0,1,0,0); // Reset any previous transformations to the identity matrix
-      ctx.scale(dpr, dpr); // Apply scaling for high-DPI rendering
+      // Set canvas size (CSS size + intrinsic size)
+      const dpr_main_canvas = window.devicePixelRatio || 1; // dpr without capping for the main canvas => high-definition display (not fuzzy) (**)
+      const rect = canvas.parentElement.getBoundingClientRect();
+      let main_canvas_width = rect.width;
+      let main_canvas_height = rect.height;
+      canvas.style.width = `${main_canvas_width}px`;
+      canvas.style.height = `${main_canvas_height}px`;
+      // Math.ceil is better than Math.floor here: it rounds up to ensure the canvas drawing buffer has enough raw pixels to cover the full CSS display area without clipping or distortion
+      canvas.width = Math.ceil(main_canvas_width * dpr_main_canvas); // can consume much memory in case of devicePixelRatio (DPR) is > 1 (the higher the pixel screen density of the physical display, the higher the DPR value) (**)
+      canvas.height = Math.ceil(main_canvas_height * dpr_main_canvas); // can consume much memory in case of devicePixelRatio (DPR) is > 1 (the higher the pixel screen density of the physical display, the higher the DPR value) (**)
       
-      updateAttributesWidthAndHeightValues(width, height);
+      // above canvas.width and canvas.height settings wiped the entire context state
+      // => apply transform - constraint: transforms must be applied ONLY after a resize
+      ctx.setTransform(dpr_main_canvas, 0, 0, dpr_main_canvas, 0, 0);
+      // => (re)apply settings inside the resize block
+      ctx.imageSmoothingEnabled = true;
+      ctx.globalAlpha = 1;
+
+      updateAttributesWidthAndHeightValues(main_canvas_width, main_canvas_height);
+      
+      // Set animation canvas size (CSS size + intrinsic size)
+      const dpr_animation_canvas = Math.min(window.devicePixelRatio || 1, 2.0); // dpr with capping for the animation canvas (capping to 2.0 is the standard industry practice) => reduces memory consumption, display can be a bit fuzzy during animation, but performance is optimized for particle effects / animations (**)
+      animationCanvas.style.width = `${main_canvas_width}px`;
+      animationCanvas.style.height = `${main_canvas_height}px`;
+      // Math.ceil is better than Math.floor here: it rounds up to ensure the canvas drawing buffer has enough raw pixels to cover the full CSS display area without clipping or distortion
+      animationCanvas.width = Math.ceil(main_canvas_width * dpr_animation_canvas); // (**)
+      animationCanvas.height = Math.ceil(main_canvas_height * dpr_animation_canvas); // (**)
+
+      // above canvas.width and canvas.height settings wiped the entire context state
+      // => apply transform - constraint: transforms must be applied ONLY after a resize
+      animation_ctx.setTransform(dpr_animation_canvas, 0, 0, dpr_animation_canvas, 0, 0);
+      // => (re)apply settings inside the resize block
+      animation_ctx.imageSmoothingEnabled = true;
+      animation_ctx.globalAlpha = 1;
+
     } // resize detected
 
     for (let i = 0; i < allRadioButtons.length; i++) {
@@ -3053,9 +3092,9 @@ function draw_graphic_bis() {
           currentAttemptNumber++;
           currentCode = -1;
           gameWon = true;
+          gameJustWon = true;
           nbGamesPlayed++;
           nbGamesPlayedAndWon++;
-          setTimeout("triggerVictoryAnimation();", 10);
           setLightGray(); // clearer stats
           if (!(smmCodeHandler.nbEmptyColors(sCodeRevealed) < nbColumns)) { // not helped
             switch (nbColumns) {
@@ -3241,57 +3280,51 @@ function draw_graphic_bis() {
       font_array_small_char__empty_space_before_str = new Array(0);
 
       basic_bold_font = "bold " + font_size + "px " + fontFamily;
-      measurePreciseTextHeight("0", basic_bold_font, str_meas_out);
-      font_array__str_height[basic_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-      measurePreciseTextHeight(outlinedStar, basic_bold_font, str_meas_out);
-      font_array_small_char__str_height[basic_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array_small_char__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight("0", outlinedStar, basic_bold_font, str_meas_out1, str_meas_out2, false);
+      font_array__str_height[basic_bold_font.replaceAll(" ","")] = str_meas_out1.str_height;
+      font_array__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+      font_array_small_char__str_height[basic_bold_font.replaceAll(" ","")] = str_meas_out2.str_height;
+      font_array_small_char__empty_space_before_str[basic_bold_font.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
 
       if (android_appli) { // zoom effect on android appli
         code_bold_font = "bold " + Math.round(font_size*1.1) + "px " + fontFamily;
-        measurePreciseTextHeight("0", code_bold_font, str_meas_out);
-        font_array__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-        font_array__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-        measurePreciseTextHeight(outlinedStar, code_bold_font, str_meas_out);
-        font_array_small_char__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-        font_array_small_char__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+        measurePreciseTextHeight("0", outlinedStar, code_bold_font, str_meas_out1, str_meas_out2, false);
+        font_array__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out1.str_height;
+        font_array__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+        font_array_small_char__str_height[code_bold_font.replaceAll(" ","")] = str_meas_out2.str_height;
+        font_array_small_char__empty_space_before_str[code_bold_font.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
       }
       else {
         code_bold_font = basic_bold_font;
       }
 
       big_code_bold_font = "bold " + Math.round(font_size*1.4) + "px " + fontFamily;
-      measurePreciseTextHeight("0", big_code_bold_font, str_meas_out);
-      font_array__str_height[big_code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array__empty_space_before_str[big_code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-      measurePreciseTextHeight(outlinedStar, big_code_bold_font, str_meas_out);
-      font_array_small_char__str_height[big_code_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array_small_char__empty_space_before_str[big_code_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight("0", outlinedStar, big_code_bold_font, str_meas_out1, str_meas_out2, false);
+      font_array__str_height[big_code_bold_font.replaceAll(" ","")] = str_meas_out1.str_height;
+      font_array__empty_space_before_str[big_code_bold_font.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+      font_array_small_char__str_height[big_code_bold_font.replaceAll(" ","")] = str_meas_out2.str_height;
+      font_array_small_char__empty_space_before_str[big_code_bold_font.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
 
       big_code_bold_font_2 = "bold " + Math.round(font_size*1.25) + "px " + fontFamily;
-      measurePreciseTextHeight("0", big_code_bold_font_2, str_meas_out);
-      font_array__str_height[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-      measurePreciseTextHeight(outlinedStar, big_code_bold_font_2, str_meas_out);
-      font_array_small_char__str_height[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array_small_char__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight("0", outlinedStar, big_code_bold_font_2, str_meas_out1, str_meas_out2, false);
+      font_array__str_height[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out1.str_height;
+      font_array__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+      font_array_small_char__str_height[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out2.str_height;
+      font_array_small_char__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
 
       medium_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
-      measurePreciseTextHeight("0", medium_bold_font, str_meas_out);
-      font_array__str_height[medium_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array__empty_space_before_str[medium_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-      measurePreciseTextHeight(outlinedStar, medium_bold_font, str_meas_out);
-      font_array_small_char__str_height[medium_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array_small_char__empty_space_before_str[medium_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight("0", outlinedStar, medium_bold_font, str_meas_out1, str_meas_out2, false);
+      font_array__str_height[medium_bold_font.replaceAll(" ","")] = str_meas_out1.str_height;
+      font_array__empty_space_before_str[medium_bold_font.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+      font_array_small_char__str_height[medium_bold_font.replaceAll(" ","")] = str_meas_out2.str_height;
+      font_array_small_char__empty_space_before_str[medium_bold_font.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
 
       medium_bold_font_2 = "bold " + Math.max(Math.floor(font_size/1.4), min_font_size) + "px " + fontFamily;
-      measurePreciseTextHeight("0", medium_bold_font_2, str_meas_out);
-      font_array__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-      measurePreciseTextHeight(outlinedStar, medium_bold_font_2, str_meas_out);
-      font_array_small_char__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array_small_char__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight("0", outlinedStar, medium_bold_font_2, str_meas_out1, str_meas_out2, false);
+      font_array__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out1.str_height;
+      font_array__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+      font_array_small_char__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out2.str_height;
+      font_array_small_char__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
 
       if (!showPossibleCodesMode) {
         stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
@@ -3299,12 +3332,11 @@ function draw_graphic_bis() {
       else {
         stats_bold_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily;
       }
-      measurePreciseTextHeight("0", stats_bold_font, str_meas_out);
-      font_array__str_height[stats_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array__empty_space_before_str[stats_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
-      measurePreciseTextHeight(outlinedStar, stats_bold_font, str_meas_out);
-      font_array_small_char__str_height[stats_bold_font.replaceAll(" ","")] = str_meas_out.str_height;
-      font_array_small_char__empty_space_before_str[stats_bold_font.replaceAll(" ","")] = str_meas_out.empty_space_before_str;
+      measurePreciseTextHeight("0", outlinedStar, stats_bold_font, str_meas_out1, str_meas_out2, true /* free_canvas */);
+      font_array__str_height[stats_bold_font.replaceAll(" ","")] = str_meas_out1.str_height;
+      font_array__empty_space_before_str[stats_bold_font.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+      font_array_small_char__str_height[stats_bold_font.replaceAll(" ","")] = str_meas_out2.str_height;
+      font_array_small_char__empty_space_before_str[stats_bold_font.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
 
       // Draw main game table
       // ********************
@@ -4400,56 +4432,18 @@ function draw_graphic_bis() {
       resetCurrentCodeButtonObject.className = "button";
     }
 
-    // Trigger selection animations
-    // ****************************
+    // Launch selection animations
+    // ***************************
 
     if (gameOnGoing() && (color_being_selected != -1) && (column_of_color_being_selected != -1)) {
-      let x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+column_of_color_being_selected*2-1));
-      let y_0 = get_y_pixel(y_min+y_step*((currentCode == sCodeRevealed) ? currentAttemptNumber - 1: currentAttemptNumber));
-      let x_1 = x_0;
-      let y_1 = get_y_pixel(y_min+y_step*nbMaxAttemptsToDisplay);
-      let arrow_width_ratio = ((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
-      let arrow_width = (get_x_pixel(x_min+x_step) - get_x_pixel(x_min)) * arrow_width_ratio;
-      
-      if ((column_of_color_being_selected < 1) || (column_of_color_being_selected > nbMaxColumns)) {
-        throw new Error("invalid column_of_color_being_selected: " + column_of_color_being_selected);
-      }
-      
-      let animation_canvas = document.getElementById("selectionCanvas_" + column_of_color_being_selected);
-      let animation_ctx = animation_canvas.getContext("2d");
-      animation_ctx.imageSmoothingEnabled = true;
-      animation_ctx.globalAlpha = 1;
-      animation_canvas.style.width = canvas.style.width;
-      animation_canvas.style.height = canvas.style.height;
-      animation_canvas.width = canvas.width;
-      animation_canvas.height = canvas.height;
-      animation_ctx.setTransform(1,0,0,1,0,0); // Reset any previous transformations to the identity matrix
-      animation_ctx.scale(dpr, dpr); // Apply scaling for high-DPI rendering
-
-      // Reset current animation display
-      animation_ctx.fillStyle = "rgba(0, 0, 0, 0)"; // transparent
-      animation_ctx.fillRect(0, 0, animation_canvas.width, animation_canvas.height);
-
-      // Display selected colors
-      animation_ctx.strokeStyle = backgroundColorTable[color_being_selected-1];
-
-      // Display arrow if needed
-      if (arrow_regular_cond()) {
-        drawArrow(animation_ctx, column_of_color_being_selected, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
-      }
-
-      draw_shadow = 2;
-      animation_ctx.font = big_code_bold_font;
-      displayColor(color_being_selected, attempt_nb_width+(70*(nbColumns+1))/100+(column_of_color_being_selected-1)*2, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color_being_selected-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
-      if (currentCode != sCodeRevealed) {
-        draw_shadow = 3;
-        animation_ctx.font = big_code_bold_font_2;
-        displayColor(color_being_selected, attempt_nb_width+(70*(nbColumns+1))/100+(column_of_color_being_selected-1)*2, currentAttemptNumber-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
-      }
-      draw_shadow = 0;
-
-      fadeOutCanvas(column_of_color_being_selected, 950);
+      fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, 1111);
       reset_color_being_selected();
+    }
+    if (gameJustWon) {
+      // Reset all ongoing animations
+      activeFades = [];
+      // Trigger victory animation
+      setTimeout("triggerVictoryAnimation();", 10);
     }
 
     if ((currentAttemptNumber >= arrow_shown_thld+3) && (currentCode != sCodeRevealed) && (nbColorSelections > 7)) {
@@ -4469,7 +4463,6 @@ function draw_graphic_bis() {
 
   }
   catch (err) {
-    draw_exception = true;
     displayGUIError("draw error: " + err, err.stack);
   }
 
@@ -4516,43 +4509,49 @@ function array_to_string(array_p) {
   return "{" + arrayAsString.trim() + "}";
 }
 
-var str_meas_out = {str_height:0, empty_space_before_str:0};
 const fontSizeRegex = /(\d+)px/;
 var tmp_canvas = document.createElement('canvas');
-function measurePreciseTextHeight(char_p, font, out) { // (see https://stackoverflow.com/questions/16816071/calculate-exact-character-string-height-in-javascript)
-
+var tmp_ctx = tmp_canvas.getContext("2d", { willReadFrequently: true }); // { willReadFrequently: true } because there are series of 2 calls to getImageData (warning in Chromium appears in console from 2 calls)
+function measurePreciseTextHeight(char1_p, char2_p, font, out1, out2, free_canvas) {  // (see https://stackoverflow.com/questions/16816071/calculate-exact-character-string-height-in-javascript)
     // Get font size
-    var char = String(char_p);
     var matches = font.match(fontSizeRegex);
     if (!matches) {
       throw new Error("measurePreciseTextHeight error: invalid font: " + font);
     }
     let font_size = parseInt(matches[1]);
-
-    if (!Number.isInteger(font_size) || (font_size <= 0)) { // narrow down the causes of error: "InvalidStateError: The object is in an invalid state" at below call to tmp_ctx.getImageData
-      throw new Error("measurePreciseTextHeight error: invalid font: " + font_size + " for font: " + font);
-    }
     
-    // Create a temporary canvas
     var height = font_size;
     var width = height*2;
+
+    // mutualize tmp_canvas.width & tmp_canvas.height affectations
     tmp_canvas.width = width;
     tmp_canvas.height = height;
-    var tmp_ctx = tmp_canvas.getContext("2d");
 
-    // Draw char in the canvas
     tmp_ctx.font = font;
     tmp_ctx.textAlign = "start"; // horizontal alignment
     tmp_ctx.textBaseline = "top"; // vertical alignment
+
+    measurePreciseTextHeight_bis(char1_p, font, width, height, out1);
+    measurePreciseTextHeight_bis(char2_p, font, width, height, out2);
+    
+    // Free memory as soon as possible
+    if (free_canvas) {
+      tmp_canvas.width = 0;
+      tmp_canvas.height = 0;
+    }
+}
+function measurePreciseTextHeight_bis(char_p, font, width, height, out) { // (see https://stackoverflow.com/questions/16816071/calculate-exact-character-string-height-in-javascript)
+    
+    // Draw char in the canvas
     tmp_ctx.clearRect(0, 0, width, height); // fill canvas with transparent color
-    tmp_ctx.fillText(char, 0, 0);
+    tmp_ctx.fillText(String(char_p), 0, 0);
 
     // Get the pixel data from the canvas
+    // error observed: "InvalidStateError: The object is in an invalid state" - this error is consistent with evictions: see comments related to eviction
     var imageData = tmp_ctx.getImageData(0, 0 , width, height).data;
-    tmp_ctx = null;
 
     if (imageData.length != height * width * 4) {
-      throw new Error("measurePreciseTextHeight error: " + imageData.length + ", " + height * width * 4);
+      throw new Error("measurePreciseTextHeight_bis error: " + imageData.length + ", " + height * width * 4);
     }
 
     // Find the first line with a non-transparent pixel
@@ -4596,15 +4595,13 @@ function measurePreciseTextHeight(char_p, font, out) { // (see https://stackover
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if ((first_non_transparent_line == -1) || (last_non_transparent_line == -1)) {
       if (android_appli) { // error observed in non-app cases: when safariMode or when injectedScript - workaround assumed to work well
-        displayGUIError("measurePreciseTextHeight: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), new Error().stack);
+        displayGUIError("measurePreciseTextHeight_bis: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), new Error().stack);
       }
       first_non_transparent_line = 0; // (defense)
       last_non_transparent_line = Math.round((height-1) * default_font_height_factor); // (defense)
     }
 
     // Free memory as soon as possible
-    tmp_canvas.width = 0;
-    tmp_canvas.height = 0;
     imageData = null;
 
     out.str_height = (last_non_transparent_line - first_non_transparent_line + 1);
@@ -5267,8 +5264,89 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
 
 }
 
+// **********
+// Animations
+// **********
+
+let activeFades = [];
+let animFrameId = null;
+function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs) {
+  // Remove any existing active fade for THIS specific column if it's already running                                                                                   
+  activeFades = activeFades.filter(fade => fade.column !== column);
+
+  // Add new fading object for this column                                       
+  activeFades.push({
+    column: column,
+    color: color,
+    nbMaxAttemptsToDisplay : nbMaxAttemptsToDisplay,
+    startTime: performance.now(),
+    duration: durationMs
+  });
+
+  // Start the render loop if it isn't running already                                                    
+  if (!animFrameId) {
+    animFrameId = requestAnimationFrame(renderLoop);
+  }
+};
+
+// Animation loop for animationCanvas overlay only
+function renderLoop(currentTime) {
+
+  // Clear animation canvas with physical pixels (as opposed to styled CSS display dimensions)
+  animation_ctx.save();
+  animation_ctx.setTransform(1, 0, 0, 1, 0, 0);
+  animation_ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
+  animation_ctx.restore();
+  
+  activeFades = activeFades.filter(fade => {
+    const elapsed = currentTime - fade.startTime;
+    const progress = Math.min(elapsed / fade.duration, 1);
+    const opacity = 1 - progress;
+
+    if (opacity <= 0) return false; // Remove finished fade from array
+
+    if ((fade.column < 1) || (fade.column > nbMaxColumns)) {
+      throw new Error("invalid fade.column: " + fade.column);
+    }
+
+    let x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+fade.column*2-1));
+    let y_0 = get_y_pixel(y_min+y_step*((currentCode == sCodeRevealed) ? currentAttemptNumber - 1: currentAttemptNumber));
+    let x_1 = x_0;
+    let y_1 = get_y_pixel(y_min+y_step*fade.nbMaxAttemptsToDisplay);
+    let arrow_width_ratio = ((window.innerWidth > 0.90*window.innerHeight) ? 0.25 : ((window.innerWidth > 0.65*window.innerHeight) ? 0.37 : 0.45));
+    let arrow_width = (get_x_pixel(x_min+x_step) - get_x_pixel(x_min)) * arrow_width_ratio;
+
+    animation_ctx.save(); // save canvas settings
+    animation_ctx.globalAlpha = opacity;
+    animation_ctx.strokeStyle = backgroundColorTable[fade.color-1];
+    // Display arrow animation if needed
+    if (arrow_regular_cond()) {
+      drawArrow(animation_ctx, fade.column, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
+    }
+    // Display color selection animation
+    draw_shadow = 2;
+    animation_ctx.font = big_code_bold_font;
+    displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, fade.nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+fade.color-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
+    if (currentCode != sCodeRevealed) {
+      draw_shadow = 3;
+      animation_ctx.font = big_code_bold_font_2;
+      displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, currentAttemptNumber-1, animation_ctx, false, true, obviouslyImpossibleColors[fade.color]);
+    }
+    draw_shadow = 0;
+    animation_ctx.restore();
+
+    return true;
+  });
+
+  if (activeFades.length > 0) {
+    animFrameId = requestAnimationFrame(renderLoop);
+  } else {
+    animFrameId = null; // Pause loop when done to save battery/GPU
+  }
+}
+
 // *************************************************************************
-// Draw graphic
+// First instructions
 // *************************************************************************
 
 debug_game_state = 68.5;

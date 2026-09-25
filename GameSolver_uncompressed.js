@@ -337,11 +337,11 @@ class CodeHandler {
                 color_min = color2;
                 color_max = color1;
               }
-              let coef = ((row1+1) * 0xA26970) ^ ((row2+1) * 0xF14457) // (Rq: no permutations on rows)
-                         ^ (this.different_game_colors_per_row[row1][color1] * 0x749841) ^ (this.different_game_colors_per_row[row2][color2] * 0x369874)
-                         ^ (this.different_game_colors_per_row[row1][color2] * 0xB54796) ^ (this.different_game_colors_per_row[row2][color1] * 0x252241);
+              let coef = ((row1+1) * 0x26970) ^ ((row2+1) * 0x14457) // (Rq: no permutations on rows)
+                         ^ (this.different_game_colors_per_row[row1][color1] * 0x49841) ^ (this.different_game_colors_per_row[row2][color2] * 0x69874)
+                         ^ (this.different_game_colors_per_row[row1][color2] * 0x54796) ^ (this.different_game_colors_per_row[row2][color1] * 0x52241);
               if (color_min == color_max) {
-                coef = coef ^ 0x5C1148;
+                coef = coef ^ 0xC1148;
               }
               this.color_correlation_matrix[color_min][color_max] = this.color_correlation_matrix[color_min][color_max] ^ coef;
             }
@@ -368,13 +368,13 @@ class CodeHandler {
                 color_min = color2;
                 color_max = color1;
               }
-              let common_mask_1 = 0xA49875;
-              let common_mask_2 = 0xCE84F4;
-              let coef = ((row+1) * 0x2A3698) // (Rq: no permutations on rows)
+              let common_mask_1 = 0x49875;
+              let common_mask_2 = 0xE84F4;
+              let coef = ((row+1) * 0xA3698) // (Rq: no permutations on rows)
                          ^ (this.different_game_colors_per_column[col1][color1] * common_mask_1) ^ (this.different_game_colors_per_column[col2][color2] * common_mask_1)
                          ^ (this.different_game_colors_per_column[col2][color1] * common_mask_2) ^ (this.different_game_colors_per_column[col1][color2] * common_mask_2);
               if (color_min == color_max) {
-                coef = coef ^ 0x533E16;
+                coef = coef ^ 0x33E16;
               }
               this.color_correlation_matrix[color_min][color_max] = this.color_correlation_matrix[color_min][color_max] ^ coef;
             }
@@ -406,7 +406,7 @@ class CodeHandler {
                         color_min = color2;
                         color_max = color1;
                       }
-                      let coef = ((row1+1) * 0xB48725) ^ ((row2+1) * 0x67F428); // (Rq: no permutations on rows)
+                      let coef = ((row1+1) * 0x48725) ^ ((row2+1) * 0x7F428); // (Rq: no permutations on rows)
                       this.color_correlation_matrix[color_min][color_max] = this.color_correlation_matrix[color_min][color_max] ^ coef;
                     }
                   }
@@ -1083,6 +1083,9 @@ function lookForCodeInPrecalculatedGames(code_p, cur_game_size, nb_possible_code
             let code_str = line_str.substring(last_end_of_code_perf_pair_index, middle_of_code_perf_pair_index);
             code = codeHandler.uncompressStringToCode(code_str);
             codeClass2 = codeHandler.getSMMCodeClassId(code, curGameForGamePrecalculation, cur_game_size);
+            if ((codeClass2 < 0) || (codeClass2 > 4294967295)) { // 2^32-1 (duplicated code)
+              throw new Error("lookForCodeInPrecalculatedGames: invalid codeClass2 for unsigned 32-bits storage: " + codeClass2);
+            }
             lookForCodeInPrecalculatedGamesClassIdsTable[precalculated_code_cnt] = codeClass2;
           }
           else {
@@ -1138,7 +1141,7 @@ function lookForCodeInPrecalculatedGames(code_p, cur_game_size, nb_possible_code
 // ********************************************************************************************************
 class OptimizedArrayInternalList {
   constructor(granularity_p) {
-    this.list = new Array(granularity_p);
+    this.list = new Int32Array(granularity_p);
   }
 }
 
@@ -2035,7 +2038,7 @@ function generateAllPermutations() {
   // All permutations are listed by default
   cur_permutations_table_size = new Array(overallNbMaxAttempts+overallMaxDepth);
   cur_permutations_table_size[0] = all_permutations_table_size[nbColumns];
-  cur_permutations_table = new2DArray(overallNbMaxAttempts+overallMaxDepth, cur_permutations_table_size[0]);
+  cur_permutations_table = new2DInt32Array(overallNbMaxAttempts+overallMaxDepth, cur_permutations_table_size[0]);
   for (let i = 0; i < cur_permutations_table_size[0]; i++) {
     cur_permutations_table[0][i] = i;
   }
@@ -2045,6 +2048,22 @@ function generateAllPermutations() {
 // ******************************
 // Handle multidimensional arrays
 // ******************************
+
+function new2DInt32Array(x, y) {
+  var my_array = new Array(x);
+  for (let i = 0; i < x; i++) {
+    my_array[i] = new Int32Array(y);
+  }
+  return my_array;
+}
+
+function new2DInt8Array(x, y) {
+  var my_array = new Array(x);
+  for (let i = 0; i < x; i++) {
+    my_array[i] = new Int8Array(y);
+  }
+  return my_array;
+}
 
 function new2DArray(x, y) {
   var my_array = new Array(x);
@@ -2068,11 +2087,11 @@ function check2DArraySizes(my_array, x, y) {
   return true;
 }
 
-function new3DArray(x, y, z, reduc) {
+function new3DInt32Array(x, y, z, reduc) {
   var my_array = new Array(x);
   var reduced_z = z;
   for (let i = 0; i < x; i++) {
-    my_array[i] = new2DArray(y, reduced_z);
+    my_array[i] = new2DInt32Array(y, reduced_z);
     reduced_z = Math.ceil(reduced_z * reduc);
   }
   return my_array;
@@ -3684,8 +3703,8 @@ function handleMessage(data) {
         initialNbClasses = 7; // {11111, 11112, 11122, 11123, 11223, 11234, 12345}
         maxDepth = Math.min(13, overallMaxDepth);
         maxDepthForGamePrecalculation = 3; // game precalculation (-1 or 3) (*)
-        lookForCodeInPrecalculatedGamesReuseTable = new Array(initialNbPossibleCodes);
-        lookForCodeInPrecalculatedGamesClassIdsTable = new Array(initialNbPossibleCodes);
+        lookForCodeInPrecalculatedGamesReuseTable = new Int8Array(initialNbPossibleCodes);
+        lookForCodeInPrecalculatedGamesClassIdsTable = new Uint32Array(initialNbPossibleCodes);
         break;
       case 6:
         nbMaxMarks = 27;
@@ -3772,13 +3791,16 @@ function handleMessage(data) {
             throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (1)");
           }
           marksTable_NbToMark[mark_cnt] = mark_tmp;
+          if (mark_cnt > 100) { // shall be storable on signed 8 bits
+            throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (2)");
+          }
           marksTable_MarkToNb[i][j] = mark_cnt;
           mark_cnt++;
         }
       }
     }
     if (mark_cnt != nbMaxMarks) {
-      throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (2)");
+      throw new Error("INIT phase / internal error (mark_cnt: " + mark_cnt + ") (3)");
     }
     if (marksTable_NbToMark.length != nbMaxMarks) {
       throw new Error("INIT phase / internal error (marksTable_NbToMark length: " + marksTable_NbToMark.length + ")");
@@ -3796,15 +3818,15 @@ function handleMessage(data) {
     worst_mark_idx = marksTable_MarkToNb[0][0];
 
     possibleCodesForPerfEvaluation = new Array(2);
-    possibleCodesForPerfEvaluation[0] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
-    possibleCodesForPerfEvaluation[1] = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
-    // initialCodeListForPrecalculatedMode = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc); // (precalculation mode)
+    possibleCodesForPerfEvaluation[0] = new Int32Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
+    possibleCodesForPerfEvaluation[1] = new Int32Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
+    // initialCodeListForPrecalculatedMode = new Int32Array(nbOfCodesForSystematicEvaluation_ForMemAlloc); // (precalculation mode)
 
     if (nbColumns == 5) { // Optimization for Super Master Mind games
       if (nbColors != 8) {
         throw new Error("INIT phase / internal error (unexpected number of colors)");
       }
-      listOfClassIds = new Array(0x88888+1); // (A few Mbytes)
+      listOfClassIds = new Uint32Array(0x88888+1);
     }
     else {
       listOfClassIds = null;
@@ -3992,13 +4014,13 @@ function handleMessage(data) {
     console.log(String(curAttemptNumber) + ": " + codeHandler.markToString(marks[curAttemptNumber-1]) + " " + codeHandler.codeToString(codesPlayed[curAttemptNumber-1]));
 
     if (possibleCodesForPerfEvaluation_InitialIndexes == null) {
-      possibleCodesForPerfEvaluation_InitialIndexes = new Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
+      possibleCodesForPerfEvaluation_InitialIndexes = new Int32Array(nbOfCodesForSystematicEvaluation_ForMemAlloc);
     }
     if (possibleCodesForPerfEvaluation_OptimizedCodes == null) {
-      possibleCodesForPerfEvaluation_OptimizedCodes = new Array(nbCodesLimitForMarkOptimization);
+      possibleCodesForPerfEvaluation_OptimizedCodes = new Int32Array(nbCodesLimitForMarkOptimization);
     }
     if (marks_already_computed_table == null) {
-      marks_already_computed_table = new2DArray(nbCodesLimitForMarkOptimization, nbCodesLimitForMarkOptimization);
+      marks_already_computed_table = new2DInt8Array(nbCodesLimitForMarkOptimization, nbCodesLimitForMarkOptimization);
     }
     for (let i = 0; i < nbCodesLimitForMarkOptimization; i++) {
       marks_already_computed_table[i].fill(-1); // mark not computed yet
@@ -4073,15 +4095,18 @@ function handleMessage(data) {
 
       if ( (nbColumns <= 5)
            || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) ) { // (****) optimization for 6 & 7 columns games
-        listOfClassesFirstCall = new Array(previousNbOfPossibleCodes);
+        listOfClassesFirstCall = new Int32Array(previousNbOfPossibleCodes);
         listOfClassesFirstCall.fill(0);
-        listOfClassesIdsFirstCall = new Array(previousNbOfPossibleCodes);
+        listOfClassesIdsFirstCall = new Uint32Array(previousNbOfPossibleCodes);
         listOfClassesIdsFirstCall.fill(0);
         for (let idx1 = 0; idx1 < previousNbOfPossibleCodes; idx1++) {
           let cur_code = possibleCodesForPerfEvaluation[index][idx1];
           let codeClass1 = 0;
           if (nbColumns == 5) { // Optimization for Super Master Mind games
             codeClass1 = codeHandler.getSMMCodeClassId(cur_code, curGame, curGameSize);
+            if ((codeClass1 < 0) || (codeClass1 > 4294967295)) { // 2^32-1 (duplicated code)
+              throw new Error("NEW_ATTEMPT phase / invalid codeClass1 for unsigned 32-bits storage: " + codeClass1);
+            }
             if (listOfClassIds != null) {
               listOfClassIds[cur_code] = codeClass1;
             }
@@ -4148,10 +4173,10 @@ function handleMessage(data) {
             performanceListsInitDoneForPrecalculatedGames = true;
             performanceListsInitDone = false;
             arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation_ForMemAlloc)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
-            listOfGlobalPerformances = new Array(arraySizeAtInit);
+            listOfGlobalPerformances = new Float64Array(arraySizeAtInit);
             maxDepthApplied = 1; // "one-recursive-depth computing of performances" for current game and code (whether possible or impossible) => memory optimization
             listsOfPossibleCodeIndexes = undefined;
-            listsOfPossibleCodeIndexes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
+            listsOfPossibleCodeIndexes = new3DInt32Array(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
             nbOfPossibleCodes = undefined;
             nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
             listOfEquivalentCodesAndPerformances = undefined;
@@ -4177,10 +4202,10 @@ function handleMessage(data) {
             performanceListsInitDone = true;
             performanceListsInitDoneForPrecalculatedGames = false;
             arraySizeAtInit = Math.ceil((3*previousNbOfPossibleCodes + nbOfCodesForSystematicEvaluation)/4); // (overestimated for low values of previousNbOfPossibleCodes to ensure proper subsequent mem_reduc_factor application)
-            listOfGlobalPerformances = new Array(arraySizeAtInit);
+            listOfGlobalPerformances = new Float64Array(arraySizeAtInit);
             maxDepthApplied = maxDepth;
             listsOfPossibleCodeIndexes = undefined;
-            listsOfPossibleCodeIndexes = new3DArray(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
+            listsOfPossibleCodeIndexes = new3DInt32Array(maxDepthApplied, nbMaxMarks, arraySizeAtInit, mem_reduc_factor);
             nbOfPossibleCodes = undefined;
             nbOfPossibleCodes = new2DArray(maxDepthApplied, nbMaxMarks);
             listOfEquivalentCodesAndPerformances = undefined;
