@@ -2881,8 +2881,6 @@ let activeParticles=[];
 function animate(){
 const now=performance.now();
 let canvas=document.getElementById("animationCanvas");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
 let ctx=canvas.getContext("2d");
 ctx.clearRect(0, 0, canvas.width, canvas.height);
 const targetHeight=window.innerHeight * 0.10;
@@ -2896,10 +2894,12 @@ ctx.drawImage(trophy_image, x, y, targetWidth, targetHeight);
 activeParticles=activeParticles.filter(p=>{
 p.x+=Math.cos(p.angle) * p.speed;
 p.y+=Math.sin(p.angle) * p.speed;
+ctx.save();
 ctx.fillStyle=p.color;
 ctx.beginPath();
 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
 ctx.fill();
+ctx.restore();
 return now < p.deathTime;
 });
 if(activeParticles.length > 0){
