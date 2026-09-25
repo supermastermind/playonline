@@ -1394,9 +1394,7 @@ var trophy_image=new Image();
 var trophy_image_loaded=false;
 var trophy_image_width=-1;
 var trophy_image_height=-1;
-if(!firefoxMode){
 trophy_image.src="img/trophy.png";
-}
 trophy_image.onload=function(){
 trophy_image_loaded=true;
 trophy_image_width=trophy_image.width;
@@ -2887,7 +2885,7 @@ ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
 ctx.restore();
 const targetHeight=window.innerHeight * 0.10;
 const rect=animationCanvas.getBoundingClientRect();
-if(trophy_image.complete&&trophy_image.naturalWidth > 0){
+if(trophy_image_loaded&&trophy_image.complete&&trophy_image.naturalWidth > 0){
 const aspectRatio=trophy_image.naturalWidth / trophy_image.naturalHeight;
 const targetWidth=targetHeight * aspectRatio;
 const x=(rect.width-targetWidth) / 2;
