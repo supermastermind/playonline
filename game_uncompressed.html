@@ -3479,7 +3479,7 @@
       // Firework particle system
       // ************************
 
-      let animation_time = 1500; // 1.5 second
+      let animation_time = 1750; // 1.75 second
       function firework(x, y) {
         let size_coef = window.innerHeight / 600;
         const particles = [];
@@ -3502,6 +3502,7 @@
       }
 
       let activeParticles = [];
+      let start_anim_time = 0;
 
       function animate() {
         const now = performance.now();
@@ -3512,15 +3513,18 @@
         ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
         ctx.restore();
 
-        // 10.0vh equivalent in pixels <=> <img src='img/trophy.png' style='height:10.0vh;'>
-        const targetHeight = window.innerHeight * 0.10;
-
         const rect = animationCanvas.getBoundingClientRect();
         if (trophy_image_loaded && trophy_image.complete && trophy_image.naturalWidth > 0) {
+          const elapsed = (now - start_anim_time);
+          
           // Maintain aspect ratio
+          let targetHeight = window.innerHeight * 0.10; // 10.0vh equivalent in pixels <=> <img src='img/trophy.png' style='height:10.0vh;'>
           const aspectRatio = trophy_image.naturalWidth / trophy_image.naturalHeight;
-          const targetWidth = targetHeight * aspectRatio;
-
+          let targetWidth = targetHeight * aspectRatio;
+          let ratio = Math.min((0.15 + elapsed/animation_time)*1.33, 1);
+          targetHeight = Math.ceil(targetHeight * ratio);
+          targetWidth = Math.ceil(targetWidth * ratio);
+          
           // Centered coordinates
           const x = (rect.width - targetWidth) / 2;
           const y = (rect.height - targetHeight) / 2;
@@ -3552,7 +3556,8 @@
         const x = rect.width / 2;
         const y = rect.height / 2;
         activeParticles.push(...firework(x, y));
-        animate();
+        start_anim_time = performance.now();;
+        requestAnimationFrame(animate);
       }
 
       function triggerVictoryAnimation() {
@@ -3564,7 +3569,7 @@
           ctx.setTransform(1, 0, 0, 1, 0, 0);
           ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
           ctx.restore();
-        }, animation_time + 333);
+        }, animation_time + 50 );
       }
 
       // *********************************************

@@ -1477,7 +1477,7 @@ function pointerDown(e) {
 function pointerMove(e) {
   e.preventDefault();
 
-  if ((gamesolver_blob == null) || !scriptsFullyLoaded) {
+  if ((gamesolver_blob == null) || !scriptsFullyLoaded || androidMode || mobileMode) {
     console.log("pointerMove skipped");
     return;
   }

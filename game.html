@@ -2857,7 +2857,7 @@ let traceObject=document.getElementById("traces_id");
 if(traceObject==null){
 throw new Error("traces_id was not found");
 }
-let animation_time=1500;
+let animation_time=1750;
 function firework(x, y){
 let size_coef=window.innerHeight / 600;
 const particles=[];
@@ -2876,6 +2876,7 @@ color: `hsl(${Math.random() * 360}, 100%, 60%)`
 return particles;
 }
 let activeParticles=[];
+let start_anim_time=0;
 function animate(){
 const now=performance.now();
 let ctx=animationCanvas.getContext("2d");
@@ -2883,11 +2884,15 @@ ctx.save();
 ctx.setTransform(1, 0, 0, 1, 0, 0);
 ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
 ctx.restore();
-const targetHeight=window.innerHeight * 0.10;
 const rect=animationCanvas.getBoundingClientRect();
 if(trophy_image_loaded&&trophy_image.complete&&trophy_image.naturalWidth > 0){
+const elapsed=(now-start_anim_time);
+let targetHeight=window.innerHeight * 0.10;
 const aspectRatio=trophy_image.naturalWidth / trophy_image.naturalHeight;
-const targetWidth=targetHeight * aspectRatio;
+let targetWidth=targetHeight * aspectRatio;
+let ratio=Math.min((0.15+elapsed/animation_time)*1.33, 1);
+targetHeight=Math.ceil(targetHeight * ratio);
+targetWidth=Math.ceil(targetWidth * ratio);
 const x=(rect.width-targetWidth) / 2;
 const y=(rect.height-targetHeight) / 2;
 ctx.drawImage(trophy_image, x, y, targetWidth, targetHeight);
@@ -2911,7 +2916,8 @@ const rect=animationCanvas.getBoundingClientRect();
 const x=rect.width / 2;
 const y=rect.height / 2;
 activeParticles.push(...firework(x, y));
-animate();
+start_anim_time=performance.now();;
+requestAnimationFrame(animate);
 }
 function triggerVictoryAnimation(){
 triggerFireworks();
@@ -2921,7 +2927,7 @@ ctx.save();
 ctx.setTransform(1, 0, 0, 1, 0, 0);
 ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
 ctx.restore();
-}, animation_time+333);
+}, animation_time+50 );
 }
 const loadSuperMasterMindScript_progressFunction=function(evt){
 debug_game_state=62;
