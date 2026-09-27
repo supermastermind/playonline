@@ -559,6 +559,7 @@ return ~code;
 if(typeof debug_game_state!=='undefined'){
 debug_game_state=76.1;
 }
+let end_defs=1;
 let END_OF_COMMON_DEFINITIONS;
 if(typeof debug_game_state!=='undefined'){
 debug_game_state=76.2;
