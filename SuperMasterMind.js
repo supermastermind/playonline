@@ -2169,6 +2169,7 @@ animation_ctx.globalAlpha=1;
 let res;
 let last_but_one_attempt_event=false;
 let gameJustWon=false;
+let gameJustLost=false;
 let nbColumnsSelected=getNbColumnsSelected();
 if((nbColumnsSelected < 0)||(nbColumnsSelected > nbMaxColumns) ){
 displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected, new Error().stack);
@@ -2453,6 +2454,7 @@ currentAttemptNumber++;
 if(currentAttemptNumber==nbMaxAttempts+1){
 currentCode=-1;
 stopTime=(new Date()).getTime();
+gameJustLost=true;
 nbGamesPlayed++;
 }
 else{
@@ -3498,6 +3500,9 @@ reset_color_being_selected();
 if(gameJustWon){
 activeFades=[];
 setTimeout("triggerVictoryAnimation();", 10);
+}
+else if(gameJustLost){
+activeFades=[];
 }
 if((currentAttemptNumber >=arrow_shown_thld+3)&&(currentCode!=sCodeRevealed)&&(nbColorSelections > 7)){
 localStorage.arrow_shown_date=currentDate();

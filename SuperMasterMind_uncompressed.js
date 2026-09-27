@@ -2801,6 +2801,7 @@ function draw_graphic_bis() {
     let res;
     let last_but_one_attempt_event = false;
     let gameJustWon = false;
+    let gameJustLost = false;
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
@@ -3133,6 +3134,7 @@ function draw_graphic_bis() {
           if (currentAttemptNumber == nbMaxAttempts+1) { // game over (game lost)
             currentCode = -1;
             stopTime = (new Date()).getTime(); // time in milliseconds
+            gameJustLost = true;
             nbGamesPlayed++;
           }
           else {
@@ -4444,6 +4446,10 @@ function draw_graphic_bis() {
       activeFades = [];
       // Trigger victory animation
       setTimeout("triggerVictoryAnimation();", 10);
+    }
+    else if (gameJustLost) {
+      // Reset all ongoing animations
+      activeFades = [];
     }
 
     if ((currentAttemptNumber >= arrow_shown_thld+3) && (currentCode != sCodeRevealed) && (nbColorSelections > 7)) {
