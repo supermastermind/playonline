@@ -1630,6 +1630,7 @@ setTimeout("displayRandomCodesHintIfNeeded();", 444);
 }
 gameSolverDbg=8;
 reset_color_being_selected();
+activeFades=[];
 }
 function checkArraySizes(){
 if(backgroundColorTable.length!=foregroundColorTable.length){displayGUIError("array sizes are inconsistent (0)", new Error().stack);}

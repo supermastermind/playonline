@@ -2081,6 +2081,9 @@ function resetGameAttributes(nbColumnsSelected) {
   gameSolverDbg = 8;
 
   reset_color_being_selected();
+
+  // Reset all ongoing animations
+  activeFades = [];
 }
 
 function checkArraySizes() {
