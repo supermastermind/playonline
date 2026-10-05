@@ -1393,7 +1393,9 @@ y_step=(y_max-y_min) / (currentAttemptNumber-1
 +transition_height
 +nbPossibleCodesShown
 +1);
-}}
+}
+activeFades=[];
+}
 function postInitMessageToGameSolver(cnt_p){
 try{
 if(game_id_for_gameSolverConfig!=cnt_p){
@@ -1630,7 +1632,6 @@ setTimeout("displayRandomCodesHintIfNeeded();", 444);
 }
 gameSolverDbg=8;
 reset_color_being_selected();
-activeFades=[];
 }
 function checkArraySizes(){
 if(backgroundColorTable.length!=foregroundColorTable.length){displayGUIError("array sizes are inconsistent (0)", new Error().stack);}
