@@ -1794,8 +1794,11 @@ function updateGameSizes() {
                                 + 1); // tick display
   }
 
-  // Reset all ongoing animations
+  // Reset ongoing selection animations
   activeFades = [];
+  // Reset ongoing end of game animations
+  activeParticles = [];
+
 }
 
 function postInitMessageToGameSolver(cnt_p) {
@@ -4436,21 +4439,24 @@ function draw_graphic_bis() {
       resetCurrentCodeButtonObject.className = "button";
     }
 
-    // Launch selection animations
-    // ***************************
+    // Trigger animations
+    // ******************
 
+    // Trigger selection animations
     if (gameOnGoing() && (color_being_selected != -1) && (column_of_color_being_selected != -1)) {
       fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, 950);
       reset_color_being_selected();
     }
+    
+    // Trigger end of game animations
     if (gameJustWon) {
-      // Reset all ongoing animations
+      // Reset ongoing selection animations
       activeFades = [];
       // Trigger victory animation
       setTimeout("triggerVictoryAnimation();", 10);
     }
     else if (gameJustLost) {
-      // Reset all ongoing animations
+      // Reset ongoing selection animations
       activeFades = [];
     }
 

@@ -1395,6 +1395,7 @@ y_step=(y_max-y_min) / (currentAttemptNumber-1
 +1);
 }
 activeFades=[];
+activeParticles=[];
 }
 function postInitMessageToGameSolver(cnt_p){
 try{
