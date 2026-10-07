@@ -3513,27 +3513,6 @@
         ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
         ctx.restore();
 
-        const rect = animationCanvas.getBoundingClientRect();
-        if (activeParticles.length > 0) {
-          if (trophy_image_loaded && trophy_image.complete && trophy_image.naturalWidth > 0) {
-            const elapsed = (now - start_anim_time);
-            
-            // Maintain aspect ratio
-            let targetHeight = window.innerHeight * 0.10; // 10.0vh equivalent in pixels <=> <img src='img/trophy.png' style='height:10.0vh;'>
-            const aspectRatio = trophy_image.naturalWidth / trophy_image.naturalHeight;
-            let targetWidth = targetHeight * aspectRatio;
-            let ratio = Math.min((0.15 + elapsed/animation_time)*1.33, 1);
-            targetHeight = Math.ceil(targetHeight * ratio);
-            targetWidth = Math.ceil(targetWidth * ratio);
-            
-            // Centered coordinates
-            const x = (rect.width - targetWidth) / 2;
-            const y = (rect.height - targetHeight) / 2;
-
-            ctx.drawImage(trophy_image, x, y, targetWidth, targetHeight);
-          }
-        }
-
         activeParticles = activeParticles.filter(p => {
           p.x += Math.cos(p.angle) * p.speed;
           p.y += Math.sin(p.angle) * p.speed;
@@ -3549,6 +3528,25 @@
         });
 
         if (activeParticles.length > 0) {
+          if (trophy_image_loaded && trophy_image.complete && trophy_image.naturalWidth > 0) {
+            const elapsed = (now - start_anim_time);
+            
+            // Maintain aspect ratio
+            const rect = animationCanvas.getBoundingClientRect();
+            let targetHeight = window.innerHeight * 0.10; // 10.0vh equivalent in pixels <=> <img src='img/trophy.png' style='height:10.0vh;'>
+            const aspectRatio = trophy_image.naturalWidth / trophy_image.naturalHeight;
+            let targetWidth = targetHeight * aspectRatio;
+            let ratio = Math.min((0.15 + elapsed/animation_time)*1.33, 1);
+            targetHeight = Math.ceil(targetHeight * ratio);
+            targetWidth = Math.ceil(targetWidth * ratio);
+            
+            // Centered coordinates
+            const x = (rect.width - targetWidth) / 2;
+            const y = (rect.height - targetHeight) / 2;
+
+            ctx.drawImage(trophy_image, x, y, targetWidth, targetHeight);
+          }
+
           requestAnimationFrame(animate);
         }
       }
