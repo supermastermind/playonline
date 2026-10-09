@@ -973,10 +973,10 @@ if(!settingsButtonObject.disabled){
 let display_form_str=
 "<b>Theme:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
 <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
-<option value='1'"+((!modernDisplay)&&(displayVariant!=1) ? " selected" : "")+">classic theme / numbers</option>\
-<option value='2'"+((!modernDisplay)&&(displayVariant==1) ? " selected" : "")+">classic theme / colors only</option>\
+<option value='1'"+((!modernDisplay)&&(displayVariant!=1) ? " selected" : "")+">default theme / numbers</option>\
+<option value='2'"+((!modernDisplay)&&(displayVariant==1) ? " selected" : "")+">default theme / shapes</option>\
 <option value='3'"+(modernDisplay&&(displayVariant!=1) ? " selected" : "")+">light theme / numbers</option>\
-<option value='4'"+(modernDisplay&&(displayVariant==1) ? " selected" : "")+">light theme / colors only</option>\
+<option value='4'"+(modernDisplay&&(displayVariant==1) ? " selected" : "")+">light theme / shapes</option>\
 </select>"+end_separator_str;
 let change_first_name_title_str="<b>Nickname:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
 let change_first_name_str="";
@@ -4191,7 +4191,7 @@ displayString("\uD83D\uDCA1", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*
 "#FFBF00", backgroundColor, ctx, false);
 }}
 let activeFades=[];
-let animFrameId=null;
+let selectionAnimFrameId=null;
 function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs){
 activeFades=activeFades.filter(fade=> fade.column!==column);
 activeFades.push({
@@ -4201,8 +4201,8 @@ nbMaxAttemptsToDisplay : nbMaxAttemptsToDisplay,
 startTime: performance.now(),
 duration: durationMs
 });
-if(!animFrameId){
-animFrameId=requestAnimationFrame(renderLoop);
+if(!selectionAnimFrameId){
+selectionAnimFrameId=requestAnimationFrame(renderLoop);
 }};
 function renderLoop(currentTime){
 animation_ctx.save();
@@ -4242,9 +4242,14 @@ animation_ctx.restore();
 return true;
 });
 if(activeFades.length > 0){
-animFrameId=requestAnimationFrame(renderLoop);
-}else{
-animFrameId=null;
+selectionAnimFrameId=requestAnimationFrame(renderLoop);
+}
+else{
+selectionAnimFrameId=null;
+animation_ctx.save();
+animation_ctx.setTransform(1, 0, 0, 1, 0, 0);
+animation_ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
+animation_ctx.restore();
 }}
 debug_game_state=68.5;
 scriptsFullyLoaded=true;

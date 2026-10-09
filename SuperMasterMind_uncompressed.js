@@ -1274,10 +1274,10 @@ settingsButtonClick = function() { // (override temporary definition)
     let display_form_str =
       "<b>Theme:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
        <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
-         <option value='1'" + ((!modernDisplay) && (displayVariant != 1) ? " selected" : "") + ">classic theme / numbers</option>\
-         <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">classic theme / colors only</option>\
+         <option value='1'" + ((!modernDisplay) && (displayVariant != 1) ? " selected" : "") + ">default theme / numbers</option>\
+         <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">default theme / shapes</option>\
          <option value='3'" + (modernDisplay && (displayVariant != 1) ? " selected" : "") + ">light theme / numbers</option>\
-         <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">light theme / colors only</option>\
+         <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">light theme / shapes</option>\
        </select>" + end_separator_str;
 
     let change_first_name_title_str = "<b>Nickname:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
@@ -5283,12 +5283,12 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
 // **********
 
 let activeFades = [];
-let animFrameId = null;
+let selectionAnimFrameId = null;
 function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs) {
   // Remove any existing active fade for THIS specific column if it's already running                                                                                   
   activeFades = activeFades.filter(fade => fade.column !== column);
 
-  // Add new fading object for this column                                       
+  // Add new fading object for this column
   activeFades.push({
     column: column,
     color: color,
@@ -5297,9 +5297,9 @@ function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs) {
     duration: durationMs
   });
 
-  // Start the render loop if it isn't running already                                                    
-  if (!animFrameId) {
-    animFrameId = requestAnimationFrame(renderLoop);
+  // Start render loop if it is not running already
+  if (!selectionAnimFrameId) {
+    selectionAnimFrameId = requestAnimationFrame(renderLoop);
   }
 };
 
@@ -5353,9 +5353,15 @@ function renderLoop(currentTime) {
   });
 
   if (activeFades.length > 0) {
-    animFrameId = requestAnimationFrame(renderLoop);
-  } else {
-    animFrameId = null; // Pause loop when done to save battery/GPU
+    selectionAnimFrameId = requestAnimationFrame(renderLoop);
+  }
+  else {
+    selectionAnimFrameId = null; // Pause loop when done to save battery/GPU
+
+    animation_ctx.save();
+    animation_ctx.setTransform(1, 0, 0, 1, 0, 0);
+    animation_ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
+    animation_ctx.restore();
   }
 }
 

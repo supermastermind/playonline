@@ -2857,7 +2857,7 @@ let traceObject=document.getElementById("traces_id");
 if(traceObject==null){
 throw new Error("traces_id was not found");
 }
-let animation_time=1750;
+let animation_time=1900;
 function firework(x, y){
 let size_coef=window.innerHeight / 600;
 const particles=[];
@@ -2869,7 +2869,7 @@ y,
 angle: Math.random() * Math.PI * 2,
 speed: (Math.random() * 5+1.5) * 1.25,
 size: Math.ceil((Math.random() * 4+1) * size_coef),
-deathTime: now+animation_time-animation_time*Math.random()*2/5,
+deathTime: ((i <=20) ? now+animation_time : now+animation_time-animation_time*Math.random()*2/5),
 color: `hsl(${Math.random() * 360}, 100%, 60%)`
 });
 }
@@ -2877,6 +2877,7 @@ return particles;
 }
 let activeParticles=[];
 let start_anim_time=0;
+let endOfGameAnimFrameId=null;
 function animate(){
 const now=performance.now();
 let ctx=animationCanvas.getContext("2d");
@@ -2909,26 +2910,25 @@ const x=(rect.width-targetWidth) / 2;
 const y=(rect.height-targetHeight) / 2;
 ctx.drawImage(trophy_image, x, y, targetWidth, targetHeight);
 }
-requestAnimationFrame(animate);
-}}
-function triggerFireworks(){
-const rect=animationCanvas.getBoundingClientRect();
-const x=rect.width / 2;
-const y=rect.height / 2;
-activeParticles.push(...firework(x, y));
-start_anim_time=performance.now();;
-requestAnimationFrame(animate);
+endOfGameAnimFrameId=requestAnimationFrame(animate);
 }
-function triggerVictoryAnimation(){
-triggerFireworks();
-setTimeout(()=>{
-let ctx=animationCanvas.getContext("2d");
+else{
+endOfGameAnimFrameId=null;
 ctx.save();
 ctx.setTransform(1, 0, 0, 1, 0, 0);
 ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
 ctx.restore();
-}, animation_time+50 );
-}
+}}
+function triggerVictoryAnimation(){
+const rect=animationCanvas.getBoundingClientRect();
+const x=rect.width / 2;
+const y=rect.height / 2;
+activeParticles=[];
+activeParticles.push(...firework(x, y));
+start_anim_time=performance.now();
+if(!endOfGameAnimFrameId){
+endOfGameAnimFrameId=requestAnimationFrame(animate);
+}}
 const loadSuperMasterMindScript_progressFunction=function(evt){
 debug_game_state=62;
 if(evt.loaded > 0){
