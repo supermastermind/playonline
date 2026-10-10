@@ -1275,9 +1275,9 @@ settingsButtonClick = function() { // (override temporary definition)
       "<b>Theme:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>\
        <select id='displayModeSelect' style='font-size:1.75vh;color:black' onChange='handleDisplayModeSelectionChange()'>\
          <option value='1'" + ((!modernDisplay) && (displayVariant != 1) ? " selected" : "") + ">default theme / numbers</option>\
-         <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">default theme / shapes</option>\
+         <option value='2'" + ((!modernDisplay) && (displayVariant == 1) ? " selected" : "") + ">default theme / colors only</option>\
          <option value='3'" + (modernDisplay && (displayVariant != 1) ? " selected" : "") + ">light theme / numbers</option>\
-         <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">light theme / shapes</option>\
+         <option value='4'" + (modernDisplay && (displayVariant == 1) ? " selected" : "") + ">light theme / colors only</option>\
        </select>" + end_separator_str;
 
     let change_first_name_title_str = "<b>Nickname:</b><hr style='height:0.25vh;padding:0;margin:0;visibility:hidden;'>";
