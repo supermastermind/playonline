@@ -367,7 +367,7 @@
       } catch (err) {
         appInfoStr = "???";
       }
-      if (android_appli && ((versionCodeInt == -1) || (versionCodeInt <= 34))) {
+      if (android_appli && ((versionCodeInt == -1) || (versionCodeInt <= 34))) { // 34 kept low due to blocked US Play Store
          var versionCodeErrorMsg = "Your app version is " + ((versionCodeInt == - 1) ? "invalid" : "very old") + ". Please install the last update of the app from Play Store.";
          alert(versionCodeErrorMsg);
          window.stop(); // stop any further execution if error at this early stage. Note: window.stop() does not work in Internet explorer.
@@ -983,9 +983,9 @@
       });
 
       let loaded_sizes = new Array(3);
-      loaded_sizes[0] = 88000 + 22000 + 7000 + 117000; // imported js scripts + game.html = 88000 (jquery) + 22000 (pako) + 7000 (tingle) + 117000 (game.html)
+      loaded_sizes[0] = 88000 + 22000 + 7000 + 122000; // imported js scripts + game.html = 88000 (jquery) + 22000 (pako) + 7000 (tingle) + 122000 (game.html)
       loaded_sizes[1] = 135000; // GameSolver.js (state: 1)
-      loaded_sizes[2] =  99000; // SuperMasterMind.js.gz (state: 2)
+      loaded_sizes[2] =  115000; // SuperMasterMind.js.gz (state: 2)
       function getGlobalProgress(progress, state) {
         if ((progress < 0) || (progress > 1)) { // error case
           return 0;
@@ -1011,7 +1011,7 @@
           console.log("getGlobalProgress: invalid state: " + progress + ", " + state); // (errors are not handled yet)
         }
       }
-      var globalProgressForHTMLGame1 = getGlobalProgress(0.50 /* (rough value) */, 0);
+      var globalProgressForHTMLGame1 = getGlobalProgress(0.25 /* (rough value) */, 0);
       console.log("current progress: " + Math.max(globalProgressForHTMLGame1, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame1; // !WARNING! -> this console text will be read by the android app so shall not be modified
       if (globalProgressForHTMLGame1 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame1 + "%)"); // (not rem unit as no viewport! / duplicated code)
@@ -1906,7 +1906,7 @@
         }); // no resubmissions ((mobile) network was operational at parent handle_rsp() call) and result not checked to simplify
       }
 
-      var globalProgressForHTMLGame2 = getGlobalProgress(0.75 /* (rough value) */, 0);
+      var globalProgressForHTMLGame2 = getGlobalProgress(0.50 /* (rough value) */, 0);
       console.log("current progress: " + Math.max(globalProgressForHTMLGame2, lastGlobalProgress) + "% (g)"); lastGlobalProgress = globalProgressForHTMLGame2; // !WARNING! -> this console text will be read by the android app so shall not be modified
       if (globalProgressForHTMLGame2 > 0) {
         $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading (" + globalProgressForHTMLGame2 + "%)"); // (not rem unit as no viewport! / duplicated code)
@@ -3661,7 +3661,7 @@
                 debug_game_state = 65;
                 var errorStr = ("SuperMasterMind script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
                 console.log(errorStr);
-                alert("Oops... a network error occurred!\nPlease retry...\n\n" + "(" + errorStr + ")");
+                alert("Oops... a network error occurred!\nTry again later\n\n" + "(" + errorStr + ")");
                 smm_load_state = 3.5;
                 debug_game_state = 66;
             }
@@ -3801,7 +3801,7 @@
         var errorStr = ("GameSolver script load failure: " + textStatus + " " + error + " " + str_from_jqxhr(jqxhr)).trim();
         console.log(errorStr);
         gamesolver_blob_error = errorStr;
-        alert("Oops... a network error occurred!\nPlease retry...\n\n" + "(" + errorStr + ")");
+        alert("Oops... a network error occurred!\nTry again later\n\n" + "(" + errorStr + ")");
         $(".game_loading").fadeOut("slow"); // game_loading div fades out
         gamesolver_load_state = 3.5;
         debug_game_state = 79.5;

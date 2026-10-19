@@ -774,9 +774,9 @@ modal_mode=-1;
 return true;
 }});
 let loaded_sizes=new Array(3);
-loaded_sizes[0]=88000+22000+7000+117000;
+loaded_sizes[0]=88000+22000+7000+122000;
 loaded_sizes[1]=135000;
-loaded_sizes[2]=99000;
+loaded_sizes[2]=115000;
 function getGlobalProgress(progress, state){
 if((progress < 0)||(progress > 1)){
 return 0;
@@ -800,7 +800,7 @@ return Math.min(100, 2*Math.round((percent_min+progress * (percent_max-percent_m
 else{
 console.log("getGlobalProgress: invalid state: "+progress+", "+state);
 }}
-var globalProgressForHTMLGame1=getGlobalProgress(0.50 , 0);
+var globalProgressForHTMLGame1=getGlobalProgress(0.25 , 0);
 console.log("current progress: "+Math.max(globalProgressForHTMLGame1, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgressForHTMLGame1;
 if(globalProgressForHTMLGame1 > 0){
 $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading ("+globalProgressForHTMLGame1+"%)");
@@ -1558,7 +1558,7 @@ timeout: 90000,
 cache: false
 });
 }
-var globalProgressForHTMLGame2=getGlobalProgress(0.75 , 0);
+var globalProgressForHTMLGame2=getGlobalProgress(0.50 , 0);
 console.log("current progress: "+Math.max(globalProgressForHTMLGame2, lastGlobalProgress)+"% (g)");lastGlobalProgress=globalProgressForHTMLGame2;
 if(globalProgressForHTMLGame2 > 0){
 $("#game_loading_id").html("<img src='img/loading.gif' style='height:12%;'><br>Loading ("+globalProgressForHTMLGame2+"%)");
@@ -3006,7 +3006,7 @@ smm_load_state=3;
 debug_game_state=65;
 var errorStr=("SuperMasterMind script load failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
 console.log(errorStr);
-alert("Oops... a network error occurred!\nPlease retry...\n\n"+"("+errorStr+")");
+alert("Oops... a network error occurred!\nTry again later\n\n"+"("+errorStr+")");
 smm_load_state=3.5;
 debug_game_state=66;
 }})
@@ -3126,7 +3126,7 @@ debug_game_state=79;
 var errorStr=("GameSolver script load failure: "+textStatus+" "+error+" "+str_from_jqxhr(jqxhr)).trim();
 console.log(errorStr);
 gamesolver_blob_error=errorStr;
-alert("Oops... a network error occurred!\nPlease retry...\n\n"+"("+errorStr+")");
+alert("Oops... a network error occurred!\nTry again later\n\n"+"("+errorStr+")");
 $(".game_loading").fadeOut("slow");
 gamesolver_load_state=3.5;
 debug_game_state=79.5;

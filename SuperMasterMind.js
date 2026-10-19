@@ -382,13 +382,13 @@ return "(currentattempt:"+currentAttemptNumber
 +", gamesolverdbg:"+gameSolverDbg
 +", debuggamestate:"+debug_game_state+")";
 }
-function displayGUIError(GUIErrorStr, errStack){
+function displayGUIError(GUIErrorStr){
+let errStack=new Error().stack;
 let completedGUIErrorStr=(GUIErrorStr+" "+getExtraDebugInfo()).trim();
 if(gameErrorCnt < 50){
 console.log("***** ERROR ***** ("+gameErrorCnt+"): "+completedGUIErrorStr+" / "+errStack+"\n");
 console.log("Stack:");
-let stack=new Error().stack;
-console.log(stack);
+console.log(errStack);
 console.log("\n");
 }
 gameErrorCnt++;
@@ -443,10 +443,10 @@ function onGameSolverError(e){
 if((safariMode||(detectedOS.indexOf("iPhone")!=-1))&&(e.message==undefined)&&(e.lineno==undefined)&&(e.filename==undefined)){
 return;
 }
-displayGUIError("gameSolver error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
+displayGUIError("gameSolver error: "+e.message+" at line "+e.lineno+" in "+e.filename);
 }
 function onGameSolverMessageError(e){
-displayGUIError("gameSolver MESSAGE error: "+e.message+" at line "+e.lineno+" in "+e.filename, new Error().stack);
+displayGUIError("gameSolver MESSAGE error: "+e.message+" at line "+e.lineno+" in "+e.filename);
 }
 function handlePrompt(){
 var mode=prompt("Which mode do you want to select?", "abc");
@@ -540,12 +540,12 @@ return code;
 function onGameSolverMsg(e){
 try{
 if(e.data==undefined){
-displayGUIError("gameSolver msg error: data is undefined", new Error().stack);
+displayGUIError("gameSolver msg error: data is undefined");
 return;
 }
 let data=e.data;
 if(data.rsp_type==undefined){
-displayGUIError("gameSolver msg error: rsp_type is undefined", new Error().stack);
+displayGUIError("gameSolver msg error: rsp_type is undefined");
 return;
 }
 if(data.rsp_type=='INTERNAL_WORKER_ERROR_DETECTED'){
@@ -556,68 +556,68 @@ if((data.rsp_type=='I_AM_ALIVE')&&(Number(data.game_id)==game_cnt)){
 isWorkerAlive=1;
 }
 else{
-displayGUIError("gameSolver msg message error: invalid worker initialization ("+data.rsp_type+", "+data.game_id+", "+game_cnt+")", new Error().stack);
+displayGUIError("gameSolver msg message error: invalid worker initialization ("+data.rsp_type+", "+data.game_id+", "+game_cnt+")");
 return;
 }}
 else if(data.rsp_type=='NB_POSSIBLE_CODES'){
 if(data.nbOfPossibleCodes_p==undefined){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined");
 }
 let nbOfPossibleCodes_p=Number(data.nbOfPossibleCodes_p);
 if(isNaN(nbOfPossibleCodes_p)||(nbOfPossibleCodes_p < 0) ){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: "+nbOfPossibleCodes_p, new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: "+nbOfPossibleCodes_p);
 }
 if(data.colorsFoundCode_p==undefined){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined", new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined");
 }
 let colorsFoundCode_p=Number(data.colorsFoundCode_p);
 if(isNaN(colorsFoundCode_p)){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: "+colorsFoundCode_p, new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: "+colorsFoundCode_p);
 }
 if(data.minNbColorsTable_p==undefined){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined", new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined");
 }
 let minNbColorsTable_p=(data.minNbColorsTable_p).split(",");
 if(minNbColorsTable_p.length!=nbColors+1){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: "+data.minNbColorsTable_p+", length is "+minNbColorsTable_p.length, new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: "+data.minNbColorsTable_p+", length is "+minNbColorsTable_p.length);
 }
 if(data.maxNbColorsTable_p==undefined){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined", new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined");
 }
 let maxNbColorsTable_p=(data.maxNbColorsTable_p).split(",");
 if(maxNbColorsTable_p.length!=nbColors+1){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: "+data.maxNbColorsTable_p+", length is "+maxNbColorsTable_p.length, new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: "+data.maxNbColorsTable_p+", length is "+maxNbColorsTable_p.length);
 }
 if(data.attempt_nb==undefined){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined");
 }
 let attempt_nb=Number(data.attempt_nb);
 if(isNaN(attempt_nb)||(attempt_nb <=0) ){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: "+attempt_nb, new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: "+attempt_nb);
 }
 if(data.game_id==undefined){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined");
 }
 let game_id=Number(data.game_id);
 if(isNaN(game_id)||(game_id < 0) ){
-displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: "+game_id, new Error().stack);
+displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: "+game_id);
 }
 writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
 }
 else if(data.rsp_type=='LIST_OF_POSSIBLE_CODES'){
 if(data.possibleCodesList_p==undefined){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined");
 }
 let possibleCodesList_p=(data.possibleCodesList_p).split(",");
 if((possibleCodesList_p.length <=0)||(possibleCodesList_p.length > nbMaxPossibleCodesShown) ){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: "+possibleCodesList_p.length+", "+nbMaxPossibleCodesShown, new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: "+possibleCodesList_p.length+", "+nbMaxPossibleCodesShown);
 }
 if(data.nb_possible_codes_listed==undefined){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined", new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined");
 }
 let nb_possible_codes_listed=Number(data.nb_possible_codes_listed);
 if(isNaN(nb_possible_codes_listed)||(nb_possible_codes_listed <=0)||(nb_possible_codes_listed > nbMaxPossibleCodesShown) ){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: "+nb_possible_codes_listed, new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: "+nb_possible_codes_listed);
 }
 let possible_codes_subdivision=-1;
 try{
@@ -632,81 +632,81 @@ equivalent_possible_code=Number(data.equivalent_possible_code);
 }}
 catch (tmp_exc){}
 if(data.globalPerformancesList_p==undefined){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined");
 }
 let globalPerformancesList_p=(data.globalPerformancesList_p).split(",");
 if((globalPerformancesList_p.length <=0)||(globalPerformancesList_p.length > nbMaxPossibleCodesShown) ){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid globalPerformancesList_p: "+data.globalPerformancesList_p+", length is "+globalPerformancesList_p.length, new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid globalPerformancesList_p: "+data.globalPerformancesList_p+", length is "+globalPerformancesList_p.length);
 }
 if(data.attempt_nb==undefined){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined");
 }
 let attempt_nb=Number(data.attempt_nb);
 if(isNaN(attempt_nb)||(attempt_nb <=0) ){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: "+attempt_nb, new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: "+attempt_nb);
 }
 if(data.game_id==undefined){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined");
 }
 let game_id=Number(data.game_id);
 if(isNaN(game_id)||(game_id < 0) ){
-displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: "+game_id, new Error().stack);
+displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: "+game_id);
 }
 writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possible_codes_subdivision, equivalent_possible_code, globalPerformancesList_p, attempt_nb, game_id);
 }
 else if(data.rsp_type=='CODE_PLAYED_PERFORMANCE'){
 if(data.relative_perf_p==undefined){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined", new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined");
 }
 let relative_perf_p=Number(data.relative_perf_p);
 if(data.best_global_performance_p==undefined){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: best_global_performance_p is undefined", new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: best_global_performance_p is undefined");
 }
 let best_global_performance_p=Number(data.best_global_performance_p);
 if(data.relative_perf_evaluation_done_p==undefined){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_evaluation_done_p is undefined", new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_evaluation_done_p is undefined");
 }
 let relative_perf_evaluation_done_p=Boolean(data.relative_perf_evaluation_done_p);
 if(data.classic_useless_code_p==undefined){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: classic_useless_code_p is undefined", new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: classic_useless_code_p is undefined");
 }
 let classic_useless_code_p=Boolean(data.classic_useless_code_p);
 if(data.code_p==undefined){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined", new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined");
 }
 let code_p=Number(data.code_p);
 if(data.attempt_nb==undefined){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: attempt_nb is undefined");
 }
 let attempt_nb=Number(data.attempt_nb);
 if(isNaN(attempt_nb)||(attempt_nb <=0) ){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt_nb: "+attempt_nb, new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt_nb: "+attempt_nb);
 }
 if(data.game_id==undefined){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined", new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined");
 }
 let game_id=Number(data.game_id);
 if(isNaN(game_id)||(game_id < 0) ){
-displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: "+game_id, new Error().stack);
+displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: "+game_id);
 }
 writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id);
 }
 else if(data.rsp_type=='TRACE'){
 if((data.game_id==undefined)||(Number(data.game_id)!=game_cnt)){
-displayGUIError("TRACE / unexpected game_id: "+data.game_id+", "+game_cnt, new Error().stack);
+displayGUIError("TRACE / unexpected game_id: "+data.game_id+", "+game_cnt);
 }
 if(data.trace_contents==undefined){
-displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined", new Error().stack);
+displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined");
 }
 let trace_str=data.trace_contents.concat("<br>");
 traceObject.innerHTML=traceObject.innerHTML.concat(trace_str);
 }
 else{
-displayGUIError("gameSolver error: unexpected rsp_type: "+data.rsp_type, new Error().stack);
+displayGUIError("gameSolver error: unexpected rsp_type: "+data.rsp_type);
 return;
 }}
 catch (exc){
-displayGUIError("onGameSolverMsg error: "+exc, exc.stack);
+displayGUIError("onGameSolverMsg error: "+exc);
 }}
 function newGameButtonClick_delayed(skip_transition_effect=false){
 if(!skip_transition_effect){
@@ -822,7 +822,7 @@ if(!rsp){
 return;
 }}
 if(nbColorsRevealed > ((nbColumns <=4) ? 0 : 1)){
-displayGUIError("too many revealed colors: "+nbColorsRevealed, new Error().stack);
+displayGUIError("too many revealed colors: "+nbColorsRevealed);
 }
 else{
 let revealedColorIdx=Math.floor(Math.random() * nbEmptyColors);
@@ -1081,7 +1081,7 @@ draw_graphic();
 break;
 }}}
 catch (exc){
-displayGUIError("pointerDown: "+exc, exc.stack);
+displayGUIError("pointerDown: "+exc);
 }}}
 else if((!gameOnGoing())&&allPossibleCodesFilled()){
 if(!showPossibleCodesMode){
@@ -1387,7 +1387,7 @@ else{
 nb_attempts_not_displayed=0;
 skip_last_attempt_display=false;
 if(!((!gameOnGoing())&&allPossibleCodesFilled())||(currentAttemptNumber <=0) ){
-displayGUIError("invalid context for updateGameSizes(): "+gameOnGoing()+", "+allPossibleCodesFilled(), new Error().stack);
+displayGUIError("invalid context for updateGameSizes(): "+gameOnGoing()+", "+allPossibleCodesFilled());
 }
 y_step=(y_max-y_min) / (currentAttemptNumber-1
 +transition_height
@@ -1424,7 +1424,7 @@ else{
 throw new Error("internal error: gameSolverInitMsgContents==null");
 }}
 catch (err){
-displayGUIError("postInitMessageToGameSolver() error: "+err, err.stack);
+displayGUIError("postInitMessageToGameSolver() error: "+err);
 }}
 function resetGameAttributes(nbColumnsSelected){
 let i;
@@ -1606,7 +1606,7 @@ if(gameSolver==undefined){
 isWorkerAlive=0;
 workerCreationTime=(new Date()).getTime();
 if(gamesolver_blob==null){
-displayGUIError("GameSolver script has not been loaded successfully: "+gamesolver_blob_error, new Error().stack);
+displayGUIError("GameSolver script has not been loaded successfully: "+gamesolver_blob_error);
 }
 gameSolver=new Worker(window.URL.createObjectURL(gamesolver_blob));gameSolverDbg=3;
 }
@@ -1635,32 +1635,32 @@ gameSolverDbg=8;
 reset_color_being_selected();
 }
 function checkArraySizes(){
-if(backgroundColorTable.length!=foregroundColorTable.length){displayGUIError("array sizes are inconsistent (0)", new Error().stack);}
-if(specialStrTable.length!=specialColorTable.length){displayGUIError("array sizes are inconsistent (1)", new Error().stack);}
-if(codesPlayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (2)", new Error().stack);}
-if(marks.length > nbMaxAttempts){displayGUIError("array is wider than expected (3)", new Error().stack);}
-if(nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (4)", new Error().stack);}
-if(colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (5)", new Error().stack);}
-if(minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (6)", new Error().stack);}
+if(backgroundColorTable.length!=foregroundColorTable.length){displayGUIError("array sizes are inconsistent (0)");}
+if(specialStrTable.length!=specialColorTable.length){displayGUIError("array sizes are inconsistent (1)");}
+if(codesPlayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (2)");}
+if(marks.length > nbMaxAttempts){displayGUIError("array is wider than expected (3)");}
+if(nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (4)");}
+if(colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (5)");}
+if(minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (6)");}
 for (let i=0;i < nbMaxAttempts;i++){
-if(minNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (7)", new Error().stack);}}
-if(maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (8)", new Error().stack);}
+if(minNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (7)");}}
+if(maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (8)");}
 for (let i=0;i < nbMaxAttempts;i++){
-if(maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (9)", new Error().stack);}}
-if(obviouslyImpossibleColors.length > nbColors+1){displayGUIError("array is wider than expected (10)", new Error().stack);}
-if(relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)", new Error().stack);}
-if(global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)", new Error().stack);}
-if(relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)", new Error().stack);}
-if(classicUselessCode.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)", new Error().stack);}
-if(performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)", new Error().stack);}
-if(possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (16)", new Error().stack);}
-if(globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (17)", new Error().stack);}
-if(possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected (18)", new Error().stack);}
-if(possibleCodesListsSubdivisions.length > nbMaxAttempts){displayGUIError("array is wider than expected (19)", new Error().stack);}
-if(equivalentPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (20)", new Error().stack);}
+if(maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (9)");}}
+if(obviouslyImpossibleColors.length > nbColors+1){displayGUIError("array is wider than expected (10)");}
+if(relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)");}
+if(global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)");}
+if(relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)");}
+if(classicUselessCode.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)");}
+if(performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)");}
+if(possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (16)");}
+if(globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (17)");}
+if(possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected (18)");}
+if(possibleCodesListsSubdivisions.length > nbMaxAttempts){displayGUIError("array is wider than expected (19)");}
+if(equivalentPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (20)");}
 for (let i=0;i < nbMaxAttempts;i++){
-if(possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (21)", new Error().stack);}
-if(globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (22)", new Error().stack);}}}
+if(possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (21)");}
+if(globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (22)");}}}
 gameOnGoing=function(){
 if((gamesolver_blob==null)||!scriptsFullyLoaded){
 console.log("gameOnGoing skipped");
@@ -1679,7 +1679,7 @@ return (
 }
 function isAttemptPossible(attempt_nb){
 if((attempt_nb <=0)||(attempt_nb >=currentAttemptNumber) ){
-displayGUIError("invalid attempt nb ("+attempt_nb+")", new Error().stack);
+displayGUIError("invalid attempt nb ("+attempt_nb+")");
 return 1;
 }
 let mark_tmp={nbBlacks:0, nbWhites:0};
@@ -1700,7 +1700,7 @@ if((nbOfPossibleCodes_p <=0)
 ||(attempt_nb <=0)||(attempt_nb > nbMaxAttempts)
 ||(nbOfPossibleCodes[attempt_nb-1]!=0 )
 ||(!smmCodeHandler.isValid(colorsFoundCode_p)) ){
-displayGUIError("invalid stats ("+nbOfPossibleCodes_p+", "+attempt_nb+", "+nbOfStatsFilled_NbPossibleCodes+", "+nbOfPossibleCodes[attempt_nb-1]+") (1)", new Error().stack);
+displayGUIError("invalid stats ("+nbOfPossibleCodes_p+", "+attempt_nb+", "+nbOfStatsFilled_NbPossibleCodes+", "+nbOfPossibleCodes[attempt_nb-1]+") (1)");
 return false;
 }
 nbOfPossibleCodes[attempt_nb-1]=nbOfPossibleCodes_p;
@@ -1712,7 +1712,7 @@ maxNbColorsTables[attempt_nb-1][color]=maxNbColorsTable_p[color];
 sum_max+=maxNbColorsTables[attempt_nb-1][color];
 }
 if(sum_max < nbColumns){
-displayGUIError("invalid stats (sum_max="+sum_max+") (2)", new Error().stack);
+displayGUIError("invalid stats (sum_max="+sum_max+") (2)");
 return false;
 }
 nbOfStatsFilled_NbPossibleCodes=attempt_nb;
@@ -1740,7 +1740,7 @@ if(((relative_perf_p <=PerformanceMinValidValue)&&(relative_perf_p!=PerformanceU
 ||(global_best_performances[attempt_nb-1]!=PerformanceNA )
 ||(relativePerformancesEvaluationDone[attempt_nb-1] )
 ||(classicUselessCode[attempt_nb-1] ) ){
-displayGUIError("invalid perfs ("+attempt_nb+", "+nbOfStatsFilled_Perfs+", "+nbOfStatsFilled_NbPossibleCodes+", "+relative_perf_p+", "+best_global_performance_p+", "+relative_perf_evaluation_done_p+", "+classic_useless_code_p+", "+code_p+", "+attempt_nb+")", new Error().stack);
+displayGUIError("invalid perfs ("+attempt_nb+", "+nbOfStatsFilled_Perfs+", "+nbOfStatsFilled_NbPossibleCodes+", "+relative_perf_p+", "+best_global_performance_p+", "+relative_perf_evaluation_done_p+", "+classic_useless_code_p+", "+code_p+", "+attempt_nb+")");
 return false;
 }
 relative_performances_of_codes_played[attempt_nb-1]=relative_perf_p;
@@ -1761,7 +1761,7 @@ main_graph_update_needed=true;
 draw_graphic();
 if(gameWon&&allPerformancesFilled()){
 if((timeStr.length==0)||(score < 0.0)){
-displayGUIError("internal error at store_player_info call: "+timeStr.length+", "+score, new Error().stack);
+displayGUIError("internal error at store_player_info call: "+timeStr.length+", "+score);
 }
 else{
 let nbColorsRevealed=nbColumns-smmCodeHandler.nbEmptyColors(sCodeRevealed);
@@ -1790,19 +1790,19 @@ if((nb_possible_codes_listed <=0)||(possibleCodesList_p.length < nb_possible_cod
 ||(nb_possible_codes_listed > nbOfPossibleCodes[attempt_nb-1])
 ||((nbOfPossibleCodes[attempt_nb-1] <=nbMaxPossibleCodesShown)&&(nb_possible_codes_listed!=nbOfPossibleCodes[attempt_nb-1]))
 ||((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown)&&(nb_possible_codes_listed!=nbMaxPossibleCodesShown)) ){
-displayGUIError("invalid stats ("+attempt_nb+", "+nbOfStatsFilled_NbPossibleCodes+", "+nbOfPossibleCodes[attempt_nb-1]+", "+nb_possible_codes_listed+") (3)", new Error().stack);
+displayGUIError("invalid stats ("+attempt_nb+", "+nbOfStatsFilled_NbPossibleCodes+", "+nbOfPossibleCodes[attempt_nb-1]+", "+nb_possible_codes_listed+") (3)");
 return false;
 }
 for (let i=0;i < nb_possible_codes_listed;i++){
 let code=possibleCodesList_p[i];
 let global_perf=globalPerformancesList_p[i];
 if(!smmCodeHandler.isFullAndValid(code)){
-displayGUIError("invalid stats ("+attempt_nb+", "+nbOfStatsFilled_NbPossibleCodes+", "+i+", "+code+") (4)", new Error().stack);
+displayGUIError("invalid stats ("+attempt_nb+", "+nbOfStatsFilled_NbPossibleCodes+", "+i+", "+code+") (4)");
 return false;
 }
 if(((global_perf <=0.01)&&(global_perf!=PerformanceUNKNOWN))
 ||(global_perf==PerformanceNA) ){
-displayGUIError("invalid stats (unknown code performance(s) after evaluation) (5)", new Error().stack);
+displayGUIError("invalid stats (unknown code performance(s) after evaluation) (5)");
 return false;
 }
 possibleCodesLists[attempt_nb-1][i]=code;
@@ -1994,7 +1994,7 @@ default:
 throw new Error("updateAndStoreNbGamesStarted(): invalid number of columns: "+nbColumns);
 }}
 catch (err){
-displayGUIError("error while storing nbgamesstarted: "+err, new Error().stack);
+displayGUIError("error while storing nbgamesstarted: "+err);
 }}
 function updateAttributesWidthAndHeightValues(width, height){
 main_graph_update_needed=true;
@@ -2008,7 +2008,7 @@ reduced_height=(current_height * (100.0-top_border_margin_y-bottom_border_margin
 }
 function get_x_pixel(x){
 if((x < x_min-0.0000001)||(x > x_max+0.0000001) ){
-displayGUIError("out of range x value: "+x, new Error().stack);
+displayGUIError("out of range x value: "+x);
 if(x < x_min) x=x_min;
 if(x > x_max) x=x_max;
 }
@@ -2021,7 +2021,7 @@ return res;
 }
 function get_y_pixel(y, ignoreRanges=false){
 if((!ignoreRanges)&&((y < y_min-0.0000001)||(y > y_max+0.0000001)) ){
-displayGUIError("out of range y value: "+y+", "+y_min+", "+y_max+", "+y_step+", "+showPossibleCodesMode, new Error().stack);
+displayGUIError("out of range y value: "+y+", "+y_min+", "+y_max+", "+y_step+", "+showPossibleCodesMode);
 if(y < y_min) y=y_min;
 if(y > y_max) y=y_max;
 }
@@ -2175,7 +2175,7 @@ let gameJustWon=false;
 let gameJustLost=false;
 let nbColumnsSelected=getNbColumnsSelected();
 if((nbColumnsSelected < 0)||(nbColumnsSelected > nbMaxColumns) ){
-displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected, new Error().stack);
+displayGUIError("inconsistent number of columns selected: "+nbColumnsSelected);
 nbColumnsSelected=defaultNbColumns;
 }
 let lineWidth=getLineWidth(window.innerHeight, 1);
@@ -2389,7 +2389,7 @@ if(smmCodeHandler.getNbColumns()!=nbColumns){
 throw new Error("invalid nbColumns handling");
 }
 if((currentAttemptNumber <=0)||(currentAttemptNumber > nbMaxAttempts+1)){
-displayGUIError("inconsistent currentAttemptNumber value: "+currentAttemptNumber, new Error().stack);
+displayGUIError("inconsistent currentAttemptNumber value: "+currentAttemptNumber);
 }
 else{
 if(gameOnGoing()
@@ -3158,7 +3158,7 @@ displayString(timeStr.replaceAll("min","m").replaceAll("s","").replaceAll(" ",""
 darkGray, "", ctx, false, true, 0, false, 0);
 }}}}}
 else{
-displayGUIError("game over inconsistency", new Error().stack);
+displayGUIError("game over inconsistency");
 }}
 ctx.font=basic_bold_font;
 ctx.fillStyle=darkGray;
@@ -3295,7 +3295,7 @@ displayString("\u2009Click to select!\u2009", 0, nbMaxAttemptsToDisplay, attempt
 (modernDisplay ? modernBaseColor2 : "orange"), "", ctx, false, true, 0, true, 0);
 }}}}
 else{
-displayGUIError("invalid currentPossibleCodeShown: "+currentPossibleCodeShown, new Error().stack);
+displayGUIError("invalid currentPossibleCodeShown: "+currentPossibleCodeShown);
 }
 ctx.font=basic_bold_font;
 for (let col=0;col < nbColumns;col++){
@@ -3346,7 +3346,7 @@ code_ratio=possibleCodesListsSizes[currentPossibleCodeShown-1] / (2*nbPossibleCo
 for (let codeidx=0;codeidx < nbOfCodesListed;codeidx++){
 let codeidx_with_ratio=Math.floor((codeidx+code_list_offset) * code_ratio);
 if(codeidx_with_ratio >=possibleCodesListsSizes[currentPossibleCodeShown-1]){
-displayGUIError("invalid codeidx_with_ratio;"+codeidx_with_ratio+", "+possibleCodesListsSizes[currentPossibleCodeShown-1], new Error().stack);
+displayGUIError("invalid codeidx_with_ratio;"+codeidx_with_ratio+", "+possibleCodesListsSizes[currentPossibleCodeShown-1]);
 }
 let code=possibleCodesLists[currentPossibleCodeShown-1][codeidx_with_ratio];
 let y_cell=nbMaxAttemptsToDisplay+transition_height+nbPossibleCodesShown-1-codeidx;
@@ -3365,7 +3365,7 @@ displayPerf(relative_perf, y_cell, backgroundColor, 0, true, false , Performance
 if((possibleCodesListsSubdivisions[currentPossibleCodeShown-1]!=-1)
 &&(possibleCodesListsSubdivisions[currentPossibleCodeShown-1]==codeidx+code_list_offset+1) ){
 if(code_ratio!=1.0){
-displayGUIError("invalid code_ratio: "+code_ratio, new Error().stack);
+displayGUIError("invalid code_ratio: "+code_ratio);
 }
 x_0=get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
 y_0=get_y_pixel(y_min+y_step*y_cell);
@@ -3518,7 +3518,7 @@ if(last_but_one_attempt_event
 setTimeout("displayRevealSecretColorHintIfNeeded();", 4);
 }}
 catch (err){
-displayGUIError("draw error: "+err, err.stack);
+displayGUIError("draw error: "+err);
 }}
 function fillTextWithColors(str, x_pixel, y_pixel, foregroundColor, ctx, str_width, str_height){
 ctx.textAlign="start";
@@ -3613,7 +3613,7 @@ break;
 }}
 if((first_non_transparent_line==-1)||(last_non_transparent_line==-1)){
 if(android_appli){
-displayGUIError("measurePreciseTextHeight_bis: first_non_transparent_line or last_non_transparent_line was not calculated: "+(first_non_transparent_line==-1)+", "+(last_non_transparent_line==-1), new Error().stack);
+displayGUIError("measurePreciseTextHeight_bis: first_non_transparent_line or last_non_transparent_line was not calculated: "+(first_non_transparent_line==-1)+", "+(last_non_transparent_line==-1));
 }
 first_non_transparent_line=0;
 last_non_transparent_line=Math.round((height-1) * default_font_height_factor);
@@ -3658,14 +3658,14 @@ str_height=arr_str_height[ctx_font_str.replaceAll(" ","")];
 }
 if(str_height==undefined){
 if(android_appli){
-displayGUIError("displayString: str_height not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(arr_str_height), new Error().stack);
+displayGUIError("displayString: str_height not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(arr_str_height));
 }
 str_height=parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor;
 }}
 let empty_space_before_str=arr_empty_space_before_str[ctx_font_str.replaceAll(" ","")];
 if(empty_space_before_str==undefined){
 if(android_appli){
-displayGUIError("displayString: empty_space_before_str not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(arr_empty_space_before_str), new Error().stack);
+displayGUIError("displayString: empty_space_before_str not found for font: "+ctx_font_str+"/"+ctx.font+" inside array: "+array_to_string(arr_empty_space_before_str));
 }
 empty_space_before_str=0;
 }
@@ -3746,7 +3746,7 @@ ctx.fillRect(x_0+1, y_0_next+1, x_0_next-x_0-1, y_0-y_0_next-1);
 if(justify==0){
 if(!displayColorMode){
 if(backgroundColor==""){
-displayGUIError("displayString error: N.A. background #1", new Error().stack);
+displayGUIError("displayString error: N.A. background #1");
 }
 let redC=parseInt(backgroundColor.substring(1,3), 16);
 let greenC=parseInt(backgroundColor.substring(3,5), 16);
@@ -3766,7 +3766,7 @@ ctx.stroke();
 ctx.stroke();
 if(displayVariant!=1){
 if(backgroundColor==""){
-displayGUIError("displayString error: N.A. background #2", new Error().stack);
+displayGUIError("displayString error: N.A. background #2");
 }
 ctx.fillStyle=averageColor(backgroundColor, "#000000", 0.9);
 let half_hidding_rect_width=Math.max(8*(x_0_next-x_0)/100, str_width/2+2);
@@ -3824,7 +3824,7 @@ let r2;
 let g2;
 let b2;
 if((color1Coef < 0.0)||(color1Coef > 1.0)){
-displayGUIError("error in averageColor (1): "+color1+", "+color2+", "+color1Coef, new Error().stack);
+displayGUIError("error in averageColor (1): "+color1+", "+color2+", "+color1Coef);
 return color1_p;
 }
 if((color1.indexOf("#")==0)&&(color1.length==7)){
@@ -3839,7 +3839,7 @@ g1=rgb[1];
 b1=rgb[2];
 }
 else{
-displayGUIError("error in averageColor (2): "+color1+", "+color2+", "+color1Coef, new Error().stack);
+displayGUIError("error in averageColor (2): "+color1+", "+color2+", "+color1Coef);
 return color1_p;
 }
 if((color2.indexOf("#")==0)&&(color2.length==7)){
@@ -3854,7 +3854,7 @@ g2=rgb[1];
 b2=rgb[2];
 }
 else{
-displayGUIError("error in averageColor (3): "+color1+", "+color2+", "+color1Coef, new Error().stack);
+displayGUIError("error in averageColor (3): "+color1+", "+color2+", "+color1Coef);
 return color1_p;
 }
 let newr=Math.round(r1*color1Coef+r2*(1-color1Coef));
@@ -3863,7 +3863,7 @@ let newb=Math.round(b1*color1Coef+b2*(1-color1Coef));
 if(isNaN(newr)||(newr < 0)||(newr > 255)
 ||isNaN(newg)||(newg < 0)||(newg > 255)
 ||isNaN(newb)||(newb < 0)||(newb > 255) ){
-displayGUIError("error in averageColor (4): "+color1+", "+color2+", "+color1Coef+" / "+newr+", "+newg+", "+newb, new Error().stack);
+displayGUIError("error in averageColor (4): "+color1+", "+color2+", "+color1Coef+" / "+newr+", "+newg+", "+newb);
 return color1_p;
 }
 return "rgb("+newr+","+newg+","+newb+")";

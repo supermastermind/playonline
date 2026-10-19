@@ -494,8 +494,9 @@ function getExtraDebugInfo() {
          + ", debuggamestate:" + debug_game_state + ")";
 }
 
-function displayGUIError(GUIErrorStr, errStack) {
+function displayGUIError(GUIErrorStr) {
 
+  let errStack = new Error().stack;
   let completedGUIErrorStr = (GUIErrorStr + " " + getExtraDebugInfo()).trim();
 
   // Display error in Javascript console
@@ -504,8 +505,7 @@ function displayGUIError(GUIErrorStr, errStack) {
   if (gameErrorCnt < 50) {
     console.log("***** ERROR ***** (" + gameErrorCnt + "): " + completedGUIErrorStr + " / " + errStack + "\n");
     console.log("Stack:");
-    let stack = new Error().stack;
-    console.log(stack);
+    console.log(errStack);
     console.log("\n");
   }
   gameErrorCnt++;
@@ -576,12 +576,12 @@ function onGameSolverError(e) {
   if ((safariMode || (detectedOS.indexOf("iPhone") != -1)) && (e.message == undefined) && (e.lineno == undefined) && (e.filename == undefined)) {
     return;
   }
-  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
+  displayGUIError("gameSolver error: " + e.message + " at line " + e.lineno + " in " + e.filename);
 }
 
 // Function called on gameSolver worker's MESSAGE error
 function onGameSolverMessageError(e) {
-  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename, new Error().stack);
+  displayGUIError("gameSolver MESSAGE error: " + e.message + " at line " + e.lineno + " in " + e.filename);
 }
 
 function handlePrompt() {
@@ -707,13 +707,13 @@ function onGameSolverMsg(e) {
   try {
 
     if (e.data == undefined) {
-      displayGUIError("gameSolver msg error: data is undefined", new Error().stack);
+      displayGUIError("gameSolver msg error: data is undefined");
       return;
     }
     let data = e.data;
 
     if (data.rsp_type == undefined) {
-      displayGUIError("gameSolver msg error: rsp_type is undefined", new Error().stack);
+      displayGUIError("gameSolver msg error: rsp_type is undefined");
       return;
     }
 
@@ -734,7 +734,7 @@ function onGameSolverMsg(e) {
         isWorkerAlive = 1;
       }
       else {
-        displayGUIError("gameSolver msg message error: invalid worker initialization (" + data.rsp_type + ", " + data.game_id + ", " + game_cnt + ")", new Error().stack);
+        displayGUIError("gameSolver msg message error: invalid worker initialization (" + data.rsp_type + ", " + data.game_id + ", " + game_cnt + ")");
         return;
       }
     }
@@ -746,51 +746,51 @@ function onGameSolverMsg(e) {
     else if (data.rsp_type == 'NB_POSSIBLE_CODES') {
 
       if (data.nbOfPossibleCodes_p == undefined) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined", new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: nbOfPossibleCodes_p is undefined");
       }
       let nbOfPossibleCodes_p = Number(data.nbOfPossibleCodes_p);
       if ( isNaN(nbOfPossibleCodes_p) || (nbOfPossibleCodes_p < 0) ) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p, new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid nbOfPossibleCodes_p: " + nbOfPossibleCodes_p);
       }
 
       if (data.colorsFoundCode_p == undefined) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined", new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: colorsFoundCode_p is undefined");
       }
       let colorsFoundCode_p = Number(data.colorsFoundCode_p);
       if (isNaN(colorsFoundCode_p)) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: " + colorsFoundCode_p, new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid colorsFoundCode_p: " + colorsFoundCode_p);
       }
 
       if (data.minNbColorsTable_p == undefined) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined", new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: minNbColorsTable_p is undefined");
       }
       let minNbColorsTable_p = (data.minNbColorsTable_p).split(",");
       if (minNbColorsTable_p.length != nbColors+1) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length, new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid minNbColorsTable_p: " + data.minNbColorsTable_p + ", length is " + minNbColorsTable_p.length);
       }
 
       if (data.maxNbColorsTable_p == undefined) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined", new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: maxNbColorsTable_p is undefined");
       }
       let maxNbColorsTable_p = (data.maxNbColorsTable_p).split(",");
       if (maxNbColorsTable_p.length != nbColors+1) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length, new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid maxNbColorsTable_p: " + data.maxNbColorsTable_p + ", length is " + maxNbColorsTable_p.length);
       }
 
       if (data.attempt_nb == undefined) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined");
       }
       let attempt_nb = Number(data.attempt_nb);
       if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb);
       }
 
       if (data.game_id == undefined) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: game_id is undefined");
       }
       let game_id = Number(data.game_id);
       if ( isNaN(game_id) || (game_id < 0) ) {
-        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+        displayGUIError("NB_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id);
       }
 
       writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbColorsTable_p, maxNbColorsTable_p, attempt_nb, game_id);
@@ -804,19 +804,19 @@ function onGameSolverMsg(e) {
     else if (data.rsp_type == 'LIST_OF_POSSIBLE_CODES') {
 
       if (data.possibleCodesList_p == undefined) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined", new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: possibleCodesList_p is undefined");
       }
       let possibleCodesList_p = (data.possibleCodesList_p).split(",");
       if ( (possibleCodesList_p.length <= 0) || (possibleCodesList_p.length > nbMaxPossibleCodesShown) ) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + possibleCodesList_p.length + ", " + nbMaxPossibleCodesShown, new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid possibleCodesList_p: " + possibleCodesList_p.length + ", " + nbMaxPossibleCodesShown);
       }
 
       if (data.nb_possible_codes_listed == undefined) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined", new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: nb_possible_codes_listed is undefined");
       }
       let nb_possible_codes_listed = Number(data.nb_possible_codes_listed);
       if ( isNaN(nb_possible_codes_listed) || (nb_possible_codes_listed <= 0) || (nb_possible_codes_listed > nbMaxPossibleCodesShown) ) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed, new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid nb_possible_codes_listed: " + nb_possible_codes_listed);
       }
 
       let possible_codes_subdivision = -1; // N.A.
@@ -836,27 +836,27 @@ function onGameSolverMsg(e) {
       catch (tmp_exc) {}
 
       if (data.globalPerformancesList_p == undefined) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined", new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: globalPerformancesList_p is undefined");
       }
       let globalPerformancesList_p = (data.globalPerformancesList_p).split(",");
       if ( (globalPerformancesList_p.length <= 0) || (globalPerformancesList_p.length > nbMaxPossibleCodesShown) ) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid globalPerformancesList_p: " + data.globalPerformancesList_p + ", length is " + globalPerformancesList_p.length, new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid globalPerformancesList_p: " + data.globalPerformancesList_p + ", length is " + globalPerformancesList_p.length);
       }
 
       if (data.attempt_nb == undefined) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: attempt_nb is undefined");
       }
       let attempt_nb = Number(data.attempt_nb);
       if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid attempt_nb: " + attempt_nb);
       }
 
       if (data.game_id == undefined) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined", new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: game_id is undefined");
       }
       let game_id = Number(data.game_id);
       if ( isNaN(game_id) || (game_id < 0) ) {
-        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+        displayGUIError("LIST_OF_POSSIBLE_CODES / gameSolver msg error: invalid game_id: " + game_id);
       }
 
       writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possible_codes_subdivision, equivalent_possible_code, globalPerformancesList_p, attempt_nb, game_id);
@@ -870,44 +870,44 @@ function onGameSolverMsg(e) {
     else if (data.rsp_type == 'CODE_PLAYED_PERFORMANCE') {
 
       if (data.relative_perf_p == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined", new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_p is undefined");
       }
       let relative_perf_p = Number(data.relative_perf_p);
 
       if (data.best_global_performance_p == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: best_global_performance_p is undefined", new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: best_global_performance_p is undefined");
       }
       let best_global_performance_p = Number(data.best_global_performance_p);
 
       if (data.relative_perf_evaluation_done_p == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_evaluation_done_p is undefined", new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: relative_perf_evaluation_done_p is undefined");
       }
       let relative_perf_evaluation_done_p = Boolean(data.relative_perf_evaluation_done_p);
 
       if (data.classic_useless_code_p == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: classic_useless_code_p is undefined", new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: classic_useless_code_p is undefined");
       }
       let classic_useless_code_p = Boolean(data.classic_useless_code_p);
 
       if (data.code_p == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined", new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: code_p is undefined");
       }
       let code_p = Number(data.code_p);
 
       if (data.attempt_nb == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: attempt_nb is undefined", new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: attempt_nb is undefined");
       }
       let attempt_nb = Number(data.attempt_nb);
       if ( isNaN(attempt_nb) || (attempt_nb <= 0) ) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt_nb: " + attempt_nb, new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid attempt_nb: " + attempt_nb);
       }
 
       if (data.game_id == undefined) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined", new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: game_id is undefined");
       }
       let game_id = Number(data.game_id);
       if ( isNaN(game_id) || (game_id < 0) ) {
-        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: " + game_id, new Error().stack);
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: " + game_id);
       }
 
       writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id);
@@ -921,10 +921,10 @@ function onGameSolverMsg(e) {
     else if (data.rsp_type == 'TRACE') {
 
       if ((data.game_id == undefined) || (Number(data.game_id) != game_cnt)) { // unexpected game_id
-        displayGUIError("TRACE / unexpected game_id: " + data.game_id + ", " + game_cnt, new Error().stack);
+        displayGUIError("TRACE / unexpected game_id: " + data.game_id + ", " + game_cnt);
       }
       if (data.trace_contents == undefined) {
-        displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined", new Error().stack);
+        displayGUIError("TRACE / gameSolver msg error: trace_contents is undefined");
       }
       let trace_str = data.trace_contents.concat("<br>");
 
@@ -937,13 +937,13 @@ function onGameSolverMsg(e) {
     // **********
 
     else {
-      displayGUIError("gameSolver error: unexpected rsp_type: " + data.rsp_type, new Error().stack);
+      displayGUIError("gameSolver error: unexpected rsp_type: " + data.rsp_type);
       return;
     }
 
   }
   catch (exc) {
-    displayGUIError("onGameSolverMsg error: " + exc, exc.stack);
+    displayGUIError("onGameSolverMsg error: " + exc);
   }
 
 }
@@ -1101,7 +1101,7 @@ revealSecretColorButtonClick = function() { // (override temporary definition)
       }
     }
     if (nbColorsRevealed > ((nbColumns <= 4) ? 0 : 1)) {
-      displayGUIError("too many revealed colors: " + nbColorsRevealed, new Error().stack);
+      displayGUIError("too many revealed colors: " + nbColorsRevealed);
     }
     else {
       let revealedColorIdx = Math.floor(Math.random() * nbEmptyColors);
@@ -1408,7 +1408,7 @@ function pointerDown(e) {
         }
       }
       catch (exc) {
-        displayGUIError("pointerDown: " + exc, exc.stack);
+        displayGUIError("pointerDown: " + exc);
       }
 
     }
@@ -1786,7 +1786,7 @@ function updateGameSizes() {
     nb_attempts_not_displayed = 0;
     skip_last_attempt_display = false;
     if ( !((!gameOnGoing()) && allPossibleCodesFilled()) || (currentAttemptNumber <= 0) ) {
-      displayGUIError("invalid context for updateGameSizes(): " + gameOnGoing() + ", " + allPossibleCodesFilled(), new Error().stack);
+      displayGUIError("invalid context for updateGameSizes(): " + gameOnGoing() + ", " + allPossibleCodesFilled());
     }
     y_step = (y_max - y_min) / (currentAttemptNumber-1 // number of attempts reached at end of game
                                 + transition_height // margin
@@ -1829,7 +1829,7 @@ function postInitMessageToGameSolver(cnt_p) {
     }
   }
   catch (err) {
-    displayGUIError("postInitMessageToGameSolver() error: " + err, err.stack);
+    displayGUIError("postInitMessageToGameSolver() error: " + err);
   }
 }
 
@@ -2053,7 +2053,7 @@ function resetGameAttributes(nbColumnsSelected) {
     workerCreationTime = (new Date()).getTime();
     // gameSolver = new Worker("GameSolver.js"); gameSolverDbg = 3;
     if (gamesolver_blob == null) {
-      displayGUIError("GameSolver script has not been loaded successfully: " + gamesolver_blob_error, new Error().stack);
+      displayGUIError("GameSolver script has not been loaded successfully: " + gamesolver_blob_error);
     }
     gameSolver = new Worker(window.URL.createObjectURL(gamesolver_blob)); gameSolverDbg = 3;
   }
@@ -2089,34 +2089,34 @@ function resetGameAttributes(nbColumnsSelected) {
 }
 
 function checkArraySizes() {
-  if (backgroundColorTable.length != foregroundColorTable.length) {displayGUIError("array sizes are inconsistent (0)", new Error().stack);}
-  if (specialStrTable.length != specialColorTable.length) {displayGUIError("array sizes are inconsistent (1)", new Error().stack);}
-  if (codesPlayed.length > nbMaxAttempts) {displayGUIError("array is wider than expected (2)", new Error().stack);}
-  if (marks.length > nbMaxAttempts) {displayGUIError("array is wider than expected (3)", new Error().stack);}
-  if (nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (4)", new Error().stack);}
-  if (colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (5)", new Error().stack);}
-  if (minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (6)", new Error().stack);}
+  if (backgroundColorTable.length != foregroundColorTable.length) {displayGUIError("array sizes are inconsistent (0)");}
+  if (specialStrTable.length != specialColorTable.length) {displayGUIError("array sizes are inconsistent (1)");}
+  if (codesPlayed.length > nbMaxAttempts) {displayGUIError("array is wider than expected (2)");}
+  if (marks.length > nbMaxAttempts) {displayGUIError("array is wider than expected (3)");}
+  if (nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (4)");}
+  if (colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (5)");}
+  if (minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (6)");}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected (7)", new Error().stack);}
+    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected (7)");}
   }
-  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (8)", new Error().stack);}
+  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (8)");}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (9)", new Error().stack);}
+    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (9)");}
   }
-  if (obviouslyImpossibleColors.length > nbColors+1){displayGUIError("array is wider than expected (10)", new Error().stack);}
-  if (relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)", new Error().stack);}
-  if (global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)", new Error().stack);}
-  if (relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)", new Error().stack);}
-  if (classicUselessCode.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)", new Error().stack);}
-  if (performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)", new Error().stack);}
-  if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (16)", new Error().stack);}
-  if (globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (17)", new Error().stack);}
-  if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected (18)", new Error().stack);}
-  if (possibleCodesListsSubdivisions.length > nbMaxAttempts){displayGUIError("array is wider than expected (19)", new Error().stack);}
-  if (equivalentPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (20)", new Error().stack);}
+  if (obviouslyImpossibleColors.length > nbColors+1){displayGUIError("array is wider than expected (10)");}
+  if (relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)");}
+  if (global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)");}
+  if (relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)");}
+  if (classicUselessCode.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)");}
+  if (performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)");}
+  if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (16)");}
+  if (globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (17)");}
+  if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected (18)");}
+  if (possibleCodesListsSubdivisions.length > nbMaxAttempts){displayGUIError("array is wider than expected (19)");}
+  if (equivalentPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (20)");}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (21)", new Error().stack);}
-    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (22)", new Error().stack);}
+    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (21)");}
+    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (22)");}
   }
 }
 
@@ -2143,7 +2143,7 @@ function allPossibleCodesFilled() {
 // Check if a code played is possible
 function isAttemptPossible(attempt_nb) { // (returns 0 if the attempt_nb th code is possible, returns the first attempt number with which there is a contradiction otherwise)
   if ( (attempt_nb <= 0) || (attempt_nb >= currentAttemptNumber) ) {
-    displayGUIError("invalid attempt nb (" + attempt_nb + ")", new Error().stack);
+    displayGUIError("invalid attempt nb (" + attempt_nb + ")");
     return 1;
   }
   let mark_tmp = {nbBlacks:0, nbWhites:0};
@@ -2171,7 +2171,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
        || (attempt_nb <= 0) || (attempt_nb > nbMaxAttempts)
        || (nbOfPossibleCodes[attempt_nb-1] != 0 /* initial value */)
        || (!smmCodeHandler.isValid(colorsFoundCode_p)) ) {
-    displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (1)", new Error().stack);
+    displayGUIError("invalid stats (" + nbOfPossibleCodes_p + ", " + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ") (1)");
     return false;
   }
   nbOfPossibleCodes[attempt_nb-1] = nbOfPossibleCodes_p;
@@ -2183,7 +2183,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
     sum_max += maxNbColorsTables[attempt_nb-1][color];
   }
   if (sum_max < nbColumns) {
-    displayGUIError("invalid stats (sum_max=" + sum_max + ") (2)", new Error().stack);
+    displayGUIError("invalid stats (sum_max=" + sum_max + ") (2)");
     return false;
   }
   nbOfStatsFilled_NbPossibleCodes = attempt_nb; // Assumption: the number of possible codes is assumed to be the first stat to be written among all stats
@@ -2215,7 +2215,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
        || (global_best_performances[attempt_nb-1] != PerformanceNA /* initial value */)
        || (relativePerformancesEvaluationDone[attempt_nb-1] /* initial value */)
        || (classicUselessCode[attempt_nb-1] /* initial value */) ) {
-    displayGUIError("invalid perfs (" + attempt_nb + ", " + nbOfStatsFilled_Perfs + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + relative_perf_p + ", " + best_global_performance_p + ", " + relative_perf_evaluation_done_p + ", " + classic_useless_code_p + ", " + code_p + ", " + attempt_nb + ")", new Error().stack);
+    displayGUIError("invalid perfs (" + attempt_nb + ", " + nbOfStatsFilled_Perfs + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + relative_perf_p + ", " + best_global_performance_p + ", " + relative_perf_evaluation_done_p + ", " + classic_useless_code_p + ", " + code_p + ", " + attempt_nb + ")");
     return false;
   }
   relative_performances_of_codes_played[attempt_nb-1] = relative_perf_p; // may be known or unknown
@@ -2243,7 +2243,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
 
   if (gameWon && allPerformancesFilled()) {
     if ((timeStr.length == 0) || (score < 0.0)) {
-      displayGUIError("internal error at store_player_info call: " + timeStr.length + ", " + score, new Error().stack);
+      displayGUIError("internal error at store_player_info call: " + timeStr.length + ", " + score);
     }
     else { // (score > 0.0 because game won)
       let nbColorsRevealed = nbColumns - smmCodeHandler.nbEmptyColors(sCodeRevealed);
@@ -2279,19 +2279,19 @@ function writePossibleCodes(possibleCodesList_p, nb_possible_codes_listed, possi
         || (nb_possible_codes_listed > nbOfPossibleCodes[attempt_nb-1])
         || ((nbOfPossibleCodes[attempt_nb-1] <= nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbOfPossibleCodes[attempt_nb-1])) // (cf. above assumption on stats writing)
         || ((nbOfPossibleCodes[attempt_nb-1] > nbMaxPossibleCodesShown) && (nb_possible_codes_listed != nbMaxPossibleCodesShown)) ) { // (cf. above assumption on stats writing)
-    displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (3)", new Error().stack);
+    displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + nbOfPossibleCodes[attempt_nb-1] + ", " + nb_possible_codes_listed + ") (3)");
     return false;
   }
   for (let i = 0; i < nb_possible_codes_listed; i++) {
     let code = possibleCodesList_p[i];
     let global_perf = globalPerformancesList_p[i];
     if (!smmCodeHandler.isFullAndValid(code)) {
-      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + i + ", " + code + ") (4)", new Error().stack);
+      displayGUIError("invalid stats (" + attempt_nb + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + i + ", " + code + ") (4)");
       return false;
     }
    if ( ((global_perf <= 0.01) && (global_perf != PerformanceUNKNOWN))
         || (global_perf == PerformanceNA) ) {
-      displayGUIError("invalid stats (unknown code performance(s) after evaluation) (5)", new Error().stack);
+      displayGUIError("invalid stats (unknown code performance(s) after evaluation) (5)");
       return false;
     }
     possibleCodesLists[attempt_nb-1][i] = code;
@@ -2530,7 +2530,7 @@ function updateAndStoreNbGamesStarted(offset) {
     }
   }
   catch (err) {
-    displayGUIError("error while storing nbgamesstarted: " + err, new Error().stack);
+    displayGUIError("error while storing nbgamesstarted: " + err);
   }
 }
 
@@ -2552,7 +2552,7 @@ function updateAttributesWidthAndHeightValues(width, height) {
 
 function get_x_pixel(x) {
   if ( (x < x_min - 0.0000001) || (x > x_max + 0.0000001) ) {
-    displayGUIError("out of range x value: " + x, new Error().stack);
+    displayGUIError("out of range x value: " + x);
     if (x < x_min) x = x_min;
     if (x > x_max) x = x_max;
   }
@@ -2567,7 +2567,7 @@ function get_x_pixel(x) {
 // function get_x_coordinate(x_pixel) {
   // let res;
   // if ( (x_pixel < 0) || (x_pixel > current_width - 1) ) {
-    // displayGUIError("out of range x pixel value: " + x_pixel, new Error().stack);
+    // displayGUIError("out of range x pixel value: " + x_pixel);
     // if (x_pixel < 0) x_pixel = 0;
     // if (x_pixel > current_width - 1) x_pixel = current_width - 1;
   // }
@@ -2581,7 +2581,7 @@ function get_x_pixel(x) {
 
 function get_y_pixel(y, ignoreRanges = false) {
   if ( (!ignoreRanges) && ((y < y_min - 0.0000001) || (y > y_max + 0.0000001)) ) {
-    displayGUIError("out of range y value: " + y + ", " + y_min + ", " + y_max + ", " + y_step + ", " + showPossibleCodesMode, new Error().stack);
+    displayGUIError("out of range y value: " + y + ", " + y_min + ", " + y_max + ", " + y_step + ", " + showPossibleCodesMode);
     if (y < y_min) y = y_min;
     if (y > y_max) y = y_max;
   }
@@ -2596,7 +2596,7 @@ function get_y_pixel(y, ignoreRanges = false) {
 // function get_y_coordinate(y_pixel) {
   // let res;
   // if ( (y_pixel < 0) || (y_pixel > current_height - 1) ) {
-    // displayGUIError("out of range y pixel value: " + y_pixel, new Error().stack);
+    // displayGUIError("out of range y pixel value: " + y_pixel);
     // if (y_pixel < 0) y_pixel = 0;
     // if (y_pixel > current_height - 1) y_pixel = current_height - 1;
   // }
@@ -2810,7 +2810,7 @@ function draw_graphic_bis() {
 
     let nbColumnsSelected = getNbColumnsSelected();
     if ( (nbColumnsSelected < 0) || (nbColumnsSelected > nbMaxColumns) ) { // (error case)
-      displayGUIError("inconsistent number of columns selected: " + nbColumnsSelected, new Error().stack);
+      displayGUIError("inconsistent number of columns selected: " + nbColumnsSelected);
       nbColumnsSelected = defaultNbColumns;
     }
 
@@ -3064,7 +3064,7 @@ function draw_graphic_bis() {
     }
 
     if ((currentAttemptNumber <= 0) || (currentAttemptNumber > nbMaxAttempts+1)) { // Defensive check that currentAttemptNumber is valid
-      displayGUIError("inconsistent currentAttemptNumber value: " + currentAttemptNumber, new Error().stack);
+      displayGUIError("inconsistent currentAttemptNumber value: " + currentAttemptNumber);
     }
     else {
       if ( gameOnGoing() // playing phase
@@ -4002,7 +4002,7 @@ function draw_graphic_bis() {
             }
           }
           else {
-            displayGUIError("game over inconsistency", new Error().stack);
+            displayGUIError("game over inconsistency");
           }
 
         }
@@ -4175,7 +4175,7 @@ function draw_graphic_bis() {
 
         }
         else {
-          displayGUIError("invalid currentPossibleCodeShown: " + currentPossibleCodeShown, new Error().stack);
+          displayGUIError("invalid currentPossibleCodeShown: " + currentPossibleCodeShown);
         }
 
         // Draw always present and impossible colors
@@ -4244,7 +4244,7 @@ function draw_graphic_bis() {
 
           let codeidx_with_ratio = Math.floor((codeidx+code_list_offset) * code_ratio);
           if (codeidx_with_ratio >= possibleCodesListsSizes[currentPossibleCodeShown-1]) {
-            displayGUIError("invalid codeidx_with_ratio; " + codeidx_with_ratio + ", " + possibleCodesListsSizes[currentPossibleCodeShown-1], new Error().stack);
+            displayGUIError("invalid codeidx_with_ratio; " + codeidx_with_ratio + ", " + possibleCodesListsSizes[currentPossibleCodeShown-1]);
           }
 
           // Display code
@@ -4269,7 +4269,7 @@ function draw_graphic_bis() {
           if ( (possibleCodesListsSubdivisions[currentPossibleCodeShown-1] != -1)
                && (possibleCodesListsSubdivisions[currentPossibleCodeShown-1] == codeidx+code_list_offset+1) ) {
             if (code_ratio != 1.0) {
-              displayGUIError("invalid code_ratio: " + code_ratio, new Error().stack);
+              displayGUIError("invalid code_ratio: " + code_ratio);
             }
             x_0 = get_x_pixel(x_min+x_step*(attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width));
             y_0 = get_y_pixel(y_min+y_step*y_cell);
@@ -4477,7 +4477,7 @@ function draw_graphic_bis() {
 
   }
   catch (err) {
-    displayGUIError("draw error: " + err, err.stack);
+    displayGUIError("draw error: " + err);
   }
 
 }
@@ -4609,7 +4609,7 @@ function measurePreciseTextHeight_bis(char_p, font, width, height, out) { // (se
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if ((first_non_transparent_line == -1) || (last_non_transparent_line == -1)) {
       if (android_appli) { // error observed in non-app cases: when safariMode or when injectedScript - workaround assumed to work well
-        displayGUIError("measurePreciseTextHeight_bis: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1), new Error().stack);
+        displayGUIError("measurePreciseTextHeight_bis: first_non_transparent_line or last_non_transparent_line was not calculated: " + (first_non_transparent_line == -1) + ", " +  (last_non_transparent_line == -1));
       }
       first_non_transparent_line = 0; // (defense)
       last_non_transparent_line = Math.round((height-1) * default_font_height_factor); // (defense)
@@ -4662,7 +4662,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
     // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
     if (str_height == undefined) {
       if (android_appli) { // error observed in non-app cases: when safariMode or when injectedScript - workaround assumed to work well
-        displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_str_height), new Error().stack);
+        displayGUIError("displayString: str_height not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_str_height));
       }
       str_height = parseInt(ctx.font.match(/\d+/)[0]) * default_font_height_factor; // (defense)
     }
@@ -4671,7 +4671,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
   // Error observed for android appli run with "AppleWebKit ... Chrome/xxx Mobile Safari/xxx" => defense applied
   if (empty_space_before_str == undefined) {
     if (android_appli) { // error observed in non-app cases: when safariMode or when injectedScript - workaround assumed to work well
-      displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_empty_space_before_str), new Error().stack);
+      displayGUIError("displayString: empty_space_before_str not found for font: " + ctx_font_str + "/" + ctx.font + " inside array: " + array_to_string(arr_empty_space_before_str));
     }
     empty_space_before_str = 0; // (defense)
   }
@@ -4760,7 +4760,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
     if (justify == 0) { // centered
       if (!displayColorMode) { // To simplify, strikethrough mode is only handled in centered case
         if (backgroundColor == "") { // N.A. background
-          displayGUIError("displayString error: N.A. background #1", new Error().stack);
+          displayGUIError("displayString error: N.A. background #1");
         }
         let redC = parseInt(backgroundColor.substring(1,3), 16);
         let greenC = parseInt(backgroundColor.substring(3,5), 16);
@@ -4781,7 +4781,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
 
         if (displayVariant != 1) {
             if (backgroundColor == "") { // N.A. background
-              displayGUIError("displayString error: N.A. background #2", new Error().stack);
+              displayGUIError("displayString error: N.A. background #2");
             }
             ctx.fillStyle = averageColor(backgroundColor, "#000000", 0.9);
             let half_hidding_rect_width = Math.max(8*(x_0_next - x_0)/100, str_width/2+2);
@@ -4849,7 +4849,7 @@ function averageColor(color1_p, color2_p, color1Coef) {
   let b2;
 
   if ((color1Coef < 0.0) || (color1Coef > 1.0)) {
-    displayGUIError("error in averageColor (1): " + color1 + ", " + color2 + ", " + color1Coef, new Error().stack);
+    displayGUIError("error in averageColor (1): " + color1 + ", " + color2 + ", " + color1Coef);
     return color1_p;
   }
 
@@ -4866,7 +4866,7 @@ function averageColor(color1_p, color2_p, color1Coef) {
     b1 = rgb[2];
   }
   else {
-    displayGUIError("error in averageColor (2): " + color1 + ", " + color2 + ", " + color1Coef, new Error().stack);
+    displayGUIError("error in averageColor (2): " + color1 + ", " + color2 + ", " + color1Coef);
     return color1_p;
   }
 
@@ -4883,7 +4883,7 @@ function averageColor(color1_p, color2_p, color1Coef) {
     b2 = rgb[2];
   }
   else {
-    displayGUIError("error in averageColor (3): " + color1 + ", " + color2 + ", " + color1Coef, new Error().stack);
+    displayGUIError("error in averageColor (3): " + color1 + ", " + color2 + ", " + color1Coef);
     return color1_p;
   }
 
@@ -4894,7 +4894,7 @@ function averageColor(color1_p, color2_p, color1Coef) {
   if ( isNaN(newr) || (newr < 0) || (newr > 255)
        || isNaN(newg) || (newg < 0) || (newg > 255)
        || isNaN(newb) || (newb < 0) || (newb > 255) ) {
-    displayGUIError("error in averageColor (4): " + color1 + ", " + color2 + ", " + color1Coef + " / " + newr + ", " + newg + ", " + newb, new Error().stack);
+    displayGUIError("error in averageColor (4): " + color1 + ", " + color2 + ", " + color1Coef + " / " + newr + ", " + newg + ", " + newb);
     return color1_p;
   }
   return "rgb(" + newr + "," + newg + "," + newb + ")";

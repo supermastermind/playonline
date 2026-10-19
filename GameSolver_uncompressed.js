@@ -804,7 +804,7 @@ let nbOfCodesForSystematicEvaluation = -1;
 let nbOfCodesForSystematicEvaluation_AllCodesEvaluated = -1;
 let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
 
-let refNbCodesLimitForMarkOptimization = 800;
+let refNbCodesLimitForMarkOptimization = 900;
 let nbCodesLimitForMarkOptimization = -1;
 
 let initialNbClasses = -1;
@@ -830,7 +830,7 @@ let listsOfPossibleCodeIndexes;
 let nbOfPossibleCodes;
 let listOfEquivalentCodesAndPerformances;
 let marks_already_computed_table = null;
-let nbCodesLimitForEquivalentCodesCheck = 40; // (value determined empirically)
+let nbCodesLimitForEquivalentCodesCheck = 60; // (value determined empirically)
 
 let initialInitDone = false;
 let curGame;
