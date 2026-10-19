@@ -2446,7 +2446,7 @@ function evaluatePerformances(depth, listOfCodeIndexes, nbCodes, particularCode,
   let idx;
   let res = PerformanceNA;
 
-  evaluatePerformancesStartTime = new Date().getTime();
+  evaluatePerformancesStartTime = Date.now();
 
   // Defensive check
   if ((best_mark_idx != marksTable_MarkToNb[nbColumns][0]) || (best_mark_idx >= nbMaxMarks)) {
@@ -3254,7 +3254,7 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
     // if ((depth <= 1) && (idx1 < nbCodes)) { // (precalculation mode)
     if (depth <= 1) {
 
-      let time_elapsed = new Date().getTime() - evaluatePerformancesStartTime;
+      let time_elapsed = Date.now() - evaluatePerformancesStartTime;
 
       if (time_elapsed > appliedMaxPerformanceEvaluationTime + maxAllowedExtraTime) {
         console.log("(processing unexpectedly too long, abortion after " + time_elapsed + "ms)");

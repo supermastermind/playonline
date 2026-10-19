@@ -1732,7 +1732,7 @@ let areCurrentGameOrCodePrecalculated=-1;
 function evaluatePerformances(depth, listOfCodeIndexes, nbCodes, particularCode, areCurrentGameOrCodePrecalculated_p, nbOfClassesFirstCall_p){
 let idx;
 let res=PerformanceNA;
-evaluatePerformancesStartTime=new Date().getTime();
+evaluatePerformancesStartTime=Date.now();
 if((best_mark_idx!=marksTable_MarkToNb[nbColumns][0])||(best_mark_idx >=nbMaxMarks)){
 throw new Error("evaluatePerformances: invalid best_mark_idx");
 }
@@ -2190,7 +2190,7 @@ if(sum < best_sum){
 best_sum=sum;
 }
 if(depth <=1){
-let time_elapsed=new Date().getTime()-evaluatePerformancesStartTime;
+let time_elapsed=Date.now()-evaluatePerformancesStartTime;
 if(time_elapsed > appliedMaxPerformanceEvaluationTime+maxAllowedExtraTime){
 console.log("(processing unexpectedly too long, abortion after "+time_elapsed+"ms)");
 listOfGlobalPerformances[0]=PerformanceNA;
