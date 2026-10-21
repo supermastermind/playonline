@@ -3024,6 +3024,11 @@ if((curGameForGamePrecalculation.length!=maxDepthForGamePrecalculation_ForMemAll
 throw new Error("NEW_ATTEMPT phase / curGameForGamePrecalculation or marksIdxsForGamePrecalculation allocation was modified");
 }}
 else{
+let classStr="";
+if(nbOfClassesFirstCall!=-1){
+classStr=" / "+nbOfClassesFirstCall+((nbOfClassesFirstCall > 1) ? " classes" : " class");
+}
+console.log("(perfeval skipped for "+previousNbOfPossibleCodes+" codes"+classStr+")");
 best_global_performance=PerformanceUNKNOWN;
 code_played_relative_perf=PerformanceUNKNOWN;
 relative_perf_evaluation_done=false;

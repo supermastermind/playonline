@@ -4398,6 +4398,11 @@ function handleMessage(data) {
 
       }
       else {
+        let classStr = "";
+        if (nbOfClassesFirstCall != -1) {
+          classStr = " / " + nbOfClassesFirstCall + ((nbOfClassesFirstCall > 1) ? " classes" : " class");
+        }
+        console.log("(perfeval skipped for " + previousNbOfPossibleCodes + " codes" + classStr + ")");
         best_global_performance = PerformanceUNKNOWN;
         code_played_relative_perf = PerformanceUNKNOWN;
         relative_perf_evaluation_done = false;
