@@ -798,8 +798,8 @@ let extraTimeForSimplisticGames = 15000; // 15 seconds
 let maxAllowedExtraTime = 35000; // 35 seconds
 let factorForMaxPerformanceEvaluationTime = 1000; // 1000 for 1 second - shall be much higher in (precalculation mode)
 
-let refNbOfCodesForSystematicEvaluation = 3200; // (high values may induce latencies)
-let refNbOfCodesForSystematicEvaluation_AllCodesEvaluated = 3200; // (shall be <= refNbOfCodesForSystematicEvaluation - high values may induce latencies)
+let refNbOfCodesForSystematicEvaluation = 3600; // (high values may induce latencies)
+let refNbOfCodesForSystematicEvaluation_AllCodesEvaluated = 3500; // (shall be <= refNbOfCodesForSystematicEvaluation - high values may induce latencies)
 let nbOfCodesForSystematicEvaluation = -1;
 let nbOfCodesForSystematicEvaluation_AllCodesEvaluated = -1;
 let nbOfCodesForSystematicEvaluation_ForMemAlloc = -1;
@@ -3203,10 +3203,8 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
                 possibleCodesForPerfEvaluation_OptimizedCodes[i] = possibleCodesForPerfEvaluation_InitialCodesPt[next_code_idx];
                 // Code indexes
                 nextListOfCodeIndexesToConsider[i] = i;
-                // Marks already computed
-                for (let j = 0; j < nextNbCodes; j++) {
-                  marks_already_computed_table[i][j] = -1; // mark not computed yet
-                }
+                // Reset marks already computed
+                marks_already_computed_table[i].fill(-1, 0, nextNbCodes); // mark not computed yet
               }
               if (nextNbCodes < nbCodesLimitForMarkOptimization) { // (defensive setting)
                 possibleCodesForPerfEvaluation_OptimizedCodes[nextNbCodes] = 0; /* empty code */
@@ -3251,8 +3249,8 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
     }
 
     // Fill output in case of first call
-    // if ((depth <= 1) && (idx1 < nbCodes)) { // (precalculation mode)
-    if (depth <= 1) {
+    // if ((depth <= 0) && (idx1 < nbCodes)) { // (precalculation mode)
+    if (depth <= 0) { // too many calls to costly Date.now() with "if (depth <= 1)"
 
       let time_elapsed = Date.now() - evaluatePerformancesStartTime;
 
@@ -3264,7 +3262,7 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
         recursiveEvaluatePerformancesWasAborted = true; throw new Error(performanceEvaluationAbortedStr);
       }
 
-      if (first_call) {
+      if (first_call) { // depth == -1
 
         if ((!compute_sum_ini) && (nbCodes > 100)) {
 
@@ -3376,7 +3374,7 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
         } */
 
       }
-      else if ((depth == 0) || (depth == 1)) { // first and second levels of recursivity
+      else if (depth == 0) { // first level of recursivity
         // Processing is aborted when too long
         if (time_elapsed > appliedMaxPerformanceEvaluationTime * 1.05) {
           console.log("(processing abortion after " + time_elapsed + "ms)");
@@ -3389,9 +3387,8 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
       else {
         throw new Error("recursiveEvaluatePerformances: internal error (1)");
       }
-      time_elapsed = undefined;
 
-    } // (depth <= 1)
+    } // (depth <= 0)
 
     /* if (precalculation_mode && write_me_for_precalculation) { // (precalculation mode)
       str = str + codeHandler.compressCodeToString(cur_code) + ":" + Math.round(sum).toString(16).toUpperCase() + ",";
@@ -3519,10 +3516,8 @@ function recursiveEvaluatePerformances(depth, listOfCodeIndexes, nbCodes /*, pos
                 possibleCodesForPerfEvaluation_OptimizedCodes[i] = possibleCodesForPerfEvaluation_InitialCodesPt[next_code_idx];
                 // Code indexes
                 nextListOfCodeIndexesToConsider[i] = i;
-                // Marks already computed
-                for (let j = 0; j < nextNbCodes; j++) {
-                  marks_already_computed_table[i][j] = -1; // mark not computed yet
-                }
+                // Reset marks already computed
+                marks_already_computed_table[i].fill(-1, 0, nextNbCodes); // mark not computed yet
               }
               if (nextNbCodes < nbCodesLimitForMarkOptimization) { // (defensive setting)
                 possibleCodesForPerfEvaluation_OptimizedCodes[nextNbCodes] = 0; /* empty code */
@@ -3698,7 +3693,7 @@ function handleMessage(data) {
         break;
       case 5:
         nbMaxMarks = 20;
-        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 20 : 45); // (as many games fully evaluated as possible)
+        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 30 : 45); // (as many games fully evaluated as possible)
         nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
         nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes); // initialNbPossibleCodes in (precalculation mode)
         nbOfCodesForSystematicEvaluation_ForMemAlloc = initialNbPossibleCodes; // game precalculation (*)
@@ -3710,7 +3705,7 @@ function handleMessage(data) {
         break;
       case 6:
         nbMaxMarks = 27;
-        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 20 : 30); // (games never fully evaluated but extrapolated global performances)
+        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 30 : 40); // (games never fully evaluated [with extrapolated global performances])
         nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
         nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
         nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
@@ -3733,7 +3728,7 @@ function handleMessage(data) {
         // *                *** TOTAL: 35 marks *** *
         // ******************************************
         nbMaxMarks = 35;
-        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 20 : 30); // (games never fully evaluated)
+        maxPerformanceEvaluationTime = factorForMaxPerformanceEvaluationTime*(beginner_mode ? 30 : 40); // (games never fully evaluated [with extrapolated global performances])
         nbOfCodesForSystematicEvaluation = Math.min(refNbOfCodesForSystematicEvaluation, initialNbPossibleCodes);
         nbOfCodesForSystematicEvaluation_AllCodesEvaluated = Math.min(refNbOfCodesForSystematicEvaluation_AllCodesEvaluated, initialNbPossibleCodes);
         nbOfCodesForSystematicEvaluation_ForMemAlloc = nbOfCodesForSystematicEvaluation;
@@ -3828,7 +3823,7 @@ function handleMessage(data) {
       if (nbColors != 8) {
         throw new Error("INIT phase / internal error (unexpected number of colors)");
       }
-      listOfClassIds = new Uint32Array(0x88888+1);
+      listOfClassIds = new Uint32Array(0x88888+1); // ~ 2MB
     }
     else {
       listOfClassIds = null;
@@ -4152,11 +4147,12 @@ function handleMessage(data) {
       // ***************************
 
       if ( (precalculated_cur_game_or_code > 0) // both game and code were precalculated
+           // (duplicated conditions)
            || ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-           || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.58) // number of possible codes is not too high (1/4)
-           || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70) && (nbOfClassesFirstCall <= 50)) // number of possible codes is not too high (2/4)
-           || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87) && (nbOfClassesFirstCall <= 25)) // number of possible codes is not too high (3/4)
-           || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 15)) ) { // number of possible codes is not too high (****) (4/4)
+           || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.60) // number of possible codes is not too high, with margin
+           || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.80) && (nbOfClassesFirstCall <= 100)) // number of possible codes is not too high, with margin - observed examples on i7: 2376 codes / 55 classes / 35s - 2500 codes / 60 classes / 31s - 2598 codes / 68 classes / 45s
+           || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.90) && (nbOfClassesFirstCall <= 60)) // number of possible codes is not too high, with margin
+           || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 30)) ) { // number of possible codes is not too high, with margin (****) - observed example on i7: 3684 codes / 31 classes / 88s 
 
         if (previousNbOfPossibleCodes > nbOfCodesForSystematicEvaluation_ForMemAlloc) {
           throw new Error("NEW_ATTEMPT phase / inconsistent previousNbOfPossibleCodes or nbOfCodesForSystematicEvaluation_ForMemAlloc value (1): " + previousNbOfPossibleCodes + ", " +  nbOfCodesForSystematicEvaluation_ForMemAlloc);
@@ -4191,11 +4187,12 @@ function handleMessage(data) {
           }
         }
         // ***** Second evaluation phase in a game *****
-        else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // only game was precalculated and number of possible codes is not too high
-                  || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.58) // number of possible codes is not too high (1/4)
-                  || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.70) && (nbOfClassesFirstCall <= 50)) // number of possible codes is not too high (2/4)
-                  || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.87) && (nbOfClassesFirstCall <= 25)) // number of possible codes is not too high (3/4)
-                  || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 15)) ) { // number of possible codes is not too high (****) (4/4)
+        // (duplicated conditions)
+        else if ( ((precalculated_cur_game_or_code == 0) && (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation)) // (duplicated condition, see above)
+                  || (previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.60) // (duplicated condition, see above)
+                  || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.80) && (nbOfClassesFirstCall <= 100)) // (duplicated condition, see above)
+                  || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated * 0.90) && (nbOfClassesFirstCall <= 60)) // (duplicated condition, see above)
+                  || ((previousNbOfPossibleCodes <= nbOfCodesForSystematicEvaluation_AllCodesEvaluated) && (nbOfClassesFirstCall <= 30)) ) { // (duplicated condition, see above)
           if (precalculated_cur_game_or_code > 0) {
             throw new Error("NEW_ATTEMPT phase / internal error (precalculated_cur_game_or_code)");
           }
