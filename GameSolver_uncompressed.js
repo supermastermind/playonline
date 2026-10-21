@@ -3606,7 +3606,7 @@ function handleMessage(data) {
       throw new Error("INIT phase / nbMaxPossibleCodesShown is undefined");
     }
     nbMaxPossibleCodesShown = Number(data.nbMaxPossibleCodesShown);
-    if ( isNaN(nbMaxPossibleCodesShown) || (nbMaxPossibleCodesShown < 5) || (nbMaxPossibleCodesShown > 100) ) {
+    if ( isNaN(nbMaxPossibleCodesShown) || (nbMaxPossibleCodesShown < 20) || (nbMaxPossibleCodesShown > 100) ) {
       throw new Error("INIT phase / invalid nbMaxPossibleCodesShown: " + nbMaxPossibleCodesShown);
     }
     possibleCodesShown = new Array(nbMaxPossibleCodesShown);
@@ -4378,11 +4378,11 @@ function handleMessage(data) {
           throw new Error("NEW_ATTEMPT phase / other_code_colors allocation was modified");
         }
         if ( (!check2DArraySizes(cur_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
-             || (cur_game_code_colors.size < curGame.length) ) { // first dimension shall be >= curGame size
+             || (cur_game_code_colors.length < curGame.length) ) { // first dimension shall be >= curGame size
           throw new Error("NEW_ATTEMPT phase / cur_game_code_colors allocation was modified or is invalid");
         }
         if ( (!check2DArraySizes(other_game_code_colors, overallNbMaxAttempts+overallMaxDepth, nbMaxColumns))
-             || (other_game_code_colors.size < curGame.length) ) { // first dimension shall be >= curGame size
+             || (other_game_code_colors.length < curGame.length) ) { // first dimension shall be >= curGame size
           throw new Error("NEW_ATTEMPT phase / other_game_code_colors allocation was modified or is invalid");
         }
         if (permuted_other_code_colors.length != nbMaxColumns) {
