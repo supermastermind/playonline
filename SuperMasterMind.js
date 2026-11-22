@@ -776,6 +776,7 @@ dsCode=true;
 main_graph_update_needed=true;
 updateGameSizes();
 draw_graphic();
+setTimeout("fadeOutCanvas(1, 1, "+(nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0))+", true, 2500);", 4);
 }
 else{
 newGameButtonClick_delayed(skip_transition_effect);
@@ -3486,7 +3487,7 @@ else{
 resetCurrentCodeButtonObject.className="button";
 }
 if(gameOnGoing()&&(color_being_selected!=-1)&&(column_of_color_being_selected!=-1)){
-fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, 950);
+fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, false, 950);
 reset_color_being_selected();
 }
 if(gameJustWon){
@@ -3495,6 +3496,10 @@ setTimeout("triggerVictoryAnimation();", 10);
 }
 else if(gameJustLost){
 activeFades=[];
+if(scode_height <=0){
+throw new Error("scode_height <=0");
+}
+setTimeout("fadeOutCanvas(1, 1, "+nbMaxAttemptsToDisplay+", true, 2500);", 4);
 }
 if((currentAttemptNumber >=arrow_shown_thld+3)&&(currentCode!=sCodeRevealed)&&(nbColorSelections > 7)){
 localStorage.arrow_shown_date=currentDate();
@@ -4190,13 +4195,14 @@ ctx.font=fontIni;
 }}
 let activeFades=[];
 let selectionAnimFrameId=null;
-function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs){
+function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, secretCode, durationMs){
 activeFades=activeFades.filter(fade=> fade.column!==column);
 activeFades.push({
 column: column,
 color: color,
 nbMaxAttemptsToDisplay : nbMaxAttemptsToDisplay,
 startTime: performance.now(),
+secretCode : secretCode,
 duration: durationMs
 });
 if(!selectionAnimFrameId){
@@ -4224,17 +4230,22 @@ let arrow_width=(get_x_pixel(x_min+x_step)-get_x_pixel(x_min)) * arrow_width_rat
 animation_ctx.save();
 animation_ctx.globalAlpha=opacity;
 animation_ctx.strokeStyle=backgroundColorTable[fade.color-1];
-if(arrow_regular_cond()){
+if(arrow_regular_cond()&&!fade.secretCode){
 drawArrow(animation_ctx, fade.column, x_1, y_1+1.35 * arrow_width, x_0, y_0-1.35 * arrow_width, arrow_width);
 }
 draw_shadow=2;
 animation_ctx.font=big_code_bold_font;
+if(fade.secretCode){
+if(scode_height > 0){
+displayCode(smmCodeHandler.convert(sCode), fade.nbMaxAttemptsToDisplay+transition_height, animation_ctx);
+}}
+else{
 displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, fade.nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+fade.color-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
 if(currentCode!=sCodeRevealed){
 draw_shadow=3;
 animation_ctx.font=big_code_bold_font_2;
 displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, currentAttemptNumber-1, animation_ctx, false, true, obviouslyImpossibleColors[fade.color]);
-}
+}}
 draw_shadow=0;
 animation_ctx.restore();
 return true;

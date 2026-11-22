@@ -1041,6 +1041,9 @@ newGameButtonClick = function(nbColumns_p, skip_transition_effect = false) { // 
         updateGameSizes(); // (due to dsCode update)
         draw_graphic();
 
+        // Trigger defeat animation
+        setTimeout("fadeOutCanvas(1, 1, " + (nbMaxAttempts-nb_attempts_not_displayed-(skip_last_attempt_display?1:0)) + ", true, 2500);", 4);
+
       }
       else {
         newGameButtonClick_delayed(skip_transition_effect);
@@ -4432,7 +4435,7 @@ function draw_graphic_bis() {
 
     // Trigger selection animations
     if (gameOnGoing() && (color_being_selected != -1) && (column_of_color_being_selected != -1)) {
-      fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, 950);
+      fadeOutCanvas(column_of_color_being_selected, color_being_selected, nbMaxAttemptsToDisplay, false, 950);
       reset_color_being_selected();
     }
     
@@ -4446,6 +4449,11 @@ function draw_graphic_bis() {
     else if (gameJustLost) {
       // Reset ongoing selection animations
       activeFades = [];
+      // Trigger defeat animation
+      if (scode_height <= 0) {
+        throw new Error("scode_height <= 0");
+      }
+      setTimeout("fadeOutCanvas(1, 1, " + nbMaxAttemptsToDisplay + ", true, 2500);", 4);
     }
 
     if ((currentAttemptNumber >= arrow_shown_thld+3) && (currentCode != sCodeRevealed) && (nbColorSelections > 7)) {
@@ -5283,7 +5291,7 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
 
 let activeFades = [];
 let selectionAnimFrameId = null;
-function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs) {
+function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, secretCode, durationMs) {
   // Remove any existing active fade for THIS specific column if it's already running                                                                                   
   activeFades = activeFades.filter(fade => fade.column !== column);
 
@@ -5293,6 +5301,7 @@ function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs) {
     color: color,
     nbMaxAttemptsToDisplay : nbMaxAttemptsToDisplay,
     startTime: performance.now(),
+    secretCode : secretCode,
     duration: durationMs
   });
 
@@ -5304,7 +5313,6 @@ function fadeOutCanvas(column, color, nbMaxAttemptsToDisplay, durationMs) {
 
 // Animation loop for animationCanvas overlay only
 function renderLoop(currentTime) {
-
   // Clear animation canvas with physical pixels (as opposed to styled CSS display dimensions)
   animation_ctx.save();
   animation_ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -5333,17 +5341,24 @@ function renderLoop(currentTime) {
     animation_ctx.globalAlpha = opacity;
     animation_ctx.strokeStyle = backgroundColorTable[fade.color-1];
     // Display arrow animation if needed
-    if (arrow_regular_cond()) {
+    if (arrow_regular_cond() && !fade.secretCode) {
       drawArrow(animation_ctx, fade.column, x_1, y_1 + 1.35 * arrow_width, x_0, y_0 - 1.35 * arrow_width, arrow_width);
     }
     // Display color selection animation
     draw_shadow = 2;
     animation_ctx.font = big_code_bold_font;
-    displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, fade.nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+fade.color-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
-    if (currentCode != sCodeRevealed) {
-      draw_shadow = 3;
-      animation_ctx.font = big_code_bold_font_2;
-      displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, currentAttemptNumber-1, animation_ctx, false, true, obviouslyImpossibleColors[fade.color]);
+    if (fade.secretCode) {
+      if (scode_height > 0) {
+        displayCode(smmCodeHandler.convert(sCode), fade.nbMaxAttemptsToDisplay+transition_height, animation_ctx);
+      }
+    }
+    else {
+      displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, fade.nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+fade.color-1, animation_ctx, false, true, obviouslyImpossibleColors[color_being_selected]);
+      if (currentCode != sCodeRevealed) {
+        draw_shadow = 3;
+        animation_ctx.font = big_code_bold_font_2;
+        displayColor(fade.color, attempt_nb_width+(70*(nbColumns+1))/100+(fade.column-1)*2, currentAttemptNumber-1, animation_ctx, false, true, obviouslyImpossibleColors[fade.color]);
+      }
     }
     draw_shadow = 0;
     animation_ctx.restore();
