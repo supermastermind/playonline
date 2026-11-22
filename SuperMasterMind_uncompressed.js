@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v35.04"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
+let smm_compatibility_version = "v35.05"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as Ajax cache is disabled
-if ((!localStorage.reloadForCompatibility_v3504) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3505) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3504 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3505 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -553,7 +553,7 @@ function displayGUIError(GUIErrorStr) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.04: " + (localStorage.reloadForCompatibility_v3504 ? localStorage.reloadForCompatibility_v3504 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.05: " + (localStorage.reloadForCompatibility_v3505 ? localStorage.reloadForCompatibility_v3505 : "not done"), 210);
 
       // Alert
       // *****
@@ -4651,6 +4651,7 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
     arr_empty_space_before_str = font_array_small_char__empty_space_before_str;
   }
 
+  ctx_font_str = ctx_font_str.replaceAll("italic ",""); // italic does not change font sizes
   let str_height = arr_str_height[ctx_font_str.replaceAll(" ","")];
   if (str_height == undefined) {
     if ((safariMode || ((!android_appli) && mobileMode && (!androidMode))) && (ctx_font_str.indexOf("bold") == -1)) { // Known Safari bug: "bold" prefix may disappear

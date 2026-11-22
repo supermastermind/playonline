@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v35.04";
+let smm_compatibility_version="v35.05";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3504)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3505)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3504="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3505="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -430,7 +430,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v35.04: "+(localStorage.reloadForCompatibility_v3504 ? localStorage.reloadForCompatibility_v3504 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v35.05: "+(localStorage.reloadForCompatibility_v3505 ? localStorage.reloadForCompatibility_v3505 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -3647,6 +3647,7 @@ else{
 arr_str_height=font_array_small_char__str_height;
 arr_empty_space_before_str=font_array_small_char__empty_space_before_str;
 }
+ctx_font_str=ctx_font_str.replaceAll("italic ","");
 let str_height=arr_str_height[ctx_font_str.replaceAll(" ","")];
 if(str_height==undefined){
 if((safariMode||((!android_appli)&&mobileMode&&(!androidMode)))&&(ctx_font_str.indexOf("bold")==-1)){
