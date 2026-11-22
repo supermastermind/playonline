@@ -118,6 +118,7 @@ let obviouslyImpossibleColors;
 let relative_performances_of_codes_played;
 let global_best_performances;
 let relativePerformancesEvaluationDone;
+let roughEval;
 let classicUselessCode;
 let performancesDisplayed;
 let possibleCodesLists;
@@ -362,6 +363,7 @@ let big_code_bold_font = defaultFont;
 let big_code_bold_font_2 = defaultFont;
 let medium_bold_font = defaultFont;
 let medium_bold_font_2 = defaultFont;
+let medium_bold_font_3 = defaultFont;
 let stats_bold_font = defaultFont;
 let font_size = min_font_size;
 let star_font_size = min_font_size;
@@ -884,6 +886,11 @@ function onGameSolverMsg(e) {
       }
       let relative_perf_evaluation_done_p = Boolean(data.relative_perf_evaluation_done_p);
 
+      if (data.rough_eval_p == undefined) {
+        displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: rough_eval_p is undefined");
+      }
+      let rough_eval_p = Boolean(data.rough_eval_p);
+
       if (data.classic_useless_code_p == undefined) {
         displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: classic_useless_code_p is undefined");
       }
@@ -910,7 +917,7 @@ function onGameSolverMsg(e) {
         displayGUIError("CODE_PLAYED_PERFORMANCE / gameSolver msg error: invalid game_id: " + game_id);
       }
 
-      writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id);
+      writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, rough_eval_p, code_p, attempt_nb, game_id);
 
     }
 
@@ -1949,18 +1956,12 @@ function resetGameAttributes(nbColumnsSelected) {
 
   nbColorSelections = 0;
   currentCode = 0;
-  codesPlayed = new Array(nbMaxAttempts);
-  for (i = 0; i < nbMaxAttempts; i++) {
-    codesPlayed[i] = 0;
-  }
+  codesPlayed = new Array(nbMaxAttempts).fill(0);
   marks = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
     marks[i] = {nbBlacks:0, nbWhites:0};
   }
-  nbOfPossibleCodes = new Array(nbMaxAttempts);
-  for (i = 0; i < nbMaxAttempts; i++) {
-    nbOfPossibleCodes[i] = 0;
-  }
+  nbOfPossibleCodes = new Array(nbMaxAttempts).fill(0);
   colorsFoundCodes = new Array(nbMaxAttempts);
   minNbColorsTables = new Array(nbMaxAttempts);
   for (i = 0; i < nbMaxAttempts; i++) {
@@ -1970,28 +1971,13 @@ function resetGameAttributes(nbColumnsSelected) {
   for (i = 0; i < nbMaxAttempts; i++) {
     maxNbColorsTables[i] = new Array(nbColors+1);
   }
-  obviouslyImpossibleColors = new Array(nbColors+1);
-  for (i = 0; i < nbColors+1; i++) {
-    obviouslyImpossibleColors[i] = false;
-  }
-  relative_performances_of_codes_played = new Array(nbMaxAttempts);
-  global_best_performances = new Array(nbMaxAttempts);
-  for (i = 0; i < nbMaxAttempts; i++) {
-    relative_performances_of_codes_played[i] = PerformanceNA;
-    global_best_performances[i] = PerformanceNA;
-  }
-  relativePerformancesEvaluationDone = new Array(nbMaxAttempts);
-  for (i = 0; i < nbMaxAttempts; i++) {
-    relativePerformancesEvaluationDone[i] = false;
-  }
-  classicUselessCode = new Array(nbMaxAttempts);
-  for (i = 0; i < nbMaxAttempts; i++) {
-    classicUselessCode[i] = false;
-  }
-  performancesDisplayed = new Array(nbMaxAttempts);
-  for (i = 0; i < nbMaxAttempts; i++) {
-    performancesDisplayed[i] = false;
-  }
+  obviouslyImpossibleColors = new Array(nbColors+1).fill(false);
+  relative_performances_of_codes_played = new Array(nbMaxAttempts).fill(PerformanceNA);
+  global_best_performances = new Array(nbMaxAttempts).fill(PerformanceNA);
+  relativePerformancesEvaluationDone = new Array(nbMaxAttempts).fill(false);
+  roughEval = new Array(nbMaxAttempts).fill(false);
+  classicUselessCode = new Array(nbMaxAttempts).fill(false);
+  performancesDisplayed = new Array(nbMaxAttempts).fill(false);
 
   possibleCodesLists = new Array(nbMaxAttempts);
   possibleCodesListsSizes = new Array(nbMaxAttempts);
@@ -2089,34 +2075,36 @@ function resetGameAttributes(nbColumnsSelected) {
 }
 
 function checkArraySizes() {
+  let err_str = "array is wider than expected ";
   if (backgroundColorTable.length != foregroundColorTable.length) {displayGUIError("array sizes are inconsistent (0)");}
   if (specialStrTable.length != specialColorTable.length) {displayGUIError("array sizes are inconsistent (1)");}
-  if (codesPlayed.length > nbMaxAttempts) {displayGUIError("array is wider than expected (2)");}
-  if (marks.length > nbMaxAttempts) {displayGUIError("array is wider than expected (3)");}
-  if (nbOfPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (4)");}
-  if (colorsFoundCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (5)");}
-  if (minNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (6)");}
+  if (codesPlayed.length > nbMaxAttempts) {displayGUIError(err_str + "(2)");}
+  if (marks.length > nbMaxAttempts) {displayGUIError(err_str + "(3)");}
+  if (nbOfPossibleCodes.length > nbMaxAttempts) {displayGUIError(err_str + "(4)");}
+  if (colorsFoundCodes.length > nbMaxAttempts) {displayGUIError(err_str + "(5)");}
+  if (minNbColorsTables.length > nbMaxAttempts) {displayGUIError(err_str + "(6)");}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError("array is wider than expected (7)");}
+    if (minNbColorsTables[i].length > nbColors+1) {displayGUIError(err_str + "(7)");}
   }
-  if (maxNbColorsTables.length > nbMaxAttempts){displayGUIError("array is wider than expected (8)");}
+  if (maxNbColorsTables.length > nbMaxAttempts) {displayGUIError(err_str + "(8)");}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (maxNbColorsTables[i].length > nbColors+1){displayGUIError("array is wider than expected (9)");}
+    if (maxNbColorsTables[i].length > nbColors+1) {displayGUIError(err_str + "(9)");}
   }
-  if (obviouslyImpossibleColors.length > nbColors+1){displayGUIError("array is wider than expected (10)");}
-  if (relative_performances_of_codes_played.length > nbMaxAttempts){displayGUIError("array is wider than expected (11)");}
-  if (global_best_performances.length > nbMaxAttempts){displayGUIError("array is wider than expected (12)");}
-  if (relativePerformancesEvaluationDone.length > nbMaxAttempts){displayGUIError("array is wider than expected (13)");}
-  if (classicUselessCode.length > nbMaxAttempts){displayGUIError("array is wider than expected (14)");}
-  if (performancesDisplayed.length > nbMaxAttempts){displayGUIError("array is wider than expected (15)");}
-  if (possibleCodesLists.length > nbMaxAttempts){displayGUIError("array is wider than expected (16)");}
-  if (globalPerformancesList.length > nbMaxAttempts){displayGUIError("array is wider than expected (17)");}
-  if (possibleCodesListsSizes.length > nbMaxAttempts){displayGUIError("array is wider than expected (18)");}
-  if (possibleCodesListsSubdivisions.length > nbMaxAttempts){displayGUIError("array is wider than expected (19)");}
-  if (equivalentPossibleCodes.length > nbMaxAttempts){displayGUIError("array is wider than expected (20)");}
+  if (obviouslyImpossibleColors.length > nbColors+1) {displayGUIError(err_str + "(10)");}
+  if (relative_performances_of_codes_played.length > nbMaxAttempts) {displayGUIError(err_str + "(11)");}
+  if (global_best_performances.length > nbMaxAttempts) {displayGUIError(err_str + "(12)");}
+  if (relativePerformancesEvaluationDone.length > nbMaxAttempts) {displayGUIError(err_str + "(13)");}
+  if (roughEval.length > nbMaxAttempts) {displayGUIError(err_str + "(14)");}
+  if (classicUselessCode.length > nbMaxAttempts) {displayGUIError(err_str + "(15)");}
+  if (performancesDisplayed.length > nbMaxAttempts) {displayGUIError(err_str + "(16)");}
+  if (possibleCodesLists.length > nbMaxAttempts) {displayGUIError(err_str + "(17)");}
+  if (globalPerformancesList.length > nbMaxAttempts) {displayGUIError(err_str + "(18)");}
+  if (possibleCodesListsSizes.length > nbMaxAttempts) {displayGUIError(err_str + "(19)");}
+  if (possibleCodesListsSubdivisions.length > nbMaxAttempts) {displayGUIError(err_str + "(20)");}
+  if (equivalentPossibleCodes.length > nbMaxAttempts) {displayGUIError(err_str + "(21)");}
   for (let i = 0; i < nbMaxAttempts; i++) {
-    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (21)");}
-    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown){displayGUIError("array is wider than expected (22)");}
+    if (possibleCodesLists[i].length > nbMaxPossibleCodesShown) {displayGUIError(err_str + "(22)");}
+    if (globalPerformancesList[i].length > nbMaxPossibleCodesShown) {displayGUIError(err_str + "(23)");}
   }
 }
 
@@ -2195,7 +2183,7 @@ function writeNbOfPossibleCodes(nbOfPossibleCodes_p, colorsFoundCode_p, minNbCol
 }
 
 // Code performances
-function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, code_p, attempt_nb, game_id) {
+function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_done_p, classic_useless_code_p, best_global_performance_p, rough_eval_p, code_p, attempt_nb, game_id) {
   if (game_id != game_cnt) { // ignore other threads
     console.log("writePerformanceOfCodePlayed() call ignored: " + game_id + ", " + game_cnt);
     return false;
@@ -2214,6 +2202,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
        || (relative_performances_of_codes_played[attempt_nb-1] != PerformanceNA /* initial value */)
        || (global_best_performances[attempt_nb-1] != PerformanceNA /* initial value */)
        || (relativePerformancesEvaluationDone[attempt_nb-1] /* initial value */)
+       || (roughEval[attempt_nb-1] /* initial value */)
        || (classicUselessCode[attempt_nb-1] /* initial value */) ) {
     displayGUIError("invalid perfs (" + attempt_nb + ", " + nbOfStatsFilled_Perfs + ", " + nbOfStatsFilled_NbPossibleCodes + ", " + relative_perf_p + ", " + best_global_performance_p + ", " + relative_perf_evaluation_done_p + ", " + classic_useless_code_p + ", " + code_p + ", " + attempt_nb + ")");
     return false;
@@ -2231,6 +2220,7 @@ function writePerformanceOfCodePlayed(relative_perf_p, relative_perf_evaluation_
     at_least_one_useless_code_played = true;
   }
   relativePerformancesEvaluationDone[attempt_nb-1] = relative_perf_evaluation_done_p;
+  roughEval[attempt_nb-1] = rough_eval_p;
   classicUselessCode[attempt_nb-1] = classic_useless_code_p;
   nbOfStatsFilled_Perfs = attempt_nb;
 
@@ -3333,8 +3323,15 @@ function draw_graphic_bis() {
       font_array_small_char__str_height[medium_bold_font_2.replaceAll(" ","")] = str_meas_out2.str_height;
       font_array_small_char__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
 
+      medium_bold_font_3 = "bold " + Math.max(Math.floor(font_size/1.07), min_font_size) + "px " + fontFamily;
+      measurePreciseTextHeight("0", outlinedStar, medium_bold_font_3, str_meas_out1, str_meas_out2, false);
+      font_array__str_height[medium_bold_font_3.replaceAll(" ","")] = str_meas_out1.str_height;
+      font_array__empty_space_before_str[medium_bold_font_3.replaceAll(" ","")] = str_meas_out1.empty_space_before_str;
+      font_array_small_char__str_height[medium_bold_font_3.replaceAll(" ","")] = str_meas_out2.str_height;
+      font_array_small_char__empty_space_before_str[medium_bold_font_3.replaceAll(" ","")] = str_meas_out2.empty_space_before_str;
+
       if (!showPossibleCodesMode) {
-        stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.55), min_font_size) + "px " + fontFamily;
+        stats_bold_font = "bold " + Math.max(Math.floor(font_size/1.6), min_font_size) + "px " + fontFamily;
       }
       else {
         stats_bold_font = "bold " + Math.max(Math.floor(star_font_size), min_font_size) + "px " + fontFamily;
@@ -3487,7 +3484,7 @@ function draw_graphic_bis() {
 
         if (i < currentAttemptNumber) {
           // Relative performance was filled and may be known or unknown
-          displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), showPossibleCodesMode, false, PerformanceNA, ctx, false, false, classicUselessCode[i-1]);
+          displayPerf(relative_performances_of_codes_played[i-1], i-1, backgroundColor, isAttemptPossible(i), showPossibleCodesMode, false, PerformanceNA, ctx, false, false, classicUselessCode[i-1], roughEval[i-1]);
           if ( relativePerformancesEvaluationDone[i-1]
                && (relative_performances_of_codes_played[i-1] != PerformanceUNKNOWN)
                && (relative_performances_of_codes_played[i-1] <= PerformanceLOW) ) {
@@ -3574,7 +3571,7 @@ function draw_graphic_bis() {
       // **************************************
 
       if (tick_width > 0) {
-        ctx.font = basic_bold_font;
+        ctx.font = medium_bold_font_3;
         for (let i = 1 ; i < currentAttemptNumber; i++) {
 
           let backgroundColor = "";
@@ -3589,7 +3586,7 @@ function draw_graphic_bis() {
             ctx.font = stats_bold_font;
             displayString("\u2234" /* tick hidden */, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
                           lightGray, backgroundColor, ctx, false);
-            ctx.font = basic_bold_font;
+            ctx.font = medium_bold_font_3;
           }
           else if (0 == isPossible) { // code is possible
             if (!displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
@@ -3615,6 +3612,7 @@ function draw_graphic_bis() {
           }
 
         }
+        ctx.font = basic_bold_font;
       }
 
       let lineWidthIni = ctx.lineWidth;
@@ -4263,7 +4261,7 @@ function draw_graphic_bis() {
           }
           ctx.font = stats_bold_font;
           let backgroundColor = "";
-          displayPerf(relative_perf, y_cell, backgroundColor, 0, true, false /* valid_best_global_perf && (currentPossibleCodeShown <= 1) */, PerformanceNA /* best_global_perf */, ctx, (code == codesPlayed[currentPossibleCodeShown-1]), (code == equivalentPossibleCodes[currentPossibleCodeShown-1]), false);
+          displayPerf(relative_perf, y_cell, backgroundColor, 0, true, false /* valid_best_global_perf && (currentPossibleCodeShown <= 1) */, PerformanceNA /* best_global_perf */, ctx, (code == codesPlayed[currentPossibleCodeShown-1]), (code == equivalentPossibleCodes[currentPossibleCodeShown-1]), false, roughEval[currentPossibleCodeShown-1]);
 
           // Display subdivision
           if ( (possibleCodesListsSubdivisions[currentPossibleCodeShown-1] != -1)
@@ -5138,7 +5136,7 @@ function drawBubble(ctx, x, y, w, h, radius, foregroundColor, lineWidth, bottomR
   }
 }
 
-function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag, equivalentIdeaFlag, isClassicUselessCode) {
+function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOptimal, globalPerfDisplayIfOptimal, optimalGlobalPerf, ctx, ideaFlag, equivalentIdeaFlag, isClassicUselessCode, isRough) {
 
   let performance = Math.round(perf * 100.0) / 100.0; // 0.01 precision
   let optimalglobalperformance = Math.round(optimalGlobalPerf * 100.0) / 100.0; // 0.01 precision
@@ -5169,6 +5167,12 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
     }
   }
 
+  let fontIni;
+  if (isRough) {
+    fontIni = ctx.font;
+    ctx.font = "italic " + ctx.font;
+  }
+  
   if (performance == PerformanceUNKNOWN) {
     displayString("\u2234", x_cell, y_cell, cell_width,
                   lightGray, backgroundColor, ctx, false);
@@ -5274,6 +5278,10 @@ function displayPerf(perf, y_cell, backgroundColor, isPossible, starDisplayIfOpt
   else if (equivalentIdeaFlag && (tick_width > 0) && (!globalPerfDisplayIfOptimal)) {
     displayString("\uD83D\uDCA1", attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, y_cell+(android_appli ? 0 : 0.065), tick_width, // previous character: \u2190 = left arrow with vertical compensation
                   "#FFBF00", backgroundColor, ctx, false);
+  }
+
+  if (isRough) {
+    ctx.font = fontIni;
   }
 
 }
