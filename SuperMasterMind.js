@@ -270,7 +270,6 @@ let big_code_bold_font=defaultFont;
 let big_code_bold_font_2=defaultFont;
 let medium_bold_font=defaultFont;
 let medium_bold_font_2=defaultFont;
-let medium_bold_font_3=defaultFont;
 let stats_bold_font=defaultFont;
 let font_size=min_font_size;
 let star_font_size=min_font_size;
@@ -2592,7 +2591,7 @@ font_array__str_height[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out1.st
 font_array__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out1.empty_space_before_str;
 font_array_small_char__str_height[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out2.str_height;
 font_array_small_char__empty_space_before_str[big_code_bold_font_2.replaceAll(" ","")]=str_meas_out2.empty_space_before_str;
-medium_bold_font="bold "+Math.max(Math.floor(font_size/1.55), min_font_size)+"px "+fontFamily;
+medium_bold_font="bold "+Math.max(Math.floor(font_size/1.6), min_font_size)+"px "+fontFamily;
 measurePreciseTextHeight("0", outlinedStar, medium_bold_font, str_meas_out1, str_meas_out2, false);
 font_array__str_height[medium_bold_font.replaceAll(" ","")]=str_meas_out1.str_height;
 font_array__empty_space_before_str[medium_bold_font.replaceAll(" ","")]=str_meas_out1.empty_space_before_str;
@@ -2604,12 +2603,6 @@ font_array__str_height[medium_bold_font_2.replaceAll(" ","")]=str_meas_out1.str_
 font_array__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")]=str_meas_out1.empty_space_before_str;
 font_array_small_char__str_height[medium_bold_font_2.replaceAll(" ","")]=str_meas_out2.str_height;
 font_array_small_char__empty_space_before_str[medium_bold_font_2.replaceAll(" ","")]=str_meas_out2.empty_space_before_str;
-medium_bold_font_3="bold "+Math.max(Math.floor(font_size/1.07), min_font_size)+"px "+fontFamily;
-measurePreciseTextHeight("0", outlinedStar, medium_bold_font_3, str_meas_out1, str_meas_out2, false);
-font_array__str_height[medium_bold_font_3.replaceAll(" ","")]=str_meas_out1.str_height;
-font_array__empty_space_before_str[medium_bold_font_3.replaceAll(" ","")]=str_meas_out1.empty_space_before_str;
-font_array_small_char__str_height[medium_bold_font_3.replaceAll(" ","")]=str_meas_out2.str_height;
-font_array_small_char__empty_space_before_str[medium_bold_font_3.replaceAll(" ","")]=str_meas_out2.empty_space_before_str;
 if(!showPossibleCodesMode){
 stats_bold_font="bold "+Math.max(Math.floor(font_size/1.6), min_font_size)+"px "+fontFamily;
 }
@@ -2805,7 +2798,7 @@ displayString(String(nbOfPossibleCodes[i-1].toExponential(1)).replace("e+","e"),
 statsColor, backgroundColor, ctx, false);
 }}}
 if(tick_width > 0){
-ctx.font=medium_bold_font_3;
+ctx.font=medium_bold_font_2;
 for (let i=1;i < currentAttemptNumber;i++){
 let backgroundColor="";
 if(i==currentPossibleCodeShown){
@@ -2818,7 +2811,7 @@ if(gameOnGoing()&&(i > nbMaxHintsDisplayed)
 ctx.font=stats_bold_font;
 displayString("\u2234" , attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
 lightGray, backgroundColor, ctx, false);
-ctx.font=medium_bold_font_3;
+ctx.font=medium_bold_font_2;
 }
 else if(0==isPossible){
 if(!displayString(tickChar, attempt_nb_width+(70*(nbColumns+1))/100+nbColumns*2+nb_possible_codes_width+optimal_width, i-1, tick_width,
