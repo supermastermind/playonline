@@ -1863,9 +1863,9 @@
           return;
         }
 
-        var score_display_time = 4444; // (see blinking time)
+        var score_display_time = 3000;
         if (last_game_was_short && (nbGamesPlayedAndWon >= 2) && localStorage.gamesok && (Number(localStorage.gamesok) >= 10)) {
-          score_display_time = score_display_time * 2 + 3000; // extra time when short games
+          score_display_time = score_display_time * 3; // extra time when short games
         }
 
         var time_to_wait = 44;
