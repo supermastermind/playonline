@@ -2990,7 +2990,7 @@ timeStr=timeInMinutes+" min";
 else{
 timeStr=timeInSeconds+" s";
 }
-wasGameShort=(totalTimeInSeconds < ((nbColumns <=4) ? 25 : 60));
+wasGameShort=(totalTimeInSeconds < ((nbColumns <=4) ? 20 : 60));
 if(gameWon){
 let victoryStr;
 let victoryStr2;

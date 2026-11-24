@@ -3808,7 +3808,7 @@ function draw_graphic_bis() {
           else {
             timeStr = timeInSeconds + " s";
           }
-          wasGameShort = (totalTimeInSeconds < ((nbColumns <= 4) ? 25 : 60));
+          wasGameShort = (totalTimeInSeconds < ((nbColumns <= 4) ? 20 : 60));
 
           if (gameWon) { // game won
             let victoryStr;
