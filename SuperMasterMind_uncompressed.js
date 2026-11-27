@@ -218,6 +218,7 @@ let y_step = 1.0; // N.A.
 let color_being_selected = -1;
 let column_of_color_being_selected = -1;
 let draw_shadow = 0; // (saves a function parameter)
+let draw_glint = false; // (saves a function parameter)
 
 let attempt_nb_width = 2;
 let nb_possible_codes_width = 5;
@@ -233,7 +234,7 @@ let refLineWidth = 1;
 function getLineWidth(inner_window_height, min_value) {
   // window.innerHeight = 300 => limit for lineWidth = 1
   // window.innerHeight = 1800 => limit for lineWidth = 3 (valid use case: 1969 <-> 3 for Samsung Galaxy S20FE 5G)
-  return Math.max(Math.floor(inner_window_height / 750 + 0.6), min_value);
+  return Math.max(Math.floor(inner_window_height / 450), min_value);
 }
 
 function getGridLineWidth(inner_window_height) {
@@ -249,7 +250,7 @@ let orangeColor = "#FF7700"; // Orange
 let redColor = "#F00000"; // Red
 let purpleColor = "#C900A1"; // purple
 let cyanColor = "#2DB7E5"; // Cyan
-let backgroundColorTable = // all values shall be written #RGB (not like "red", "white", ...)
+let backgroundColorTable = // all values shall be written #RRGGBB (not "red", "white", ...)
   [
     blueColor,   // Blue
     greenColor,  // Green
@@ -262,15 +263,15 @@ let backgroundColorTable = // all values shall be written #RGB (not like "red", 
     purpleColor, // Purple
     cyanColor    // Cyan
   ];
-let foregroundColorTable =
+let foregroundColorTable = // (black digits on light pawns, white digits on dark ones)
   [
-    "#FFFFFF",   // White
     "#FFFFFF",
     "#FFFFFF",
     "#FFFFFF",
     "#FFFFFF",
     "#FFFFFF",
-    "#000000",   // Black
+    "#FFFFFF",
+    "#000000",
     "#000000",
     "#FFFFFF",
     "#FFFFFF"
@@ -282,7 +283,7 @@ let specialStrTable =
     "\u23F0", // alarm clock
     "\u231B"  // hourglass
   ];
-let outlinedStar = "\u272D";
+let outlinedStar = "\u272A";
 
 let specialColorTable =
   [
@@ -349,7 +350,7 @@ let currentCodeColorMode = -1;
 // Fonts
 // *****
 
-let fontFamily = "Verdana, sans-serif";
+let fontFamily = "DejaVuSansBold, sans-serif"; // DejaVuSansBold font is preferred, else sans-serif font (always available)
 let defaultFont = "10px " + fontFamily;
 let min_font_size = 7; // (font size below 7 may not be easily readable in canvas)
 let max_font_size = 1000;
@@ -367,6 +368,24 @@ let stats_bold_font = defaultFont;
 let font_size = min_font_size;
 let star_font_size = min_font_size;
 let default_font_height_factor = 0.83;
+
+
+async function loadDejaVuSansBold() {
+  const face = new FontFace(
+    "DejaVuSansBold",
+    'url("./font/dejavu-sans-latin-700-normal.woff2") format("woff2")',
+    // 'url("https://cdn.jsdelivr.net/npm/@fontsource/dejavu-sans/files/dejavu-sans-latin-700-normal.woff2") format("woff2")',
+    { weight: "700", style: "normal" }
+  );
+
+  try {
+    const loaded = await face.load();
+    document.fonts.add(loaded);
+    console.log("(DejaVuSansBold font loaded)");
+  } catch (err) {
+    console.log("DejaVuSansBold font loading failed: " + err);
+  }
+}
 
 // Other variables
 // ****************
@@ -4041,7 +4060,9 @@ function draw_graphic_bis() {
           for (let col = 0; col < nbColumns; col++) {
             color_selection_code = smmCodeHandler.setColor(color_selection_code, color+1, col+1);
           }
+          draw_glint = CompressedDisplayMode && (window.innerHeight >= window.innerWidth * 1.4);
           displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
+          draw_glint = false;
         }
         draw_shadow = 0;
 
@@ -4746,6 +4767,9 @@ function displayString(str_p, x_cell, y_cell, x_cell_width,
           else {
             let radius = Math.min(x_0_next - x_0 - 1, y_0 - y_0_next - 1)/(CompressedDisplayMode ? 2.6 : 2.6);
             drawRoundedRect(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, radius, true, apply_gradient);
+            if (draw_glint && (currentCodeColorMode != 4)) {
+              funDrawHighlight(ctx, x_0 + 1, y_0_next + 1, x_0_next - x_0 - 1, y_0 - y_0_next - 1, radius);
+            }
           }
         }
         else {
@@ -4896,6 +4920,25 @@ function averageColor(color1_p, color2_p, color1Coef) {
   }
   return "rgb(" + newr + "," + newg + "," + newb + ")";
 
+}
+
+// Draw a small glint on colored pawns
+function funDrawHighlight(ctx, x, y, w, h, radius) {
+  ctx.save();
+  drawRoundedRectBis(ctx, x, y, w, h, radius);
+  ctx.clip();
+  let g = ctx.createLinearGradient(0, y, 0, y + h*0.5);
+  g.addColorStop(0, "rgba(255,255,255,0.14)");
+  g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(x, y, w, h*0.5);
+  ctx.restore();
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(x + w*0.23, y + h*0.26, w*0.08, h*0.05, -0.35, 0, 2*Math.PI, false);
+  ctx.fillStyle = "rgba(255,255,255,0.40)";
+  ctx.fill();
+  ctx.restore();
 }
 
 function getColorToDisplay(color) {
@@ -5383,35 +5426,45 @@ function renderLoop(currentTime) {
 // First instructions
 // *************************************************************************
 
-debug_game_state = 68.5;
-scriptsFullyLoaded = true;
+function startGame() {
+  console.log("Start game...");
 
-draw_graphic();
-updateThemeAttributes();
+  debug_game_state = 68.5;
+  scriptsFullyLoaded = true;
 
-canvas.addEventListener("pointerdown", pointerDown, false);
-canvas.addEventListener("pointermove", pointerMove, false);
+  draw_graphic();
+  updateThemeAttributes();
 
-// Welcome message at very first game on android app
-// Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit
-if ((!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_firstname)) { // recent player
-  let welcome_str =
-    "<div style='display:flex;justify-content:center'><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td>\
-    <img alt='welcome!' src='img/" + (android_appli ? "Welcome_android_app.png" : "Welcome_browser.png") + "' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;'>\
-    </td></tr></table></div>";
-  try {
-    modal_mode = 5;
-    // set modal content
-    modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
-                     + welcome_str
-                     + "</div>");
-    // open modal
-    modal.open();
+  canvas.addEventListener("pointerdown", pointerDown, false);
+  canvas.addEventListener("pointermove", pointerMove, false);
+
+  // Welcome message at very first game on android app
+  // Note: not done for web games because index.html is supposed to have been seen and because cookies may be reset at each browser exit
+  if ((!localStorage.gamesok) || (Number(localStorage.gamesok) < min_gamesok_for_firstname)) { // recent player
+    let welcome_str =
+      "<div style='display:flex;justify-content:center'><table style='width:" + generalTableWidthStr + ";'><tr style='text-align:center;'><td>\
+      <img alt='welcome!' src='img/" + (android_appli ? "Welcome_android_app.png" : "Welcome_browser.png") + "' style='width:100%;margin-top:1.5vh;margin-bottom:1.0vh;'>\
+      </td></tr></table></div>";
+    try {
+      modal_mode = 5;
+      // set modal content
+      modal.setContent("<div style='-webkit-touch-callout: none; /* iOS Safari */ -webkit-user-select: none; /* Safari */ -khtml-user-select: none; /* Konqueror HTML */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* Internet Explorer/Edge */ user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */'>"
+                      + welcome_str
+                      + "</div>");
+      // open modal
+      modal.open();
+    }
+    catch (exc) {
+      throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
+    }
   }
-  catch (exc) {
-    throw new Error("modal error (" + modal_mode + "):" + exc + ": " + exc.stack);
-  }
+
+  debug_game_state = 69;
+  debug_smm_state = 100;
 }
 
-debug_game_state = 69;
-debug_smm_state = 100;
+async function loadCustoFontAndStartGame() {
+  await loadDejaVuSansBold();
+  startGame();
+}
+loadCustoFontAndStartGame();

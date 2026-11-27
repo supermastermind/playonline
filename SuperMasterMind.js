@@ -154,6 +154,7 @@ let y_step=1.0;
 let color_being_selected=-1;
 let column_of_color_being_selected=-1;
 let draw_shadow=0;
+let draw_glint=false;
 let attempt_nb_width=2;
 let nb_possible_codes_width=5;
 let optimal_width=4;
@@ -164,7 +165,7 @@ let nb_attempts_not_displayed=0;
 let skip_last_attempt_display=false;
 let refLineWidth=1;
 function getLineWidth(inner_window_height, min_value){
-return Math.max(Math.floor(inner_window_height / 750+0.6), min_value);
+return Math.max(Math.floor(inner_window_height / 450), min_value);
 }
 function getGridLineWidth(inner_window_height){
 return Math.max(Math.round(getLineWidth(inner_window_height, 1) / 2), 1);
@@ -207,7 +208,7 @@ let specialStrTable=
 "\u23F0",
 "\u231B"
 ];
-let outlinedStar="\u272D";
+let outlinedStar="\u272A";
 let specialColorTable=
 [
 "orange",
@@ -256,7 +257,7 @@ updateHoverBackgroundColor(modernDisplay ? legacy_backgroundColor_base_color : "
 }
 updateThemeAttributes();
 let currentCodeColorMode=-1;
-let fontFamily="Verdana, sans-serif";
+let fontFamily="DejaVuSansBold, sans-serif";
 let defaultFont="10px "+fontFamily;
 let min_font_size=7;
 let max_font_size=1000;
@@ -274,6 +275,19 @@ let stats_bold_font=defaultFont;
 let font_size=min_font_size;
 let star_font_size=min_font_size;
 let default_font_height_factor=0.83;
+async function loadDejaVuSansBold(){
+const face=new FontFace(
+"DejaVuSansBold",
+'url("./font/dejavu-sans-latin-700-normal.woff2") format("woff2")',
+{weight: "700", style: "normal"}
+);
+try{
+const loaded=await face.load();
+document.fonts.add(loaded);
+console.log("(DejaVuSansBold font loaded)");
+}catch (err){
+console.log("DejaVuSansBold font loading failed: "+err);
+}}
 let main_graph_update_needed=true;
 let color_cnt=1;
 let tickChar="\u2714";
@@ -3184,7 +3198,9 @@ let color_selection_code=0;
 for (let col=0;col < nbColumns;col++){
 color_selection_code=smmCodeHandler.setColor(color_selection_code, color+1, col+1);
 }
+draw_glint=CompressedDisplayMode&&(window.innerHeight >=window.innerWidth * 1.4);
 displayCode(color_selection_code, nbMaxAttemptsToDisplay+transition_height+scode_height+transition_height+color, ctx, false, gameOnGoing(), true);
+draw_glint=false;
 }
 draw_shadow=0;
 }
@@ -3734,7 +3750,9 @@ ctx.stroke();
 else{
 let radius=Math.min(x_0_next-x_0-1, y_0-y_0_next-1)/(CompressedDisplayMode ? 2.6 : 2.6);
 drawRoundedRect(ctx, x_0+1, y_0_next+1, x_0_next-x_0-1, y_0-y_0_next-1, radius, true, apply_gradient);
-}}
+if(draw_glint&&(currentCodeColorMode!=4)){
+funDrawHighlight(ctx, x_0+1, y_0_next+1, x_0_next-x_0-1, y_0-y_0_next-1, radius);
+}}}
 else{
 ctx.fillRect(x_0+1, y_0_next+1, x_0_next-x_0-1, y_0-y_0_next-1);
 }}}
@@ -3862,6 +3880,23 @@ displayGUIError("error in averageColor (4): "+color1+", "+color2+", "+color1Coef
 return color1_p;
 }
 return "rgb("+newr+","+newg+","+newb+")";
+}
+function funDrawHighlight(ctx, x, y, w, h, radius){
+ctx.save();
+drawRoundedRectBis(ctx, x, y, w, h, radius);
+ctx.clip();
+let g=ctx.createLinearGradient(0, y, 0, y+h*0.5);
+g.addColorStop(0, "rgba(255,255,255,0.14)");
+g.addColorStop(1, "rgba(255,255,255,0)");
+ctx.fillStyle=g;
+ctx.fillRect(x, y, w, h*0.5);
+ctx.restore();
+ctx.save();
+ctx.beginPath();
+ctx.ellipse(x+w*0.23, y+h*0.26, w*0.08, h*0.05,-0.35, 0, 2*Math.PI, false);
+ctx.fillStyle="rgba(255,255,255,0.40)";
+ctx.fill();
+ctx.restore();
 }
 function getColorToDisplay(color){
 if(displayVariant==1){
@@ -4260,6 +4295,8 @@ animation_ctx.setTransform(1, 0, 0, 1, 0, 0);
 animation_ctx.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
 animation_ctx.restore();
 }}
+function startGame(){
+console.log("Start game...");
 debug_game_state=68.5;
 scriptsFullyLoaded=true;
 draw_graphic();
@@ -4283,3 +4320,9 @@ throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 }}
 debug_game_state=69;
 debug_smm_state=100;
+}
+async function loadCustoFontAndStartGame(){
+await loadDejaVuSansBold();
+startGame();
+}
+loadCustoFontAndStartGame();
