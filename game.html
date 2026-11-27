@@ -1521,9 +1521,9 @@ handle_rsp_error_met=true;
 }
 return;
 }
-var score_display_time=3333;
+var score_display_time=4000;
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
-score_display_time=score_display_time * 3;
+score_display_time=score_display_time * 2.5;
 }
 var time_to_wait=44;
 var time_diff=new Date().getTime()-store_time;

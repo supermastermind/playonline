@@ -1863,9 +1863,9 @@
           return;
         }
 
-        var score_display_time = 3333;
+        var score_display_time = 4000;
         if (last_game_was_short && (nbGamesPlayedAndWon >= 2) && localStorage.gamesok && (Number(localStorage.gamesok) >= 10)) {
-          score_display_time = score_display_time * 3; // extra time when short games
+          score_display_time = score_display_time * 2.5; // extra time when short games
         }
 
         var time_to_wait = 44;
@@ -3479,7 +3479,7 @@
       // Firework particle system
       // ************************
 
-      let animation_time = 3000; // 3 seconds < 3.3 seconds (3333ms)
+      let animation_time = 3000; // 3 seconds
       let activeParticles = [];
       let start_anim_time = 0;
       let lastFrameTime = 0;
