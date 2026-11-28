@@ -12,7 +12,7 @@ console.log("Running SuperMasterMind.js...");
 
 debug_game_state = 68;
 
-let smm_compatibility_version = "v35.05"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
+let smm_compatibility_version = "v35.06"; // !WARNING! -> value to be aligned with version in game.html => search "v35" for all occurrences in this script and game.html
 try { // try/catch for backward compatibility
   current_smm_compatibility_version = smm_compatibility_version;
 }
@@ -55,11 +55,11 @@ function reloadAllContentsDistantly() {
 
 // Check if current script version is different from game.html version:
 // script version could only be more recent as Ajax cache is disabled
-if ((!localStorage.reloadForCompatibility_v3505) && (html_compatibility_game_version != smm_compatibility_version)) {
+if ((!localStorage.reloadForCompatibility_v3506) && (html_compatibility_game_version != smm_compatibility_version)) {
     if (android_appli) {
       alert("Game update detected.\nRestart the app...");
     }
-    localStorage.reloadForCompatibility_v3505 = "distant reload request done on " + currentDateAndTime();
+    localStorage.reloadForCompatibility_v3506 = "distant reload request done on " + currentDateAndTime();
     reloadAllContentsDistantly();
 }
 
@@ -350,7 +350,10 @@ let currentCodeColorMode = -1;
 // Fonts
 // *****
 
-let fontFamily = "DejaVuSansBold, sans-serif"; // DejaVuSansBold font is preferred, else sans-serif font (always available)
+// DejaVuSansBold is preferred,
+// else (in case of DejaVuSansBold font loading failure) Verdana: very similar to DejaVuSansBold but not always present,
+// else sans-serif (always available): it is not a fixed font but a generic font family, the font varies depending on browser, OS or other settings
+let fontFamily = "DejaVuSansBold, Verdana, sans-serif";
 let defaultFont = "10px " + fontFamily;
 let min_font_size = 7; // (font size below 7 may not be easily readable in canvas)
 let max_font_size = 1000;
@@ -369,17 +372,20 @@ let font_size = min_font_size;
 let star_font_size = min_font_size;
 let default_font_height_factor = 0.83;
 
-
-async function loadDejaVuSansBold() {
-  const face = new FontFace(
-    "DejaVuSansBold",
-    'url("./font/dejavu-sans-latin-700-normal.woff2") format("woff2")',
-    // 'url("https://cdn.jsdelivr.net/npm/@fontsource/dejavu-sans/files/dejavu-sans-latin-700-normal.woff2") format("woff2")',
-    { weight: "700", style: "normal" }
-  );
-
+async function loadDejaVuSansBold(timeoutMs = 5000) {
   try {
-    const loaded = await face.load();
+    const face = new FontFace(
+      "DejaVuSansBold",
+      'url("./font/dejavu-sans-latin-700-normal.woff2") format("woff2")',
+      // 'url("https://cdn.jsdelivr.net/npm/@fontsource/dejavu-sans/files/dejavu-sans-latin-700-normal.woff2") format("woff2")',
+      { weight: "700", style: "normal" }
+    );
+
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("font load timeout")), timeoutMs)
+    );
+
+    const loaded = await Promise.race([face.load(), timeout]);
     document.fonts.add(loaded);
     console.log("(DejaVuSansBold font loaded)");
   } catch (err) {
@@ -571,7 +577,7 @@ function displayGUIError(GUIErrorStr) {
       }
       errorStr = errorStr + " for game " + strGame;
 
-      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.05: " + (localStorage.reloadForCompatibility_v3505 ? localStorage.reloadForCompatibility_v3505 : "not done"), 210);
+      submitForm("game error (" + (globalErrorCnt+1) + "/" + maxGlobalErrors + ")" + errorStr + ": ***** ERROR MESSAGE ***** " + completedGUIErrorStr + " / STACK: " + errStack + " / VERSIONS: game: " + html_compatibility_game_version + ", smm: " + smm_compatibility_version + ", alignment for v35.06: " + (localStorage.reloadForCompatibility_v3506 ? localStorage.reloadForCompatibility_v3506 : "not done"), 210);
 
       // Alert
       // *****
@@ -5463,8 +5469,8 @@ function startGame() {
   debug_smm_state = 100;
 }
 
-async function loadCustoFontAndStartGame() {
+async function loadCustomFontAndStartGame() {
   await loadDejaVuSansBold();
   startGame();
 }
-loadCustoFontAndStartGame();
+loadCustomFontAndStartGame();

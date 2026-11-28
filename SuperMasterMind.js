@@ -1,7 +1,7 @@
 "use strict";
 console.log("Running SuperMasterMind.js...");
 debug_game_state=68;
-let smm_compatibility_version="v35.05";
+let smm_compatibility_version="v35.06";
 try{
 current_smm_compatibility_version=smm_compatibility_version;
 }
@@ -33,11 +33,11 @@ href=href.substring(0, params_idx);
 }
 window.location.href=href+"?tmp="+currentDateAndTime();
 }}
-if((!localStorage.reloadForCompatibility_v3505)&&(html_compatibility_game_version!=smm_compatibility_version)){
+if((!localStorage.reloadForCompatibility_v3506)&&(html_compatibility_game_version!=smm_compatibility_version)){
 if(android_appli){
 alert("Game update detected.\nRestart the app...");
 }
-localStorage.reloadForCompatibility_v3505="distant reload request done on "+currentDateAndTime();
+localStorage.reloadForCompatibility_v3506="distant reload request done on "+currentDateAndTime();
 reloadAllContentsDistantly();
 }
 function reloadAllContentsDistantlyIfNeeded(){
@@ -257,7 +257,7 @@ updateHoverBackgroundColor(modernDisplay ? legacy_backgroundColor_base_color : "
 }
 updateThemeAttributes();
 let currentCodeColorMode=-1;
-let fontFamily="DejaVuSansBold, sans-serif";
+let fontFamily="DejaVuSansBold, Verdana, sans-serif";
 let defaultFont="10px "+fontFamily;
 let min_font_size=7;
 let max_font_size=1000;
@@ -275,14 +275,17 @@ let stats_bold_font=defaultFont;
 let font_size=min_font_size;
 let star_font_size=min_font_size;
 let default_font_height_factor=0.83;
-async function loadDejaVuSansBold(){
+async function loadDejaVuSansBold(timeoutMs=5000){
+try{
 const face=new FontFace(
 "DejaVuSansBold",
 'url("./font/dejavu-sans-latin-700-normal.woff2") format("woff2")',
 {weight: "700", style: "normal"}
 );
-try{
-const loaded=await face.load();
+const timeout=new Promise((_, reject)=>
+setTimeout(()=> reject(new Error("font load timeout")), timeoutMs)
+);
+const loaded=await Promise.race([face.load(), timeout]);
 document.fonts.add(loaded);
 console.log("(DejaVuSansBold font loaded)");
 }catch (err){
@@ -443,7 +446,7 @@ catch (game_exc){
 strGame=strGame.trim()+" "+game_exc;
 }
 errorStr=errorStr+" for game "+strGame;
-submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v35.05: "+(localStorage.reloadForCompatibility_v3505 ? localStorage.reloadForCompatibility_v3505 : "not done"), 210);
+submitForm("game error ("+(globalErrorCnt+1)+"/"+maxGlobalErrors+")"+errorStr+": ***** ERROR MESSAGE ***** "+completedGUIErrorStr+" / STACK: "+errStack+" / VERSIONS: game: "+html_compatibility_game_version+", smm: "+smm_compatibility_version+", alignment for v35.06: "+(localStorage.reloadForCompatibility_v3506 ? localStorage.reloadForCompatibility_v3506 : "not done"), 210);
 if(gameErrorStr==""){
 gameErrorStr="***** ERROR *****: "+GUIErrorStr+" / "+errStack+"\n";
 alert(gameErrorStr);
@@ -4321,8 +4324,8 @@ throw new Error("modal error ("+modal_mode+"):"+exc+": "+exc.stack);
 debug_game_state=69;
 debug_smm_state=100;
 }
-async function loadCustoFontAndStartGame(){
+async function loadCustomFontAndStartGame(){
 await loadDejaVuSansBold();
 startGame();
 }
-loadCustoFontAndStartGame();
+loadCustomFontAndStartGame();

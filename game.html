@@ -73,7 +73,7 @@ overflow-y: hidden;
 }
 *{-webkit-tap-highlight-color: transparent;}
 .button{
-font-family: monospace, sans-serif;
+font-family: monospace;
 background-color: white;
 border: 2px solid black;
 border-radius: 50%;
@@ -140,7 +140,7 @@ margin: 0;
 padding: 0;
 }
 .radio{
-font-family: monospace, sans-serif;
+font-family: monospace;
 color: black;
 white-space: nowrap;
 margin: 0;
@@ -677,7 +677,7 @@ document.write("<img id='img_1' style='display:none;' src='img/End_of_year.png'>
 </script>
 </p>
 <script>
-let html_compatibility_game_version="v35.05";
+let html_compatibility_game_version="v35.06";
 let current_smm_compatibility_version="not filled yet";
 let modeAlreadySelected=false;
 let lastKeyCheck=false;
@@ -1030,7 +1030,7 @@ extra_debug_info=extra_debug_info.trim();
 if(extra_debug_info==""){
 extra_debug_info="-";
 }
-submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v35.05: "+(localStorage.reloadForCompatibility_v3505 ? localStorage.reloadForCompatibility_v3505 : "not done")+"): "
+submitForm("***** GAME ERROR ***** (game: "+html_compatibility_game_version+", smm: "+current_smm_compatibility_version+", alignment for v35.06: "+(localStorage.reloadForCompatibility_v3506 ? localStorage.reloadForCompatibility_v3506 : "not done")+"): "
 +(github_unicorn_error ? "github unicorn error-" : "")+(github_html_error ? "github html error-" : "")+(github_load_error ? "github load error-" : "")
 +err_str+" in "+userInfoStr+" (start time:"+pageLoadStartTime+"/error time:"+new Date()+")"
 +" / debug: "+nbGamesPlayed+"|"+nbGamesPlayedAndWon
@@ -1523,7 +1523,7 @@ return;
 }
 var score_display_time=5000;
 if(last_game_was_short&&(nbGamesPlayedAndWon >=2)&&localStorage.gamesok&&(Number(localStorage.gamesok) >=10)){
-score_display_time=score_display_time * 2.5;
+score_display_time=score_display_time * 2;
 }
 var time_to_wait=44;
 var time_diff=new Date().getTime()-store_time;
